@@ -66,7 +66,14 @@ plugins:
 nav:
   - Inicio: index.md
   - Hormigón:
-    - hormigon/index.md
+    - Introducción: hormigon/index.md
+    - ACI 318-25:
+      - Cap. 7 — Losas Unidireccionales: hormigon/ACI-318-Ch7-OneWaySlabs.md
+      - Cap. 8 — Losas Bidireccionales: hormigon/ACI-318-Ch8-TwoWaySlabs.md
+      - Cap. 9 — Vigas: hormigon/ACI-318-Ch9-Beams.md
+      - Cap. 10 — Columnas: hormigon/ACI-318-Ch10-Columns.md
+      - Cap. 21 — Factores φ: hormigon/ACI-318-Ch21-PhiFactors.md
+      - Cap. 22 — Resistencia Seccional: hormigon/ACI-318-Ch22-SectionalStrength.md
   - Estanques:
     - estanques/index.md
   - Sismo:
