@@ -55,6 +55,7 @@ markdown_extensions:
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.plot.ly/plotly-2.35.2.min.js
 
 plugins:
   - search:
@@ -77,7 +78,8 @@ nav:
   - Estanques:
     - estanques/index.md
   - Sismo:
-    - sismo/index.md
+    - Introducción: sismo/index.md
+    - NCh2369:2025 — Espectro: sismo/NCh2369.md
   - Herramientas Python:
     - herramientas/index.md
   - Guía de contenido: guia-contenido.md
