@@ -15,6 +15,7 @@ Referencia de propiedades geométricas para secciones transversales de uso comú
 | Sección | Descripción |
 |---|---|
 | [Perfil I Simétrico](IBeam-Simetrico.md) | Alas iguales, sección doblemente simétrica |
+| [Rectángulo Hueco](HollowRectangle.md) | Sección rectangular hueca (RHS/SHS), paredes rectas |
 
 ---
 

@@ -83,5 +83,6 @@ nav:
     - Propiedades Geométricas:
       - Introducción: herramientas/propiedades-geometricas/index.md
       - Perfil I Simétrico: herramientas/propiedades-geometricas/IBeam-Simetrico.md
+      - Rectángulo Hueco: herramientas/propiedades-geometricas/HollowRectangle.md
     - Herramientas Python: herramientas/python/index.md
   - Guía de contenido: guia-contenido.md
