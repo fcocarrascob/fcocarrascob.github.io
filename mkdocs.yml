@@ -75,11 +75,13 @@ nav:
       - Cap. 10 — Columnas: hormigon/ACI-318-Ch10-Columns.md
       - Cap. 21 — Factores φ: hormigon/ACI-318-Ch21-PhiFactors.md
       - Cap. 22 — Resistencia Seccional: hormigon/ACI-318-Ch22-SectionalStrength.md
-  - Estanques:
-    - estanques/index.md
   - Sismo:
     - Introducción: sismo/index.md
     - NCh2369:2025 — Espectro: sismo/NCh2369.md
-  - Herramientas Python:
-    - herramientas/index.md
+  - Herramientas:
+    - Introducción: herramientas/index.md
+    - Propiedades Geométricas:
+      - Introducción: herramientas/propiedades-geometricas/index.md
+      - Perfil I Simétrico: herramientas/propiedades-geometricas/IBeam-Simetrico.md
+    - Herramientas Python: herramientas/python/index.md
   - Guía de contenido: guia-contenido.md

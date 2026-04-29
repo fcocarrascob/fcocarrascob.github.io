@@ -1,14 +1,12 @@
-# Herramientas Python
+---
+title: "Herramientas"
+---
 
-Guías para usar Python en cálculos de ingeniería estructural de forma reproducible y bien documentada.
+# Herramientas
 
-## Contenido
+Recursos de apoyo para el cálculo estructural: propiedades geométricas de secciones transversales y herramientas Python para cálculos reproducibles y documentados.
 
-!!! info "En construcción"
-    Esta sección está en desarrollo. Agrega páginas usando la [guía de contenido](../guia-contenido.md).
+## Secciones
 
-## Herramientas cubiertas
-
-- **`forallpeople`** — Librería de unidades para cálculos de ingeniería
-- **`handcalcs`** — Renderizado de cálculos como LaTeX en Jupyter
-- **Jupyter Notebooks** — Integración con este sitio
+- **[Propiedades Geométricas](propiedades-geometricas/index.md)** — Centroides, momentos de inercia, módulos de sección y radios de giro para perfiles comunes.
+- **[Herramientas Python](python/index.md)** — Uso de `forallpeople`, `handcalcs` y Jupyter Notebooks en ingeniería estructural.
