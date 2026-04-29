@@ -37,57 +37,20 @@ Propiedades geométricas para un perfil I de alas paralelas iguales (sección do
 
 ---
 
-## 1. Área y Perímetro
+## Propiedades geométricas
 
-$$A = 2\,b\,t_f + h\,t_w$$
-
-$$P = 2\,(2b + d - 2\,t_f) + 2\,t_w$$
-
----
-
-## 2. Centroide
-
-Por simetría doble, el centroide coincide con el centro geométrico:
-
-$$\bar{y} = \dfrac{d}{2}, \qquad \bar{z} = \dfrac{b}{2}$$
-
----
-
-## 3. Momento de Inercia
-
-### Eje fuerte $x$–$x$ (horizontal, pasa por el centroide)
-
-$$I_x = \dfrac{b\,d^3 - h^3(b - t_w)}{12}$$
-
-### Eje débil $y$–$y$ (vertical, pasa por el centroide)
-
-$$I_y = \dfrac{2\,t_f\,b^3 + h\,t_w^3}{12}$$
-
----
-
-## 4. Momento de Inercia Polar
-
-$$J_i = I_x + I_y$$
-
----
-
-## 5. Radio de Giro
-
-$$r_x = \sqrt{\dfrac{I_x}{A}}, \qquad r_y = \sqrt{\dfrac{I_y}{A}}$$
-
----
-
-## 6. Módulo Elástico de Sección
-
-$$Z_x = \dfrac{I_x}{d/2}, \qquad Z_y = \dfrac{I_y}{b/2}$$
-
----
-
-## 7. Módulo Plástico de Sección
-
-$$S_x = \dfrac{b\,t_f\,(d - t_f) + \dfrac{t_w\,h^2}{4}}{1}$$
-
-$$S_y = \dfrac{b^2\,t_f}{2} + \dfrac{t_w^2\,h}{4}$$
+| Propiedad | Símbolo | Ecuación | Observación |
+|-----------|---------|----------|-------------|
+| Área | $A$ | $A = 2\,b\,t_f + h\,t_w$ | |
+| Perímetro | $P$ | $P = 2\,(2b + h) + 4\,t_f + 2\,t_w$ | |
+| Centroide | $\bar{x},\bar{y}$ | $\bar{x}=b/2 ,\quad \bar{y} = d/2$ | Simetría doble; coincide con el centro geométrico |
+| Inercia eje $x$–$x$ | $I_x$ | $I_x = \dfrac{b\,d^3 - h^3(b - t_w)}{12}$ | Eje fuerte (horizontal) |
+| Inercia eje $y$–$y$ | $I_y$ | $I_y = \dfrac{2\,t_f\,b^3 + h\,t_w^3}{12}$ | Eje débil (vertical) |
+| Inercia polar | $J_i$ | $J_i = I_x + I_y$ | |
+| Radio de giro | $r_x,\, r_y$ | $r_x = \sqrt{I_x/A},\quad r_y = \sqrt{I_y/A}$ | |
+| Módulo elástico | $S_x,\, S_y$ | $S_x = \dfrac{I_x}{\bar{y}},\quad S_y = \dfrac{I_y}{\bar{x}}$ | |
+| Módulo plástico | $Z_x$ | $Z_x = b\,t_f\,(d - t_f) + \dfrac{t_w\,h^2}{4}$ | |
+| Módulo plástico | $Z_y$ | $Z_y = \dfrac{b^2\,t_f}{2} + \dfrac{t_w^2\,h}{4}$ | |
 
 ---
 
@@ -158,25 +121,31 @@ function calcIBeam() {
   function fmt(v, dec) { return v.toLocaleString('es-CL', {maximumFractionDigits: dec}); }
 
   document.getElementById('pg-results').innerHTML =
-    '<table style="border-collapse:collapse;width:100%;font-size:0.9rem;">' +
+    '<table style="border-collapse:collapse;width:100%;font-size:0.9rem;table-layout:fixed;">' +
+    '<colgroup>' +
+    '<col style="width:38%">' +
+    '<col style="width:14%">' +
+    '<col style="width:30%">' +
+    '<col style="width:18%">' +
+    '</colgroup>' +
     '<thead><tr style="background:#4a90d9;color:#fff;">' +
     '<th style="padding:6px 10px;text-align:left;">Propiedad</th>' +
     '<th style="padding:6px 10px;text-align:left;">Símbolo</th>' +
     '<th style="padding:6px 10px;text-align:right;">Valor</th>' +
     '<th style="padding:6px 10px;text-align:left;">Unidad</th>' +
     '</tr></thead><tbody>' +
-    row('Área',                    'A',           fmt(A,  2),  'mm²')  +
-    row('Perímetro',               'P',           fmt(P,  2),  'mm')   +
-    row('Centroide (eje x)',        'ȳ',           fmt(d/2,2),  'mm')   +
-    row('Inercia eje x–x',         'Iₓ',          fmt(Ix, 0),  'mm⁴')  +
-    row('Inercia eje y–y',         'Iᵧ',          fmt(Iy, 0),  'mm⁴')  +
-    row('Inercia polar',           'Jᵢ',          fmt(Ji, 0),  'mm⁴')  +
-    row('Radio de giro x',         'rₓ',          fmt(rx, 2),  'mm')   +
-    row('Radio de giro y',         'rᵧ',          fmt(ry, 2),  'mm')   +
-    row('Módulo elástico x',       'Zₓ',          fmt(Zx, 0),  'mm³')  +
-    row('Módulo elástico y',       'Zᵧ',          fmt(Zy, 0),  'mm³')  +
-    row('Módulo plástico x',       'Sₓ',          fmt(Sx, 0),  'mm³')  +
-    row('Módulo plástico y',       'Sᵧ',          fmt(Sy, 0),  'mm³')  +
+    row('Área',              'A',   fmt(A,  2),  'mm²')  +
+    row('Perímetro',         'P',   fmt(P,  2),  'mm')   +
+    row('Centroide',         'ȳ',   fmt(d/2,2),  'mm')   +
+    row('Inercia x–x',       'Iₓ',  fmt(Ix, 0),  'mm⁴')  +
+    row('Inercia y–y',       'Iᵧ',  fmt(Iy, 0),  'mm⁴')  +
+    row('Inercia polar',     'Jᵢ',  fmt(Ji, 0),  'mm⁴')  +
+    row('Radio de giro x',   'rₓ',  fmt(rx, 2),  'mm')   +
+    row('Radio de giro y',   'rᵧ',  fmt(ry, 2),  'mm')   +
+    row('Mód. elástico x',   'Zₓ',  fmt(Zx, 0),  'mm³')  +
+    row('Mód. elástico y',   'Zᵧ',  fmt(Zy, 0),  'mm³')  +
+    row('Mód. plástico x',   'Sₓ',  fmt(Sx, 0),  'mm³')  +
+    row('Mód. plástico y',   'Sᵧ',  fmt(Sy, 0),  'mm³')  +
     '</tbody></table>';
 }
 
@@ -184,7 +153,7 @@ function row(name, sym, val, unit) {
   return '<tr style="border-bottom:1px solid #ddd;">' +
     '<td style="padding:5px 10px;">' + name + '</td>' +
     '<td style="padding:5px 10px;font-style:italic;">' + sym + '</td>' +
-    '<td style="padding:5px 10px;text-align:right;font-variant-numeric:tabular-nums;">' + val + '</td>' +
+    '<td style="padding:5px 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;">' + val + '</td>' +
     '<td style="padding:5px 10px;color:#666;">' + unit + '</td>' +
     '</tr>';
 }
@@ -192,4 +161,3 @@ function row(name, sym, val, unit) {
 
 ---
 
-> **Nota:** Las fórmulas son válidas para perfiles de alas paralelas con simetría doble ($b_1 = b_2$, $t_{f1} = t_{f2}$). Para perfiles con alas desiguales utilizar la sección de Perfil I No Simétrico (próximamente).
