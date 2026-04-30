@@ -82,6 +82,7 @@ nav:
     - Introducción: estructuras-varias/index.md
     - Estanques de Acero API 650:
       - Introducción: estructuras-varias/estanques-acero/index.md
+      - Calculadora de Propiedades: estructuras-varias/estanques-acero/Calculadora.md
   - Herramientas:
     - Introducción: herramientas/index.md
     - Propiedades Geométricas:
