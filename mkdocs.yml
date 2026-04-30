@@ -78,6 +78,10 @@ nav:
   - Sismo:
     - Introducción: sismo/index.md
     - NCh2369:2025 — Espectro: sismo/NCh2369.md
+  - Estructuras Varias:
+    - Introducción: estructuras-varias/index.md
+    - Estanques de Acero API 650:
+      - Introducción: estructuras-varias/estanques-acero/index.md
   - Herramientas:
     - Introducción: herramientas/index.md
     - Propiedades Geométricas:
