@@ -1,0 +1,92 @@
+site_name: Ingeniería Estructural
+site_url: https://fcocarrascob.github.io
+site_description: Wiki de referencia técnica para ingeniería estructural
+site_author: Francisco Carrasco
+
+theme:
+  name: material
+  language: es
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    - scheme: slate
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.plot.ly/plotly-2.35.2.min.js
+
+plugins:
+  - search:
+      lang: es
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+
+nav:
+  - Inicio: index.md
+  - Hormigón:
+    - Introducción: hormigon/index.md
+    - ACI 318-25:
+      - Cap. 7 — Losas Unidireccionales: hormigon/ACI-318-Ch7-OneWaySlabs.md
+      - Cap. 8 — Losas Bidireccionales: hormigon/ACI-318-Ch8-TwoWaySlabs.md
+      - Cap. 9 — Vigas: hormigon/ACI-318-Ch9-Beams.md
+      - Cap. 10 — Columnas: hormigon/ACI-318-Ch10-Columns.md
+      - Cap. 21 — Factores φ: hormigon/ACI-318-Ch21-PhiFactors.md
+      - Cap. 22 — Resistencia Seccional: hormigon/ACI-318-Ch22-SectionalStrength.md
+  - Sismo:
+    - Introducción: sismo/index.md
+    - NCh2369:2025 — Espectro: sismo/NCh2369.md
+  - Estructuras Varias:
+    - Introducción: estructuras-varias/index.md
+    - Estanques de Acero API 650:
+      - Introducción: estructuras-varias/estanques-acero/index.md
+  - Herramientas:
+    - Introducción: herramientas/index.md
+    - Propiedades Geométricas:
+      - Introducción: herramientas/propiedades-geometricas/index.md
+      - Perfil I Simétrico: herramientas/propiedades-geometricas/IBeam-Simetrico.md
+      - Rectángulo Hueco: herramientas/propiedades-geometricas/HollowRectangle.md
+    - Herramientas Python: herramientas/python/index.md
+  - Guía de contenido: guia-contenido.md
