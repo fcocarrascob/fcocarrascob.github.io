@@ -56,6 +56,7 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
   - https://cdn.plot.ly/plotly-2.35.2.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.8.1/math.min.js
 
 plugins:
   - search:
@@ -89,5 +90,9 @@ nav:
       - Introducción: herramientas/propiedades-geometricas/index.md
       - Perfil I Simétrico: herramientas/propiedades-geometricas/IBeam-Simetrico.md
       - Rectángulo Hueco: herramientas/propiedades-geometricas/HollowRectangle.md
+    - Notepad de Cálculos:
+      - Introducción: herramientas/notepad-calculos/index.md
+      - Notepad WYSIWYG (MathLive): herramientas/notepad-calculos/MathLiveNotepad.md
+      - Ejemplo — Viga ACI 318: herramientas/notepad-calculos/EjemploVigaACI.md
     - Herramientas Python: herramientas/python/index.md
   - Guía de contenido: guia-contenido.md
