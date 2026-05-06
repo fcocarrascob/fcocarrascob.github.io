@@ -92,7 +92,6 @@ nav:
       - Rectángulo Hueco: herramientas/propiedades-geometricas/HollowRectangle.md
     - Notepad de Cálculos:
       - Introducción: herramientas/notepad-calculos/index.md
-      - Notepad WYSIWYG (MathLive): herramientas/notepad-calculos/MathLiveNotepad.md
-      - Ejemplo — Viga ACI 318: herramientas/notepad-calculos/EjemploVigaACI.md
+      - Hoja de Cálculo: herramientas/notepad-calculos/MathSheet.md
     - Herramientas Python: herramientas/python/index.md
   - Guía de contenido: guia-contenido.md
