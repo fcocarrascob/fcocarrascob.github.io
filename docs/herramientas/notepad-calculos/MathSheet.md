@@ -1,7 +1,7 @@
----
+﻿---
 title: "MathSheet — Hoja de Cálculo"
 type: tool
-tags: [hoja-de-calculo, calculadora, mathlive, mathjs, interactivo]
+tags: [hoja-de-calculo, calculadora, mathjs, latex, interactivo]
 created: 2026-05-06
 updated: 2026-05-06
 hide:
@@ -11,12 +11,12 @@ hide:
 
 # MathSheet — Hoja de Cálculo
 
-Posiciona **bloques de cálculo** en el canvas arrastrándolos por su cabecera. Las expresiones se evalúan de arriba hacia abajo, izquierda a derecha, compartiendo un scope de [math.js](https://mathjs.org/). El estado se guarda automáticamente en el navegador.
+**Clic izquierdo** en el canvas para crear un bloque Math. Escribe LaTeX puro y presiona **Enter** (o haz clic fuera) para renderizar y calcular. **Doble clic** en un bloque para volver a editar. Los bloques se evalúan de arriba a abajo, izquierda a derecha, compartiendo variables.
 
 ---
 
 <div id="ms-toolbar">
-  <button class="ms-btn" onclick="msAddBlock('calc')">+ Cálculo</button>
+  <button class="ms-btn" onclick="msAddBlock('calc')">+ Math</button>
   <button class="ms-btn" onclick="msAddBlock('text')">+ Texto</button>
   <button class="ms-btn" onclick="msAddBlock('section')">+ Sección</button>
   <div class="ms-sep"></div>
@@ -27,7 +27,6 @@ Posiciona **bloques de cálculo** en el canvas arrastrándolos por su cabecera. 
   <div class="ms-sep"></div>
   <button class="ms-btn" onclick="msLoadExample()" title="Cargar hoja de ejemplo">Ejemplo</button>
   <div class="ms-sep"></div>
-  <button class="ms-btn" id="ms-btn-kb" onclick="msToggleKb()" title="Activar / desactivar teclado virtual MathLive">⌨ Teclado</button>
   <label class="ms-label">
     <input type="checkbox" id="ms-snap-cb" checked onchange="msToggleSnap(this.checked)">
     Cuadrícula
@@ -64,8 +63,7 @@ Posiciona **bloques de cálculo** en el canvas arrastrándolos por su cabecera. 
   transition: background 0.15s;
   white-space: nowrap;
 }
-.ms-btn:hover  { background: rgba(0,0,0,0.13); }
-.ms-btn.active { background: #2980b9; color: #fff; }
+.ms-btn:hover { background: rgba(0,0,0,0.13); }
 .ms-sep {
   width: 1px;
   height: 20px;
@@ -103,6 +101,7 @@ Posiciona **bloques de cálculo** en el canvas arrastrándolos por su cabecera. 
     linear-gradient(rgba(180,180,180,0.22) 1px, transparent 1px),
     linear-gradient(90deg, rgba(180,180,180,0.22) 1px, transparent 1px);
   background-size: 40px 40px;
+  cursor: crosshair;
 }
 
 /* ── Block ───────────────────────────────────────────────────────── */
@@ -160,41 +159,99 @@ Posiciona **bloques de cálculo** en el canvas arrastrándolos por su cabecera. 
 
 /* ── Block body ──────────────────────────────────────────────────── */
 .ms-block-body {
-  padding: 8px;
+  padding: 6px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* ── Math field ──────────────────────────────────────────────────── */
-math-field.ms-mf {
+/* ── Edit / view layer switching ─────────────────────────────────── */
+.ms-block[data-mode="view"] .ms-edit-layer { display: none; }
+.ms-block[data-mode="edit"] .ms-view-layer { display: none; }
+
+/* ── Edit layer ──────────────────────────────────────────────────── */
+.ms-edit-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* ── LaTeX textarea ──────────────────────────────────────────────── */
+.ms-latex-input {
   width: 100%;
-  min-height: 44px;
+  min-height: 52px;
   border: 1px solid rgba(0,0,0,0.18);
   border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 1rem;
+  padding: 6px 8px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.85rem;
+  resize: none;
   background: var(--md-code-bg-color, #f5f5f5);
   box-sizing: border-box;
+  color: inherit;
+  overflow: hidden;
+  line-height: 1.55;
 }
-math-field.ms-mf:focus-within {
+.ms-latex-input:focus {
   border-color: #2980b9;
   box-shadow: 0 0 0 2px rgba(41,128,185,0.15);
   outline: none;
 }
+.ms-input-hint {
+  font-size: 0.70rem;
+  color: #bbb;
+  padding: 0 2px;
+}
+
+/* ── View layer ──────────────────────────────────────────────────── */
+.ms-view-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: default;
+  transition: background 0.12s;
+}
+.ms-view-layer:hover { background: rgba(41,128,185,0.05); }
+.ms-view-layer::after {
+  content: '✎';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 0.72rem;
+  color: #aaa;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+.ms-view-layer:hover::after { opacity: 1; }
+
+/* ── Rendered MathJax container ──────────────────────────────────── */
+.ms-rendered {
+  padding: 2px 4px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+.ms-rendered .MathJax { max-width: 100%; }
 
 /* ── Result ──────────────────────────────────────────────────────── */
 .ms-result {
   padding: 3px 10px;
-  min-height: 30px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   border-radius: 4px;
-  font-size: 0.92rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
   flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
 }
-.ms-result-empty  { color: #ccc; font-style: italic; font-size: 0.8rem; }
+.ms-result-empty  { color: #ccc; font-style: italic; font-size: 0.78rem; }
 .ms-result-assign { border-left: 3px solid #2980b9; background: rgba(41,128,185,0.06); }
 .ms-result-ok     { border-left: 3px solid #27ae60; background: rgba(39,174,96,0.06); }
 .ms-result-err    {
@@ -202,7 +259,7 @@ math-field.ms-mf:focus-within {
   background: rgba(231,76,60,0.06);
   color: #c0392b;
   font-family: monospace;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 /* ── Text textarea ───────────────────────────────────────────────── */
@@ -254,6 +311,9 @@ math-field.ms-mf:focus-within {
 }
 .ms-block:hover .ms-resize-handle { opacity: 1; }
 
+/* ── No-snap canvas cursor ───────────────────────────────────────── */
+#ms-canvas.no-snap { cursor: crosshair; }
+
 /* ── Dark mode ───────────────────────────────────────────────────── */
 [data-md-color-scheme="slate"] #ms-canvas {
   background-image:
@@ -269,30 +329,20 @@ math-field.ms-mf:focus-within {
   background: rgba(255,255,255,0.04);
   border-color: rgba(255,255,255,0.07);
 }
-[data-md-color-scheme="slate"] math-field.ms-mf {
-  border-color: rgba(255,255,255,0.2);
-  color: var(--md-default-fg-color);
-}
+[data-md-color-scheme="slate"] .ms-latex-input,
 [data-md-color-scheme="slate"] .ms-text-area {
-  border-color: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.2);
 }
-[data-md-color-scheme="slate"] #ms-toolbar {
-  border-color: rgba(255,255,255,0.1);
-}
+[data-md-color-scheme="slate"] #ms-toolbar,
 [data-md-color-scheme="slate"] #ms-wrap {
   border-color: rgba(255,255,255,0.1);
 }
 </style>
 
 <script type="module">
-// ── Load MathLive ─────────────────────────────────────────────────
-import 'https://cdn.jsdelivr.net/npm/mathlive';
-await customElements.whenDefined('math-field');
-
 // ── State ─────────────────────────────────────────────────────────
 let blockCounter = 0;
 let snapEnabled  = true;
-let kbEnabled    = false;
 let evalTimer    = null;
 const GRID       = 40;
 
@@ -302,109 +352,189 @@ window.msSaveJSON    = msSaveJSON;
 window.msLoadJSON    = msLoadJSON;
 window.msClear       = msClear;
 window.msLoadExample = msLoadExample;
-window.msToggleKb    = msToggleKb;
 window.msToggleSnap  = msToggleSnap;
 
-// ── ASCIIMath → math.js conversion ───────────────────────────────
-// MathLive outputs ASCII-Math; this converts subscript forms and
-// operators to valid math.js syntax.
-function asciiToMathjs(ascii) {
-  return ascii
-    .replace(/([a-zA-Z])_\(([a-zA-Z0-9']+)\)/g, '$1$2')   // w_(u) → wu
-    .replace(/([a-zA-Z])_\{([a-zA-Z0-9']+)\}/g, '$1$2')   // w_{u} → wu
-    .replace(/([a-zA-Z])_([a-zA-Z0-9])/g,       '$1$2')   // w_u   → wu
-    .replace(/\bcdot\b/g, '*')                             // \cdot → *
-    .replace(/:=/g, '=')                                   // :=    → =
-    .trim();
+// ── LaTeX → math.js conversion ────────────────────────────────────
+// Handles the most common structural-engineering LaTeX patterns.
+function latexToMathjs(latex) {
+  let s = latex.trim();
+
+  // Strip optional math delimiters if user typed them
+  s = s.replace(/^\$\$|\$\$$/g, '').replace(/^\$|\$$/g, '').trim();
+
+  // \frac{num}{den} → (num)/(den)   — iterate to resolve nesting
+  for (let i = 0; i < 8; i++) {
+    s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)');
+  }
+
+  // \sqrt[n]{x} → nthRoot(x,n)   — must precede plain \sqrt
+  for (let i = 0; i < 4; i++) {
+    s = s.replace(/\\sqrt\s*\[([^\]]*)\]\s*\{([^{}]*)\}/g, 'nthRoot($2,$1)');
+  }
+  // \sqrt{x} → sqrt(x)
+  for (let i = 0; i < 4; i++) {
+    s = s.replace(/\\sqrt\s*\{([^{}]*)\}/g, 'sqrt($1)');
+  }
+
+  // Superscripts  ^{expr} → ^(expr)
+  s = s.replace(/\^\s*\{([^{}]*)\}/g, '^($1)');
+
+  // Subscript variable names: A_{s1} → As1,  f_c → fc
+  s = s.replace(/([a-zA-Z])\s*_\s*\{([a-zA-Z0-9]+)\}/g, '$1$2');
+  s = s.replace(/([a-zA-Z])\s*_\s*([a-zA-Z0-9])/g, '$1$2');
+
+  // \left / \right delimiters
+  s = s.replace(/\\left\s*\(/g, '(').replace(/\\right\s*\)/g, ')');
+  s = s.replace(/\\left\s*\[/g, '(').replace(/\\right\s*\]/g, ')');
+  s = s.replace(/\\left\s*\{/g, '(').replace(/\\right\s*\}/g, ')');
+
+  // Trig & hyperbolic functions
+  s = s.replace(
+    /\\(sin|cos|tan|cot|sec|csc|arcsin|arccos|arctan|sinh|cosh|tanh|asin|acos|atan)\b/g,
+    '$1'
+  );
+
+  // Logarithms / exp
+  s = s.replace(/\\ln\b/g, 'log');
+  s = s.replace(/\\log\b/g, 'log10');
+  s = s.replace(/\\exp\b/g, 'exp');
+
+  // Constants
+  s = s.replace(/\\pi\b/g, 'pi');
+  s = s.replace(/\\infty\b/g, 'Infinity');
+
+  // Operators
+  s = s.replace(/\\cdot\b/g, '*');
+  s = s.replace(/\\times\b/g, '*');
+  s = s.replace(/\\div\b/g, '/');
+  s = s.replace(/:=/g, '=');
+
+  // Decorators that wrap a variable: \bar{x} → x, etc.
+  s = s.replace(/\\(?:bar|hat|vec|tilde|dot|overline|underline)\s*\{([^{}]*)\}/g, '$1');
+
+  // Text annotations: \text{...} → (remove)
+  s = s.replace(/\\(?:text|mathrm|mathbf|mathit|mathsf|mbox)\s*\{[^{}]*\}/g, '');
+
+  // Remove remaining unknown LaTeX commands
+  s = s.replace(/\\[a-zA-Z]+\*/g, '');
+  s = s.replace(/\\[a-zA-Z]+/g, '');
+
+  // Remaining braces → parentheses
+  s = s.replace(/\{/g, '(').replace(/\}/g, ')');
+
+  // Implicit multiplication
+  s = s.replace(/(\d)\s*\(/g, '$1*(');      // 2(x+1) → 2*(x+1)
+  s = s.replace(/\)\s*\(/g, ')*(');          // )( → )*(
+  s = s.replace(/(\d)([a-zA-Z])/g, '$1*$2'); // 2x → 2*x
+
+  return s.trim();
 }
 
-// ── Format helpers ────────────────────────────────────────────────
+// ── Format a math.js result value ────────────────────────────────
 function fmtValue(v) {
   try {
     if (typeof v === 'number') {
-      return v.toLocaleString('es-CL', { maximumFractionDigits: 4 });
+      const rounded = parseFloat(v.toPrecision(6));
+      return rounded.toLocaleString('es-CL', { maximumFractionDigits: 4 });
     }
     if (math.typeOf(v) === 'Unit') {
-      return v.toNumber().toLocaleString('es-CL', { maximumFractionDigits: 4 }) +
-             '\u00a0' + v.formatUnits();
+      const num = v.toNumber();
+      const r   = parseFloat(num.toPrecision(6));
+      return r.toLocaleString('es-CL', { maximumFractionDigits: 4 }) + '\u00a0' + v.formatUnits();
     }
     if (typeof v === 'boolean') return v ? 'verdadero' : 'falso';
     return math.format(v, { precision: 6 });
   } catch(e) { return String(v); }
 }
 
-// Convert math.js variable name to LaTeX subscript form:
-// wu → w_{u},  Mu → M_{u},  As1 → A_{s1}
-function varLatex(name) {
-  let m;
-  m = name.match(/^([A-Za-z]+?)([0-9]+)$/);
-  if (m) return m[1] + '_{' + m[2] + '}';
-  m = name.match(/^([a-z])([A-Z][a-z]*)$/);
-  if (m) return m[1] + '_{' + m[2] + '}';
-  m = name.match(/^([A-Z][a-z]*)([A-Z][a-z]*)$/);
-  if (m && m[1].length <= 2) return m[1] + '_{' + m[2] + '}';
-  return name;
-}
-
-function buildResultLatex(ascii, val) {
-  const m = ascii.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/);
-  const valStr = fmtValue(val);
-  return m
-    ? '\\(' + varLatex(m[1]) + ' = ' + valStr + '\\)'
-    : '\\(' + valStr + '\\)';
-}
-
 // ── Evaluation engine ─────────────────────────────────────────────
 function scheduleEval() {
   clearTimeout(evalTimer);
-  evalTimer = setTimeout(evaluateSheet, 300);
+  evalTimer = setTimeout(evaluateSheet, 250);
 }
 
 function evaluateSheet() {
   if (typeof math === 'undefined') return;
 
-  // Sort calc blocks: top first, then left-to-right within same row
+  // Sort: top → bottom, then left → right
   const calcBlocks = [...document.querySelectorAll('.ms-block[data-type="calc"]')]
     .sort((a, b) => {
-      const dy = (parseInt(a.style.top)  || 0) - (parseInt(b.style.top)  || 0);
+      const dy = (parseInt(a.style.top) || 0) - (parseInt(b.style.top) || 0);
       return dy !== 0 ? dy : (parseInt(a.style.left) || 0) - (parseInt(b.style.left) || 0);
     });
 
-  const scope     = {};
-  const toTypeset = [];
+  const scope = {};
 
   for (const block of calcBlocks) {
-    const mf  = block.querySelector('math-field');
-    const res = block.querySelector('.ms-result');
-    if (!mf || !res) continue;
+    const latex    = (block.dataset.latex || '').trim();
+    const resultEl = block.querySelector('.ms-result');
+    if (!resultEl) continue;
 
-    let ascii = '';
-    try { ascii = asciiToMathjs(mf.getValue('ascii-math') || ''); } catch(e) {}
-
-    if (!ascii.trim()) {
-      res.className = 'ms-result ms-result-empty';
-      res.innerHTML = '—';
-      block.dataset.error = '';
+    if (!latex) {
+      resultEl.className   = 'ms-result ms-result-empty';
+      resultEl.textContent = '—';
+      block.dataset.error  = '';
       continue;
     }
 
+    const expr = latexToMathjs(latex);
     try {
-      const result   = math.evaluate(ascii, scope);
-      const isAssign = /^\s*[A-Za-z_][A-Za-z0-9_]*\s*=/.test(ascii);
-      res.className  = 'ms-result ' + (isAssign ? 'ms-result-assign' : 'ms-result-ok');
-      res.innerHTML  = '<span class="arithmatex">' + buildResultLatex(ascii, result) + '</span>';
+      const result   = math.evaluate(expr, scope);
+      const isAssign = /^\s*[A-Za-z_][A-Za-z0-9_]*\s*=/.test(expr);
+      if (isAssign) {
+        const varName            = expr.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/)[1];
+        resultEl.className       = 'ms-result ms-result-assign';
+        resultEl.textContent     = varName + ' = ' + fmtValue(result);
+      } else {
+        resultEl.className       = 'ms-result ms-result-ok';
+        resultEl.textContent     = '= ' + fmtValue(result);
+      }
       block.dataset.error = '';
-      toTypeset.push(res);
     } catch(e) {
-      res.className   = 'ms-result ms-result-err';
-      res.textContent = '⚠ ' + e.message;
-      block.dataset.error = '1';
+      resultEl.className   = 'ms-result ms-result-err';
+      resultEl.textContent = '⚠ ' + e.message;
+      block.dataset.error  = '1';
     }
   }
+}
 
-  if (window.MathJax && MathJax.typesetPromise && toTypeset.length) {
-    MathJax.typesetPromise(toTypeset);
+// ── Render LaTeX via MathJax ──────────────────────────────────────
+function renderBlock(block, latex) {
+  const el = block.querySelector('.ms-rendered');
+  if (!el) return;
+  if (!latex.trim()) {
+    el.innerHTML = '<span style="color:#ccc;font-style:italic;font-size:0.78rem">vacío — doble clic para editar</span>';
+    return;
   }
+  // Use display math (\[…\]) for expressions with multi-line constructs;
+  // inline math (\(…\)) for simpler expressions.
+  const isDisplay = /\\frac|\\int|\\sum|\\prod|\\lim|\\sqrt\s*\{/.test(latex);
+  el.innerHTML = isDisplay ? '\\[' + latex + '\\]' : '\\(' + latex + '\\)';
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([el]);
+  }
+}
+
+// ── Enter / exit edit mode ────────────────────────────────────────
+function enterEditMode(block) {
+  block.dataset.mode = 'edit';
+  const ta = block.querySelector('.ms-latex-input');
+  if (ta) {
+    ta.value = block.dataset.latex || '';
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 'px';
+    setTimeout(() => { ta.focus(); ta.select(); }, 30);
+  }
+}
+
+function commitBlock(block) {
+  const ta = block.querySelector('.ms-latex-input');
+  if (!ta) return;
+  block.dataset.latex = ta.value.trim();
+  block.dataset.mode  = 'view';
+  renderBlock(block, block.dataset.latex);
+  scheduleEval();
+  saveSheet();
 }
 
 // ── Drag ──────────────────────────────────────────────────────────
@@ -413,7 +543,6 @@ function initDrag(block) {
   header.addEventListener('mousedown', function(e) {
     if (e.target.closest('button')) return;
     e.preventDefault();
-
     const startX   = e.clientX;
     const startY   = e.clientY;
     const origLeft = parseInt(block.style.left) || 0;
@@ -423,7 +552,6 @@ function initDrag(block) {
       block.style.left = Math.max(0, origLeft + e.clientX - startX) + 'px';
       block.style.top  = Math.max(0, origTop  + e.clientY - startY) + 'px';
     }
-
     function onUp() {
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup',   onUp);
@@ -432,9 +560,8 @@ function initDrag(block) {
         block.style.top  = (Math.round(parseInt(block.style.top)  / GRID) * GRID) + 'px';
       }
       saveSheet();
-      evaluateSheet(); // reorder may change results
+      evaluateSheet();
     }
-
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup',   onUp);
   });
@@ -448,7 +575,6 @@ function initResize(block) {
     e.stopPropagation();
     const startX = e.clientX;
     const startW = block.offsetWidth;
-
     function onMove(e) {
       block.style.width = Math.max(200, startW + e.clientX - startX) + 'px';
     }
@@ -457,7 +583,6 @@ function initResize(block) {
       document.removeEventListener('mouseup',   onUp);
       saveSheet();
     }
-
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup',   onUp);
   });
@@ -468,7 +593,7 @@ function createBlock(type, x, y, opts) {
   opts = opts || {};
   const snapX    = snapEnabled ? Math.round(x / GRID) * GRID : x;
   const snapY    = snapEnabled ? Math.round(y / GRID) * GRID : y;
-  const defaultW = (type === 'section') ? 560 : 400;
+  const defaultW = type === 'section' ? 560 : 360;
   const w        = opts.w || defaultW;
 
   const block        = document.createElement('div');
@@ -479,15 +604,13 @@ function createBlock(type, x, y, opts) {
   block.style.top    = snapY + 'px';
   block.style.width  = w + 'px';
 
-  // ── Header ──
-  const header    = document.createElement('div');
+  // Header
+  const header     = document.createElement('div');
   header.className = 'ms-block-header';
-
-  const typeLabels = { calc: 'Cálculo', text: 'Texto', section: 'Sección' };
+  const typeLabels = { calc: 'Math', text: 'Texto', section: 'Sección' };
   const lbl        = document.createElement('span');
   lbl.className    = 'ms-block-type-label';
   lbl.textContent  = typeLabels[type] || type;
-
   const closeBtn     = document.createElement('button');
   closeBtn.className = 'ms-close-btn';
   closeBtn.innerHTML = '&times;';
@@ -498,29 +621,77 @@ function createBlock(type, x, y, opts) {
     saveSheet();
     evaluateSheet();
   });
-
   header.appendChild(lbl);
   header.appendChild(closeBtn);
 
-  // ── Body ──
+  // Body
   const body     = document.createElement('div');
   body.className = 'ms-block-body';
 
   if (type === 'calc') {
-    const mf     = document.createElement('math-field');
-    mf.className = 'ms-mf';
-    mf.setAttribute('virtual-keyboard-mode', kbEnabled ? 'onfocus' : 'manual');
-    if (opts.expr) mf.value = opts.expr;
+    const latex        = opts.latex !== undefined ? opts.latex : (opts.expr || '');
+    block.dataset.latex = latex;
+    block.dataset.mode  = opts.mode || (latex ? 'view' : 'edit');
 
-    const res     = document.createElement('div');
-    res.className = 'ms-result ms-result-empty';
-    res.innerHTML = '—';
+    // ── Edit layer ──
+    const editLayer     = document.createElement('div');
+    editLayer.className = 'ms-edit-layer';
 
-    mf.addEventListener('input',  scheduleEval);
-    mf.addEventListener('change', scheduleEval);
+    const ta       = document.createElement('textarea');
+    ta.className   = 'ms-latex-input';
+    ta.placeholder = 'LaTeX, p.ej.  M_u = \\frac{w_u \\cdot L^2}{8}';
+    ta.value       = latex;
+    ta.rows        = 2;
 
-    body.appendChild(mf);
-    body.appendChild(res);
+    ta.addEventListener('input', function() {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+    ta.addEventListener('blur', function() {
+      commitBlock(block);
+    });
+    ta.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        ta.blur(); // commit
+      }
+      if (e.key === 'Escape') {
+        ta.value = block.dataset.latex || ''; // revert
+        ta.blur();
+      }
+    });
+
+    const hint     = document.createElement('small');
+    hint.className = 'ms-input-hint';
+    hint.textContent = 'Enter para confirmar · Shift+Enter nueva línea · Esc cancela';
+
+    editLayer.appendChild(ta);
+    editLayer.appendChild(hint);
+
+    // ── View layer ──
+    const viewLayer     = document.createElement('div');
+    viewLayer.className = 'ms-view-layer';
+    viewLayer.title     = 'Doble clic para editar';
+
+    const rendered      = document.createElement('div');
+    rendered.className  = 'ms-rendered';
+
+    const resultEl      = document.createElement('div');
+    resultEl.className  = 'ms-result ms-result-empty';
+    resultEl.textContent = '—';
+
+    viewLayer.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      enterEditMode(block);
+    });
+
+    viewLayer.appendChild(rendered);
+    viewLayer.appendChild(resultEl);
+
+    body.appendChild(editLayer);
+    body.appendChild(viewLayer);
+
+    if (latex) setTimeout(() => renderBlock(block, latex), 60);
 
   } else if (type === 'text') {
     const ta       = document.createElement('textarea');
@@ -544,7 +715,7 @@ function createBlock(type, x, y, opts) {
     body.appendChild(inp);
   }
 
-  // ── Resize handle ──
+  // Resize handle
   const rh     = document.createElement('div');
   rh.className = 'ms-resize-handle';
 
@@ -558,13 +729,26 @@ function createBlock(type, x, y, opts) {
   return block;
 }
 
+// ── Canvas left-click → create Math block ─────────────────────────
+document.getElementById('ms-canvas').addEventListener('click', function(e) {
+  if (e.target.closest('.ms-block')) return; // click was on a block
+  const rect = this.getBoundingClientRect();
+  const x    = e.clientX - rect.left;
+  const y    = e.clientY - rect.top;
+  const block = createBlock('calc', x, y, { mode: 'edit' });
+  // Focus the textarea immediately
+  const ta = block.querySelector('.ms-latex-input');
+  if (ta) setTimeout(() => ta.focus(), 40);
+  saveSheet();
+});
+
 // ── Toolbar: add block ────────────────────────────────────────────
 function msAddBlock(type) {
   const wrap  = document.getElementById('ms-wrap');
   const x     = Math.round(wrap.scrollLeft / GRID) * GRID + GRID;
   const y     = Math.round(wrap.scrollTop  / GRID) * GRID + GRID;
-  const block = createBlock(type, x, y);
-  const focus = block.querySelector('math-field, textarea, input');
+  const block = createBlock(type, x, y, { mode: type === 'calc' ? 'edit' : undefined });
+  const focus = block.querySelector('textarea, input[type="text"]');
   if (focus) setTimeout(() => focus.focus(), 60);
   saveSheet();
 }
@@ -572,16 +756,7 @@ function msAddBlock(type) {
 // ── Snap toggle ───────────────────────────────────────────────────
 function msToggleSnap(val) {
   snapEnabled = val;
-  saveSheet();
-}
-
-// ── Keyboard toggle ───────────────────────────────────────────────
-function msToggleKb() {
-  kbEnabled = !kbEnabled;
-  document.getElementById('ms-btn-kb').classList.toggle('active', kbEnabled);
-  document.querySelectorAll('math-field.ms-mf').forEach(mf => {
-    mf.setAttribute('virtual-keyboard-mode', kbEnabled ? 'onfocus' : 'manual');
-  });
+  document.getElementById('ms-canvas').classList.toggle('no-snap', !val);
   saveSheet();
 }
 
@@ -590,19 +765,17 @@ function saveSheet() {
   const state = {
     counter: blockCounter,
     snap:    snapEnabled,
-    kb:      kbEnabled,
     blocks:  [...document.querySelectorAll('.ms-block')].map(b => {
-      const mf  = b.querySelector('math-field');
-      const ta  = b.querySelector('textarea');
-      const inp = b.querySelector('input[type="text"]');
+      const ta  = b.querySelector('textarea.ms-text-area');
+      const inp = b.querySelector('input[type="text"].ms-section-input');
       return {
-        id:   b.id,
-        type: b.dataset.type,
-        x:    parseInt(b.style.left) || 0,
-        y:    parseInt(b.style.top)  || 0,
-        w:    b.offsetWidth,
-        expr: mf  ? mf.value  : '',
-        text: ta  ? ta.value  : (inp ? inp.value : '')
+        id:    b.id,
+        type:  b.dataset.type,
+        x:     parseInt(b.style.left) || 0,
+        y:     parseInt(b.style.top)  || 0,
+        w:     b.offsetWidth,
+        latex: b.dataset.latex || '',
+        text:  ta ? ta.value : (inp ? inp.value : '')
       };
     })
   };
@@ -615,21 +788,37 @@ function loadSheet(state) {
   document.getElementById('ms-canvas').querySelectorAll('.ms-block').forEach(b => b.remove());
 
   blockCounter = state.counter || 0;
-  snapEnabled  = state.snap !== false; // default true
-  kbEnabled    = state.kb || false;
-
+  snapEnabled  = state.snap !== false;
   const snapCb = document.getElementById('ms-snap-cb');
-  const kbBtn  = document.getElementById('ms-btn-kb');
   if (snapCb) snapCb.checked = snapEnabled;
-  if (kbBtn)  kbBtn.classList.toggle('active', kbEnabled);
 
   for (const bs of state.blocks) {
+    // Backward-compat: old format used 'expr' instead of 'latex'
+    const latex = bs.latex !== undefined ? bs.latex : (bs.expr || '');
     const block = createBlock(bs.type, bs.x, bs.y, {
-      id: bs.id, w: bs.w, expr: bs.expr, text: bs.text
+      id: bs.id, w: bs.w, latex, text: bs.text
     });
-    block.id = bs.id; // ensure ID matches saved state
+    block.id = bs.id;
   }
-  setTimeout(evaluateSheet, 200);
+
+  // Render all calc blocks, then evaluate
+  setTimeout(() => {
+    const toRender = [];
+    document.querySelectorAll('.ms-block[data-type="calc"]').forEach(b => {
+      const l  = b.dataset.latex || '';
+      const el = b.querySelector('.ms-rendered');
+      if (el && l) {
+        const isDisplay = /\\frac|\\int|\\sum|\\prod|\\lim|\\sqrt\s*\{/.test(l);
+        el.innerHTML = isDisplay ? '\\[' + l + '\\]' : '\\(' + l + '\\)';
+        toRender.push(el);
+      }
+    });
+    if (window.MathJax && MathJax.typesetPromise && toRender.length) {
+      MathJax.typesetPromise(toRender).then(() => evaluateSheet());
+    } else {
+      evaluateSheet();
+    }
+  }, 80);
 }
 
 // ── Export JSON ───────────────────────────────────────────────────
@@ -662,7 +851,7 @@ function msLoadJSON(input) {
     }
   };
   reader.readAsText(file);
-  input.value = ''; // reset so same file can be re-imported
+  input.value = '';
 }
 
 // ── Clear canvas ──────────────────────────────────────────────────
@@ -673,7 +862,7 @@ function msClear() {
   localStorage.removeItem('mathsheet-v1');
 }
 
-// ── Load example sheet ────────────────────────────────────────────
+// ── Example sheet ─────────────────────────────────────────────────
 function msLoadExample() {
   if (document.querySelectorAll('.ms-block').length > 0) {
     if (!confirm('¿Reemplazar el canvas actual con el ejemplo?')) return;
@@ -682,44 +871,40 @@ function msLoadExample() {
   blockCounter = 0;
 
   const items = [
-    { type: 'section', x:  40, y:  40,  text: '§1 Datos del Problema' },
-    { type: 'calc',    x:  40, y: 120,  expr: 'L=6' },
-    { type: 'calc',    x: 480, y: 120,  expr: 'w_D=15' },
-    { type: 'calc',    x: 920, y: 120,  expr: 'w_L=10' },
-    { type: 'section', x:  40, y: 240,  text: '§2 Combinación de Cargas ACI 318' },
-    { type: 'calc',    x:  40, y: 320,  expr: 'w_u=1.2\\cdot w_D+1.6\\cdot w_L' },
-    { type: 'section', x:  40, y: 440,  text: '§3 Solicitaciones Máximas' },
-    { type: 'calc',    x:  40, y: 520,  expr: 'M_u=\\frac{w_u\\cdot L^2}{8}' },
-    { type: 'calc',    x: 480, y: 520,  expr: 'V_u=\\frac{w_u\\cdot L}{2}' },
-    { type: 'text',    x:  40, y: 680,  text: 'Viga simplemente apoyada con carga uniforme.\nVerificar: sección tensión-controlada (ACI §21.2.2).' },
+    { type: 'section', x:  40, y:  40,  text:  '§1 Datos del Problema' },
+    { type: 'calc',    x:  40, y: 120,  latex: 'L = 6' },
+    { type: 'calc',    x: 460, y: 120,  latex: 'w_D = 15' },
+    { type: 'calc',    x: 880, y: 120,  latex: 'w_L = 10' },
+    { type: 'section', x:  40, y: 240,  text:  '§2 Combinación de Cargas ACI 318' },
+    { type: 'calc',    x:  40, y: 320,  latex: 'w_u = 1.2 \\cdot w_D + 1.6 \\cdot w_L' },
+    { type: 'section', x:  40, y: 440,  text:  '§3 Solicitaciones Máximas' },
+    { type: 'calc',    x:  40, y: 520,  latex: 'M_u = \\frac{w_u \\cdot L^2}{8}' },
+    { type: 'calc',    x: 480, y: 520,  latex: 'V_u = \\frac{w_u \\cdot L}{2}' },
+    { type: 'text',    x:  40, y: 680,  text:  'Viga simplemente apoyada con carga uniforme.\nVerificar: sección tensión-controlada (ACI §21.2.2).' },
   ];
-
   for (const item of items) {
-    createBlock(item.type, item.x, item.y, { expr: item.expr, text: item.text });
+    createBlock(item.type, item.x, item.y, { latex: item.latex, text: item.text });
   }
-  setTimeout(evaluateSheet, 200);
+  setTimeout(evaluateSheet, 300);
   saveSheet();
 }
 
 // ── Initialisation ────────────────────────────────────────────────
 function init() {
-  // Restore from localStorage; fall back to example on first visit
   const raw = localStorage.getItem('mathsheet-v1');
   if (raw) {
     try {
       const state = JSON.parse(raw);
-      if (state.blocks && state.blocks.length > 0) {
-        loadSheet(state);
-        return;
-      }
+      if (state.blocks && state.blocks.length > 0) { loadSheet(state); return; }
     } catch(e) {}
   }
   msLoadExample();
 }
 
-// Wait for math.js global (loaded by MkDocs CDN) before starting
+// Wait for math.js global (loaded by MkDocs CDN) then start
 (function waitForMath() {
   if (typeof math !== 'undefined') { init(); return; }
   setTimeout(waitForMath, 80);
 })();
 </script>
+
