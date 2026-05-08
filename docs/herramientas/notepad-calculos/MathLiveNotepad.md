@@ -3,168 +3,389 @@ title: "Notepad WYSIWYG de Cálculos"
 type: tool
 tags: [notepad, calculadora, mathlive, wysiwyg, interactivo]
 created: 2026-05-03
-updated: 2026-05-03
+updated: 2026-05-05
 hide:
   - navigation
   - toc
 ---
 
-# Notepad WYSIWYG de Cálculos
+<!-- ─────────────────────────────────────────────────────────────────
+     Notepad WYSIWYG — diseño inspirado en Mathcha.io
+     Motor: math.js  |  Entrada: MathLive  |  Salida: MathJax
+     ───────────────────────────────────────────────────────────────── -->
 
-Escribe expresiones matemáticas con tipografía TeX: fracciones reales, exponentes, raíces y letras griegas. El scope acumula entre filas de arriba a abajo.
+<div class="np-doc" id="np-document">
 
----
+  <!-- ── Toolbar ───────────────────────────────────────────────────── -->
+  <div class="np-toolbar" id="np-toolbar">
+    <div class="np-tb-group">
+      <button class="np-btn np-btn-primary" onclick="addRow()" title="Nueva fila de cálculo (Enter)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+        Cálculo
+      </button>
+      <button class="np-btn" onclick="addSection()" title="Nueva sección">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="2"><line x1="0" y1="5" x2="14" y2="5"/></svg>
+        Sección
+      </button>
+    </div>
+    <div class="np-tb-group">
+      <button class="np-btn" onclick="copyNotepad()" id="btn-copy" title="Copiar al portapapeles">
+        <svg width="13" height="14" viewBox="0 0 13 14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="8" height="10" rx="1.5"/><path d="M3 1H1.5A.5.5 0 001 1.5v10"/></svg>
+        Copiar
+      </button>
+      <button class="np-btn" onclick="window.print()" title="Imprimir o exportar PDF">
+        <svg width="14" height="13" viewBox="0 0 14 13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="4" width="12" height="7" rx="1.5"/><path d="M3 4V2.5A.5.5 0 013.5 2h7a.5.5 0 01.5.5V4"/><rect x="3" y="7.5" width="8" height="2.5" rx=".5"/></svg>
+        PDF
+      </button>
+      <button class="np-btn np-btn-ghost" onclick="clearNotepad()" title="Restablecer ejemplo">Limpiar</button>
+      <div class="np-tb-sep"></div>
+      <button class="np-btn np-btn-icon" onclick="toggleKeyboard()" id="btn-kbd" title="Activar teclado virtual">⌨</button>
+    </div>
+  </div>
 
-<div id="np-toolbar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
-  <button onclick="addRow()"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    + Cálculo
-  </button>
-  <button onclick="addSection()"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    + Sección
-  </button>
-  <span style="width:1px;height:20px;background:#ccc;display:inline-block;margin:0 2px;"></span>
-  <button onclick="clearNotepad()"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    Limpiar
-  </button>
-  <button onclick="copyNotepad()" id="btn-copy"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    Copiar
-  </button>
-  <button onclick="window.print()"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    Imprimir / PDF
-  </button>
-  <span style="width:1px;height:20px;background:#ccc;display:inline-block;margin:0 2px;"></span>
-  <button onclick="toggleKeyboard()" id="btn-kbd" title="Activar teclado virtual matemático"
-    style="padding:5px 14px;background:#e0e0e0;color:#333;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">
-    ⌨ Teclado
-  </button>
+  <!-- ── Barra de símbolos rápidos ─────────────────────────────────── -->
+  <div class="np-symbar" id="np-symbar">
+    <span class="np-sym-label">Insertar:</span>
+    <button class="np-sym" data-latex="\sqrt{#?}"     title="Raíz cuadrada">√</button>
+    <button class="np-sym" data-latex="\frac{#?}{}"   title="Fracción">ⁿ⁄ₓ</button>
+    <button class="np-sym" data-latex="^{#?}"          title="Exponente">xⁿ</button>
+    <button class="np-sym" data-latex="\pi"            title="Pi">π</button>
+    <button class="np-sym" data-latex="\phi"           title="Phi">φ</button>
+    <button class="np-sym" data-latex="\sigma"         title="Sigma">σ</button>
+    <button class="np-sym" data-latex="\tau"           title="Tau">τ</button>
+    <button class="np-sym" data-latex="\epsilon"       title="Epsilon">ε</button>
+    <button class="np-sym" data-latex="\mu"            title="Mu">μ</button>
+    <button class="np-sym" data-latex="\Delta"         title="Delta">Δ</button>
+    <button class="np-sym" data-latex="\sum_{#?}^{}"  title="Sumatorio">Σ</button>
+    <button class="np-sym" data-latex="\infty"         title="Infinito">∞</button>
+    <button class="np-sym" data-latex="\leq"           title="Menor o igual">≤</button>
+    <button class="np-sym" data-latex="\geq"           title="Mayor o igual">≥</button>
+    <button class="np-sym" data-latex="\cdot"          title="Multiplicación (punto)">·</button>
+    <button class="np-sym" data-latex="°"              title="Grados">°</button>
+  </div>
+
+  <!-- ── Cabeceras de columna ──────────────────────────────────────── -->
+  <div class="np-col-headers" id="np-col-headers">
+    <span>Expresión</span>
+    <span>Resultado</span>
+    <span></span>
+  </div>
+
+  <!-- ── Filas ─────────────────────────────────────────────────────── -->
+  <div id="np-rows" class="np-rows-container"></div>
+
 </div>
-
-<div id="np-col-headers"
-  style="display:grid;grid-template-columns:1fr 1fr 28px;gap:8px;margin-bottom:4px;padding:0 2px;">
-  <div style="font-size:0.78rem;color:#999;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;">Expresión</div>
-  <div style="font-size:0.78rem;color:#999;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;">Resultado</div>
-  <div></div>
-</div>
-
-<div id="np-rows"></div>
 
 <style>
-/* ── Filas de cálculo ────────────────────────────────── */
+/* ════════════════════════════════════════════════════════
+   CONTENEDOR DOCUMENTO
+   ════════════════════════════════════════════════════════ */
+.np-doc {
+  background: var(--md-default-bg-color, #fff);
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+  overflow: hidden;
+  margin: 0 0 1.5rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   TOOLBAR
+   ════════════════════════════════════════════════════════ */
+.np-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #f7f7f7;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.np-tb-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.np-tb-sep {
+  width: 1px;
+  height: 18px;
+  background: #ddd;
+  margin: 0 2px;
+}
+.np-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: #fff;
+  color: #444;
+  border: 1px solid #d8d8d8;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.np-btn:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+.np-btn-primary {
+  background: #2980b9;
+  color: #fff;
+  border-color: #2471a3;
+}
+.np-btn-primary:hover {
+  background: #2471a3;
+  border-color: #1f618d;
+}
+.np-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: #888;
+}
+.np-btn-ghost:hover {
+  background: #f0f0f0;
+  border-color: #ddd;
+  color: #444;
+}
+.np-btn-icon {
+  padding: 5px 8px;
+  font-size: 0.9rem;
+}
+
+/* Teclado activo */
+.np-btn-icon.active {
+  background: #2980b9;
+  color: #fff;
+  border-color: #2471a3;
+}
+
+/* ════════════════════════════════════════════════════════
+   BARRA DE SÍMBOLOS
+   ════════════════════════════════════════════════════════ */
+.np-symbar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 14px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+  flex-wrap: wrap;
+}
+.np-sym-label {
+  font-size: 0.73rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.np-sym {
+  min-width: 30px;
+  height: 28px;
+  padding: 0 6px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: "Latin Modern Math", "STIX Two Math", serif;
+  transition: background 0.1s, border-color 0.1s;
+  line-height: 1;
+}
+.np-sym:hover {
+  background: #ebf5fb;
+  border-color: #2980b9;
+  color: #1a5276;
+}
+
+/* ════════════════════════════════════════════════════════
+   CABECERAS DE COLUMNA
+   ════════════════════════════════════════════════════════ */
+.np-col-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 32px;
+  gap: 0;
+  padding: 5px 14px 5px 16px;
+  border-bottom: 1px solid #eee;
+  background: #f5f5f5;
+}
+.np-col-headers span {
+  font-size: 0.72rem;
+  color: #aaa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ════════════════════════════════════════════════════════
+   CONTENEDOR DE FILAS
+   ════════════════════════════════════════════════════════ */
+.np-rows-container {
+  padding: 6px 0 10px;
+}
+
+/* ════════════════════════════════════════════════════════
+   FILA DE CÁLCULO
+   ════════════════════════════════════════════════════════ */
 .np-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 28px;
-  gap: 8px;
+  grid-template-columns: 1fr 1fr 32px;
+  gap: 0;
   align-items: center;
-  margin: 3px 0;
+  border-bottom: 1px solid #f3f3f3;
+  transition: background 0.1s;
+  padding: 0 14px;
 }
+.np-row:last-of-type { border-bottom: none; }
+.np-row:hover { background: rgba(41,128,185,0.025); }
 
 /* ── Math field ──────────────────────────────────────── */
 math-field.np-mf {
   width: 100%;
-  min-height: 40px;
-  border: 1px solid #bbb;
-  border-radius: 6px;
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 5px;
   padding: 4px 8px;
-  font-size: 1rem;
-  background: var(--md-code-bg-color, #f5f5f5);
+  font-size: 1.05rem;
+  background: transparent;
   box-sizing: border-box;
+  transition: border-color 0.15s, background 0.15s;
+  --caret-color: #2980b9;
 }
 math-field.np-mf:focus-within {
   border-color: #2980b9;
-  box-shadow: 0 0 0 2px rgba(41,128,185,0.15);
+  background: rgba(41,128,185,0.04);
   outline: none;
 }
 
-/* ── Paneles de resultado ────────────────────────────── */
+/* ── Panel de resultado ──────────────────────────────── */
 .np-result {
-  padding: 4px 12px;
-  border-radius: 0 6px 6px 0;
-  min-height: 40px;
+  padding: 4px 10px 4px 12px;
+  min-height: 42px;
   display: flex;
   align-items: center;
-  line-height: 1.7;
+  font-size: 0.97rem;
+  border-left: 1px solid #f0f0f0;
 }
-.np-result-assign { border-left:3px solid #2980b9; background:rgba(41,128,185,0.06); }
-.np-result-ok     { border-left:3px solid #27ae60; background:rgba(39,174,96,0.06); }
-.np-result-err    { border-left:3px solid #e74c3c; background:rgba(231,76,60,0.06); color:#c0392b; font-family:monospace; font-size:0.82rem; }
-.np-result-empty  { border-left:3px solid #ddd; background:rgba(0,0,0,0.02); color:#ccc; font-style:italic; font-size:0.85rem; }
-
-/* ── Filas de sección ────────────────────────────────── */
-.np-section-row {
-  display: grid;
-  grid-template-columns: 1fr 28px;
-  gap: 8px;
-  margin: 14px 0 4px;
-  align-items: center;
-}
-.np-section-input {
-  width: 100%;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-bottom: 2px solid #2980b9;
-  background: transparent;
-  color: inherit;
-  padding: 4px 2px;
-  outline: none;
-  box-sizing: border-box;
-}
+.np-result-assign { color: #1a5276; }
+.np-result-ok     { color: #1e8449; }
+.np-result-err    { color: #c0392b; font-family: monospace; font-size: 0.8rem; }
+.np-result-empty  { color: #d5d5d5; font-style: italic; font-size: 0.85rem; user-select: none; }
 
 /* ── Botón eliminar ──────────────────────────────────── */
 .np-del-btn {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: none;
   border-radius: 4px;
   background: transparent;
-  color: #bbb;
+  color: #ccc;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
   flex-shrink: 0;
+  margin: auto;
 }
-.np-del-btn:hover { background:rgba(231,76,60,0.12); color:#e74c3c; }
+.np-del-btn:hover { background: rgba(231,76,60,0.1); color: #e74c3c; }
 
-/* ── Modo oscuro ─────────────────────────────────────── */
-[data-md-color-scheme="slate"] math-field.np-mf {
-  background: var(--md-code-bg-color, #2d2d2d);
-  border-color: #555;
-  color: #eee;
+/* ════════════════════════════════════════════════════════
+   FILA DE SECCIÓN
+   ════════════════════════════════════════════════════════ */
+.np-section-row {
+  display: grid;
+  grid-template-columns: 1fr 32px;
+  align-items: center;
+  gap: 0;
+  margin: 6px 0 0;
+  padding: 6px 14px 0;
+  border-top: 2px solid #e8e8e8;
 }
-[data-md-color-scheme="slate"] .np-section-input {
-  color: #eee;
+.np-section-input {
+  width: 100%;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #2c3e50;
+  letter-spacing: 0.01em;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 4px 2px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
 }
+.np-section-input:focus { border-bottom-color: #2980b9; }
+.np-section-input::placeholder { color: #bbb; font-weight: 400; }
 
-/* ── Impresión ───────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════
+   MODO OSCURO (slate)
+   ════════════════════════════════════════════════════════ */
+[data-md-color-scheme="slate"] .np-doc {
+  background: var(--md-default-bg-color, #1e1e2e);
+  border-color: #3a3a4a;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+[data-md-color-scheme="slate"] .np-toolbar,
+[data-md-color-scheme="slate"] .np-symbar,
+[data-md-color-scheme="slate"] .np-col-headers { background: #252535; border-color: #3a3a4a; }
+[data-md-color-scheme="slate"] .np-btn {
+  background: #2e2e3e;
+  color: #ccc;
+  border-color: #444;
+}
+[data-md-color-scheme="slate"] .np-btn:hover { background: #3a3a4e; border-color: #555; }
+[data-md-color-scheme="slate"] .np-sym { background: #2e2e3e; color: #ccc; border-color: #444; }
+[data-md-color-scheme="slate"] .np-sym:hover { background: #1a3a55; border-color: #2980b9; color: #7fb3d3; }
+[data-md-color-scheme="slate"] .np-rows-container { background: var(--md-default-bg-color, #1e1e2e); }
+[data-md-color-scheme="slate"] .np-row { border-bottom-color: #2a2a3a; }
+[data-md-color-scheme="slate"] .np-row:hover { background: rgba(41,128,185,0.06); }
+[data-md-color-scheme="slate"] math-field.np-mf { color: #ddd; --caret-color: #5dade2; }
+[data-md-color-scheme="slate"] math-field.np-mf:focus-within { border-color: #5dade2; background: rgba(93,173,226,0.06); }
+[data-md-color-scheme="slate"] .np-result { border-left-color: #2a2a3a; }
+[data-md-color-scheme="slate"] .np-result-assign { color: #7fb3d3; }
+[data-md-color-scheme="slate"] .np-result-ok     { color: #7dcea0; }
+[data-md-color-scheme="slate"] .np-result-err    { color: #e67e73; }
+[data-md-color-scheme="slate"] .np-result-empty  { color: #444; }
+[data-md-color-scheme="slate"] .np-section-row { border-top-color: #3a3a4a; }
+[data-md-color-scheme="slate"] .np-section-input { color: #ddd; }
+[data-md-color-scheme="slate"] .np-col-headers span { color: #666; }
+
+/* ════════════════════════════════════════════════════════
+   IMPRESIÓN
+   ════════════════════════════════════════════════════════ */
 @media print {
   header, .md-header, .md-nav, .md-sidebar, .md-footer,
   .md-tabs, [data-md-component="header"], [data-md-component="sidebar"],
   button, .md-content__button,
-  #np-toolbar, #np-col-headers, .np-del-btn { display:none !important; }
-  math-field { visibility:hidden; height:0 !important; margin:0 !important; padding:0 !important; }
-  .np-row { grid-template-columns:1fr !important; }
-  .np-row > math-field { display:none !important; }
-  .np-section-row { grid-template-columns:1fr !important; }
-  .np-result { border-radius:4px; min-height:auto; }
-  .md-grid { max-width:100% !important; margin:0 !important; }
-  .md-content { margin:0 !important; padding:0 !important; }
-  body { font-size:11pt; }
+  .np-toolbar, .np-symbar, .np-col-headers, .np-del-btn { display: none !important; }
+  .np-doc { border: none; box-shadow: none; border-radius: 0; }
+  math-field { visibility: hidden; height: 0 !important; margin: 0 !important; padding: 0 !important; }
+  .np-row { grid-template-columns: 1fr !important; padding: 0; }
+  .np-row > math-field { display: none !important; }
+  .np-section-row { grid-template-columns: 1fr !important; }
+  .np-result { border-left: none; min-height: auto; border-radius: 4px; font-size: 11pt; }
+  .md-grid { max-width: 100% !important; margin: 0 !important; }
+  .md-content { margin: 0 !important; padding: 0 !important; }
+  body { font-size: 11pt; }
 }
 
-/* ── Mobile ──────────────────────────────────────────── */
-@media (max-width:700px) {
-  .np-row { grid-template-columns:1fr 28px !important; }
-  .np-row > .np-result { display:none; }
+/* ════════════════════════════════════════════════════════
+   MOBILE
+   ════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  .np-row { grid-template-columns: 1fr 32px !important; }
+  .np-row > .np-result { display: none; }
+  .np-symbar { display: none; }
 }
 </style>
 
@@ -174,9 +395,9 @@ import 'https://cdn.jsdelivr.net/npm/mathlive';
 await customElements.whenDefined('math-field');
 
 // ── Estado global ─────────────────────────────────────────────────────
-var _evalTimer  = null;
-var _kbEnabled  = false;
-var _rowCounter = 0;
+var _evalTimer   = null;
+var _kbEnabled   = false;
+var _activeMF    = null;   // último math-field enfocado (para insertar símbolos)
 
 // ── Ejemplo inicial ───────────────────────────────────────────────────
 var EJEMPLO = [
@@ -307,6 +528,7 @@ function addRow(latex) {
 
   mf.addEventListener('input',  scheduleEval);
   mf.addEventListener('change', scheduleEval);
+  mf.addEventListener('focus',  function() { _activeMF = mf; });
 
   row.appendChild(mf);
   row.appendChild(resDiv);
@@ -347,7 +569,6 @@ window.addSection = addSection;
 window.clearNotepad = function() {
   if (!confirm('\u00bfLimpiar y volver al ejemplo inicial?')) return;
   document.getElementById('np-rows').innerHTML = '';
-  _rowCounter = 0;
   loadExample();
 };
 
@@ -391,12 +612,23 @@ window.copyNotepad = function() {
 window.toggleKeyboard = function() {
   _kbEnabled = !_kbEnabled;
   var btn = document.getElementById('btn-kbd');
-  btn.style.background = _kbEnabled ? '#2980b9' : '#e0e0e0';
-  btn.style.color      = _kbEnabled ? '#fff'    : '#333';
+  btn.classList.toggle('active', _kbEnabled);
   document.querySelectorAll('math-field.np-mf').forEach(function(mf) {
     mf.setAttribute('virtual-keyboard-mode', _kbEnabled ? 'onfocus' : 'manual');
   });
 };
+
+// ── Barra de símbolos rápidos ─────────────────────────────────────────
+document.querySelectorAll('.np-sym').forEach(function(btn) {
+  btn.addEventListener('mousedown', function(e) {
+    e.preventDefault();  // no robar el foco del math-field
+    var latex = this.dataset.latex;
+    if (!latex || !_activeMF) return;
+    _activeMF.executeCommand(['insert', latex]);
+    _activeMF.focus();
+    scheduleEval();
+  });
+});
 
 // ── Cargar ejemplo ────────────────────────────────────────────────────
 function loadExample() {
@@ -416,3 +648,4 @@ function loadExample() {
   setTimeout(waitForMath, 80);
 })();
 </script>
+

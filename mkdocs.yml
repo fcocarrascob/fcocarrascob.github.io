@@ -74,6 +74,8 @@ nav:
       - Cap. 8 — Losas Bidireccionales: hormigon/ACI-318-Ch8-TwoWaySlabs.md
       - Cap. 9 — Vigas: hormigon/ACI-318-Ch9-Beams.md
       - Cap. 10 — Columnas: hormigon/ACI-318-Ch10-Columns.md
+      - Cap. 11 — Muros (No Sísmicos): hormigon/ACI-318-Ch11-Walls.md
+      - Cap. 18 — Muros Especiales (Sísmicos): hormigon/ACI-318-Ch18-SpecialWalls.md
       - Cap. 21 — Factores φ: hormigon/ACI-318-Ch21-PhiFactors.md
       - Cap. 22 — Resistencia Seccional: hormigon/ACI-318-Ch22-SectionalStrength.md
   - Sismo:
