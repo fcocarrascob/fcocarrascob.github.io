@@ -3,18 +3,19 @@ title: "ACI 318-25 Cap. 9 — Diseño de Vigas"
 type: formula
 standard_ref: "ACI-318-25"
 chapter: "9"
-section: "9.3–9.7"
-variables: [M_u, V_u, T_u, phi, A_s, A_v, b_w, d, h, f_c, f_y, f_yt, s, rho_w]
+section: "9.3–9.7, 18.6"
+variables: [M_u, V_u, T_u, phi, A_s, A_v, b_w, d, h, f_c, f_y, f_yt, s, rho_w, M_pr, V_e]
 units: "SI"
-tags: [vigas, flexión, corte, torsión, hormigón, ACI]
+tags: [vigas, flexión, corte, torsión, hormigón, ACI, sismo, marcos-especiales]
 related:
   - ../standards/ACI-318-25.md
   - ../formulas/ACI-318-Ch22-SectionalStrength.md
   - ../formulas/ACI-318-Ch21-PhiFactors.md
   - ../materials/Concrete-Properties.md
   - ../materials/Steel-Reinforcing.md
+  - ACI-318-Ch18-SpecialWalls.md
 created: 2026-04-10
-updated: 2026-04-10
+updated: 2026-05-14
 ---
 
 # ACI 318-25 Cap. 9 — Diseño de Vigas
@@ -168,3 +169,70 @@ Requerido cuando $V_u > 0.5\,\phi V_c$:
 $$A_{v,min} = \max\left(\frac{0.062\sqrt{f'_c}}{f_{yt}}\,b_w s,\; \frac{0.35}{f_{yt}}\,b_w s\right)$$
 
 ---
+
+## Requisitos Sísmicos — Viga de Marco Especial (§18.6)
+
+> **Aplica cuando:** la viga forma parte de un Sistema Especial de Marcos Resistentes a Momento (SMRF) en edificios SDC C–F o en Chile bajo NCh2369 con diseño sísmico especial.
+
+### Límites Dimensionales (§18.6.2)
+
+| Requisito | Límite |
+|-----------|--------|
+| Luz libre | $\ell_n \geq 4d$ |
+| Ancho del alma | $b_w \geq 250$ mm |
+| Relación ancho/altura | $b_w / h \geq 0.3$ |
+| Proyección fuera de cara de columna | $\leq 3b_w$ por cada lado |
+
+### Refuerzo Longitudinal (§18.6.3)
+
+- Mínimo **2 barras continuas** en cara superior e inferior en toda la longitud.
+- Cuantía de tracción: $\rho \leq 0.025$ en cualquier sección.
+- En la **cara del nudo**: $A_s^{+} \geq A_s^{-}/2$ (refuerzo inferior ≥ mitad del superior).
+- En cualquier sección de la luz: $A_s \geq \tfrac{1}{4}\,\max(A_s^{cara\,A},\, A_s^{cara\,B})$.
+
+### Empalmes (§18.6.4)
+
+- **Prohibidos** dentro de $2h$ desde la cara de la columna.
+- **Prohibidos** en regiones de plastificación esperada.
+- Los empalmes permitidos deben quedar dentro de aros de confinamiento.
+
+### Refuerzo Transversal — Confinamiento (§18.6.5)
+
+Se requieren **aros** (hoops) en longitud $2h$ desde la cara de la columna en ambos extremos.
+
+- Primer aro: a no más de **50 mm** de la cara de la columna.
+- Espaciado dentro de $2h$:
+
+$$s \leq \min\!\left(\frac{d}{4},\; 6d_{b,long},\; 150\ \text{mm}\right)$$
+
+- Fuera de la zona $2h$: estribos con ganchos de 135°, $s \leq d/2$.
+
+**Variables:**
+
+| Símbolo | Descripción | Unidad |
+|---------|------------|--------|
+| $h$ | Altura total de la viga | mm |
+| $d_{b,long}$ | Diámetro de barra longitudinal | mm |
+| $s$ | Espaciado de aros | mm |
+
+### Diseño por Cortante Sísmico (§18.6.6)
+
+El cortante de diseño $V_e$ se determina a partir de los **momentos probables** $M_{pr}$ en los extremos (usando $1.25f_y$ y $\phi = 1.0$), sumados con la carga de gravedad:
+
+$$V_e = \frac{M_{pr,1} + M_{pr,2}}{\ell_n} + \frac{w_{grav}\,\ell_n}{2}$$
+
+> Se evalúan ambos sentidos del sismo para determinar el máximo $V_e$.
+
+**Condición $V_c = 0$ (§18.6.6.2):** asumir $V_c = 0$ cuando simultáneamente:
+
+1. La componente sísmica del corte supera la mitad del corte total: $V_e^{sism} > V_u/2$
+2. La carga axial factorizada: $P_u < 0.05\,A_g\,f'_c$
+
+**Variables:**
+
+| Símbolo | Descripción | Unidad |
+|---------|------------|--------|
+| $M_{pr,1},\,M_{pr,2}$ | Momentos probables en extremos (con $1.25f_y$, $\phi=1$) | N·mm |
+| $\ell_n$ | Luz libre de la viga | mm |
+| $w_{grav}$ | Carga de gravedad uniformemente distribuida factorizada | N/mm |
+| $V_e$ | Cortante de diseño sísmico | N |
