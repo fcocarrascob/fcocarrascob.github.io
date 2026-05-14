@@ -1861,25 +1861,83 @@
 <div class="arithmatex">\[P_{n,max} = 0.80\,P_o\]</div>
 <p>Para columnas con espiral (§22.4.2, Tabla 22.4.2.1):</p>
 <div class="arithmatex">\[P_{n,max} = 0.85\,P_o\]</div>
-<p><strong>Variables:</strong>
-| Símbolo | Descripción | Unidad |
-|---------|------------|--------|
-| <span class="arithmatex">\(P_{n,max}\)</span> | Resistencia axial nominal máxima | N |
-| <span class="arithmatex">\(f'_c\)</span> | Resistencia a compresión del concreto | MPa |
-| <span class="arithmatex">\(A_g\)</span> | Área bruta de la sección transversal | mm² |
-| <span class="arithmatex">\(A_{st}\)</span> | Área total de acero longitudinal | mm² |
-| <span class="arithmatex">\(f_y\)</span> | Fluencia del acero de refuerzo | MPa |</p>
+<p><strong>Variables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Símbolo</th>
+<th>Descripción</th>
+<th>Unidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(P_{n,max}\)</span></td>
+<td>Resistencia axial nominal máxima</td>
+<td>N</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f'_c\)</span></td>
+<td>Resistencia a compresión del concreto</td>
+<td>MPa</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(A_g\)</span></td>
+<td>Área bruta de la sección transversal</td>
+<td>mm²</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(A_{st}\)</span></td>
+<td>Área total de acero longitudinal</td>
+<td>mm²</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_y\)</span></td>
+<td>Fluencia del acero de refuerzo</td>
+<td>MPa</td>
+</tr>
+</tbody>
+</table>
 <h3 id="resistencia-a-flexion-nominal">Resistencia a Flexión Nominal</h3>
 <div class="arithmatex">\[M_n = A_s f_y \left( d - \frac{a}{2} \right)\]</div>
 <div class="arithmatex">\[a = \frac{A_s f_y}{0.85 f'_c b}\]</div>
-<p><strong>Variables:</strong>
-| Símbolo | Descripción | Unidad |
-|---------|------------|--------|
-| <span class="arithmatex">\(M_n\)</span> | Momento nominal | N·mm |
-| <span class="arithmatex">\(A_s\)</span> | Área de acero en tracción | mm² |
-| <span class="arithmatex">\(d\)</span> | Altura efectiva (distancia al centroide del acero en tracción) | mm |
-| <span class="arithmatex">\(a\)</span> | Profundidad del bloque de compresión equivalente | mm |
-| <span class="arithmatex">\(b\)</span> | Ancho de la sección | mm |</p>
+<p><strong>Variables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Símbolo</th>
+<th>Descripción</th>
+<th>Unidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(M_n\)</span></td>
+<td>Momento nominal</td>
+<td>N·mm</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(A_s\)</span></td>
+<td>Área de acero en tracción</td>
+<td>mm²</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(d\)</span></td>
+<td>Altura efectiva (distancia al centroide del acero en tracción)</td>
+<td>mm</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(a\)</span></td>
+<td>Profundidad del bloque de compresión equivalente</td>
+<td>mm</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(b\)</span></td>
+<td>Ancho de la sección</td>
+<td>mm</td>
+</tr>
+</tbody>
+</table>
 <h3 id="verificacion-de-diseno">Verificación de Diseño</h3>
 <div class="arithmatex">\[\phi P_n \geq P_u \quad \text{y} \quad \phi M_n \geq M_u\]</div>
 <p><strong>Factores φ (§21.2):</strong>
@@ -1891,8 +1949,8 @@
 | Transición | Interpolar linealmente |</p>
 <h3 id="limites-de-refuerzo-106">Límites de Refuerzo (§10.6)</h3>
 <div class="arithmatex">\[0.01 A_g \leq A_{st} \leq 0.08 A_g\]</div>
-<p>Es decir:
-$<span class="arithmatex">\(1\% \leq \rho_g \leq 8\%\)</span>$</p>
+<p>Es decir:</p>
+<div class="arithmatex">\[1\% \leq \rho_g \leq 8\%\]</div>
 <blockquote>
 <p><strong>Práctica recomendada:</strong> mantener <span class="arithmatex">\(\rho_g\)</span> entre 1% y 4% para facilitar la construcción y evitar congestión de acero.</p>
 </blockquote>

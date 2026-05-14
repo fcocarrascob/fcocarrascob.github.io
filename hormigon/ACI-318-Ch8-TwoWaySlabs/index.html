@@ -826,10 +826,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#43-esfuerzo-de-cortante-por-transferencia-de-momento" class="md-nav__link">
+  <a href="#43-resistencia-del-concreto-sin-refuerzo-de-corte-22652" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.3 Esfuerzo de Cortante por Transferencia de Momento
+        4.3 Resistencia del Concreto sin Refuerzo de Corte (§22.6.5.2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-esfuerzo-de-cortante-por-transferencia-de-momento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Esfuerzo de Cortante por Transferencia de Momento
       
     </span>
   </a>
@@ -2136,10 +2147,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#43-esfuerzo-de-cortante-por-transferencia-de-momento" class="md-nav__link">
+  <a href="#43-resistencia-del-concreto-sin-refuerzo-de-corte-22652" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.3 Esfuerzo de Cortante por Transferencia de Momento
+        4.3 Resistencia del Concreto sin Refuerzo de Corte (§22.6.5.2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-esfuerzo-de-cortante-por-transferencia-de-momento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Esfuerzo de Cortante por Transferencia de Momento
       
     </span>
   </a>
@@ -2305,11 +2327,13 @@
 <h2 id="fuente">Fuente</h2>
 <p>ACI CODE-318-25: Capítulo 8, páginas 111–140.</p>
 <h2 id="alcance-81">Alcance (§8.1)</h2>
-<p>Se aplica al diseño de losas reforzadas para flexión en <strong>dos direcciones</strong>, con o sin vigas entre apoyos, incluyendo:
-- Losas macizas (Flat Plates / Flat Slabs)
-- Losas sobre plataforma metálica (stay-in-place non-composite steel deck)
-- Losas compuestas
-- Sistemas de losa nervada en dos direcciones (waffle slabs, §8.8)</p>
+<p>Se aplica al diseño de losas reforzadas para flexión en <strong>dos direcciones</strong>, con o sin vigas entre apoyos, incluyendo:</p>
+<ul>
+<li>Losas macizas (Flat Plates / Flat Slabs)</li>
+<li>Losas sobre plataforma metálica (stay-in-place non-composite steel deck)</li>
+<li>Losas compuestas</li>
+<li>Sistemas de losa nervada en dos direcciones (waffle slabs, §8.8)</li>
+</ul>
 <blockquote>
 <p><strong>No incluye:</strong> losas sobre terreno que no transmiten cargas verticales al suelo.</p>
 </blockquote>
@@ -2566,7 +2590,76 @@
 <li><span class="arithmatex">\(v_n\)</span> según §22.6 (incluye contribución del concreto y, si aplica, del refuerzo de corte).</li>
 <li>Debe verificarse tanto corte unidireccional como bidireccional (punzonamiento).</li>
 </ul>
-<h3 id="43-esfuerzo-de-cortante-por-transferencia-de-momento">4.3 Esfuerzo de Cortante por Transferencia de Momento</h3>
+<h3 id="43-resistencia-del-concreto-sin-refuerzo-de-corte-22652">4.3 Resistencia del Concreto sin Refuerzo de Corte (§22.6.5.2)</h3>
+<p>Para losas y zapatas no preesforzadas sin refuerzo de corte, <span class="arithmatex">\(v_c\)</span> es el <strong>menor</strong> de:</p>
+<div class="arithmatex">\[v_c = 0.33\,\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2a}\]</div>
+<div class="arithmatex">\[v_c = 0.17\!\left(1 + \frac{2}{\beta}\right)\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2b}\]</div>
+<div class="arithmatex">\[v_c = 0.083\!\left(2 + \frac{\alpha_s d}{b_o}\right)\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2c}\]</div>
+<p>La resistencia nominal total resulta:</p>
+<div class="arithmatex">\[V_c = v_c\, b_o\, d \tag{22.6.5.1}\]</div>
+<p><strong>Factor de efecto de tamaño</strong> (§22.5.5.1.3), con <span class="arithmatex">\(d\)</span> en mm:</p>
+<div class="arithmatex">\[\lambda_s = \sqrt{\frac{2}{1 + 0.004\,d}} \leq 1.0 \tag{22.5.5.1.3}\]</div>
+<p><strong>Variables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Símbolo</th>
+<th>Descripción</th>
+<th>Unidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(v_c\)</span></td>
+<td>Resistencia unitaria al cortante bidireccional del concreto</td>
+<td>MPa</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(V_c\)</span></td>
+<td>Resistencia nominal total al cortante bidireccional</td>
+<td>N</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f'_c\)</span></td>
+<td>Resistencia especificada a compresión del concreto</td>
+<td>MPa</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span></td>
+<td>Relación lado largo / lado corto del soporte o carga concentrada</td>
+<td>—</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\alpha_s\)</span></td>
+<td>Parámetro de posición de columna: 40 (interior), 30 (borde), 20 (esquina)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(b_o\)</span></td>
+<td>Perímetro de la sección crítica de cortante</td>
+<td>mm</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(d\)</span></td>
+<td>Profundidad efectiva promedio de la losa</td>
+<td>mm</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\lambda_s\)</span></td>
+<td>Factor de efecto de tamaño</td>
+<td>—</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\lambda\)</span></td>
+<td>Factor de modificación para concreto liviano</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Nota:</strong> La ecuación (22.6.5.2a) controla habitualmente en columnas cuadradas y relaciones <span class="arithmatex">\(b_o/d\)</span> moderadas. La ecuación (22.6.5.2b) gobierna cuando <span class="arithmatex">\(\beta &gt; 2\)</span> (columnas muy rectangulares). La ecuación (22.6.5.2c) controla en losas con gran relación <span class="arithmatex">\(b_o/d\)</span> (columnas pequeñas respecto al espesor de losa).</p>
+</blockquote>
+<h3 id="44-esfuerzo-de-cortante-por-transferencia-de-momento">4.4 Esfuerzo de Cortante por Transferencia de Momento</h3>
 <div class="arithmatex">\[v_{u,AB} = v_{uv} + \frac{\gamma_v M_{sc} c_{AB}}{J_c}\]</div>
 <div class="arithmatex">\[v_{u,CD} = v_{uv} - \frac{\gamma_v M_{sc} c_{CD}}{J_c}\]</div>
 <p>donde <span class="arithmatex">\(J_c\)</span> es una propiedad de la sección crítica análoga al momento polar de inercia. Para columna interior:</p>
@@ -2602,10 +2695,12 @@
 </tbody>
 </table>
 <h3 id="62-restriccion-de-esquina-873">6.2 Restricción de Esquina (§8.7.3)</h3>
-<p>En esquinas exteriores de losas apoyadas en muros de borde o vigas con <span class="arithmatex">\(\alpha_f &gt; 1.0\)</span>:
-- Proveer refuerzo en la cara superior e inferior que resista <span class="arithmatex">\(M_u/\text{m}\)</span> igual al <span class="arithmatex">\(M_u\)</span> máximo positivo por unidad de ancho en el panel.
-- Extensión desde la esquina: <span class="arithmatex">\(\ell_{largo}/5\)</span> en cada dirección.
-- Refuerzo paralelo a la diagonal (arriba) y perpendicular a la diagonal (abajo), o dos capas paralelas a los bordes en cada cara.</p>
+<p>En esquinas exteriores de losas apoyadas en muros de borde o vigas con <span class="arithmatex">\(\alpha_f &gt; 1.0\)</span>:</p>
+<ul>
+<li>Proveer refuerzo en la cara superior e inferior que resista <span class="arithmatex">\(M_u/\text{m}\)</span> igual al <span class="arithmatex">\(M_u\)</span> máximo positivo por unidad de ancho en el panel.</li>
+<li>Extensión desde la esquina: <span class="arithmatex">\(\ell_{largo}/5\)</span> en cada dirección.</li>
+<li>Refuerzo paralelo a la diagonal (arriba) y perpendicular a la diagonal (abajo), o dos capas paralelas a los bordes en cada cara.</li>
+</ul>
 <h3 id="63-terminacion-del-refuerzo-sin-vigas-87413-y-fig-87413">6.3 Terminación del Refuerzo sin Vigas (§8.7.4.1.3 y Fig. 8.7.4.1.3)</h3>
 <ul>
 <li>Las longitudes mínimas de extensión están establecidas en la Fig. 8.7.4.1.3.</li>
@@ -2613,11 +2708,13 @@
 <li>En vanos adyacentes desiguales, las extensiones de refuerzo negativo se basan en el vano más largo.</li>
 </ul>
 <h3 id="64-aberturas-en-la-losa-854">6.4 Aberturas en la Losa (§8.5.4)</h3>
-<p>Las aberturas son permitidas si el análisis verifica resistencia y serviciabilidad. Sin análisis formal, se permiten si:
-- En la zona de intersección de <strong>dos franjas medias</strong>: abertura de cualquier tamaño (sin compensación de refuerzo sí habrá que mantener el total del panel).
-- En la intersección de <strong>dos franjas de columna</strong>: abertura <span class="arithmatex">\(\leq 1/8\)</span> del ancho de cada franja de columna; compensar el refuerzo interrumpido.
-- En la intersección de <strong>una franja de columna + una franja media</strong>: no interrumpir más del <span class="arithmatex">\(1/4\)</span> del refuerzo de ninguna franja; compensar.
-- Si la abertura está a menos de <span class="arithmatex">\(4h\)</span> del perímetro de columna: verificar cortante por punzonamiento según §22.6.4.3.</p>
+<p>Las aberturas son permitidas si el análisis verifica resistencia y serviciabilidad. Sin análisis formal, se permiten si:</p>
+<ul>
+<li>En la zona de intersección de <strong>dos franjas medias</strong>: abertura de cualquier tamaño (sin compensación de refuerzo sí habrá que mantener el total del panel).</li>
+<li>En la intersección de <strong>dos franjas de columna</strong>: abertura <span class="arithmatex">\(\leq 1/8\)</span> del ancho de cada franja de columna; compensar el refuerzo interrumpido.</li>
+<li>En la intersección de <strong>una franja de columna + una franja media</strong>: no interrumpir más del <span class="arithmatex">\(1/4\)</span> del refuerzo de ninguna franja; compensar.</li>
+<li>Si la abertura está a menos de <span class="arithmatex">\(4h\)</span> del perímetro de columna: verificar cortante por punzonamiento según §22.6.4.3.</li>
+</ul>
 <hr />
 <h2 id="7-deflexiones-832-242">7. Deflexiones (§8.3.2, §24.2)</h2>
 <p>Si no se satisfacen los espesores mínimos de §8.3.1, calcular deflexiones según §24.2 verificando que no excedan los límites de Tabla 24.2.2.</p>
