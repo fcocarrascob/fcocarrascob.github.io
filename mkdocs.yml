@@ -97,4 +97,8 @@ nav:
       - Notepad WYSIWYG (MathLive): herramientas/notepad-calculos/MathLiveNotepad.md
       - Ejemplo — Viga ACI 318: herramientas/notepad-calculos/EjemploVigaACI.md
     - Herramientas Python: herramientas/python/index.md
+    - SAP2000:
+      - Introducción: herramientas/sap2000/index.md
+      - Momento-Curvatura: herramientas/sap2000/MomentoCurvatura.md
+      - Interacción P-M: herramientas/sap2000/InteraccionPM.md
   - Guía de contenido: guia-contenido.md
