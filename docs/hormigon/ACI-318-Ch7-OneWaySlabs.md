@@ -25,6 +25,7 @@ ACI CODE-318-25: Capítulo 7, páginas 99–110.
 ## Alcance (§7.1)
 
 Se aplica al diseño de losas reforzadas para flexión en **una dirección**, incluyendo:
+
 - Losas macizas (solid slabs)
 - Losas sobre plataforma metálica (stay-in-place non-composite steel deck)
 - Losas compuestas (precast + cast-in-place)
@@ -76,6 +77,7 @@ Para losas construidas monolíticamente con apoyos, $M_u$ puede calcularse en la
 
 ### Cortante factorizado — Sección crítica
 La cortante de diseño puede tomarse en la sección crítica ubicada a **d desde la cara del apoyo** (no preesforzadas) o **h/2 desde la cara** (preesforzadas), siempre que (§7.4.3.2):
+
 - La reacción del apoyo introduce compresión en el extremo de la losa
 - Las cargas se aplican en o cerca de la cara superior
 - No hay cargas concentradas entre la cara del apoyo y la sección crítica
@@ -159,18 +161,6 @@ $$\rho_{s\&t} \geq 0.0018 \tag{24.4.3.2}$$
 Las losas no preesforzadas deben ser tension-controlled (ver [ACI-318-Ch21-PhiFactors](ACI-318-Ch21-PhiFactors.md)):
 
 $$\varepsilon_t \geq \varepsilon_{ty} + 0.003 \Rightarrow \phi = 0.90$$
-
----
-
-## 7. Ejemplo de Aplicación
-
-**Datos:** Losa maciza, ambos extremos continuos, $\ell = 5\,000$ mm, $f_y = 420$ MPa, concreto normal, $b = 1000$ mm de franja.
-
-**Espesor mínimo (Tabla 7.3.1.1):**
-$$h_{\min} = \frac{\ell}{28} = \frac{5{,}000}{28} = 179\text{ mm} \rightarrow \text{usar } h = 180\text{ mm}$$
-
-**Refuerzo de retracción (por metro de ancho):**
-$$A_{s,\min} = 0.0018 \times 1000 \times 180 = 324\text{ mm}^2/\text{m}$$
 
 ---
 

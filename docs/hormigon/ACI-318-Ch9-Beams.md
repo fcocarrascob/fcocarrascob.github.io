@@ -40,6 +40,7 @@ Para vigas no preesforzadas que no soporten ni estén unidas a particiones u otr
 > Valores válidos para concreto de peso normal y $f_y = 420$ MPa.
 
 **Modificadores:**
+
 - Para $f_y \neq 420$ MPa: multiplicar por $(0.4 + f_y/700)$
 - Para concreto liviano ($w_c$ entre 1440 y 1840 kg/m³): multiplicar por $\max(1.65 - 0.0003\,w_c,\; 1.09)$
 
@@ -70,6 +71,7 @@ $$a = \frac{A_s f_y}{0.85\,f'_c\,b}$$
 La profundidad del bloque de compresión equivalente cumple $a = \beta_1 c$.
 
 **Variables:**
+
 | Símbolo | Descripción | Unidad |
 |---------|------------|--------|
 | $M_n$ | Momento nominal | N·mm |
@@ -103,6 +105,7 @@ $$V_c = \left[0.66\lambda\,\rho_w^{1/3}\sqrt{f'_c} + \frac{N_u}{6\,A_g}\right] b
 $$V_c = \left[0.66\,\lambda_s\,\lambda\,\rho_w^{1/3}\sqrt{f'_c} + \frac{N_u}{6\,A_g}\right] b_w d$$
 
 **Límites:**
+
 $$0.083\,\lambda\sqrt{f'_c}\,b_w d \leq V_c \leq 0.42\,\lambda\sqrt{f'_c}\,b_w d$$
 
 > $V_c$ no puede ser negativo. $N_u/6A_g$ no puede exceder $0.05\,f'_c$. $\sqrt{f'_c}$ limitado a 8.3 MPa (§22.5.3.1).
@@ -112,6 +115,7 @@ $$0.083\,\lambda\sqrt{f'_c}\,b_w d \leq V_c \leq 0.42\,\lambda\sqrt{f'_c}\,b_w d
 $$\lambda_s = \sqrt{\frac{2}{1 + d/250}} \leq 1.0$$
 
 **Variables:**
+
 | Símbolo | Descripción | Unidad |
 |---------|------------|--------|
 | $V_c$ | Resistencia al corte aportada por el concreto | N |
@@ -135,6 +139,7 @@ $$V_s = \frac{A_v\,f_{yt}\,d}{s}$$
 $$V_u \leq \phi\left(V_c + 0.66\sqrt{f'_c}\,b_w d\right)$$
 
 **Variables:**
+
 | Símbolo | Descripción | Unidad |
 |---------|------------|--------|
 | $V_s$ | Resistencia al corte del refuerzo | N |
@@ -163,19 +168,3 @@ Requerido cuando $V_u > 0.5\,\phi V_c$:
 $$A_{v,min} = \max\left(\frac{0.062\sqrt{f'_c}}{f_{yt}}\,b_w s,\; \frac{0.35}{f_{yt}}\,b_w s\right)$$
 
 ---
-
-## Ejemplo de Uso
-
-Viga simplemente apoyada, $\ell = 6$ m, $b_w = 300$ mm, $h = 500$ mm, $d = 450$ mm, $f'_c = 28$ MPa, $f_y = 420$ MPa, concreto normal $(\lambda = 1)$:
-
-**Profundidad mínima:** $h_{min} = 6000/16 = 375$ mm → $h = 500$ mm ✓
-
-**Bloque de compresión con $A_s = 1200$ mm²:**
-$$a = \frac{1200 \times 420}{0.85 \times 28 \times 300} = 70.6 \text{ mm}$$
-$$M_n = 1200 \times 420 \times (450 - 70.6/2) = 208.7 \text{ kN*m}$$
-$$\phi M_n = 0.90 \times 208.7 = 187.8 \text{ kN*m}$$
-
-**Cortante con $\rho_w = 1200/(300 \times 450) = 0.00889$:**
-$$V_c = \left[0.66 \times 1.0 \times 0.00889^{1/3} \times \sqrt{28}\right] \times 300 \times 450 = 103 \text{ kN}$$
-$$V_s\text{ (estribo Ø10@150 mm)} = \frac{2 \times 78.5 \times 420 \times 450}{150} = 197 \text{ kN}$$
-$$\phi V_n = 0.75 \times (103 + 197) = 225 \text{ kN}$$

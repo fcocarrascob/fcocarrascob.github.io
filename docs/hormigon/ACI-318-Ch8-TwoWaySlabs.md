@@ -4,7 +4,7 @@ type: formula
 standard_ref: "ACI-318-25"
 chapter: "8"
 section: "8.3–8.7"
-variables: [h, fy, ln, alpha_fm, beta, gamma_f, gamma_v, Msc, b1, b2, vu, vn, phi, As_min, Ag, bslab]
+variables: [h, fy, ln, alpha_fm, beta, gamma_f, gamma_v, Msc, b1, b2, vu, vn, phi, As_min, Ag, bslab, vc, Vc, bo, d, alpha_s, lambda_s, lambda, fc]
 units: "SI"
 tags: [losa, bidireccional, two-way-slab, punzonamiento, flat-plate, flat-slab, espesor-mínimo, franja-de-columna, franja-media]
 related:
@@ -24,6 +24,7 @@ ACI CODE-318-25: Capítulo 8, páginas 111–140.
 ## Alcance (§8.1)
 
 Se aplica al diseño de losas reforzadas para flexión en **dos direcciones**, con o sin vigas entre apoyos, incluyendo:
+
 - Losas macizas (Flat Plates / Flat Slabs)
 - Losas sobre plataforma metálica (stay-in-place non-composite steel deck)
 - Losas compuestas
@@ -150,7 +151,41 @@ $$\phi v_n \geq v_u \tag{8.5.1.1d}$$
 - $v_n$ según §22.6 (incluye contribución del concreto y, si aplica, del refuerzo de corte).
 - Debe verificarse tanto corte unidireccional como bidireccional (punzonamiento).
 
-### 4.3 Esfuerzo de Cortante por Transferencia de Momento
+### 4.3 Resistencia del Concreto sin Refuerzo de Corte (§22.6.5.2)
+
+Para losas y zapatas no preesforzadas sin refuerzo de corte, $v_c$ es el **menor** de:
+
+$$v_c = 0.33\,\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2a}$$
+
+$$v_c = 0.17\!\left(1 + \frac{2}{\beta}\right)\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2b}$$
+
+$$v_c = 0.083\!\left(2 + \frac{\alpha_s d}{b_o}\right)\lambda_s\,\lambda\,\sqrt{f'_c} \tag{22.6.5.2c}$$
+
+La resistencia nominal total resulta:
+
+$$V_c = v_c\, b_o\, d \tag{22.6.5.1}$$
+
+**Factor de efecto de tamaño** (§22.5.5.1.3), con $d$ en mm:
+
+$$\lambda_s = \sqrt{\frac{2}{1 + 0.004\,d}} \leq 1.0 \tag{22.5.5.1.3}$$
+
+**Variables:**
+
+| Símbolo | Descripción | Unidad |
+|---------|-------------|--------|
+| $v_c$ | Resistencia unitaria al cortante bidireccional del concreto | MPa |
+| $V_c$ | Resistencia nominal total al cortante bidireccional | N |
+| $f'_c$ | Resistencia especificada a compresión del concreto | MPa |
+| $\beta$ | Relación lado largo / lado corto del soporte o carga concentrada | — |
+| $\alpha_s$ | Parámetro de posición de columna: 40 (interior), 30 (borde), 20 (esquina) | — |
+| $b_o$ | Perímetro de la sección crítica de cortante | mm |
+| $d$ | Profundidad efectiva promedio de la losa | mm |
+| $\lambda_s$ | Factor de efecto de tamaño | — |
+| $\lambda$ | Factor de modificación para concreto liviano | — |
+
+> **Nota:** La ecuación (22.6.5.2a) controla habitualmente en columnas cuadradas y relaciones $b_o/d$ moderadas. La ecuación (22.6.5.2b) gobierna cuando $\beta > 2$ (columnas muy rectangulares). La ecuación (22.6.5.2c) controla en losas con gran relación $b_o/d$ (columnas pequeñas respecto al espesor de losa).
+
+### 4.4 Esfuerzo de Cortante por Transferencia de Momento
 
 $$v_{u,AB} = v_{uv} + \frac{\gamma_v M_{sc} c_{AB}}{J_c}$$
 
@@ -192,6 +227,7 @@ donde $\alpha_s$ corresponde a la posición de la columna (§22.6.5.3) y $\lambd
 ### 6.2 Restricción de Esquina (§8.7.3)
 
 En esquinas exteriores de losas apoyadas en muros de borde o vigas con $\alpha_f > 1.0$:
+
 - Proveer refuerzo en la cara superior e inferior que resista $M_u/\text{m}$ igual al $M_u$ máximo positivo por unidad de ancho en el panel.
 - Extensión desde la esquina: $\ell_{largo}/5$ en cada dirección.
 - Refuerzo paralelo a la diagonal (arriba) y perpendicular a la diagonal (abajo), o dos capas paralelas a los bordes en cada cara.
@@ -205,6 +241,7 @@ En esquinas exteriores de losas apoyadas en muros de borde o vigas con $\alpha_f
 ### 6.4 Aberturas en la Losa (§8.5.4)
 
 Las aberturas son permitidas si el análisis verifica resistencia y serviciabilidad. Sin análisis formal, se permiten si:
+
 - En la zona de intersección de **dos franjas medias**: abertura de cualquier tamaño (sin compensación de refuerzo sí habrá que mantener el total del panel).
 - En la intersección de **dos franjas de columna**: abertura $\leq 1/8$ del ancho de cada franja de columna; compensar el refuerzo interrumpido.
 - En la intersección de **una franja de columna + una franja media**: no interrumpir más del $1/4$ del refuerzo de ninguna franja; compensar.

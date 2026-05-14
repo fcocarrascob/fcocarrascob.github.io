@@ -46,6 +46,7 @@ Para columnas con espiral (§22.4.2, Tabla 22.4.2.1):
 $$P_{n,max} = 0.85\,P_o$$
 
 **Variables:**
+
 | Símbolo | Descripción | Unidad |
 |---------|------------|--------|
 | $P_{n,max}$ | Resistencia axial nominal máxima | N |
@@ -61,6 +62,7 @@ $$M_n = A_s f_y \left( d - \frac{a}{2} \right)$$
 $$a = \frac{A_s f_y}{0.85 f'_c b}$$
 
 **Variables:**
+
 | Símbolo | Descripción | Unidad |
 |---------|------------|--------|
 | $M_n$ | Momento nominal | N·mm |
@@ -86,6 +88,7 @@ $$\phi P_n \geq P_u \quad \text{y} \quad \phi M_n \geq M_u$$
 $$0.01 A_g \leq A_{st} \leq 0.08 A_g$$
 
 Es decir:
+
 $$1\% \leq \rho_g \leq 8\%$$
 
 > **Práctica recomendada:** mantener $\rho_g$ entre 1% y 4% para facilitar la construcción y evitar congestión de acero.
