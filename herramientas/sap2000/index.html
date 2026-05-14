@@ -12,31 +12,31 @@
         <meta name="author" content="Francisco Carrasco">
       
       
-        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/propiedades-geometricas/IBeam-Simetrico/">
+        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/sap2000/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../python/">
       
       
-        <link rel="next" href="../HollowRectangle/">
+        <link rel="next" href="MomentoCurvatura/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Perfil I Simétrico — Propiedades Geométricas - Ingeniería Estructural</title>
+        <title>Herramientas SAP2000 - Ingeniería Estructural</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +55,7 @@
       
     
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#perfil-i-simetrico-propiedades-geometricas" class="md-skip">
+        <a href="#herramientas-sap2000" class="md-skip">
           Saltar a contenido
         </a>
       
@@ -96,7 +96,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Cabecera">
-    <a href="../../.." title="Ingeniería Estructural" class="md-header__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
+    <a href="../.." title="Ingeniería Estructural" class="md-header__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Perfil I Simétrico — Propiedades Geométricas
+              Herramientas SAP2000
             
           </span>
         </div>
@@ -214,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -235,7 +235,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../hormigon/" class="md-tabs__link">
+        <a href="../../hormigon/" class="md-tabs__link">
           
   
   
@@ -255,7 +255,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../sismo/" class="md-tabs__link">
+        <a href="../../sismo/" class="md-tabs__link">
           
   
   
@@ -275,7 +275,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../estructuras-varias/" class="md-tabs__link">
+        <a href="../../estructuras-varias/" class="md-tabs__link">
           
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -315,7 +315,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../guia-contenido/" class="md-tabs__link">
+      <a href="../../guia-contenido/" class="md-tabs__link">
         
   
   
@@ -356,7 +356,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Ingeniería Estructural" class="md-nav__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
+    <a href="../.." title="Ingeniería Estructural" class="md-nav__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -374,7 +374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -453,7 +453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/" class="md-nav__link">
+      <a href="../../hormigon/" class="md-nav__link">
         
   
   
@@ -533,7 +533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch7-OneWaySlabs/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch7-OneWaySlabs/" class="md-nav__link">
         
   
   
@@ -561,7 +561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch8-TwoWaySlabs/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch8-TwoWaySlabs/" class="md-nav__link">
         
   
   
@@ -589,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch9-Beams/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch9-Beams/" class="md-nav__link">
         
   
   
@@ -617,7 +617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch10-Columns/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch10-Columns/" class="md-nav__link">
         
   
   
@@ -645,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch11-Walls/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch11-Walls/" class="md-nav__link">
         
   
   
@@ -673,7 +673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch18-SpecialWalls/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch18-SpecialWalls/" class="md-nav__link">
         
   
   
@@ -701,7 +701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch21-PhiFactors/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch21-PhiFactors/" class="md-nav__link">
         
   
   
@@ -729,7 +729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch22-SectionalStrength/" class="md-nav__link">
+      <a href="../../hormigon/ACI-318-Ch22-SectionalStrength/" class="md-nav__link">
         
   
   
@@ -824,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../sismo/" class="md-nav__link">
+      <a href="../../sismo/" class="md-nav__link">
         
   
   
@@ -852,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../sismo/NCh2369/" class="md-nav__link">
+      <a href="../../sismo/NCh2369/" class="md-nav__link">
         
   
   
@@ -939,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/" class="md-nav__link">
+      <a href="../../estructuras-varias/" class="md-nav__link">
         
   
   
@@ -1019,7 +1019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/estanques-acero/" class="md-nav__link">
+      <a href="../../estructuras-varias/estanques-acero/" class="md-nav__link">
         
   
   
@@ -1047,7 +1047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/estanques-acero/Calculadora/" class="md-nav__link">
+      <a href="../../estructuras-varias/estanques-acero/Calculadora/" class="md-nav__link">
         
   
   
@@ -1147,91 +1147,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Introducción
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Propiedades Geométricas
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Propiedades Geométricas
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../" class="md-nav__link">
         
   
@@ -1257,26 +1172,36 @@
                 
   
   
+  
+  
     
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+    
+    
+    
       
       
         
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
           
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
   
   
   <span class="md-ellipsis">
     
   
-    Perfil I Simétrico
+    Propiedades Geométricas
   
 
     
@@ -1284,10 +1209,56 @@
   
   
 
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Propiedades Geométricas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../propiedades-geometricas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../propiedades-geometricas/IBeam-Simetrico/" class="md-nav__link">
         
   
   
@@ -1303,59 +1274,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Tabla de contenidos
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#notacion-y-dimensiones" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Notación y dimensiones
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#propiedades-geometricas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Propiedades geométricas
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#calculadora" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Calculadora
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1368,7 +1286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../HollowRectangle/" class="md-nav__link">
+      <a href="../propiedades-geometricas/HollowRectangle/" class="md-nav__link">
         
   
   
@@ -1459,7 +1377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/" class="md-nav__link">
+      <a href="../notepad-calculos/" class="md-nav__link">
         
   
   
@@ -1487,7 +1405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/MathLiveNotepad/" class="md-nav__link">
+      <a href="../notepad-calculos/MathLiveNotepad/" class="md-nav__link">
         
   
   
@@ -1515,7 +1433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/EjemploVigaACI/" class="md-nav__link">
+      <a href="../notepad-calculos/EjemploVigaACI/" class="md-nav__link">
         
   
   
@@ -1551,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../python/" class="md-nav__link">
+      <a href="../python/" class="md-nav__link">
         
   
   
@@ -1576,6 +1494,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1591,11 +1511,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
@@ -1616,7 +1536,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1631,10 +1551,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../sap2000/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1650,6 +1597,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-disponibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Herramientas disponibles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formato-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formato de datos
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1662,7 +1651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/MomentoCurvatura/" class="md-nav__link">
+      <a href="MomentoCurvatura/" class="md-nav__link">
         
   
   
@@ -1690,7 +1679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/InteraccionPM/" class="md-nav__link">
+      <a href="InteraccionPM/" class="md-nav__link">
         
   
   
@@ -1733,7 +1722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guia-contenido/" class="md-nav__link">
+      <a href="../../guia-contenido/" class="md-nav__link">
         
   
   
@@ -1780,10 +1769,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#notacion-y-dimensiones" class="md-nav__link">
+  <a href="#herramientas-disponibles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Notación y dimensiones
+        Herramientas disponibles
       
     </span>
   </a>
@@ -1791,21 +1780,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#propiedades-geometricas" class="md-nav__link">
+  <a href="#formato-de-datos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Propiedades geométricas
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#calculadora" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Calculadora
+        Formato de datos
       
     </span>
   </a>
@@ -1829,226 +1807,40 @@
 
 
 
-<h1 id="perfil-i-simetrico-propiedades-geometricas">Perfil I Simétrico — Propiedades Geométricas</h1>
-<p>Propiedades geométricas para un perfil I de alas paralelas iguales (sección doblemente simétrica).</p>
+<h1 id="herramientas-sap2000">Herramientas SAP2000</h1>
+<p>Herramientas para visualizar resultados del <strong>Section Designer de SAP2000</strong>. Pega los datos exportados directamente y genera los gráficos en el navegador, sin necesidad de Python ni Jupyter.</p>
 <hr />
-<h2 id="notacion-y-dimensiones">Notación y dimensiones</h2>
-<div style="display:flex; flex-wrap:wrap; gap:2.5rem; align-items:flex-start; margin-bottom:1.5rem;">
-<div style="flex:0 0 auto;">
-<p><img src="../ibeam.png" alt="Diagrama Perfil I Simétrico" style="max-width:260px; height:auto;"></p>
-</div>
-<div style="flex:1 1 200px;">
+<h2 id="herramientas-disponibles">Herramientas disponibles</h2>
 <table>
 <thead>
 <tr>
-<th>Símbolo</th>
+<th>Herramienta</th>
 <th>Descripción</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(d\)</span></td>
-<td>Altura total del perfil</td>
+<td><a href="MomentoCurvatura/">Momento-Curvatura</a></td>
+<td>Diagrama Momento-Curvatura con factores <span class="arithmatex">\(\phi\)</span> aplicados y cálculo del factor de ductilidad <span class="arithmatex">\(FU\)</span></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(b\)</span></td>
-<td>Ancho de ala</td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(t_f\)</span></td>
-<td>Espesor de ala</td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(t_w\)</span></td>
-<td>Espesor de alma</td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(h\)</span></td>
-<td>Altura libre del alma: <span class="arithmatex">\(h = d - 2\,t_f\)</span></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<hr />
-<h2 id="propiedades-geometricas">Propiedades geométricas</h2>
-<table>
-<thead>
-<tr>
-<th>Propiedad</th>
-<th>Símbolo</th>
-<th>Ecuación</th>
-<th>Observación</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Área</td>
-<td><span class="arithmatex">\(A\)</span></td>
-<td><span class="arithmatex">\(A = 2\,b\,t_f + h\,t_w\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Perímetro</td>
-<td><span class="arithmatex">\(P\)</span></td>
-<td><span class="arithmatex">\(P = 2\,(2b + h) + 4\,t_f + 2\,t_w\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Centroide</td>
-<td><span class="arithmatex">\(\bar{x},\bar{y}\)</span></td>
-<td><span class="arithmatex">\(\bar{x}=b/2 ,\quad \bar{y} = d/2\)</span></td>
-<td>Simetría doble; coincide con el centro geométrico</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(x\)</span>–<span class="arithmatex">\(x\)</span></td>
-<td><span class="arithmatex">\(I_x\)</span></td>
-<td><span class="arithmatex">\(I_x = \dfrac{b\,d^3 - h^3(b - t_w)}{12}\)</span></td>
-<td>Eje fuerte (horizontal)</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(y\)</span>–<span class="arithmatex">\(y\)</span></td>
-<td><span class="arithmatex">\(I_y\)</span></td>
-<td><span class="arithmatex">\(I_y = \dfrac{2\,t_f\,b^3 + h\,t_w^3}{12}\)</span></td>
-<td>Eje débil (vertical)</td>
-</tr>
-<tr>
-<td>Inercia polar</td>
-<td><span class="arithmatex">\(J_i\)</span></td>
-<td><span class="arithmatex">\(J_i = I_x + I_y\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro</td>
-<td><span class="arithmatex">\(r_x,\, r_y\)</span></td>
-<td><span class="arithmatex">\(r_x = \sqrt{I_x/A},\quad r_y = \sqrt{I_y/A}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo elástico</td>
-<td><span class="arithmatex">\(S_x,\, S_y\)</span></td>
-<td><span class="arithmatex">\(S_x = \dfrac{I_x}{\bar{y}},\quad S_y = \dfrac{I_y}{\bar{x}}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo plástico</td>
-<td><span class="arithmatex">\(Z_x\)</span></td>
-<td><span class="arithmatex">\(Z_x = b\,t_f\,(d - t_f) + \dfrac{t_w\,h^2}{4}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo plástico</td>
-<td><span class="arithmatex">\(Z_y\)</span></td>
-<td><span class="arithmatex">\(Z_y = \dfrac{b^2\,t_f}{2} + \dfrac{t_w^2\,h}{4}\)</span></td>
-<td></td>
+<td><a href="InteraccionPM/">Interacción P-M</a></td>
+<td>Diagramas de interacción P-M3 y P-M2 para columnas (curvas a 0°, 90°, 180° y 270°)</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="calculadora">Calculadora</h2>
-<p>Ingresa las dimensiones de la sección y calcula automáticamente todas las propiedades.</p>
-<div style="background:var(--md-code-bg-color, #f5f5f5); border-radius:8px; padding:1.5rem; max-width:520px;">
-
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem;">
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>d</em> — altura total (mm)</span>
-    <input id="pg-d"  type="number" value="300" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>b</em> — ancho de ala (mm)</span>
-    <input id="pg-b"  type="number" value="150" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>t<sub>f</sub></em> — espesor de ala (mm)</span>
-    <input id="pg-tf" type="number" value="10"  min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>t<sub>w</sub></em> — espesor de alma (mm)</span>
-    <input id="pg-tw" type="number" value="7"   min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-</div>
-
-<button onclick="calcIBeam()"
-  style="margin-top:1rem;padding:8px 24px;background:#4a90d9;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1rem;">
-  Calcular
-</button>
-
-<div id="pg-results" style="margin-top:1.2rem;"></div>
-</div>
-
-<script>
-function calcIBeam() {
-  var d  = parseFloat(document.getElementById('pg-d').value);
-  var b  = parseFloat(document.getElementById('pg-b').value);
-  var tf = parseFloat(document.getElementById('pg-tf').value);
-  var tw = parseFloat(document.getElementById('pg-tw').value);
-
-  if ([d, b, tf, tw].some(isNaN) || d <= 0 || b <= 0 || tf <= 0 || tw <= 0) {
-    document.getElementById('pg-results').innerHTML =
-      '<p style="color:red;">⚠ Ingresa valores positivos en todos los campos.</p>';
-    return;
-  }
-  var h = d - 2 * tf;
-  if (h <= 0) {
-    document.getElementById('pg-results').innerHTML =
-      '<p style="color:red;">⚠ El espesor de ala es demasiado grande para la altura indicada.</p>';
-    return;
-  }
-
-  var A  = 2 * b * tf + h * tw;
-  var P  = 2 * (2 * b + d - 2 * tf) + 2 * tw;
-  var Ix = (b * Math.pow(d, 3) - Math.pow(h, 3) * (b - tw)) / 12;
-  var Iy = (2 * tf * Math.pow(b, 3) + h * Math.pow(tw, 3)) / 12;
-  var Ji = Ix + Iy;
-  var rx = Math.sqrt(Ix / A);
-  var ry = Math.sqrt(Iy / A);
-  var Zx = Ix / (d / 2);
-  var Zy = Iy / (b / 2);
-  var Sx = b * tf * (d - tf) + (tw * h * h) / 4;
-  var Sy = (b * b * tf) / 2 + (tw * tw * h) / 4;
-
-  function fmt(v, dec) { return v.toLocaleString('es-CL', {maximumFractionDigits: dec}); }
-
-  document.getElementById('pg-results').innerHTML =
-    '<table style="border-collapse:collapse;width:100%;font-size:0.9rem;table-layout:fixed;">' +
-    '<colgroup>' +
-    '<col style="width:38%">' +
-    '<col style="width:14%">' +
-    '<col style="width:30%">' +
-    '<col style="width:18%">' +
-    '</colgroup>' +
-    '<thead><tr style="background:#4a90d9;color:#fff;">' +
-    '<th style="padding:6px 10px;text-align:left;">Propiedad</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Símbolo</th>' +
-    '<th style="padding:6px 10px;text-align:right;">Valor</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Unidad</th>' +
-    '</tr></thead><tbody>' +
-    row('Área',              'A',   fmt(A,  2),  'mm²')  +
-    row('Perímetro',         'P',   fmt(P,  2),  'mm')   +
-    row('Centroide',         'ȳ',   fmt(d/2,2),  'mm')   +
-    row('Inercia x–x',       'Iₓ',  fmt(Ix, 0),  'mm⁴')  +
-    row('Inercia y–y',       'Iᵧ',  fmt(Iy, 0),  'mm⁴')  +
-    row('Inercia polar',     'Jᵢ',  fmt(Ji, 0),  'mm⁴')  +
-    row('Radio de giro x',   'rₓ',  fmt(rx, 2),  'mm')   +
-    row('Radio de giro y',   'rᵧ',  fmt(ry, 2),  'mm')   +
-    row('Mód. elástico x',   'Zₓ',  fmt(Zx, 0),  'mm³')  +
-    row('Mód. elástico y',   'Zᵧ',  fmt(Zy, 0),  'mm³')  +
-    row('Mód. plástico x',   'Sₓ',  fmt(Sx, 0),  'mm³')  +
-    row('Mód. plástico y',   'Sᵧ',  fmt(Sy, 0),  'mm³')  +
-    '</tbody></table>';
-}
-
-function row(name, sym, val, unit) {
-  return '<tr style="border-bottom:1px solid #ddd;">' +
-    '<td style="padding:5px 10px;">' + name + '</td>' +
-    '<td style="padding:5px 10px;font-style:italic;">' + sym + '</td>' +
-    '<td style="padding:5px 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;">' + val + '</td>' +
-    '<td style="padding:5px 10px;color:#666;">' + unit + '</td>' +
-    '</tr>';
-}
-</script>
-
-<hr />
+<h2 id="formato-de-datos">Formato de datos</h2>
+<p>Ambas herramientas leen datos exportados del Section Designer de SAP2000 en <strong>formato de texto separado por tabulaciones (TSV)</strong>, con la <strong>coma (<code>,</code>) como separador decimal</strong> (formato chileno/europeo). El flujo de trabajo es:</p>
+<ol>
+<li>En SAP2000, selecciona los datos en la ventana del Section Designer</li>
+<li>Copia al portapapeles (<code>Ctrl+C</code>)</li>
+<li>Pega en el área de texto de la herramienta (<code>Ctrl+V</code>)</li>
+<li>Presiona <strong>Graficar</strong></li>
+</ol>
+<blockquote>
+<p><strong>Nota:</strong> Los cálculos se realizan completamente en el navegador. Ningún dato se envía a ningún servidor.</p>
+</blockquote>
 
 
 
@@ -2087,7 +1879,7 @@ function row(name, sym, val, unit) {
       <nav class="md-footer__inner md-grid" aria-label="Pie" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Introducción">
+          <a href="../python/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Herramientas Python">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2097,20 +1889,20 @@ function row(name, sym, val, unit) {
                 Anterior
               </span>
               <div class="md-ellipsis">
-                Introducción
+                Herramientas Python
               </div>
             </div>
           </a>
         
         
           
-          <a href="../HollowRectangle/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Rectángulo Hueco">
+          <a href="MomentoCurvatura/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Momento-Curvatura">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Siguiente
               </span>
               <div class="md-ellipsis">
-                Rectángulo Hueco
+                Momento-Curvatura
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2147,12 +1939,12 @@ function row(name, sym, val, unit) {
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../../javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
