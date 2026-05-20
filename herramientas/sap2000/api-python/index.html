@@ -12,13 +12,13 @@
         <meta name="author" content="Francisco Carrasco">
       
       
-        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/propiedades-geometricas/HollowRectangle/">
+        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/sap2000/api-python/">
       
       
-        <link rel="prev" href="../IBeam-Simetrico/">
+        <link rel="prev" href="../InteraccionPM/">
       
       
-        <link rel="next" href="../../notepad-calculos/">
+        <link rel="next" href="conexion/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Rectángulo Hueco — Propiedades Geométricas - Ingeniería Estructural</title>
+        <title>API Python SAP2000 — Introducción - Ingeniería Estructural</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rectangulo-hueco-propiedades-geometricas" class="md-skip">
+        <a href="#api-python-sap2000-introduccion" class="md-skip">
           Saltar a contenido
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Rectángulo Hueco — Propiedades Geométricas
+              API Python SAP2000 — Introducción
             
           </span>
         </div>
@@ -1172,8 +1172,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1189,11 +1187,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
         
           
           <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
@@ -1214,7 +1212,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1232,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../propiedades-geometricas/" class="md-nav__link">
         
   
   
@@ -1260,7 +1258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../IBeam-Simetrico/" class="md-nav__link">
+      <a href="../../propiedades-geometricas/IBeam-Simetrico/" class="md-nav__link">
         
   
   
@@ -1285,37 +1283,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Rectángulo Hueco
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../propiedades-geometricas/HollowRectangle/" class="md-nav__link">
         
   
   
@@ -1331,59 +1302,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Tabla de contenidos
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#notacion-y-dimensiones" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Notación y dimensiones
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#propiedades-geometricas" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Propiedades geométricas
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#calculadora" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Calculadora
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1576,6 +1494,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1591,11 +1511,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
@@ -1616,7 +1536,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1634,7 +1554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -1662,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/MomentoCurvatura/" class="md-nav__link">
+      <a href="../MomentoCurvatura/" class="md-nav__link">
         
   
   
@@ -1690,7 +1610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/InteraccionPM/" class="md-nav__link">
+      <a href="../InteraccionPM/" class="md-nav__link">
         
   
   
@@ -1715,8 +1635,10 @@
                 
   
   
+    
   
   
+  
     
     
     
@@ -1727,11 +1649,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_4" checked>
         
           
           <label class="md-nav__link" for="__nav_5_5_4" id="__nav_5_5_4_label" tabindex="0">
@@ -1752,7 +1674,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_5_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1767,10 +1689,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../sap2000/api-python/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1786,6 +1735,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-que-es-la-oapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ¿Qué es la OAPI?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Requisitos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Requisitos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-minima" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación mínima
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-completa-backend-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación completa (backend + GUI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-flujo-de-trabajo-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Flujo de trabajo general
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-arquitectura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Arquitectura del proyecto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-contenido-de-esta-seccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Contenido de esta sección
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1798,7 +1850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/api-python/conexion/" class="md-nav__link">
+      <a href="conexion/" class="md-nav__link">
         
   
   
@@ -1826,7 +1878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/api-python/llamadas-api/" class="md-nav__link">
+      <a href="llamadas-api/" class="md-nav__link">
         
   
   
@@ -1854,7 +1906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/api-python/backend-template/" class="md-nav__link">
+      <a href="backend-template/" class="md-nav__link">
         
   
   
@@ -1882,7 +1934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sap2000/api-python/gui-template/" class="md-nav__link">
+      <a href="gui-template/" class="md-nav__link">
         
   
   
@@ -1980,10 +2032,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#notacion-y-dimensiones" class="md-nav__link">
+  <a href="#1-que-es-la-oapi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Notación y dimensiones
+        1. ¿Qué es la OAPI?
       
     </span>
   </a>
@@ -1991,10 +2043,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#propiedades-geometricas" class="md-nav__link">
+  <a href="#2-requisitos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Propiedades geométricas
+        2. Requisitos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Requisitos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-minima" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación mínima
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-completa-backend-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación completa (backend + GUI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-flujo-de-trabajo-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Flujo de trabajo general
       
     </span>
   </a>
@@ -2002,10 +2093,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#calculadora" class="md-nav__link">
+  <a href="#4-arquitectura-del-proyecto" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Calculadora
+        4. Arquitectura del proyecto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-contenido-de-esta-seccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Contenido de esta sección
       
     </span>
   </a>
@@ -2029,615 +2131,150 @@
 
 
 
-<h1 id="rectangulo-hueco-propiedades-geometricas">Rectángulo Hueco — Propiedades Geométricas</h1>
-<p>Propiedades geométricas para una sección rectangular hueca de paredes rectas (sección doblemente simétrica). Aplica a perfiles tubulares rectangulares (RHS) y cuadrados (SHS).</p>
+<h1 id="api-python-sap2000-introduccion">API Python SAP2000 — Introducción</h1>
+<p>SAP2000 expone una <strong>Open API (OAPI)</strong> que permite controlar el programa
+completamente desde código Python: crear modelos, asignar cargas, ejecutar
+análisis y extraer resultados, todo de forma programática.</p>
 <hr />
-<h2 id="notacion-y-dimensiones">Notación y dimensiones</h2>
-<div style="display:flex; flex-wrap:wrap; gap:2.5rem; align-items:flex-start; margin-bottom:1.5rem;">
-<div style="flex:0 0 auto;">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="260" height="270" viewBox="0 0 260 270">
-<br />
-<!-- eje x centroidal --></p>
-<p><line x1="15" y1="130" x2="230" y2="130" stroke="#888" stroke-width="1" stroke-dasharray="5,4"/>
-<br />
-<!-- eje y centroidal --></p>
-<p><line x1="120" y1="10" x2="120" y2="245" stroke="#888" stroke-width="1" stroke-dasharray="5,4"/>
-<br />
-<!-- eje x1 (esquina inferior) --></p>
-<p><line x1="15" y1="225" x2="230" y2="225" stroke="#aaa" stroke-width="1" stroke-dasharray="3,3"/>
-<br />
-<!-- eje y1 (esquina izquierda) --></p>
-<p><line x1="30" y1="10" x2="30" y2="245" stroke="#aaa" stroke-width="1" stroke-dasharray="3,3"/>
-<br />
-<!-- rectángulo exterior --></p>
-<p><rect x="30" y="30" width="180" height="195" fill="#4a90d9" stroke="#1a5a9a" stroke-width="1.5" opacity="0.85"/>
-<br />
-<!-- hueco interior --></p>
-<p><rect x="65" y="65" width="110" height="125" fill="white" stroke="#1a5a9a" stroke-width="1"/>
-<br />
-<!-- cota b (exterior, arriba) --></p>
-<p><line x1="30"  y1="18" x2="210" y2="18" stroke="#333" stroke-width="1"/>
-  <line x1="30"  y1="14" x2="30"  y2="22" stroke="#333" stroke-width="1"/>
-  <line x1="210" y1="14" x2="210" y2="22" stroke="#333" stroke-width="1"/>
-  <text x="120" y="13" text-anchor="middle" font-size="12" fill="#333" font-family="serif" font-style="italic">b</text>
-<br />
-<!-- cota b1 (interior, abajo del hueco) --></p>
-<p><line x1="65"  y1="252" x2="175" y2="252" stroke="#555" stroke-width="1"/>
-  <line x1="65"  y1="248" x2="65"  y2="256" stroke="#555" stroke-width="1"/>
-  <line x1="175" y1="248" x2="175" y2="256" stroke="#555" stroke-width="1"/>
-  <text x="120" y="264" text-anchor="middle" font-size="11" fill="#555" font-family="serif" font-style="italic">b<tspan font-size="9" dy="2">1</tspan></text>
-<br />
-<!-- cota a (exterior, derecha) --></p>
-<p><line x1="222" y1="30"  x2="222" y2="225" stroke="#333" stroke-width="1"/>
-  <line x1="218" y1="30"  x2="226" y2="30"  stroke="#333" stroke-width="1"/>
-  <line x1="218" y1="225" x2="226" y2="225" stroke="#333" stroke-width="1"/>
-  <text x="235" y="132" text-anchor="middle" font-size="12" fill="#333" font-family="serif" font-style="italic">a</text>
-<br />
-<!-- cota a1 (interior, izquierda) --></p>
-<p><line x1="18" y1="65"  x2="18" y2="190" stroke="#555" stroke-width="1"/>
-  <line x1="14" y1="65"  x2="22" y2="65"  stroke="#555" stroke-width="1"/>
-  <line x1="14" y1="190" x2="22" y2="190" stroke="#555" stroke-width="1"/>
-  <text x="9" y="131" text-anchor="middle" font-size="11" fill="#555" font-family="serif" font-style="italic">a<tspan font-size="9" dy="2">1</tspan></text>
-<br />
-<!-- labels ejes centroidales --></p>
-<p><text x="227" y="126" font-size="11" fill="#888" font-family="serif" font-style="italic">x</text>
-  <text x="124" y="244" font-size="11" fill="#888" font-family="serif" font-style="italic">y</text>
-<br />
-<!-- labels ejes en esquina --></p>
-<p><text x="227" y="221" font-size="10" fill="#aaa" font-family="serif" font-style="italic">x<tspan font-size="8" dy="2">1</tspan></text>
-  <text x="33"  y="244" font-size="10" fill="#aaa" font-family="serif" font-style="italic">y<tspan font-size="8" dy="2">1</tspan></text>
-<br />
-<!-- centroide --></p>
-<p><circle cx="120" cy="130" r="3" fill="#e55"/>
-  <text x="126" y="125" font-size="10" fill="#e55" font-family="sans-serif">C</text>
-<br />
-<!-- Cx label --></p>
-<p><line x1="30" y1="138" x2="120" y2="138" stroke="#e55" stroke-width="0.8" stroke-dasharray="3,2"/>
-  <text x="75" y="150" text-anchor="middle" font-size="10" fill="#e55" font-family="serif" font-style="italic">C<tspan font-size="8" dy="2">x</tspan></text>
-<br />
-<!-- Cy label --></p>
-<p><line x1="128" y1="130" x2="128" y2="225" stroke="#e55" stroke-width="0.8" stroke-dasharray="3,2"/>
-  <text x="140" y="182" font-size="10" fill="#e55" font-family="serif" font-style="italic">C<tspan font-size="8" dy="2">y</tspan></text>
-</svg></p>
-</div>
-<div style="flex:1 1 200px;">
+<h2 id="1-que-es-la-oapi">1. ¿Qué es la OAPI?</h2>
+<p>La OAPI de SAP2000 es una interfaz <strong>COM (Component Object Model)</strong> que
+expone el objeto principal <code>SapObject</code>, desde el cual se accede a todo el
+modelo. En Python se usa la biblioteca <code>comtypes</code> para conectarse a ese
+objeto COM.</p>
+<p>La jerarquía de acceso es:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>comtypes.client
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    └── sap_object          (CSI.SAP2000.API.SapObject)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>            └── SapModel    (cSapModel)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                    ├── PropMaterial    → materiales
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                    ├── PropFrame       → secciones de barra
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                    ├── PropArea        → secciones de área
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                    ├── FrameObj        → barras (frame elements)
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                    ├── AreaObj         → áreas (shell elements)
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                    ├── PointObj        → nudos
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>                    ├── LoadPatterns    → patrones de carga
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>                    ├── LoadCases       → casos de carga
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>                    ├── Analyze         → análisis
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                    ├── Results         → resultados
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>                    └── File            → guardar/abrir modelo
+</span></code></pre></div>
+<blockquote>
+<p><strong>Nota:</strong> Toda la interacción ocurre a través de <code>SapModel</code>. El objeto
+<code>sap_object</code> sólo se usa para conectar/desconectar y obtener metadatos
+como la versión de la API.</p>
+</blockquote>
+<hr />
+<h2 id="2-requisitos">2. Requisitos</h2>
 <table>
 <thead>
 <tr>
-<th>Símbolo</th>
-<th>Descripción</th>
+<th>Requisito</th>
+<th>Versión mínima</th>
+<th>Notas</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(b\)</span></td>
-<td>Ancho exterior</td>
+<td>Sistema operativo</td>
+<td>Windows 10/11</td>
+<td>COM es exclusivo de Windows</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(a\)</span></td>
-<td>Altura exterior</td>
+<td>SAP2000</td>
+<td>v22 o superior</td>
+<td>Instalado y con licencia activa</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(b_1\)</span></td>
-<td>Ancho interior del hueco</td>
+<td>Python</td>
+<td>3.10+</td>
+<td>64-bit recomendado</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(a_1\)</span></td>
-<td>Altura interior del hueco</td>
+<td><code>comtypes</code></td>
+<td>1.2+</td>
+<td><code>pip install comtypes</code></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(C_x = b/2\)</span></td>
-<td>Distancia al centroide (horizontal)</td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(C_y = a/2\)</span></td>
-<td>Distancia al centroide (vertical)</td>
+<td><code>PySide6</code></td>
+<td>6.5+</td>
+<td>Solo para GUI — <code>pip install PySide6</code></td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Nota:</strong> Para pared uniforme de espesor <span class="arithmatex">\(t\)</span>: <span class="arithmatex">\(b_1 = b - 2t\)</span>, <span class="arithmatex">\(a_1 = a - 2t\)</span>.</p>
-</blockquote>
-</div>
-</div>
+<h3 id="instalacion-minima">Instalación mínima</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>comtypes
+</span></code></pre></div>
+<h3 id="instalacion-completa-backend-gui">Instalación completa (backend + GUI)</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>comtypes<span class="w"> </span>PySide6
+</span></code></pre></div>
 <hr />
-<h2 id="propiedades-geometricas">Propiedades geométricas</h2>
+<h2 id="3-flujo-de-trabajo-general">3. Flujo de trabajo general</h2>
+<p>Un script Python que usa la OAPI sigue siempre esta secuencia:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. Conectar     → obtener sap_object → obtener SapModel
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2. Operar       → crear/modificar el modelo usando SapModel.*
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>3. Desconectar  → liberar la referencia COM
+</span></code></pre></div>
+<blockquote>
+<p><strong>Advertencia:</strong> Si el script termina abruptamente sin desconectar, la
+referencia COM queda activa pero Python ya no puede usarla. Siempre usar
+<code>try/finally</code> para garantizar la desconexión.</p>
+</blockquote>
+<hr />
+<h2 id="4-arquitectura-del-proyecto">4. Arquitectura del proyecto</h2>
+<p>Para proyectos más complejos, este proyecto organiza el código en dos capas:</p>
 <table>
 <thead>
 <tr>
-<th>Propiedad</th>
-<th>Símbolo</th>
-<th>Ecuación</th>
-<th>Observación</th>
+<th>Capa</th>
+<th>Archivo</th>
+<th>Responsabilidad</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Área</td>
-<td><span class="arithmatex">\(A\)</span></td>
-<td><span class="arithmatex">\(A = b\,a - b_1 a_1\)</span></td>
-<td></td>
+<td><strong>Backend</strong></td>
+<td><code>backend_{nombre}.py</code></td>
+<td>Conexión COM + lógica SAP2000</td>
 </tr>
 <tr>
-<td>Perímetro exterior</td>
-<td><span class="arithmatex">\(P\)</span></td>
-<td><span class="arithmatex">\(P = 2\,(a + b)\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Perímetro interior</td>
-<td><span class="arithmatex">\(P_1\)</span></td>
-<td><span class="arithmatex">\(P_1 = 2\,(a_1 + b_1)\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Centroide</td>
-<td><span class="arithmatex">\(C_x,\,C_y\)</span></td>
-<td><span class="arithmatex">\(C_x = b/2,\quad C_y = a/2\)</span></td>
-<td>Simetría doble</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(x\)</span>–<span class="arithmatex">\(x\)</span></td>
-<td><span class="arithmatex">\(I_x\)</span></td>
-<td><span class="arithmatex">\(I_x = \dfrac{b\,a^3 - b_1 a_1^3}{12}\)</span></td>
-<td>Eje centroidal horizontal</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(y\)</span>–<span class="arithmatex">\(y\)</span></td>
-<td><span class="arithmatex">\(I_y\)</span></td>
-<td><span class="arithmatex">\(I_y = \dfrac{b^3 a - b_1^3 a_1}{12}\)</span></td>
-<td>Eje centroidal vertical</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(x_1\)</span>–<span class="arithmatex">\(x_1\)</span></td>
-<td><span class="arithmatex">\(I_{x1}\)</span></td>
-<td><span class="arithmatex">\(I_{x1} = \dfrac{b\,a^3}{3} - \dfrac{b_1 a_1(a_1^2 + 3a^2)}{12}\)</span></td>
-<td>Eje en borde inferior</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(y_1\)</span>–<span class="arithmatex">\(y_1\)</span></td>
-<td><span class="arithmatex">\(I_{y1}\)</span></td>
-<td><span class="arithmatex">\(I_{y1} = \dfrac{b^3 a}{3} - \dfrac{b_1 a_1(b_1^2 + 3b^2)}{12}\)</span></td>
-<td>Eje en borde izquierdo</td>
-</tr>
-<tr>
-<td>Inercia polar <span class="arithmatex">\(z\)</span></td>
-<td><span class="arithmatex">\(J_z\)</span></td>
-<td><span class="arithmatex">\(J_z = I_x + I_y\)</span></td>
-<td>Respecto al centroide</td>
-</tr>
-<tr>
-<td>Inercia polar <span class="arithmatex">\(z_1\)</span></td>
-<td><span class="arithmatex">\(J_{z1}\)</span></td>
-<td><span class="arithmatex">\(J_{z1} = I_{x1} + I_{y1}\)</span></td>
-<td>Respecto a esquina</td>
-</tr>
-<tr>
-<td>Radio de giro</td>
-<td><span class="arithmatex">\(K_x,\,K_y\)</span></td>
-<td><span class="arithmatex">\(K_x = \sqrt{\dfrac{I_x}{A}},\quad K_y = \sqrt{\dfrac{I_y}{A}}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro polar</td>
-<td><span class="arithmatex">\(K_z\)</span></td>
-<td><span class="arithmatex">\(K_z = \sqrt{K_x^2 + K_y^2}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro <span class="arithmatex">\(x_1\)</span></td>
-<td><span class="arithmatex">\(K_{x1}\)</span></td>
-<td><span class="arithmatex">\(K_{x1} = \sqrt{I_{x1}/A}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro <span class="arithmatex">\(y_1\)</span></td>
-<td><span class="arithmatex">\(K_{y1}\)</span></td>
-<td><span class="arithmatex">\(K_{y1} = \sqrt{I_{y1}/A}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro <span class="arithmatex">\(z_1\)</span></td>
-<td><span class="arithmatex">\(K_{z1}\)</span></td>
-<td><span class="arithmatex">\(K_{z1} = \sqrt{K_{x1}^2 + K_{y1}^2}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo elástico</td>
-<td><span class="arithmatex">\(Z_x,\,Z_y\)</span></td>
-<td><span class="arithmatex">\(Z_x = \dfrac{I_x}{C_y},\quad Z_y = \dfrac{I_y}{C_x}\)</span></td>
-<td></td>
+<td><strong>Frontend</strong></td>
+<td><code>gui_{nombre}.py</code></td>
+<td>Interfaz gráfica PySide6</td>
 </tr>
 </tbody>
 </table>
+<p>Ambas capas parten de templates base ubicados en <code>scripts/templates/</code>:</p>
+<ul>
+<li><code>backend_template.py</code> — template del backend</li>
+<li><code>gui_template.py</code> — template de la GUI</li>
+</ul>
 <hr />
-<h2 id="calculadora">Calculadora</h2>
-<p>Ingresa las dimensiones exteriores e interiores de la sección.</p>
-<div style="background:var(--md-code-bg-color, #f5f5f5); border-radius:8px; padding:1.5rem; max-width:520px;">
-
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem;">
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>b</em> — ancho exterior (mm)</span>
-    <input id="hr-b"  type="number" value="150" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>a</em> — altura exterior (mm)</span>
-    <input id="hr-a"  type="number" value="200" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>b<sub>1</sub></em> — ancho interior (mm)</span>
-    <input id="hr-b1" type="number" value="130" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>a<sub>1</sub></em> — altura interior (mm)</span>
-    <input id="hr-a1" type="number" value="180" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-</div>
-
-<button onclick="calcHR()"
-  style="margin-top:1rem;padding:8px 24px;background:#4a90d9;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1rem;">
-  Calcular
-</button>
-
-<div id="hr-results" style="margin-top:1.2rem;"></div>
-</div>
-
-<script>
-function calcHR() {
-  var b  = parseFloat(document.getElementById('hr-b').value);
-  var a  = parseFloat(document.getElementById('hr-a').value);
-  var b1 = parseFloat(document.getElementById('hr-b1').value);
-  var a1 = parseFloat(document.getElementById('hr-a1').value);
-
-  if ([b, a, b1, a1].some(isNaN) || b <= 0 || a <= 0 || b1 <= 0 || a1 <= 0) {
-    document.getElementById('hr-results').innerHTML =
-      '<p style="color:red;">⚠ Ingresa valores positivos en todos los campos.</p>';
-    return;
-  }
-  if (a1 >= a || b1 >= b) {
-    document.getElementById('hr-results').innerHTML =
-      '<p style="color:red;">⚠ Las dimensiones interiores deben ser menores que las exteriores.</p>';
-    return;
-  }
-
-  var A   = b * a - b1 * a1;
-  var P   = 2 * (a + b);
-  var P1  = 2 * (a1 + b1);
-  var Cx  = b / 2;
-  var Cy  = a / 2;
-  var Ix  = (b * Math.pow(a, 3) - b1 * Math.pow(a1, 3)) / 12;
-  var Iy  = (Math.pow(b, 3) * a - Math.pow(b1, 3) * a1) / 12;
-  var Ix1 = (b * Math.pow(a, 3)) / 3 - (b1 * a1 * (a1*a1 + 3*a*a)) / 12;
-  var Iy1 = (Math.pow(b, 3) * a) / 3 - (b1 * a1 * (b1*b1 + 3*b*b)) / 12;
-  var Jz  = Ix + Iy;
-  var Jz1 = Ix1 + Iy1;
-  var Kx  = Math.sqrt(Ix / A);
-  var Ky  = Math.sqrt(Iy / A);
-  var Kz  = Math.sqrt(Kx*Kx + Ky*Ky);
-  var Kx1 = Math.sqrt(Ix1 / A);
-  var Ky1 = Math.sqrt(Iy1 / A);
-  var Kz1 = Math.sqrt(Kx1*Kx1 + Ky1*Ky1);
-  var Zx  = Ix / Cy;
-  var Zy  = Iy / Cx;
-
-  function fmt(v, dec) { return v.toLocaleString('es-CL', {maximumFractionDigits: dec}); }
-
-  document.getElementById('hr-results').innerHTML =
-    '<table style="border-collapse:collapse;width:100%;font-size:0.9rem;table-layout:fixed;">' +
-    '<colgroup>' +
-    '<col style="width:38%">' +
-    '<col style="width:14%">' +
-    '<col style="width:30%">' +
-    '<col style="width:18%">' +
-    '</colgroup>' +
-    '<thead><tr style="background:#4a90d9;color:#fff;">' +
-    '<th style="padding:6px 10px;text-align:left;">Propiedad</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Símbolo</th>' +
-    '<th style="padding:6px 10px;text-align:right;">Valor</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Unidad</th>' +
-    '</tr></thead><tbody>' +
-    hrRow('Área',             'A',    fmt(A,   2), 'mm²') +
-    hrRow('Perímetro ext.',   'P',    fmt(P,   2), 'mm')  +
-    hrRow('Perímetro int.',   'P₁',   fmt(P1,  2), 'mm')  +
-    hrRow('Centroide Cx',     'Cₓ',   fmt(Cx,  2), 'mm')  +
-    hrRow('Centroide Cy',     'Cᵧ',   fmt(Cy,  2), 'mm')  +
-    hrRow('Inercia x–x',      'Iₓ',   fmt(Ix,  0), 'mm⁴') +
-    hrRow('Inercia y–y',      'Iᵧ',   fmt(Iy,  0), 'mm⁴') +
-    hrRow('Inercia x₁–x₁',   'Iₓ₁',  fmt(Ix1, 0), 'mm⁴') +
-    hrRow('Inercia y₁–y₁',   'Iᵧ₁',  fmt(Iy1, 0), 'mm⁴') +
-    hrRow('Inercia polar z',  'Jz',   fmt(Jz,  0), 'mm⁴') +
-    hrRow('Inercia polar z₁', 'Jz₁',  fmt(Jz1, 0), 'mm⁴') +
-    hrRow('Radio giro Kx',    'Kₓ',   fmt(Kx,  2), 'mm')  +
-    hrRow('Radio giro Ky',    'Kᵧ',   fmt(Ky,  2), 'mm')  +
-    hrRow('Radio giro Kz',    'Kz',   fmt(Kz,  2), 'mm')  +
-    hrRow('Radio giro Kx₁',   'Kₓ₁',  fmt(Kx1, 2), 'mm')  +
-    hrRow('Radio giro Ky₁',   'Kᵧ₁',  fmt(Ky1, 2), 'mm')  +
-    hrRow('Radio giro Kz₁',   'Kz₁',  fmt(Kz1, 2), 'mm')  +
-    hrRow('Mód. elástico x',  'Zₓ',   fmt(Zx,  0), 'mm³') +
-    hrRow('Mód. elástico y',  'Zᵧ',   fmt(Zy,  0), 'mm³') +
-    '</tbody></table>';
-}
-
-function hrRow(name, sym, val, unit) {
-  return '<tr style="border-bottom:1px solid #ddd;">' +
-    '<td style="padding:5px 10px;">' + name + '</td>' +
-    '<td style="padding:5px 10px;font-style:italic;">' + sym + '</td>' +
-    '<td style="padding:5px 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;">' + val + '</td>' +
-    '<td style="padding:5px 10px;color:#666;">' + unit + '</td>' +
-    '</tr>';
-}
-</script>
-
-<hr />
-<blockquote>
-<p><strong>Nota:</strong> Las fórmulas son válidas para sección rectangular hueca con hueco centrado y paredes rectas (sin radios de esquina). Para perfiles tubulares normalizados (RHS/SHS) con radios de esquina, el área y la inercia reales difieren ligeramente.</p>
-</blockquote>
-<h1 id="rectangulo-hueco-propiedades-geometricas_1">Rectángulo Hueco — Propiedades Geométricas</h1>
-<p>Propiedades geométricas para una sección rectangular hueca de paredes rectas (sección doblemente simétrica). Aplica a perfiles tubulares rectangulares (RHS) y cuadrados (SHS).</p>
-<hr />
-<h2 id="notacion-y-dimensiones_1">Notación y dimensiones</h2>
-<div style="display:flex; flex-wrap:wrap; gap:2.5rem; align-items:flex-start; margin-bottom:1.5rem;">
-<div style="flex:0 0 auto;">
-<p><svg xmlns="http://www.w3.org/2000/svg" width="240" height="260" viewBox="0 0 240 260">
-<br />
-<!-- ejes centroidales --></p>
-<p><line x1="120" y1="10" x2="120" y2="250" stroke="#888" stroke-width="1" stroke-dasharray="5,4"/>
-  <line x1="15"  y1="130" x2="225" y2="130" stroke="#888" stroke-width="1" stroke-dasharray="5,4"/>
-<br />
-<!-- rectángulo exterior --></p>
-<p><rect x="30" y="30" width="180" height="200" fill="#4a90d9" stroke="#1a5a9a" stroke-width="1.5" opacity="0.85"/>
-<br />
-<!-- hueco interior (blanco) --></p>
-<p><rect x="60" y="60" width="120" height="140" fill="white" stroke="#1a5a9a" stroke-width="1"/>
-<br />
-<!-- cota b (exterior) --></p>
-<p><line x1="30"  y1="18" x2="210" y2="18" stroke="#333" stroke-width="1"/>
-  <line x1="30"  y1="14" x2="30"  y2="22" stroke="#333" stroke-width="1"/>
-  <line x1="210" y1="14" x2="210" y2="22" stroke="#333" stroke-width="1"/>
-  <text x="120" y="13" text-anchor="middle" font-size="12" fill="#333" font-family="serif" font-style="italic">b</text>
-<br />
-<!-- cota b' (interior) --></p>
-<p><line x1="60"  y1="248" x2="180" y2="248" stroke="#555" stroke-width="1"/>
-  <line x1="60"  y1="244" x2="60"  y2="252" stroke="#555" stroke-width="1"/>
-  <line x1="180" y1="244" x2="180" y2="252" stroke="#555" stroke-width="1"/>
-  <text x="120" y="258" text-anchor="middle" font-size="11" fill="#555" font-family="serif" font-style="italic">b'</text>
-<br />
-<!-- cota d (exterior) --></p>
-<p><line x1="222" y1="30"  x2="222" y2="230" stroke="#333" stroke-width="1"/>
-  <line x1="218" y1="30"  x2="226" y2="30"  stroke="#333" stroke-width="1"/>
-  <line x1="218" y1="230" x2="226" y2="230" stroke="#333" stroke-width="1"/>
-  <text x="233" y="134" text-anchor="middle" font-size="12" fill="#333" font-family="serif" font-style="italic">d</text>
-<br />
-<!-- cota d' (interior) --></p>
-<p><line x1="16" y1="60"  x2="16" y2="200" stroke="#555" stroke-width="1"/>
-  <line x1="12" y1="60"  x2="20" y2="60"  stroke="#555" stroke-width="1"/>
-  <line x1="12" y1="200" x2="20" y2="200" stroke="#555" stroke-width="1"/>
-  <text x="8" y="134" text-anchor="middle" font-size="11" fill="#555" font-family="serif" font-style="italic">d'</text>
-<br />
-<!-- eje x label --></p>
-<p><text x="220" y="128" font-size="11" fill="#888" font-family="sans-serif">x</text>
-<br />
-<!-- eje y label --></p>
-<p><text x="125" y="250" font-size="11" fill="#888" font-family="sans-serif">y</text>
-<br />
-<!-- centroide --></p>
-<p><circle cx="120" cy="130" r="3" fill="#e55"/>
-  <text x="127" y="126" font-size="10" fill="#e55" font-family="sans-serif">C</text>
-</svg></p>
-</div>
-<div style="flex:1 1 200px;">
+<h2 id="5-contenido-de-esta-seccion">5. Contenido de esta sección</h2>
 <table>
 <thead>
 <tr>
-<th>Símbolo</th>
-<th>Descripción</th>
+<th>Página</th>
+<th>Tema</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(d\)</span></td>
-<td>Altura exterior</td>
+<td><a href="conexion/">Conexión y Desconexión</a></td>
+<td>Cómo conectarse a SAP2000 y liberar la referencia COM</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(b\)</span></td>
-<td>Ancho exterior</td>
+<td><a href="llamadas-api/">Llamadas a la API</a></td>
+<td>Patrón de return codes, parámetros ByRef, unidades</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(d'\)</span></td>
-<td>Altura interior del hueco</td>
+<td><a href="backend-template/">Template Backend</a></td>
+<td>Cómo adaptar <code>backend_template.py</code> a un script propio</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(b'\)</span></td>
-<td>Ancho interior del hueco</td>
+<td><a href="gui-template/">Template GUI</a></td>
+<td>Cómo adaptar <code>gui_template.py</code> a una GUI standalone</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p><strong>Nota:</strong> Para espesor de pared uniforme <span class="arithmatex">\(t\)</span>: <span class="arithmatex">\(b' = b - 2t\)</span> y <span class="arithmatex">\(d' = d - 2t\)</span>.</p>
-</blockquote>
-</div>
-</div>
-<hr />
-<h2 id="propiedades-geometricas_1">Propiedades geométricas</h2>
-<table>
-<thead>
-<tr>
-<th>Propiedad</th>
-<th>Símbolo</th>
-<th>Ecuación</th>
-<th>Observación</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Área</td>
-<td><span class="arithmatex">\(A\)</span></td>
-<td><span class="arithmatex">\(A = b\,d - b'd'\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Perímetro</td>
-<td><span class="arithmatex">\(P\)</span></td>
-<td><span class="arithmatex">\(P = 2\,(b + d) + 2\,(b' + d')\)</span></td>
-<td>Contorno exterior + contorno del hueco</td>
-</tr>
-<tr>
-<td>Centroide</td>
-<td><span class="arithmatex">\(\bar{x},\bar{y}\)</span></td>
-<td><span class="arithmatex">\(\bar{x} = b/2,\quad \bar{y} = d/2\)</span></td>
-<td>Simetría doble</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(x\)</span>–<span class="arithmatex">\(x\)</span></td>
-<td><span class="arithmatex">\(I_x\)</span></td>
-<td><span class="arithmatex">\(I_x = \dfrac{b\,d^3 - b'\,d'^3}{12}\)</span></td>
-<td>Eje fuerte (horizontal)</td>
-</tr>
-<tr>
-<td>Inercia eje <span class="arithmatex">\(y\)</span>–<span class="arithmatex">\(y\)</span></td>
-<td><span class="arithmatex">\(I_y\)</span></td>
-<td><span class="arithmatex">\(I_y = \dfrac{d\,b^3 - d'\,b'^3}{12}\)</span></td>
-<td>Eje débil (vertical)</td>
-</tr>
-<tr>
-<td>Inercia polar</td>
-<td><span class="arithmatex">\(J_i\)</span></td>
-<td><span class="arithmatex">\(J_i = I_x + I_y\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Radio de giro</td>
-<td><span class="arithmatex">\(r_x,\,r_y\)</span></td>
-<td><span class="arithmatex">\(r_x = \sqrt{I_x/A},\quad r_y = \sqrt{I_y/A}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo elástico</td>
-<td><span class="arithmatex">\(Z_x,\,Z_y\)</span></td>
-<td><span class="arithmatex">\(Z_x = \dfrac{I_x}{d/2},\quad Z_y = \dfrac{I_y}{b/2}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo plástico</td>
-<td><span class="arithmatex">\(S_x\)</span></td>
-<td><span class="arithmatex">\(S_x = \dfrac{b\,d^2 - b'\,d'^2}{4}\)</span></td>
-<td></td>
-</tr>
-<tr>
-<td>Módulo plástico</td>
-<td><span class="arithmatex">\(S_y\)</span></td>
-<td><span class="arithmatex">\(S_y = \dfrac{d\,b^2 - d'\,b'^2}{4}\)</span></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="calculadora_1">Calculadora</h2>
-<p>Ingresa las dimensiones exteriores e interiores de la sección.</p>
-<div style="background:var(--md-code-bg-color, #f5f5f5); border-radius:8px; padding:1.5rem; max-width:520px;">
-
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem;">
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>d</em> — altura exterior (mm)</span>
-    <input id="hr-d"  type="number" value="200" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>b</em> — ancho exterior (mm)</span>
-    <input id="hr-b"  type="number" value="150" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>d'</em> — altura interior (mm)</span>
-    <input id="hr-di" type="number" value="180" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-  <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-    <span><em>b'</em> — ancho interior (mm)</span>
-    <input id="hr-bi" type="number" value="130" min="1" style="padding:4px 8px;border:1px solid #bbb;border-radius:4px;font-size:1rem;">
-  </label>
-</div>
-
-<button onclick="calcHR()"
-  style="margin-top:1rem;padding:8px 24px;background:#4a90d9;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1rem;">
-  Calcular
-</button>
-
-<div id="hr-results" style="margin-top:1.2rem;"></div>
-</div>
-
-<script>
-function calcHR() {
-  var d  = parseFloat(document.getElementById('hr-d').value);
-  var b  = parseFloat(document.getElementById('hr-b').value);
-  var di = parseFloat(document.getElementById('hr-di').value);
-  var bi = parseFloat(document.getElementById('hr-bi').value);
-
-  if ([d, b, di, bi].some(isNaN) || d <= 0 || b <= 0 || di <= 0 || bi <= 0) {
-    document.getElementById('hr-results').innerHTML =
-      '<p style="color:red;">⚠ Ingresa valores positivos en todos los campos.</p>';
-    return;
-  }
-  if (di >= d || bi >= b) {
-    document.getElementById('hr-results').innerHTML =
-      '<p style="color:red;">⚠ Las dimensiones interiores deben ser menores que las exteriores.</p>';
-    return;
-  }
-
-  var A  = b * d - bi * di;
-  var P  = 2 * (b + d) + 2 * (bi + di);
-  var Ix = (b * Math.pow(d, 3) - bi * Math.pow(di, 3)) / 12;
-  var Iy = (d * Math.pow(b, 3) - di * Math.pow(bi, 3)) / 12;
-  var Ji = Ix + Iy;
-  var rx = Math.sqrt(Ix / A);
-  var ry = Math.sqrt(Iy / A);
-  var Zx = Ix / (d / 2);
-  var Zy = Iy / (b / 2);
-  var Sx = (b * d * d - bi * di * di) / 4;
-  var Sy = (d * b * b - di * bi * bi) / 4;
-
-  function fmt(v, dec) { return v.toLocaleString('es-CL', {maximumFractionDigits: dec}); }
-
-  document.getElementById('hr-results').innerHTML =
-    '<table style="border-collapse:collapse;width:100%;font-size:0.9rem;table-layout:fixed;">' +
-    '<colgroup>' +
-    '<col style="width:38%">' +
-    '<col style="width:14%">' +
-    '<col style="width:30%">' +
-    '<col style="width:18%">' +
-    '</colgroup>' +
-    '<thead><tr style="background:#4a90d9;color:#fff;">' +
-    '<th style="padding:6px 10px;text-align:left;">Propiedad</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Símbolo</th>' +
-    '<th style="padding:6px 10px;text-align:right;">Valor</th>' +
-    '<th style="padding:6px 10px;text-align:left;">Unidad</th>' +
-    '</tr></thead><tbody>' +
-    hrRow('Área',             'A',   fmt(A,  2),  'mm²') +
-    hrRow('Perímetro',        'P',   fmt(P,  2),  'mm')  +
-    hrRow('Centroide',        'ȳ',   fmt(d/2,2),  'mm')  +
-    hrRow('Inercia x–x',      'Iₓ',  fmt(Ix, 0),  'mm⁴') +
-    hrRow('Inercia y–y',      'Iᵧ',  fmt(Iy, 0),  'mm⁴') +
-    hrRow('Inercia polar',    'Jᵢ',  fmt(Ji, 0),  'mm⁴') +
-    hrRow('Radio de giro x',  'rₓ',  fmt(rx, 2),  'mm')  +
-    hrRow('Radio de giro y',  'rᵧ',  fmt(ry, 2),  'mm')  +
-    hrRow('Mód. elástico x',  'Zₓ',  fmt(Zx, 0),  'mm³') +
-    hrRow('Mód. elástico y',  'Zᵧ',  fmt(Zy, 0),  'mm³') +
-    hrRow('Mód. plástico x',  'Sₓ',  fmt(Sx, 0),  'mm³') +
-    hrRow('Mód. plástico y',  'Sᵧ',  fmt(Sy, 0),  'mm³') +
-    '</tbody></table>';
-}
-
-function hrRow(name, sym, val, unit) {
-  return '<tr style="border-bottom:1px solid #ddd;">' +
-    '<td style="padding:5px 10px;">' + name + '</td>' +
-    '<td style="padding:5px 10px;font-style:italic;">' + sym + '</td>' +
-    '<td style="padding:5px 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;">' + val + '</td>' +
-    '<td style="padding:5px 10px;color:#666;">' + unit + '</td>' +
-    '</tr>';
-}
-</script>
-
-<hr />
-<blockquote>
-<p><strong>Nota:</strong> Las fórmulas son válidas para sección rectangular hueca con hueco centrado y paredes rectas (sin radios de esquina). Para perfiles tubulares normalizados (RHS/SHS) con radios de esquina, el área y la inercia reales difieren ligeramente.</p>
-</blockquote>
 
 
 
@@ -2676,7 +2313,7 @@ function hrRow(name, sym, val, unit) {
       <nav class="md-footer__inner md-grid" aria-label="Pie" >
         
           
-          <a href="../IBeam-Simetrico/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Perfil I Simétrico">
+          <a href="../InteraccionPM/" class="md-footer__link md-footer__link--prev" aria-label="Anterior: Interacción P-M">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2686,20 +2323,20 @@ function hrRow(name, sym, val, unit) {
                 Anterior
               </span>
               <div class="md-ellipsis">
-                Perfil I Simétrico
+                Interacción P-M
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../notepad-calculos/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Introducción">
+          <a href="conexion/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Conexión y Desconexión">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Siguiente
               </span>
               <div class="md-ellipsis">
-                Introducción
+                Conexión y Desconexión
               </div>
             </div>
             <div class="md-footer__button md-icon">

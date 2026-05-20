@@ -12,31 +12,31 @@
         <meta name="author" content="Francisco Carrasco">
       
       
-        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/sap2000/MomentoCurvatura/">
+        <link rel="canonical" href="https://fcocarrascob.github.io/herramientas/sap2000/api-python/conexion/">
       
       
         <link rel="prev" href="../">
       
       
-        <link rel="next" href="../InteraccionPM/">
+        <link rel="next" href="../llamadas-api/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Momento-Curvatura — SAP2000 - Ingeniería Estructural</title>
+        <title>API Python SAP2000 — Conexión y Desconexión - Ingeniería Estructural</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +55,7 @@
       
     
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#momento-curvatura-sap2000-section-designer" class="md-skip">
+        <a href="#api-python-sap2000-conexion-y-desconexion" class="md-skip">
           Saltar a contenido
         </a>
       
@@ -96,7 +96,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Cabecera">
-    <a href="../../.." title="Ingeniería Estructural" class="md-header__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
+    <a href="../../../.." title="Ingeniería Estructural" class="md-header__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Momento-Curvatura — SAP2000
+              API Python SAP2000 — Conexión y Desconexión
             
           </span>
         </div>
@@ -214,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../../../.." class="md-tabs__link">
         
   
   
@@ -235,7 +235,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../hormigon/" class="md-tabs__link">
+        <a href="../../../../hormigon/" class="md-tabs__link">
           
   
   
@@ -255,7 +255,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../sismo/" class="md-tabs__link">
+        <a href="../../../../sismo/" class="md-tabs__link">
           
   
   
@@ -275,7 +275,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../estructuras-varias/" class="md-tabs__link">
+        <a href="../../../../estructuras-varias/" class="md-tabs__link">
           
   
   
@@ -297,7 +297,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../" class="md-tabs__link">
+        <a href="../../../" class="md-tabs__link">
           
   
   
@@ -315,7 +315,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../guia-contenido/" class="md-tabs__link">
+      <a href="../../../../guia-contenido/" class="md-tabs__link">
         
   
   
@@ -345,9 +345,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -358,7 +356,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Ingeniería Estructural" class="md-nav__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
+    <a href="../../../.." title="Ingeniería Estructural" class="md-nav__button md-logo" aria-label="Ingeniería Estructural" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -376,7 +374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         
   
   
@@ -455,7 +453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/" class="md-nav__link">
+      <a href="../../../../hormigon/" class="md-nav__link">
         
   
   
@@ -535,7 +533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch7-OneWaySlabs/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch7-OneWaySlabs/" class="md-nav__link">
         
   
   
@@ -563,7 +561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch8-TwoWaySlabs/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch8-TwoWaySlabs/" class="md-nav__link">
         
   
   
@@ -591,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch9-Beams/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch9-Beams/" class="md-nav__link">
         
   
   
@@ -619,7 +617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch10-Columns/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch10-Columns/" class="md-nav__link">
         
   
   
@@ -647,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch11-Walls/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch11-Walls/" class="md-nav__link">
         
   
   
@@ -675,7 +673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch18-SpecialWalls/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch18-SpecialWalls/" class="md-nav__link">
         
   
   
@@ -703,7 +701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch21-PhiFactors/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch21-PhiFactors/" class="md-nav__link">
         
   
   
@@ -731,7 +729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../hormigon/ACI-318-Ch22-SectionalStrength/" class="md-nav__link">
+      <a href="../../../../hormigon/ACI-318-Ch22-SectionalStrength/" class="md-nav__link">
         
   
   
@@ -826,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../sismo/" class="md-nav__link">
+      <a href="../../../../sismo/" class="md-nav__link">
         
   
   
@@ -854,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../sismo/NCh2369/" class="md-nav__link">
+      <a href="../../../../sismo/NCh2369/" class="md-nav__link">
         
   
   
@@ -941,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/" class="md-nav__link">
+      <a href="../../../../estructuras-varias/" class="md-nav__link">
         
   
   
@@ -1021,7 +1019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/estanques-acero/" class="md-nav__link">
+      <a href="../../../../estructuras-varias/estanques-acero/" class="md-nav__link">
         
   
   
@@ -1049,7 +1047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../estructuras-varias/estanques-acero/Calculadora/" class="md-nav__link">
+      <a href="../../../../estructuras-varias/estanques-acero/Calculadora/" class="md-nav__link">
         
   
   
@@ -1149,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../" class="md-nav__link">
+      <a href="../../../" class="md-nav__link">
         
   
   
@@ -1232,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../propiedades-geometricas/" class="md-nav__link">
+      <a href="../../../propiedades-geometricas/" class="md-nav__link">
         
   
   
@@ -1260,7 +1258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../propiedades-geometricas/IBeam-Simetrico/" class="md-nav__link">
+      <a href="../../../propiedades-geometricas/IBeam-Simetrico/" class="md-nav__link">
         
   
   
@@ -1288,7 +1286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../propiedades-geometricas/HollowRectangle/" class="md-nav__link">
+      <a href="../../../propiedades-geometricas/HollowRectangle/" class="md-nav__link">
         
   
   
@@ -1379,7 +1377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/" class="md-nav__link">
+      <a href="../../../notepad-calculos/" class="md-nav__link">
         
   
   
@@ -1407,7 +1405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/MathLiveNotepad/" class="md-nav__link">
+      <a href="../../../notepad-calculos/MathLiveNotepad/" class="md-nav__link">
         
   
   
@@ -1435,7 +1433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notepad-calculos/EjemploVigaACI/" class="md-nav__link">
+      <a href="../../../notepad-calculos/EjemploVigaACI/" class="md-nav__link">
         
   
   
@@ -1471,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../python/" class="md-nav__link">
+      <a href="../../../python/" class="md-nav__link">
         
   
   
@@ -1556,6 +1554,144 @@
   
   
     <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MomentoCurvatura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Momento-Curvatura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../InteraccionPM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interacción P-M
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_5_4" id="__nav_5_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Python
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Python
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../" class="md-nav__link">
         
   
@@ -1600,7 +1736,7 @@
   <span class="md-ellipsis">
     
   
-    Momento-Curvatura
+    Conexión y Desconexión
   
 
     
@@ -1618,7 +1754,7 @@
   <span class="md-ellipsis">
     
   
-    Momento-Curvatura
+    Conexión y Desconexión
   
 
     
@@ -1644,10 +1780,104 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#instrucciones" class="md-nav__link">
+  <a href="#1-el-objeto-raiz-sapobject" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Instrucciones
+        1. El objeto raíz: SapObject
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-modos-de-conexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Modos de conexión
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Modos de conexión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-adjuntarse-a-una-instancia-existente-modo-habitual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Adjuntarse a una instancia existente (modo habitual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-lanzar-una-nueva-instancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Lanzar una nueva instancia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-validar-la-conexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Validar la conexión
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-desconexion-liberar-la-referencia-com" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Desconexión (liberar la referencia COM)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-patron-completo-con-manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Patrón completo con manejo de errores
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-la-clase-sapconnection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. La clase SapConnection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#siguiente-paso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Siguiente paso
       
     </span>
   </a>
@@ -1670,143 +1900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../InteraccionPM/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Interacción P-M
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_5_5_4" id="__nav_5_5_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Python
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_5_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    API Python
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api-python/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Introducción
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api-python/conexion/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Conexión y Desconexión
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api-python/llamadas-api/" class="md-nav__link">
+      <a href="../llamadas-api/" class="md-nav__link">
         
   
   
@@ -1834,7 +1928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-python/backend-template/" class="md-nav__link">
+      <a href="../backend-template/" class="md-nav__link">
         
   
   
@@ -1862,7 +1956,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-python/gui-template/" class="md-nav__link">
+      <a href="../gui-template/" class="md-nav__link">
         
   
   
@@ -1913,7 +2007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guia-contenido/" class="md-nav__link">
+      <a href="../../../../guia-contenido/" class="md-nav__link">
         
   
   
@@ -1941,9 +2035,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1962,10 +2054,104 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#instrucciones" class="md-nav__link">
+  <a href="#1-el-objeto-raiz-sapobject" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Instrucciones
+        1. El objeto raíz: SapObject
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-modos-de-conexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Modos de conexión
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Modos de conexión">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-adjuntarse-a-una-instancia-existente-modo-habitual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Adjuntarse a una instancia existente (modo habitual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-lanzar-una-nueva-instancia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Lanzar una nueva instancia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-validar-la-conexion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Validar la conexión
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-desconexion-liberar-la-referencia-com" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Desconexión (liberar la referencia COM)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-patron-completo-con-manejo-de-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Patrón completo con manejo de errores
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-la-clase-sapconnection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. La clase SapConnection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#siguiente-paso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Siguiente paso
       
     </span>
   </a>
@@ -1986,159 +2172,153 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
 
 
 
-
-<h1 id="momento-curvatura-sap2000-section-designer">Momento-Curvatura — SAP2000 Section Designer</h1>
-<p>Pega los datos exportados del Section Designer de SAP2000 para visualizar el diagrama Momento-Curvatura con momentos factorados.</p>
+<h1 id="api-python-sap2000-conexion-y-desconexion">API Python SAP2000 — Conexión y Desconexión</h1>
+<p>El primer paso para controlar SAP2000 desde Python es obtener una referencia
+al objeto COM principal. Esta página explica cómo conectarse, validar la
+conexión y liberar la referencia al terminar.</p>
 <hr />
-<h2 id="instrucciones">Instrucciones</h2>
-<ol>
-<li>En SAP2000, abre el <strong>Section Designer</strong> y exporta la curva Momento-Curvatura</li>
-<li>Los datos deben tener <strong>4 columnas</strong>: Curvatura · <span class="arithmatex">\(M_n\)</span> Real · <span class="arithmatex">\(M_n\)</span> Ideal · (columna auxiliar)</li>
-<li>Copia y pega en el área de texto (tabulaciones como separador, coma como decimal)</li>
-<li>Ingresa el <strong>Momento Último</strong> <span class="arithmatex">\(M_u\)</span> de diseño en tonf·m</li>
-<li>Presiona <strong>Graficar</strong></li>
-</ol>
+<h2 id="1-el-objeto-raiz-sapobject">1. El objeto raíz: <code>SapObject</code></h2>
+<p>Todo comienza con <code>comtypes.client</code>, que permite obtener el objeto COM
+registrado por SAP2000 con el <code>ProgID</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&quot;CSI.SAP2000.API.SapObject&quot;
+</span></code></pre></div>
+<p>Desde ese objeto se obtiene <code>SapModel</code>, que es la interfaz que se usa para
+todas las operaciones del modelo.</p>
+<hr />
+<h2 id="2-modos-de-conexion">2. Modos de conexión</h2>
+<p>Existen dos modos:</p>
+<table>
+<thead>
+<tr>
+<th>Modo</th>
+<th>Cuándo usarlo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Adjuntarse a instancia existente</strong></td>
+<td>SAP2000 ya está abierto con un modelo cargado</td>
+</tr>
+<tr>
+<td><strong>Lanzar nueva instancia</strong></td>
+<td>Se quiere abrir SAP2000 desde el script sin intervención manual</td>
+</tr>
+</tbody>
+</table>
+<h3 id="21-adjuntarse-a-una-instancia-existente-modo-habitual">2.1 Adjuntarse a una instancia existente (modo habitual)</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">comtypes.client</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Obtiene el objeto COM de la instancia de SAP2000 ya en ejecución</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">sap_object</span> <span class="o">=</span> <span class="n">comtypes</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetActiveObject</span><span class="p">(</span><span class="s2">&quot;CSI.SAP2000.API.SapObject&quot;</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Obtiene la interfaz principal del modelo</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">SapModel</span> <span class="o">=</span> <span class="n">sap_object</span><span class="o">.</span><span class="n">SapModel</span>
+</span></code></pre></div>
 <blockquote>
-<p><strong>Nota:</strong> Los factores <span class="arithmatex">\(\phi\)</span> son fijos: <span class="arithmatex">\(\phi = 0{,}95\)</span> para <span class="arithmatex">\(\phi M_n\)</span> real y <span class="arithmatex">\(\phi = 0{,}90\)</span> para <span class="arithmatex">\(\phi M_n\)</span> ideal.</p>
+<p><strong>Nota:</strong> <code>GetActiveObject</code> lanza <code>OSError</code> si SAP2000 no está abierto.
+Siempre envolver en <code>try/except</code>.</p>
+</blockquote>
+<h3 id="22-lanzar-una-nueva-instancia">2.2 Lanzar una nueva instancia</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">comtypes.client</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">comtypes.gen.SAP2000v1</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Crea el helper de SAP2000 y lanza la aplicación</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">helper</span> <span class="o">=</span> <span class="n">comtypes</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">CreateObject</span><span class="p">(</span><span class="s2">&quot;SAP2000v1.Helper&quot;</span><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">helper</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">QueryInterface</span><span class="p">(</span><span class="n">comtypes</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">SAP2000v1</span><span class="o">.</span><span class="n">cHelper</span><span class="p">)</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">sap_object</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">CreateObjectProgID</span><span class="p">(</span><span class="s2">&quot;CSI.SAP2000.API.SapObject&quot;</span><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">sap_object</span><span class="o">.</span><span class="n">ApplicationStart</span><span class="p">()</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">SapModel</span> <span class="o">=</span> <span class="n">sap_object</span><span class="o">.</span><span class="n">SapModel</span>
+</span></code></pre></div>
+<blockquote>
+<p><strong>Advertencia:</strong> Este modo requiere que la biblioteca de tipos COM de
+SAP2000 (<code>SAP2000v1</code>) esté registrada en el sistema (ocurre automáticamente
+con la instalación de SAP2000).</p>
 </blockquote>
 <hr />
-<div style="background:var(--md-code-bg-color,#f5f5f5);border-radius:8px;padding:1.5rem;margin-bottom:1.2rem;">
-
-  <label style="display:block;font-size:0.9rem;font-weight:600;margin-bottom:0.5rem;">
-    Datos del Section Designer — copiar y pegar desde SAP2000 (TSV, decimal con coma)
-  </label>
-  <textarea id="mc-input" rows="10" spellcheck="false"
-    placeholder="Pegar datos aquí..."
-    style="width:100%;font-family:monospace;font-size:0.85rem;padding:10px;border:1px solid #bbb;border-radius:5px;box-sizing:border-box;resize:vertical;background:var(--md-default-bg-color,#fff);"></textarea>
-
-  <div style="display:flex;align-items:flex-end;gap:1.5rem;margin-top:1rem;flex-wrap:wrap;">
-    <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
-      <span>M<sub>ult</sub> — Momento último (tonf·m)</span>
-      <input id="mc-mult" type="number" value="21.0" step="0.5" min="0"
-        style="padding:5px 10px;border:1px solid #bbb;border-radius:4px;font-size:1rem;width:180px;">
-    </label>
-    <button onclick="plotMC()"
-      style="padding:8px 28px;background:#4a90d9;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1rem;">
-      Graficar
-    </button>
-    <button onclick="clearMC()"
-      style="padding:8px 16px;background:#e0e0e0;color:#333;border:none;border-radius:5px;cursor:pointer;font-size:0.9rem;">
-      Limpiar
-    </button>
-  </div>
-
-</div>
-
-<div id="mc-msg" style="min-height:1.5rem;margin-bottom:0.5rem;"></div>
-<div id="mc-table" style="margin-bottom:1.5rem;"></div>
-<div id="mc-chart" style="max-width:680px;height:580px;border:1px solid #000;border-radius:4px;"></div>
-
-<script>
-(function () {
-
-  function parseTSV(text) {
-    var rows = [];
-    var lines = text.trim().split('\n');
-    for (var i = 0; i < lines.length; i++) {
-      var cols = lines[i].split('\t').map(function (v) {
-        return parseFloat(v.trim().replace(',', '.'));
-      });
-      if (cols.length >= 3 && !isNaN(cols[0]) && !isNaN(cols[1]) && !isNaN(cols[2])) {
-        rows.push(cols);
-      }
-    }
-    return rows;
-  }
-
-  window.plotMC = function () {
-    var text = document.getElementById('mc-input').value;
-    var mUlt = parseFloat(document.getElementById('mc-mult').value);
-    var msg  = document.getElementById('mc-msg');
-    var tbl  = document.getElementById('mc-table');
-    msg.innerHTML = '';
-    tbl.innerHTML = '';
-
-    if (!text.trim()) {
-      msg.innerHTML = '<p style="color:#e74c3c;margin:0;">&#9888; Pega los datos del Section Designer antes de graficar.</p>';
-      return;
-    }
-    if (isNaN(mUlt) || mUlt <= 0) {
-      msg.innerHTML = '<p style="color:#e74c3c;margin:0;">&#9888; Ingresa un valor positivo para M<sub>ult</sub>.</p>';
-      return;
-    }
-
-    var rows = parseTSV(text);
-    if (rows.length < 2) {
-      msg.innerHTML = '<p style="color:#e74c3c;margin:0;">&#9888; No se encontraron suficientes datos válidos. Verifica que el separador sea tabulación y el decimal sea coma o punto.</p>';
-      return;
-    }
-
-    /* Agregar origen (0, 0, 0) al inicio — igual que el notebook */
-    var curv    = [0].concat(rows.map(function (r) { return r[0]; }));
-    var mnReal  = [0].concat(rows.map(function (r) { return r[1] * 0.95; }));
-    var mnIdeal = [0].concat(rows.map(function (r) { return r[2] * 0.90; }));
-    var mUltArr = curv.map(function () { return mUlt; });
-
-    var mYield = mnReal[1];
-    var fu     = mUlt / mYield;
-
-    /* Tabla de resultados */
-    tbl.innerHTML =
-      '<table style="border-collapse:collapse;font-size:0.9rem;">' +
-      '<thead><tr style="background:#4a90d9;color:#fff;">' +
-      '<th style="padding:7px 20px;border:1px solid #3a80c9;">Momento de Fluencia &phi;M<sub>n</sub> (tonf&middot;m)</th>' +
-      '<th style="padding:7px 20px;border:1px solid #3a80c9;">Momento &Uacute;ltimo M<sub>ult</sub> (tonf&middot;m)</th>' +
-      '<th style="padding:7px 20px;border:1px solid #3a80c9;">Factor de Ductilidad FU</th>' +
-      '</tr></thead><tbody><tr style="text-align:center;">' +
-      '<td style="padding:7px 20px;border:1px solid #ddd;">' + mYield.toFixed(2) + '</td>' +
-      '<td style="padding:7px 20px;border:1px solid #ddd;">' + mUlt.toFixed(2) + '</td>' +
-      '<td style="padding:7px 20px;border:1px solid #ddd;font-weight:600;">' + fu.toFixed(2) + '</td>' +
-      '</tr></tbody></table>';
-
-    var traces = [
-      {
-        x: curv, y: mnReal, mode: 'lines',
-        name: '\u03c6M\u2099 Real (' + mYield.toFixed(2) + ' tonf\u00b7m)',
-        line: { color: '#2980b9', width: 2.5 }
-      },
-      {
-        x: curv, y: mnIdeal, mode: 'lines',
-        name: '\u03c6M\u2099 Ideal',
-        line: { color: '#27ae60', width: 2.5, dash: 'dash' }
-      },
-      {
-        x: curv, y: mUltArr, mode: 'lines',
-        name: 'M<sub>ult</sub> = ' + mUlt.toFixed(2) + ' tonf\u00b7m',
-        line: { color: '#e74c3c', width: 2, dash: 'dot' }
-      }
-    ];
-
-    var layout = {
-      title: { text: 'Diagrama Momento-Curvatura', font: { size: 16 } },
-      xaxis: { title: 'Curvatura (1/m)', gridcolor: '#ddd', zeroline: true, zerolinecolor: '#aaa' },
-      yaxis: { title: 'Momento \u03c6M\u2099 (tonf\u00b7m)', gridcolor: '#ddd', zeroline: true, zerolinecolor: '#aaa' },
-      legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#ccc', borderwidth: 1 },
-      margin: { l: 70, r: 30, t: 60, b: 60 },
-      hovermode: 'x unified'
-    };
-
-    Plotly.newPlot('mc-chart', traces, layout, { responsive: true });
-  };
-
-  window.clearMC = function () {
-    document.getElementById('mc-input').value = '';
-    document.getElementById('mc-msg').innerHTML = '';
-    document.getElementById('mc-table').innerHTML = '';
-    var el = document.getElementById('mc-chart');
-    if (el && el._fullLayout) { Plotly.purge(el); }
-  };
-
-}());
-</script>
+<h2 id="3-validar-la-conexion">3. Validar la conexión</h2>
+<p>Tras conectar, conviene verificar la versión y el modelo activo:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Versión de la API</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">version</span> <span class="o">=</span> <span class="n">sap_object</span><span class="o">.</span><span class="n">GetOAPIVersionNumber</span><span class="p">()</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SAP2000 OAPI versión: </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Ruta del modelo activo (cadena vacía si no hay modelo guardado)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">model_path</span> <span class="o">=</span> <span class="n">SapModel</span><span class="o">.</span><span class="n">GetModelFilename</span><span class="p">()</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modelo activo: </span><span class="si">{</span><span class="n">model_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="4-desconexion-liberar-la-referencia-com">4. Desconexión (liberar la referencia COM)</h2>
+<p>Desconectar consiste en liberar las referencias Python al objeto COM.
+<strong>Esto no cierra SAP2000</strong>: sólo hace que Python deje de tener acceso.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Liberar referencias</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">SapModel</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">sap_object</span> <span class="o">=</span> <span class="kc">None</span>
+</span></code></pre></div>
+<blockquote>
+<p><strong>Nota:</strong> En <code>comtypes</code>, al asignar <code>None</code> se decrementa el contador de
+referencias COM. SAP2000 sigue abierto e interactivo para el usuario.</p>
+</blockquote>
+<hr />
+<h2 id="5-patron-completo-con-manejo-de-errores">5. Patrón completo con manejo de errores</h2>
+<p>El patrón recomendado usa <code>try/finally</code> para garantizar la desconexión:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">comtypes.client</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">sap_object</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">SapModel</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="c1"># 1. Conectar</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">sap_object</span> <span class="o">=</span> <span class="n">comtypes</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetActiveObject</span><span class="p">(</span><span class="s2">&quot;CSI.SAP2000.API.SapObject&quot;</span><span class="p">)</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">SapModel</span> <span class="o">=</span> <span class="n">sap_object</span><span class="o">.</span><span class="n">SapModel</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">version</span> <span class="o">=</span> <span class="n">sap_object</span><span class="o">.</span><span class="n">GetOAPIVersionNumber</span><span class="p">()</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Conectado — OAPI v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    <span class="c1"># 2. Operar con SapModel...</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="c1"># ret = SapModel.PropMaterial.SetMaterial(...)</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No se pudo conectar a SAP2000: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error durante la ejecución: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="k">raise</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="k">finally</span><span class="p">:</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="c1"># 3. Siempre desconectar</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="n">SapModel</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">sap_object</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Desconectado.&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="6-la-clase-sapconnection">6. La clase <code>SapConnection</code></h2>
+<p>El template del proyecto encapsula este patrón en la clase <code>SapConnection</code>
+definida en <code>backend_template.py</code>. Usarla directamente evita repetir el código
+de conexión en cada script:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">backend_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">SapConnection</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">SapConnection</span><span class="p">()</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># Conectar</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">attach_to_existing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># result == {&quot;connected&quot;: True, &quot;version&quot;: &quot;...&quot;, &quot;model_path&quot;: &quot;...&quot;}</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;connected&quot;</span><span class="p">]:</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">SapModel</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">sap_model</span>   <span class="c1"># acceso a la interfaz del modelo</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="c1"># ... operar ...</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Desconectar</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="n">conn</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="c1"># conn.sap_model queda None; SAP2000 sigue abierto</span>
+</span></code></pre></div>
+<p>Ver <a href="../backend-template/">Template Backend</a> para la documentación completa
+de <code>SapConnection</code>.</p>
+<hr />
+<h2 id="siguiente-paso">Siguiente paso</h2>
+<p>Con la conexión establecida, el siguiente paso es aprender cómo funcionan
+las llamadas individuales a la API: <a href="../llamadas-api/">Llamadas a la API</a>.</p>
 
 
 
@@ -2151,8 +2331,6 @@
 
 
 
-
-  
 
 
 
@@ -2176,8 +2354,6 @@
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Pie" >
         
           
@@ -2198,13 +2374,13 @@
         
         
           
-          <a href="../InteraccionPM/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Interacción P-M">
+          <a href="../llamadas-api/" class="md-footer__link md-footer__link--next" aria-label="Siguiente: Llamadas a la API">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Siguiente
               </span>
               <div class="md-ellipsis">
-                Interacción P-M
+                Llamadas a la API
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2241,12 +2417,12 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../../javascripts/mathjax.js"></script>
+        <script src="../../../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
