@@ -101,4 +101,10 @@ nav:
       - Introducción: herramientas/sap2000/index.md
       - Momento-Curvatura: herramientas/sap2000/MomentoCurvatura.md
       - Interacción P-M: herramientas/sap2000/InteraccionPM.md
+      - API Python:
+        - Introducción: herramientas/sap2000/api-python/index.md
+        - Conexión y Desconexión: herramientas/sap2000/api-python/conexion.md
+        - Llamadas a la API: herramientas/sap2000/api-python/llamadas-api.md
+        - Template Backend: herramientas/sap2000/api-python/backend-template.md
+        - Template GUI: herramientas/sap2000/api-python/gui-template.md
   - Guía de contenido: guia-contenido.md
