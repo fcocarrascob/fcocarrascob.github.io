@@ -1,0 +1,124 @@
+/* ── Cell animations ─────────────────────────────────────────────────── */
+
+@keyframes cellEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cellExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+    max-height: 0;
+  }
+}
+
+.cell-enter {
+  animation: cellEnter 0.18s ease-out forwards;
+}
+
+.cell-exit {
+  animation: cellExit 0.15s ease-in forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ── KaTeX output styling ─────────────────────────────────────────────── */
+
+.katex-output {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.katex-output .katex {
+  font-size: 0.95em !important;
+}
+
+/* ── CodeMirror dark theme overrides ──────────────────────────────────── */
+
+.dark .cm-editor {
+  background: transparent !important;
+}
+
+.dark .cm-gutters {
+  display: none;
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Variable panel ──────────────────────────────────────────────────── */
+
+.variables-panel {
+  transition: width 200ms ease;
+}
+
+/* ── Text cell markdown-like styling ─────────────────────────────────── */
+
+.text-cell-output h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.text-cell-output h2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.text-cell-output strong {
+  font-weight: 600;
+}
+
+.text-cell-output em {
+  font-style: italic;
+}
+
+/* ── Mobile responsive tweaks ────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .variables-panel {
+    display: none;
+  }
+
+  .toolbar-label {
+    display: none;
+  }
+}

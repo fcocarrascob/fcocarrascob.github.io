@@ -1,6 +1,10 @@
 # MkDocs build output
 site/
 
+# Canvas Notepad (React/Vite) — build output y dependencias
+math-notebook/node_modules/
+docs/canvas-notepad/
+
 # Python
 __pycache__/
 *.py[cod]
