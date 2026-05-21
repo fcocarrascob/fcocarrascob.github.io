@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+# Forzar runtime Node.js 24 en las acciones (depreca Node 20 desde jun 2026)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
       # ── Node: build Canvas Notepad (React/Vite) ─────────────────────────
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: math-notebook/package-lock.json
 
