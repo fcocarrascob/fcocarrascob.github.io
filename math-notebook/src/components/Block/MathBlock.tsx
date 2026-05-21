@@ -3,21 +3,24 @@ import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import type { Cell } from '@/types/notebook'
 
-// ── TypeScript: declarar el web component <math-field> ───────────────────────
-declare global {
+// ── Tipo del elemento <math-field> ───────────────────────────────────────────
+type MathFieldElement = HTMLElement & {
+  value: string
+  getValue: (format: string) => string
+  executeCommand: (cmd: [string, string]) => void
+  focus: () => void
+}
+
+// React 19 usa React.JSX — se augmenta el módulo 'react' en vez de global JSX
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       'math-field': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
+        React.HTMLAttributes<MathFieldElement> & {
           value?: string
           'virtual-keyboard-mode'?: string
         },
-        HTMLElement & {
-          value: string
-          getValue: (format: string) => string
-          executeCommand: (cmd: [string, string]) => void
-          focus: () => void
-        }
+        MathFieldElement
       >
     }
   }
@@ -34,10 +37,7 @@ interface MathBlockProps {
 export function MathBlock({ cell, isDark, isFocused, onChange, onEval }: MathBlockProps) {
   const [editMode, setEditMode] = useState(false)
   const [mathLiveReady, setMathLiveReady] = useState(false)
-  const mfRef = useRef<HTMLElement & {
-    value: string
-    getValue: (fmt: string) => string
-  }>(null)
+  const mfRef = useRef<MathFieldElement>(null)
 
   // ── Cargar MathLive una sola vez ─────────────────────────────────────────
   useEffect(() => {
@@ -126,7 +126,6 @@ export function MathBlock({ cell, isDark, isFocused, onChange, onEval }: MathBlo
     }
 
     return (
-      // @ts-expect-error — web component, no hay tipos exactos disponibles
       <math-field
         ref={mfRef}
         value={cell.content}
