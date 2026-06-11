@@ -1,0 +1,170 @@
+---
+title: "ACI 318-25 Cap. 7 — Losas Unidireccionales"
+description: "Espesor mínimo, refuerzo de flexión, refuerzo por temperatura y retracción, y espaciamientos máximos para losas unidireccionales no pretensadas según ACI 318-25."
+pubDate: 2026-06-11
+tags: ["losas", "aci318", "flexión", "detallado"]
+subsection: "aci318-25"
+chapter: "Cap. 7 — Losas Unidireccionales"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo 7 aplica a losas no pretensadas y pretensadas que trabajan en una dirección:
+losas macizas, nervadas y de cualquier sección transversal donde la relación de luz
+mayor a menor supera 2 (en cuyo caso toda la carga se distribuye en la dirección corta).
+
+Las losas apoyadas directamente sobre el suelo quedan fuera del alcance de este capítulo
+(ver ACI 318-25 Cap. 13).
+
+---
+
+## Espesor mínimo (Tabla 7.3.1.1)
+
+Para losas no pretensadas que **no soportan ni están unidas a particiones u otros elementos
+susceptibles de dañarse por deflexiones grandes**, se puede omitir el cálculo de
+deflexiones si el espesor cumple:
+
+| Condición de apoyo | Espesor mínimo $h$ |
+|--------------------|:------------------:|
+| Simplemente apoyada | $\ell_n / 20$ |
+| Un extremo continuo | $\ell_n / 24$ |
+| Ambos extremos continuos | $\ell_n / 28$ |
+| Ménsula (voladizo) | $\ell_n / 10$ |
+
+Donde $\ell_n$ es la **luz libre** entre apoyos. Los valores de la tabla aplican para
+$f_y = 420\,\text{MPa}$; para otros valores de $f_y$:
+
+<Equation label="Ec. 7.3.1.1">
+$$
+h_{\min} = h_{\text{tabla}} \cdot \left(0.4 + \frac{f_y}{700}\right)
+$$
+</Equation>
+
+<Note type="info">
+Para hormigones de densidad normal ($w_c \approx 2300\,\text{kg/m}^3$) los valores de la
+tabla son directamente aplicables. Para hormigones livianos con $w_c$ entre
+1440 y 1840 kg/m³, los espesores de la tabla se multiplican por el mayor de
+$\bigl(1.65 - 0.0003\,w_c\bigr)$ y 1.09 (Sec. 7.3.1.1.1).
+</Note>
+
+---
+
+## Resistencia requerida
+
+La resistencia de diseño debe satisfacer:
+
+$$
+\phi M_n \geq M_u \qquad \phi V_n \geq V_u
+$$
+
+Para el cálculo de $M_u$ y $V_u$ se utilizan las combinaciones de carga mayoradas de la
+Sec. 5.3. En losas continuas, ACI 318-25 permite usar los **coeficientes de momento
+simplificados** de la Sec. 6.5 cuando se cumplen las condiciones allí indicadas (cargas
+uniformes, al menos dos vanos, vanos similares, etc.).
+
+---
+
+## Resistencia a flexión
+
+La resistencia nominal a flexión por unidad de ancho ($b = 1\,\text{m}$) se calcula
+igual que en vigas rectangulares:
+
+<Equation label="Ec. 22.2.2">
+$$
+M_n = A_s \cdot f_y \cdot \left(d - \frac{a}{2}\right)
+$$
+</Equation>
+
+Donde la profundidad del bloque de compresión equivalente es:
+
+<Equation label="Ec. 22.2.1.1">
+$$
+a = \frac{A_s \cdot f_y}{0.85 \cdot f'_c \cdot b}
+$$
+</Equation>
+
+El factor de reducción es $\phi = 0.90$ para falla controlada por tensión, condición que
+en losas se verifica comprobando que $\varepsilon_t \geq 0.005$ (sección con tensión
+controlada).
+
+---
+
+## Refuerzo mínimo de flexión (Tabla 7.6.1.1)
+
+El área de acero de flexión no puede ser inferior a:
+
+| Acero | $f_y$ (MPa) | $A_{s,\min}$ |
+|-------|:-----------:|:-------------|
+| ASTM A615 Gr 280 | 280 | $0.0020 \cdot b \cdot h$ |
+| ASTM A615/A706 Gr 420 | 420 | $0.0018 \cdot b \cdot h$ |
+| ASTM A615 Gr 550 | 550 | $\dfrac{0.0018 \times 420}{f_y} \cdot b \cdot h \geq 0.0014\,bh$ |
+
+<Note type="warning" title="$h$ vs $d$ en refuerzo mínimo">
+$A_{s,\min}$ se calcula con el espesor total $h$, **no** con el peralte efectivo $d$.
+Este es un punto frecuente de confusión al pasar de vigas (donde se usa $b_w \cdot d$) a losas.
+</Note>
+
+---
+
+## Refuerzo por temperatura y retracción (Sec. 7.6.4)
+
+Perpendicular al refuerzo de flexión principal se debe colocar refuerzo de temperatura
+y retracción con las mismas cuantías mínimas de la Tabla 7.6.1.1. Este refuerzo no
+requiere cálculo adicional de resistencia, solo cumplir las cuantías mínimas.
+
+<Note type="tip" title="Losas en una dirección apoyadas en muros paralelos">
+En losas simplemente apoyadas en los cuatro bordes que trabajan unidireccionalmente
+(relación $\ell_2/\ell_1 > 2$), el refuerzo de temperatura actúa en la dirección
+larga y debe satisfacer los mismos requisitos de espaciamiento máximo.
+</Note>
+
+---
+
+## Espaciamientos máximos (Sec. 7.7.2)
+
+### Refuerzo de flexión principal
+
+<Equation label="Sec. 7.7.2.1">
+$$
+s \leq \min(3h,\; 450\,\text{mm})
+$$
+</Equation>
+
+### Refuerzo de temperatura y retracción
+
+<Equation label="Sec. 7.7.2.3">
+$$
+s \leq \min(5h,\; 450\,\text{mm})
+$$
+</Equation>
+
+---
+
+## Recubrimiento mínimo (Tabla 20.6.1.3)
+
+Para losas no expuestas a la intemperie ni en contacto con el suelo:
+
+| Diámetro de barra | Recubrimiento |
+|:-----------------:|:-------------:|
+| $\leq$ No. 11 (Ø36 mm) | 20 mm |
+
+El recubrimiento se mide desde la cara exterior del hormigón hasta la cara de la barra
+más cercana (sin incluir la armadura transversal si la hay).
+
+---
+
+## Resumen de verificaciones para losas unidireccionales
+
+| Verificación | Requisito |
+|--------------|-----------|
+| Espesor mínimo | Tabla 7.3.1.1 o cálculo de deflexión (Cap. 24) |
+| Resistencia a flexión | $\phi M_n \geq M_u$ con $\phi = 0.90$ |
+| Refuerzo mínimo de flexión | Tabla 7.6.1.1 (función de $f_y$) |
+| Refuerzo de temperatura | Ídem mínimo de flexión, dirección perpendicular |
+| Espaciamiento flexión | $s \leq \min(3h,\, 450\,\text{mm})$ |
+| Espaciamiento temperatura | $s \leq \min(5h,\, 450\,\text{mm})$ |
+| Cortante | $\phi V_c \geq V_u$ (generalmente no requiere estribos) |
+| Recubrimiento | 20 mm para barras ≤ No. 11 en ambiente interior |
