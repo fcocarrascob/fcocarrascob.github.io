@@ -1,0 +1,241 @@
+---
+title: "ACI 318-25 Cap. 9 — Vigas"
+description: "Espesor mínimo, resistencia a flexión y cortante, refuerzo mínimo y máximo, límites de deformación, refuerzo transversal, torsión y detallado para vigas no pretensadas según ACI 318-25."
+pubDate: 2026-06-11
+tags: ["vigas", "aci318", "flexión", "cortante", "torsión", "detallado"]
+subsection: "aci318-25"
+chapter: "Cap. 9 — Vigas"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo 9 aplica a vigas no pretensadas y pretensadas, incluyendo:
+
+- Vigas que forman parte de pórticos o sistemas de losas con vigas.
+- Vigas compuestas de hormigón (Cap. 9 junto con Sec. 16.4).
+- Viguetas (sistemas nervados de la Sec. 9.8), que tienen disposiciones particulares de
+  geometría y cortante.
+
+Las vigas se diseñan para resistir simultáneamente **flexión**, **cortante** y, cuando
+corresponde, **torsión** y **carga axial**.
+
+---
+
+## Espesor mínimo (Tabla 9.3.1.1)
+
+Para vigas no pretensadas que **no soportan ni están unidas a particiones u otros elementos
+susceptibles de dañarse por deflexiones grandes**, se puede omitir el cálculo de
+deflexiones si la altura total cumple:
+
+| Condición de apoyo | Altura mínima $h$ |
+|--------------------|:------------------:|
+| Simplemente apoyada | $\ell / 16$ |
+| Un extremo continuo | $\ell / 18.5$ |
+| Ambos extremos continuos | $\ell / 21$ |
+| Ménsula (voladizo) | $\ell / 8$ |
+
+Los valores aplican para $f_y = 420\,\text{MPa}$ y hormigón de densidad normal; para otros
+$f_y$ se multiplican por $\left(0.4 + f_y/700\right)$. Para hormigón liviano se aplica el
+factor de la Sec. 9.3.1.1.1.
+
+<Note type="info">
+A diferencia de las losas (Cap. 7), en vigas la tabla usa la **luz $\ell$** según se
+define en la Sec. 9.3.1.1, no la luz libre $\ell_n$.
+</Note>
+
+---
+
+## Resistencia requerida
+
+La resistencia de diseño debe satisfacer en todas las secciones:
+
+$$
+\phi M_n \geq M_u \qquad \phi V_n \geq V_u \qquad \phi T_n \geq T_u
+$$
+
+Las solicitaciones $M_u$, $V_u$, $T_u$ se obtienen de las combinaciones mayoradas de la
+Sec. 5.3.
+
+---
+
+## Resistencia a flexión
+
+Para una sección rectangular con refuerzo de tracción:
+
+<Equation label="Ec. 22.2.2">
+$$
+M_n = A_s \cdot f_y \cdot \left(d - \frac{a}{2}\right)
+\qquad
+a = \frac{A_s \cdot f_y}{0.85 \cdot f'_c \cdot b}
+$$
+</Equation>
+
+### Factor de reducción según deformación (Tabla 21.2.2)
+
+El factor $\phi$ depende de la deformación neta de tracción $\varepsilon_t$ en el acero
+más alejado:
+
+| Clasificación | $\varepsilon_t$ | $\phi$ |
+|---------------|:---------------:|:------:|
+| Controlada por compresión | $\leq \varepsilon_{ty}$ | 0.65 (estribos) / 0.75 (zunchos) |
+| Transición | $\varepsilon_{ty} < \varepsilon_t < \varepsilon_{ty}+0.003$ | interpolación lineal |
+| Controlada por tracción | $\geq \varepsilon_{ty}+0.003$ | 0.90 |
+
+donde $\varepsilon_{ty} = f_y / E_s$. Para acero Gr 420, $\varepsilon_{ty} \approx 0.0021$
+y el límite de tracción controlada es $\varepsilon_t \geq 0.005$.
+
+<Note type="warning" title="Límite de deformación en vigas (Sec. 9.3.3.1)">
+Las vigas no pretensadas con carga axial mayorada $< 0.10 f'_c A_g$ deben diseñarse con
+$\varepsilon_t \geq \varepsilon_{ty} + 0.003$ (controladas por tracción). Esto obliga a
+secciones dúctiles y evita fallas frágiles por aplastamiento del hormigón.
+</Note>
+
+---
+
+## Refuerzo mínimo de flexión (Sec. 9.6.1.2)
+
+El área de tracción no puede ser inferior al mayor de:
+
+<Equation label="Ec. 9.6.1.2">
+$$
+A_{s,\min} = \max\left(
+\frac{0.25\sqrt{f'_c}}{f_y}\, b_w d
+\; ,\;
+\frac{1.4}{f_y}\, b_w d
+\right)
+$$
+</Equation>
+
+No se exige $A_{s,\min}$ si el refuerzo provisto supera en un tercio al requerido por
+análisis (Sec. 9.6.1.3).
+
+---
+
+## Refuerzo máximo
+
+El límite máximo se impone indirectamente a través del requisito de ductilidad: como las
+vigas deben ser controladas por tracción ($\varepsilon_t \geq \varepsilon_{ty}+0.003$), la
+cuantía queda acotada. Equivale a limitar la profundidad del eje neutro a
+$c/d_t \leq 0.375$ para acero Gr 420.
+
+---
+
+## Resistencia a cortante (Cap. 22)
+
+La resistencia nominal combina la contribución del hormigón y del refuerzo transversal:
+
+<Equation label="Ec. 22.5.1.1">
+$$
+V_n = V_c + V_s \qquad \phi V_n \geq V_u \quad (\phi = 0.75)
+$$
+</Equation>
+
+### Contribución del hormigón (Tabla 22.5.5.1)
+
+Para elementos no pretensados sin fuerza axial, $V_c$ es el menor entre las expresiones que
+incorporan la cuantía de refuerzo longitudinal $\rho_w$ y el efecto de tamaño:
+
+<Equation label="Ec. 22.5.5.1">
+$$
+V_c = \left(0.66\,\lambda\,(\rho_w)^{1/3}\sqrt{f'_c} + \frac{N_u}{6 A_g}\right) b_w d
+$$
+</Equation>
+
+con el factor de tamaño $\lambda_s = \sqrt{2/(1+0.004 d)} \leq 1.0$ aplicado cuando no hay
+estribos mínimos. (En la edición 25 se mantiene el enfoque ACI 318-19 que incorpora $\rho_w$
+en lugar del clásico $0.17\sqrt{f'_c}$.)
+
+### Contribución de los estribos (Ec. 22.5.10.5.3)
+
+<Equation label="Ec. 22.5.10.5.3">
+$$
+V_s = \frac{A_v \, f_{yt} \, d}{s}
+$$
+</Equation>
+
+donde $A_v$ es el área de las ramas de estribo, $f_{yt}$ su límite elástico y $s$ el
+espaciamiento. La resistencia $V_s$ está limitada a $V_s \leq 0.66\sqrt{f'_c}\,b_w d$.
+
+---
+
+## Refuerzo transversal mínimo (Sec. 9.6.3)
+
+Se requiere refuerzo de cortante mínimo cuando $V_u > 0.5\,\phi V_c$:
+
+<Equation label="Ec. 9.6.3.4">
+$$
+A_{v,\min} = \max\left(
+0.062\sqrt{f'_c}\,\frac{b_w s}{f_{yt}}
+\;,\;
+0.35\,\frac{b_w s}{f_{yt}}
+\right)
+$$
+</Equation>
+
+### Espaciamiento máximo de estribos (Tabla 9.7.6.2.2)
+
+| $V_s$ | $s_{\max}$ (el menor) |
+|-------|:--------------------:|
+| $\leq 0.33\sqrt{f'_c}\,b_w d$ | $\min(d/2,\; 600\,\text{mm})$ |
+| $> 0.33\sqrt{f'_c}\,b_w d$ | $\min(d/4,\; 300\,\text{mm})$ |
+
+---
+
+## Torsión (Cap. 22.7)
+
+La torsión puede despreciarse si el momento torsor mayorado es menor que el umbral de
+fisuración por torsión:
+
+<Equation label="Ec. 22.7.4.1">
+$$
+T_u \leq \phi\,\lambda\sqrt{f'_c}\left(\frac{A_{cp}^2}{p_{cp}}\right)
+$$
+</Equation>
+
+donde $A_{cp}$ es el área encerrada por el perímetro exterior y $p_{cp}$ ese perímetro.
+Cuando se supera, se dimensiona refuerzo transversal cerrado (estribos) **y** longitudinal
+para resistir la torsión, combinados con los del cortante y la flexión.
+
+<Note type="tip" title="Torsión de equilibrio vs. compatibilidad">
+Si la torsión es necesaria para el equilibrio, debe diseñarse íntegra. Si proviene de la
+compatibilidad de deformaciones (estructura hiperestática), $T_u$ puede reducirse al valor
+de fisuración $\phi\,\lambda\sqrt{f'_c}\,(A_{cp}^2/p_{cp})$ y redistribuir.
+</Note>
+
+---
+
+## Refuerzo longitudinal de piel (Sec. 9.7.2.3)
+
+En vigas con $h > 900\,\text{mm}$ se debe disponer refuerzo de piel cerca de las caras
+laterales en la zona de tracción, distribuido en una altura $h/2$ desde la armadura de
+tracción, para controlar la fisuración.
+
+---
+
+## Detallado del refuerzo
+
+- **Recubrimiento mínimo (Tabla 20.5.1.3):** 40 mm para vigas no expuestas a la intemperie
+  (cara de estribos), 20 mm para barras principales en ambiente interior según el caso.
+- **Refuerzo de integridad estructural (Sec. 9.7.7):** en vigas perimetrales, al menos un
+  cuarto del acero positivo y dos barras continuas, con estribos cerrados a lo largo del vano.
+- **Espaciamiento libre entre barras (Sec. 25.2):** $\geq \max(25\,\text{mm},\, d_b,\, 4/3\,d_{agg})$.
+
+---
+
+## Resumen de verificaciones para vigas
+
+| Verificación | Requisito |
+|--------------|-----------|
+| Altura mínima | Tabla 9.3.1.1 o cálculo de deflexión (Cap. 24) |
+| Ductilidad | $\varepsilon_t \geq \varepsilon_{ty} + 0.003$ (Sec. 9.3.3.1) |
+| Resistencia a flexión | $\phi M_n \geq M_u$, $\phi$ según Tabla 21.2.2 |
+| Refuerzo mínimo de flexión | $\max(0.25\sqrt{f'_c}/f_y,\; 1.4/f_y)\,b_w d$ |
+| Resistencia a cortante | $\phi V_n = \phi(V_c+V_s) \geq V_u$, $\phi=0.75$ |
+| Estribos mínimos | Si $V_u > 0.5\phi V_c$ (Sec. 9.6.3) |
+| Espaciamiento de estribos | Tabla 9.7.6.2.2 |
+| Torsión | $T_u \leq \phi\lambda\sqrt{f'_c}(A_{cp}^2/p_{cp})$ o diseñar |
+| Refuerzo de piel | Si $h > 900$ mm (Sec. 9.7.2.3) |
+| Integridad estructural | Barras continuas y estribos cerrados (Sec. 9.7.7) |
