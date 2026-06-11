@@ -1,0 +1,246 @@
+---
+title: "ACI 318-25 Cap. 8 — Losas Bidireccionales"
+description: "Espesor mínimo, métodos de análisis, refuerzo de flexión, transferencia de momento y cortante por punzonamiento para losas en dos direcciones no pretensadas según ACI 318-25."
+pubDate: 2026-06-11
+tags: ["losas", "aci318", "flexión", "punzonamiento", "detallado"]
+subsection: "aci318-25"
+chapter: "Cap. 8 — Losas Bidireccionales"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo 8 aplica a losas no pretensadas y pretensadas que trabajan en **dos
+direcciones**, incluyendo:
+
+- Losas macizas apoyadas sobre vigas en todos sus bordes.
+- Losas planas (*flat plates*) apoyadas directamente sobre columnas, sin vigas ni capiteles.
+- Losas planas con ábacos o capiteles (*flat slabs*).
+- Losas nervadas en dos direcciones (reticulares o *waffle slabs*).
+
+Una losa trabaja en dos direcciones cuando la relación de luces (mayor a menor) es
+**$\leq 2$**, repartiéndose la carga en ambas direcciones. Cuando la relación supera 2,
+la losa se diseña como unidireccional (Cap. 7).
+
+---
+
+## Espesor mínimo
+
+El control de deflexiones se satisface respetando un espesor mínimo que depende de la
+presencia de vigas de borde, caracterizada por la rigidez relativa $\alpha_f$ (relación
+entre la rigidez a flexión de la viga y la de la losa de ancho tributario).
+
+### Losas sin vigas interiores (Tabla 8.3.1.1)
+
+Para losas planas y losas planas con ábacos, el espesor mínimo es función de la luz libre
+$\ell_n$ (en la dirección larga) y de $f_y$:
+
+| Sistema | Sin ábacos | Con ábacos |
+|---------|:----------:|:----------:|
+| Paños exteriores sin vigas de borde | $\ell_n / 30$ | $\ell_n / 33$ |
+| Paños exteriores con vigas de borde | $\ell_n / 33$ | $\ell_n / 36$ |
+| Paños interiores | $\ell_n / 33$ | $\ell_n / 36$ |
+
+Los valores aplican para $f_y = 420\,\text{MPa}$; para otros $f_y$ se multiplican por
+$\left(0.8 + f_y/1400\right)$. Además, el espesor no puede ser menor que:
+
+- 125 mm en losas sin ábacos.
+- 100 mm en losas con ábacos.
+
+### Losas con vigas en todos los bordes (Sec. 8.3.1.2)
+
+Cuando hay vigas entre los apoyos en todos los lados, el espesor mínimo se rige por el
+promedio de rigideces $\alpha_{fm}$:
+
+<Equation label="Ec. 8.3.1.2">
+$$
+h = \frac{\ell_n \left(0.8 + \dfrac{f_y}{1400}\right)}{36 + 9\beta}
+$$
+</Equation>
+
+donde $\beta$ es la relación entre la luz libre larga y la corta. Esta expresión aplica
+cuando $\alpha_{fm} > 2.0$; para $0.2 < \alpha_{fm} \leq 2.0$ se usa $36 + 5\beta(\alpha_{fm}-0.2)$
+en el denominador (con $h \geq 125$ mm), y para $\alpha_{fm} \leq 0.2$ rige la Tabla 8.3.1.1.
+
+<Note type="info">
+$\alpha_{fm}$ es el valor medio de $\alpha_f$ de todas las vigas que rodean el paño.
+Para losas planas (sin vigas) $\alpha_{fm} = 0$ y siempre gobierna la Tabla 8.3.1.1.
+</Note>
+
+---
+
+## Métodos de análisis
+
+ACI 318-25 admite varios procedimientos para determinar los momentos de diseño:
+
+- **Método directo de diseño (MDD)** — repartición tabulada de momentos, válido solo si
+  se cumplen las limitaciones geométricas y de carga de la Sec. 8.10 (mínimo tres vanos
+  en cada dirección, paños rectangulares con relación $\leq 2$, cargas uniformes con
+  $L \leq 2D$, etc.).
+- **Método del pórtico equivalente** — modela la estructura como pórticos en cada dirección.
+- **Análisis por elementos finitos o métodos de la teoría de la elasticidad/plasticidad.**
+
+En cualquier caso, los momentos totales estáticos se distribuyen entre las **franjas de
+columna** y las **franjas centrales**.
+
+### Momento estático total (Sec. 8.10.3)
+
+<Equation label="Ec. 8.10.3.2">
+$$
+M_o = \frac{q_u \, \ell_2 \, \ell_n^2}{8}
+$$
+</Equation>
+
+donde $q_u$ es la carga mayorada por unidad de área, $\ell_2$ el ancho del paño
+perpendicular a la dirección analizada y $\ell_n$ la luz libre en la dirección del momento
+(no menor que $0.65\,\ell_1$).
+
+---
+
+## Resistencia a flexión
+
+Cada franja se arma para su momento mayorado, igual que en una losa unidireccional:
+
+<Equation label="Ec. 22.2.2">
+$$
+M_n = A_s \cdot f_y \cdot \left(d - \frac{a}{2}\right)
+\qquad
+a = \frac{A_s \cdot f_y}{0.85 \cdot f'_c \cdot b}
+$$
+</Equation>
+
+con $\phi = 0.90$ para secciones controladas por tensión ($\varepsilon_t \geq 0.005$).
+
+---
+
+## Refuerzo mínimo de flexión (Sec. 8.6.1.1)
+
+El refuerzo mínimo en cada dirección coincide con las cuantías de retracción y temperatura
+de la Tabla 24.4.3.2, calculadas con el **espesor total $h$**:
+
+| Acero | $f_y$ (MPa) | $A_{s,\min}$ |
+|-------|:-----------:|:-------------|
+| ASTM A615 Gr 280 | 280 | $0.0020 \cdot b \cdot h$ |
+| ASTM A615/A706 Gr 420 | 420 | $0.0018 \cdot b \cdot h$ |
+| ASTM A615 Gr 550 | 550 | $\dfrac{0.0018 \times 420}{f_y} \cdot b \cdot h \geq 0.0014\,bh$ |
+
+<Note type="warning" title="$h$ vs $d$ en refuerzo mínimo">
+Al igual que en losas unidireccionales, $A_{s,\min}$ se calcula con el espesor total $h$,
+no con el peralte efectivo $d$.
+</Note>
+
+---
+
+## Espaciamiento máximo del refuerzo (Sec. 8.7.2.2)
+
+En las secciones críticas de momento positivo y negativo el espaciamiento no puede exceder:
+
+<Equation label="Sec. 8.7.2.2">
+$$
+s \leq \min(2h,\; 450\,\text{mm})
+$$
+</Equation>
+
+<Note type="tip">
+Nótese que el límite es más estricto que en losas unidireccionales ($3h$), reflejando la
+necesidad de un mejor control de fisuras en las zonas de momento concentrado alrededor
+de las columnas.
+</Note>
+
+---
+
+## Transferencia de momento losa-columna (Sec. 8.4.2.3)
+
+En el nudo losa-columna, una fracción del momento desbalanceado $M_{sc}$ se transfiere por
+**flexión** y el resto por **excentricidad del cortante** (punzonamiento). La fracción
+transferida por flexión es:
+
+<Equation label="Ec. 8.4.2.3.2">
+$$
+\gamma_f = \frac{1}{1 + \dfrac{2}{3}\sqrt{\dfrac{b_1}{b_2}}}
+$$
+</Equation>
+
+y la transferida por cortante $\gamma_v = 1 - \gamma_f$. Aquí $b_1$ y $b_2$ son las
+dimensiones del perímetro crítico paralela y perpendicular a la dirección del momento.
+
+---
+
+## Cortante por punzonamiento (Sec. 22.6)
+
+En losas planas el modo de falla crítico es el **punzonamiento** alrededor de las columnas.
+La verificación se realiza en un perímetro crítico $b_o$ situado a $d/2$ de la cara del
+apoyo:
+
+$$
+\phi V_c \geq V_u \qquad \phi = 0.75
+$$
+
+La resistencia $V_c$ (para losas sin refuerzo de cortante) es el menor de:
+
+<Equation label="Tabla 22.6.5.2">
+$$
+V_c = \min
+\begin{cases}
+0.33\,\lambda_s\,\lambda\sqrt{f'_c}\; b_o d \\[4pt]
+0.17\left(1 + \dfrac{2}{\beta}\right)\lambda_s\,\lambda\sqrt{f'_c}\; b_o d \\[4pt]
+0.083\left(2 + \dfrac{\alpha_s d}{b_o}\right)\lambda_s\,\lambda\sqrt{f'_c}\; b_o d
+\end{cases}
+$$
+</Equation>
+
+donde $\beta$ es la relación de lados de la columna, $\alpha_s$ vale 40 (interior), 30
+(borde) o 20 (esquina), y $\lambda_s$ es el factor de efecto de tamaño:
+
+<Equation label="Ec. 22.5.5.1.3">
+$$
+\lambda_s = \sqrt{\frac{2}{1 + 0.004\,d}} \leq 1.0
+$$
+</Equation>
+
+<Note type="warning" title="Cortante combinado con momento">
+Cuando hay transferencia de momento, la tensión de cortante máxima en el perímetro crítico
+combina el cortante directo $V_u$ y la parte $\gamma_v M_{sc}$, y debe compararse con
+$\phi v_c$ (tensión, no fuerza). Es la verificación que suele gobernar el espesor de las
+losas planas.
+</Note>
+
+Si $V_u$ supera $\phi V_c$, se puede aumentar $h$, añadir ábacos/capiteles, o disponer
+refuerzo de cortante (estribos, pernos con cabeza *headed studs*).
+
+---
+
+## Refuerzo de integridad estructural (Sec. 8.7.4.2)
+
+Para prevenir el colapso progresivo, al menos dos barras inferiores en cada dirección deben
+ser continuas a través del núcleo de la columna (o ancladas en apoyos exteriores). Este
+refuerzo asegura que, tras una falla local de punzonamiento, la losa quede "colgada" de
+las barras inferiores.
+
+---
+
+## Recubrimiento mínimo (Tabla 20.5.1.3)
+
+Para losas no expuestas a la intemperie ni en contacto con el suelo:
+
+| Diámetro de barra | Recubrimiento |
+|:-----------------:|:-------------:|
+| $\leq$ No. 11 (Ø36 mm) | 20 mm |
+
+---
+
+## Resumen de verificaciones para losas bidireccionales
+
+| Verificación | Requisito |
+|--------------|-----------|
+| Espesor mínimo | Tabla 8.3.1.1 (planas) o Ec. 8.3.1.2 (con vigas) |
+| Análisis de momentos | MDD (Sec. 8.10), pórtico equivalente o FEM |
+| Resistencia a flexión | $\phi M_n \geq M_u$ con $\phi = 0.90$ |
+| Refuerzo mínimo | Tabla 24.4.3.2 (función de $f_y$), con $b \cdot h$ |
+| Espaciamiento | $s \leq \min(2h,\, 450\,\text{mm})$ |
+| Transferencia de momento | $\gamma_f$ por flexión, $\gamma_v$ por cortante |
+| Punzonamiento | $\phi V_c \geq V_u$ con $\phi = 0.75$ |
+| Integridad estructural | Barras inferiores continuas por la columna (Sec. 8.7.4) |
+| Recubrimiento | 20 mm para barras ≤ No. 11 en ambiente interior |
