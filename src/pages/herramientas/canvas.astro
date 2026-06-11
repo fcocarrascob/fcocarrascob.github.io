@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
+import MathCanvas from '../../components/canvas/MathCanvas.tsx';
+
+const title = 'Canvas matemático';
+const description =
+  'Lienzo de nodos conectados para armar cálculos reactivos con unidades (math.js). Útil para checks de ACI/Eurocódigo.';
+---
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+    <header class="mb-4">
+      <h1 class="text-2xl font-semibold text-ink">Canvas matemático</h1>
+      <p class="mt-1 text-sm text-muted">
+        Conecta <strong>entradas</strong> (valor + unidad) a <strong>fórmulas</strong>
+        (expresiones math.js) y muéstralas en <strong>salidas</strong>. El cálculo es
+        reactivo y verifica la coherencia de unidades.
+      </p>
+    </header>
+    <div class="h-[70vh] w-full overflow-hidden rounded-lg border border-border bg-white">
+      <MathCanvas client:only="react" />
+    </div>
+    <p class="mt-3 text-xs text-muted">
+      Ejemplo: entrada <code>fy = 420 MPa</code>, <code>As = 1000 mm^2</code>,
+      <code>d = 450 mm</code>; fórmula <code>Mn = As*fy*d</code>; salida en <code>kN*m</code>.
+      Arrastra desde el punto derecho de un nodo al izquierdo de otro para conectarlos.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>

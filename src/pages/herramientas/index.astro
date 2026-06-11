@@ -1,0 +1,31 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+
+const tools = [
+  {
+    href: '/herramientas/canvas',
+    title: 'Canvas matemático',
+    description:
+      'Lienzo de nodos conectados para cálculos reactivos con unidades. Arma checks de ACI/Eurocódigo visualmente.',
+  },
+];
+---
+<PageLayout title="Herramientas" description="Utilidades interactivas de cálculo estructural">
+  <div class="prose prose-slate max-w-none">
+    <h1>Herramientas</h1>
+    <p>Utilidades interactivas para apoyar el cálculo estructural.</p>
+  </div>
+  <ul class="mt-6 grid gap-4 not-prose">
+    {tools.map(({ href, title, description }) => (
+      <li>
+        <a
+          href={href}
+          class="block rounded-lg border border-border bg-surface p-4 transition-colors hover:border-accent"
+        >
+          <h2 class="font-semibold text-ink">{title}</h2>
+          <p class="mt-1 text-sm text-muted">{description}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+</PageLayout>

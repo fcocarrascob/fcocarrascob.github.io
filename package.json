@@ -13,9 +13,14 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
+    "@astrojs/react": "^5.0.7",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.0",
+    "@xyflow/react": "^12.11.0",
     "astro": "^6.4.6",
+    "mathjs": "^15.2.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.3.0"
