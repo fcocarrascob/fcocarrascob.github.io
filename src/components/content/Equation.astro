@@ -1,0 +1,19 @@
+---
+interface Props {
+  label?: string;
+  id?: string;
+}
+
+const { label, id } = Astro.props;
+---
+<div
+  id={id}
+  class="my-6 flex items-center gap-4 overflow-x-auto"
+>
+  <div class="flex-1 flex justify-center">
+    <slot />
+  </div>
+  {label && (
+    <span class="shrink-0 text-sm text-muted font-medium">({label})</span>
+  )}
+</div>

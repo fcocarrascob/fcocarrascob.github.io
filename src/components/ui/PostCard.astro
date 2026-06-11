@@ -1,0 +1,39 @@
+---
+import TagPill from './TagPill.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  href: string;
+  tags: string[];
+  norm?: string;
+  section?: string;
+}
+
+const { title, description, pubDate, href, tags, norm, section } = Astro.props;
+
+const dateFormatter = new Intl.DateTimeFormat('es-CL', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+<article class="py-6 border-b border-border last:border-0">
+  <div class="flex items-center gap-3 mb-2 text-sm text-muted">
+    <time datetime={pubDate.toISOString()}>{dateFormatter.format(pubDate)}</time>
+    {section && <span>&middot; {section}</span>}
+    {norm && <span class="text-accent">{norm}</span>}
+  </div>
+  <a href={href} class="group">
+    <h2 class="text-lg font-semibold text-ink group-hover:text-accent transition-colors mb-1">
+      {title}
+    </h2>
+  </a>
+  <p class="text-muted text-sm leading-relaxed mb-3">{description}</p>
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-1.5">
+      {tags.map((tag) => <TagPill tag={tag} />)}
+    </div>
+  )}
+</article>

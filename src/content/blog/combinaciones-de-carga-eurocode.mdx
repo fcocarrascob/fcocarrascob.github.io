@@ -1,0 +1,89 @@
+---
+title: "Combinaciones de Carga según Eurocode — ELU"
+description: "Formulación de las combinaciones de acciones para el Estado Límite Último (ELU) según EN 1990 y factores parciales de seguridad."
+pubDate: 2026-06-11
+tags: ["cargas", "eurocode", "ELU"]
+norm: "EN 1990"
+section: "Bases de Diseño"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Principio de verificación
+
+El diseño en Estado Límite Último (ELU) requiere que el efecto de las acciones de diseño no supere la resistencia de diseño:
+
+$$
+E_d \leq R_d
+$$
+
+Los efectos de las acciones se calculan aplicando combinaciones de carga con factores parciales que amplifican las solicitaciones.
+
+## Combinación fundamental (Ec. 6.10)
+
+Para situaciones persistentes y transitorias, la combinación fundamental es:
+
+<Equation label="Ec. 6.10">
+$$
+\sum_j \gamma_{G,j} \cdot G_{k,j} \;+\; \gamma_P \cdot P \;+\; \gamma_{Q,1} \cdot Q_{k,1} \;+\; \sum_{i>1} \gamma_{Q,i} \cdot \psi_{0,i} \cdot Q_{k,i}
+$$
+</Equation>
+
+Donde:
+
+| Símbolo | Definición |
+|---------|------------|
+| $G_{k,j}$ | Valor característico de la acción permanente $j$ |
+| $Q_{k,1}$ | Valor característico de la acción variable **dominante** |
+| $Q_{k,i}$ | Valor característico de acciones variables **acompañantes** |
+| $\psi_{0,i}$ | Factor de combinación de la acción variable $i$ |
+| $P$ | Fuerza de pretensado representativa |
+
+## Factores parciales de seguridad
+
+Los valores recomendados por EN 1990 para el conjunto STR/GEO son:
+
+| Acción | Símbolo | Desfavorable | Favorable |
+|--------|---------|:------------:|:---------:|
+| Permanente | $\gamma_G$ | 1.35 | 1.00 |
+| Variable | $\gamma_Q$ | 1.50 | 0.00 |
+| Pretensado | $\gamma_P$ | 1.30 | 1.00 |
+
+<Note type="tip">
+Los valores de $\psi_0$, $\psi_1$ y $\psi_2$ para distintas categorías de uso (vivienda, oficinas, cubiertas, nieve, viento, etc.) se encuentran en la **Tabla A1.1** del Anexo A1 de EN 1990.
+</Note>
+
+## Combinaciones alternativas (Ec. 6.10a / 6.10b)
+
+Como alternativa a la Ec. 6.10, EN 1990 permite utilizar el par de ecuaciones más restrictivo:
+
+<Equation label="Ec. 6.10a">
+$$
+\sum_j \gamma_{G,j} \cdot G_{k,j} \;+\; \gamma_P \cdot P \;+\; \gamma_{Q,1} \cdot \psi_{0,1} \cdot Q_{k,1} \;+\; \sum_{i>1} \gamma_{Q,i} \cdot \psi_{0,i} \cdot Q_{k,i}
+$$
+</Equation>
+
+<Equation label="Ec. 6.10b">
+$$
+\sum_j \xi_j \cdot \gamma_{G,j} \cdot G_{k,j} \;+\; \gamma_P \cdot P \;+\; \gamma_{Q,1} \cdot Q_{k,1} \;+\; \sum_{i>1} \gamma_{Q,i} \cdot \psi_{0,i} \cdot Q_{k,i}
+$$
+</Equation>
+
+El factor de reducción $\xi = 0{,}85$ se aplica a las acciones permanentes desfavorables en la Ec. 6.10b. Este par de ecuaciones es generalmente más económico cuando las cargas permanentes dominan sobre las variables.
+
+<Note type="warning" title="Aplicación">
+Las combinaciones 6.10a/6.10b son una **opción nacional** — deben estar habilitadas en el Anexo Nacional del país correspondiente. Cuando se permite su uso, se aplica el conjunto que produce el mayor efecto de diseño.
+</Note>
+
+## Situaciones accidentales
+
+Para situaciones accidentales (impacto, explosión, incendio), la combinación adopta la forma:
+
+<Equation label="Ec. 6.11b">
+$$
+\sum_j G_{k,j} \;+\; P \;+\; A_d \;+\; \psi_{1,1} \cdot Q_{k,1} \;+\; \sum_{i>1} \psi_{2,i} \cdot Q_{k,i}
+$$
+</Equation>
+
+En este caso la acción accidental $A_d$ se incluye con valor de diseño directo (sin factor parcial), y las acciones variables se reducen mediante los factores de combinación $\psi_1$ y $\psi_2$.

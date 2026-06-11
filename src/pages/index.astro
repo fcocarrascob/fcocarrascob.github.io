@@ -1,0 +1,46 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PostCard from '../components/ui/PostCard.astro';
+import { getAllPosts } from '../lib/posts';
+
+const posts = await getAllPosts();
+const recentPosts = posts.slice(0, 10);
+---
+<PageLayout title="Inicio" description="Apuntes de ingeniería estructural">
+  <div class="mb-12">
+    <h1 class="text-2xl font-semibold text-ink mb-3">struct/pad</h1>
+    <p class="text-muted leading-relaxed">
+      Apuntes, resúmenes y notas de ingeniería estructural: normas, procesos de
+      diseño, ecuaciones y tablas. Un espacio para consolidar conocimiento técnico.
+    </p>
+  </div>
+
+  <section>
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-6">
+      Notas recientes
+    </h2>
+    {recentPosts.length === 0 ? (
+      <p class="text-muted">No hay notas publicadas todavía.</p>
+    ) : (
+      recentPosts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          href={`/blog/${post.id}`}
+          tags={post.data.tags}
+          norm={post.data.norm}
+          section={post.data.section}
+        />
+      ))
+    )}
+  </section>
+
+  {posts.length > 10 && (
+    <div class="mt-8">
+      <a href="/blog" class="text-sm text-accent hover:underline">
+        Ver todas las notas &rarr;
+      </a>
+    </div>
+  )}
+</PageLayout>

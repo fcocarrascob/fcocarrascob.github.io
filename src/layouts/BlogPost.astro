@@ -1,0 +1,76 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagPill from '../components/ui/TagPill.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    tags: string[];
+    norm?: string;
+    section?: string;
+  };
+  breadcrumb?: { href: string; label: string };
+}
+
+const { frontmatter, breadcrumb } = Astro.props;
+
+const dateFormatter = new Intl.DateTimeFormat('es-CL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <Header />
+  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-12">
+    <article>
+      <header class="mb-10 pb-8 border-b border-border">
+        {breadcrumb && (
+          <a
+            href={breadcrumb.href}
+            class="text-sm text-muted hover:text-ink transition-colors inline-block mb-5"
+          >
+            &larr; {breadcrumb.label}
+          </a>
+        )}
+        {frontmatter.section && (
+          <p class="text-sm font-medium text-muted uppercase tracking-wider mb-3">
+            {frontmatter.section}
+          </p>
+        )}
+        <h1 class="text-3xl font-semibold text-ink leading-tight mb-4">
+          {frontmatter.title}
+        </h1>
+        <p class="text-muted mb-5">{frontmatter.description}</p>
+        <div class="flex items-center gap-4 text-sm text-muted">
+          <time datetime={frontmatter.pubDate.toISOString()}>
+            {dateFormatter.format(frontmatter.pubDate)}
+          </time>
+          {frontmatter.norm && (
+            <span class="text-accent font-medium">{frontmatter.norm}</span>
+          )}
+          {frontmatter.updatedDate && (
+            <span>
+              Actualizado: {dateFormatter.format(frontmatter.updatedDate)}
+            </span>
+          )}
+        </div>
+        {frontmatter.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mt-4">
+            {frontmatter.tags.map((tag) => <TagPill tag={tag} />)}
+          </div>
+        )}
+      </header>
+
+      <div class="prose prose-slate max-w-none">
+        <slot />
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

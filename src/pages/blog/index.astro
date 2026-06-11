@@ -1,0 +1,29 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import PostCard from '../../components/ui/PostCard.astro';
+import { getAllPosts } from '../../lib/posts';
+
+const posts = await getAllPosts();
+---
+<PageLayout title="Notas" description="Archivo de todas las notas de ingeniería estructural">
+  <div class="mb-10">
+    <h1 class="text-2xl font-semibold text-ink mb-2">Notas</h1>
+    <p class="text-muted text-sm">{posts.length} entrada{posts.length !== 1 ? 's' : ''}</p>
+  </div>
+
+  {posts.length === 0 ? (
+    <p class="text-muted">No hay notas publicadas todavía.</p>
+  ) : (
+    posts.map((post) => (
+      <PostCard
+        title={post.data.title}
+        description={post.data.description}
+        pubDate={post.data.pubDate}
+        href={`/blog/${post.id}`}
+        tags={post.data.tags}
+        norm={post.data.norm}
+        section={post.data.section}
+      />
+    ))
+  )}
+</PageLayout>

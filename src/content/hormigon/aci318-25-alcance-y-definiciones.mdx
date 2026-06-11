@@ -1,0 +1,86 @@
+---
+title: "ACI 318-25 — Alcance, Materiales y Definiciones Clave"
+description: "Resumen del Capítulo 1 y términos fundamentales de ACI 318-25: alcance de la norma, materiales cubiertos y definiciones esenciales para el diseño."
+pubDate: 2026-06-11
+tags: ["aci318", "definiciones", "materiales"]
+subsection: "aci318-25"
+chapter: "Cap. 1 — Alcance"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance de ACI 318-25
+
+ACI 318-25 establece los requerimientos mínimos para el diseño y construcción de elementos estructurales de hormigón armado y pretensado en edificios y otras estructuras. Cubre:
+
+- Hormigón estructural armado con barras o mallas de acero
+- Hormigón pretensado (pre y postesado)
+- Elementos compuestos hormigón-acero
+- Anclajes en hormigón
+
+La norma **no aplica** a estructuras de hormigón simple (sin refuerzo) ni a elementos de hormigón de masa (masa dams).
+
+<Note type="tip" title="Versión 2025">
+ACI 318-25 es la edición más reciente, con ciclo de actualización quinquenal. Los cambios respecto a ACI 318-19 se identifican con barras laterales en el texto de la norma.
+</Note>
+
+## Materiales
+
+### Hormigón
+
+| Parámetro | Símbolo | Rango típico |
+|-----------|---------|:------------:|
+| Resistencia cilíndrica especificada | $f'_c$ | 17 – 70 MPa |
+| Módulo de elasticidad (normal weight) | $E_c$ | ver Ec. 19.2.2 |
+| Densidad normal | $w_c$ | 2300 kg/m³ |
+
+El módulo de elasticidad para hormigón de densidad normal se calcula como:
+
+<Equation label="Ec. 19.2.2.1a">
+$$
+E_c = 4700 \sqrt{f'_c} \quad [\text{MPa}]
+$$
+</Equation>
+
+Para densidades entre 1440 y 2560 kg/m³:
+
+<Equation label="Ec. 19.2.2.1b">
+$$
+E_c = w_c^{1.5} \cdot 0.043 \sqrt{f'_c} \quad [\text{MPa}]
+$$
+</Equation>
+
+### Acero de refuerzo
+
+| Tipo | Límite de fluencia $f_y$ | Norma |
+|------|:------------------------:|-------|
+| Grado 420 | 420 MPa | ASTM A615 / A706 |
+| Grado 550 | 550 MPa | ASTM A615 |
+| Grado 690 | 690 MPa | ASTM A615 |
+
+<Note type="warning" title="Límite en diseño por resistencia">
+ACI 318-25 limita el valor de $f_y$ utilizable en diseño a **550 MPa** para la mayoría de las aplicaciones (Sec. 20.2.2.4), independiente de la resistencia real del acero.
+</Note>
+
+## Definiciones clave
+
+**Resistencia nominal** ($R_n$) — resistencia calculada según las ecuaciones de ACI 318 usando las propiedades especificadas de materiales y las dimensiones nominales de la sección.
+
+**Resistencia de diseño** ($\phi R_n$) — resistencia nominal reducida por el factor de reducción $\phi$. Debe ser mayor o igual al efecto de las cargas mayoradas:
+
+$$
+\phi R_n \geq U
+$$
+
+**Factor de reducción $\phi$** — refleja la variabilidad de materiales, mano de obra y consecuencias del tipo de falla. Varía según el modo de falla:
+
+| Modo de falla | $\phi$ |
+|---------------|:------:|
+| Flexión controlada por tensión | 0.90 |
+| Corte y torsión | 0.75 |
+| Compresión (estribos) | 0.65 |
+| Compresión (espiral) | 0.75 |
+| Aplastamiento en hormigón | 0.65 |
+
+**Carga mayorada** ($U$) — combinación de cargas de servicio amplificadas por factores de carga según ACI 318-25 Sec. 5.3 (basados en ASCE 7).

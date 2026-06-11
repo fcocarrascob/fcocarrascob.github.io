@@ -1,0 +1,38 @@
+---
+interface Props {
+  type?: 'info' | 'warning' | 'tip';
+  title?: string;
+}
+
+const { type = 'info', title } = Astro.props;
+
+const styles = {
+  info: {
+    border: 'border-accent',
+    bg: 'bg-blue-50',
+    titleColor: 'text-accent',
+    defaultTitle: 'Nota',
+  },
+  warning: {
+    border: 'border-amber-400',
+    bg: 'bg-amber-50',
+    titleColor: 'text-amber-700',
+    defaultTitle: 'Atención',
+  },
+  tip: {
+    border: 'border-emerald-400',
+    bg: 'bg-emerald-50',
+    titleColor: 'text-emerald-700',
+    defaultTitle: 'Referencia normativa',
+  },
+};
+
+const s = styles[type];
+const displayTitle = title ?? s.defaultTitle;
+---
+<aside class:list={['my-6 rounded border-l-4 px-5 py-4 text-sm', s.border, s.bg]}>
+  <p class:list={['font-semibold mb-1', s.titleColor]}>{displayTitle}</p>
+  <div class="text-ink leading-relaxed">
+    <slot />
+  </div>
+</aside>
