@@ -8,6 +8,8 @@ import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
+  site: 'https://fcocarrascob.github.io',
+  base: '/struct_pad',
   integrations: [mdx(), react()],
   markdown: {
     processor: unified({
