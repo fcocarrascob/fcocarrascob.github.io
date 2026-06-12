@@ -1,148 +1,249 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  ReactFlow,
-  ReactFlowProvider,
-  Background,
-  Controls,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  type Node,
-  type Edge,
-  type Connection,
-  type NodeTypes,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import MathRegion, { GRID, snap } from './MathRegion';
+import SymbolPalette, { type SymbolEntry } from './SymbolPalette';
+import { evaluateSheet, type Region, type RegionKind } from '../../lib/worksheet';
 
-import InputNode from './nodes/InputNode';
-import FormulaNode from './nodes/FormulaNode';
-import OutputNode from './nodes/OutputNode';
-import { evaluateGraph, type CanvasNodeData, type GraphNode, type GraphEdge } from '../../lib/mathCanvas';
+const STORAGE_KEY = 'structpad.worksheet.v1';
 
-const nodeTypes: NodeTypes = {
-  input: InputNode,
-  formula: FormulaNode,
-  output: OutputNode,
-};
+/** Hoja de ejemplo para la primera visita (se reemplaza al editar). */
+const DEMO: Region[] = [
+  { id: 'demo-t', kind: 'text', x: 32, y: 32, src: 'Ejemplo: momento máximo de una viga biapoyada' },
+  { id: 'demo-1', kind: 'math', x: 32, y: 80, src: 'F := 30 kN' },
+  { id: 'demo-2', kind: 'math', x: 32, y: 128, src: 'L := 6 m' },
+  { id: 'demo-3', kind: 'math', x: 32, y: 176, src: 'M := F*L/4 = kN*m' },
+];
 
-/** Firma de las definiciones (sin result/error) para disparar el recálculo sin bucles. */
-function definitionSignature(nodes: Node[], edges: Edge[]): string {
-  const n = nodes.map((x) => {
-    const d = x.data as CanvasNodeData;
-    return [x.id, x.type, d.varName, d.value, d.unit, d.expr, d.targetUnit];
-  });
-  const e = edges.map((x) => [x.source, x.target]);
-  return JSON.stringify({ n, e });
+function loadInitial(): Region[] {
+  if (typeof window === 'undefined') return DEMO;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (Array.isArray(data?.regions)) {
+        return (data.regions as Region[]).filter((r) => r.src.trim() !== '');
+      }
+    }
+  } catch {
+    // JSON corrupto: arrancar con la demo
+  }
+  return DEMO;
 }
 
-let idCounter = 0;
-const nextId = () => `n${++idCounter}`;
+const newId = () => `r${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-function Canvas() {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-
-  const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
-
-  const updateNodeData = useCallback(
-    (id: string, patch: Partial<CanvasNodeData>) => {
-      setNodes((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, data: { ...n.data, ...patch } } : n)),
-      );
-    },
-    [setNodes],
-  );
-
-  const addNode = useCallback(
-    (type: 'input' | 'formula' | 'output') => {
-      const id = nextId();
-      const defaults: Record<string, CanvasNodeData> = {
-        input: { varName: '', value: '', unit: '' },
-        formula: { varName: '', expr: '' },
-        output: { targetUnit: '' },
-      };
-      const node: Node = {
-        id,
-        type,
-        position: { x: 80 + Math.random() * 240, y: 80 + Math.random() * 200 },
-        data: { ...defaults[type] } as Record<string, unknown>,
-      };
-      setNodes((prev) => [...prev, node]);
-    },
-    [setNodes],
-  );
-
-  // Recalcula resultados cuando cambian las definiciones o las aristas.
-  const signature = useMemo(() => definitionSignature(nodes, edges), [nodes, edges]);
-  useEffect(() => {
-    const results = evaluateGraph(nodes as unknown as GraphNode[], edges as unknown as GraphEdge[]);
-    setNodes((prev) =>
-      prev.map((n) => {
-        const r = results[n.id] ?? {};
-        if (n.data.result === r.result && n.data.error === r.error) return n;
-        return { ...n, data: { ...n.data, result: r.result, error: r.error } };
-      }),
-    );
-    // Depende solo de la firma de definiciones para evitar bucles de render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, setNodes]);
-
-  // Inyecta el callback de edición en cada nodo en tiempo de render.
-  const displayNodes = useMemo(
-    () =>
-      nodes.map((n) => ({
-        ...n,
-        data: { ...n.data, onChange: (patch: Partial<CanvasNodeData>) => updateNodeData(n.id, patch) },
-      })),
-    [nodes, updateNodeData],
-  );
-
-  return (
-    <div className="relative h-full w-full">
-      <div className="absolute left-3 top-3 z-10 flex gap-2 rounded-lg border border-border bg-surface/90 p-2 shadow-sm backdrop-blur">
-        <button
-          className="rounded bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90"
-          onClick={() => addNode('input')}
-        >
-          + Entrada
-        </button>
-        <button
-          className="rounded bg-ink px-3 py-1 text-sm font-medium text-white hover:opacity-90"
-          onClick={() => addNode('formula')}
-        >
-          + Fórmula
-        </button>
-        <button
-          className="rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:opacity-90"
-          onClick={() => addNode('output')}
-        >
-          + Salida
-        </button>
-      </div>
-      <ReactFlow
-        nodes={displayNodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
-    </div>
-  );
-}
+const toolBtn =
+  'rounded border border-border bg-white px-2.5 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent';
 
 export default function MathCanvas() {
+  const [regions, setRegions] = useState<Region[]>(loadInitial);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  /** Tipo de la próxima región a crear con clic ('text' tras pulsar el botón Texto). */
+  const [nextKind, setNextKind] = useState<RegionKind>('math');
+
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const activeInputRef = useRef<HTMLInputElement | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const results = useMemo(() => evaluateSheet(regions), [regions]);
+
+  // Autoguardado con debounce.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        // Las regiones vacías son transitorias (se borran al salir de edición):
+        // no se persisten por si la página se cierra con una a medio crear.
+        const persistable = regions.filter((r) => r.src.trim() !== '');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, regions: persistable }));
+      } catch {
+        // cuota llena o storage deshabilitado: ignorar
+      }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [regions]);
+
+  const updateRegion = useCallback((id: string, patch: Partial<Region>) => {
+    setRegions((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  }, []);
+
+  const commitActive = useCallback(() => {
+    if (activeId) {
+      // Una región que queda vacía al salir de edición se elimina.
+      setRegions((prev) => prev.filter((r) => r.id !== activeId || r.src.trim() !== ''));
+    }
+    setActiveId(null);
+  }, [activeId]);
+
+  const onSheetClick = (e: React.MouseEvent) => {
+    if (e.target !== e.currentTarget) return;
+    setSelected(new Set());
+    const rect = e.currentTarget.getBoundingClientRect();
+    const kind: RegionKind = e.shiftKey ? 'text' : nextKind;
+    const region: Region = {
+      id: newId(),
+      kind,
+      x: snap(e.clientX - rect.left),
+      y: snap(e.clientY - rect.top - GRID / 2),
+      src: '',
+    };
+    setNextKind('math');
+    setRegions((prev) => [...prev, region]);
+    setActiveId(region.id);
+  };
+
+  // Supr/Retroceso elimina la selección (fuera de edición).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+      const el = document.activeElement;
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
+      if (selected.size === 0) return;
+      e.preventDefault();
+      setRegions((prev) => prev.filter((r) => !selected.has(r.id)));
+      setSelected(new Set());
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected]);
+
+  const insertSymbol = useCallback(
+    (entry: SymbolEntry) => {
+      const el = activeInputRef.current;
+      if (!el || !activeId) return;
+      const start = el.selectionStart ?? el.value.length;
+      const end = el.selectionEnd ?? start;
+      const next = el.value.slice(0, start) + entry.insert + el.value.slice(end);
+      updateRegion(activeId, { src: next });
+      const caret = start + (entry.caret ?? entry.insert.length);
+      requestAnimationFrame(() => {
+        el.focus();
+        el.setSelectionRange(caret, caret);
+      });
+    },
+    [activeId, updateRegion],
+  );
+
+  const exportJson = () => {
+    const blob = new Blob([JSON.stringify({ version: 1, regions }, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hoja-calculo.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importJson = (file: File) => {
+    file.text().then((text) => {
+      try {
+        const data = JSON.parse(text);
+        if (!Array.isArray(data?.regions)) throw new Error('formato inválido');
+        setRegions(data.regions as Region[]);
+        setSelected(new Set());
+        setActiveId(null);
+      } catch {
+        alert('El archivo no es una hoja de cálculo válida.');
+      }
+    });
+  };
+
   return (
-    <ReactFlowProvider>
-      <Canvas />
-    </ReactFlowProvider>
+    <div className="flex h-full w-full flex-col">
+      <div className="flex items-center gap-2 border-b border-border bg-surface/80 px-3 py-2">
+        <button
+          className={`${toolBtn} ${nextKind === 'text' ? '!border-accent !text-accent' : ''}`}
+          onClick={() => setNextKind((k) => (k === 'text' ? 'math' : 'text'))}
+          title="Pulsa y luego haz clic en la hoja para colocar texto (o Shift+clic directo)"
+        >
+          T Texto
+        </button>
+        <span className="mx-1 h-4 w-px bg-border" />
+        <button className={toolBtn} onClick={exportJson}>
+          Exportar
+        </button>
+        <button className={toolBtn} onClick={() => fileRef.current?.click()}>
+          Importar
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) importJson(f);
+            e.target.value = '';
+          }}
+        />
+        <button
+          className={`${toolBtn} hover:!border-red-400 hover:!text-red-600`}
+          onClick={() => {
+            if (confirm('¿Vaciar toda la hoja?')) {
+              setRegions([]);
+              setSelected(new Set());
+              setActiveId(null);
+            }
+          }}
+        >
+          Limpiar
+        </button>
+        <span className="ml-auto hidden text-xs text-muted sm:block">
+          Clic: nueva región · doble clic: editar · Supr: borrar
+        </span>
+      </div>
+
+      <div className="flex min-h-0 flex-1">
+        <div className="relative flex-1 overflow-auto bg-white">
+          <div
+            ref={sheetRef}
+            className="relative cursor-crosshair"
+            style={{
+              minWidth: '100%',
+              minHeight: '100%',
+              width: 1600,
+              height: 1400,
+              backgroundImage:
+                'linear-gradient(to right, rgba(100,116,139,0.12) 1px, transparent 1px), ' +
+                'linear-gradient(to bottom, rgba(100,116,139,0.12) 1px, transparent 1px)',
+              backgroundSize: `${GRID}px ${GRID}px`,
+            }}
+            onClick={onSheetClick}
+          >
+            {regions.map((r) => (
+              <MathRegion
+                key={r.id}
+                region={r}
+                result={results[r.id]}
+                active={activeId === r.id}
+                selected={selected.has(r.id)}
+                onChange={(src) => updateRegion(r.id, { src })}
+                onCommit={commitActive}
+                onActivate={() => {
+                  setSelected(new Set());
+                  setActiveId(r.id);
+                }}
+                onSelect={(additive) =>
+                  setSelected((prev) => {
+                    const next = new Set(additive ? prev : []);
+                    if (additive && prev.has(r.id)) next.delete(r.id);
+                    else next.add(r.id);
+                    return next;
+                  })
+                }
+                onMove={(x, y) => updateRegion(r.id, { x, y })}
+                registerInput={(el) => {
+                  // Solo registrar montajes; insertSymbol ya valida que haya
+                  // región activa, así que una referencia obsoleta es inocua.
+                  if (el) activeInputRef.current = el;
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        <SymbolPalette onInsert={insertSymbol} />
+      </div>
+    </div>
   );
 }
