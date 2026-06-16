@@ -113,12 +113,34 @@ export default function MathCanvas() {
       if (!el || !activeId) return;
       const start = el.selectionStart ?? el.value.length;
       const end = el.selectionEnd ?? start;
-      const next = el.value.slice(0, start) + entry.insert + el.value.slice(end);
+
+      // Los snippets multilínea (bloques de programa) se re-indentan según la
+      // sangría de la línea actual, para que queden bien anidados al insertarlos
+      // dentro de otro bloque.
+      let text = entry.insert;
+      if (text.includes('\n')) {
+        const lineStart = el.value.lastIndexOf('\n', start - 1) + 1;
+        const indent = el.value.slice(lineStart, start).match(/^\s*/)?.[0] ?? '';
+        if (indent) text = text.replace(/\n/g, `\n${indent}`);
+      }
+
+      const next = el.value.slice(0, start) + text + el.value.slice(end);
       updateRegion(activeId, { src: next });
-      const caret = start + (entry.caret ?? entry.insert.length);
+
+      // Selección tras insertar: si el snippet tiene placeholder, seleccionarlo
+      // (para teclear encima); si no, posicionar el cursor según `caret`.
+      let selStart = start + (entry.caret ?? text.length);
+      let selEnd = selStart;
+      if (entry.select) {
+        const idx = text.indexOf(entry.select);
+        if (idx >= 0) {
+          selStart = start + idx;
+          selEnd = selStart + entry.select.length;
+        }
+      }
       requestAnimationFrame(() => {
         el.focus();
-        el.setSelectionRange(caret, caret);
+        el.setSelectionRange(selStart, selEnd);
       });
     },
     [activeId, updateRegion],
@@ -250,7 +272,10 @@ export default function MathCanvas() {
             ))}
           </div>
         </div>
-        <SymbolPalette onInsert={insertSymbol} />
+        <SymbolPalette
+          onInsert={insertSymbol}
+          activeKind={activeId ? (regions.find((r) => r.id === activeId)?.kind ?? null) : null}
+        />
       </div>
     </div>
   );

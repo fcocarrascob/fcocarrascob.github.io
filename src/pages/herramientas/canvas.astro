@@ -29,6 +29,31 @@ const description =
       una región, arrastra para moverla, Supr la borra. La hoja se guarda automáticamente
       en el navegador.
     </p>
+
+    <details class="mt-3 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">
+        Programación: bucles, condicionales y funciones
+      </summary>
+      <div class="mt-2 space-y-2">
+        <p>
+          Pulsa <strong>ƒ Programa</strong> y haz clic en la hoja para crear un bloque. La
+          <strong>indentación</strong> (sangría) define el cuerpo, como en Python. En el editor:
+          <code>Enter</code> = nueva línea, <code>Tab</code> = indentar,
+          <code>Esc</code> o <code>Ctrl+Enter</code> = confirmar.
+        </p>
+        <p>
+          <code>nombre :=</code> exporta el valor de <code>return</code> como variable reutilizable;
+          <code>nombre(args) :=</code> define una función llamable desde otras regiones. Usa los
+          botones del grupo <em>Programación</em> de la paleta para insertar bloques ya armados
+          (reemplaza los marcadores <code>cond</code>, <code>expr</code>, <code>1:n</code>).
+        </p>
+        <pre class="overflow-x-auto rounded border border-border bg-surface/60 p-2 font-mono text-ink">beta1(fc) :=
+    if fc <= 28
+        return 0.85
+    return max(0.65, 0.85 - 0.05*(fc - 28)/7)</pre>
+        <p>Luego, en otra región: <code>beta1(35) =</code> → <code>0.8</code>.</p>
+      </div>
+    </details>
   </main>
   <Footer />
 </BaseLayout>

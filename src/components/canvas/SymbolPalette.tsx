@@ -7,6 +7,10 @@ export interface SymbolEntry {
   insert: string;
   /** Posición del cursor tras insertar (por defecto, al final). */
   caret?: number;
+  /** Descripción para el tooltip (qué hace el snippet). */
+  desc?: string;
+  /** Placeholder a seleccionar tras insertar (primera ocurrencia en `insert`). */
+  select?: string;
 }
 
 interface Group {
@@ -49,14 +53,24 @@ const GROUPS: Group[] = [
   {
     title: 'Programación',
     symbols: [
-      { label: 'if', insert: 'if \n    ', caret: 3 },
-      { label: 'else if', insert: 'else if \n    ', caret: 8 },
-      { label: 'else', insert: 'else\n    ' },
-      { label: 'for', insert: 'for i in 1:n\n    ' },
-      { label: 'while', insert: 'while \n    ', caret: 6 },
-      { label: 'return', insert: 'return ' },
-      { label: 'break', insert: 'break' },
-      { label: 'continue', insert: 'continue' },
+      { label: 'if', insert: 'if cond\n    expr', select: 'cond', desc: 'Condicional simple' },
+      {
+        label: 'if/else',
+        insert: 'if cond\n    expr\nelse\n    expr',
+        select: 'cond',
+        desc: 'Condicional con alternativa',
+      },
+      { label: 'else if', insert: 'else if cond\n    expr', select: 'cond', desc: 'Rama adicional de un if' },
+      {
+        label: 'for',
+        insert: 'for i in 1:n\n    expr',
+        select: '1:n',
+        desc: 'Bucle sobre un rango (1:n) o lista [..]',
+      },
+      { label: 'while', insert: 'while cond\n    expr', select: 'cond', desc: 'Bucle mientras se cumpla la condición' },
+      { label: 'return', insert: 'return expr', select: 'expr', desc: 'Devuelve un valor del bloque' },
+      { label: 'break', insert: 'break', desc: 'Sale del bucle' },
+      { label: 'continue', insert: 'continue', desc: 'Salta a la siguiente iteración' },
     ],
   },
   {
@@ -107,15 +121,20 @@ const GROUPS: Group[] = [
 interface Props {
   /** Inserta el símbolo en el input de la región activa. */
   onInsert: (entry: SymbolEntry) => void;
+  /** Tipo de la región en edición; habilita los snippets de programa. */
+  activeKind?: 'math' | 'text' | 'program' | null;
 }
 
-export default function SymbolPalette({ onInsert }: Props) {
+export default function SymbolPalette({ onInsert, activeKind }: Props) {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   return (
     <div className="flex h-full w-44 flex-col gap-1 overflow-y-auto border-l border-border bg-surface/80 p-2 backdrop-blur">
       {GROUPS.map((group) => {
         const isCollapsed = collapsed[group.title];
+        // Los bloques de programa solo tienen sentido en una región de programa:
+        // se deshabilitan (con pista) mientras no se edita una.
+        const disabled = group.title === 'Programación' && activeKind !== 'program';
         return (
           <div key={group.title}>
             <button
@@ -127,11 +146,17 @@ export default function SymbolPalette({ onInsert }: Props) {
             </button>
             {!isCollapsed && (
               <div className="mt-1 flex flex-wrap gap-1 pb-1">
+                {disabled && (
+                  <p className="w-full text-[10px] leading-tight text-muted">
+                    Crea un bloque <span className="font-medium">ƒ Programa</span> para usar estos.
+                  </p>
+                )}
                 {group.symbols.map((s) => (
                   <button
                     key={s.label}
-                    className="min-w-7 rounded border border-border bg-white px-1.5 py-0.5 text-xs text-ink hover:border-accent hover:text-accent"
-                    title={s.insert.trim()}
+                    disabled={disabled}
+                    className="min-w-7 rounded border border-border bg-white px-1.5 py-0.5 text-xs text-ink hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-ink"
+                    title={s.desc ?? s.insert.trim()}
                     // preventDefault para no robar el foco al input activo
                     onPointerDown={(e) => e.preventDefault()}
                     onMouseDown={(e) => e.preventDefault()}
