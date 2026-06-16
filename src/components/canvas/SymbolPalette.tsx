@@ -47,6 +47,19 @@ const GROUPS: Group[] = [
     ],
   },
   {
+    title: 'Programación',
+    symbols: [
+      { label: 'if', insert: 'if \n    ', caret: 3 },
+      { label: 'else if', insert: 'else if \n    ', caret: 8 },
+      { label: 'else', insert: 'else\n    ' },
+      { label: 'for', insert: 'for i in 1:n\n    ' },
+      { label: 'while', insert: 'while \n    ', caret: 6 },
+      { label: 'return', insert: 'return ' },
+      { label: 'break', insert: 'break' },
+      { label: 'continue', insert: 'continue' },
+    ],
+  },
+  {
     title: 'Funciones',
     symbols: [
       fn('sin'), fn('cos'), fn('tan'), fn('asin'), fn('acos'), fn('atan'),

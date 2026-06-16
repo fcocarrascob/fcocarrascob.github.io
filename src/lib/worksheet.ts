@@ -13,10 +13,14 @@
 // resuelven en orden de lectura: arriba→abajo, izquierda→derecha (como SMath).
 
 import { create, all } from 'mathjs';
+import { parseProgram, runProgram, type ProgramContext } from './program';
 
 const math = create(all, {});
 
-export type RegionKind = 'math' | 'text';
+/** Tope de iteraciones por programa (anti-bucle-infinito; evita colgar la pestaña). */
+const MAX_ITERS = 100_000;
+
+export type RegionKind = 'math' | 'text' | 'program';
 
 export interface Region {
   id: string;
@@ -44,6 +48,8 @@ export interface RegionResult {
   tex?: string;
   /** Veredicto booleano de una comparación (true=✓, false=✗). Lo pinta MathRegion. */
   bool?: boolean;
+  /** Firma de una función definida por una región de programa (ej. "f(x)"). */
+  defined?: string;
   /** Mensaje de error (sintaxis, variable indefinida, unidad incoherente...). */
   error?: string;
 }
@@ -153,14 +159,25 @@ export function evaluateSheet(regions: Region[]): SheetResults {
   const scope: Record<string, unknown> = {};
 
   const ordered = regions
-    .filter((r) => r.kind === 'math')
+    .filter((r) => r.kind !== 'text')
     .sort((a, b) => a.y - b.y || a.x - b.x);
+
+  const ctx: ProgramContext = {
+    evaluate: (expr, s) => math.evaluate(expr, s),
+    maxIters: MAX_ITERS,
+  };
 
   for (const region of ordered) {
     if (region.src.trim() === '') {
       results[region.id] = {};
       continue;
     }
+
+    if (region.kind === 'program') {
+      results[region.id] = evalProgramRegion(region.src, scope, ctx);
+      continue;
+    }
+
     const parsed = parseMathRegion(region.src);
 
     // LaTeX de la parte izquierda (definición + expresión), independiente de
@@ -203,6 +220,52 @@ export function evaluateSheet(regions: Region[]): SheetResults {
   }
 
   return results;
+}
+
+/**
+ * Evalúa una región de programa. Si define una función (`f(x) := ...`) la
+ * registra como closure en el scope compartido; si es un programa inline lo
+ * ejecuta en una copia del scope (sus variables internas no contaminan la hoja)
+ * y exporta su valor de retorno bajo el nombre de la cabecera, si lo hay.
+ */
+function evalProgramRegion(
+  src: string,
+  scope: Record<string, unknown>,
+  ctx: ProgramContext,
+): RegionResult {
+  let prog;
+  try {
+    prog = parseProgram(src);
+  } catch (err) {
+    return { error: errMsg(err) };
+  }
+
+  if (prog.params && prog.name) {
+    const { name, params, body } = prog;
+    // El closure captura el scope vivo: ve las variables de la hoja al llamarse
+    // (y permite recursión, pues `name` ya está en el scope).
+    scope[name] = (...args: unknown[]) => {
+      const local = { ...scope };
+      params.forEach((p, i) => {
+        local[p] = args[i];
+      });
+      return runProgram(body, local, ctx, { n: 0 });
+    };
+    return { defined: `${name}(${params.join(', ')})` };
+  }
+
+  try {
+    const value = runProgram(prog.body, { ...scope }, ctx, { n: 0 });
+    if (prog.name) scope[prog.name] = value;
+    let tex: string | undefined;
+    if (value !== undefined) {
+      const lhs = prog.name ? `${symbolTex(prog.name)}=` : '';
+      tex = lhs + resultToTex(value);
+    }
+    return { tex };
+  } catch (err) {
+    return { error: errMsg(err) };
+  }
 }
 
 function errMsg(err: unknown): string {

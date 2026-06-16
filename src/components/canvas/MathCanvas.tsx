@@ -43,7 +43,7 @@ export default function MathCanvas() {
   const [nextKind, setNextKind] = useState<RegionKind>('math');
 
   const sheetRef = useRef<HTMLDivElement>(null);
-  const activeInputRef = useRef<HTMLInputElement | null>(null);
+  const activeInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const results = useMemo(() => evaluateSheet(regions), [regions]);
@@ -159,6 +159,13 @@ export default function MathCanvas() {
           title="Pulsa y luego haz clic en la hoja para colocar texto (o Shift+clic directo)"
         >
           T Texto
+        </button>
+        <button
+          className={`${toolBtn} ${nextKind === 'program' ? '!border-accent !text-accent' : ''}`}
+          onClick={() => setNextKind((k) => (k === 'program' ? 'math' : 'program'))}
+          title="Pulsa y luego haz clic en la hoja para colocar un bloque de programa"
+        >
+          ƒ Programa
         </button>
         <span className="mx-1 h-4 w-px bg-border" />
         <button className={toolBtn} onClick={exportJson}>

@@ -17,8 +17,8 @@ interface Props {
   onActivate: () => void;
   onSelect: (additive: boolean) => void;
   onMove: (x: number, y: number) => void;
-  /** Registra el input activo para que la paleta inserte símbolos. */
-  registerInput: (el: HTMLInputElement | null) => void;
+  /** Registra el input/textarea activo para que la paleta inserte símbolos. */
+  registerInput: (el: HTMLInputElement | HTMLTextAreaElement | null) => void;
 }
 
 /** Render KaTeX imperativo (sin dangerouslySetInnerHTML). */
@@ -66,7 +66,12 @@ export default function MathRegion({
   };
 
   const isText = region.kind === 'text';
+  const isProgram = region.kind === 'program';
   const hasError = Boolean(result?.error) && !active;
+
+  const lines = region.src.split('\n');
+  const progRows = Math.max(lines.length, 2);
+  const progCols = Math.max(...lines.map((l) => l.length), 24);
 
   return (
     <div
@@ -86,7 +91,35 @@ export default function MathRegion({
         onActivate();
       }}
     >
-      {active ? (
+      {active && isProgram ? (
+        <textarea
+          ref={registerInput}
+          autoFocus
+          className="resize-none bg-transparent font-mono text-sm leading-snug text-ink outline-none"
+          style={{ width: `${progCols + 2}ch` }}
+          rows={progRows}
+          value={region.src}
+          placeholder={'S :=\n    s := 0\n    for i in 1:10\n        s := s + i\n    return s'}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onCommit}
+          onKeyDown={(e) => {
+            // Enter inserta línea; se confirma con Escape o Ctrl/⌘+Enter.
+            if (e.key === 'Escape' || (e.key === 'Enter' && (e.ctrlKey || e.metaKey))) {
+              e.preventDefault();
+              onCommit();
+            } else if (e.key === 'Tab') {
+              e.preventDefault();
+              const ta = e.currentTarget;
+              const s = ta.selectionStart;
+              const next = ta.value.slice(0, s) + '    ' + ta.value.slice(ta.selectionEnd);
+              onChange(next);
+              requestAnimationFrame(() => ta.setSelectionRange(s + 4, s + 4));
+            }
+            e.stopPropagation();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+        />
+      ) : active ? (
         <input
           ref={registerInput}
           autoFocus
@@ -107,6 +140,24 @@ export default function MathRegion({
         />
       ) : isText ? (
         <span className="whitespace-pre text-sm text-ink">{region.src}</span>
+      ) : isProgram ? (
+        <div>
+          <div className="flex items-center gap-2">
+            <pre className="whitespace-pre border-l-2 border-accent pl-2 font-mono text-sm leading-snug text-ink">
+              {region.src}
+            </pre>
+            {result?.tex && (
+              <span className="flex items-center gap-1">
+                <span className="text-muted">→</span>
+                <Katex tex={result.tex} />
+              </span>
+            )}
+            {result?.defined && (
+              <span className="text-xs italic text-muted">{result.defined} definida</span>
+            )}
+          </div>
+          {hasError && <div className="max-w-64 text-xs text-red-600">{result?.error}</div>}
+        </div>
       ) : (
         <div>
           {result?.bool !== undefined ? (
