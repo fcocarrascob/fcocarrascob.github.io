@@ -17,6 +17,12 @@ import { parseProgram, runProgram, type ProgramContext } from './program';
 
 const math = create(all, {});
 
+// Unidad de la práctica local (Chile/LatAm). `kgf` ya viene en math.js
+// (= 9.80665 N); las compuestas `kgf/cm²`, `tonf·m`, `tonf/m` se derivan solas.
+// math.js `max`/`min` ya comparan unidades (vía larger/smaller), así que
+// `max(2.5 tonf, 30 kN)` funciona sin envoltorios.
+math.createUnit('tonf', { definition: '1000 kgf', aliases: ['tf'] });
+
 /** Tope de iteraciones por programa (anti-bucle-infinito; evita colgar la pestaña). */
 const MAX_ITERS = 100_000;
 

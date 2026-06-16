@@ -95,6 +95,11 @@ const GROUPS: Group[] = [
       { label: 'm', insert: ' m' },
       { label: 'kg', insert: ' kg' },
       { label: '°', insert: ' deg' },
+      { label: 'tonf', insert: ' tonf' },
+      { label: 'kgf', insert: ' kgf' },
+      { label: 'kgf/cm²', insert: ' kgf/cm^2' },
+      { label: 'tonf·m', insert: ' tonf*m' },
+      { label: 'tonf/m', insert: ' tonf/m' },
     ],
   },
 ];
