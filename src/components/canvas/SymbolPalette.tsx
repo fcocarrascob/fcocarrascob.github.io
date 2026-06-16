@@ -33,6 +33,20 @@ const GROUPS: Group[] = [
     ],
   },
   {
+    title: 'Booleano',
+    symbols: [
+      { label: '<', insert: ' < ' },
+      { label: '>', insert: ' > ' },
+      { label: '≤', insert: ' <= ' },
+      { label: '≥', insert: ' >= ' },
+      { label: '=', insert: ' == ' },
+      { label: '≠', insert: ' != ' },
+      { label: '∧', insert: ' and ' },
+      { label: '∨', insert: ' or ' },
+      { label: '¬', insert: 'not ' },
+    ],
+  },
+  {
     title: 'Funciones',
     symbols: [
       fn('sin'), fn('cos'), fn('tan'), fn('asin'), fn('acos'), fn('atan'),

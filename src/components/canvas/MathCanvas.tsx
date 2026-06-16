@@ -11,6 +11,7 @@ const DEMO: Region[] = [
   { id: 'demo-1', kind: 'math', x: 32, y: 80, src: 'F := 30 kN' },
   { id: 'demo-2', kind: 'math', x: 32, y: 128, src: 'L := 6 m' },
   { id: 'demo-3', kind: 'math', x: 32, y: 176, src: 'M := F*L/4 = kN*m' },
+  { id: 'demo-4', kind: 'math', x: 32, y: 224, src: 'M <= 60 kN*m =' },
 ];
 
 function loadInitial(): Region[] {

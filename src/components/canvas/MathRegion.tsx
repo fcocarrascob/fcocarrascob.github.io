@@ -109,7 +109,18 @@ export default function MathRegion({
         <span className="whitespace-pre text-sm text-ink">{region.src}</span>
       ) : (
         <div>
-          {result?.tex ? (
+          {result?.bool !== undefined ? (
+            <div className="flex items-center gap-2">
+              {result.tex && <Katex tex={result.tex} />}
+              <span
+                className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-sm font-bold ${
+                  result.bool ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                }`}
+              >
+                {result.bool ? '✓' : '✗'}
+              </span>
+            </div>
+          ) : result?.tex ? (
             <Katex tex={result.tex} />
           ) : (
             <span className="font-mono text-sm text-ink">{region.src}</span>

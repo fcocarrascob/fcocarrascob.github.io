@@ -42,6 +42,8 @@ export interface ParsedMath {
 export interface RegionResult {
   /** LaTeX completo de la región (definición + expresión + resultado). */
   tex?: string;
+  /** Veredicto booleano de una comparación (true=✓, false=✗). Lo pinta MathRegion. */
+  bool?: boolean;
   /** Mensaje de error (sintaxis, variable indefinida, unidad incoherente...). */
   error?: string;
 }
@@ -184,10 +186,17 @@ export function evaluateSheet(regions: Region[]): SheetResults {
         value = value.to(parsed.targetUnit);
       }
       if (parsed.varName) scope[parsed.varName] = value;
-      if (parsed.showResult && tex !== undefined) {
-        tex += `=${resultToTex(value)}`;
+
+      const isBool = typeof value === 'boolean';
+      if (isBool && parsed.showResult) {
+        // `tex` es la comparación renderizada; el veredicto ✓/✗ lo pinta MathRegion.
+        results[region.id] = { tex, bool: value };
+      } else {
+        if (!isBool && parsed.showResult && tex !== undefined) {
+          tex += `=${resultToTex(value)}`;
+        }
+        results[region.id] = { tex };
       }
-      results[region.id] = { tex };
     } catch (err) {
       results[region.id] = { tex, error: errMsg(err) };
     }
