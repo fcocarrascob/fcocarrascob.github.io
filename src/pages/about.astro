@@ -4,9 +4,17 @@ import PageLayout from '../layouts/PageLayout.astro';
 const projects = [
   {
     title: 'Revisión Estructural Truck Shop 30ton',
-    description: '<strong>Cliente:</strong> Stracon Group<br/><strong>Ubicación:</strong> Antamina, Áncash, Perú<br/>Revisión estructural de Truck Shop de 2 bahías para puente grúa de 30 ton.<br/><strong>Normas:</strong> RNE · ASCE 7 · ACI 318 · AISC 341 · AISC 360',
+    description: '<strong>Cliente:</strong> Stracon Group<br/><strong>Ubicación:</strong> Antamina, Áncash, Perú<br/><strong>Descripción:</strong> Revisión estructural de Truck Shop de 2 bahías para puente grúa de 30 ton. Revisión sísmica según normativa peruana; verificación de resistencias y deformaciones verticales/laterales. <br/><strong>Normas:</strong> RNE · ASCE 7 · ACI 318 · AISC 341 · AISC 360',
     image: '/portfolio/macadam.png',
     alt: 'Revisión Estructural Truck Shop 30ton',
+    imageLeft: false,
+  },
+  {
+    title: 'Losa de Aproximación Chancador',
+    description: '<strong>Cliente:</strong> AMSA <br/><strong>Ubicación:</strong>Nueva Centinela, Sierra Gorda <br/><strong>Descripción:</strong> Análisis y diseño de Losas de Aproximación hacia Chancador Primario; Camión de Carga KOMATSU 980E-5, análisis de resistencia y estabilidad.<br/><strong>Normas:</strong> ACI 318 · NCh170 · NCh430 · NCh3171',
+    image: '/portfolio/losa_aprox.png',
+    alt: 'Título del proyecto',
+    imageLeft: true,
   },
 ];
 ---
@@ -28,7 +36,7 @@ const projects = [
     <h2 class="text-sm font-semibold uppercase tracking-widest text-[var(--color-muted)] mb-6">Portafolio</h2>
     <div class="divide-y divide-[var(--color-border)]">
       {projects.map((p) => (
-        <div class="flex gap-6 py-6 items-start">
+        <div class={`flex gap-6 py-6 items-start ${p.imageLeft ? 'flex-row-reverse' : ''}`}>
           <div class="flex-1 min-w-0">
             <h3 class="font-semibold text-[var(--color-ink)] leading-snug">{p.title}</h3>
             <p class="mt-2 text-sm text-[var(--color-muted)] leading-relaxed" set:html={p.description} />

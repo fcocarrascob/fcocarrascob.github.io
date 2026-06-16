@@ -5,6 +5,12 @@ import { getHormigonPostsBySubsection, SUBSECTIONS } from '../../../lib/hormigon
 
 const sub = SUBSECTIONS['aci318-25'];
 const posts = await getHormigonPostsBySubsection('aci318-25');
+
+const capNum = (chapter: string) => parseInt(chapter.match(/\d+/)?.[0] ?? '0');
+const sorted = [...posts].sort((a, b) => capNum(a.data.chapter) - capNum(b.data.chapter));
+
+const parte1 = sorted.filter((p) => capNum(p.data.chapter) === 1);
+const parte3 = sorted.filter((p) => capNum(p.data.chapter) !== 1);
 ---
 <PageLayout title={sub.label} description={sub.description}>
   <div class="mb-10">
@@ -18,24 +24,58 @@ const posts = await getHormigonPostsBySubsection('aci318-25');
       <h1 class="text-2xl font-semibold text-ink mb-3">{sub.label}</h1>
       <p class="text-muted leading-relaxed">{sub.description}</p>
     </div>
+    {sorted.length > 0 && (
+      <div class="flex flex-wrap gap-2 mt-5">
+        {sorted.map((post) => (
+          <a
+            href={`/hormigon/${post.id}`}
+            title={post.data.chapter}
+            class="text-xs px-3 py-1.5 rounded border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors"
+          >
+            {post.data.chapter.split('—')[0].trim()}
+          </a>
+        ))}
+      </div>
+    )}
   </div>
 
-  <div class="text-sm text-muted mb-6">
-    {posts.length} nota{posts.length !== 1 ? 's' : ''}
-  </div>
+  {parte1.length > 0 && (
+    <section class="mb-10">
+      <h2 class="text-sm font-semibold text-ink border-t border-[var(--color-border)] pt-6 mb-6">
+        Parte 1 — General
+      </h2>
+      {parte1.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          href={`/hormigon/${post.id}`}
+          tags={post.data.tags}
+          section={post.data.chapter}
+        />
+      ))}
+    </section>
+  )}
 
-  {posts.length === 0 ? (
+  {parte3.length > 0 && (
+    <section>
+      <h2 class="text-sm font-semibold text-ink border-t border-[var(--color-border)] pt-6 mb-6">
+        Parte 3 — Elementos
+      </h2>
+      {parte3.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          href={`/hormigon/${post.id}`}
+          tags={post.data.tags}
+          section={post.data.chapter}
+        />
+      ))}
+    </section>
+  )}
+
+  {posts.length === 0 && (
     <p class="text-muted">No hay notas publicadas todavía.</p>
-  ) : (
-    posts.map((post) => (
-      <PostCard
-        title={post.data.title}
-        description={post.data.description}
-        pubDate={post.data.pubDate}
-        href={`/hormigon/${post.id}`}
-        tags={post.data.tags}
-        section={post.data.chapter}
-      />
-    ))
   )}
 </PageLayout>

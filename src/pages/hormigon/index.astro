@@ -1,6 +1,5 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import PostCard from '../../components/ui/PostCard.astro';
 import { getAllHormigonPosts, SUBSECTIONS } from '../../lib/hormigon';
 
 const posts = await getAllHormigonPosts();
@@ -46,21 +45,4 @@ const subsectionCounts = Object.fromEntries(
     </ul>
   </section>
 
-  {posts.length > 0 && (
-    <section>
-      <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-6">
-        Notas recientes
-      </h2>
-      {posts.slice(0, 5).map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          pubDate={post.data.pubDate}
-          href={`/hormigon/${post.id}`}
-          tags={post.data.tags}
-          section={post.data.chapter}
-        />
-      ))}
-    </section>
-  )}
 </PageLayout>
