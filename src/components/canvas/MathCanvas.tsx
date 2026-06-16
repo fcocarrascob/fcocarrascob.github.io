@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MathRegion, { GRID, snap } from './MathRegion';
 import SymbolPalette, { type SymbolEntry } from './SymbolPalette';
 import { evaluateSheet, type Region, type RegionKind } from '../../lib/worksheet';
+import { TEMPLATES, type Template } from '../../lib/worksheet-templates';
 
 const STORAGE_KEY = 'structpad.worksheet.v1';
 
@@ -41,6 +42,8 @@ export default function MathCanvas() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   /** Tipo de la próxima región a crear con clic ('text' tras pulsar el botón Texto). */
   const [nextKind, setNextKind] = useState<RegionKind>('math');
+  /** Menú desplegable de plantillas abierto. */
+  const [templatesOpen, setTemplatesOpen] = useState(false);
 
   const sheetRef = useRef<HTMLDivElement>(null);
   const activeInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
@@ -158,6 +161,16 @@ export default function MathCanvas() {
     URL.revokeObjectURL(url);
   };
 
+  const loadTemplate = (tpl: Template) => {
+    setTemplatesOpen(false);
+    const hasContent = regions.some((r) => r.src.trim() !== '');
+    if (hasContent && !confirm(`¿Reemplazar la hoja actual por «${tpl.titulo}»?`)) return;
+    // Clonar las regiones para no mutar la plantilla compartida al editarla.
+    setRegions(tpl.regions.map((r) => ({ ...r })));
+    setSelected(new Set());
+    setActiveId(null);
+  };
+
   const importJson = (file: File) => {
     file.text().then((text) => {
       try {
@@ -190,6 +203,33 @@ export default function MathCanvas() {
           ƒ Programa
         </button>
         <span className="mx-1 h-4 w-px bg-border" />
+        <div className="relative">
+          <button
+            className={`${toolBtn} ${templatesOpen ? '!border-accent !text-accent' : ''}`}
+            onClick={() => setTemplatesOpen((o) => !o)}
+            title="Cargar una planilla de diseño"
+          >
+            Plantillas ▾
+          </button>
+          {templatesOpen && (
+            <>
+              {/* Capa para cerrar el menú al hacer clic fuera. */}
+              <div className="fixed inset-0 z-30" onClick={() => setTemplatesOpen(false)} />
+              <div className="absolute left-0 top-full z-40 mt-1 w-72 rounded border border-border bg-white py-1 shadow-lg">
+                {TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    className="block w-full px-3 py-1.5 text-left hover:bg-accent/10"
+                    onClick={() => loadTemplate(tpl)}
+                  >
+                    <span className="block text-xs font-medium text-ink">{tpl.titulo}</span>
+                    <span className="block text-[10px] text-muted">{tpl.norma}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
         <button className={toolBtn} onClick={exportJson}>
           Exportar
         </button>
@@ -233,7 +273,8 @@ export default function MathCanvas() {
               minWidth: '100%',
               minHeight: '100%',
               width: 1600,
-              height: 1400,
+              // Crece para acomodar plantillas largas (deja margen tras la última región).
+              height: Math.max(1400, (regions.length ? Math.max(...regions.map((r) => r.y)) : 0) + 240),
               backgroundImage:
                 'linear-gradient(to right, rgba(100,116,139,0.12) 1px, transparent 1px), ' +
                 'linear-gradient(to bottom, rgba(100,116,139,0.12) 1px, transparent 1px)',
