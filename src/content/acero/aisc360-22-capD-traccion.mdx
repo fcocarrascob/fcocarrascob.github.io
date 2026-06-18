@@ -1,0 +1,138 @@
+---
+title: "AISC 360-22 Cap. D — Diseño de miembros en tracción"
+description: "Resistencia a tracción según el Capítulo D de AISC 360-22: fluencia en el área bruta y rotura en el área neta efectiva, factor de retraso de cortante U (Tabla D3.1) y limitaciones de esbeltez."
+pubDate: 2026-06-18
+tags: ["aisc360", "tracción", "área neta", "retraso de cortante", "U", "LRFD", "ASD"]
+subsection: "aisc360-22"
+chapter: "Cap. D — Tracción"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo D cubre la **resistencia a tracción** $P_n$ de miembros solicitados axialmente
+por su centroide. Gobierna el menor de dos estados límite: **fluencia en el área bruta** y
+**rotura (fractura) en el área neta efectiva**.
+
+| Sección | Contenido |
+|---------|-----------|
+| D1 | Limitaciones de esbeltez |
+| D2 | Resistencia a tracción |
+| D3 | Área neta efectiva (factor $U$) |
+| D4 | Miembros armados (built-up) |
+| D5 | Miembros conectados por pasador (pin) |
+| D6 | Barras de ojo (eyebars) |
+
+---
+
+## D1 — Esbeltez
+
+No hay límite obligatorio de esbeltez para miembros en tracción, pero AISC **recomienda**
+$L/r \leq 300$ (salvo varillas y colgadores) para controlar vibraciones y flecha por peso
+propio.
+
+---
+
+## D2 — Resistencia a tracción
+
+Se verifican **ambos** estados límite y gobierna el menor $P_n$:
+
+### Fluencia en el área bruta
+
+<Equation label="Ec. D2-1">
+$$
+P_n = F_y \, A_g \qquad (\phi_t = 0.90, \;\; \Omega_t = 1.67)
+$$
+</Equation>
+
+### Rotura en el área neta efectiva
+
+<Equation label="Ec. D2-2">
+$$
+P_n = F_u \, A_e \qquad (\phi_t = 0.75, \;\; \Omega_t = 2.00)
+$$
+</Equation>
+
+<Note type="info">
+La fluencia usa $F_y$ sobre el área **bruta** $A_g$ (estado dúctil, factor menos exigente);
+la rotura usa $F_u$ sobre el área **neta efectiva** $A_e$ (estado frágil, factor más
+exigente). Por eso un mismo perfil puede estar gobernado por la rotura aunque $F_u > F_y$.
+</Note>
+
+---
+
+## D3 — Área neta efectiva
+
+<Equation label="Ec. D3-1">
+$$
+A_e = A_n \, U
+$$
+</Equation>
+
+donde $A_n$ es el área neta (Cap. B4.3, descontando agujeros) y $U$ el **factor de retraso
+de cortante** (shear lag), que penaliza el hecho de que no todos los elementos de la sección
+transmitan la carga de forma uniforme en la conexión.
+
+La forma general más usada para conexiones apernadas o soldadas en las que solo algunos
+elementos están conectados es:
+
+<Equation label="Caso 2, Tabla D3.1">
+$$
+U = 1 - \frac{\bar{x}}{l}
+$$
+</Equation>
+
+donde $\bar{x}$ es la excentricidad de la conexión (distancia del plano de conexión al
+centroide del elemento) y $l$ la longitud de la conexión en la dirección de la carga.
+
+### Tabla D3.1 — Factores de retraso de cortante $U$
+
+| Caso | Configuración | $U$ |
+|:----:|---------------|-----|
+| 1 | La carga se transmite directamente a **cada** elemento de la sección (por conectores o soldadura) | $1.0$ |
+| 2 | Todos los miembros **salvo HSS**, con la carga en **algunos** elementos (apernado o soldadura longitudinal + transversal) | $1 - \bar{x}/l$ |
+| 3 | Carga transmitida solo por **soldaduras transversales** a algunos elementos | $1.0$; $A_n$ = área de los elementos directamente conectados |
+| 4 | Planchas, ángulos, canales y perfiles W con carga por **soldaduras longitudinales** solamente | $\dfrac{3 l^2}{3 l^2 + w^2}\left(1 - \dfrac{\bar{x}}{w}\right)$, con $l = \tfrac{l_1 + l_2}{2}$ |
+| 5 | **HSS circular** con una sola plancha gusset concéntrica | $1.0$ si $l \geq 1.3D$; si $D \leq l < 1.3D$: $1 - \bar{x}/l$ con $\bar{x} = D/\pi$ |
+| 6 | **HSS rectangular**, una plancha gusset concéntrica ($l \geq H$) | $1 - \bar{x}/l$, con $\bar{x} = \dfrac{B^2 + 2BH}{4(B+H)}$ |
+| 6 | **HSS rectangular**, dos planchas gusset laterales ($l \geq H$) | $1 - \bar{x}/l$, con $\bar{x} = \dfrac{B^2}{4(B+H)}$ |
+| 7 | Perfiles W, M, S, HP (o tés cortadas de ellos) con **ala** conectada (≥ 3 conectores por línea) | $0.90$ si $b_f \geq \tfrac{2}{3} d$; si no, $0.85$ |
+| 7 | Los mismos perfiles con el **alma** conectada (≥ 4 conectores por línea) | $0.70$ |
+| 8 | Ángulos simples y dobles con ≥ 4 conectores por línea | $0.80$ |
+| 8 | Ángulos simples y dobles con 3 conectores por línea (con menos de 3, usar Caso 2) | $0.60$ |
+
+Donde $B$ = ancho del HSS rectangular medido a 90° del plano de conexión, $H$ = altura
+medida en el plano de conexión, $D$ = diámetro exterior del HSS circular, $d$ = peralte del
+perfil, $w$ = ancho de la plancha y $l_1, l_2$ ($\geq 4 \times$ el tamaño de soldadura) las
+longitudes de soldadura longitudinal.
+
+<Note type="tip">
+Para perfiles laminados (Caso 7) y ángulos (Caso 8) se puede usar el valor tabulado **o**,
+de forma más precisa, $U = 1 - \bar{x}/l$ del Caso 2; AISC permite tomar el **mayor** de
+ambos.
+</Note>
+
+---
+
+## Relación con la rotura en bloque
+
+Además de los estados límite del Capítulo D, las conexiones en tracción deben verificarse
+contra la **rotura en bloque de cortante** (block shear), cuyo cálculo está en la
+**Sección J4.3**:
+
+<Equation label="Ec. J4-5">
+$$
+R_n = 0.60 \, F_u A_{nv} + U_{bs} \, F_u A_{nt} \leq 0.60 \, F_y A_{gv} + U_{bs} \, F_u A_{nt}
+$$
+</Equation>
+
+donde $A_{gv}, A_{nv}$ son áreas brutas/netas en cortante, $A_{nt}$ el área neta en tracción
+y $U_{bs} = 1.0$ para tracción uniforme (0.5 si es no uniforme). $\phi = 0.75$, $\Omega = 2.00$.
+
+<Note type="warning">
+Las Secciones D4–D6 (miembros armados, conexiones por pasador y barras de ojo) tienen
+reglas geométricas y de resistencia propias no detalladas aquí. Los valores de $U$ se
+resumen de la Tabla D3.1; verificar el caso exacto contra la edición vigente.
+</Note>

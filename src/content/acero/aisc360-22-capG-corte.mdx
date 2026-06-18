@@ -1,0 +1,169 @@
+---
+title: "AISC 360-22 Cap. G — Diseño de miembros en corte"
+description: "Resistencia a corte según el Capítulo G de AISC 360-22: corte en el alma de perfiles I y canales (Cv1), acción del campo de tracciones, HSS rectangulares y circulares, y corte en eje débil."
+pubDate: 2026-06-18
+tags: ["aisc360", "corte", "alma", "campo de tracciones", "HSS", "LRFD", "ASD"]
+subsection: "aisc360-22"
+chapter: "Cap. G — Corte"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo G cubre la **resistencia nominal a corte** $V_n$ en el plano del alma (y, para
+algunos perfiles, en el eje débil). El estado límite habitual es el **pandeo por corte del
+alma**, controlado por la esbeltez $h/t_w$.
+
+| Sección | Contenido |
+|---------|-----------|
+| G1 | Disposiciones generales |
+| G2 | Perfiles I y canales (alma): G2.1 resistencia, G2.2 campo de tracciones, G2.3 atiesadores |
+| G3 | Ángulos simples y tés |
+| G4 | HSS rectangulares, secciones cajón |
+| G5 | HSS circulares |
+| G6 | Corte en el **eje débil** de perfiles simétricos |
+| G7 | Vigas con aberturas en el alma |
+
+---
+
+## G2.1 — Corte en el alma de perfiles I y canales
+
+<Equation label="Ec. G2-1">
+$$
+V_n = 0.6 \, F_y \, A_w \, C_{v1}
+$$
+</Equation>
+
+donde $A_w = d \, t_w$ (peralte total $\times$ espesor del alma) y $C_{v1}$ es el coeficiente
+de resistencia a corte del alma. El factor $0.6\,F_y$ es la tensión de fluencia por corte
+($\tau_y \approx 0.6 F_y$).
+
+### Coeficiente $C_{v1}$ y factores
+
+- **Almas de perfiles I laminados** con $\dfrac{h}{t_w} \leq 2.24\sqrt{\dfrac{E}{F_y}}$:
+
+<Equation label="Ec. G2-2">
+$$
+C_{v1} = 1.0 \qquad (\phi_v = 1.00, \;\; \Omega_v = 1.50)
+$$
+</Equation>
+
+- **Todos los demás** perfiles I y canales: $\phi_v = 0.90$, $\Omega_v = 1.67$, con:
+  - Si $\dfrac{h}{t_w} \leq 1.10\sqrt{\dfrac{k_v E}{F_y}}$:
+
+<Equation label="Ec. G2-3">
+$$
+C_{v1} = 1.0
+$$
+</Equation>
+
+  - Si $\dfrac{h}{t_w} > 1.10\sqrt{\dfrac{k_v E}{F_y}}$:
+
+<Equation label="Ec. G2-4">
+$$
+C_{v1} = \frac{1.10\sqrt{k_v E / F_y}}{h / t_w}
+$$
+</Equation>
+
+<Note type="tip">
+La gran mayoría de los perfiles **W laminados** de uso común cumplen
+$h/t_w \leq 2.24\sqrt{E/F_y}$, por lo que toman $C_{v1} = 1.0$ y el factor más favorable
+$\phi_v = 1.00$. Es decir, $V_n = 0.6\,F_y\,A_w$ sin reducción.
+</Note>
+
+### Coeficiente de pandeo por corte $k_v$
+
+- Almas **sin atiesadores transversales**: $k_v = 5.34$.
+- Almas **con atiesadores transversales**:
+
+$$
+k_v = 5 + \frac{5}{\left(a/h\right)^2}
+$$
+
+excepto $k_v = 5.34$ cuando $a/h > 3.0$ o $a/h > \left[\dfrac{260}{h/t_w}\right]^2$, siendo
+$a$ la separación entre atiesadores.
+
+---
+
+## G2.2 — Acción del campo de tracciones (tension field)
+
+En almas atiesadas y esbeltas, tras el pandeo elástico por corte el alma puede seguir
+resistiendo mediante un mecanismo tipo celosía (el alma traccionada + atiesadores
+comprimidos). Cuando se cumplen las condiciones de G2.2:
+
+<Equation label="Ec. G2-7">
+$$
+V_n = 0.6 \, F_y \, A_w \left[ C_{v2} + \frac{1 - C_{v2}}{1.15\sqrt{1 + \left(a/h\right)^2}} \right]
+$$
+</Equation>
+
+<Note type="warning">
+El campo de tracciones **no se permite** en paneles extremos, cuando $a/h > 3.0$, ni en
+perfiles donde no se desarrolle el anclaje del campo. Si no aplica, se usa G2.1. $C_{v2}$ es
+el coeficiente de **pandeo** por corte (no de resistencia), con expresiones análogas a las
+de HSS de la Sección G4.
+</Note>
+
+---
+
+## G4 — HSS rectangulares y secciones cajón
+
+<Equation label="Ec. G4-1">
+$$
+V_n = 0.6 \, F_y \, A_w \, C_{v2}
+$$
+</Equation>
+
+con $A_w = 2 h t$ (las dos almas), $h$ = ancho plano del alma y $k_v = 5$. El coeficiente de
+pandeo $C_{v2}$ tiene tres rangos:
+
+- $\dfrac{h}{t} \leq 1.10\sqrt{\dfrac{k_v E}{F_y}}$:  $C_{v2} = 1.0$
+- $1.10\sqrt{\dfrac{k_v E}{F_y}} < \dfrac{h}{t} \leq 1.37\sqrt{\dfrac{k_v E}{F_y}}$:
+  $C_{v2} = \dfrac{1.10\sqrt{k_v E / F_y}}{h/t}$
+- $\dfrac{h}{t} > 1.37\sqrt{\dfrac{k_v E}{F_y}}$:
+  $C_{v2} = \dfrac{1.51 \, k_v E}{\left(h/t\right)^2 F_y}$
+
+$\phi_v = 0.90$, $\Omega_v = 1.67$.
+
+---
+
+## G5 — HSS circulares
+
+<Equation label="Ec. G5-1">
+$$
+V_n = \frac{F_{cr} \, A_g}{2}
+$$
+</Equation>
+
+donde $F_{cr}$ es el **mayor** de:
+
+$$
+F_{cr} = \frac{1.60 \, E}{\sqrt{L_v / D}\,\left(D/t\right)^{5/4}} \qquad\text{y}\qquad
+F_{cr} = \frac{0.78 \, E}{\left(D/t\right)^{3/2}}
+$$
+
+pero $F_{cr} \leq 0.6 \, F_y$. $L_v$ es la distancia entre puntos de corte máximo y nulo.
+$\phi_v = 0.90$, $\Omega_v = 1.67$.
+
+---
+
+## G6 — Corte en el eje débil
+
+Para perfiles I y canales solicitados en el eje débil, el corte lo resisten las **alas**:
+
+<Equation label="Ec. G6-1">
+$$
+V_n = 0.6 \, F_y \, b_f \, t_f \, C_{v2}
+$$
+</Equation>
+
+(por cada ala, $A_w = b_f t_f$), con $k_v = 1.2$ y $C_{v2}$ según los rangos de G4.
+$\phi_v = 0.90$, $\Omega_v = 1.67$.
+
+<Note type="warning">
+Las Secciones G3 (ángulos y tés) y G7 (vigas con aberturas en el alma) tienen reglas
+propias no detalladas aquí. Verificar coeficientes y rangos contra la edición vigente de
+AISC 360-22.
+</Note>

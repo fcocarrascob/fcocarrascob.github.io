@@ -1,0 +1,127 @@
+---
+title: "AISC 360-22 Cap. H — Fuerzas combinadas y torsión"
+description: "Interacción de flexión y carga axial (viga-columna) según el Capítulo H de AISC 360-22: ecuaciones H1-1a/H1-1b, miembros asimétricos, torsión en HSS y estados combinados."
+pubDate: 2026-06-18
+tags: ["aisc360", "fuerzas combinadas", "viga-columna", "interacción", "torsión", "LRFD", "ASD"]
+subsection: "aisc360-22"
+chapter: "Cap. H — Fuerzas combinadas y torsión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo H verifica miembros sometidos **simultáneamente** a flexión y fuerza axial
+(viga-columna), y a torsión o sus combinaciones. Toma como datos las resistencias
+requeridas ($P_r$, $M_r$, $V_r$, $T_r$) y las disponibles ($P_c$, $M_c$, $V_c$, $T_c$)
+calculadas en los Capítulos D/E (axial), F (flexión) y G (corte).
+
+| Sección | Contenido |
+|---------|-----------|
+| H1 | Miembros simétricos: flexión + fuerza axial |
+| H2 | Miembros asimétricos: interacción de tensiones |
+| H3 | Torsión y combinaciones con torsión (HSS y otros) |
+
+<Note type="info">
+Resistencias **disponibles**: $P_c = \phi_c P_n$ (LRFD) o $P_n/\Omega_c$ (ASD); análogamente
+$M_c = \phi_b M_n$ o $M_n/\Omega_b$. Las **requeridas** $P_r$, $M_r$ incluyen los efectos de
+segundo orden ($P\text{-}\Delta$ y $P\text{-}\delta$) o la amplificación del Cap. C / Apéndice 8.
+</Note>
+
+---
+
+## H1.1 — Flexión y fuerza axial en miembros simétricos
+
+Es la ecuación de interacción más usada del diseño en acero. Aplica tanto a compresión como
+a tracción axial, en perfiles doblemente y simplemente simétricos:
+
+- **Cuando $\dfrac{P_r}{P_c} \geq 0.2$:**
+
+<Equation label="Ec. H1-1a">
+$$
+\frac{P_r}{P_c} + \frac{8}{9}\left( \frac{M_{rx}}{M_{cx}} + \frac{M_{ry}}{M_{cy}} \right) \leq 1.0
+$$
+</Equation>
+
+- **Cuando $\dfrac{P_r}{P_c} < 0.2$:**
+
+<Equation label="Ec. H1-1b">
+$$
+\frac{P_r}{2 P_c} + \left( \frac{M_{rx}}{M_{cx}} + \frac{M_{ry}}{M_{cy}} \right) \leq 1.0
+$$
+</Equation>
+
+donde el subíndice $x$ es el eje fuerte y el $y$ el eje débil.
+
+<Note type="tip">
+El quiebre en $P_r/P_c = 0.2$ produce un diagrama de interacción **bilineal**: cuando el
+axial domina ($\geq 0.2$) la flexión pesa con factor $8/9$; cuando la flexión domina
+($< 0.2$) el axial pesa con factor $1/2$. Para tracción axial combinada con flexión, H1.2
+permite aumentar $C_b$ (la tracción estabiliza contra el pandeo lateral-torsional).
+</Note>
+
+---
+
+## H2 — Miembros asimétricos
+
+Para secciones sin eje de simetría (o cuando H1 no aplica), se usa una interacción basada en
+**tensiones** en el punto más solicitado:
+
+<Equation label="Ec. H2-1">
+$$
+\left| \frac{f_{ra}}{F_{ca}} + \frac{f_{rbw}}{F_{cbw}} + \frac{f_{rbz}}{F_{cbz}} \right| \leq 1.0
+$$
+</Equation>
+
+donde $f_{ra}$, $f_{rbw}$, $f_{rbz}$ son las tensiones requeridas (axial y flexión en los ejes
+principales $w$, $z$) y $F_{ca}$, $F_{cbw}$, $F_{cbz}$ las tensiones disponibles
+correspondientes.
+
+---
+
+## H3 — Torsión y estados combinados
+
+### H3.1 Torsión en HSS
+
+<Equation label="Ec. H3-1">
+$$
+T_n = F_{cr} \, C \qquad (\phi_T = 0.90, \;\; \Omega_T = 1.67)
+$$
+</Equation>
+
+donde $C$ es la **constante torsional** del HSS y $F_{cr}$ la tensión crítica de corte por
+torsión:
+
+- **HSS circular** — el mayor de:
+
+$$
+F_{cr} = \frac{1.23 \, E}{\sqrt{L/D}\,\left(D/t\right)^{5/4}} \qquad\text{y}\qquad
+F_{cr} = \frac{0.60 \, E}{\left(D/t\right)^{3/2}}, \qquad F_{cr} \leq 0.6 F_y
+$$
+
+- **HSS rectangular**, según $h/t$:
+  - $h/t \leq 2.45\sqrt{E/F_y}$:  $F_{cr} = 0.6 F_y$
+  - $2.45\sqrt{E/F_y} < h/t \leq 3.07\sqrt{E/F_y}$:
+    $F_{cr} = \dfrac{0.6 F_y \,\left(2.45\sqrt{E/F_y}\right)}{h/t}$
+  - $3.07\sqrt{E/F_y} < h/t \leq 260$:
+    $F_{cr} = \dfrac{0.458 \, \pi^2 E}{\left(h/t\right)^2}$
+
+### H3.2 HSS bajo torsión combinada
+
+Cuando la torsión requerida es pequeña respecto a la disponible
+($T_r / T_c \leq 0.2$) **la torsión se puede despreciar** y se diseña solo por H1. En caso
+contrario:
+
+<Equation label="Ec. H3-6">
+$$
+\left( \frac{P_r}{P_c} + \frac{M_r}{M_c} \right) + \left( \frac{V_r}{V_c} + \frac{T_r}{T_c} \right)^2 \leq 1.0
+$$
+</Equation>
+
+<Note type="warning">
+La Sección H3.3 (torsión en miembros no-HSS, p. ej. perfiles I) usa un enfoque de
+superposición de tensiones normales y de corte limitadas por $F_y$ y $0.6F_y$, y rara vez
+gobierna salvo en perfiles abiertos muy solicitados a torsión. Verificar coeficientes contra
+la edición vigente de AISC 360-22.
+</Note>
