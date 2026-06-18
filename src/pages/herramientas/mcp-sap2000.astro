@@ -1,7 +1,69 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
+
+const repo = 'https://github.com/fcocarrascob/Skills_SAP';
+const serverFile = `${repo}/blob/main/mcp_server/server.py`;
+
+const mcpTools = [
+  { name: 'connect_sap2000', desc: 'Conectar/adjuntar a instancia de SAP2000', line: 43 },
+  { name: 'disconnect_sap2000', desc: 'Desconectar del modelo activo', line: 63 },
+  { name: 'get_model_info', desc: 'Obtener info del modelo (unidades, conteos, archivo)', line: 72 },
+  { name: 'execute_sap_function', desc: 'Ejecutar una función API individual', line: 82 },
+  { name: 'run_sap_script', desc: 'Ejecutar un script completo en sandbox', line: 107 },
+  { name: 'list_scripts', desc: 'Listar scripts guardados', line: 139 },
+  { name: 'load_script', desc: 'Cargar código fuente de un script', line: 156 },
+  { name: 'search_api_docs', desc: 'Buscar en documentación API', line: 169 },
+  { name: 'list_api_categories', desc: 'Listar categorías de documentación', line: 190 },
+  { name: 'query_function_registry', desc: 'Consultar funciones verificadas', line: 200 },
+  { name: 'register_verified_function', desc: 'Registrar nueva función verificada', line: 233 },
+  { name: 'list_registry_categories', desc: 'Listar categorías del registry', line: 274 },
+];
+
+const registryCategories = [
+  { cat: 'File', count: 2, example: 'NewBlank, Save, OpenFile' },
+  { cat: 'PropMaterial', count: 10, example: 'SetMaterial, SetMPIsotropic' },
+  { cat: 'PropFrame', count: 13, example: 'SetRectangle, SetCircle, SetISection' },
+  { cat: 'PropArea', count: 3, example: 'SetShell_1, GetNameList' },
+  { cat: 'Object_Model', count: 22, example: 'AddCartesian, Count' },
+  { cat: 'FrameObj', count: 2, example: 'AddByPoint, AddByCoord' },
+  { cat: 'AreaObj', count: 1, example: 'AddByCoord' },
+  { cat: 'Load_Patterns', count: 4, example: 'Add, GetNameList' },
+  { cat: 'Load_Cases', count: 5, example: 'ResponseSpectrum.SetCase' },
+  { cat: 'RespCombo', count: 10, example: 'Add, SetCaseList, GetNameList' },
+  { cat: 'Analyze', count: 3, example: 'RunAnalysis, SetActiveDOF' },
+  { cat: 'Analysis_Results', count: 5, example: 'JointDispl, FrameForce' },
+  { cat: 'Database_Tables', count: 37, example: 'Lectura, escritura, exportación' },
+  { cat: 'Constraints', count: 3, example: 'SetBody, SetDiaphragm' },
+  { cat: 'Design', count: 9, example: 'StartDesign, GetCode, SetCode' },
+  { cat: 'Groups', count: 2, example: 'AddGroup, SetGroupAssign' },
+  { cat: 'Functions', count: 1, example: 'FuncRS.SetUser' },
+  { cat: 'Mass_Source', count: 4, example: 'SetDefault, SetMassSource' },
+];
+
+const totalFunctions = registryCategories.reduce((s, c) => s + c.count, 0);
+
+const guiApps = [
+  { name: 'Modelo Base Estandarizado', desc: 'Generador con materiales, patrones de carga, secciones de acero/HA, espectros NCh2369 y combinaciones LRFD/ASD/NCh.' },
+  { name: 'Placa Base Paramétrica', desc: 'Pernos de anclaje, silla, balasto Winkler y mallado con control visual de todos los parámetros.' },
+  { name: 'Anillo Circular', desc: 'Anillos parametrizados con control de radios, espesores y calidad de malla por zona concéntrica.' },
+  { name: 'Explorador de Database Tables', desc: 'Navegador y editor de tablas internas de SAP2000. Lectura, edición y exportación a CSV/XML/Excel.' },
+  { name: 'Post-Proceso', desc: 'Extracción de desplazamientos de nodos y fuerzas en shells para verificación de estabilidad.' },
+  { name: 'Combinaciones de Carga', desc: 'CRUD completo con templates de combinaciones normativas (LRFD, ASD, NCh).' },
+  { name: 'Estados de Carga', desc: 'Multi-tab para mapeo y verificación de estados de carga con capa de modelo dedicada.' },
+  { name: 'Fundaciones', desc: 'Generador paramétrico de fundaciones con conexión directa a SAP2000.' },
+];
+
+const examples = [
+  { name: 'Viga simplemente apoyada', desc: 'Con verificación analítica de M, V y δ' },
+  { name: 'Anillo circular parametrizado', desc: '3 zonas concéntricas de espesor variable' },
+  { name: 'Domo elipsoidal 3D', desc: 'Doble curvatura con quads y triángulos polares' },
+  { name: 'Nave industrial mixta', desc: 'HA + acero con análisis sísmico NCh2745' },
+  { name: 'Multi-torre a gran escala', desc: 'Modelo de varias torres' },
+  { name: 'Geometría compleja', desc: 'Showcase de geometría parametrizada' },
+  { name: 'Placa base con pernos', desc: 'Pernos de anclaje y balasto Winkler' },
+];
 ---
-<PageLayout title="MCP SAP2000" description="Servidor MCP para conectar agentes de IA con SAP2000">
+<PageLayout title="MCP SAP2000" description="Servidor MCP para conectar agentes de IA con SAP2000 — documentación y guía de uso">
   <div class="mb-10">
     <a href="/herramientas" class="text-sm text-muted hover:text-ink transition-colors">
       &larr; Herramientas
@@ -9,13 +71,242 @@ import PageLayout from '../../layouts/PageLayout.astro';
     <div class="mt-4">
       <p class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Herramientas</p>
       <h1 class="text-2xl font-semibold text-ink mb-3">MCP SAP2000</h1>
-      <p class="text-muted leading-relaxed">
-        Servidor MCP para conectar agentes de IA con SAP2000. Documentación y guía de uso del repositorio.
+      <p class="text-muted leading-relaxed max-w-2xl">
+        Framework de automatización de SAP2000 mediante Python, COM bridge y
+        <a href="https://modelcontextprotocol.io" class="text-accent hover:underline">Model Context Protocol (MCP)</a>.
+        Permite generar modelos estructurales, asignar cargas, ejecutar análisis y extraer
+        resultados de forma programática — todo orquestado desde un agente de IA como interfaz conversacional.
       </p>
     </div>
   </div>
 
   <div class="prose prose-slate max-w-none">
-    <p>Contenido en construcción.</p>
+
+    <!-- Arquitectura -->
+    <h2>Arquitectura</h2>
+    <p>
+      El servidor MCP actúa como puente entre el agente de IA y SAP2000. El usuario describe
+      lo que necesita en lenguaje natural; el agente consulta el servidor para buscar
+      documentación y funciones verificadas, genera y ejecuta scripts en un sandbox aislado,
+      y SAP2000 procesa los comandos vía COM automation.
+    </p>
+    <div class="not-prose my-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+      <span class="rounded-lg border border-border bg-blue-50 px-4 py-2 font-medium text-blue-800">Usuario</span>
+      <span class="text-muted">&rarr;</span>
+      <span class="rounded-lg border border-border bg-purple-50 px-4 py-2 font-medium text-purple-800">Agente IA</span>
+      <span class="text-muted">&rarr; MCP &rarr;</span>
+      <span class="rounded-lg border border-border bg-amber-50 px-4 py-2 font-medium text-amber-800">MCP Server (Python)</span>
+      <span class="text-muted">&rarr; COM &rarr;</span>
+      <span class="rounded-lg border border-border bg-green-50 px-4 py-2 font-medium text-green-800">SAP2000</span>
+    </div>
+
+    <h3>Componentes del servidor</h3>
+    <div class="not-prose my-4 overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-border">
+            <th class="py-2 pr-4 text-left font-semibold text-ink">Módulo</th>
+            <th class="py-2 text-left font-semibold text-ink">Función</th>
+          </tr>
+        </thead>
+        <tbody class="text-muted">
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">server.py</td><td class="py-2">Entry point — registro de 12 herramientas MCP</td></tr>
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">sap_bridge.py</td><td class="py-2">Conexión COM singleton a SAP2000</td></tr>
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">sap_executor.py</td><td class="py-2">Ejecutor con sandbox (imports restringidos, timeout 120s)</td></tr>
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">script_library.py</td><td class="py-2">Persistencia y búsqueda de scripts</td></tr>
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">doc_search.py</td><td class="py-2">Motor de búsqueda sobre documentación API</td></tr>
+          <tr class="border-b border-border/50"><td class="py-2 pr-4 font-mono text-xs text-ink">function_registry.py</td><td class="py-2">Base de datos de funciones verificadas</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Herramientas MCP -->
+    <h2>12 herramientas MCP</h2>
+    <p>
+      El servidor expone las siguientes herramientas que el agente de IA puede invocar directamente:
+    </p>
+    <div class="not-prose my-4 grid gap-2 sm:grid-cols-2">
+      {mcpTools.map(t => (
+        <a href={`${serverFile}#L${t.line}`} target="_blank" rel="noopener noreferrer"
+           class="rounded border border-border px-3 py-2 transition-colors hover:border-accent hover:bg-surface block no-underline">
+          <code class="text-xs font-semibold text-accent">{t.name}</code>
+          <p class="mt-0.5 text-xs text-muted">{t.desc}</p>
+        </a>
+      ))}
+    </div>
+
+    <!-- Flujo de trabajo -->
+    <h2>Flujo de trabajo</h2>
+    <p>Todos los scripts siguen un patrón universal de 9 fases:</p>
+    <ol>
+      <li><strong>Inicializar modelo</strong> — <code>InitializeNewModel</code>, <code>NewBlank</code></li>
+      <li><strong>Definir materiales</strong> — <code>PropMaterial.SetMaterial</code>, <code>SetMPIsotropic</code></li>
+      <li><strong>Definir secciones</strong> — <code>PropFrame.Set*</code>, <code>PropArea.SetShell_1</code></li>
+      <li><strong>Crear geometría</strong> — <code>FrameObj.AddByCoord</code>, <code>AreaObj.AddByCoord</code></li>
+      <li><strong>Agregar restricciones</strong> — <code>PointObj.SetRestraint</code>, <code>ConstraintDef.*</code></li>
+      <li><strong>Aplicar cargas</strong> — <code>LoadPatterns.Add</code>, <code>SetLoadDistributed</code></li>
+      <li><strong>Ejecutar análisis</strong> — <code>File.Save</code>, <code>Analyze.RunAnalysis</code></li>
+      <li><strong>Extraer resultados</strong> — <code>Results.JointDispl</code>, <code>Results.AreaForceShell</code></li>
+      <li><strong>Verificar</strong> — Assertions y comparación con cálculos manuales</li>
+    </ol>
+
+    <!-- Convención ByRef -->
+    <h3>Convención ByRef</h3>
+    <p>
+      La API de SAP2000 usa extensivamente parámetros ByRef. En Python vía COM, las funciones
+      retornan <strong>tuplas</strong> donde los outputs ByRef aparecen primero y el último
+      elemento es siempre el código de retorno (0 = éxito):
+    </p>
+    <pre><code>raw = SapModel.PointObj.AddCartesian(5, 3, 2, "", "PT1")
+point_name = raw[0]   # ByRef Name output
+ret_code = raw[-1]    # return code (siempre último)
+assert ret_code == 0, f"AddCartesian failed: {'{'}ret_code{'}'}"</code></pre>
+
+    <!-- Registry -->
+    <h2>Registry de funciones verificadas</h2>
+    <p>
+      El framework mantiene un registro de <strong>{totalFunctions} funciones API</strong> verificadas
+      contra SAP2000 real. Cada entrada incluye firma completa, layout ByRef, wrapper script
+      ejecutable y notas de uso.
+    </p>
+    <div class="not-prose my-4 overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-border">
+            <th class="py-2 pr-4 text-left font-semibold text-ink">Categoría</th>
+            <th class="py-2 pr-4 text-center font-semibold text-ink">Funciones</th>
+            <th class="py-2 text-left font-semibold text-ink">Ejemplo</th>
+          </tr>
+        </thead>
+        <tbody class="text-muted">
+          {registryCategories.map(r => (
+            <tr class="border-b border-border/50">
+              <td class="py-1.5 pr-4 font-mono text-xs text-ink">{r.cat}</td>
+              <td class="py-1.5 pr-4 text-center">{r.count}</td>
+              <td class="py-1.5 text-xs">{r.example}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sandbox -->
+    <h2>Sandbox de ejecución</h2>
+    <p>
+      Los scripts se ejecutan en un entorno restringido para seguridad. El sandbox provee
+      variables pre-inyectadas (<code>SapModel</code>, <code>SapObject</code>, <code>result</code>,
+      <code>sap_temp_dir</code>) y bloquea imports potencialmente peligrosos:
+    </p>
+    <ul>
+      <li><strong>Bloqueados:</strong> <code>os</code>, <code>subprocess</code>, <code>sys</code>, <code>shutil</code>, <code>pathlib</code>, <code>socket</code>, <code>http</code>, <code>ctypes</code>, <code>pickle</code></li>
+      <li><strong>Permitidos:</strong> <code>math</code>, <code>json</code>, <code>datetime</code>, <code>decimal</code>, <code>collections</code>, <code>itertools</code>, <code>functools</code></li>
+    </ul>
+    <p>Timeout por defecto: 120 segundos.</p>
+
+    <!-- GUI Apps -->
+    <h2>Aplicaciones GUI standalone</h2>
+    <p>
+      Ocho interfaces gráficas PySide6 que se conectan directamente a SAP2000 vía COM,
+      operables sin VS Code ni agente de IA. Cada GUI usa worker threads para operación
+      asíncrona sin bloquear la interfaz.
+    </p>
+    <div class="not-prose my-4 grid gap-3 sm:grid-cols-2">
+      {guiApps.map(app => (
+        <div class="rounded-lg border border-border bg-surface p-3">
+          <h3 class="text-sm font-semibold text-ink">{app.name}</h3>
+          <p class="mt-1 text-xs text-muted leading-relaxed">{app.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Ejemplos -->
+    <h2>Ejemplos</h2>
+    <p>
+      Scripts completos generados conversacionalmente con el agente de IA y verificados
+      contra SAP2000 real:
+    </p>
+    <div class="not-prose my-4">
+      <ul class="space-y-1.5">
+        {examples.map(e => (
+          <li class="flex items-baseline gap-2 text-sm">
+            <span class="text-accent font-medium shrink-0">&bull;</span>
+            <span><strong class="text-ink">{e.name}</strong> <span class="text-muted">— {e.desc}</span></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Configuración -->
+    <h2>Configuración</h2>
+
+    <h3>Requisitos</h3>
+    <div class="not-prose my-4 overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <tbody class="text-muted">
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">Windows</td><td class="py-1.5">10/11 (SAP2000 solo corre en Windows)</td></tr>
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">Python</td><td class="py-1.5">3.10+</td></tr>
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">SAP2000</td><td class="py-1.5">Cualquier versión con soporte API</td></tr>
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">comtypes</td><td class="py-1.5">Interfaz COM para Python</td></tr>
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">mcp[cli]</td><td class="py-1.5">SDK del protocolo MCP</td></tr>
+          <tr class="border-b border-border/50"><td class="py-1.5 pr-4 font-semibold text-ink">PySide6</td><td class="py-1.5">Para GUIs standalone (opcional)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Instalación</h3>
+    <pre><code># Clonar repositorio
+git clone https://github.com/fcocarrascob/Skills_SAP.git
+cd Skills_SAP
+
+# Crear y activar entorno virtual
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+# Instalar dependencias
+pip install -r mcp_server/requirements.txt</code></pre>
+
+    <h3>VS Code + GitHub Copilot</h3>
+    <p>
+      El servidor se autoconfigura vía <code>.vscode/mcp.json</code>. Al abrir el workspace
+      y usar Copilot, el server se inicia automáticamente.
+    </p>
+
+    <h3>Claude Code</h3>
+    <p>
+      Para Claude Code, crear <code>.claude/settings.json</code> en la raíz del proyecto con
+      rutas absolutas:
+    </p>
+    <pre><code>{JSON.stringify({
+  mcpServers: {
+    sap2000: {
+      command: "<ruta-al-proyecto>/.venv/Scripts/python.exe",
+      args: ["<ruta-al-proyecto>/mcp_server/server.py"],
+      env: {}
+    }
+  }
+}, null, 2)}</code></pre>
+
+    <!-- Tecnologías -->
+    <h2>Stack tecnológico</h2>
+    <ul>
+      <li><strong>Python 3.10+</strong> — Lenguaje principal</li>
+      <li><strong>comtypes</strong> — Interfaz COM para SAP2000</li>
+      <li><strong>FastMCP</strong> — SDK para servidor MCP</li>
+      <li><strong>PySide6</strong> — Framework GUI (aplicaciones standalone)</li>
+      <li><strong>SAP2000 API</strong> — API COM de CSI para análisis estructural</li>
+    </ul>
+
+    <!-- Repositorio -->
+    <h2>Repositorio</h2>
+    <p>
+      El código fuente, documentación API completa (25 archivos), 127 wrapper scripts y
+      los 7 scripts de ejemplo están disponibles en GitHub:
+    </p>
+    <p>
+      <a href={repo} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-ink no-underline transition-colors hover:border-accent">
+        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        fcocarrascob/Skills_SAP
+      </a>
+    </p>
   </div>
 </PageLayout>
