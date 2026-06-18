@@ -1,0 +1,182 @@
+---
+title: "AISC 360-22 Cap. B — Requisitos de diseño"
+description: "Bases de diseño LRFD y ASD, áreas bruta y neta, y clasificación de secciones por pandeo local con las Tablas B4.1a (compresión axial) y B4.1b (flexión) de AISC 360-22."
+pubDate: 2026-06-18
+tags: ["aisc360", "requisitos de diseño", "LRFD", "ASD", "clasificación de secciones", "pandeo local", "esbeltez"]
+subsection: "aisc360-22"
+chapter: "Cap. B — Requisitos de diseño"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo B fija los **requisitos generales de diseño** que aplican a todos los demás
+capítulos: bases de diseño, propiedades de los miembros y clasificación de secciones. Su
+estructura es:
+
+| Sección | Contenido |
+|---------|-----------|
+| B1 | Disposiciones generales y alcance |
+| B2 | Cargas y combinaciones de carga (remite al código de edificación aplicable) |
+| B3 | Bases de diseño: estados límite, LRFD y ASD |
+| B4 | Propiedades de los miembros: clasificación por pandeo local y áreas |
+| B5 | Fabricación y montaje |
+| B6 | Control y aseguramiento de calidad |
+| B7 | Evaluación de estructuras existentes |
+
+---
+
+## B3 — Bases de diseño
+
+El diseño debe verificar todos los **estados límite de resistencia** (ELU) y de
+**servicio** (deformaciones, vibraciones). AISC 360 admite dos métodos equivalentes; el
+proyectista elige uno y lo usa de forma consistente.
+
+### LRFD (diseño por factores de carga y resistencia)
+
+<Equation label="Ec. B3-1">
+$$
+R_u \leq \phi R_n
+$$
+</Equation>
+
+donde $R_u$ es la resistencia requerida con cargas mayoradas, $R_n$ la resistencia
+nominal y $\phi$ el factor de resistencia ($\phi \leq 1.0$).
+
+### ASD (diseño por resistencias admisibles)
+
+<Equation label="Ec. B3-2">
+$$
+R_a \leq \frac{R_n}{\Omega}
+$$
+</Equation>
+
+donde $R_a$ es la resistencia requerida con cargas de servicio y $\Omega$ el factor de
+seguridad ($\Omega \geq 1.0$).
+
+<Note type="info">
+Ambos formatos parten de la **misma resistencia nominal $R_n$**. Los factores se calibran
+de modo que, para una relación viva/muerta típica, $\Omega = \dfrac{1.5}{\phi}$. Así
+$\phi = 0.90 \Rightarrow \Omega = 1.67$ y $\phi = 0.75 \Rightarrow \Omega = 2.00$.
+</Note>
+
+---
+
+## B4 — Propiedades de los miembros
+
+### B4.1 Clasificación por pandeo local
+
+La capacidad de un miembro de desarrollar fluencia o $M_p$ antes de pandear localmente
+depende de la **relación ancho-espesor** $\lambda$ de cada elemento comprimido. Según el
+tipo de solicitación se usa una de dos tablas:
+
+- **Miembros en compresión axial** → Tabla B4.1a. Solo interesa el límite $\lambda_r$:
+  el elemento es **no esbelto** ($\lambda \leq \lambda_r$) o **esbelto** ($\lambda > \lambda_r$).
+- **Miembros en flexión** → Tabla B4.1b. Hay dos límites, $\lambda_p$ y $\lambda_r$:
+
+| Si | Clasificación (flexión) |
+|----|--------------------------|
+| $\lambda \leq \lambda_p$ | Compacta |
+| $\lambda_p < \lambda \leq \lambda_r$ | No compacta |
+| $\lambda > \lambda_r$ | Esbelta |
+
+<Note type="warning">
+Un mismo perfil puede clasificarse distinto según la solicitación (axial vs. flexión) y
+según el elemento (ala vs. alma). Siempre se clasifican **todos** los elementos comprimidos
+y gobierna el más desfavorable.
+</Note>
+
+### Elementos atiesados y no atiesados
+
+- **No atiesados:** apoyados en un solo borde paralelo a la dirección de la carga (alas de
+  perfiles I, alas de canales y tés, alas de ángulos).
+- **Atiesados:** apoyados en ambos bordes (almas de perfiles I, paredes de HSS).
+
+El ancho $b$ y el espesor $t$ que definen $\lambda$ se miden según las notas de cada caso
+(en HSS, $b$ y $h$ son los anchos planos; si no se conoce el radio de esquina,
+$b = B - 3t$ y $h = H - 3t$).
+
+---
+
+## Tabla B4.1a — Razones ancho-espesor: elementos en compresión axial
+
+Define únicamente $\lambda_r$ (límite no esbelto / esbelto). $k_c = \dfrac{4}{\sqrt{h/t_w}}$,
+con $0.35 \leq k_c \leq 0.76$.
+
+| Caso | Elemento | $\lambda$ | $\lambda_r$ (no esbelto) |
+|:----:|----------|:---------:|:------------------------:|
+| 1 | Alas de perfiles laminados, planchas conectadas a perfiles laminados, alas de pares de ángulos conectados continuamente, alas de canales y de tés (**no atiesado**) | $b/t$ | $0.56\sqrt{E/F_y}$ |
+| 2 | Alas de perfiles I soldados y planchas o ángulos conectados a secciones soldadas (**no atiesado**) | $b/t$ | $0.64\sqrt{k_c\,E/F_y}$ |
+| 3 | Alas de ángulos laminados, alas de pares de ángulos con separadores y todo otro elemento no atiesado | $b/t$ | $0.45\sqrt{E/F_y}$ |
+| 4 | Almas (vástagos) de tés | $d/t$ | $0.75\sqrt{E/F_y}$ |
+| 5 | Almas de perfiles I doblemente simétricos y canales (**atiesado**) | $h/t_w$ | $1.49\sqrt{E/F_y}$ |
+| 6 | Paredes de HSS rectangulares y secciones cajón de espesor uniforme | $b/t$ | $1.40\sqrt{E/F_y}$ |
+| 7 | Alas de sobre-planchas y planchas diafragma entre líneas de conectores/soldadura | $b/t$ | $1.40\sqrt{E/F_y}$ |
+| 8 | Todo elemento atiesador | $b/t$ | $1.49\sqrt{E/F_y}$ |
+| 9 | HSS circulares (tubos) | $D/t$ | $0.11\,E/F_y$ |
+
+---
+
+## Tabla B4.1b — Razones ancho-espesor: elementos en flexión
+
+Define $\lambda_p$ (compacto / no compacto) y $\lambda_r$ (no compacto / esbelto).
+
+| Caso | Elemento | $\lambda$ | $\lambda_p$ (compacto) | $\lambda_r$ (no compacto) |
+|:----:|----------|:---------:|:----------------------:|:-------------------------:|
+| 10 | Alas de perfiles I laminados, canales y tés (**no atiesado**) | $b/t$ | $0.38\sqrt{E/F_y}$ | $1.0\sqrt{E/F_y}$ |
+| 11 | Alas de perfiles I armados (**no atiesado**) | $b/t$ | $0.38\sqrt{E/F_y}$ | $0.95\sqrt{k_c\,E/F_L}$ |
+| 12 | Alas de ángulos simples | $b/t$ | $0.54\sqrt{E/F_y}$ | $0.91\sqrt{E/F_y}$ |
+| 13 | Alas de perfiles I y canales en flexión **eje menor** | $b/t$ | $0.38\sqrt{E/F_y}$ | $1.0\sqrt{E/F_y}$ |
+| 14 | Almas (vástagos) de tés | $d/t$ | $0.84\sqrt{E/F_y}$ | $1.03\sqrt{E/F_y}$ |
+| 15 | Almas de perfiles I y canales doblemente simétricos (**atiesado**) | $h/t_w$ | $3.76\sqrt{E/F_y}$ | $5.70\sqrt{E/F_y}$ |
+| 16 | Almas de perfiles I de simetría simple | $h_c/t_w$ | ver nota* | $5.70\sqrt{E/F_y}$ |
+| 17 | Alas de HSS rectangulares y secciones cajón de espesor uniforme | $b/t$ | $1.12\sqrt{E/F_y}$ | $1.40\sqrt{E/F_y}$ |
+| 18 | Alas de sobre-planchas y planchas diafragma entre líneas de conectores/soldadura | $b/t$ | $1.12\sqrt{E/F_y}$ | $1.40\sqrt{E/F_y}$ |
+| 19 | Almas de HSS rectangulares y secciones cajón | $h/t$ | $2.42\sqrt{E/F_y}$ | $5.70\sqrt{E/F_y}$ |
+| 20 | HSS circulares | $D/t$ | $0.07\,E/F_y$ | $0.31\,E/F_y$ |
+
+<Note type="info">
+\*Caso 16 (alma de perfil I de simetría simple):
+
+$$
+\lambda_p = \frac{\dfrac{h_c}{h_p}\sqrt{E/F_y}}{\left(0.54\,\dfrac{M_p}{M_y} - 0.09\right)^2} \leq \lambda_r
+$$
+
+donde $h_c$ es el doble de la distancia del centroide a la cara interior del ala
+comprimida y $h_p$ el doble de la distancia del eje plástico neutro a esa misma cara. Para
+perfiles doblemente simétricos se reduce al Caso 15. En el Caso 11, $F_L = 0.7 F_y$ en
+general (ver notas de la tabla).
+</Note>
+
+---
+
+## B4.3 — Áreas bruta y neta
+
+Para verificaciones de tracción, compresión y conexiones se distinguen:
+
+- **Área bruta $A_g$:** área total de la sección transversal.
+- **Área neta $A_n$:** descuenta los agujeros de conectores. El ancho del agujero se toma
+  $1.6$ mm ($1/16''$) mayor que la dimensión nominal del agujero. En conexiones con
+  agujeros escalonados se suma el término $\dfrac{s^2}{4g}$ por cada diagonal:
+
+<Equation label="Ec. B4.3b">
+$$
+A_n = \left[ b_g - \sum d_h + \sum \frac{s^2}{4g} \right] t
+$$
+</Equation>
+
+donde $s$ es el paso longitudinal entre agujeros y $g$ el gramil transversal.
+
+<Note type="tip">
+El **área neta efectiva** $A_e$ (que incorpora el retraso de cortante mediante el factor
+$U$) se define en el Capítulo D, no en el B. El Capítulo B solo fija $A_g$ y $A_n$.
+</Note>
+
+<Note type="warning">
+Esta nota cubre B3 y B4 (las partes de cálculo). B1–B2 remiten al código de edificación
+aplicable para cargas y combinaciones, y B5–B7 (fabricación, calidad y evaluación de
+estructuras existentes) son administrativos. Los valores de las tablas deben verificarse
+contra la edición vigente de AISC 360-22.
+</Note>

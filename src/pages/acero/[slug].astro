@@ -1,0 +1,34 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { SUBSECTIONS } from '../../lib/acero';
+import type { SubsectionKey } from '../../lib/acero';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('acero', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const subKey = post.data.subsection as SubsectionKey;
+const sub = SUBSECTIONS[subKey];
+---
+<BlogPost
+  frontmatter={{
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    updatedDate: post.data.updatedDate,
+    tags: post.data.tags,
+    norm: sub?.norm,
+    section: post.data.chapter ?? sub?.label,
+  }}
+  breadcrumb={{ href: `/acero/${post.data.subsection}`, label: sub?.label ?? post.data.subsection }}
+>
+  <Content />
+</BlogPost>

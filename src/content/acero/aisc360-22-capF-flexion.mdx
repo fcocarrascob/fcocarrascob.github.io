@@ -1,0 +1,313 @@
+---
+title: "AISC 360-22 Cap. F — Diseño de miembros en flexión"
+description: "Resistencia nominal a flexión según el Capítulo F de AISC 360-22: estados límite de fluencia y pandeo lateral-torsional, longitudes Lp y Lr, factor Cb y resumen por tipo de sección."
+pubDate: 2026-06-18
+tags: ["aisc360", "flexión", "vigas", "pandeo lateral-torsional", "pandeo local", "HSS", "LRFD", "ASD"]
+subsection: "aisc360-22"
+chapter: "Cap. F — Flexión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo F de AISC 360-22 establece la **resistencia nominal a flexión** $M_n$ de
+miembros solicitados por flexión simple alrededor de un eje principal. Aplica a perfiles
+laminados y armados de distintas geometrías; cada sección (F2 a F12) cubre un tipo de
+sección y eje de flexión:
+
+| Sección | Tipo de miembro / eje |
+|---------|-----------------------|
+| F2 | Perfiles I doblemente simétricos y canales **compactos**, flexión eje mayor |
+| F3 | Perfiles I doblemente simétricos, eje mayor, **ala no compacta o esbelta** |
+| F4 | Perfiles I de simetría simple, eje mayor |
+| F5 | Perfiles I con **alma esbelta**, eje mayor |
+| F6 | Perfiles I y canales, flexión **eje menor** |
+| F7 | Secciones tubulares rectangulares (HSS) y cajón |
+| F8 | Secciones tubulares circulares (HSS) |
+| F9 | Tés y ángulos dobles |
+| F10 | Ángulos simples |
+| F11 | Barras rectangulares y circulares |
+
+<Note type="info">
+El Capítulo F asume que el corte y la flexión se verifican por separado. La interacción
+con carga axial se trata en el Capítulo H, y el corte en el Capítulo G.
+</Note>
+
+---
+
+## Resistencia de diseño
+
+La resistencia de diseño en flexión debe satisfacer, según el método:
+
+<Equation label="LRFD">
+$$
+\phi_b M_n \geq M_u \qquad \phi_b = 0.90
+$$
+</Equation>
+
+<Equation label="ASD">
+$$
+\frac{M_n}{\Omega_b} \geq M_a \qquad \Omega_b = 1.67
+$$
+</Equation>
+
+---
+
+## Sección F2 — Perfiles I compactos, flexión eje mayor
+
+Aplica a perfiles I doblemente simétricos y canales con **alma y ala compactas**
+flexionados alrededor del eje mayor. La resistencia nominal $M_n$ es el menor valor entre
+los estados límite de **fluencia** y **pandeo lateral-torsional (LTB)**.
+
+### Estado límite de fluencia
+
+<Equation label="Ec. F2-1">
+$$
+M_n = M_p = F_y \, Z_x
+$$
+</Equation>
+
+donde $Z_x$ es el módulo plástico respecto al eje mayor.
+
+### Estado límite de pandeo lateral-torsional
+
+El comportamiento depende de la longitud no arriostrada $L_b$ frente a las longitudes
+límite $L_p$ (plastificación) y $L_r$ (límite del rango inelástico):
+
+- **$L_b \leq L_p$** — no aplica LTB: $M_n = M_p$.
+- **$L_p < L_b \leq L_r$** — pandeo inelástico:
+
+<Equation label="Ec. F2-2">
+$$
+M_n = C_b \left[ M_p - \left(M_p - 0.7 F_y S_x\right) \left(\frac{L_b - L_p}{L_r - L_p}\right) \right] \leq M_p
+$$
+</Equation>
+
+- **$L_b > L_r$** — pandeo elástico:
+
+<Equation label="Ec. F2-3">
+$$
+M_n = F_{cr} \, S_x \leq M_p
+$$
+</Equation>
+
+con la tensión crítica:
+
+<Equation label="Ec. F2-4">
+$$
+F_{cr} = \frac{C_b \, \pi^2 E}{\left(L_b / r_{ts}\right)^2} \sqrt{1 + 0.078 \, \frac{J c}{S_x h_o} \left(\frac{L_b}{r_{ts}}\right)^2}
+$$
+</Equation>
+
+### Longitudes límite
+
+<Equation label="Ec. F2-5">
+$$
+L_p = 1.76 \, r_y \sqrt{\frac{E}{F_y}}
+$$
+</Equation>
+
+<Equation label="Ec. F2-6">
+$$
+L_r = 1.95 \, r_{ts} \, \frac{E}{0.7 F_y} \sqrt{\frac{J c}{S_x h_o} + \sqrt{\left(\frac{J c}{S_x h_o}\right)^2 + 6.76 \left(\frac{0.7 F_y}{E}\right)^2}}
+$$
+</Equation>
+
+Para perfiles I doblemente simétricos $c = 1$; para canales $c = \dfrac{h_o}{2}\sqrt{\dfrac{I_y}{C_w}}$.
+Los parámetros $r_{ts}$ y $h_o$ (distancia entre centroides de alas) se definen en F2.
+
+---
+
+## Factor de modificación por gradiente de momento $C_b$
+
+$C_b$ amplifica la resistencia a LTB cuando el diagrama de momentos no es uniforme entre
+arriostramientos:
+
+<Equation label="Ec. F1-1">
+$$
+C_b = \frac{12.5 \, M_{max}}{2.5 \, M_{max} + 3 M_A + 4 M_B + 3 M_C}
+$$
+</Equation>
+
+donde $M_{max}$ es el momento máximo absoluto y $M_A$, $M_B$, $M_C$ son los momentos
+absolutos a $1/4$, $1/2$ y $3/4$ de la longitud no arriostrada.
+
+<Note type="tip">
+Para momento uniforme $C_b = 1.0$ (conservador y siempre admisible). Tomar $C_b = 1.0$
+simplifica la verificación a costa de cierta resistencia.
+</Note>
+
+---
+
+## Clasificación de la sección (Tabla B4.1b)
+
+Varios estados límite dependen de la esbeltez de los elementos comprimidos. Cada ala/alma
+se clasifica comparando su relación ancho-espesor $\lambda$ con los límites $\lambda_p$
+(compacto) y $\lambda_r$ (no compacto):
+
+| Si | Clasificación | Estado límite de pandeo local |
+|----|---------------|-------------------------------|
+| $\lambda \leq \lambda_p$ | Compacta | No aplica — desarrolla $M_p$ |
+| $\lambda_p < \lambda \leq \lambda_r$ | No compacta | Pandeo local **inelástico** |
+| $\lambda > \lambda_r$ | Esbelta | Pandeo local **elástico** |
+
+<Note type="info">
+Para perfiles laminados doblemente simétricos (W) de acero A992 el ala suele ser compacta
+y el alma siempre compacta, por lo que la Sección F2 gobierna. Las Secciones F3–F8 cubren
+los casos no compactos/esbeltos y otras geometrías.
+</Note>
+
+---
+
+## Sección F3 — Perfiles I con ala no compacta o esbelta, eje mayor
+
+Para perfiles I doblemente simétricos con **alma compacta** pero **ala no compacta o
+esbelta**, $M_n$ es el menor entre LTB (Sección F2) y **pandeo local del ala comprimida
+(FLB)**.
+
+### Pandeo local del ala (FLB)
+
+- **Ala no compacta:**
+
+<Equation label="Ec. F3-1">
+$$
+M_n = M_p - \left(M_p - 0.7 F_y S_x\right) \left(\frac{\lambda - \lambda_{pf}}{\lambda_{rf} - \lambda_{pf}}\right)
+$$
+</Equation>
+
+- **Ala esbelta:**
+
+<Equation label="Ec. F3-2">
+$$
+M_n = \frac{0.9 \, E \, k_c \, S_x}{\lambda^2}
+$$
+</Equation>
+
+donde $\lambda = b_f / 2 t_f$, los límites $\lambda_{pf}$ y $\lambda_{rf}$ se toman de la
+Tabla B4.1b (Caso 10/11) y
+
+$$
+k_c = \frac{4}{\sqrt{h/t_w}}, \qquad 0.35 \leq k_c \leq 0.76
+$$
+
+---
+
+## Sección F6 — Perfiles I y canales, flexión en eje menor
+
+En flexión alrededor del eje menor **no aplica el pandeo lateral-torsional**. $M_n$ es el
+menor entre fluencia y FLB.
+
+### Fluencia
+
+<Equation label="Ec. F6-1">
+$$
+M_n = M_p = F_y Z_y \leq 1.6 \, F_y S_y
+$$
+</Equation>
+
+### Pandeo local del ala (FLB)
+
+- **Ala no compacta:**
+
+<Equation label="Ec. F6-2">
+$$
+M_n = M_p - \left(M_p - 0.7 F_y S_y\right) \left(\frac{\lambda - \lambda_{pf}}{\lambda_{rf} - \lambda_{pf}}\right)
+$$
+</Equation>
+
+- **Ala esbelta:**
+
+<Equation label="Ec. F6-3 / F6-4">
+$$
+M_n = F_{cr} S_y, \qquad F_{cr} = \frac{0.69 \, E}{\lambda^2}
+$$
+</Equation>
+
+con $\lambda = b/t_f$ del ala.
+
+---
+
+## Sección F7 — HSS rectangulares y cuadrados, secciones cajón
+
+$M_n$ es el menor entre fluencia, pandeo local del ala (FLB) y pandeo local del alma (WLB).
+
+### Fluencia
+
+<Equation label="Ec. F7-1">
+$$
+M_n = M_p = F_y Z
+$$
+</Equation>
+
+### Pandeo local del ala (FLB)
+
+- **Ala no compacta:**
+
+<Equation label="Ec. F7-2">
+$$
+M_n = M_p - \left(M_p - F_y S\right) \left(3.57 \, \frac{b}{t} \sqrt{\frac{F_y}{E}} - 4.0\right) \leq M_p
+$$
+</Equation>
+
+- **Ala esbelta:** se usa el módulo elástico efectivo $S_e$ calculado con el ancho efectivo
+
+<Equation label="Ec. F7-3 / F7-4">
+$$
+M_n = F_y S_e, \qquad b_e = 1.92 \, t \sqrt{\frac{E}{F_y}} \left[1 - \frac{0.38}{b/t}\sqrt{\frac{E}{F_y}}\right] \leq b
+$$
+</Equation>
+
+### Pandeo local del alma (WLB)
+
+- **Alma no compacta:**
+
+<Equation label="Ec. F7-6">
+$$
+M_n = M_p - \left(M_p - F_y S_x\right) \left(0.305 \, \frac{h}{t_w} \sqrt{\frac{F_y}{E}} - 0.738\right) \leq M_p
+$$
+</Equation>
+
+<Note type="tip">
+En HSS, $b$ y $h$ son los anchos planos (descontando radios de esquina); cuando no se conoce
+el radio, AISC permite tomar $b = B - 3t$ y $h = H - 3t$.
+</Note>
+
+---
+
+## Sección F8 — HSS circulares
+
+Válida para $D/t < 0.45\,E/F_y$. $M_n$ es el menor entre fluencia y pandeo local.
+
+### Fluencia
+
+<Equation label="Ec. F8-1">
+$$
+M_n = M_p = F_y Z
+$$
+</Equation>
+
+### Pandeo local
+
+- **No compacto:**
+
+<Equation label="Ec. F8-2">
+$$
+M_n = \left(\frac{0.021 \, E}{D/t} + F_y\right) S
+$$
+</Equation>
+
+- **Esbelto:**
+
+<Equation label="Ec. F8-3 / F8-4">
+$$
+M_n = F_{cr} S, \qquad F_{cr} = \frac{0.33 \, E}{D/t}
+$$
+</Equation>
+
+<Note type="warning">
+Faltan por documentar las Secciones F4–F5 (perfiles I de simetría simple y de alma esbelta)
+y F9–F11 (tés, ángulos dobles, ángulos simples y barras). Los límites de esbeltez
+$\lambda_p$/$\lambda_r$ de cada elemento deben verificarse siempre contra la Tabla B4.1b.
+</Note>

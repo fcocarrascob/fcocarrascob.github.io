@@ -1,0 +1,190 @@
+---
+title: "AISC 360-22 Cap. E — Diseño de miembros en compresión"
+description: "Resistencia a compresión según el Capítulo E de AISC 360-22: pandeo por flexión (E3), pandeo torsional y flexo-torsional (E4), longitud efectiva y miembros con elementos esbeltos (E7)."
+pubDate: 2026-06-18
+tags: ["aisc360", "compresión", "columnas", "pandeo", "longitud efectiva", "LRFD", "ASD"]
+subsection: "aisc360-22"
+chapter: "Cap. E — Compresión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Alcance
+
+El Capítulo E cubre la **resistencia nominal a compresión** $P_n$ de miembros cargados
+axialmente por su centroide. La resistencia es el menor valor entre los estados límite
+aplicables: **pandeo por flexión (FB)**, **pandeo torsional (TB)** y **pandeo
+flexo-torsional (FTB)**.
+
+| Sección | Contenido |
+|---------|-----------|
+| E1 | Disposiciones generales y factores |
+| E2 | Longitud efectiva $L_c$ |
+| E3 | Pandeo por flexión — secciones sin elementos esbeltos |
+| E4 | Pandeo torsional y flexo-torsional |
+| E5 | Ángulos simples en compresión |
+| E6 | Miembros armados (built-up) |
+| E7 | Miembros con elementos esbeltos |
+
+---
+
+## E1 — Resistencia de diseño
+
+<Equation label="LRFD / ASD">
+$$
+\phi_c P_n \geq P_u \quad (\phi_c = 0.90) \qquad\qquad \frac{P_n}{\Omega_c} \geq P_a \quad (\Omega_c = 1.67)
+$$
+</Equation>
+
+---
+
+## E2 — Longitud efectiva
+
+La esbeltez se expresa mediante la **longitud efectiva** $L_c = K L$, donde $K$ es el
+factor de longitud efectiva y $L$ la longitud no arriostrada del eje considerado.
+
+<Note type="tip">
+AISC recomienda limitar la esbeltez $L_c/r \leq 200$ en miembros comprimidos. No es un
+límite obligatorio, pero esbelteces mayores rara vez son eficientes. $K$ se obtiene de los
+ábacos de alineamiento (Apéndice 7) o por análisis.
+</Note>
+
+---
+
+## E3 — Pandeo por flexión (secciones sin elementos esbeltos)
+
+Es el estado límite que gobierna en la mayoría de columnas de perfil compacto:
+
+<Equation label="Ec. E3-1">
+$$
+P_n = F_{cr} \, A_g
+$$
+</Equation>
+
+La tensión crítica $F_{cr}$ distingue pandeo **inelástico** y **elástico** según la
+esbeltez:
+
+- **Columna intermedia / corta** — $\dfrac{L_c}{r} \leq 4.71\sqrt{\dfrac{E}{F_y}}$
+  (equivale a $F_y / F_e \leq 2.25$):
+
+<Equation label="Ec. E3-2">
+$$
+F_{cr} = \left[ 0.658^{\, F_y / F_e} \right] F_y
+$$
+</Equation>
+
+- **Columna esbelta** — $\dfrac{L_c}{r} > 4.71\sqrt{\dfrac{E}{F_y}}$
+  (equivale a $F_y / F_e > 2.25$):
+
+<Equation label="Ec. E3-3">
+$$
+F_{cr} = 0.877 \, F_e
+$$
+</Equation>
+
+donde $F_e$ es la **tensión de pandeo elástico de Euler**:
+
+<Equation label="Ec. E3-4">
+$$
+F_e = \frac{\pi^2 E}{\left(L_c / r\right)^2}
+$$
+</Equation>
+
+Se usa la mayor relación $L_c/r$ de los dos ejes principales.
+
+<Note type="info">
+El factor $0.877$ de la Ec. E3-3 representa una reducción por imperfecciones iniciales y
+tensiones residuales aplicada a la curva de Euler; la Ec. E3-2 captura la transición
+inelástica.
+</Note>
+
+---
+
+## E4 — Pandeo torsional y flexo-torsional
+
+Aplica a miembros de **simetría simple** o **asimétricos** y a perfiles I doblemente
+simétricos esbeltos a torsión. Se usa $P_n = F_{cr} A_g$ con $F_{cr}$ de las Ecs. E3-2/E3-3,
+pero adoptando $F_e$ según la geometría:
+
+- **Miembros doblemente simétricos:**
+
+<Equation label="Ec. E4-2">
+$$
+F_e = \left( \frac{\pi^2 E \, C_w}{L_{cz}^2} + G J \right) \frac{1}{I_x + I_y}
+$$
+</Equation>
+
+- **Miembros de simetría simple** (eje $y$ de simetría):
+
+<Equation label="Ec. E4-3">
+$$
+F_e = \left( \frac{F_{ey} + F_{ez}}{2H} \right) \left[ 1 - \sqrt{1 - \frac{4 \, F_{ey} F_{ez} \, H}{\left(F_{ey} + F_{ez}\right)^2}} \, \right]
+$$
+</Equation>
+
+con los términos auxiliares:
+
+$$
+F_{ez} = \frac{1}{A_g \, \bar{r}_o^2}\left( \frac{\pi^2 E \, C_w}{L_{cz}^2} + G J \right), \qquad
+H = 1 - \frac{x_o^2 + y_o^2}{\bar{r}_o^2}
+$$
+
+$$
+\bar{r}_o^2 = x_o^2 + y_o^2 + \frac{I_x + I_y}{A_g}
+$$
+
+donde $x_o, y_o$ son las coordenadas del centro de corte respecto al centroide, $\bar{r}_o$
+el radio de giro polar respecto al centro de corte y $L_{cz}$ la longitud efectiva a torsión.
+
+---
+
+## E7 — Miembros con elementos esbeltos
+
+Cuando algún elemento es **esbelto** ($\lambda > \lambda_r$ de la Tabla B4.1a), se aplica el
+**método del ancho efectivo**:
+
+<Equation label="Ec. E7-1">
+$$
+P_n = F_{cr} \, A_e
+$$
+</Equation>
+
+$F_{cr}$ se calcula igual que en E3/E4 (con la sección completa), y $A_e$ es el **área
+efectiva**, obtenida reemplazando el ancho real $b$ por un ancho efectivo $b_e$ en cada
+elemento esbelto:
+
+- Si $\lambda \leq \lambda_r \sqrt{F_y / F_{cr}}$:  $b_e = b$.
+- Si $\lambda > \lambda_r \sqrt{F_y / F_{cr}}$:
+
+<Equation label="Ec. E7-3">
+$$
+b_e = b \left[ 1 - c_1 \sqrt{\frac{F_{el}}{F_{cr}}} \, \right] \sqrt{\frac{F_{el}}{F_{cr}}}
+$$
+</Equation>
+
+donde la tensión de pandeo local elástico es:
+
+<Equation label="Ec. E7-5">
+$$
+F_{el} = \left( c_2 \, \frac{\lambda_r}{\lambda} \right)^2 F_y
+$$
+</Equation>
+
+Los coeficientes $c_1$ y $c_2$ se toman de la Tabla E7.1 según el tipo de elemento
+($c_2 = \dfrac{1 - \sqrt{1 - 4 c_1}}{2 c_1}$).
+
+Para **HSS circulares esbeltos** ($D/t > 0.11\,E/F_y$) se usa directamente un área efectiva:
+
+<Equation label="Ec. E7-19">
+$$
+A_e = \left[ \frac{0.038 \, E}{F_y \left(D/t\right)} + \frac{2}{3} \right] A_g \leq A_g
+$$
+</Equation>
+
+<Note type="warning">
+AISC 360-16/22 reemplazó el antiguo **factor $Q$** por el método del ancho efectivo aquí
+descrito; documentación o software anteriores a 2016 usan la formulación $Q_s Q_a$. Las
+Secciones E5 (ángulos simples) y E6 (miembros armados) introducen reglas adicionales de
+esbeltez modificada que no se detallan en esta nota.
+</Note>

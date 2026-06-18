@@ -29,4 +29,18 @@ const hormigon = defineCollection({
   }),
 });
 
-export const collections = { blog, hormigon };
+const acero = defineCollection({
+  loader: glob({ base: './src/content/acero', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    subsection: z.string(),
+    chapter: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, hormigon, acero };
