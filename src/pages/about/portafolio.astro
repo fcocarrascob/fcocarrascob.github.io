@@ -1,0 +1,85 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+
+const projects = [
+  {
+    title: 'Revisión Estructural Truck Shop 30ton',
+    description: '<strong>Cliente:</strong> Stracon Group<br/><strong>Ubicación:</strong> Antamina, Áncash, Perú<br/><strong>Descripción:</strong> Revisión estructural de Truck Shop de 2 bahías para puente grúa de 30 ton. Revisión sísmica según normativa peruana; verificación de resistencias y deformaciones verticales/laterales. <br/><strong>Normas:</strong> RNE · ASCE 7 · ACI 318 · AISC 341 · AISC 360',
+    image: '/portfolio/01_macadam.png',
+    alt: 'Revisión Estructural Truck Shop 30ton',
+    imageLeft: false,
+  },
+  {
+    title: 'Losa de Aproximación Chancador',
+    description: '<strong>Cliente:</strong> AMSA <br/><strong>Ubicación:</strong>Nueva Centinela, Sierra Gorda, Chile <br/><strong>Descripción:</strong> Análisis y diseño de Losas de Aproximación hacia Chancador Primario; Camión de Carga KOMATSU 980E-5, análisis de resistencia y estabilidad.<br/><strong>Normas:</strong> ACI 318 · NCh170 · NCh430 · NCh3171',
+    image: '/portfolio/02_losa_aprox.png',
+    alt: 'Título del proyecto',
+    imageLeft: true,
+  },
+  {
+    title: 'Planta Almacenamiento NH3',
+    description: '<strong>Cliente:</strong> ENEL <br/><strong>Ubicación:</strong> Quillota, Valparaíso, Chile <br/><strong>Descripción:</strong> Galpón Industrial de 500m2 con estanques de almacenamiento de amoniaco. Estructura de hormigón enterrada con pedestales para equipos y muros de contención.<br/><strong>Normas:</strong> ACI 318 · AASHTO LRFD · NCh3171 · NCh 433 · NCh2369',
+    image: '/portfolio/03_icafal.png',
+    alt: 'TEXTO_ALTERNATIVO',
+    imageLeft: false,
+  },
+  {
+    title: 'Taller Dewatering Mantención Mina',
+    description: '<strong>Cliente:</strong> TECK <br/><strong>Ubicación:</strong> Quebrada Blanca, Tarapacá, Chile <br/><strong>Descripción:</strong> Galpón industrial para mantención con puente grúa de 20ton. Análisis y diseño sísmico de estructura de acero. Diseño, verificación estabilidad y resistencia de fundaciones. <br/><strong>Normas:</strong> ACI 318 · NCh170 · NCh430 · NCh3171 · NCh2369:2025 · AISC 360',
+    image: '/portfolio/04_dewatering.png',
+    alt: 'Título del proyecto',
+    imageLeft: true,
+  },
+  {
+    title: 'Revisión estructural Clarificador 30m',
+    description: '<strong>Cliente:</strong> TECK <br/><strong>Ubicación:</strong> Quebrada Blanca (Puerto), Tarapacá, Chile <br/><strong>Descripción:</strong> Revisión estructural de perfiles y planchas de acero Clarificador de 30m de diámetro. Revisión estabilidad y resistencia de fundaciones. <br/><strong>Normas:</strong> ACI 318 · NCh3171 · NCh2369:2025 · AISC 360',
+    image: '/portfolio/05_clarificador.png',
+    alt: 'TEXTO_ALTERNATIVO',
+    imageLeft: false,
+  },
+  {
+    title: 'Fundación Estanque 1000m3',
+    description: '<strong>Cliente:</strong> AMSA <br/><strong>Ubicación:</strong> Nueva Centinela, Sierra Gorda, Chile <br/><strong>Descripción:</strong> Diseño fundación anular para Estanque de acero 12m de diámetro para almacenamiento de agua. Análisis sísmico de contenido (impulsivo/convectivo), verificación estabilidad y resistencia.<br/><strong>Normas:</strong> ACI 318 · NCh170 · NCh430 · NCh3171 · NCh2369:2025 · API 650',
+    image: '/portfolio/06_funda_estanque.png',
+    alt: 'Título del proyecto',
+    imageLeft: true,
+  },
+  {
+    title: 'Conexiones Data Center',
+    description: '<strong>Cliente:</strong> TECSA <br/><strong>Ubicación:</strong> Lampa, Santiago, Chile <br/><strong>Descripción:</strong> Diseño y verificación de conexiones de acero Data Center ODATA, utilizando IDEA Statica. Conexiones de corte, arriostramientos verticales y horizontales, empalmes de vigas y columnas. Verificación a capacidad de perfiles. <br/><strong>Normas:</strong> NCh3171 · NCh2369:2025 · AISC 360',
+    image: '/portfolio/07_conexiones.png',
+    alt: 'TEXTO_ALTERNATIVO',
+    imageLeft: false,
+  },
+];
+---
+<PageLayout title="Portafolio" description="Proyectos de ingeniería estructural">
+  <div class="mb-10">
+    <a href="/about" class="text-sm text-muted hover:text-ink transition-colors">
+      &larr; Acerca de
+    </a>
+    <div class="mt-4">
+      <p class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Acerca de</p>
+      <h1 class="text-2xl font-semibold text-ink mb-3">Portafolio</h1>
+      <p class="text-muted leading-relaxed">Proyectos de ingeniería estructural realizados.</p>
+    </div>
+  </div>
+
+  <div class="divide-y divide-[var(--color-border)]">
+    {projects.map((p) => (
+      <div class={`flex gap-6 py-6 items-start ${p.imageLeft ? 'flex-row-reverse' : ''}`}>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-[var(--color-ink)] leading-snug">{p.title}</h3>
+          <p class="mt-2 text-sm text-[var(--color-muted)] leading-relaxed" set:html={p.description} />
+        </div>
+        <div class="w-1/2 shrink-0">
+          <img
+            src={p.image}
+            alt={p.alt}
+            class="w-full h-auto rounded"
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+</PageLayout>
