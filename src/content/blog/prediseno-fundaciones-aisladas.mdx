@@ -1,0 +1,402 @@
+---
+title: "Prediseño de Fundaciones Aisladas"
+description: "Verificaciones de estabilidad para el prediseño de zapatas aisladas bajo carga biaxial: capacidad de soporte, kern, vuelco y deslizamiento."
+pubDate: 2026-06-25
+tags: ["fundaciones", "zapatas", "prediseño", "geotecnia", "estabilidad"]
+section: "Fundaciones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Introducción
+
+Una zapata aislada es un elemento de fundación superficial que transmite las cargas de una
+columna o pedestal al suelo. Se utiliza cuando las condiciones del terreno permiten apoyar
+directamente la estructura sin requerir fundaciones profundas.
+
+El **prediseño** busca determinar las dimensiones en planta ($L_x$, $L_y$) y el espesor
+($t$) de la zapata de modo que se satisfagan las verificaciones de estabilidad bajo cargas
+de servicio. Estas verificaciones son previas al diseño definitivo (armadura, punzonamiento,
+análisis no lineal) y garantizan que la geometría propuesta es viable antes de pasar a un
+modelo de elementos finitos.
+
+Las verificaciones de prediseño son:
+
+1. **Capacidad de soporte** — la presión de contacto no excede la admisible del suelo.
+2. **Kern / levantamiento** — no se produce despegue en la base.
+3. **Estabilidad al vuelco** — la fundación resiste el volcamiento.
+4. **Deslizamiento** — la fricción en la base resiste las fuerzas horizontales.
+
+---
+
+## Modelo y convención de signos
+
+El sistema consiste en un **pedestal** de sección $b \times h$ y altura $h_p$, apoyado
+sobre una **zapata** rectangular de dimensiones $L_x \times L_y$ y espesor $t$.
+
+Las cargas se definen en el tope del pedestal mediante 6 componentes:
+
+| Componente | Dirección | Convención |
+|:----------:|:---------:|------------|
+| $F_1$ | Horizontal X | Positivo en $+X$ |
+| $F_2$ | Horizontal Y | Positivo en $+Y$ |
+| $F_3$ | Vertical Z | **Negativo = compresión** (hacia abajo) |
+| $M_1$ | Momento eje X | Regla de la mano derecha |
+| $M_2$ | Momento eje Y | Regla de la mano derecha |
+| $M_3$ | Torsión eje Z | — |
+
+<Note type="warning">
+La convención $F_3 &lt; 0$ para compresión es consistente con SAP2000. Un valor positivo de
+$F_3$ representa tracción (arrancamiento), lo que **reduce** la carga vertical neta y
+empeora la estabilidad.
+</Note>
+
+---
+
+## Transferencia de cargas al nivel de fundación
+
+Las cargas se aplican en el tope del pedestal, pero las verificaciones se realizan al nivel de
+la base de la zapata. Los momentos se amplifican por el efecto de los cortes horizontales
+actuando a lo largo de la altura del pedestal:
+
+<Equation label="Ec. 1">
+$$
+M'_x = M_1 + F_2 \cdot h_p
+$$
+</Equation>
+
+<Equation label="Ec. 2">
+$$
+M'_y = M_2 + F_1 \cdot h_p
+$$
+</Equation>
+
+Donde $M'_x$ y $M'_y$ son los momentos transferidos al nivel de la base de la zapata.
+
+La carga vertical neta incluye el peso propio de los elementos:
+
+<Equation label="Ec. 3">
+$$
+N = -F_3 + W_z + W_p + W_r
+$$
+</Equation>
+
+Donde:
+
+$$
+W_z = \gamma_c \cdot L_x \cdot L_y \cdot t
+$$
+
+$$
+W_p = \gamma_c \cdot b \cdot h \cdot h_p
+$$
+
+$$
+W_r = \gamma_s \cdot (L_x \cdot L_y - b \cdot h) \cdot h_r
+$$
+
+con $\gamma_c = 0{,}0024\;\text{kgf/cm}^3$ (hormigón), $\gamma_s$ el peso unitario del
+suelo de relleno, y $h_r$ la altura de relleno sobre la zapata. $W_z$, $W_p$ y $W_r$
+corresponden al peso de la zapata, pedestal y relleno respectivamente.
+
+<Note type="info">
+El signo negativo de $F_3$ en la Ec. 3 convierte la compresión (valor negativo) en una
+contribución positiva a $N$. Si $F_3$ es positivo (tracción), la carga neta disminuye.
+Cuando $N \leq 0$, la fundación está en tracción neta y es inherentemente inestable.
+</Note>
+
+### Excentricidades
+
+Las excentricidades de la carga resultante respecto al centroide de la zapata son:
+
+<Equation label="Ec. 4">
+$$
+e_x = \frac{M'_y}{N}
+\qquad
+e_y = \frac{M'_x}{N}
+$$
+</Equation>
+
+---
+
+## Verificación 1 — Capacidad de soporte
+
+La presión máxima de contacto no debe superar la presión admisible del suelo $q_a$.
+
+Para cargas excéntricas, se utiliza el método de **Meyerhof** que define un área efectiva
+reducida por las excentricidades:
+
+<Equation label="Ec. 5">
+$$
+A_e = L'_x \cdot L'_y
+\qquad\text{con}\qquad
+L'_x = L_x - 2|e_x|
+\qquad
+L'_y = L_y - 2|e_y|
+$$
+</Equation>
+
+La presión máxima equivalente es:
+
+<Equation label="Ec. 6">
+$$
+q_m = \frac{N}{A_e} \leq q_a
+$$
+</Equation>
+
+El factor de seguridad resulta:
+
+$$
+FS = \frac{q_a}{q_m} \geq 1{,}0
+$$
+
+<Note type="tip" title="Referencia">
+El concepto de área efectiva fue propuesto por Meyerhof (1953) y es el método estándar para
+evaluar la capacidad de soporte bajo cargas excéntricas. Si $L'_x \leq 0$ o $L'_y \leq 0$,
+la excentricidad excede los límites geométricos y la verificación falla automáticamente.
+</Note>
+
+---
+
+## Verificación 2 — Kern y levantamiento
+
+El **kern** (o núcleo central) de una sección rectangular es la zona dentro de la cual la
+carga resultante puede ubicarse sin generar tracciones en la base. Si la carga está dentro
+del kern, toda la base permanece en contacto con el suelo.
+
+La condición de kern para flexión biaxial se obtiene exigiendo que la presión mínima sea
+no negativa. Partiendo de la distribución de presiones:
+
+$$
+\sigma = \frac{N}{A} \pm \frac{M_x \cdot y}{I_x} \pm \frac{M_y \cdot x}{I_y}
+$$
+
+con $I_x = L_x \cdot L_y^3 / 12$ e $I_y = L_y \cdot L_x^3 / 12$, y sustituyendo
+$M_x = N \cdot e_y$, $M_y = N \cdot e_x$, la condición $\sigma_{\min} \geq 0$ se reduce a:
+
+<Equation label="Ec. 7">
+$$
+\frac{6\,|e_x|}{L_x} + \frac{6\,|e_y|}{L_y} \leq 1
+$$
+</Equation>
+
+El factor de seguridad contra levantamiento es:
+
+<Equation label="Ec. 8">
+$$
+FS = \left(\frac{6\,|e_x|}{L_x} + \frac{6\,|e_y|}{L_y}\right)^{-1} \geq 1{,}0
+$$
+</Equation>
+
+<Note type="warning">
+Cuando la carga se ubica fuera del kern ($FS &lt; 1$), parte de la base pierde contacto con el
+suelo. Esto no implica necesariamente el colapso, pero la distribución de presiones deja de
+ser lineal y el análisis requiere métodos no lineales (por ejemplo, resortes
+compression-only en un modelo de elementos finitos).
+</Note>
+
+---
+
+## Distribución de presiones de contacto
+
+Cuando la carga está dentro del kern, la presión en cualquier punto $(x, y)$ de la base se
+calcula con la fórmula de flexión biaxial:
+
+<Equation label="Ec. 9">
+$$
+q(x,y) = \frac{N}{A}\left(1 + \frac{6\,e_x}{L_x}\cdot\frac{2x}{L_x}
++ \frac{6\,e_y}{L_y}\cdot\frac{2y}{L_y}\right)
+$$
+</Equation>
+
+Las presiones en las cuatro esquinas de la zapata resultan:
+
+| Esquina | Presión |
+|:-------:|---------|
+| $+x,\;+y$ | $q = (N/A)(1 + 6e_x/L_x + 6e_y/L_y)$ |
+| $-x,\;+y$ | $q = (N/A)(1 - 6e_x/L_x + 6e_y/L_y)$ |
+| $-x,\;-y$ | $q = (N/A)(1 - 6e_x/L_x - 6e_y/L_y)$ |
+| $+x,\;-y$ | $q = (N/A)(1 + 6e_x/L_x - 6e_y/L_y)$ |
+
+---
+
+## Verificación 3 — Estabilidad al vuelco
+
+La fundación debe resistir el volcamiento alrededor de cada eje. El momento estabilizante
+proviene de la carga vertical actuando a la distancia del centroide al borde de giro:
+
+<Equation label="Ec. 10">
+$$
+FS_X = \frac{N \cdot L_x / 2}{|M'_y|} \geq 1{,}5
+$$
+</Equation>
+
+<Equation label="Ec. 11">
+$$
+FS_Y = \frac{N \cdot L_y / 2}{|M'_x|} \geq 1{,}5
+$$
+</Equation>
+
+<Note type="info">
+El factor de seguridad mínimo de 1,5 es un valor ampliamente aceptado en la práctica. Algunas
+normas exigen valores mayores (2,0) dependiendo del tipo de carga (permanente vs sísmica).
+</Note>
+
+---
+
+## Verificación 4 — Deslizamiento
+
+La resistencia al deslizamiento se evalúa comparando la fuerza horizontal resultante con la
+capacidad friccional en la base:
+
+<Equation label="Ec. 12">
+$$
+FS_d = \frac{N \cdot \mu}{\sqrt{F_1^2 + F_2^2}} \geq 1{,}5
+$$
+</Equation>
+
+Donde $\mu$ es el coeficiente de fricción suelo-fundación.
+
+<Note type="tip" title="Valores típicos de μ">
+
+| Tipo de suelo | $\mu$ |
+|---------------|:-----:|
+| Grava compacta | 0,50 – 0,60 |
+| Arena densa | 0,40 – 0,55 |
+| Arena suelta | 0,30 – 0,40 |
+| Arcilla firme | 0,30 – 0,40 |
+| Arcilla blanda | 0,20 – 0,30 |
+
+</Note>
+
+---
+
+## Resumen de verificaciones
+
+| Verificación | Ecuación | Criterio |
+|:-------------|:---------|:--------:|
+| Capacidad de soporte | $q_m = N / A_e$ | $FS \geq 1{,}0$ |
+| Kern (levantamiento) | $6\|e_x\|/L_x + 6\|e_y\|/L_y$ | $\leq 1{,}0$ |
+| Vuelco (eje X) | $N \cdot L_x/2 \;/\; \|M'_y\|$ | $\geq 1{,}5$ |
+| Vuelco (eje Y) | $N \cdot L_y/2 \;/\; \|M'_x\|$ | $\geq 1{,}5$ |
+| Deslizamiento | $N \cdot \mu \;/\; \sqrt{F_1^2 + F_2^2}$ | $\geq 1{,}5$ |
+
+---
+
+## Ejemplo numérico
+
+### Datos
+
+**Pedestal:** $b = 50\;\text{cm}$, $h = 50\;\text{cm}$, $h_p = 80\;\text{cm}$
+
+**Suelo:** $q_a = 2{,}0\;\text{kgf/cm}^2$, $\mu = 0{,}45$,
+$\gamma_s = 0{,}0018\;\text{kgf/cm}^3$, $h_r = 40\;\text{cm}$
+
+**Cargas en tope de pedestal (combinación de servicio):**
+
+| $F_1$ | $F_2$ | $F_3$ | $M_1$ | $M_2$ | $M_3$ |
+|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+| 5 000 kgf | 3 000 kgf | −50 000 kgf | 100 000 kgf·cm | 150 000 kgf·cm | 50 000 kgf·cm |
+
+**Zapata propuesta:** $L_x = 200\;\text{cm}$, $L_y = 200\;\text{cm}$, $t = 40\;\text{cm}$
+
+### Paso 1 — Pesos propios
+
+$$
+W_z = 0{,}0024 \times 200 \times 200 \times 40 = 3\,840\;\text{kgf}
+$$
+
+$$
+W_p = 0{,}0024 \times 50 \times 50 \times 80 = 480\;\text{kgf}
+$$
+
+$$
+W_r = 0{,}0018 \times (200 \times 200 - 50 \times 50) \times 40 = 2\,700\;\text{kgf}
+$$
+
+### Paso 2 — Carga vertical y momentos en la base
+
+$$
+N = -(-50\,000) + 3\,840 + 480 + 2\,700 = 57\,020\;\text{kgf}
+$$
+
+$$
+M'_x = 100\,000 + 3\,000 \times 80 = 340\,000\;\text{kgf·cm}
+$$
+
+$$
+M'_y = 150\,000 + 5\,000 \times 80 = 550\,000\;\text{kgf·cm}
+$$
+
+### Paso 3 — Excentricidades
+
+$$
+e_x = \frac{550\,000}{57\,020} = 9{,}65\;\text{cm}
+\qquad
+e_y = \frac{340\,000}{57\,020} = 5{,}96\;\text{cm}
+$$
+
+### Paso 4 — Verificaciones
+
+**Capacidad de soporte:**
+
+$$
+A_e = (200 - 2 \times 9{,}65)(200 - 2 \times 5{,}96) = 180{,}71 \times 188{,}07 = 33\,987\;\text{cm}^2
+$$
+
+$$
+q_m = \frac{57\,020}{33\,987} = 1{,}68\;\text{kgf/cm}^2
+\qquad
+FS = \frac{2{,}0}{1{,}68} = 1{,}19 \geq 1{,}0 \quad\checkmark
+$$
+
+**Kern:**
+
+$$
+\frac{6 \times 9{,}65}{200} + \frac{6 \times 5{,}96}{200} = 0{,}290 + 0{,}179 = 0{,}47 \leq 1{,}0
+\qquad
+FS = \frac{1}{0{,}47} = 2{,}14 \quad\checkmark
+$$
+
+**Vuelco eje X:**
+
+$$
+FS = \frac{57\,020 \times 100}{550\,000} = 10{,}37 \geq 1{,}5 \quad\checkmark
+$$
+
+**Vuelco eje Y:**
+
+$$
+FS = \frac{57\,020 \times 100}{340\,000} = 16{,}77 \geq 1{,}5 \quad\checkmark
+$$
+
+**Deslizamiento:**
+
+$$
+H_r = \sqrt{5\,000^2 + 3\,000^2} = 5\,831\;\text{kgf}
+$$
+
+$$
+FS = \frac{57\,020 \times 0{,}45}{5\,831} = 4{,}40 \geq 1{,}5 \quad\checkmark
+$$
+
+### Resultado
+
+La zapata de $200 \times 200\;\text{cm}$ con espesor $40\;\text{cm}$ cumple las cuatro
+verificaciones de estabilidad. La verificación gobernante es la **capacidad de soporte** con
+$FS = 1{,}19$. Las presiones en las esquinas son:
+
+| Esquina | q (kgf/cm²) |
+|:-------:|:-----------:|
+| $+x,\;+y$ | 2,09 |
+| $-x,\;+y$ | 1,27 |
+| $-x,\;-y$ | 0,76 |
+| $+x,\;-y$ | 1,58 |
+
+<Note type="info">
+Las presiones en esquinas se calculan con la distribución biaxial (Ec. 9) y pueden superar
+$q_a$ localmente, dado que el método de Meyerhof (Ec. 6) evalúa una presión
+**promedio** sobre el área efectiva. Esta discrepancia es esperada y se resuelve en el
+diseño definitivo mediante un modelo no lineal con resortes compression-only.
+</Note>
