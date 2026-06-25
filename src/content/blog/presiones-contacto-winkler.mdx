@@ -1,0 +1,316 @@
+---
+title: "Presiones de Contacto — Modelo de Winkler Discretizado"
+description: "Formulación del modelo de Winkler con resortes de solo compresión para determinar el mapa de presiones y asentamientos de una zapata aislada bajo carga biaxial, incluyendo el caso de despegue parcial."
+pubDate: 2026-06-25
+tags: ["fundaciones", "zapatas", "Winkler", "presiones de contacto", "geotecnia"]
+section: "Fundaciones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Motivación
+
+El [prediseño de fundaciones aisladas](/blog/prediseno-fundaciones-aisladas) entrega la
+verificación de kern (Ec. 7): si la carga está dentro del núcleo central, la presión en
+la base es estrictamente positiva y la distribución biaxial (Ec. 9) es exacta.
+
+Sin embargo, cuando la excentricidad excede el kern —combinaciones sísmicas o de viento
+intenso son los casos típicos— la Ec. 9 produce presiones negativas en parte de la base,
+lo que físicamente significa **despegue**: el suelo no puede traccionar la zapata.
+El prediseño detecta esta situación pero no la resuelve.
+
+El modelo que se desarrolla aquí extiende el análisis para cualquier posición de la
+resultante: discretiza la zapata en celdas, asigna un resorte de solo compresión a cada
+una, y encuentra por equilibrio el mapa real de presiones bajo la restricción de
+contacto unilateral.
+
+---
+
+## Hipótesis del modelo
+
+| Hipótesis | Implicancia |
+|-----------|-------------|
+| Zapata **rígida** | La deformación de la base es un plano (3 grados de libertad) |
+| Suelo como **resortes de Winkler** | La presión en cada punto es proporcional al asentamiento local: $q = k_s \cdot \delta$ |
+| Resortes de **solo compresión** | Las zonas en que el plano indicaría tracción se desprenden; el resorte aporta $q = 0$ |
+| Carga transmitida al **nivel de base** | Se usan $N$, $M'_x$, $M'_y$ del prediseño (Ecs. 1–3) |
+
+<Note type="info">
+La hipótesis de zapata rígida es válida para espesores típicos de prediseño
+($t \gtrsim L/5$). Para zapatas esbeltas se requiere un modelo de placa flexible sobre
+resortes de Winkler, lo que demanda elementos finitos de placa.
+</Note>
+
+<Note type="tip" title="Coeficiente de balasto $k_s$">
+El parámetro $k_s$ (kgf/cm³) caracteriza la rigidez vertical del suelo. Valores
+orientativos:
+
+| Tipo de suelo | $k_s$ (kgf/cm³) |
+|---------------|:---------------:|
+| Arcilla blanda | 0,5 – 2 |
+| Arcilla firme | 2 – 4 |
+| Arena suelta | 1 – 3 |
+| Arena densa | 5 – 15 |
+| Grava | 10 – 30 |
+
+En ausencia de ensayos, $k_s$ puede estimarse como $k_s \approx q_a / \delta_{\text{adm}}$,
+donde $\delta_{\text{adm}}$ es el asentamiento admisible (típicamente 2,5 cm para
+estructuras corrientes).
+</Note>
+
+---
+
+## Discretización
+
+La zapata de dimensiones $L_x \times L_y$ se divide en $n_x \times n_y$ celdas
+uniformes. Cada celda $i$ tiene:
+
+$$
+\Delta x = \frac{L_x}{n_x}, \qquad \Delta y = \frac{L_y}{n_y}, \qquad A_i = \Delta x \cdot \Delta y
+$$
+
+y su centro se ubica en $(x_i,\, y_i)$ respecto al centroide de la zapata:
+
+$$
+x_i = -\frac{L_x}{2} + \left(j - \tfrac{1}{2}\right)\Delta x, \qquad
+y_i = -\frac{L_y}{2} + \left(k - \tfrac{1}{2}\right)\Delta y
+$$
+
+con $j = 1, \ldots, n_x$ y $k = 1, \ldots, n_y$.
+
+---
+
+## Formulación — caso general
+
+### Campo de desplazamientos
+
+Bajo la hipótesis de zapata rígida, el asentamiento vertical en cualquier punto de la
+base es un plano definido por tres parámetros:
+
+<Equation label="Ec. 1">
+$$
+\delta(x,y) = \delta_0 + \alpha_x \cdot x + \alpha_y \cdot y
+$$
+</Equation>
+
+donde $\delta_0$ es el asentamiento uniforme (hundimiento medio) y $\alpha_x$, $\alpha_y$
+son las pendientes de giro del plano (positivas hacia abajo en la dirección positiva del
+eje correspondiente).
+
+### Presión por celda
+
+Con la condición de solo compresión, la presión en la celda $i$ es:
+
+<Equation label="Ec. 2">
+$$
+q_i = \max\!\bigl(0,\; k_s \cdot \delta(x_i, y_i)\bigr)
+= \max\!\bigl(0,\; k_s(\delta_0 + \alpha_x x_i + \alpha_y y_i)\bigr)
+$$
+</Equation>
+
+### Equilibrio
+
+Las tres ecuaciones de equilibrio del sólido rígido sobre los resortes activos son:
+
+<Equation label="Ec. 3">
+$$
+\sum_{i \in \mathcal{A}} A_i\, q_i = N
+$$
+</Equation>
+
+<Equation label="Ec. 4">
+$$
+\sum_{i \in \mathcal{A}} A_i\, q_i \cdot x_i = M'_y
+$$
+</Equation>
+
+<Equation label="Ec. 5">
+$$
+\sum_{i \in \mathcal{A}} A_i\, q_i \cdot y_i = M'_x
+$$
+</Equation>
+
+donde $\mathcal{A}$ es el conjunto de celdas activas (en contacto con el suelo) y
+$N$, $M'_x$, $M'_y$ son las cargas transferidas al nivel de base del prediseño.
+
+Sustituyendo la Ec. 2 en las Ecs. 3–5, el sistema toma la forma matricial:
+
+<Equation label="Ec. 6">
+$$
+k_s \begin{bmatrix}
+\displaystyle\sum_\mathcal{A} A_i &
+\displaystyle\sum_\mathcal{A} A_i x_i &
+\displaystyle\sum_\mathcal{A} A_i y_i \\[8pt]
+\displaystyle\sum_\mathcal{A} A_i x_i &
+\displaystyle\sum_\mathcal{A} A_i x_i^2 &
+\displaystyle\sum_\mathcal{A} A_i x_i y_i \\[8pt]
+\displaystyle\sum_\mathcal{A} A_i y_i &
+\displaystyle\sum_\mathcal{A} A_i x_i y_i &
+\displaystyle\sum_\mathcal{A} A_i y_i^2
+\end{bmatrix}
+\begin{bmatrix} \delta_0 \\ \alpha_x \\ \alpha_y \end{bmatrix}
+=
+\begin{bmatrix} N \\ M'_y \\ M'_x \end{bmatrix}
+$$
+</Equation>
+
+Llamando $\mathbf{K}(\mathcal{A})$ a la matriz de rigidez y $\mathbf{u} = [\delta_0,\alpha_x,\alpha_y]^\top$:
+
+$$
+\mathbf{K}(\mathcal{A})\,\mathbf{u} = \mathbf{F}
+\qquad \Longrightarrow \qquad
+\mathbf{u} = \mathbf{K}(\mathcal{A})^{-1}\mathbf{F}
+$$
+
+---
+
+## Caso lineal: equivalencia con la distribución biaxial
+
+Cuando **todas** las celdas están activas ($\mathcal{A}$ = grilla completa centrada en el
+origen), los términos cruzados de $\mathbf{K}$ se anulan por simetría:
+
+$$
+\sum_{\text{todos}} A_i x_i = 0, \qquad
+\sum_{\text{todos}} A_i y_i = 0, \qquad
+\sum_{\text{todos}} A_i x_i y_i = 0
+$$
+
+y la matriz se vuelve diagonal. El sistema se desacopla:
+
+$$
+\delta_0 = \frac{N}{k_s\, L_x L_y}, \qquad
+\alpha_x = \frac{12\, M'_y}{k_s\, L_x^3 L_y}, \qquad
+\alpha_y = \frac{12\, M'_x}{k_s\, L_x L_y^3}
+$$
+
+La presión resultante en cualquier punto es:
+
+$$
+q(x,y) = k_s\,\delta(x,y)
+= \frac{N}{L_x L_y}\!\left(1 + \frac{12\,e_x\,x}{L_x^2} + \frac{12\,e_y\,y}{L_y^2}\right)
+$$
+
+Evaluando en la esquina $(x,y) = (\tfrac{L_x}{2}, \tfrac{L_y}{2})$ se recupera exactamente
+la distribución biaxial del prediseño:
+
+$$
+q\!\left(\tfrac{L_x}{2},\tfrac{L_y}{2}\right)
+= \frac{N}{A}\!\left(1 + \frac{6\,e_x}{L_x} + \frac{6\,e_y}{L_y}\right) \checkmark
+$$
+
+<Note type="info">
+La distribución biaxial lineal es un caso especial del modelo de Winkler rígido cuando
+no hay despegue. La ventaja del modelo discretizado es que maneja el caso general sin
+cambio de formulación.
+</Note>
+
+---
+
+## Caso no lineal: algoritmo iterativo por despegue
+
+Cuando la resultante está fuera del kern, la solución lineal produce $q_i < 0$ en algunas
+celdas. El algoritmo elimina esas celdas y resuelve de nuevo hasta que todas las celdas
+activas tengan presión no negativa:
+
+```
+Inicializar: A = todas las celdas
+Repetir:
+    Resolver K(A) · u = F
+    Calcular δᵢ = δ₀ + αₓ·xᵢ + αᵧ·yᵢ  para cada i ∈ A
+    A_nueva = { i ∈ A : δᵢ ≥ 0 }
+    Si A_nueva == A → convergencia, detener
+    A ← A_nueva
+```
+
+<Note type="warning">
+La convergencia está garantizada porque en cada iteración el conjunto activo $\mathcal{A}$
+es estrictamente no creciente: solo se eliminan celdas, nunca se reincorporan. El número
+máximo de iteraciones es $n_x \times n_y$ (número total de celdas), aunque en la práctica
+converge en menos de 10 iteraciones.
+</Note>
+
+### Condición de colapso
+
+Si $\mathcal{A}$ queda vacío o la matriz $\mathbf{K}(\mathcal{A})$ resulta singular
+(por ejemplo, todas las celdas activas están alineadas), la fundación no puede equilibrar
+las cargas aplicadas y la configuración es inestable. Esto ocurre cuando la excentricidad
+es tan grande que ninguna distribución de presiones positivas puede producir los momentos
+requeridos.
+
+---
+
+## Resultados del modelo
+
+Una vez convergido, el modelo entrega:
+
+| Resultado | Expresión |
+|-----------|-----------|
+| Presión en celda $i$ | $q_i = k_s(\delta_0 + \alpha_x x_i + \alpha_y y_i)$ |
+| Área de contacto efectiva | $A_c = \sum_{i \in \mathcal{A}} A_i$ |
+| Presión máxima | $q_{\max} = \max_{i \in \mathcal{A}} q_i$ |
+| Asentamiento en punto $(x,y)$ | $\delta(x,y) = \delta_0 + \alpha_x x + \alpha_y y$ |
+| Asentamiento diferencial | $\Delta\delta = \alpha_x L_x$ (en dirección $x$), etc. |
+
+La verificación de capacidad de soporte se realiza comparando $q_{\max}$ con $q_a$:
+
+$$
+FS = \frac{q_a}{q_{\max}} \geq 1{,}0
+$$
+
+<Note type="tip" title="Relación con el método de Meyerhof">
+Cuando hay despegue, la presión máxima del modelo de Winkler tiende a ser más alta que
+la presión promedio sobre el área efectiva de Meyerhof ($q_m = N/A_e$), porque Meyerhof
+asume distribución uniforme sobre el área reducida. El modelo de Winkler es más
+conservador y físicamente más representativo.
+</Note>
+
+---
+
+## Ejemplo: carga fuera del kern
+
+Usando los mismos datos del prediseño ($L_x = L_y = 200\;\text{cm}$, $N = 57\,020\;\text{kgf}$,
+$M'_y = 550\,000\;\text{kgf·cm}$, $M'_x = 340\,000\;\text{kgf·cm}$), las excentricidades
+resultaron $e_x = 9{,}65\;\text{cm}$, $e_y = 5{,}96\;\text{cm}$, con razón de kern:
+
+$$
+\frac{6\times 9{,}65}{200} + \frac{6\times 5{,}96}{200} = 0{,}47 < 1 \quad
+\Rightarrow \text{ dentro del kern}
+$$
+
+En este caso el modelo de Winkler converge en la primera iteración (todas las celdas
+activas) y reproduce exactamente las presiones de la distribución biaxial.
+
+Para ilustrar el caso de despegue, supongamos una combinación sísmica con
+$M'_y = 1\,800\,000\;\text{kgf·cm}$ manteniendo los demás datos:
+
+$$
+e_x = \frac{1\,800\,000}{57\,020} = 31{,}6\;\text{cm} > \frac{L_x}{6} = 33{,}3\;\text{cm}
+\quad \Rightarrow \text{ fuera del kern en } x
+$$
+
+La distribución biaxial produce presiones negativas en las celdas con $x < 0$.
+El algoritmo iterativo elimina esas celdas y converge a una franja de contacto del lado
+$+x$, con presión máxima superior a $q_a$. El resultado indica que la zapata debe
+agrandarse para esta combinación de carga.
+
+---
+
+## Relación con las verificaciones de prediseño
+
+El modelo de Winkler no reemplaza las verificaciones de prediseño sino que las complementa:
+
+| Verificación | Prediseño | Modelo de Winkler |
+|:-------------|:----------|:------------------|
+| Capacidad de soporte | Meyerhof ($q_m = N/A_e$) | $q_{\max}$ directo |
+| Kern / levantamiento | Detecta si hay despegue | Cuantifica el área de contacto real |
+| Vuelco | Factor de seguridad global | No aplica (equilibrio implícito) |
+| Deslizamiento | Factor de seguridad global | No aplica |
+| Mapa de presiones | Solo dentro del kern | Siempre, incluso con despegue |
+| Asentamientos | No disponible | $\delta(x,y) = q(x,y)/k_s$ |
+
+<Note type="info">
+El modelo de Winkler es la base para el análisis estructural de la zapata: la distribución
+$q(x,y)$ se usa como carga de reacción para dimensionar la armadura (cálculo de momentos
+flectores y cortantes en la placa de fundación).
+</Note>
