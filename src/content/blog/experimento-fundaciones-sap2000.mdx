@@ -1,0 +1,207 @@
+---
+title: "Un Experimento para Validar las Ecuaciones de Fundaciones"
+description: "Diseño de un barrido paramétrico de zapatas aisladas en SAP2000 (Winkler no lineal con despegue) para medir cuánto se desvían las ecuaciones clásicas de prediseño según la rigidez relativa y la excentricidad."
+pubDate: 2026-06-27
+tags: ["fundaciones", "zapatas", "SAP2000", "experimento", "machine learning", "rigidez relativa"]
+section: "Fundaciones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Motivación
+
+Las notas anteriores construyeron las dos herramientas analíticas del prediseño de zapatas:
+el [prediseño de fundaciones aisladas](/blog/prediseno-fundaciones-aisladas) (kern, capacidad
+de soporte, vuelco, deslizamiento) y el
+[modelo de Winkler discretizado](/blog/presiones-contacto-winkler) que resuelve el despegue
+parcial. Ambas comparten una hipótesis cómoda pero fuerte: **la zapata es rígida**, su base se
+deforma como un plano.
+
+La realidad es que una zapata es una losa de hormigón con espesor finito: **se flexiona**.
+Cuanto más flexible, más se concentra la presión bajo la columna y menos trabaja el vuelo. La
+distribución deja de ser un plano y las fórmulas rígidas empiezan a desviarse. La pregunta es
+*cuánto* y *cuándo*.
+
+Este post abre una serie distinta a las anteriores: en vez de derivar una ecuación, vamos a
+**diseñar un experimento** que las ponga a prueba. La idea es generar miles de modelos de
+elementos finitos en SAP2000 y medir la desviación entre lo que predicen las ecuaciones y lo
+que entrega un análisis no lineal real.
+
+---
+
+## La pregunta del experimento
+
+> **¿Cuánto y dónde se desvía el comportamiento real de una zapata —modelada como losa flexible
+> sobre resortes de solo compresión— respecto de las ecuaciones clásicas de prediseño, y cómo
+> depende esa desviación de la rigidez relativa $K_r$ y de la excentricidad $e/B$?**
+
+Es una pregunta con doble premio. Por un lado es **práctica**: produce factores de corrección y
+mapas de validez para usar las fórmulas con criterio. Por otro es **un buen conjunto de datos**:
+limpio, interpretable y etiquetado contra una referencia analítica, ideal para entrenar modelos
+sustitutos (*surrogates*) que predigan el comportamiento sin volver a correr el análisis.
+
+---
+
+## El modelo a simular
+
+Cada simulación es una zapata aislada construida en SAP2000 con la misma física del
+[modelo de Winkler](/blog/presiones-contacto-winkler), pero **sin la hipótesis de rigidez**:
+
+- **Zapata flexible:** losa de elementos *shell* de dimensiones $B \times L$ y espesor $T$, que
+  se deforma según su propia rigidez a flexión.
+- **Suelo:** resortes de área de **solo compresión** (módulo de balasto $k_s$). Donde la losa
+  sube, el resorte se desactiva ($q = 0$): es el despegue.
+- **Columna:** un pedestal rígido transmite la carga al centroide de la losa.
+- **Un único caso no lineal** que aplica la carga vertical, el momento y el peso del relleno en
+  conjunto.
+
+<Note type="warning">
+Con resortes de solo compresión **no es válido** combinar casos no lineales independientes
+(cada uno define su propio conjunto de resortes activos) ni resolver un caso de momento puro
+(es inestable verticalmente). Por eso todas las acciones se resuelven en una sola corrida no
+lineal. Es el error sutil más común al modelar este tipo de fundación.
+</Note>
+
+La diferencia con la nota de Winkler es esencial: allí la base era un plano rígido con 3 grados
+de libertad; aquí la losa tiene **miles** de grados de libertad y su forma deformada —el
+*dishing*, el ahuecamiento bajo la carga— es justamente lo que las ecuaciones rígidas no ven.
+
+---
+
+## Pensar en variables adimensionales
+
+Barrer todas las combinaciones de $B$, $L$, $T$, $k_s$, carga… sería un grid de millones de
+modelos. La salida es trabajar en **grupos adimensionales**, que reducen la dimensión del
+problema y hacen que los resultados generalicen.
+
+El número que gobierna la transición rígida-flexible es la **rigidez relativa suelo-estructura**:
+
+<Equation label="Ec. 1">
+$$
+K_r = \frac{E_c \, T^3}{k_s \, B^4}
+$$
+</Equation>
+
+Donde $E_c$ es el módulo elástico del hormigón. El numerador $E_c T^3$ es la rigidez a flexión
+de la losa; el denominador $k_s B^4$ es la rigidez del suelo a la escala de la zapata. Su cociente
+clasifica el comportamiento:
+
+| $K_r$ | Comportamiento | Distribución de presión |
+|:-----:|:--------------:|:------------------------|
+| $K_r \gg 1$ | **Rígida** | casi lineal (las ecuaciones clásicas aplican) |
+| $K_r \approx 0{,}5$ | Transición | umbral clásico rígida/flexible |
+| $K_r \ll 1$ | **Flexible** | presión concentrada bajo la columna (*dishing*) |
+
+El segundo grupo es la **excentricidad relativa** $e/B$, que gobierna el despegue: en el caso
+uniaxial, la teoría rígida dice que la base empieza a despegar exactamente cuando
+
+<Equation label="Ec. 2">
+$$
+\frac{e}{B} > \frac{1}{6}
+$$
+</Equation>
+
+Y la **relación de forma** $L/B$ completa el cuadro (cuadrada vs. rectangular).
+
+---
+
+## El diseño del barrido
+
+La estrategia tiene dos niveles:
+
+**1. Muestreo de la geometría y el suelo (Latin Hypercube).** Se muestrea el espacio
+adimensional de forma determinista, con $K_r$ tomado **log-uniforme** sobre cinco órdenes de
+magnitud (de ahí se despeja el espesor $T$). Así el eje de rigidez —lo que queremos validar—
+queda bien cubierto.
+
+| Variable | Rango | Rol |
+|:---------|:-----:|:----|
+| $B$ | 100 – 500 cm | escala |
+| $L/B$ | 1,0 – 2,5 | forma |
+| $H_{ped}/B$ | 0,3 – 1,5 | esbeltez del pedestal |
+| $k_s$ | 0,5 – 10 kgf/cm³ | balasto |
+| $\bar{p}$ | 0,5 – 5 kgf/cm² | presión axial media |
+| $\log_{10} K_r$ | −2 … 3 | **rigidez relativa (clave)** |
+
+**2. Barrido de la excentricidad por geometría.** Para *cada* zapata muestreada se mantiene la
+carga axial fija y se incrementa el momento por pasos, recorriendo
+
+$$
+\frac{e}{B} \in \{0,\; 0{,}05,\; 0{,}10,\; \tfrac{1}{6},\; 0{,}20,\; 0{,}25,\; 0{,}35,\; 0{,}50\}
+$$
+
+en dirección uniaxial ($\theta = 0°$) y biaxial diagonal ($\theta = 45°$). Esto traza la
+**curva completa de transición** de cada zapata —contacto, presión y vuelco— en vez de un único
+punto de carga suelto. Es lo que permite localizar con precisión dónde empieza el despegue y
+dónde se quiebra la fórmula rígida.
+
+<Note type="tip" title="Un detalle que cambia todo">
+El peso propio de la zapata, el pedestal y el relleno suele **duplicar** la carga vertical
+respecto del axial de la columna. Si se escalara el momento por el axial de columna, la
+excentricidad *efectiva* en la base —la que importa— quedaría distinta en cada geometría y las
+curvas no serían comparables. La solución es escalar el momento por la carga vertical
+**efectiva** $N = P + \text{peso propio}$, de modo que la excentricidad efectiva en la base
+coincida con el $e/B$ objetivo. Así el kern (Ec. 2) cae exacto en $e/B = 1/6$ para toda zapata.
+</Note>
+
+Con esto, un piloto de ~50 geometrías son ~750 simulaciones (≈ 2 h de cómputo); el barrido
+completo de ~300 geometrías, ~4500 simulaciones. Cada simulación es un análisis no lineal de
+unos 10 segundos.
+
+---
+
+## Qué vamos a medir
+
+De cada simulación se extraen escalares (una fila de base de datos) y el campo completo de
+desplazamientos y presiones (el mapa de calor). Cada salida sirve para validar una ecuación:
+
+| Salida medida | Ecuación clásica a validar |
+|:--------------|:---------------------------|
+| $e/B$ de inicio de despegue | Kern: $e/B \leq 1/6$ (uniaxial) |
+| Presión de contacto $q_{max}$ | Rígida $q = (N/A)(1 \pm 6e_x/B \pm 6e_y/L)$ |
+| Factor de concentración $q_{max}/q_{prom}$ | Umbral rígida/flexible $K_r \gtrsim 0{,}5$ |
+| % de la base en compresión | Longitud de contacto $L_c = 3(d/2 - e)$ |
+| Factor de seguridad al vuelco real | $FS = d/(2e)$ |
+| Asentamiento (campo $u_z$) | Winkler $w = q/k_s$ |
+
+---
+
+## Qué esperamos encontrar
+
+Antes de correr nada, vale la pena anotar las hipótesis —así el experimento las confirma o las
+refuta, en vez de mirar números sin brújula:
+
+1. **La concentración crece al bajar $K_r$.** En zapatas flexibles la presión se concentra bajo
+   la columna; el factor $q_{max}/q_{prom}$ debería despegarse de 1 conforme $K_r$ disminuye, y
+   el umbral clásico de $0{,}5$ debería aparecer como una transición, no como un escalón nítido.
+2. **La fórmula rígida subestima $q_{max}$ en zapatas flexibles.** Al ignorar el *dishing*, la
+   distribución lineal reparte de más hacia los bordes.
+3. **El vuelco real nunca alcanza el teórico.** La presión se concentra y redistribuye mucho
+   antes de que la resultante "salga" de la base, así que el $FS$ real de vuelco debería ser más
+   favorable que $d/(2e)$.
+4. **El despegue se adelanta o atrasa según $K_r$.** El umbral $e/B = 1/6$ es exacto solo para
+   la zapata rígida ideal; mediremos cuánto se corre con la flexibilidad.
+
+<Note type="info">
+Estas hipótesis no son el resultado: son el plan. Los posts siguientes de la serie irán
+mostrando, ecuación por ecuación, el mapa de error real medido en SAP —y, donde la física se
+complica, un modelo sustituto entrenado con estos datos que predice el comportamiento en
+milisegundos.
+</Note>
+
+---
+
+## Próximos pasos
+
+Esta nota fija el objetivo y el modelo. La hoja de ruta de la serie:
+
+1. **Caso patrón** — una zapata, barrido de $e/B$, verificación de que dentro del kern SAP
+   reproduce la fórmula biaxial. El control de sanidad antes de escalar.
+2. **Piloto y curvas de despegue** — las primeras curvas de % de contacto vs. $e/B$ agrupadas
+   por rigidez.
+3. **Validación de ecuaciones** — un post por ecuación, con su mapa de error.
+4. **Predecir sin SAP** — modelos sustitutos (escalares y de campo) entrenados con el dataset.
+
+El código del experimento (muestreo, simulación, extracción y las ecuaciones de referencia) vive
+en un repositorio aparte; estas notas son el cuaderno de bitácora que lo acompaña.
