@@ -2,6 +2,7 @@
 title: "Un Experimento para Validar las Ecuaciones de Fundaciones"
 description: "Diseño de un barrido paramétrico de zapatas aisladas en SAP2000 (Winkler no lineal con despegue) para medir cuánto se desvían las ecuaciones clásicas de prediseño según la rigidez relativa y la excentricidad."
 pubDate: 2026-06-27
+updatedDate: 2026-06-27
 tags: ["fundaciones", "zapatas", "SAP2000", "experimento", "machine learning", "rigidez relativa"]
 section: "Fundaciones"
 ---
@@ -192,14 +193,93 @@ milisegundos.
 
 ---
 
+## Primeros resultados: el control de sanidad
+
+Antes de lanzar las miles de simulaciones del barrido completo hay una pregunta que conviene
+responder primero: **¿reproduce SAP la fórmula rígida cuando la zapata efectivamente *es*
+rígida?** Si en el régimen donde la teoría clásica debería ser exacta el modelo ya se desviara,
+nada de lo que viniera después —los mapas de error, los modelos sustitutos— sería confiable. Es
+el control de sanidad obligatorio antes de escalar.
+
+Para eso tomamos **una sola geometría** del muestreo, sólidamente del lado rígido, y barrimos la
+excentricidad uniaxial ($\theta = 0°$) de extremo a extremo:
+
+| Parámetro | Valor |
+|:---|:---:|
+| $B \times L$ | 355 × 498 cm |
+| Espesor $T$ | 150 cm |
+| Balasto $k_s$ | 8,2 kgf/cm³ |
+| **Rigidez relativa $K_r$** | **6,1** (rígida) |
+| Carga vertical efectiva $N$ | ≈ 880 tonf |
+
+Con $K_r \approx 6$ estamos bien dentro del régimen rígido: aquí la fórmula clásica
+$q = (N/A)(1 + 6e/B)$ debería acertar. El resultado del barrido —una corrida no lineal por cada
+nivel de excentricidad— fue:
+
+| $e/B$ | ¿Despegue? | Contacto SAP | Contacto rígido | $q_{max}$ SAP | $q_{max}$ rígido | Error |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 0,00 | no | 100 % | 100 % | 5,18 | 4,98 | **+4,2 %** |
+| 0,05 | no | 100 % | 100 % | 6,50 | 6,47 | +0,4 % |
+| 0,10 | no | 100 % | 100 % | 7,97 | 7,96 | +0,1 % |
+| **1/6** | límite | 98,8 % | 100 % | 9,93 | 9,95 | −0,3 % |
+| 0,20 | sí | 92 % | 90 % | 11,03 | 11,06 | −0,3 % |
+| 0,25 | sí | 77 % | 75 % | 13,20 | 13,27 | −0,5 % |
+| 0,35 | sí | 46 % | 45 % | 21,21 | 22,11 | −4,1 % |
+| 0,50 | sí | 15 % | 0 % (vuelco) | 92,35 | $\infty$ | — |
+
+Presiones en kgf/cm². "Contacto rígido" es el porcentaje de la base en compresión que predice la
+teoría: $100\%$ dentro del kern, y $3(d/2 - e)/d$ una vez que aparece el despegue. Tres lecturas,
+una por hipótesis:
+
+**1. Dentro del kern, SAP reproduce la fórmula rígida con error menor al 0,5 %.** Entre
+$e/B = 0{,}05$ y $0{,}25$ el $q_{max}$ medido coincide con la predicción clásica casi
+exactamente. El control de sanidad pasa: en el régimen donde la teoría debe valer, vale —y eso
+da confianza en todo el andamiaje (geometría, resortes de solo compresión, extracción del campo).
+
+**2. El despegue arranca donde manda el kern.** El contacto se mantiene en $100\%$ hasta
+$e/B = 1/6$ y cae de forma ordenada después ($92 \to 77 \to 46 \to 15\,\%$), siguiendo de cerca a
+la longitud de contacto teórica $L_c = 3(d/2 - e)$. La transición predicha por la Ec. 2 aparece
+exactamente donde corresponde.
+
+<Note type="info" title="El borde exacto del kern">
+El único punto que no marca $100\%$ de contacto es el límite mismo del kern, $e/B = 1/6$, con
+$98{,}8\%$. No es un error del modelo: ahí la presión teórica llega a cero justo en el borde, y la
+malla tiene una fila de nodos sobre esa línea de presión nula que, por la flexibilidad finita de
+la losa, levanta una fracción micrométrica. Es discretización, no física —se atenúa refinando la
+malla— y conviene tenerlo presente al leer los porcentajes de contacto cerca del kern.
+</Note>
+
+**3. El vuelco real no llega al teórico.** En $e/B = 0{,}50$ la fórmula rígida predice vuelco —la
+resultante sale de la base, $q_{max} \to \infty$—, pero SAP entrega una presión finita con un
+$15\%$ de la base todavía en contacto. Tal como anticipaba la hipótesis 3, la presión se concentra
+y redistribuye mucho antes de volcar: el factor de seguridad real es más favorable que $d/(2e)$.
+
+<Note type="tip" title="La primera pista de la concentración">
+Hay un número que se sale del libreto rígido: en $e/B = 0$ —carga puramente axial, presión que
+debería ser uniforme— SAP da un $q_{max}$ un **4 % por encima** de $N/A$. Es el *dishing*: la losa
+se ahueca bajo el pedestal y concentra ahí la presión. Con $K_r \approx 6$ (rígida) el efecto es
+apenas del 4 %; la hipótesis 1 dice que ese exceso debería **dispararse** a medida que $K_r$ baja.
+Mapear esa curva —cuánto crece $q_{max}/q_{prom}$ conforme la zapata se vuelve flexible— es,
+justamente, lo que va a entregar el piloto.
+</Note>
+
+Conviene no sobreinterpretar: esto es **una** zapata, **un** punto sobre el eje de $K_r$, en
+dirección uniaxial. Lo que confirma es que la maquinaria está sana y que el límite rígido se
+recupera con fidelidad. Las desviaciones que el experimento realmente persigue —la concentración
+en zapatas flexibles, el corrimiento del despegue con $K_r$, el comportamiento biaxial— viven
+fuera de este punto. Para eso hace falta el barrido completo.
+
+---
+
 ## Próximos pasos
 
 Esta nota fija el objetivo y el modelo. La hoja de ruta de la serie:
 
-1. **Caso patrón** — una zapata, barrido de $e/B$, verificación de que dentro del kern SAP
-   reproduce la fórmula biaxial. El control de sanidad antes de escalar.
-2. **Piloto y curvas de despegue** — las primeras curvas de % de contacto vs. $e/B$ agrupadas
-   por rigidez.
+1. **Caso patrón ✓** — el control de sanidad de la sección anterior: una zapata rígida reproduce
+   la fórmula clásica dentro del kern. Hecho.
+2. **Piloto y curvas de despegue** — el próximo paso inmediato: ~50 geometrías (~750
+   simulaciones), las primeras curvas de % de contacto y de concentración $q_{max}/q_{prom}$
+   vs. $e/B$ agrupadas por rigidez $K_r$.
 3. **Validación de ecuaciones** — un post por ecuación, con su mapa de error.
 4. **Predecir sin SAP** — modelos sustitutos (escalares y de campo) entrenados con el dataset.
 
