@@ -12,6 +12,10 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     norm: z.string().optional(),
     section: z.string().optional(),
+    // Serie de posts encadenados (p.ej. el experimento de fundaciones). `series`
+    // agrupa; `seriesPart` ordena dentro del grupo (1, 2, 3, …).
+    series: z.string().optional(),
+    seriesPart: z.number().optional(),
   }),
 });
 

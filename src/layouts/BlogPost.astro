@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import TagPill from '../components/ui/TagPill.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
+import type { SeriesNav } from '../lib/posts';
 
 interface Props {
   frontmatter: {
@@ -15,9 +16,10 @@ interface Props {
     section?: string;
   };
   breadcrumb?: { href: string; label: string };
+  seriesNav?: SeriesNav;
 }
 
-const { frontmatter, breadcrumb } = Astro.props;
+const { frontmatter, breadcrumb, seriesNav } = Astro.props;
 
 const dateFormatter = new Intl.DateTimeFormat('es-CL', {
   year: 'numeric',
@@ -38,7 +40,12 @@ const dateFormatter = new Intl.DateTimeFormat('es-CL', {
             &larr; {breadcrumb.label}
           </a>
         )}
-        {frontmatter.section && (
+        {seriesNav ? (
+          <p class="text-sm font-medium text-muted uppercase tracking-wider mb-3">
+            Serie · {seriesNav.name}
+            <span class="text-accent"> · Parte {seriesNav.part} de {seriesNav.total}</span>
+          </p>
+        ) : frontmatter.section && (
           <p class="text-sm font-medium text-muted uppercase tracking-wider mb-3">
             {frontmatter.section}
           </p>
@@ -70,6 +77,31 @@ const dateFormatter = new Intl.DateTimeFormat('es-CL', {
       <div class="prose prose-slate max-w-none">
         <slot />
       </div>
+
+      {seriesNav && (seriesNav.prev || seriesNav.next) && (
+        <nav class="mt-14 pt-8 border-t border-border grid grid-cols-2 gap-6 text-sm">
+          <div>
+            {seriesNav.prev && (
+              <a href={`/blog/${seriesNav.prev.id}`} class="group block">
+                <span class="block text-muted mb-1">&lsaquo; Parte {seriesNav.prev.part}</span>
+                <span class="block text-ink group-hover:text-accent transition-colors font-medium">
+                  {seriesNav.prev.title}
+                </span>
+              </a>
+            )}
+          </div>
+          <div class="text-right">
+            {seriesNav.next && (
+              <a href={`/blog/${seriesNav.next.id}`} class="group block">
+                <span class="block text-muted mb-1">Parte {seriesNav.next.part} &rsaquo;</span>
+                <span class="block text-ink group-hover:text-accent transition-colors font-medium">
+                  {seriesNav.next.title}
+                </span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
     </article>
   </main>
   <Footer />
