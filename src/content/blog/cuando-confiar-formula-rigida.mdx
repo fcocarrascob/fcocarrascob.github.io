@@ -1,0 +1,242 @@
+---
+title: "Cuándo Confiar en la Fórmula Rígida: el Experimento Completo"
+description: "Resultados del barrido completo del experimento de fundaciones: 5250 simulaciones no lineales sobre 350 geometrías que miden dónde valen las ecuaciones clásicas de prediseño y dónde la flexibilidad de la zapata las quiebra, con un mapa de corrección listo para usar."
+pubDate: 2026-06-27
+updatedDate: 2026-06-29
+tags: ["fundaciones", "zapatas", "SAP2000", "experimento", "rigidez relativa", "presiones de contacto"]
+section: "Fundaciones"
+series: "Fundaciones aisladas"
+seriesPart: 4
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De dónde venimos
+
+El [post anterior](/blog/experimento-fundaciones-sap2000) diseñó un experimento: barrer miles de
+zapatas aisladas en SAP2000 —modeladas como losas flexibles sobre resortes de solo compresión— y
+medir cuánto se desvían del comportamiento que predicen las ecuaciones clásicas de prediseño. Cerró
+con un control de sanidad sobre una zapata rígida y cuatro hipótesis anotadas a lápiz.
+
+Ahora hay datos, y no pocos. Esta nota presenta el **barrido completo** y responde la pregunta
+central de la serie —*¿cuándo se le puede creer a la fórmula rígida?*— terminando con un **mapa de
+corrección** que se puede usar directamente en el prediseño.
+
+---
+
+## El barrido en números
+
+Tras un piloto que validó la maquinaria, el barrido completo recorrió **350 geometrías**
+muestreadas por *Latin Hypercube* sobre el espacio adimensional, y para cada una barrió la
+excentricidad $e/B$ de $0$ a $0{,}5$ en dirección uniaxial y biaxial. En total, **5250 análisis no
+lineales**, cero errores en los datos.
+
+Lo importante es la cobertura del eje que queremos validar: la **rigidez relativa**
+
+<Equation label="Ec. 1">
+$$
+K_r = \frac{E_c \, T^3}{k_s \, B^4}
+$$
+</Equation>
+
+quedó muestreada entre $0{,}011$ y $997$ —**casi cinco órdenes de magnitud**, de zapatas
+extremadamente flexibles a prácticamente rígidas. Esa amplitud es la que permite ver *la
+transición* con resolución, no solo los extremos.
+
+<Note type="info" title="La cocina del barrido">
+Generar 5250 modelos no fue gratis: SAP2000 acumula inestabilidad numérica y termina cayendo tras
+varios cientos de análisis. La orquestación se hizo **idempotente y reanudable** —cada simulación se
+guarda apenas termina, y al relanzar se saltan las hechas— así que el barrido se completó en varias
+sesiones, reiniciando SAP entre cada una. Es el tipo de detalle de ingeniería que no aparece en el
+resultado pero define si el experimento es factible.
+</Note>
+
+---
+
+## Resultado 1: la presión se concentra al bajar $K_r$
+
+Empecemos por el caso más limpio: carga **puramente axial** ($e/B = 0$), sin momento. La teoría
+rígida dice que la presión es uniforme, $q = N/A$ en toda la base. Si la zapata fuera un plano
+rígido, el factor de concentración $q_{max}/q_{prom}$ valdría exactamente $1$.
+
+<Figure
+  src="/fundaciones/concentracion_vs_kr.png"
+  alt="Concentración q_max/q_prom en función de la rigidez relativa K_r, para carga axial pura"
+  caption="Factor de concentración bajo carga axial pura (e/B = 0) vs. rigidez relativa, para las 350 geometrías. La presión pasa de uniforme en zapatas rígidas a fuertemente concentrada en las flexibles, dibujando una transición limpia a lo largo de cinco órdenes de magnitud."
+/>
+
+El resultado es inequívoco. En las zapatas rígidas ($K_r > 10$) el factor se queda en $1{,}01$: la
+presión es uniforme, como manda la teoría. Pero al bajar $K_r$ la losa empieza a **ahuecarse** bajo
+la columna —el *dishing*— y la presión se concentra: promedia $1{,}31$ en el régimen flexible
+($K_r$ entre $0{,}1$ y $1$) y trepa hasta cerca de $2{,}0$ en las zapatas más blandas. La correlación
+es monótona y fortísima (coeficiente de Spearman $\rho = -0{,}93$).
+
+<Note type="tip" title="El umbral clásico se corre">
+El criterio de libro clasifica una zapata como rígida si $K_r \gtrsim 0{,}5$. Pero en los datos, la
+presión recién se vuelve uniforme **a partir de $K_r \approx 1$**: las zapatas con $K_r$ entre $0{,}5$
+y $1$ todavía concentran un 20–30&nbsp;%. La transición real está corrida hacia arriba respecto del
+umbral clásico —un detalle que importa cuando uno decide si puede usar la distribución lineal.
+</Note>
+
+---
+
+## Resultado 2: dentro del kern, la fórmula rígida vale… hasta cierto punto
+
+La fórmula de presión de contacto del prediseño —dentro del kern, sin despegue— es
+
+<Equation label="Ec. 2">
+$$
+q = \frac{N}{A}\left(1 + \frac{6e_x}{B} + \frac{6e_y}{L}\right)
+$$
+</Equation>
+
+Para ponerla a prueba, comparamos su $q_{max}$ contra el que mide SAP, en todas las simulaciones
+que caen dentro del kern. La clave es **no promediar todo junto**: el resultado depende de la
+rigidez.
+
+<Figure
+  src="/fundaciones/qmax_kern.png"
+  alt="q_max de SAP vs q_max de la fórmula rígida, dentro del kern, coloreado por K_r"
+  caption="Presión máxima medida en SAP vs. la predicción de la fórmula rígida, para los casos dentro del kern. Los puntos azules (rígidos) caen sobre la diagonal; los rojos (flexibles) se despegan hacia arriba: la fórmula subestima."
+/>
+
+Los puntos azules —zapatas rígidas— se pegan a la diagonal $y = x$: la fórmula acierta. Los rojos
+—flexibles— se abren hacia arriba: SAP mide mucho más de lo que la fórmula predice, porque el
+*dishing* concentra la carga y la distribución lineal no lo ve. Estratificando el error por banda
+de rigidez (con cientos de casos por banda):
+
+| Rigidez $K_r$ | Casos | Error medio de $q_{max}$ |
+|:---|:---:|:---:|
+| $\geq 10$ (muy rígida) | 565 | $-0{,}4\,\%$ |
+| $3{,}2 - 10$ | 399 | $+0{,}1\,\%$ |
+| $1 - 3{,}2$ | 426 | $+1{,}0\,\%$ |
+| $0{,}1 - 1$ (flexible) | 512 | $+18{,}8\,\%$ |
+| $< 0{,}1$ (muy flexible) | 204 | $+78{,}0\,\%$ |
+
+La lectura es directa y útil: **para $K_r \geq 1$ la fórmula rígida es excelente** (error del orden
+del 1&nbsp;%) y prácticamente exacta para $K_r \geq 3{,}2$. Debajo de ese umbral empieza a subestimar
+la presión máxima —un 19&nbsp;% en el régimen flexible, hasta un 78&nbsp;% en las zapatas más blandas.
+Subestimar $q_{max}$ es subestimar la demanda de flexión y punzonamiento: el lado inseguro.
+
+---
+
+## Resultado 3: las curvas de despegue
+
+Subiendo la excentricidad aparece el despegue. La teoría rígida predice una única curva de
+porcentaje de contacto: $100\,\%$ hasta el kern ($e/B = 1/6$) y luego $L_c/d = 3(d/2 - e)/d$. ¿Qué
+hacen las zapatas reales?
+
+<Figure
+  src="/fundaciones/contacto_vs_eb.png"
+  alt="Porcentaje de la base en contacto vs e/B, agrupado por banda de rigidez, comparado con la teoría rígida"
+  caption="Curvas de despegue (% de la base en compresión) vs. excentricidad, agrupadas por rigidez. La línea negra es la teoría rígida. Las zapatas flexibles despegan antes a baja excentricidad, pero conservan más contacto a alta."
+/>
+
+Las zapatas rígidas (azul) calzan con la teoría rígida casi exactamente, incluido el quiebre en el
+kern. Las flexibles (rojo) cuentan otra historia, y en dos direcciones:
+
+- **A baja excentricidad despegan *antes*.** Una zapata muy flexible se ahueca tanto que sus bordes
+  se levantan incluso sin momento: bajo carga axial pura ya hay casos con apenas $67\,\%$ de la base
+  en contacto, cuando la teoría rígida diría $100\,\%$.
+- **A alta excentricidad conservan *más* contacto.** Pasado $e/B \approx 0{,}25$, la flexibilidad
+  redistribuye y las curvas flexibles quedan por encima de la rígida.
+
+<Note type="info" title="El borde del kern, de nuevo">
+En $e/B = 1/6$ el contacto promedio del barrido es $95{,}0\,\%$, no $100\,\%$. Como se explicó en el
+post anterior, es discretización en el límite exacto del kern (una fila de nodos sobre la línea de
+presión nula), más algo de flexibilidad real: ninguna zapata física despega *exactamente* en el
+punto teórico.
+</Note>
+
+---
+
+## Resultado 4: el vuelco que no ocurre
+
+El caso límite del barrido es $e/B = 0{,}5$: la resultante cae justo en el borde de la base. La
+fórmula de estabilidad rígida, $FS = d/(2e)$, da aquí $FS = 1$ —vuelco inminente— y la presión de
+contacto se va a infinito. ¿Vuelcan las zapatas?
+
+<Figure
+  src="/fundaciones/vuelco.png"
+  alt="Porcentaje de contacto en e/B = 0,5 vs K_r; ninguna zapata pierde el contacto total"
+  caption="En e/B = 0,5 la teoría rígida predice vuelco (0 % de contacto, presión infinita). En SAP, todas las zapatas conservan entre 9 % y 15 % de la base en compresión: la presión se concentra y redistribuye, y no vuelcan."
+/>
+
+Ninguna. Todas conservan entre $9\,\%$ y $15\,\%$ de la base en contacto, con presión finita. La
+razón es física: a medida que la resultante se acerca al borde, la presión se concentra en una
+franja cada vez más angosta pero **real**, que sigue equilibrando el momento. El cuerpo rígido
+ideal vuelca porque no puede concentrar presión; la losa sobre suelo sí puede. El factor de
+seguridad real al vuelco es **más favorable** que $d/(2e)$ —tal como anticipaba la hipótesis 3.
+
+---
+
+## La herramienta: un mapa de corrección
+
+Las cuatro lecturas anteriores cuentan *qué* pasa. Pero para el prediseño hace falta algo
+accionable: si voy a usar la fórmula rígida, **¿por cuánto me equivoco, y cómo lo corrijo?** Con
+5250 simulaciones se puede responder con un único número —el factor de corrección
+
+<Equation label="Ec. 3">
+$$
+f = \frac{q_{max}^{\text{SAP}}}{q_{max}^{\text{rígido}}}
+$$
+</Equation>
+
+—que dice por cuánto multiplicar el $q_{max}$ de la fórmula clásica para llegar al real. El mapa de
+$f$ en función de $K_r$ y $e/B$ (caso uniaxial) es esto:
+
+<Figure
+  src="/fundaciones/mapa_correccion.png"
+  alt="Mapa de calor del factor de corrección q_max SAP sobre q_max rígido en función de K_r y e/B"
+  caption="Factor de corrección f = q_max(SAP)/q_max(rígido). Multiplicar la presión máxima de la fórmula clásica por este factor da la real. Blanco (f ≈ 1): la fórmula vale. Rojo (f > 1): subestima, hay que amplificar. La mitad derecha (K_r ≥ 1) es prácticamente toda blanca."
+/>
+
+Cómo se lee, y por qué es útil:
+
+- **La mitad derecha está en blanco.** Para $K_r \geq 1$, $f$ ronda $1{,}00$ en todo el rango de
+  excentricidad: la fórmula rígida se puede usar tal cual.
+- **La esquina inferior izquierda arde.** Zapatas muy flexibles ($K_r < 0{,}1$) con baja
+  excentricidad llegan a $f = 2{,}1$: la presión real **duplica** la que predice la fórmula. Ahí no
+  alcanza con corregir, conviene modelar.
+- **Un matiz fino:** arriba a la derecha (alta $e/B$, alta rigidez) aparece $f \approx 0{,}96$ —la
+  fórmula triangular con despegue *sobreestima* levemente. La única zona donde la teoría rígida es
+  conservadora.
+
+Esto es, en esencia, un factor de seguridad calibrado contra elementos finitos: en vez de un
+coeficiente global a ojo, un valor que depende de las dos variables que mandan.
+
+---
+
+## Síntesis: el mapa de validez
+
+Todo converge en algo que el prediseño puede usar directamente. La variable que manda no es la
+geometría absoluta sino la rigidez relativa $K_r$, y hay un umbral práctico:
+
+<Note type="tip" title="Regla práctica">
+Para **$K_r \geq 1$** las ecuaciones clásicas de zapata rígida —kern, presión lineal
+$q=(N/A)(1\pm 6e/B)$, curva de despegue— son fiables, con errores del orden del 1&nbsp;%. Para
+**$K_r < 1$** la zapata se comporta como losa flexible: la presión se concentra bajo la columna
+(hasta el doble), la fórmula lineal **subestima** $q_{max}$ —el lado inseguro— y hay que amplificar
+con el factor de corrección (o modelar). El vuelco real, en cambio, es siempre **más** favorable que
+$d/(2e)$: ahí la fórmula clásica peca de conservadora.
+</Note>
+
+Con 350 geometrías cubriendo cinco órdenes de magnitud de $K_r$, el umbral $K_r \approx 1$ y el mapa
+de corrección son resultados sólidos. Lo que queda abierto es el **caso biaxial** —la presión en las
+cuatro esquinas con despegue no tiene fórmula cerrada simple— y exprimir el dataset con modelos que
+predigan sin volver a correr SAP.
+
+---
+
+## Próximos pasos
+
+1. **El caso biaxial.** La fórmula de las cuatro esquinas $q=(N/A)(1\pm 6e_x/B \pm 6e_y/L)$ dentro
+   del kern, y el despegue biaxial —que no tiene solución analítica cerrada— son el siguiente frente
+   de validación.
+2. **Modelos sustitutos** (*surrogates*) que predigan la presión y el campo de asentamiento sin
+   correr SAP, entrenados con las 5250 simulaciones: el prediseño en milisegundos.
+
+El dato ya está limpio y etiquetado contra la referencia analítica. Es la materia prima tanto para
+afinar las fórmulas con criterio como para las herramientas que vienen.
