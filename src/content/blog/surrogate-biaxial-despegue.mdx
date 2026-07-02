@@ -130,8 +130,8 @@ de árboles más la reconstrucción POD, sin servidor.
 
 Antes de confiar en la herramienta, un caso concreto **fuera del dataset**: una zapata de 3,0 × 4,0 m,
 40 cm de espesor, $k_s = 5$, con excentricidad biaxial $e_x/B = 0{,}20$, $e_y/L \approx 0{,}13$
-($K_r = 0{,}38$: flexible). El surrogate responde al instante: **78 % en contacto, $q_{max} \approx
-3{,}0$ kgf/cm²**. Y SAP2000, resolviendo el no lineal completo:
+($K_r = 0{,}38$: flexible). El surrogate responde al instante: **76 % en contacto**, con una presión
+máxima del mismo orden. Y SAP2000, resolviendo el no lineal completo:
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
   <figure className="m-0">
@@ -156,10 +156,10 @@ Antes de confiar en la herramienta, un caso concreto **fuera del dataset**: una 
   </figure>
 </div>
 
-SAP mide **78 % en contacto y $q_{max} = 2{,}77$ kgf/cm²**. El surrogate clava el contacto al punto y
-queda del lado seguro en la presión (~8 %), sobre un caso nunca visto. La frontera diagonal entre azul
-y magenta es el polígono de contacto biaxial que ninguna fórmula entrega —y que el surrogate
-reproduce.
+SAP mide **78 % en contacto y $q_{max} = 2{,}77$ kgf/cm²**. El surrogate acierta el contacto a dos
+puntos y queda del lado seguro en la presión, sobre un caso que **nunca vio**. La frontera diagonal
+entre azul y magenta es el polígono de contacto biaxial que ninguna fórmula entrega —y que el
+surrogate reproduce.
 
 ---
 

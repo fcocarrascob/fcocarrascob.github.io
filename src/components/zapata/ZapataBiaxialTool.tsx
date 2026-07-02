@@ -8,18 +8,26 @@ const KR_MAX = 997;
 const ECC_MAX = 0.45; // e_x/B, e_y/L máximos del muestreo
 const ECC_CAP = 0.6; // e_x/B + e_y/L (rincón profundo no muestreado)
 
+// Pesos unitarios del modelo SAP y sección del pedestal (fijos)
+const GAMMA_C = 0.0024; // hormigón [kgf/cm³]
+const GAMMA_S = 0.0018; // suelo de relleno [kgf/cm³]
+const PED_A = 50 * 50;  // sección del pedestal [cm²]
+
 interface Inputs {
-  B: number; L: number; T: number; ks: number; // geometría + suelo
-  N: number; Mx: number; My: number;           // carga vertical + momentos
+  B: number; L: number; T: number; Hped: number; // geometría
+  ks: number; hrel: number;                       // suelo + relleno
+  P: number; Mx: number; My: number;              // carga de columna + momentos
 }
-const DEFAULTS: Inputs = { B: 300, L: 400, T: 40, ks: 5, N: 120, Mx: 60, My: 72 };
+const DEFAULTS: Inputs = { B: 300, L: 400, T: 40, Hped: 120, ks: 5, hrel: 80, P: 90, Mx: 60, My: 72 };
 
 const FIELDS: { key: keyof Inputs; label: string; unit: string; step: number }[] = [
   { key: 'B', label: 'Ancho B', unit: 'cm', step: 10 },
   { key: 'L', label: 'Largo L', unit: 'cm', step: 10 },
   { key: 'T', label: 'Espesor T', unit: 'cm', step: 5 },
+  { key: 'Hped', label: 'Alto pedestal', unit: 'cm', step: 10 },
   { key: 'ks', label: 'Balasto kₛ', unit: 'kgf/cm³', step: 0.5 },
-  { key: 'N', label: 'Carga vertical N', unit: 'tonf', step: 10 },
+  { key: 'hrel', label: 'Relleno h', unit: 'cm', step: 10 },
+  { key: 'P', label: 'Carga columna P', unit: 'tonf', step: 10 },
   { key: 'Mx', label: 'Momento Mₓ', unit: 'tonf·m', step: 5 },
   { key: 'My', label: 'Momento M_y', unit: 'tonf·m', step: 5 },
 ];
@@ -57,18 +65,25 @@ export default function ZapataBiaxialTool() {
       .catch((e) => setError(String(e)));
   }, []);
 
-  // ── Variables derivadas (features del surrogate + escalas físicas) ─────────
+  // ── Variables derivadas (peso propio + relleno → N_tot → features) ─────────
   const d = useMemo(() => {
-    const { B, L, T, ks, N, Mx, My } = inp;
-    // e = 100·M[tonf·m] / N[tonf]  →  [cm];  e_x por My (sobre B), e_y por Mx (sobre L)
-    const ex = N > 0 ? (100 * My) / N : 0;
-    const ey = N > 0 ? (100 * Mx) / N : 0;
+    const { B, L, T, Hped, ks, hrel, P, Mx, My } = inp;
+    // Composición de la carga vertical total en la base [kgf]
+    const wZap = B * L * T * GAMMA_C;                       // peso zapata
+    const wPed = PED_A * Hped * GAMMA_C;                    // peso pedestal
+    const wFill = Math.max(B * L - PED_A, 0) * hrel * GAMMA_S; // relleno sobre el vuelo
+    const Pcol = P * 1000;                                  // columna [tonf → kgf]
+    const Ntot = Pcol + wZap + wPed + wFill;                // vertical total [kgf]
+    // Excentricidad EFECTIVA: el momento lo pone la columna, dividido por N_tot.
+    // M[tonf·m] → kgf·cm es ×1e5;  e_x por My (sobre B), e_y por Mx (sobre L).
+    const ex = Ntot > 0 ? (My * 1e5) / Ntot : 0;
+    const ey = Ntot > 0 ? (Mx * 1e5) / Ntot : 0;
     const exB = B > 0 ? ex / B : 0;
     const eyL = L > 0 ? ey / L : 0;
     const Kr = ks > 0 && B > 0 ? (E_G25 * T ** 3) / (ks * B ** 4) : 0;
     const LB = B > 0 ? L / B : 0;
-    const NA = B > 0 && L > 0 ? (N * 1000) / (B * L) : 0; // N/A [kgf/cm²]
-    return { exB, eyL, Kr, LB, NA };
+    const NA = B > 0 && L > 0 ? Ntot / (B * L) : 0;         // N/A [kgf/cm²]
+    return { exB, eyL, Kr, LB, NA, Ntot, Pcol, wZap, wPed, wFill };
   }, [inp]);
 
   const pred = useMemo(() => {
@@ -148,8 +163,19 @@ export default function ZapataBiaxialTool() {
           ))}
         </div>
 
+        {/* ── Composición de la carga vertical total ── */}
+        <div className="mt-4 rounded border border-border bg-surface/50 p-3 text-xs leading-relaxed text-muted">
+          <span className="font-medium text-ink">
+            Vertical total N = {(d.Ntot / 1000).toFixed(0)} tonf
+          </span>{' '}
+          = columna {(d.Pcol / 1000).toFixed(0)} + peso propio {((d.wZap + d.wPed) / 1000).toFixed(1)}{' '}
+          + relleno {(d.wFill / 1000).toFixed(1)} tonf. El peso propio y el relleno están{' '}
+          <em>centrados</em>: suman a N y por eso <strong>bajan la excentricidad efectiva</strong>{' '}
+          (e = M/N) — estabilizan la zapata.
+        </div>
+
         {/* ── Variables adimensionales calculadas ── */}
-        <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-4">
           <Derived label="e_x/B" value={d.exB.toFixed(3)} />
           <Derived label="e_y/L" value={d.eyL.toFixed(3)} />
           <Derived label="K_r" value={d.Kr.toFixed(2)} />
