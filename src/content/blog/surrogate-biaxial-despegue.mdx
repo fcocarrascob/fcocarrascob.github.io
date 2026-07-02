@@ -163,6 +163,34 @@ surrogate reproduce.
 
 ---
 
+## Poniéndolo en aprietos
+
+Un caso es una anécdota. Para confiar en la herramienta conviene estresarla en los **extremos**:
+zapatas al borde de la envolvente y excentricidades biaxiales fuertes. Cuatro casos, cada uno resuelto
+por el surrogate (el motor de la herramienta) y por SAP2000 completo:
+
+| Caso | $K_r$ | $e_x/B,\ e_y/L$ | Contacto (tool / SAP) | $q_{max}$ (tool / SAP) |
+|:---|:---:|:---:|:---:|:---:|
+| Dentro del kern | 2,1 | 0,08 / 0,07 | 100 % / 100 % | 1,83 / 1,87 |
+| Muy flexible, biaxial fuerte | 0,011 | 0,22 / 0,22 | 33 % / 40 % | 3,1 / 3,4 |
+| Rincón profundo | 0,36 | 0,30 / 0,25 | 35 % / 39 % | 7,4 / 6,2 |
+| Muy rígido, contacto delgado | 197 | 0,30 / 0,10 | 49 % / 58 % | 6,4 / 5,9 |
+
+<Figure
+  src="/fundaciones/verificacion_casos.png"
+  alt="Mapas de presión de SAP2000 vs surrogate para cuatro casos límite"
+  caption="Mapa de presión SAP2000 (izquierda) vs. surrogate (derecha) para los cuatro casos. El polígono de contacto y la concentración se reproducen en todos los regímenes: contacto pleno dentro del kern, dishing en la muy flexible, franja delgada en la muy rígida, triángulo en el rincón profundo."
+/>
+
+Los mapas coinciden en los cuatro regímenes. En números: el contacto se sigue **dentro de unos pocos
+puntos** a lo largo de cinco órdenes de magnitud de $K_r$ —desde $0{,}011$ (una losa casi sin rigidez)
+hasta $197$ (prácticamente un bloque)—, y la presión máxima queda **dentro de ~10–20 %**, corriendo
+algo conservadora en los extremos (el surrogate lee el pico en una grilla más fina que la salida nodal
+de SAP). La precisión es mejor en el centro de la envolvente y se degrada de forma controlada hacia los
+bordes —justo donde conviene volver al análisis.
+
+---
+
 ## La herramienta
 
 Todo esto vive ahora en una página interactiva. Se ingresan geometría, suelo y cargas; la herramienta
