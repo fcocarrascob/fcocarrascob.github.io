@@ -112,4 +112,59 @@ const vigaFlexionCorte: Template = {
   regions: layout('viga', 40, 32, vigaItems),
 };
 
-export const TEMPLATES: Template[] = [vigaFlexionCorte];
+// --- Pernos de anclaje: tracción, corte e interacción (ACI 318-25, Cap. 17) ---
+// Solo resistencia del ACERO del perno (17.6.1.2 tracción, 17.7.1.2 corte) más la
+// interacción tracción-corte (17.8.3). No incluye los modos de falla del hormigón
+// (breakout, pullout, pryout, side-face blowout, splitting) — ver Note al final.
+// Ase se aproxima como 0.75*Ag (rosca UNC estándar); reemplazar por el área neta
+// real de catálogo cuando esté disponible.
+const pernoAnclajeItems: Item[] = [
+  t('PERNOS DE ANCLAJE — Tracción, corte e interacción · ACI 318-25 (Cap. 17)'),
+
+  t('Materiales · perno de anclaje'),
+  m('futa := 400 MPa'),
+  m('phiN := 0.75'),
+  m('phiV := 0.65'),
+
+  t('Geometría del grupo de pernos'),
+  m('n := 4'),
+  m('db := 22 mm'),
+  m('Ag := pi/4*db^2 = mm^2'),
+  m('Ase := 0.75*Ag = mm^2'),
+
+  t('Solicitaciones mayoradas (grupo completo)'),
+  m('Nua := 12 tonf'),
+  m('Vua := 8 tonf'),
+
+  t('━━ RESISTENCIA DEL ACERO — TRACCIÓN (17.6.1.2) ━━'),
+  m('Nsa := n*Ase*futa = tonf'),
+  m('phiNsa := phiN*Nsa = tonf'),
+  t('φNsa ≥ Nua'),
+  m('phiNsa >= Nua ='),
+
+  t('━━ RESISTENCIA DEL ACERO — CORTE (17.7.1.2) ━━'),
+  m('Vsa := n*0.6*Ase*futa = tonf'),
+  m('phiVsa := phiV*Vsa = tonf'),
+  t('φVsa ≥ Vua'),
+  m('phiVsa >= Vua ='),
+
+  t('━━ INTERACCIÓN TRACCIÓN-CORTE (17.8.3) ━━'),
+  m('rn := Nua/phiNsa ='),
+  m('rv := Vua/phiVsa ='),
+  p('cumple_interaccion :=\n    if rn <= 0.2\n        return true\n    else if rv <= 0.2\n        return true\n    return (rn + rv) <= 1.2'),
+  t('Cumple si rn≤0.2, o rv≤0.2, o rn+rv≤1.2'),
+  m('cumple_interaccion ='),
+
+  t('⚠ Solo resistencia del acero. Falta verificar breakout, pullout, pryout,'),
+  t('side-face blowout y splitting del hormigón (resto del Cap. 17).'),
+];
+
+const pernoAnclaje: Template = {
+  id: 'perno-anclaje-traccion-corte',
+  titulo: 'Pernos de anclaje — Tracción, corte e interacción (ACI 318-25)',
+  norma: 'ACI 318-25 Cap. 17 (resistencia del acero)',
+  descripcion: 'Resistencia del acero de un grupo de pernos de anclaje a tracción y corte, y chequeo de interacción, con valores de ejemplo.',
+  regions: layout('perno', 40, 32, pernoAnclajeItems),
+};
+
+export const TEMPLATES: Template[] = [vigaFlexionCorte, pernoAnclaje];

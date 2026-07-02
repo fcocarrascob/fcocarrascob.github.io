@@ -1,0 +1,199 @@
+---
+title: "Placas Bases en SAP2000"
+description: "Guía paso a paso para modelar placas base de columnas de acero en SAP2000: geometría, propiedades, apoyos, cargas y verificación de resultados."
+pubDate: 2026-07-02
+tags: ["SAP2000", "placas base", "acero", "conexiones"]
+section: "SAP2000"
+draft: false
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+<Note type="info" title="Nota en progreso">
+Este post se va a ir completando por partes. Cada sección abajo es un punto de partida: el
+texto y las imágenes se agregan a medida que avanza el modelamiento.
+</Note>
+
+## Motivación
+
+_(Por qué modelar la placa base explícitamente en vez de solo verificarla a mano — qué preguntas
+responde el modelo que la fórmula clásica no.)_
+
+---
+
+## 1. Obtener reacciones de la superestructura
+
+### 1.1 El problema: la explosión combinatoria
+
+Si se opta por reacciones de Combinaciones de Carga, aparece un problema de escala: hay que
+"concatenar" cada apoyo con cada combinación. Con $N$ apoyos y $M$ combinaciones, el número de
+filas crudas es $N \times M$. En un modelo con unas pocas decenas de apoyos y unas pocas decenas
+de combinaciones (LRFD + ASD) esto ya son varios cientos de filas de $F_1, F_2, F_3, M_1, M_2,
+M_3$. Copiar todo a una planilla no es manejable ni útil: hay que filtrar antes de diseñar la
+placa.
+
+### 1.2 Estrategia de filtrado
+
+El criterio es directo: agrupar **todas** las reacciones de **todos** los apoyos, para todas las
+combinaciones, en un único conjunto, y sobre ese conjunto quedarse solo con los 2 valores más
+grandes y los 2 más chicos de cada esfuerzo:
+
+<Equation label="Ec. e">
+$$
+F_1,\ F_2,\ F_3,\ M_1,\ M_2,\ M_3,\ e_1 = \frac{M_2}{F_3},\ e_2 = \frac{M_1}{F_3}
+$$
+</Equation>
+
+Son 8 magnitudes × 2 (máximo y mínimo) = **hasta 16 filas en total**, cada una identificada por el
+apoyo y la combinación que la generó. No se filtra apoyo por apoyo ni se poda la lista de
+combinaciones de antemano: se deja que el propio filtro de máximo/mínimo global determine, sin
+intervención manual, cuáles apoyos y cuáles combinaciones terminan siendo relevantes.
+
+Es una envolvente **por componente y global** (no por apoyo): sacrifica saber cuál es el peor caso
+de *cada* apoyo individual a cambio de una tabla mínima y directamente utilizable, apta para
+dimensionar una placa base tipo que cubra el caso más exigente de toda la estructura.
+
+<Note type="warning" title="Cuidado con e = M/N cerca de N = 0">
+La excentricidad se dispara a valores enormes y sin sentido físico cuando $F_3 \to 0$ (carga
+axial casi nula). Antes de rankear por $e_1$ o $e_2$, hay que descartar las filas candidatas cuyo
+$F_3$ sea menor al 10&nbsp;% del $F_3$ máximo del conjunto completo, para que esos "extremos"
+espurios no desplacen a los casos que sí importan.
+</Note>
+
+<details class="mt-6 text-sm">
+<summary class="cursor-pointer font-medium text-ink">Ver script en Python (API de SAP2000)</summary>
+
+Requiere `pip install comtypes` y una instancia de SAP2000 abierta con el modelo ya analizado.
+
+```python
+import comtypes.client
+
+# --- Conectarse a la instancia de SAP2000 abierta ---
+helper = comtypes.client.CreateObject("SAP2000v1.Helper")
+SapObject = helper.GetObject("CSI.SAP2000.API.SapObject")
+SapModel = SapObject.SapModel
+
+# --- 1. Apoyos: puntos con alguna restricción activa ---
+_, point_names, _ = SapModel.PointObj.GetNameList()
+support_joints = [
+    name for name in point_names
+    if any(SapModel.PointObj.GetRestraint(name)[0])
+]
+
+# --- 2. Seleccionar todas las combinaciones de carga para la salida ---
+_, combo_names, _ = SapModel.RespCombo.GetNameList()
+SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
+for combo in combo_names:
+    SapModel.Results.Setup.SetComboSelectedForOutput(combo)
+
+# --- 3. Reacciones de todos los apoyos, para todas las combinaciones ---
+rows = []
+for joint in support_joints:
+    (n, _obj, _elm, load_case, _step_type, _step_num,
+     f1, f2, f3, m1, m2, m3, _ret) = SapModel.Results.JointReact(joint, 0)
+    for i in range(n):
+        rows.append({
+            "apoyo": joint, "combo": load_case[i],
+            "F1": f1[i], "F2": f2[i], "F3": f3[i],
+            "M1": m1[i], "M2": m2[i], "M3": m3[i],
+        })
+
+# --- 4. Excentricidades, descartando F3 casi nulo (< 10 % del F3 máximo) ---
+f3_max = max(abs(r["F3"]) for r in rows)
+for r in rows:
+    if abs(r["F3"]) >= 0.10 * f3_max:
+        r["e1"] = r["M2"] / r["F3"]
+        r["e2"] = r["M1"] / r["F3"]
+    else:
+        r["e1"] = r["e2"] = None
+
+# --- 5. Filtro final: 2 máximos y 2 mínimos de cada esfuerzo, sobre TODOS los apoyos ---
+componentes = ["F1", "F2", "F3", "M1", "M2", "M3", "e1", "e2"]
+
+def top2(rows, key, reverse):
+    validas = [r for r in rows if r[key] is not None]
+    return sorted(validas, key=lambda r: r[key], reverse=reverse)[:2]
+
+gobernantes = {}
+for comp in componentes:
+    gobernantes[f"{comp}_max"] = top2(rows, comp, reverse=True)
+    gobernantes[f"{comp}_min"] = top2(rows, comp, reverse=False)
+
+for caso, filas in gobernantes.items():
+    for r in filas:
+        print(f"{caso:8s} apoyo={r['apoyo']:>4s}  combo={r['combo']:<20s} "
+              f"F1={r['F1']:.3f} F2={r['F2']:.3f} F3={r['F3']:.3f} "
+              f"M1={r['M1']:.3f} M2={r['M2']:.3f} M3={r['M3']:.3f}")
+```
+
+</details>
+
+---
+
+## 2. Modelación Placa Base.
+
+Para una modelación "rápida" de la geometría de Placa Base y sus elementos utilizamos herramientas. Tener en consideración las distancias mínimas borde placa-perno (AISC 360) y borde pedestal-perno (ACI 318)
+
+### 2.1 Distancias mínimas — AISC 360 (borde de placa y separación entre pernos)
+
+Rige la [Sección J3 — Pernos](/acero/aisc360-22-capj-conexiones) de AISC 360-22.
+
+**Separación mínima entre centros de perno (J3.3):**
+
+<Equation label="J3.3">
+$$
+s \geq 2\tfrac{2}{3}\, d \quad (\text{preferible } 3d)
+$$
+</Equation>
+
+**Distancia mínima del centro del agujero al borde de la placa (J3.4, Tabla J3.4M):**
+
+| Diámetro del perno $d$ (mm) | Distancia mínima al borde (mm) |
+|:---:|:---:|
+| 16 | 22 |
+| 20 | 26 |
+| 22 | 28 |
+| 24 | 30 |
+| 27 | 34 |
+| 30 | 38 |
+| 36 | 46 |
+| $> 36$ | $1.25\,d$ |
+
+<Note type="info">
+La distancia al borde no debe exceder $12\,t$ ni 150 mm (J3.5), donde $t$ es el espesor de la
+placa. Estos límites geométricos suelen controlar el detallado antes que la propia resistencia,
+y la distancia libre que resulta ($l_c$) es la que entra en el cálculo de aplastamiento/desgarre
+del agujero.
+</Note>
+
+### 2.2 Distancias mínimas — ACI 318 (pernos de anclaje al hormigón)
+
+Rige el Capítulo 17 — Anclaje al hormigón (Anchoring to Concrete) de ACI 318-25.
+
+- **Separación mínima entre anclajes** ($d_a$ = diámetro del anclaje): $4\,d_a$ para anclajes
+  embebidos (*cast-in*) que no se aprietan con torque; $6\,d_a$ para anclajes embebidos
+  apretados con torque y para anclajes post-instalados (expansión/adherencia).
+- **Distancia mínima al borde del pedestal**: para anclajes embebidos sin torque, el
+  recubrimiento mínimo de armadura (Cap. 20); para anclajes embebidos apretados con torque,
+  $6\,d_a$.
+- **Anclajes post-instalados**: el código **no** fija un valor numérico — la separación y
+  distancia al borde mínimas son las reportadas en el informe de calificación del producto
+  (ensayos ACI 355.2 para mecánicos o ACI 355.4 para químicos/adhesivos, publicados en el ESR
+  del fabricante). Siempre usar esos valores, no una regla genérica.
+
+<Note type="warning" title="Cono de rotura y recubrimiento del pedestal">
+Aunque se cumplan las distancias mínimas de splitting, la resistencia real a rotura del cono de
+hormigón (breakout, Cap. 17) sigue cayendo mientras la distancia al borde $c_{a1}$ sea menor a
+$1.5\,h_{ef}$ ($h_{ef}$ = profundidad embebida). Para que el pedestal no gobierne el diseño de la
+placa conviene verificar también esa condición, no solo el mínimo de splitting. Verificar
+numeración de artículos contra la edición vigente de ACI 318-25.
+</Note>
+
+### 2.3 Placa Base.
+
+
+
+
+
