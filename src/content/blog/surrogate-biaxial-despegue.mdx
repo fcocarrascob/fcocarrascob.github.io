@@ -1,0 +1,159 @@
+---
+title: "Machine Learning donde la Fórmula no Llega: el Despegue Biaxial"
+description: "El despegue biaxial de una zapata no tiene fórmula cerrada clásica. Con un barrido dirigido de 3000 simulaciones y un modelo sustituto entrenado sobre elementos finitos, se predice la fracción de contacto y la presión máxima directamente desde la excentricidad y la rigidez relativa."
+pubDate: 2026-07-02
+tags: ["fundaciones", "zapatas", "SAP2000", "biaxial", "machine learning", "surrogate", "rigidez relativa"]
+section: "Fundaciones"
+series: "Fundaciones aisladas"
+seriesPart: 5
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De dónde venimos
+
+El [post anterior](/blog/cuando-confiar-formula-rigida) cerró la validación del caso **uniaxial**:
+mostramos dónde vale la fórmula rígida (para $K_r \geq 1$) y por cuánto corregirla cuando no. Pero
+quedó un frente abierto que anotamos al final: el **caso biaxial** —momento en dos direcciones a la
+vez— donde la teoría clásica se queda sin herramientas.
+
+Esta nota lo ataca, y de una forma distinta: en vez de buscar una fórmula, **entrenamos un
+predictor**.
+
+---
+
+## Por qué el biaxial es otro problema
+
+En flexión uniaxial, el despegue tiene solución cerrada: la presión se distribuye en un triángulo y
+$q_{max} = 2N / (3\,b\,(d/2 - e))$. Limpio.
+
+En biaxial no. Cuando la resultante sale del **kern** en las dos direcciones, la zona que queda en
+contacto ya no es un rectángulo ni un triángulo simple: es un **polígono** —puede ser un triángulo,
+un cuadrilátero o un pentágono según la combinación de excentricidades— y no existe una expresión
+algebraica única para su área ni para la presión máxima. La práctica lo resuelve con **cartas de
+dimensionamiento** (como las de Highter y Anders) o **iterando numéricamente**.
+
+El kern, eso sí, sigue teniendo forma exacta: para una base rectangular es un **rombo**,
+
+<Equation label="Ec. 1">
+$$
+\frac{6\,e_x}{B} + \frac{6\,e_y}{L} \leq 1
+$$
+</Equation>
+
+Dentro del rombo no hay despegue y vale la fórmula de las cuatro esquinas
+$q = (N/A)(1 \pm 6e_x/B \pm 6e_y/L)$. **Fuera** del rombo empieza el territorio sin fórmula. Ese es
+el que queremos mapear.
+
+---
+
+## La idea: en vez de una ecuación, un predictor
+
+Si no hay fórmula cerrada, hay dos caminos. Buscar una aproximación algebraica que ajuste los datos
+—posible, pero frágil y difícil de generalizar a dos variables— o **entrenar un modelo sustituto**
+(*surrogate*): un predictor que aprende la relación directamente de las simulaciones y devuelve, en
+milisegundos, lo que antes exigía una carta o una iteración.
+
+Para que ese predictor sea útil tiene que generalizar: acertar en zapatas que **no** vio durante el
+entrenamiento. Ese es el criterio con el que lo vamos a juzgar.
+
+<Note type="tip" title="Un atajo que simplifica el problema">
+Para la zapata **rígida**, la fracción de contacto y la presión normalizada $q_{max}/(N/A)$ dependen
+**solo** de $(e_x/B,\, e_y/L)$ —y son simétricas en esas dos variables—, sin importar la relación de
+forma $L/B$. Sale del mapeo afín de la base a un cuadrado unitario. La flexibilidad ($K_r$, $L/B$)
+entra únicamente como una **corrección**. Eso divide el problema en una superficie geométrica limpia
+más un ajuste fino, y le da estructura a lo que el modelo tiene que aprender.
+</Note>
+
+---
+
+## El barrido dirigido
+
+El experimento anterior barría la excentricidad en dos direcciones fijas ($\theta = 0°$ y $45°$).
+Para el biaxial eso no alcanza: hay que recorrer el **plano completo** $(e_x/B,\, e_y/L)$, con las dos
+excentricidades independientes. Así que se cambió el muestreo a una **grilla 2D** —30 combinaciones
+por geometría, incluyendo los ejes (uniaxial) como anclas y capando el rincón profundo, donde la
+resultante casi toca una esquina y el análisis se vuelve inestable.
+
+Sobre 100 geometrías nuevas (muestreadas para cubrir bien $K_r$ y $L/B$), son **3000 simulaciones no
+lineales**, de las cuales **1800 caen en despegue biaxial** —el régimen sin fórmula cerrada—. Ese es
+el material de entrenamiento.
+
+---
+
+## El surrogate
+
+El modelo —un *gradient boosting* sobre árboles— predice dos salidas desde cuatro entradas
+$(e_x/B,\, e_y/L,\, K_r,\, L/B)$:
+
+- la **fracción de la base en contacto**, $A_c/A$;
+- la **presión máxima normalizada**, $q_{max}/(N/A)$.
+
+Lo importante es cómo se valida. Un $R^2$ alto es fácil de inflar si el modelo interpola entre puntos
+casi idénticos. Para medir la generalización de verdad, se usa **validación por geometría** (dejar
+zapatas *enteras* fuera del entrenamiento y predecirlas desde cero):
+
+<Figure
+  src="/fundaciones/biaxial_validacion.png"
+  alt="Predicho por el surrogate vs medido en SAP, para fracción de contacto y presión máxima normalizada"
+  caption="Predicción del surrogate vs. valor real de SAP, evaluada sobre geometrías que el modelo no vio en el entrenamiento. Contacto: R² = 0,985. Presión normalizada: R² = 0,988."
+/>
+
+Los puntos se pegan a la diagonal: $R^2 = 0{,}985$ para la fracción de contacto (error medio de
+$1{,}4$ puntos porcentuales) y $R^2 = 0{,}988$ para $q_{max}/(N/A)$, **prediciendo zapatas nunca
+vistas**. Y el atajo de antes se confirma en los números: usando solo $(e_x/B, e_y/L)$ el modelo ya
+llega a $R^2 = 0{,}97$ (la superficie rígida); agregar $K_r$ y $L/B$ lo sube a $0{,}99$ —esa última
+milla es la corrección por flexibilidad.
+
+---
+
+## La superficie de presión
+
+Con el modelo entrenado se puede dibujar lo que ninguna fórmula daba: la superficie de $q_{max}/(N/A)$
+sobre todo el plano de excentricidades, para cualquier rigidez.
+
+<Figure
+  src="/fundaciones/biaxial_superficie.png"
+  alt="Superficie de presión máxima normalizada sobre el plano de excentricidades, para una zapata rígida y una flexible"
+  caption="Presión máxima normalizada q_max/(N/A) sobre el plano (e_x/B, e_y/L), predicha por el surrogate, para una zapata rígida (K_r = 10) y una flexible (K_r = 0,1). La línea punteada es el borde del kern rómbico; más allá, la presión se dispara hacia el rincón biaxial."
+/>
+
+Dentro del rombo (abajo a la izquierda de la línea punteada) la presión es suave. Cruzando hacia el
+rincón —las dos excentricidades grandes— se dispara: es la zona donde el contacto se reduce a un
+polígono chico y toda la carga se apoya sobre él. La zapata flexible ($K_r = 0{,}1$) muestra presiones
+algo mayores en la zona de baja excentricidad —el *dishing* de siempre—, pero el patrón general lo
+gobierna la geometría de las excentricidades, tal como anticipaba el atajo.
+
+---
+
+## Qué significa
+
+Es un cambio de herramienta. Donde el prediseño biaxial dependía de cartas o de un cálculo iterativo,
+ahora hay un **predictor directo**: se entra con $(e_x/B,\, e_y/L,\, K_r,\, L/B)$ y se obtiene la
+fracción de contacto y la presión máxima con un error de pocos por ciento, calibrado contra
+elementos finitos no lineales.
+
+<Note type="warning" title="Los límites, sin letra chica">
+El surrogate se entrenó sobre este barrido: hormigón G25, resortes de solo compresión, excentricidad
+capada antes del vuelco por rincón, y el rango de $K_r$ y $L/B$ del muestreo. Fuera de esa envolvente
+—extrapolando— no hay garantías: un modelo sustituto interpola con maestría y extrapola con
+imprudencia. Es una herramienta de prediseño calibrada, no un reemplazo del análisis para el proyecto
+definitivo.
+</Note>
+
+Con esto la serie cierra el arco que se propuso al principio: partimos de las **ecuaciones clásicas**,
+medimos **dónde valen y dónde no** contra un modelo no lineal, y donde la fórmula no llegaba
+—el despegue biaxial— la reemplazamos por un **predictor entrenado con los datos**. De la ecuación al
+dato, y del dato a la herramienta.
+
+---
+
+## La serie, de un vistazo
+
+1. [Prediseño de fundaciones aisladas](/blog/prediseno-fundaciones-aisladas) — las verificaciones clásicas.
+2. [Presiones de contacto — Winkler](/blog/presiones-contacto-winkler) — el modelo de resortes con despegue.
+3. [Un experimento para validar las ecuaciones](/blog/experimento-fundaciones-sap2000) — el diseño del barrido.
+4. [Cuándo confiar en la fórmula rígida](/blog/cuando-confiar-formula-rigida) — la validación uniaxial y el mapa de corrección.
+5. **Machine learning donde la fórmula no llega** — el surrogate biaxial (este post).
