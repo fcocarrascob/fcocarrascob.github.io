@@ -24,7 +24,7 @@ const FIELDS: { key: keyof Inputs; label: string; unit: string; step: number }[]
   { key: 'B', label: 'Ancho B', unit: 'cm', step: 10 },
   { key: 'L', label: 'Largo L', unit: 'cm', step: 10 },
   { key: 'T', label: 'Espesor T', unit: 'cm', step: 5 },
-  { key: 'Hped', label: 'Alto pedestal', unit: 'cm', step: 10 },
+  { key: 'Hped', label: 'Alto pedestal (50×50)', unit: 'cm', step: 10 },
   { key: 'ks', label: 'Balasto kₛ', unit: 'kgf/cm³', step: 0.5 },
   { key: 'hrel', label: 'Relleno h', unit: 'cm', step: 10 },
   { key: 'P', label: 'Carga columna P', unit: 'tonf', step: 10 },

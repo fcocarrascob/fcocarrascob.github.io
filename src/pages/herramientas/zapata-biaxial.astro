@@ -26,7 +26,39 @@ const description =
 
     <ZapataBiaxialTool client:only="react" />
 
-    <p class="mt-6 text-xs text-muted">
+    <details class="mt-6 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">Supuestos y notas del modelo</summary>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
+        <li>
+          <strong>Sección del pedestal: 50 × 50 cm (fija).</strong> Es la que usaron todos los
+          modelos del dataset, por eso solo se ingresa su altura. Su peso es
+          (50×50)·H<sub>ped</sub>·γ<sub>hormigón</sub> — un aporte pequeño a la carga vertical.
+        </li>
+        <li>
+          <strong>Material: hormigón G25.</strong> Fija el módulo elástico E que entra en la
+          rigidez relativa K<sub>r</sub> = E·T³ / (k<sub>s</sub>·B⁴).
+        </li>
+        <li>
+          <strong>Pesos unitarios:</strong> hormigón 2400 kgf/m³, suelo de relleno 1800 kgf/m³.
+        </li>
+        <li>
+          <strong>Carga vertical N:</strong> es la total en la base = columna + peso propio
+          (zapata + pedestal) + relleno. El relleno se apoya sobre el vuelo (área B·L menos la
+          huella del pedestal) y empuja hacia abajo incluso donde la base despega; por eso
+          <strong>estabiliza</strong> (baja la excentricidad efectiva e = M/N).
+        </li>
+        <li>
+          <strong>Convención de momentos:</strong> M<sub>y</sub> genera excentricidad sobre B
+          (e<sub>x</sub>); M<sub>x</sub>, sobre L (e<sub>y</sub>). Sin corte horizontal.
+        </li>
+        <li>
+          <strong>Suelo:</strong> resortes de Winkler de solo compresión —modelan el despegue,
+          no la falla por capacidad de soporte ni la no linealidad del suelo.
+        </li>
+      </ul>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
       Herramienta de <strong>prediseño</strong>, no de proyecto definitivo. Válida dentro de la
       envolvente de entrenamiento (hormigón G25, K_r ≈ 0,01–1000, L/B ≈ 1–2,5, excentricidad
       hasta el borde muestreado). El proyecto definitivo se verifica con el análisis.
