@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Grade, PlacaInputs, SolverResult } from '../../lib/placaBase';
 import { runPlaca, type PlacaResults } from '../../lib/placaBaseChecks';
+import type { PlacaGeom } from '../../lib/placaBaseSweep';
+import type { PlateLoadRow } from '../../lib/sapReactions';
+import SapSweepPanel from './SapSweepPanel';
 
 // ── Inputs de la UI (tonf, tonf·m, cm, kgf/cm²) ──────────────────────────────
 
@@ -220,8 +223,8 @@ export default function PlacaBaseTool() {
   const set = (key: keyof NumInputs, v: string) =>
     setInp((s) => ({ ...s, [key]: v === '' ? 0 : Number(v) }));
 
-  const res = useMemo(() => {
-    const engine: PlacaInputs = {
+  const geom = useMemo<PlacaGeom>(
+    () => ({
       B: inp.B, N: inp.N, t: inp.t, fc: inp.fc, Fy: inp.Fy,
       B2: inp.B2, N2: inp.N2, d: inp.d, bf: inp.bf,
       pattern: {
@@ -230,6 +233,15 @@ export default function PlacaBaseTool() {
         ex: inp.ex, ey: inp.ey, perimeterOnly: perim,
       },
       dRod: inp.dRod, grade, nShear: Math.max(1, Math.round(inp.nShear)),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [inp.B, inp.N, inp.t, inp.fc, inp.Fy, inp.B2, inp.N2, inp.d, inp.bf,
+     inp.nx, inp.ny, inp.ex, inp.ey, inp.dRod, inp.nShear, grade, perim]
+  );
+
+  const res = useMemo(() => {
+    const engine: PlacaInputs = {
+      ...geom,
       Pu: inp.Pu * 1000,          // tonf → kgf
       Mux: inp.Mux * 1e5,         // tonf·m → kgf·cm
       Muy: inp.Muy * 1e5,
@@ -237,7 +249,22 @@ export default function PlacaBaseTool() {
       Vuy: inp.Vuy * 1000,
     };
     return runPlaca(engine);
-  }, [inp, grade, perim]);
+  }, [geom, inp.Pu, inp.Mux, inp.Muy, inp.Vux, inp.Vuy]);
+
+  // Fila del barrido SAP2000 → formulario (kgf → tonf, kgf·cm → tonf·m).
+  const rootRef = useRef<HTMLDivElement>(null);
+  const loadSweepRow = (row: PlateLoadRow) => {
+    const r3 = (v: number) => Math.round(v * 1000) / 1000;
+    setInp((s) => ({
+      ...s,
+      Pu: r3(row.Pu / 1000),
+      Mux: r3(row.Mux / 1e5),
+      Muy: r3(row.Muy / 1e5),
+      Vux: r3(row.Vux / 1000),
+      Vuy: r3(row.Vuy / 1000),
+    }));
+    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const sol = res.solver;
   const byId = (id: string) => res.checks.find((c) => c.id === id);
@@ -259,6 +286,7 @@ export default function PlacaBaseTool() {
   const fmtEcc = (e: number) => (Number.isFinite(e) ? e.toFixed(1) : '∞');
 
   return (
+    <div ref={rootRef}>
     <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto]">
       {/* ── Panel de inputs y resultados ── */}
       <div>
@@ -411,6 +439,10 @@ export default function PlacaBaseTool() {
           Utilización perno {rodRatio > 0 ? (rodRatio * 100).toFixed(0) : '0'} %.
         </figcaption>
       </figure>
+    </div>
+
+    {/* ── Barrido de combinaciones desde SAP2000 ── */}
+    <SapSweepPanel geom={geom} onLoadRow={loadSweepRow} />
     </div>
   );
 }
