@@ -1,0 +1,46 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import { SAP_SCRIPT_TOOLS } from '../../../lib/sap-scripts/catalog';
+---
+<PageLayout
+  title="Constructor de Scripts SAP2000"
+  description="Generá scripts Python listos para ejecutar contra SAP2000, a partir de un formulario"
+>
+  <div class="prose prose-slate max-w-none">
+    <a href="/herramientas" class="text-sm text-muted no-underline hover:text-ink">&larr; Herramientas</a>
+    <h1 class="mt-4">Constructor de Scripts SAP2000</h1>
+    <p>
+      Cada sub-herramienta arma un archivo <code>.py</code> autocontenido a partir de un
+      formulario: se descarga y se ejecuta localmente (Python + <code>comtypes</code>) contra una
+      instancia de SAP2000 abierta. La lógica de cada script proviene, vendorizada y versionada,
+      del repositorio <a href="https://github.com/fcocarrascob/Skills_SAP">Skills_SAP</a> — el
+      mismo código detrás de los generadores de escritorio (ver
+      <a href="/herramientas/mcp-sap2000">MCP SAP2000</a>).
+    </p>
+  </div>
+  <ul class="mt-6 grid gap-4 not-prose">
+    {SAP_SCRIPT_TOOLS.map(({ slug, title, description, status }) => (
+      <li>
+        {status === 'available' ? (
+          <a
+            href={`/herramientas/sap-scripts/${slug}`}
+            class="block rounded-lg border border-border bg-surface p-4 transition-colors hover:border-accent"
+          >
+            <h2 class="font-semibold text-ink">{title}</h2>
+            <p class="mt-1 text-sm text-muted">{description}</p>
+          </a>
+        ) : (
+          <div class="block rounded-lg border border-dashed border-border bg-surface/50 p-4 opacity-70">
+            <div class="flex items-center gap-2">
+              <h2 class="font-semibold text-ink">{title}</h2>
+              <span class="rounded-full bg-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted">
+                Próximamente
+              </span>
+            </div>
+            <p class="mt-1 text-sm text-muted">{description}</p>
+          </div>
+        )}
+      </li>
+    ))}
+  </ul>
+</PageLayout>

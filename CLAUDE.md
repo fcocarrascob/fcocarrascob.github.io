@@ -89,6 +89,18 @@ The largest piece of non-content code: a SMath-style interactive worksheet at `/
 
 Three region kinds: `math`, `text`, `program`. When adding engine features, prefer extending the pure lib modules and keep React components thin.
 
+## SAP2000 Script Builder
+
+A family of config→script generators at `/herramientas/sap-scripts/`. Each sub-tool is a form mirroring a `*Config` dataclass from the [Skills_SAP](https://github.com/fcocarrascob/Skills_SAP) repo (`Config` dataclass + `Backend.run(config)` + `gui_*.py` — a pattern repeated across most of `Skills_SAP/scripts/`), and produces a single self-contained `.py` file the user downloads and runs locally with `comtypes` against an open SAP2000 instance. **No SAP2000 logic is reimplemented in TypeScript** — the generator only templates a short runner footer (`BaseModelConfig(...)` + `.run()`) around a vendored copy of the real Python backend, so the generated script behaves identically to the desktop GUI it mirrors.
+
+**Vendoring**: `Skills_SAP` is a public repo, added as a git submodule at `vendor/skills-sap` (pinned commit — update deliberately with `git submodule update --remote vendor/skills-sap`). Vite/Astro can't reliably import from outside `src/` (and GitHub Actions doesn't check out submodules by default), so `scripts/sync-sap-scripts.mjs` (`npm run sync:sap-scripts`) copies the specific files each sub-tool needs into `src/lib/sap-scripts/vendor/<tool>/`, prefixed with a header noting the source commit. **Never edit files under `src/lib/sap-scripts/vendor/` by hand** — edit `Skills_SAP`, then re-run the sync script. After updating the submodule, always re-run `npm run sync:sap-scripts` and commit both the submodule bump and the resulting vendor changes together.
+
+**Per sub-tool** (see `modelo-base` for the reference implementation):
+- `src/lib/sap-scripts/<tool>-template.ts` — imports the vendored `.py` file(s) via Vite's `?raw`, strips their `from config import (...)` and `if __name__ == "__main__":` boilerplate, and reassembles them with a generated footer that instantiates the config dataclass from the form values (`generate<Tool>Script(values)`). Also exports a `validate<Tool>FormValues(values)` for range checks.
+- `src/components/sap-scripts/<Tool>Builder.tsx` — the form + live preview (e.g. an SVG chart for the NCh2369 spectrum, computed with a pure TS port of the formula in `src/lib/sap-scripts/nch2369-spectrum.ts` — this port is for instant browser feedback only; the vendored Python is still what actually runs against SAP2000) + copy/download buttons for the generated script.
+- `src/pages/herramientas/sap-scripts/<tool>.astro` — thin page, `client:only="react"`.
+- `src/lib/sap-scripts/catalog.ts` — the `SAP_SCRIPT_TOOLS` list rendered by `src/pages/herramientas/sap-scripts/index.astro`; add an entry here (status `'planned'` is fine before the tool exists) to list a new sub-tool in the catalog.
+
 ## Layouts
 
 The layouts form a chain: `BaseLayout` (HTML shell, external CSS) → `PageLayout` / `BlogPost` (add `Header` + `Footer`). `BlogPost` renders the post header (title, date, tags, norm) above the prose slot and is used by both `blog/[slug].astro` and `hormigon/[slug].astro`.

@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/ui/Header.astro';
+import Footer from '../../../components/ui/Footer.astro';
+import ModeloBaseBuilder from '../../../components/sap-scripts/ModeloBaseBuilder.tsx';
+
+const title = 'Modelo Base SAP2000 — Constructor de Scripts';
+const description =
+  'Generá un script Python que crea un modelo base SAP2000 con materiales, patrones de carga, secciones, espectros sísmicos NCh2369 y combinaciones LRFD/ASD/NCh.';
+---
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-8">
+    <header class="mb-5">
+      <a href="/herramientas/sap-scripts" class="text-sm text-muted hover:text-ink">
+        &larr; Constructor de Scripts SAP2000
+      </a>
+      <h1 class="mt-2 text-2xl font-semibold text-ink">Modelo Base</h1>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Definí los parámetros sísmicos NCh2369 y descargá un script <code>.py</code> autocontenido
+        que, al ejecutarse contra SAP2000, crea un modelo nuevo con materiales (acero A36/A500,
+        hormigón G25/G30), patrones de carga estándar, secciones de acero/HA, espectros de
+        respuesta horizontal y vertical, y las combinaciones LRFD/ASD/NCh2369 con sus envolventes.
+      </p>
+    </header>
+
+    <ModeloBaseBuilder client:only="react" />
+
+    <details class="mt-6 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">Qué hace el script (8 tareas)</summary>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
+        <li><strong>1. Inicializa</strong> un modelo nuevo en blanco (unidades Tonf-m-C).</li>
+        <li>
+          <strong>2. Materiales:</strong> A36, A500 GrB (acero), G25, G30 (hormigón) con
+          propiedades isotrópicas y de diseño.
+        </li>
+        <li>
+          <strong>3. Patrones de carga:</strong> DEAD, LIVE, ROOF, SNOW, EQX/EQY/EQZ, WINDX/WINDY,
+          TEMP, SO, SA.
+        </li>
+        <li><strong>4-5. Secciones y armaduras:</strong> perfiles I, tubos HSS, ángulos, canales y rebar φ6-φ25.</li>
+        <li>
+          <strong>6. Espectros sísmicos:</strong> calcula el espectro NCh2369 horizontal (X, Y) y
+          vertical según zona/suelo/I/R/ξ, y define las funciones y casos de espectro de
+          respuesta (EQX, EQY, EQZ).
+        </li>
+        <li>
+          <strong>7. Combinaciones:</strong> NCh (E1, E2, E3), LRFD y ASD completas, incluyendo las
+          variantes industriales con SO/SA de NCh2369:2025.
+        </li>
+        <li><strong>8. Envolventes:</strong> ENV_LRFD y ENV_ASD.</li>
+      </ul>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
+      El script no reimplementa esta lógica: empaqueta una copia vendorizada y versionada de
+      <a href="https://github.com/fcocarrascob/Skills_SAP" class="text-accent hover:underline">
+        Skills_SAP
+      </a>
+      (<code>scripts/modelo_base/</code>) con los parámetros de este formulario. Los materiales,
+      secciones y combinaciones vienen con los valores por defecto del repositorio; editarlos
+      individualmente es un paso pendiente de esta herramienta.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>

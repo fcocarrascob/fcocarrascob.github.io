@@ -1,0 +1,3 @@
+[submodule "vendor/skills-sap"]
+	path = vendor/skills-sap
+	url = https://github.com/fcocarrascob/Skills_SAP.git
