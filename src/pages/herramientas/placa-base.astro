@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
+import PlacaBaseTool from '../../components/placa/PlacaBaseTool.tsx';
+
+const title = 'Placa base de columna';
+const description =
+  'Verifica placas base de columnas de acero con carga axial (compresión o tracción), momento biaxial y corte: distribución de presiones bajo la placa, aplastamiento del hormigón, espesor de placa y pernos de anclaje según AISC 360 y Design Guide 1 (LRFD).';
+---
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8">
+    <header class="mb-5">
+      <h1 class="text-2xl font-semibold text-ink">Placa base de columna</h1>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Ingresa las cargas mayoradas, la placa, la columna y los pernos: la herramienta resuelve
+        la <strong>distribución biaxial de presiones bajo la placa</strong> (placa rígida sobre
+        hormigón de solo compresión, con pernos de solo tracción) y verifica por LRFD el
+        aplastamiento del hormigón (AISC 360 J8), la flexión de la placa (Design Guide 1, líneas
+        0.95d/0.8b_f y λn′) y los pernos de anclaje F1554 (AISC 360 J3: tracción, corte e
+        interacción). El mapa muestra las presiones, el eje neutro y la tracción de cada perno.
+        Sobre cómo obtener las reacciones de diseño desde el modelo, ver la nota de
+        <a href="/blog/placas-base-sap2000" class="text-accent hover:underline">placas base en SAP2000</a>.
+      </p>
+    </header>
+
+    <PlacaBaseTool client:only="react" />
+
+    <details class="mt-6 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">Supuestos y notas del modelo</summary>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
+        <li>
+          <strong>Placa rígida.</strong> La presión de contacto es un plano
+          σ(x, y) = máx(0, p₀ + pₓ·x + p_y·y): hormigón elástico de solo compresión. El
+          equilibrio con {`{Pu, Mux, Muy}`} se resuelve de forma exacta (integración cerrada de
+          la zona comprimida), no con una grilla.
+        </li>
+        <li>
+          <strong>Pernos como áreas transformadas de solo tracción</strong> (n·A_b, con
+          n = E_s/E_c y E_c = 15100·√f'c): el método elástico clásico del Design Guide 1. El
+          reparto de tracciones es poco sensible al valor de n.
+        </li>
+        <li>
+          <strong>Convención de signos:</strong> Pu &gt; 0 comprime (Pu &lt; 0 es levantamiento).
+          Mux comprime el borde +y (excentricidad sobre N); Muy comprime el borde +x (sobre B).
+        </li>
+        <li>
+          <strong>Aplastamiento (J8):</strong> φ_c = 0.65 y
+          f_p = mín(0.85·f'c·√(A₂/A₁), 1.7·f'c), con A₂ del pedestal geométricamente similar
+          (√(A₂/A₁) ≤ 2).
+        </li>
+        <li>
+          <strong>Flexión de la placa (DG1):</strong> φ_b = 0.90 sobre Mp = Fy·t²/4 por unidad de
+          ancho. Lado comprimido: momento integrado del bloque de presiones real en las líneas
+          0.95d y 0.8b_f, más el mecanismo λn′ con λ = 1 (conservador). Lado traccionado: voladizo
+          cargado por la tracción del perno con ancho efectivo por dispersión a 45°
+          (b_ef = mín(4·brazo, separación entre pernos)) — un supuesto de juicio, explícito en el
+          detalle de la verificación.
+        </li>
+        <li>
+          <strong>Pernos (J3):</strong> F_nt = 0.75·F_u, F_nv = 0.45·F_u (hilos incluidos),
+          φ = 0.75, sobre el área bruta A_b. El corte se reparte por igual entre los pernos
+          indicados en «pernos al corte» — sin llave de corte ni fricción placa-hormigón.
+        </li>
+        <li>
+          <strong>No se verifica:</strong> el anclaje al hormigón (arrancamiento del cono,
+          pullout, desprendimiento lateral — ACI 318 Cap. 17), la soldadura columna-placa ni el
+          pandeo local de la columna. Las distancias mínimas de detallamiento (J3.3, Tabla J3.4)
+          se avisan pero no bloquean.
+        </li>
+        <li>
+          <strong>Unidades:</strong> cargas en tonf y tonf·m, geometría en cm, tensiones en
+          kgf/cm² (1 tonf = 1000 kgf).
+        </li>
+      </ul>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
+      Herramienta de <strong>prediseño</strong>, no de proyecto definitivo. El diseño final
+      requiere verificar además el anclaje al hormigón (ACI 318 Cap. 17) y las soldaduras, y
+      contrastar con el análisis de la estructura.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>
