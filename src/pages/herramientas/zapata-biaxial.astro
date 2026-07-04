@@ -19,7 +19,10 @@ const description =
         porcentaje de la base en compresión y la presión máxima. El motor es un
         <em>surrogate</em> de campo (POD + gradient boosting) entrenado sobre 3000 análisis no
         lineales en SAP2000 —resuelve en milisegundos el despegue biaxial, que no tiene fórmula
-        cerrada. Ver la <a href="/blog/surrogate-biaxial-despegue"
+        cerrada. Con el <strong>barrido SAP2000</strong> (al final de la página) puedes pegar
+        la tabla Joint Reactions completa y evaluar la zapata contra todas las combinaciones de
+        todos los apoyos a la vez, comparando contra la presión admisible. Ver la
+        <a href="/blog/surrogate-biaxial-despegue"
         class="text-accent hover:underline">serie de fundaciones</a> para el detalle.
       </p>
     </header>
@@ -54,6 +57,13 @@ const description =
         <li>
           <strong>Suelo:</strong> resortes de Winkler de solo compresión —modelan el despegue,
           no la falla por capacidad de soporte ni la no linealidad del suelo.
+        </li>
+        <li>
+          <strong>Barrido SAP2000:</strong> cada fila de Joint Reactions se mapea P = +F3,
+          Mₓ = M1, M_y = M2; con «amplificar por corte», los momentos se llevan al sello con
+          M′ = M + V·(H<sub>ped</sub> + T). El surrogate se evalúa con |e|/B y |e|/L (el campo
+          es simétrico por cuadrante) y la presión máxima se compara contra la q_a ingresada
+          en el panel.
         </li>
       </ul>
     </details>

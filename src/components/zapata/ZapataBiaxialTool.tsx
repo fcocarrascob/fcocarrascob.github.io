@@ -1,17 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { predictField, featuresFrom, type CampoModel } from '../../lib/zapataBiaxial';
-
-// ── Constantes físicas / envolvente de entrenamiento ─────────────────────────
-const E_G25 = (4700 * Math.sqrt(250 * 0.0980665)) / 0.0980665; // módulo G25 [kgf/cm²]
-const KR_MIN = 0.011;
-const KR_MAX = 997;
-const ECC_MAX = 0.45; // e_x/B, e_y/L máximos del muestreo
-const ECC_CAP = 0.6; // e_x/B + e_y/L (rincón profundo no muestreado)
-
-// Pesos unitarios del modelo SAP y sección del pedestal (fijos)
-const GAMMA_C = 0.0024; // hormigón [kgf/cm³]
-const GAMMA_S = 0.0018; // suelo de relleno [kgf/cm³]
-const PED_A = 50 * 50;  // sección del pedestal [cm²]
+import {
+  predictField,
+  featuresFrom,
+  deriveZapata,
+  envelopeWarnings,
+  type CampoModel,
+  type ZapataGeom,
+} from '../../lib/zapataBiaxial';
+import ZapataSweepPanel, { type ZapataLoadCase } from './ZapataSweepPanel';
 
 interface Inputs {
   B: number; L: number; T: number; Hped: number; // geometría
@@ -65,26 +61,18 @@ export default function ZapataBiaxialTool() {
       .catch((e) => setError(String(e)));
   }, []);
 
+  // Geometría (sin cargas) — compartida con el barrido SAP2000.
+  const geom = useMemo<ZapataGeom>(
+    () => ({ B: inp.B, L: inp.L, T: inp.T, Hped: inp.Hped, ks: inp.ks, hrel: inp.hrel }),
+    [inp.B, inp.L, inp.T, inp.Hped, inp.ks, inp.hrel]
+  );
+
   // ── Variables derivadas (peso propio + relleno → N_tot → features) ─────────
-  const d = useMemo(() => {
-    const { B, L, T, Hped, ks, hrel, P, Mx, My } = inp;
-    // Composición de la carga vertical total en la base [kgf]
-    const wZap = B * L * T * GAMMA_C;                       // peso zapata
-    const wPed = PED_A * Hped * GAMMA_C;                    // peso pedestal
-    const wFill = Math.max(B * L - PED_A, 0) * hrel * GAMMA_S; // relleno sobre el vuelo
-    const Pcol = P * 1000;                                  // columna [tonf → kgf]
-    const Ntot = Pcol + wZap + wPed + wFill;                // vertical total [kgf]
-    // Excentricidad EFECTIVA: el momento lo pone la columna, dividido por N_tot.
-    // M[tonf·m] → kgf·cm es ×1e5;  e_x por My (sobre B), e_y por Mx (sobre L).
-    const ex = Ntot > 0 ? (My * 1e5) / Ntot : 0;
-    const ey = Ntot > 0 ? (Mx * 1e5) / Ntot : 0;
-    const exB = B > 0 ? ex / B : 0;
-    const eyL = L > 0 ? ey / L : 0;
-    const Kr = ks > 0 && B > 0 ? (E_G25 * T ** 3) / (ks * B ** 4) : 0;
-    const LB = B > 0 ? L / B : 0;
-    const NA = B > 0 && L > 0 ? Ntot / (B * L) : 0;         // N/A [kgf/cm²]
-    return { exB, eyL, Kr, LB, NA, Ntot, Pcol, wZap, wPed, wFill };
-  }, [inp]);
+  // M[tonf·m] → kgf·cm es ×1e5;  e_x por My (sobre B), e_y por Mx (sobre L).
+  const d = useMemo(
+    () => deriveZapata(geom, inp.P * 1000, inp.Mx * 1e5, inp.My * 1e5),
+    [geom, inp.P, inp.Mx, inp.My]
+  );
 
   const pred = useMemo(() => {
     if (!model) return null;
@@ -93,18 +81,7 @@ export default function ZapataBiaxialTool() {
   }, [model, d]);
 
   // ── Avisos de envolvente ───────────────────────────────────────────────────
-  const warnings = useMemo(() => {
-    const w: string[] = [];
-    if (d.exB > ECC_MAX || d.eyL > ECC_MAX)
-      w.push(`Excentricidad fuera del muestreo (e/B o e/L > ${ECC_MAX}).`);
-    if (d.exB + d.eyL > ECC_CAP)
-      w.push(`e_x/B + e_y/L = ${(d.exB + d.eyL).toFixed(2)} > ${ECC_CAP}: rincón profundo no entrenado.`);
-    if (d.Kr < KR_MIN || d.Kr > KR_MAX)
-      w.push(`K_r = ${d.Kr.toFixed(3)} fuera del rango [${KR_MIN}, ${KR_MAX}].`);
-    if (d.LB < 1 || d.LB > 2.5)
-      w.push(`L/B = ${d.LB.toFixed(2)} fuera del rango [1, 2.5].`);
-    return w;
-  }, [d]);
+  const warnings = useMemo(() => envelopeWarnings(d), [d]);
 
   // ── Dibujo del heatmap ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -137,10 +114,24 @@ export default function ZapataBiaxialTool() {
   const set = (key: keyof Inputs, v: string) =>
     setInp((s) => ({ ...s, [key]: v === '' ? 0 : Number(v) }));
 
+  // Fila del barrido SAP2000 → formulario (kgf → tonf, kgf·cm → tonf·m).
+  const rootRef = useRef<HTMLDivElement>(null);
+  const loadSweepRow = (row: ZapataLoadCase) => {
+    const r3 = (v: number) => Math.round(v * 1000) / 1000;
+    setInp((s) => ({
+      ...s,
+      P: r3(row.Pcol / 1000),
+      Mx: r3(row.MxEff / 1e5),
+      My: r3(row.MyEff / 1e5),
+    }));
+    rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const qMax = pred ? pred.qMaxNorm * d.NA : 0;              // [kgf/cm²]
   const wMax = pred && inp.ks > 0 ? (pred.qMaxNorm * d.NA) / inp.ks : 0; // asentamiento máx [cm]
 
   return (
+    <div ref={rootRef}>
     <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto]">
       {/* ── Panel de inputs ── */}
       <div>
@@ -211,6 +202,10 @@ export default function ZapataBiaxialTool() {
         </figcaption>
         {!model && !error && <p className="mt-2 text-xs text-muted">Cargando modelo…</p>}
       </figure>
+    </div>
+
+    {/* ── Barrido de combinaciones desde SAP2000 ── */}
+    <ZapataSweepPanel geom={geom} model={model} onLoadRow={loadSweepRow} />
     </div>
   );
 }

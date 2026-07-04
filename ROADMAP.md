@@ -23,10 +23,13 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
   de verificaciones con sus detalles, avisos y la planta con presiones; el resto de
   la página se oculta con `print:hidden`. Además, cada verificación de la tabla
   enlaza a su sección exacta (§n) de la nota teórica.
-- [ ] **A3. Barrido SAP2000 en la zapata biaxial** — replicar el patrón de
-  `SapSweepPanel` de placa base: pegar la tabla Joint Reactions y correr el surrogate
-  sobre todas las combinaciones de todos los apoyos. El parseo ya existe
-  (`src/lib/sapReactions.ts`).
+- [x] **A3. Barrido SAP2000 en la zapata biaxial** (hecho 2026-07-04): panel
+  `ZapataSweepPanel` que parsea Joint Reactions (reusa `sapReactions.ts`) y corre el
+  surrogate por fila (`zapataBiaxialSweep.ts`), con q_a para ratio/OK, amplificación
+  opcional M′ = M + V·(H_ped + T), detección de tracción neta, avisos de envolvente
+  por fila (⚠) y «ver caso →» al formulario. La física (pesos → N_tot →
+  adimensionales) quedó extraída a `deriveZapata()`/`envelopeWarnings()` en la lib
+  pura, compartida por formulario y barrido.
 - [ ] **A4. Siguiente sub-tool de SAP Scripts** — agregar la próxima herramienta del
   catálogo (`src/lib/sap-scripts/catalog.ts`) vendoreando desde Skills_SAP, con
   `modelo-base` como referencia de implementación.
