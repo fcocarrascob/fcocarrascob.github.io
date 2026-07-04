@@ -50,6 +50,7 @@ export interface PlacaInputs {
   pattern: RodPattern;
   dRod: number; // diámetro del perno [cm]
   grade: Grade; // F1554
+  hEf: number; // embebido efectivo del anclaje [cm] (ACI 318 Cap. 17)
   nShear: number; // pernos que toman el corte
   Pu: number; // axial [kgf], >0 compresión
   Mux: number; // momento sobre eje x [kgf·cm]

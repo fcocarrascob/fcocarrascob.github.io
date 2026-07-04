@@ -19,6 +19,9 @@ export const SHORT_CHECK_LABEL: Record<string, string> = {
   'perno-traccion': 'Perno a tracción',
   'perno-corte': 'Perno a corte',
   'perno-interaccion': 'Perno V+T (J3.7)',
+  'anclaje-breakout': 'Cono de arrancamiento (17.6.2)',
+  'anclaje-pullout': 'Extracción perno (17.6.3)',
+  'anclaje-blowout': 'Blowout lateral (17.6.4)',
   equilibrio: 'Sin equilibrio',
 };
 

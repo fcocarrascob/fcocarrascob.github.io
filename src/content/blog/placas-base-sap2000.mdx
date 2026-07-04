@@ -1,6 +1,6 @@
 ---
 title: "Placas Base: teoría y verificaciones de la herramienta"
-description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3) y barrido de combinaciones de SAP2000."
+description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3), anclaje al hormigón en tracción (ACI 318 Cap. 17) y barrido de combinaciones de SAP2000."
 pubDate: 2026-07-02
 updatedDate: 2026-07-03
 tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "SAP2000"]
@@ -17,7 +17,8 @@ import Equation from '../../components/content/Equation.astro';
 Esta nota documenta la **teoría y las verificaciones** que implementa la herramienta
 [Placa base de columna](/herramientas/placa-base). La herramienta resuelve la distribución
 de presiones bajo una placa base sometida a carga axial (compresión o tracción), momento
-biaxial y corte, y la verifica por LRFD según AISC 360-22 y la Design Guide 1. Todo lo que
+biaxial y corte, y la verifica por LRFD según AISC 360-22, la Design Guide 1 y el
+Capítulo 17 de ACI 318-25 (anclaje al hormigón en tracción). Todo lo que
 la herramienta calcula está descrito aquí: este documento es la fuente de cada fórmula,
 factor y supuesto, para que los resultados puedan auditarse y reproducirse a mano.
 
@@ -40,7 +41,7 @@ de la DG1 es un caso particular.
 | **Placa rígida** | El asentamiento de la interfaz es un plano: el estado queda descrito por 3 parámetros |
 | **Hormigón elástico de solo compresión** | Donde el plano indica tracción, la placa se despega y la presión es cero (contacto unilateral) |
 | **Pernos como áreas transformadas de solo tracción** | Cada perno es un resorte que solo trabaja si la placa se levanta en su posición |
-| **Cargas en el centroide de la placa** | $P_u$, $M_{ux}$, $M_{uy}$, $V_{ux}$, $V_{uy}$ provienen de las reacciones del modelo (ver §5) |
+| **Cargas en el centroide de la placa** | $P_u$, $M_{ux}$, $M_{uy}$, $V_{ux}$, $V_{uy}$ provienen de las reacciones del modelo (ver §6) |
 
 Es el mismo esquema del [modelo de Winkler para zapatas](/blog/presiones-contacto-winkler),
 con dos diferencias: aquí el "suelo" es el hormigón del pedestal, y además del contacto
@@ -332,14 +333,103 @@ interacción no es requerida y la herramienta lo indica en el detalle.
 
 ---
 
-## 5. Barrido de combinaciones de SAP2000
+## 5. Anclaje al hormigón — ACI 318-25 Cap. 17
+
+El acero del perno (§4) es solo la mitad del problema: la tracción también tiene que
+poder **entrar al hormigón del pedestal**. Aquí es donde el solver del §1 paga dividendos:
+entrega la tracción $T_i$ de *cada* perno, así que la demanda del grupo traccionado — con
+su excentricidad real — está disponible directamente para las verificaciones del
+Capítulo 17.
+
+Los supuestos, comunes a las tres verificaciones: perno **embebido con tuerca/cabeza**
+(*cast-in headed*), hormigón **fisurado** ($\psi_c = 1.0$, conservador), hormigón de peso
+normal ($\lambda_a = 1$), pedestal $B_2 \times N_2$ concéntrico con la placa, y **sin
+refuerzo suplementario** — condición B, $\phi = 0.70$ (17.5.3).
+
+### 5.1 Cono de arrancamiento (breakout, 17.6.2)
+
+La resistencia básica de un anclaje aislado en hormigón fisurado es
+
+<Equation label="Ec. 15">
+$$
+N_b = k_c\,\lambda_a\,\sqrt{f'_c}\; h_{ef}^{1.5}
+= 10.1\,\sqrt{f'_c}\; h_{ef}^{1.5} \quad [\text{kgf, cm}]
+$$
+</Equation>
+
+(el 10.1 es la constante SI $k_c = 10$ convertida a kgf/cm). Para el **grupo** de pernos
+traccionados:
+
+<Equation label="Ec. 16">
+$$
+N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\;\psi_{ec,N}\;\psi_{ed,N}\;\psi_{c,N}\; N_b,
+\qquad A_{Nco} = 9\,h_{ef}^2
+$$
+</Equation>
+
+donde cada término sale de la geometría ya ingresada:
+
+- $A_{Nc}$ — el área proyectada del cono del grupo: la caja de los pernos traccionados
+  extendida $1.5\,h_{ef}$ hacia cada lado, **recortada por los bordes del pedestal**
+  (acotada por $n \cdot A_{Nco}$).
+- $\psi_{ec,N} = \left(1 + \dfrac{2\,e'_N}{3\,h_{ef}}\right)^{-1}$ por eje — la
+  excentricidad $e'_N$ de la resultante de tracción respecto del centroide del grupo se
+  calcula con las $T_i$ reales del solver, no con un reparto supuesto.
+- $\psi_{ed,N} = 0.7 + 0.3\,\dfrac{c_{a,min}}{1.5\,h_{ef}} \leq 1$ — reducción por el
+  borde del pedestal más cercano.
+
+La verificación es $\sum T_i \leq \phi\, N_{cbg}$ sobre el total del grupo traccionado.
+
+### 5.2 Extracción (pullout, 17.6.3)
+
+El perno más traccionado no debe extraerse por aplastamiento local sobre la cabeza:
+
+<Equation label="Ec. 17">
+$$
+N_{pn} = \psi_{c,P} \cdot 8\, A_{brg}\, f'_c,
+\qquad A_{brg} \approx 1.16\, d^2 \ \ (\text{tuerca hexagonal pesada})
+$$
+</Equation>
+
+con $\psi_{c,P} = 1.0$ (fisurado). $A_{brg}$ se estima como el área neta de una tuerca
+hexagonal pesada (ancho entre caras $\approx 1.5\,d$); si el anclaje lleva placa de
+extremo, la capacidad real es mayor.
+
+### 5.3 Desprendimiento lateral (side-face blowout, 17.6.4)
+
+Con embebido profundo cerca de un borde ($c_{a1} < 0.4\,h_{ef}$), la presión de la cabeza
+puede reventar lateralmente el pedestal antes de desarrollar el cono:
+
+<Equation label="Ec. 18">
+$$
+N_{sb} = 41.5\; c_{a1} \sqrt{A_{brg}}\, \sqrt{f'_c} \quad [\text{kgf, cm}]
+$$
+</Equation>
+
+con dos correcciones: la de **esquina** — si $c_{a2} < 3\,c_{a1}$, se multiplica por
+$(1 + c_{a2}/c_{a1})/4$ — y la de **grupo** a lo largo del borde — si la separación
+$s < 6\,c_{a1}$, la capacidad conjunta es $(1 + s/(6\,c_{a1}))\,N_{sb}$ repartida entre
+los pernos de ese borde. La herramienta revisa los cuatro bordes del pedestal y reporta
+el que gobierna; si ningún perno cumple $c_{a1} < 0.4\,h_{ef}$, el modo no aplica.
+
+<Note type="warning" title="Lo que falta del Cap. 17">
+Esta implementación cubre la **tracción** (17.6). El **corte al hormigón** — breakout de
+corte hacia el borde y pryout (17.7) — no se verifica todavía: si el corte se transfiere
+por los pernos cerca de un borde de pedestal, esa verificación debe hacerse aparte.
+Tampoco se considera armadura de anclaje (*anchor reinforcement*), que permite reemplazar
+la resistencia del cono por la del refuerzo.
+</Note>
+
+---
+
+## 6. Barrido de combinaciones de SAP2000
 
 Las verificaciones anteriores son para **un** juego de cargas $\{P_u, M_{ux}, M_{uy},
 V_{ux}, V_{uy}\}$. El problema práctico es que una placa base tipo debe cubrir **todos los
 apoyos** de la estructura bajo **todas las combinaciones**: con $N$ apoyos y $M$
 combinaciones son $N \times M$ filas de reacciones — típicamente varios cientos.
 
-### 5.1 Por qué no basta la envolvente por componente
+### 6.1 Por qué no basta la envolvente por componente
 
 La tentación natural es filtrar: quedarse con los máximos y mínimos de cada componente
 ($F_3$ máx, $M_1$ máx, excentricidad máx, …) y verificar solo esos casos. El problema es
@@ -350,7 +440,7 @@ componente no tiene garantía de contener el caso gobernante.
 
 Por eso la herramienta no filtra: el **barrido SAP2000** (panel al final de la página de la
 herramienta) recibe la tabla *Joint Reactions* completa —copiada y pegada directamente
-desde SAP2000— y ejecuta el modelo y las verificaciones completas (§1–§4) **para cada fila**
+desde SAP2000— y ejecuta el modelo y las verificaciones completas (§1–§5) **para cada fila**
 (apoyo × combinación). El resultado se agrega en tres vistas:
 
 - **Por apoyo:** la combinación que controla cada apoyo y su ratio máximo — identifica de
@@ -365,7 +455,7 @@ La convención de ejes debe respetarse al mapear las reacciones: $F_3 \to P_u$ (
 positiva), y los momentos según la orientación de la placa respecto de los ejes globales
 del modelo.
 
-### 5.2 Obtener las reacciones desde SAP2000
+### 6.2 Obtener las reacciones desde SAP2000
 
 La tabla se obtiene en SAP2000 con *Display → Show Tables → Joint Reactions*, seleccionando
 todas las combinaciones para la salida, y se copia directamente al panel de barrido.
@@ -413,13 +503,13 @@ for joint in support_joints:
 
 ---
 
-## 6. Detallamiento: distancias mínimas
+## 7. Detallamiento: distancias mínimas
 
 La herramienta chequea las distancias mínimas de detallamiento y las reporta como
 **avisos** (no bloquean el resultado, porque son requisitos de detallado, no de
 resistencia del modelo).
 
-### 6.1 AISC 360 — borde de placa y separación entre pernos
+### 7.1 AISC 360 — borde de placa y separación entre pernos
 
 Rige la [Sección J3 — Pernos](/acero/aisc360-22-capj-conexiones) de AISC 360-22.
 
@@ -453,7 +543,7 @@ resistencia.
 Adicionalmente, la herramienta avisa si hay **pernos dentro de la huella de la columna**
 (entre alas): dificultan el montaje y quedan fuera del modelo de flexión del §3.3.
 
-### 6.2 ACI 318 — pernos de anclaje al hormigón
+### 7.2 ACI 318 — pernos de anclaje al hormigón
 
 Rige el Capítulo 17 — Anclaje al hormigón (*Anchoring to Concrete*) de ACI 318-25.
 
@@ -478,15 +568,14 @@ de splitting.
 
 ---
 
-## 7. Alcance y limitaciones
+## 8. Alcance y limitaciones
 
 La herramienta es de **prediseño**, y su alcance está delimitado por lo que este documento
 describe. Lo que **no** verifica:
 
-- **Anclaje al hormigón (ACI 318 Cap. 17):** arrancamiento del cono (*breakout*),
-  extracción (*pullout*), desprendimiento lateral. La tracción $T_{max}$ de perno que
-  entrega la herramienta es precisamente la demanda de entrada para esa verificación, que
-  debe hacerse aparte.
+- **Corte al hormigón (ACI 318 17.7):** breakout de corte hacia el borde y pryout. El
+  anclaje en tracción (17.6) sí está cubierto (§5), pero si el corte se transfiere por
+  pernos cercanos a un borde del pedestal, esa verificación debe hacerse aparte.
 - **Soldadura columna-placa** y su compatibilidad con el bloque de presiones.
 - **Placas con atiesadores o silletas:** el modelo de flexión (§3) supone placa plana; con
   rigidizadores los mecanismos de líneas de fluencia cambian por completo.

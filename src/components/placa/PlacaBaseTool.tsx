@@ -11,15 +11,15 @@ interface NumInputs {
   B: number; N: number; t: number; Fy: number;
   fc: number; B2: number; N2: number;
   d: number; bf: number;
-  nx: number; ny: number; ex: number; ey: number; dRod: number; nShear: number;
+  nx: number; ny: number; ex: number; ey: number; dRod: number; hEf: number; nShear: number;
   Pu: number; Mux: number; Muy: number; Vux: number; Vuy: number;
 }
 
 const DEFAULTS: NumInputs = {
   B: 45, N: 45, t: 2.5, Fy: 2530,
-  fc: 250, B2: 60, N2: 60,
+  fc: 250, B2: 70, N2: 70,
   d: 30, bf: 30,
-  nx: 2, ny: 2, ex: 5, ey: 5, dRod: 2.54, nShear: 4,
+  nx: 2, ny: 2, ex: 5, ey: 5, dRod: 2.54, hEf: 40, nShear: 4,
   Pu: 40, Mux: 8, Muy: 0, Vux: 3, Vuy: 0,
 };
 
@@ -59,6 +59,7 @@ const GROUPS: Group[] = [
       { key: 'ex', label: 'Dist. borde eₓ', unit: 'cm', step: 1 },
       { key: 'ey', label: 'Dist. borde e_y', unit: 'cm', step: 1 },
       { key: 'dRod', label: 'Diámetro', unit: 'cm', step: 0.1 },
+      { key: 'hEf', label: 'Embebido h_ef', unit: 'cm', step: 5 },
       { key: 'nShear', label: 'Pernos al corte', unit: 'u', step: 1 },
     ],
   },
@@ -232,11 +233,11 @@ export default function PlacaBaseTool() {
         ny: Math.max(0, Math.round(inp.ny)),
         ex: inp.ex, ey: inp.ey, perimeterOnly: perim,
       },
-      dRod: inp.dRod, grade, nShear: Math.max(1, Math.round(inp.nShear)),
+      dRod: inp.dRod, grade, hEf: inp.hEf, nShear: Math.max(1, Math.round(inp.nShear)),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [inp.B, inp.N, inp.t, inp.fc, inp.Fy, inp.B2, inp.N2, inp.d, inp.bf,
-     inp.nx, inp.ny, inp.ex, inp.ey, inp.dRod, inp.nShear, grade, perim]
+     inp.nx, inp.ny, inp.ex, inp.ey, inp.dRod, inp.hEf, inp.nShear, grade, perim]
   );
 
   const res = useMemo(() => {

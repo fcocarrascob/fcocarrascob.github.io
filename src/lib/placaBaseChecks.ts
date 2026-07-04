@@ -14,6 +14,7 @@ import {
   type Rod,
   type SolverResult,
 } from './placaBase';
+import { anchorageChecks } from './placaBaseAnchorage';
 
 export interface CheckResult {
   id: string;
@@ -288,6 +289,11 @@ export function runPlaca(inp: PlacaInputs): PlacaResults {
     warnings.push('No hay pernos definidos: el corte y el levantamiento no tienen cómo transferirse.');
   }
 
+  // ── Anclaje al hormigón en tracción (ACI 318 Cap. 17) ──────────────────────
+  const anch = anchorageChecks(inp, rods, solver.T);
+  checks.push(...anch.checks);
+  warnings.push(...anch.warnings);
+
   // ── Warnings de detallamiento (no bloquean) ────────────────────────────────
   if (rods.length >= 2) {
     let sMin = Infinity;
@@ -313,9 +319,6 @@ export function runPlaca(inp: PlacaInputs): PlacaResults {
       warnings.push('Hay pernos dentro de la huella de la columna: dificultan el montaje y quedan fuera del modelo de flexión de la placa.');
   }
   if (inp.t < 1.2) warnings.push('Espesor de placa menor a 12 mm: poco práctico para placas de columna.');
-  warnings.push(
-    'El anclaje al hormigón (arrancamiento del cono, pullout — ACI 318 Cap. 17) no se verifica aquí.'
-  );
 
   const derived: PlacaDerived = {
     ex: inp.Pu !== 0 ? inp.Muy / inp.Pu : inp.Muy !== 0 ? Infinity : 0,
