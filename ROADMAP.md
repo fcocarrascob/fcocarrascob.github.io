@@ -43,9 +43,11 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
   resultante (37.7 vs 34.2 cm → T +51 % en el elástico; flexión de placa +28 % en la
   DG1), y el breakout (Cap. 17) que la DG1 no formula falla con ambos métodos y termina
   gobernando el pedestal. Figura comparativa en `public/placa-base-ejemplo/`.
-- [ ] **B2. Esquema opcional pendiente (post 3, experimento fundaciones)** — diagrama
-  del diseño del barrido en dos niveles (LHS sobre el espacio adimensional × barrido
-  de e/B por geometría). Prioridad baja: las tablas ya lo cuentan.
+- [x] **B2. Esquema del diseño del barrido (post 3, experimento fundaciones)** (hecho
+  2026-07-04): `public/fundaciones/fig-diseno-barrido.svg` — dos paneles: LHS sobre el
+  espacio adimensional (proyección log₁₀ Kr – L/B, transición Kr ≈ 0.5 marcada) y, para
+  cada zapata muestreada, el eje de e/B con los 8 niveles, el kern en 1/6 y las
+  direcciones θ = 0°/45°; totales del piloto y del barrido completo al pie.
 
 ## C. Experimentos SAP2000
 
