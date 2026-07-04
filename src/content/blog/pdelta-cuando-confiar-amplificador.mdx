@@ -1,0 +1,251 @@
+---
+title: "P-Delta: ¿Cuándo Confiar en el Amplificador 1/(1−θ)?"
+description: "Un experimento SAP2000 de 294 pórticos y 17 mil mediciones contra dos límites analíticos exactos: dónde el amplificador clásico de las normas reproduce el análisis P-Delta, cuánto subestima cuando falla, y por qué el R_M de AISC es la corrección que casi nadie cuenta."
+pubDate: 2026-07-04
+tags: ["P-Delta", "SAP2000", "experimento", "estabilidad", "ASCE 7", "AISC 360", "pórticos"]
+section: "Sísmica"
+series: "Sísmica"
+seriesPart: 1
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+Las normas sísmicas ofrecen un atajo célebre para el efecto P-Delta. En vez de correr el
+análisis de segundo orden, se calcula el **coeficiente de estabilidad** de cada piso,
+
+<Equation label="Ec. 1">
+$$
+\theta_i = \frac{P_i \, \Delta_{1,i}}{V_i \, h_i}
+$$
+</Equation>
+
+—con $P_i$ la carga gravitacional total sobre el piso, $\Delta_{1,i}$ la deriva de
+**primer orden** y $V_i$ el corte del piso— y se amplifican derivas y momentos por
+
+<Equation label="Ec. 2">
+$$
+\alpha = \frac{1}{1-\theta}
+$$
+</Equation>
+
+ASCE 7 permite ignorar P-Delta si $\theta \leq 0{,}10$, acepta el amplificador como
+alternativa al análisis explícito, y corta en un $\theta_{max}$ que típicamente ronda
+$0{,}25$. La pregunta de esta nota es la que el atajo deja abierta: **¿hasta qué θ, y
+para qué tipos de pórtico, la Ec. 2 reproduce lo que entrega un análisis P-Delta real?**
+
+Es la fórmula que funcionó en la [serie de fundaciones](/blog/experimento-fundaciones-sap2000):
+una referencia analítica cerrada, un barrido paramétrico adimensional en SAP2000, y un
+mapa de error listo para usar. Con una diferencia a favor: aquí los modelos son elásticos
+y corren en segundos, así que el barrido completo cuesta una tarde, no una semana.
+
+---
+
+## Dos límites con forma cerrada
+
+Lo primero es entender de dónde sale la Ec. 2, porque su derivación *es* su límite de
+validez. En un piso idealizado de cortante —rigidez lateral $K$, carga vertical $P$— el
+momento volcante $P\cdot\Delta$ equivale a un corte extra $P\cdot\Delta/h$, que produce
+más deriva, que produce más corte… La serie geométrica converge a $\Delta_1/(1-\theta)$:
+la Ec. 2 **es exacta** si el piso se deforma como resorte de corte puro y la única
+desestabilización es el término $-P/h$ del piso.
+
+Pero una columna real también se curva *entre* pisos —el efecto **P-δ**— y ahí la Ec. 2
+no tiene cómo verlo. El caso extremo tiene solución exacta de teoría de viga-columna: un
+voladizo con carga axial y lateral en la punta amplifica su deflexión
+
+<Equation label="Ec. 3">
+$$
+\alpha_{exacto} = \frac{3\,(\tan kh - kh)}{(kh)^3},
+\qquad kh = \frac{\pi}{2}\sqrt{P/P_{cr}}
+$$
+</Equation>
+
+mientras su θ clásico vale $\theta = (\pi^2/12)\,(P/P_{cr})$. Comparando: en
+$\theta \approx 0{,}08$ —donde la norma dice "ignorable"— la Ec. 2 ya subestima un
+$1{,}8\,\%$; en $\theta \approx 0{,}25$ subestima $6{,}7\,\%$; en $\theta \approx 0{,}41$,
+$14{,}5\,\%$. En cambio el amplificador construido con la **carga crítica de pandeo**,
+$1/(1-P/P_{cr})$, comete menos del $1\,\%$ en todo el rango.
+
+Un pórtico real vive entre esos dos límites, y la posición la fija la rigidez relativa
+viga/columna $\rho = (I_b/L)/(I_c/h)$ — el análogo del $K_r$ de la serie de fundaciones:
+con vigas rígidas el piso trabaja a cortante; con vigas flexibles las columnas se curvan
+como voladizos.
+
+<Figure
+  src="/pdelta/limites_cerrados.png"
+  alt="Amplificación de deriva versus coeficiente de estabilidad: curva exacta del límite de corte (que coincide con 1/(1−θ)) y curva exacta del voladizo, con los puntos medidos en SAP2000 cayendo sobre ambas"
+  caption="Los dos límites cerrados y los puntos medidos en SAP2000. El límite de corte (azul) es exactamente 1/(1−θ); el flexural (rojo) amplifica más de lo que la Ec. 2 predice. Los rombos —pórtico de viga rígida con la gravedad en sus columnas— caen sobre la curva del voladizo, no sobre la del corte: ese es el hallazgo que organiza todo el experimento."
+/>
+
+<Note type="warning" title="El hallazgo que corrige la intuición">
+La intuición dice: "viga rígida = piso de cortante = la Ec. 2 aplica". **Falso.** El
+pórtico de viga rígida con la gravedad bajando por sus columnas amplifica casi igual que
+el voladizo (los rombos de la figura). La razón: la columna biempotrada en sway pandea en
+$P_{cr}=\pi^2 EI/h^2$, no en el $12EI/h^2$ que implicaría el término $-P/h$ del piso; la
+diferencia es el P-δ del miembro, que endurece la desestabilización en un factor
+$\approx 6/5$. El límite de corte puro solo se alcanza cuando la gravedad **no baja por
+las columnas del pórtico** — cuando la cargan columnas gravitacionales.
+</Note>
+
+Y aquí aparece el tercer personaje. AISC 360 (Ap. 8) no usa la Ec. 2 sino
+
+<Equation label="Ec. 4">
+$$
+B_2 = \frac{1}{1-\theta/R_M},
+\qquad R_M = 1 - 0{,}15\,\frac{P_{mf}}{P_{story}}
+$$
+</Equation>
+
+donde $P_{mf}$ es la gravedad que baja por los pórticos resistentes a momento. Escrito
+así se ve lo que $R_M$ realmente es: **el factor 6/5 del P-δ** ($1/0{,}85 \approx 1{,}18
+\approx 6/5$), aplicado en proporción a cuánta gravedad efectivamente carga las columnas
+del pórtico. El experimento va a medir si esa corrección basta.
+
+---
+
+## El experimento
+
+Pórticos planos elásticos de un vano, barridos en grilla factorial: $n$ pisos (1 a 20),
+$\rho$ de $0{,}1$ a $\infty$ (viga rígida), fracción de gravedad en columna gravitacional
+$f_{lean} \in \{0, 0{,}5, 0{,}8\}$ y rigidez decreciente en altura opcional. Por
+linealidad, solo los adimensionales importan.
+
+<Figure
+  src="/pdelta/fig-modelo-pdelta.svg"
+  alt="Esquema del experimento: pórtico plano de n pisos con columna gravitacional rotulada y patrón lateral triangular, y el diagrama de casos encadenados LAT, BUCK, GRAV y LAT2 que produce la amplificación por piso"
+  caption="El modelo (a) y los casos por geometría (b). Cada .sdb contiene los 8 niveles de θ como casos encadenados: la amplificación se mide con un caso LINEAL montado sobre la rigidez al final del caso P-Delta de solo gravedad — sin restar respuestas, sin perder superposición."
+/>
+
+Dos decisiones de modelación hacen comparable todo el barrido:
+
+1. **θ se fija escalando la gravedad.** Como θ es lineal en la escala de $P$ (con $V$ y
+   $\Delta_1$ de primer orden fijos), la escala que produce cada θ objetivo
+   —$0{,}05$ a $0{,}50$, con resolución donde las normas trazan sus rayas— se despeja
+   directo, sin iterar. Es el análogo del truco de la "excentricidad efectiva" de la
+   serie de fundaciones.
+2. **La amplificación se mide con casos lineales sobre rigidez P-Delta.** El caso
+   `GRAV_θ` (no lineal, P-Delta, solo gravedad) deja la rigidez degradada; el caso
+   `LAT2_θ` aplica el patrón lateral *lineal* sobre esa rigidez. Entonces
+   $\alpha_i = \Delta_i(\mathrm{LAT2}_\theta)/\Delta_i(\mathrm{LAT})$ es el amplificador
+   puro, independiente de la magnitud de $V$. Y el caso de pandeo entrega gratis el
+   $\lambda_{cr}$ del modo de sway — la tercera referencia, $1/(1-1/\lambda_{cr})$.
+
+En total: **294 geometrías, ~5000 casos, 17 136 mediciones piso a piso, cero errores**,
+en poco más de una hora de SAP2000.
+
+### El control de sanidad
+
+Antes de barrer, los límites cerrados contra SAP (8 niveles de θ cada uno):
+
+| Patrón | Referencia exacta | Error máximo |
+|:---|:---|:---:|
+| Corte puro (viga rígida, gravedad 100 % en columna gravitacional) | $1/(1-\theta)$ | $-0{,}02\,\%$ |
+| Viga rígida, gravedad en las columnas | $1/(1-1/\lambda_{cr})$ | $-0{,}83\,\%$ |
+| Voladizo ($\rho \to 0$) | Ec. 3 | $-0{,}004\,\%$ |
+
+El primero confirma que la Ec. 2 es exacta *en su hipótesis*; el segundo, que con la
+gravedad en las columnas el clásico ya pierde $-6{,}8\,\%$ en $\theta = 0{,}25$ incluso
+con viga rígida; el tercero clava la teoría de viga-columna a cuatro decimales. La
+maquinaria —mesh, casos encadenados, extracción, pandeo— queda validada de una pasada.
+
+---
+
+## Resultado 1: el mapa de error del clásico
+
+Con la gravedad bajando por el pórtico (el caso más común en pórticos de momento), el
+error inseguro del clásico —cuánto amplifica SAP por encima de la Ec. 2, en el peor
+piso— se dibuja limpio sobre el plano $(\theta, \rho)$:
+
+<Figure
+  src="/pdelta/mapa_error_clasico.png"
+  alt="Mapa de calor de la subestimación del amplificador clásico en el plano theta-rho: crece con theta en todas las filas, con máximos en rho 0.1 y rho infinito y mínimo en rho entre 1 y 2"
+  caption="Subestimación de 1/(1−θ) en el peor piso [%], mediana sobre n, con la gravedad en el pórtico (f_lean = 0). El error crece con θ en toda condición, y sobre ρ tiene forma de U: máximo en los dos extremos, mínimo en los pórticos «normales» (ρ ≈ 1–2)."
+/>
+
+Dos lecturas:
+
+1. **La forma de U sobre ρ.** El error es máximo en los dos extremos del eje — en
+   $\rho = 0{,}1$ (comportamiento flexural: $+8{,}4\,\%$ en $\theta = 0{,}25$) y en
+   $\rho = \infty$ (viga rígida: $+7{,}3\,\%$, el P-δ puro del hallazgo) — y mínimo en
+   los pórticos corrientes ($\rho \approx 1$–$2$: $+4$–$5\,\%$). Dos mecanismos
+   distintos producen los extremos: curvatura del miembro en uno, acoplamiento
+   flexural entre pisos en el otro.
+2. **La altura solo castiga el extremo flexural.** En $\rho = 0{,}1$ el error crece de
+   $+6{,}0\,\%$ (1 piso) a $+10{,}8\,\%$ (20 pisos): el amplificador por piso no ve a
+   los vecinos, y en pórticos flexurales además **reparte mal** — subestima unos pisos
+   (hasta $+24\,\%$ en $\theta = 0{,}5$) mientras sobreestima otros. En viga rígida, en
+   cambio, el $+7{,}3\,\%$ es idéntico de 1 a 20 pisos.
+
+---
+
+## Resultado 2: manda dónde baja la gravedad — y R_M lo sabía
+
+El eje que más mueve el mapa no es ρ ni n: es $f_{lean}$, la fracción de la gravedad que
+baja por columnas gravitacionales en vez del pórtico.
+
+<Figure
+  src="/pdelta/flean_b2.png"
+  alt="Dos paneles comparando la subestimación del amplificador clásico y de B2 en función de theta para tres niveles de f_lean: el clásico mejora al aumentar f_lean, B2 es casi plano e invierte el orden"
+  caption="Subestimación mediana (peor piso) vs θ. Izquierda: el clásico mejora sistemáticamente al mover la gravedad fuera del pórtico (menos P-δ). Derecha: B₂ absorbe casi todo el error — y nota el orden invertido: su peor caso es f_lean alto, donde R_M ya casi no corrige y queda el residuo que no es P-δ."
+/>
+
+Mover la gravedad del pórtico a las columnas gravitacionales corta el error del clásico
+casi a la mitad ($+5{,}6\,\% \to +2{,}6\,\%$ en $\theta = 0{,}25$). Y $B_2$ hace
+exactamente lo que la Ec. 4 promete: con toda la gravedad en el pórtico —donde
+$R_M = 0{,}85$ corrige de lleno— deja el error en $+1{,}0\,\%$ donde el clásico pierde
+$+5{,}6\,\%$. El ranking global del barrido (mediana del error absoluto, peor piso):
+clásico $3{,}4\,\%$, $B_2$ $2{,}1\,\%$, y $1/(1-1/\lambda_{cr})$ $1{,}7\,\%$ como
+amplificador global del techo.
+
+<Note type="info" title="Lo que no encontramos también cuenta">
+La rigidez decreciente en altura ($I_{top}/I_{bot} = 0{,}3$) **no movió el error** en la
+mediana — la no-uniformidad vertical que probamos no es un eje relevante del problema.
+Una hipótesis refutada honestamente vale tanto como dos confirmadas: simplifica el mapa.
+</Note>
+
+---
+
+## El mapa de validez
+
+La síntesis operativa: el máximo θ para el cual cada amplificador mantiene su error
+inseguro bajo el 5 %, en el peor caso sobre $f_{lean}$ y taper.
+
+<Figure
+  src="/pdelta/frontera_theta_lim.png"
+  alt="Dos mapas de calor con el theta límite al 5 por ciento por rho y número de pisos: el clásico queda entre 0.10 y 0.25; B2 expande casi todo el mapa a 0.30-0.50 excepto el rincón flexural alto"
+  caption="θ máximo con subestimación ≤ 5 % (peor caso). Izquierda: el clásico. Derecha: B₂ expande la frontera a θ = 0.3–0.5 en casi todo el mapa… excepto el rincón flexural alto, donde el problema es acoplamiento entre pisos y R_M no puede arreglarlo."
+/>
+
+En reglas prácticas:
+
+- **θ ≤ 0.10:** la Ec. 2 sirve para cualquier pórtico del barrido (error < 3 %). Es,
+  no por casualidad, la zona que ASCE 7 declara ignorable — aunque *ignorar* P-Delta
+  ahí ya regala hasta un 11 % de amplificación.
+- **θ ≤ 0.20–0.25** (el $\theta_{max}$ típico): el clásico solo aguanta el 5 % en la
+  franja de pórticos corrientes ($\rho = 0{,}5$–$5$). En los extremos —vigas muy
+  flexibles, o viga rígida con la gravedad en el pórtico— ya subestima 5 % desde
+  $\theta = 0{,}10$–$0{,}15$.
+- **Con $B_2$ de AISC** la frontera sube a $\theta = 0{,}3$–$0{,}5$ en casi todo el
+  mapa. La excepción es el pórtico flexural alto ($\rho \leq 0{,}25$, $n \geq 5$):
+  ahí ni $R_M$ ayuda, porque el error no es P-δ sino acoplamiento entre pisos — es la
+  zona "corra el P-Delta explícito y no discuta".
+- **Si el modelo ya está en SAP**, el análisis de pandeo cuesta un caso más y
+  $1/(1-1/\lambda_{cr})$ es la mejor referencia global disponible.
+
+## Qué queda fuera
+
+El barrido es elástico, plano, de un vano, con patrón lateral triangular y gravedad
+uniforme por piso: mide la **mecánica** del amplificador, no la respuesta inelástica
+(las normas aplican θ con las derivas elásticas amplificadas por $C_d$, que es otra
+discusión). La flexibilidad axial de columnas —el otro camino al comportamiento flexural
+en pórticos altos— y la comparación contra grandes desplazamientos verdaderos quedaron
+anotadas como densificación del experimento.
+
+El código (constructor de pórticos, runner idempotente, referencias analíticas y el
+dataset completo de 17 136 filas) vive en el repositorio del experimento; esta nota es su
+bitácora. La serie sísmica sigue con los períodos fundamentales: T ≈ C_t·H^0.75 contra
+el modal de SAP, con la misma receta.

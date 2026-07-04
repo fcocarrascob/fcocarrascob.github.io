@@ -55,12 +55,16 @@ Fórmula que funcionó en la serie de fundaciones: *referencia analítica cerrad
 barrido paramétrico adimensional + mapa de error + surrogate + herramienta*.
 Ordenados de menor a mayor esfuerzo:
 
-- [ ] **C1. P-Delta: ¿cuándo confiar en 1/(1−θ)?** — pórticos 2D paramétricos
-  barriendo el coeficiente de estabilidad θ = P·Δ/(V·h); comparar la amplificación
-  de derivas y momentos del análisis P-Delta de SAP contra el amplificador clásico
-  1/(1−θ) (y el B₂ de AISC). Modelos de segundos, referencia cerrada exacta;
-  entregable: mapa tipo K_r ("hasta qué θ vale el amplificador"). Un post
-  autocontenido — buen estreno de la serie sísmica.
+- [x] **C1. P-Delta: ¿cuándo confiar en 1/(1−θ)?** (hecho 2026-07-04) — experimento
+  completo en `APP_sap2000\pdelta_amplificador\` (fases 0–4 en un día): 294 pórticos,
+  17 136 mediciones, 0 errores, validado contra dos límites cerrados (<1 %). Post
+  `pdelta-cuando-confiar-amplificador.mdx` (estreno serie Sísmica) con 4 figuras PNG +
+  SVG del modelo en `public/pdelta/`. Hallazgos: el error del clásico tiene forma de U
+  sobre ρ (P-δ en viga rígida ≈ voladizo ≈ +7 % en θ=0.25); el eje dominante es f_lean
+  (dónde baja la gravedad) y el R_M de AISC es exactamente esa corrección (B₂ deja
+  +1.0 % donde el clásico pierde +5.6 %); frontera θ_lim(5 %) = 0.10–0.25 según ρ/n,
+  con B₂ 0.30–0.50 salvo el rincón flexural alto. Densificación pendiente (opcional,
+  fase 5): flexibilidad axial de columnas, grandes desplazamientos, patrón uniforme.
 - [ ] **C2. Períodos fundamentales: fórmulas aproximadas vs. modal** — barrido de
   pórticos (n pisos, H, distribución de masa/rigidez, acero y hormigón) midiendo T₁
   modal en SAP; validar T ≈ C_t·H^0.75 (NCh433/ASCE 7) y Rayleigh, mapear el error
