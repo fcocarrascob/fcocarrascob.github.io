@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 400" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#6b7280"/>
+    </marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect width="620" height="400" fill="#ffffff"/>
+
+  <!-- placa (planta) -->
+  <rect x="50" y="50" width="520" height="300" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="62" y="338" font-size="11" fill="#6b7280">placa</text>
+
+  <!-- ala de la columna y línea crítica -->
+  <rect x="150" y="60" width="300" height="32" fill="#dfe3e8" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="300" y="80" text-anchor="middle" font-size="11" fill="#4b5563">columna</text>
+  <line x1="50" y1="110" x2="570" y2="110" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 5"/>
+  <text x="566" y="102" text-anchor="end" font-size="11" fill="#2563eb">línea crítica (0.95·<tspan font-style="italic">d</tspan>)</text>
+
+  <!-- dispersión desde el perno hacia la línea crítica -->
+  <line x1="200" y1="280" x2="80" y2="110" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="200" y1="280" x2="320" y2="110" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3"/>
+
+  <!-- ancho efectivo b_ef -->
+  <line x1="80" y1="120" x2="320" y2="120" stroke="#6b7280" stroke-width="1" marker-start="url(#am)" marker-end="url(#am)"/>
+  <text x="200" y="137" text-anchor="middle" font-size="12" font-style="italic" fill="#1a1a1a">b<tspan font-size="9" dy="2.5">ef</tspan></text>
+
+  <!-- brazo del voladizo -->
+  <line x1="193" y1="280" x2="170" y2="280" stroke="#cbd5e1" stroke-width="1"/>
+  <line x1="176" y1="280" x2="176" y2="110" stroke="#6b7280" stroke-width="1" marker-start="url(#am)" marker-end="url(#am)"/>
+  <text x="166" y="200" text-anchor="end" font-size="12" font-style="italic" fill="#1a1a1a">ℓ</text>
+
+  <!-- pernos traccionados -->
+  <circle cx="200" cy="280" r="7" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="450" cy="280" r="7" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <line x1="200" y1="291" x2="200" y2="317" stroke="#dc2626" stroke-width="1.8" marker-end="url(#ar)"/>
+  <text x="209" y="311" font-size="12" font-style="italic" fill="#dc2626">T</text>
+  <line x1="450" y1="291" x2="450" y2="317" stroke="#dc2626" stroke-width="1.8" marker-end="url(#ar)"/>
+  <text x="459" y="311" font-size="12" font-style="italic" fill="#dc2626">T</text>
+
+  <!-- separación al perno vecino -->
+  <line x1="211" y1="280" x2="439" y2="280" stroke="#6b7280" stroke-width="1" marker-start="url(#am)" marker-end="url(#am)"/>
+  <text x="325" y="271" text-anchor="middle" font-size="11" font-style="italic" fill="#1a1a1a">s<tspan font-size="8" dy="2.5">adj</tspan></text>
+</svg>

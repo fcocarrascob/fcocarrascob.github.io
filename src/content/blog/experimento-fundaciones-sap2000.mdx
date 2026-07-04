@@ -11,6 +11,7 @@ seriesPart: 3
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
 ## Motivación
 
@@ -69,6 +70,12 @@ lineal. Es el error sutil más común al modelar este tipo de fundación.
 La diferencia con la nota de Winkler es esencial: allí la base era un plano rígido con 3 grados
 de libertad; aquí la losa tiene **miles** de grados de libertad y su forma deformada —el
 *dishing*, el ahuecamiento bajo la carga— es justamente lo que las ecuaciones rígidas no ven.
+
+<Figure
+  src="/fundaciones/fig-dishing.svg"
+  alt="Dos elevaciones comparadas: zapata rígida con presión uniforme, y losa flexible ahuecada bajo el pedestal con presión concentrada al centro y bordes levantados"
+  caption="Lo que el experimento pone a prueba: la zapata rígida (a) reparte la presión como plano; la flexible (b) se ahueca bajo el pedestal —el dishing—, concentra la presión al centro y levanta los bordes. La rigidez relativa K_r = E_c·T³/(k_s·B⁴) gobierna la transición entre ambos regímenes."
+/>
 
 ---
 

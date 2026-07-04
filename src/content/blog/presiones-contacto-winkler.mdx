@@ -10,6 +10,7 @@ seriesPart: 2
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
 ## Motivación
 
@@ -110,6 +111,12 @@ q_i = \max\!\bigl(0,\; k_s \cdot \delta(x_i, y_i)\bigr)
 = \max\!\bigl(0,\; k_s(\delta_0 + \alpha_x x_i + \alpha_y y_i)\bigr)
 $$
 </Equation>
+
+<Figure
+  src="/fundaciones/fig-winkler-modelo.svg"
+  alt="Planta de la zapata discretizada en celdas con un resorte por celda, y elevación de la zapata rígida girada como plano: resortes comprimidos en la zona de contacto y desactivados en la zona de despegue"
+  caption="El modelo discretizado: en planta, la grilla de nₓ × n_y celdas, cada una con su resorte de área; en elevación, la zapata rígida se asienta como plano δ(x, y) — los resortes bajo la zona que se levanta se desactivan (q = 0) y solo los comprimidos equilibran N y M′."
+/>
 
 ### Equilibrio
 
@@ -224,6 +231,12 @@ Repetir:
     Si A_nueva == A → convergencia, detener
     A ← A_nueva
 ```
+
+<Figure
+  src="/fundaciones/fig-winkler-iteracion.svg"
+  alt="Tres plantas de la grilla: iteración 0 con celdas en tracción marcadas en rojo, iteración 1 con esas celdas eliminadas, y convergencia con la zona de contacto final en gradiente de presión"
+  caption="El algoritmo en imágenes: la solución lineal inicial produce tracciones (rojo) en el lado descargado; esas celdas salen del conjunto activo 𝒜 y se recalcula, hasta que todas las presiones son no negativas y queda la zona de contacto real."
+/>
 
 <Note type="warning">
 La convergencia está garantizada porque en cada iteración el conjunto activo $\mathcal{A}$

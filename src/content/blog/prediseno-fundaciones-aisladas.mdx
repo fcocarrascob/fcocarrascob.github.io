@@ -10,6 +10,7 @@ seriesPart: 1
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
 ## Introducción
 
@@ -102,6 +103,12 @@ con $\gamma_c = 0{,}0024\;\text{kgf/cm}^3$ (hormigón), $\gamma_s$ el peso unita
 suelo de relleno, y $h_r$ la altura de relleno sobre la zapata. $W_z$, $W_p$ y $W_r$
 corresponden al peso de la zapata, pedestal y relleno respectivamente.
 
+<Figure
+  src="/fundaciones/fig-modelo-cargas.svg"
+  alt="Planta y elevación del sistema pedestal-zapata: cargas F1, F3, M2 en el tope del pedestal, pesos Wz, Wp, Wr, y las resultantes N y M′ transferidas al nivel de base"
+  caption="El modelo del prediseño: las cargas se aplican en el tope del pedestal, pero las verificaciones se hacen al nivel de base — con la carga vertical neta N (que suma los pesos propios) y los momentos amplificados por el corte a lo largo de h_p (Ecs. 1–3)."
+/>
+
 <Note type="info">
 El signo negativo de $F_3$ en la Ec. 3 convierte la compresión (valor negativo) en una
 contribución positiva a $N$. Si $F_3$ es positivo (tracción), la carga neta disminuye.
@@ -153,6 +160,12 @@ $$
 FS = \frac{q_a}{q_m} \geq 1{,}0
 $$
 
+<Figure
+  src="/fundaciones/fig-meyerhof.svg"
+  alt="Planta de la zapata con el área efectiva de Meyerhof: rectángulo L′x × L′y centrado en la resultante, con las franjas excluidas 2ex y 2ey"
+  caption="El área efectiva de Meyerhof es el rectángulo L′ₓ × L′_y centrado en la resultante: la excentricidad descuenta 2eₓ y 2e_y de las dimensiones, y la verificación compara la presión promedio q_m = N/Aₑ contra q_a."
+/>
+
 <Note type="tip" title="Referencia">
 El concepto de área efectiva fue propuesto por Meyerhof (1953) y es el método estándar para
 evaluar la capacidad de soporte bajo cargas excéntricas. Si $L'_x \leq 0$ o $L'_y \leq 0$,
@@ -182,6 +195,12 @@ $$
 \frac{6\,|e_x|}{L_x} + \frac{6\,|e_y|}{L_y} \leq 1
 $$
 </Equation>
+
+<Figure
+  src="/fundaciones/fig-kern-biaxial.svg"
+  alt="Planta de la zapata con el kern rómbico de diagonales Lx/3 y Ly/3, la resultante en (ex, ey) dentro del rombo y la presión biaxial creciendo hacia la esquina de q_max"
+  caption="El kern de una base rectangular es el rombo de diagonales Lx/3 y Ly/3 (la Ec. 7 es exactamente su frontera): si la resultante cae dentro, toda la base queda en compresión y la presión varía linealmente entre q_min y q_max (Ec. 9)."
+/>
 
 El factor de seguridad contra levantamiento es:
 

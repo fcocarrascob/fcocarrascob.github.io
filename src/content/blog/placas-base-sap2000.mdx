@@ -1,8 +1,9 @@
 ---
-title: "Placas Bases en SAP2000"
-description: "Guía paso a paso para modelar placas base de columnas de acero en SAP2000: geometría, propiedades, apoyos, cargas y verificación de resultados."
+title: "Placas Base: teoría y verificaciones de la herramienta"
+description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3) y barrido de combinaciones de SAP2000."
 pubDate: 2026-07-02
-tags: ["SAP2000", "placas base", "acero", "conexiones"]
+updatedDate: 2026-07-03
+tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "SAP2000"]
 section: "SAP2000"
 draft: false
 ---
@@ -11,61 +12,371 @@ import Note from '../../components/content/Note.astro';
 import Figure from '../../components/content/Figure.astro';
 import Equation from '../../components/content/Equation.astro';
 
-<Note type="info" title="Nota en progreso">
-Este post se va a ir completando por partes. Cada sección abajo es un punto de partida: el
-texto y las imágenes se agregan a medida que avanza el modelamiento.
-</Note>
-
 ## Motivación
 
-_(Por qué modelar la placa base explícitamente en vez de solo verificarla a mano — qué preguntas
-responde el modelo que la fórmula clásica no.)_
+Esta nota documenta la **teoría y las verificaciones** que implementa la herramienta
+[Placa base de columna](/herramientas/placa-base). La herramienta resuelve la distribución
+de presiones bajo una placa base sometida a carga axial (compresión o tracción), momento
+biaxial y corte, y la verifica por LRFD según AISC 360-22 y la Design Guide 1. Todo lo que
+la herramienta calcula está descrito aquí: este documento es la fuente de cada fórmula,
+factor y supuesto, para que los resultados puedan auditarse y reproducirse a mano.
+
+El método clásico de la Design Guide 1 (bloque rectangular de presión uniforme, momento en
+un solo eje) es suficiente para el caso de compresión dominante con excentricidad moderada.
+Pero deja fuera preguntas frecuentes en la práctica: ¿qué pasa con **momento biaxial**?
+¿Con **levantamiento neto** (tracción axial)? ¿Cuánta tracción toma *cada* perno cuando el
+eje neutro cruza la placa en diagonal? El modelo elástico de placa rígida que se describe a
+continuación responde esas preguntas con un único planteo consistente, del cual el método
+de la DG1 es un caso particular.
 
 ---
 
-## 1. Obtener reacciones de la superestructura
+## 1. El modelo mecánico
 
-### 1.1 El problema: la explosión combinatoria
+### 1.1 Hipótesis
 
-Si se opta por reacciones de Combinaciones de Carga, aparece un problema de escala: hay que
-"concatenar" cada apoyo con cada combinación. Con $N$ apoyos y $M$ combinaciones, el número de
-filas crudas es $N \times M$. En un modelo con unas pocas decenas de apoyos y unas pocas decenas
-de combinaciones (LRFD + ASD) esto ya son varios cientos de filas de $F_1, F_2, F_3, M_1, M_2,
-M_3$. Copiar todo a una planilla no es manejable ni útil: hay que filtrar antes de diseñar la
-placa.
+| Hipótesis | Implicancia |
+|-----------|-------------|
+| **Placa rígida** | El asentamiento de la interfaz es un plano: el estado queda descrito por 3 parámetros |
+| **Hormigón elástico de solo compresión** | Donde el plano indica tracción, la placa se despega y la presión es cero (contacto unilateral) |
+| **Pernos como áreas transformadas de solo tracción** | Cada perno es un resorte que solo trabaja si la placa se levanta en su posición |
+| **Cargas en el centroide de la placa** | $P_u$, $M_{ux}$, $M_{uy}$, $V_{ux}$, $V_{uy}$ provienen de las reacciones del modelo (ver §5) |
 
-### 1.2 Estrategia de filtrado
+Es el mismo esquema del [modelo de Winkler para zapatas](/blog/presiones-contacto-winkler),
+con dos diferencias: aquí el "suelo" es el hormigón del pedestal, y además del contacto
+unilateral hay resortes discretos (los pernos) que trabajan en el sentido opuesto.
 
-El criterio es directo: agrupar **todas** las reacciones de **todos** los apoyos, para todas las
-combinaciones, en un único conjunto, y sobre ese conjunto quedarse solo con los 2 valores más
-grandes y los 2 más chicos de cada esfuerzo:
+### 1.2 El plano de tensiones
 
-<Equation label="Ec. e">
+El origen se toma en el centroide de la placa, con $x$ a lo largo del ancho $B$ e $y$ a lo
+largo del largo $N$. Como la placa es rígida, el estado tensional en la interfaz queda
+descrito por un **plano**:
+
+<Equation label="Ec. 1">
 $$
-F_1,\ F_2,\ F_3,\ M_1,\ M_2,\ M_3,\ e_1 = \frac{M_2}{F_3},\ e_2 = \frac{M_1}{F_3}
+s(x, y) = p_0 + p_x \cdot x + p_y \cdot y
 $$
 </Equation>
 
-Son 8 magnitudes × 2 (máximo y mínimo) = **hasta 16 filas en total**, cada una identificada por el
-apoyo y la combinación que la generó. No se filtra apoyo por apoyo ni se poda la lista de
-combinaciones de antemano: se deja que el propio filtro de máximo/mínimo global determine, sin
-intervención manual, cuáles apoyos y cuáles combinaciones terminan siendo relevantes.
+De ese plano se derivan las dos respuestas físicas, cada una con su restricción de signo:
 
-Es una envolvente **por componente y global** (no por apoyo): sacrifica saber cuál es el peor caso
-de *cada* apoyo individual a cambio de una tabla mínima y directamente utilizable, apta para
-dimensionar una placa base tipo que cubra el caso más exigente de toda la estructura.
+<Equation label="Ec. 2">
+$$
+\sigma(x, y) = \max\!\big(0,\ s(x, y)\big)
+\qquad\qquad
+T_i = \rho \cdot \max\!\big(0,\ -s(x_i, y_i)\big)
+$$
+</Equation>
 
-<Note type="warning" title="Cuidado con e = M/N cerca de N = 0">
-La excentricidad se dispara a valores enormes y sin sentido físico cuando $F_3 \to 0$ (carga
-axial casi nula). Antes de rankear por $e_1$ o $e_2$, hay que descartar las filas candidatas cuyo
-$F_3$ sea menor al 10&nbsp;% del $F_3$ máximo del conjunto completo, para que esos "extremos"
-espurios no desplacen a los casos que sí importan.
+donde $\sigma$ es la presión de contacto sobre el hormigón (solo compresión) y $T_i$ la
+tracción del perno $i$ ubicado en $(x_i, y_i)$ (solo tracción). La rigidez del perno se
+modela con el **área transformada** del método elástico clásico:
+
+<Equation label="Ec. 3">
+$$
+\rho = n \cdot A_b, \qquad n = \frac{E_s}{E_c}, \qquad E_c = 15100\,\sqrt{f'_c} \ \ [\text{kgf/cm}^2]
+$$
+</Equation>
+
+<Note type="info" title="Sensibilidad a n">
+El reparto de tracciones entre pernos es poco sensible al valor exacto de la razón modular
+$n$: lo que importa es la **posición del eje neutro**, que depende de la geometría mucho más
+que de $n$. Por eso el método transformado, con toda su simplicidad, es adecuado.
 </Note>
+
+**Convención de signos:** $P_u > 0$ comprime ($P_u < 0$ es levantamiento); $M_{ux}$
+comprime el borde $+y$ (excentricidad a lo largo de $N$); $M_{uy}$ comprime el borde $+x$
+(a lo largo de $B$).
+
+<Figure
+  src="/placas-base-sap2000/fig-modelo.svg"
+  alt="Planta y elevación del modelo: placa B×N sobre pedestal B₂×N₂, huella de columna d×bf, pernos de anclaje, ejes x-y en el centroide y cargas Pu, Mu, Vu con el plano de presiones bajo la placa"
+  caption="Geometría y convención del modelo. El origen está en el centroide de la placa, con x a lo largo de B e y a lo largo de N. En la elevación, el plano de presiones σ(x, y) bajo la placa para el régimen de compresión total."
+/>
+
+### 1.3 Equilibrio
+
+Los tres parámetros del plano se determinan imponiendo las tres ecuaciones de equilibrio
+contra las cargas aplicadas:
+
+<Equation label="Ec. 4">
+$$
+\int_A \sigma \, dA - \sum_i T_i = P_u
+\qquad
+\int_A \sigma\, y \, dA - \sum_i T_i\, y_i = M_{ux}
+\qquad
+\int_A \sigma\, x \, dA - \sum_i T_i\, x_i = M_{uy}
+$$
+</Equation>
+
+El sistema es no lineal (los operadores $\max(0,\cdot)$ hacen que la zona de contacto y el
+conjunto de pernos activos dependan de la solución), pero tiene una propiedad clave: es el
+gradiente de un **potencial convexo**, así que la solución de equilibrio existe y es única
+siempre que la configuración pueda equilibrar la carga.
+
+### 1.4 Los cuatro regímenes
+
+Según dónde caiga la resultante, la solución adopta uno de estos regímenes:
+
+| Régimen | Condición | Solución |
+|---------|-----------|----------|
+| **Compresión total** | Resultante dentro del núcleo central (kern) | Fórmula cerrada de flexión compuesta (Ec. 5) |
+| **Contacto parcial** | Excentricidad excede el kern | El eje neutro cruza la placa; parte comprime, los pernos del lado opuesto traccionan |
+| **Solo pernos** | Levantamiento neto sin contacto | Todo $P_u < 0$ y los momentos se equilibran solo con tracciones de pernos |
+| **Inestable** | Los pernos no pueden equilibrar la carga | No existe equilibrio (p. ej. levantamiento sin pernos, o momento volcador sin pernos del lado traccionado) |
+
+<Figure
+  src="/placas-base-sap2000/fig-regimenes.svg"
+  alt="Cuatro esquemas en elevación: compresión total con presión trapezoidal, contacto parcial con presión triangular y perno traccionado, solo pernos con levantamiento, e inestable sin pernos"
+  caption="Los cuatro regímenes de solución. La zona comprimida (azul) y las tracciones de pernos T (rojo) provienen del mismo plano de tensiones, cada una con su restricción de signo."
+/>
+
+En compresión total la distribución es la clásica biaxial y no participan los pernos:
+
+<Equation label="Ec. 5">
+$$
+\sigma(x,y) = \frac{P_u}{A} + \frac{M_{uy}}{I_y}\,x + \frac{M_{ux}}{I_x}\,y,
+\qquad
+A = B N,\quad I_x = \frac{B N^3}{12},\quad I_y = \frac{N B^3}{12}
+$$
+</Equation>
+
+válida mientras $\sigma \geq 0$ en las cuatro esquinas — el equivalente biaxial de la
+condición uniaxial $e \leq N/6$.
+
+En contacto parcial no hay fórmula cerrada y el equilibrio se resuelve numéricamente
+(Newton amortiguado sobre el potencial convexo). Un detalle de implementación que sí es
+relevante para confiar en los resultados: las integrales de la Ec. 4 sobre la zona
+comprimida son **exactas**, no de grilla. La zona de contacto es el rectángulo de la placa
+recortado por el semiplano $s \geq 0$ — un polígono de a lo más 5 vértices — y los momentos
+de área de un polígono tienen forma cerrada (teorema de Green). El resultado no depende de
+ninguna discretización.
+
+De la solución se obtienen las cantidades que alimentan las verificaciones: la presión
+máxima $\sigma_{max}$ (siempre en una esquina de la placa), la posición del eje neutro, la
+fracción de área en contacto y la tracción $T_i$ de cada perno.
+
+---
+
+## 2. Aplastamiento del hormigón — AISC 360 J8
+
+La presión máxima de contacto se compara con la resistencia de aplastamiento de la
+Sección J8, que incorpora el confinamiento del pedestal a través de la razón de áreas:
+
+<Equation label="Ec. 6">
+$$
+\phi_c \, f_{p,max} = \phi_c \cdot \min\!\left(0.85\, f'_c\, \sqrt{\tfrac{A_2}{A_1}},\ \ 1.7\, f'_c\right),
+\qquad \phi_c = 0.65
+$$
+</Equation>
+
+donde $A_1 = B \cdot N$ es el área de la placa y $A_2$ el área de la porción del pedestal
+**geométricamente similar y concéntrica** con la placa. En la herramienta
+$\sqrt{A_2/A_1} = \min(B_2/B,\ N_2/N) \leq 2$, que es la forma conservadora de construir el
+área similar a partir de las dimensiones del pedestal $B_2 \times N_2$.
+
+La verificación es:
+
+<Equation label="Ec. 7">
+$$
+\sigma_{max} \leq \phi_c \, f_{p,max}
+$$
+</Equation>
+
+<Note type="info" title="Diferencia con la DG1 clásica">
+El método del bloque rectangular de la DG1 compara una presión **uniforme equivalente**
+contra $\phi_c f_{p,max}$. Aquí se compara la presión **de esquina** del plano elástico, que
+para la misma carga es mayor. La verificación es entonces algo más conservadora que la DG1
+en excentricidades grandes — a cambio, es la misma para cualquier combinación de $P$,
+$M_x$ y $M_y$, sin cambiar de método según el rango de excentricidad.
+</Note>
+
+---
+
+## 3. Flexión de la placa — Design Guide 1
+
+La placa se verifica por fluencia en flexión, por unidad de ancho, contra el momento
+plástico:
+
+<Equation label="Ec. 8">
+$$
+\phi_b M_p = \phi_b \, \frac{F_y \, t^2}{4}, \qquad \phi_b = 0.90
+$$
+</Equation>
+
+de donde el **espesor requerido** que reporta la herramienta es
+
+<Equation label="Ec. 9">
+$$
+t_{req} = \sqrt{\frac{4\, M_u}{\phi_b \, F_y}}
+$$
+</Equation>
+
+con $M_u$ el mayor momento por unidad de ancho entre todos los mecanismos siguientes.
+
+### 3.1 Lado comprimido: voladizos m y n
+
+La DG1 idealiza la placa como voladizos que se empotran en las **líneas críticas** de la
+columna: a $0.95\,d$ en la dirección del peralte y a $0.8\,b_f$ en la dirección del ala.
+Los volados resultantes son
+
+<Equation label="Ec. 10">
+$$
+m = \frac{N - 0.95\, d}{2}, \qquad n = \frac{B - 0.8\, b_f}{2}
+$$
+</Equation>
+
+En el método clásico, con presión uniforme $f_p$, el momento del voladizo es
+$M_u = f_p \, l^2 / 2$ con $l = \max(m, n)$. La herramienta generaliza esto: **integra el
+bloque de presiones real** (el plano recortado por el eje neutro) sobre la región que queda
+más allá de cada línea crítica, en las cuatro direcciones ($\pm y$ a $0.95d$, $\pm x$ a
+$0.8b_f$), y toma momento respecto de la línea. Con presión uniforme el resultado coincide
+exactamente con $f_p\, l^2/2$; con presión triangular o contacto parcial, captura la
+concentración de presión en el borde sin aproximaciones.
+
+<Figure
+  src="/placas-base-sap2000/fig-dg1-lineas.svg"
+  alt="Planta de la placa con la huella de columna en I, las líneas críticas 0.95d y 0.8bf, los voladizos m y n sombreados y la longitud λn′ entre alas"
+  caption="Líneas críticas de la DG1: los voladizos m y n se empotran en las líneas 0.95·d y 0.8·b_f (franjas sombreadas); λn′ es la longitud característica del mecanismo de fluencia entre alas (§3.2)."
+/>
+
+### 3.2 Fluencia entre alas: λn′
+
+Para placas donde el volado es pequeño pero la zona entre alas es grande, gobierna el
+mecanismo de fluencia interior de Thornton, con longitud característica
+
+<Equation label="Ec. 11">
+$$
+\lambda n' = \lambda\, \frac{\sqrt{d \cdot b_f}}{4}, \qquad \lambda = 1 \ \text{(conservador)}
+$$
+</Equation>
+
+y momento asociado $M_u = \sigma_{max} \, (\lambda n')^2 / 2$. Tomar $\lambda = 1$ en vez
+de calcular $\lambda < 1$ con la carga es siempre conservador y evita una dependencia
+circular entre carga y espesor; es la simplificación que la propia DG1 recomienda cuando no
+se quiere afinar.
+
+### 3.3 Lado traccionado: flexión por tracción de pernos
+
+Cuando hay pernos traccionados fuera de la huella de la columna, la placa también debe
+transferir esa tracción por flexión: cada perno carga un voladizo que se empotra en la
+línea crítica más próxima ($0.95d$ o $0.8b_f$). El momento por unidad de ancho es
+
+<Equation label="Ec. 12">
+$$
+M_u = \frac{T_i \cdot \ell_i}{b_{ef}}, \qquad
+b_{ef} = \min\!\big(4\,\ell_i,\ s_{adj},\ \text{dimensión de la placa}\big)
+$$
+</Equation>
+
+donde $\ell_i$ es el brazo del perno a la línea crítica, $s_{adj}$ la distancia al perno
+más cercano (para no contar dos veces el mismo ancho de placa) y $4\,\ell_i$ corresponde a
+una dispersión a 45° hacia ambos lados del perno.
+
+<Figure
+  src="/placas-base-sap2000/fig-bef.svg"
+  alt="Planta del lado traccionado: perno con tracción T, brazo ℓ hasta la línea crítica, abanico de dispersión, ancho efectivo b_ef y separación s_adj al perno vecino"
+  caption="Flexión del lado traccionado: cada perno traccionado carga un voladizo de brazo ℓ hasta la línea crítica; el ancho efectivo b_ef queda acotado por la dispersión desde el perno (4·ℓ), la separación s_adj al perno vecino y la dimensión de la placa."
+/>
+
+<Note type="warning" title="Supuesto de juicio">
+El ancho efectivo $b_{ef}$ del lado traccionado no está normado: es un supuesto razonable y
+habitual (dispersión a 45°), pero un supuesto al fin. La herramienta lo reporta
+explícitamente en el detalle de la verificación para que pueda revisarse caso a caso. Para
+placas con silletas o atiesadores el mecanismo cambia por completo y esta verificación no
+aplica.
+</Note>
+
+---
+
+## 4. Pernos de anclaje — AISC 360 J3
+
+Los pernos se verifican como barras roscadas F1554 según la Tabla J3.2, sobre el **área
+bruta** $A_b = \pi d^2/4$ (los coeficientes 0.75 y 0.45 ya descuentan el efecto de la
+rosca):
+
+<Equation label="Ec. 13">
+$$
+F_{nt} = 0.75\, F_u, \qquad F_{nv} = 0.45\, F_u \ \text{(hilos incluidos)}, \qquad \phi = 0.75
+$$
+</Equation>
+
+| F1554 grado | $F_u$ (ksi) | $F_u$ (kgf/cm²) | $\phi F_{nt}$ (kgf/cm²) | $\phi F_{nv}$ (kgf/cm²) |
+|:---:|:---:|:---:|:---:|:---:|
+| 36 | 58 | 4078 | 2294 | 1376 |
+| 55 | 75 | 5273 | 2966 | 1780 |
+| 105 | 125 | 8788 | 4943 | 2966 |
+
+**Tracción:** la demanda es la tracción máxima de perno $T_{max}$ que entrega el solver
+(§1) — no un reparto uniforme $T/n$: con momento biaxial, el perno de la esquina
+traccionada toma bastante más que el promedio.
+
+**Corte:** el corte resultante $V_u = \sqrt{V_{ux}^2 + V_{uy}^2}$ se reparte por igual
+entre los pernos designados para tomar corte ($n_{shear}$, configurable). Esto permite
+representar el caso práctico en que, por las holguras de los agujeros sobredimensionados,
+solo algunos pernos (con golillas soldadas o tuercas de nivelación bloqueadas) transfieren
+corte. No se considera fricción placa-hormigón ni llave de corte.
+
+**Interacción tracción + corte (J3.7):** cuando la tensión de corte requerida excede el
+30 % de la disponible ($f_{rv} > 0.3\,\phi F_{nv}$), la tensión de tracción disponible se
+reduce:
+
+<Equation label="Ec. 14">
+$$
+F'_{nt} = \min\!\left(F_{nt},\ \ 1.3\, F_{nt} - \frac{F_{nt}}{\phi\, F_{nv}}\, f_{rv}\right)
+$$
+</Equation>
+
+y se verifica $T_{max} \leq \phi\, F'_{nt}\, A_b$. Si $f_{rv} \leq 0.3\,\phi F_{nv}$, la
+interacción no es requerida y la herramienta lo indica en el detalle.
+
+---
+
+## 5. Barrido de combinaciones de SAP2000
+
+Las verificaciones anteriores son para **un** juego de cargas $\{P_u, M_{ux}, M_{uy},
+V_{ux}, V_{uy}\}$. El problema práctico es que una placa base tipo debe cubrir **todos los
+apoyos** de la estructura bajo **todas las combinaciones**: con $N$ apoyos y $M$
+combinaciones son $N \times M$ filas de reacciones — típicamente varios cientos.
+
+### 5.1 Por qué no basta la envolvente por componente
+
+La tentación natural es filtrar: quedarse con los máximos y mínimos de cada componente
+($F_3$ máx, $M_1$ máx, excentricidad máx, …) y verificar solo esos casos. El problema es
+que las verificaciones de placa base son **funciones no lineales de la combinación
+completa**: el caso que gobierna la flexión de la placa puede tener un $P_u$ intermedio con
+un $M_u$ intermedio, sin ser extremo en ninguna componente individual. Una envolvente por
+componente no tiene garantía de contener el caso gobernante.
+
+Por eso la herramienta no filtra: el **barrido SAP2000** (panel al final de la página de la
+herramienta) recibe la tabla *Joint Reactions* completa —copiada y pegada directamente
+desde SAP2000— y ejecuta el modelo y las verificaciones completas (§1–§4) **para cada fila**
+(apoyo × combinación). El resultado se agrega en tres vistas:
+
+- **Por apoyo:** la combinación que controla cada apoyo y su ratio máximo — identifica de
+  inmediato el apoyo crítico.
+- **Por verificación:** qué par (apoyo, combinación) controla cada verificación
+  (aplastamiento, flexión, pernos) — muestra si gobierna el hormigón, la placa o los pernos.
+- **Global:** el caso más desfavorable de todo el conjunto, el espesor requerido máximo
+  $t_{req}$ y las filas sin equilibrio posible (levantamientos que los pernos actuales no
+  pueden tomar).
+
+La convención de ejes debe respetarse al mapear las reacciones: $F_3 \to P_u$ (compresión
+positiva), y los momentos según la orientación de la placa respecto de los ejes globales
+del modelo.
+
+### 5.2 Obtener las reacciones desde SAP2000
+
+La tabla se obtiene en SAP2000 con *Display → Show Tables → Joint Reactions*, seleccionando
+todas las combinaciones para la salida, y se copia directamente al panel de barrido.
+Alternativamente, puede extraerse por la API:
 
 <details class="mt-6 text-sm">
 <summary class="cursor-pointer font-medium text-ink">Ver script en Python (API de SAP2000)</summary>
 
 Requiere `pip install comtypes` y una instancia de SAP2000 abierta con el modelo ya analizado.
+Imprime todas las reacciones de todos los apoyos para todas las combinaciones, en formato
+tabular listo para el panel de barrido.
 
 ```python
 import comtypes.client
@@ -89,54 +400,26 @@ for combo in combo_names:
     SapModel.Results.Setup.SetComboSelectedForOutput(combo)
 
 # --- 3. Reacciones de todos los apoyos, para todas las combinaciones ---
-rows = []
+print("Joint\tOutputCase\tF1\tF2\tF3\tM1\tM2\tM3")
 for joint in support_joints:
     (n, _obj, _elm, load_case, _step_type, _step_num,
      f1, f2, f3, m1, m2, m3, _ret) = SapModel.Results.JointReact(joint, 0)
     for i in range(n):
-        rows.append({
-            "apoyo": joint, "combo": load_case[i],
-            "F1": f1[i], "F2": f2[i], "F3": f3[i],
-            "M1": m1[i], "M2": m2[i], "M3": m3[i],
-        })
-
-# --- 4. Excentricidades, descartando F3 casi nulo (< 10 % del F3 máximo) ---
-f3_max = max(abs(r["F3"]) for r in rows)
-for r in rows:
-    if abs(r["F3"]) >= 0.10 * f3_max:
-        r["e1"] = r["M2"] / r["F3"]
-        r["e2"] = r["M1"] / r["F3"]
-    else:
-        r["e1"] = r["e2"] = None
-
-# --- 5. Filtro final: 2 máximos y 2 mínimos de cada esfuerzo, sobre TODOS los apoyos ---
-componentes = ["F1", "F2", "F3", "M1", "M2", "M3", "e1", "e2"]
-
-def top2(rows, key, reverse):
-    validas = [r for r in rows if r[key] is not None]
-    return sorted(validas, key=lambda r: r[key], reverse=reverse)[:2]
-
-gobernantes = {}
-for comp in componentes:
-    gobernantes[f"{comp}_max"] = top2(rows, comp, reverse=True)
-    gobernantes[f"{comp}_min"] = top2(rows, comp, reverse=False)
-
-for caso, filas in gobernantes.items():
-    for r in filas:
-        print(f"{caso:8s} apoyo={r['apoyo']:>4s}  combo={r['combo']:<20s} "
-              f"F1={r['F1']:.3f} F2={r['F2']:.3f} F3={r['F3']:.3f} "
-              f"M1={r['M1']:.3f} M2={r['M2']:.3f} M3={r['M3']:.3f}")
+        print(f"{joint}\t{load_case[i]}\t{f1[i]:.4f}\t{f2[i]:.4f}\t{f3[i]:.4f}"
+              f"\t{m1[i]:.4f}\t{m2[i]:.4f}\t{m3[i]:.4f}")
 ```
 
 </details>
 
 ---
 
-## 2. Modelación Placa Base.
+## 6. Detallamiento: distancias mínimas
 
-Para una modelación "rápida" de la geometría de Placa Base y sus elementos utilizamos herramientas. Tener en consideración las distancias mínimas borde placa-perno (AISC 360) y borde pedestal-perno (ACI 318)
+La herramienta chequea las distancias mínimas de detallamiento y las reporta como
+**avisos** (no bloquean el resultado, porque son requisitos de detallado, no de
+resistencia del modelo).
 
-### 2.1 Distancias mínimas — AISC 360 (borde de placa y separación entre pernos)
+### 6.1 AISC 360 — borde de placa y separación entre pernos
 
 Rige la [Sección J3 — Pernos](/acero/aisc360-22-capj-conexiones) de AISC 360-22.
 
@@ -162,38 +445,52 @@ $$
 | $> 36$ | $1.25\,d$ |
 
 <Note type="info">
-La distancia al borde no debe exceder $12\,t$ ni 150 mm (J3.5), donde $t$ es el espesor de la
-placa. Estos límites geométricos suelen controlar el detallado antes que la propia resistencia,
-y la distancia libre que resulta ($l_c$) es la que entra en el cálculo de aplastamiento/desgarre
-del agujero.
+La distancia al borde no debe exceder $12\,t$ ni 150 mm (J3.5), donde $t$ es el espesor de
+la placa. Estos límites geométricos suelen controlar el detallado antes que la propia
+resistencia.
 </Note>
 
-### 2.2 Distancias mínimas — ACI 318 (pernos de anclaje al hormigón)
+Adicionalmente, la herramienta avisa si hay **pernos dentro de la huella de la columna**
+(entre alas): dificultan el montaje y quedan fuera del modelo de flexión del §3.3.
 
-Rige el Capítulo 17 — Anclaje al hormigón (Anchoring to Concrete) de ACI 318-25.
+### 6.2 ACI 318 — pernos de anclaje al hormigón
 
-- **Separación mínima entre anclajes** ($d_a$ = diámetro del anclaje): $4\,d_a$ para anclajes
-  embebidos (*cast-in*) que no se aprietan con torque; $6\,d_a$ para anclajes embebidos
-  apretados con torque y para anclajes post-instalados (expansión/adherencia).
+Rige el Capítulo 17 — Anclaje al hormigón (*Anchoring to Concrete*) de ACI 318-25.
+
+- **Separación mínima entre anclajes** ($d_a$ = diámetro del anclaje): $4\,d_a$ para
+  anclajes embebidos (*cast-in*) que no se aprietan con torque; $6\,d_a$ para anclajes
+  embebidos apretados con torque y para anclajes post-instalados (expansión/adherencia).
 - **Distancia mínima al borde del pedestal**: para anclajes embebidos sin torque, el
   recubrimiento mínimo de armadura (Cap. 20); para anclajes embebidos apretados con torque,
   $6\,d_a$.
 - **Anclajes post-instalados**: el código **no** fija un valor numérico — la separación y
   distancia al borde mínimas son las reportadas en el informe de calificación del producto
-  (ensayos ACI 355.2 para mecánicos o ACI 355.4 para químicos/adhesivos, publicados en el ESR
-  del fabricante). Siempre usar esos valores, no una regla genérica.
+  (ensayos ACI 355.2 para mecánicos o ACI 355.4 para químicos/adhesivos, publicados en el
+  ESR del fabricante). Siempre usar esos valores, no una regla genérica.
 
 <Note type="warning" title="Cono de rotura y recubrimiento del pedestal">
-Aunque se cumplan las distancias mínimas de splitting, la resistencia real a rotura del cono de
-hormigón (breakout, Cap. 17) sigue cayendo mientras la distancia al borde $c_{a1}$ sea menor a
-$1.5\,h_{ef}$ ($h_{ef}$ = profundidad embebida). Para que el pedestal no gobierne el diseño de la
-placa conviene verificar también esa condición, no solo el mínimo de splitting. Verificar
-numeración de artículos contra la edición vigente de ACI 318-25.
+Aunque se cumplan las distancias mínimas de splitting, la resistencia real a rotura del
+cono de hormigón (breakout, Cap. 17) sigue cayendo mientras la distancia al borde $c_{a1}$
+sea menor a $1.5\,h_{ef}$ ($h_{ef}$ = profundidad embebida). Para que el pedestal no
+gobierne el diseño de la placa conviene verificar también esa condición, no solo el mínimo
+de splitting.
 </Note>
 
-### 2.3 Placa Base.
+---
 
+## 7. Alcance y limitaciones
 
+La herramienta es de **prediseño**, y su alcance está delimitado por lo que este documento
+describe. Lo que **no** verifica:
 
-
-
+- **Anclaje al hormigón (ACI 318 Cap. 17):** arrancamiento del cono (*breakout*),
+  extracción (*pullout*), desprendimiento lateral. La tracción $T_{max}$ de perno que
+  entrega la herramienta es precisamente la demanda de entrada para esa verificación, que
+  debe hacerse aparte.
+- **Soldadura columna-placa** y su compatibilidad con el bloque de presiones.
+- **Placas con atiesadores o silletas:** el modelo de flexión (§3) supone placa plana; con
+  rigidizadores los mecanismos de líneas de fluencia cambian por completo.
+- **Flexibilidad de la placa:** la hipótesis de placa rígida (§1.1) es tanto mejor cuanto
+  mayor el espesor; para placas muy delgadas con volados grandes, la presión real se
+  concentra bajo la columna y el modelo rígido sobreestima el brazo del bloque de presiones.
+- Solo **LRFD**: las cargas de entrada deben ser combinaciones mayoradas.
