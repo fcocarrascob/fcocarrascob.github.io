@@ -19,9 +19,9 @@ const description =
         hormigón de solo compresión, con pernos de solo tracción) y verifica por LRFD el
         aplastamiento del hormigón (AISC 360 J8), la flexión de la placa (Design Guide 1, líneas
         0.95d/0.8b_f y λn′), los pernos de anclaje F1554 (AISC 360 J3: tracción, corte e
-        interacción) y el anclaje al hormigón en tracción (ACI 318 Cap. 17: cono de
-        arrancamiento, extracción y desprendimiento lateral). El mapa muestra las presiones, el
-        eje neutro y la tracción de cada perno.
+        interacción) y el anclaje al hormigón (ACI 318 Cap. 17: cono de arrancamiento,
+        extracción, desprendimiento lateral, breakout de corte, pryout e interacción N–V). El
+        mapa muestra las presiones, el eje neutro y la tracción de cada perno.
         Con el <strong>barrido SAP2000</strong> (al final de la página) puedes pegar la tabla
         Joint Reactions completa y evaluar la placa contra todas las combinaciones de todos los
         apoyos a la vez, detectando cuál controla. La teoría, las fórmulas y los supuestos de
@@ -75,15 +75,18 @@ const description =
           indicados en «pernos al corte» — sin llave de corte ni fricción placa-hormigón.
         </li>
         <li>
-          <strong>Anclaje al hormigón (ACI 318 Cap. 17, tracción):</strong> cono de
+          <strong>Anclaje al hormigón (ACI 318 Cap. 17):</strong> en tracción, cono de
           arrancamiento del grupo traccionado (17.6.2, con ψ_ec y ψ_ed), extracción (17.6.3,
-          tuerca hex. pesada) y desprendimiento lateral (17.6.4) — asumiendo perno embebido,
-          hormigón fisurado, pedestal concéntrico y sin refuerzo suplementario (φ = 0.70).
+          tuerca hex. pesada) y desprendimiento lateral (17.6.4); en corte, breakout hacia el
+          borde (17.7.2, con la fila delantera tomando toda la componente) y pryout (17.7.3);
+          más la interacción N–V (17.8). Supuestos: perno embebido, hormigón fisurado,
+          pedestal concéntrico y profundo, sin refuerzo suplementario (φ = 0.70).
         </li>
         <li>
-          <strong>No se verifica:</strong> el corte al hormigón (breakout de corte y pryout —
-          ACI 318 17.7), la soldadura columna-placa ni el pandeo local de la columna. Las
-          distancias mínimas de detallamiento (J3.3, Tabla J3.4) se avisan pero no bloquean.
+          <strong>No se verifica:</strong> la armadura de anclaje (anchor reinforcement,
+          17.5.2), anclajes post-instalados, llave de corte, la soldadura columna-placa ni el
+          pandeo local de la columna. Las distancias mínimas de detallamiento (J3.3, Tabla
+          J3.4) se avisan pero no bloquean.
         </li>
         <li>
           <strong>Unidades:</strong> cargas en tonf y tonf·m, geometría en cm, tensiones en
@@ -94,8 +97,8 @@ const description =
 
     <p class="mt-4 text-xs text-muted">
       Herramienta de <strong>prediseño</strong>, no de proyecto definitivo. El diseño final
-      requiere verificar además el corte al hormigón (ACI 318 17.7) y las soldaduras, y
-      contrastar con el análisis de la estructura.
+      requiere verificar además las soldaduras (y la armadura de anclaje o llave de corte, si
+      el hormigón las necesita), y contrastar con el análisis de la estructura.
     </p>
   </main>
   <Footer />

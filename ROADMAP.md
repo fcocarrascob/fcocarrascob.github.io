@@ -11,10 +11,12 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
   side-face blowout con corrección de esquina y grupo por borde (17.6.4); input nuevo
   `h_ef`; sección §5 nueva en la nota teórica. Supuestos: cast-in, fisurado,
   pedestal concéntrico, φ = 0.70.
-  - [ ] **A1 fase 2: corte al hormigón (17.7)** — breakout de corte hacia el borde
-    y pryout, usando el reparto de corte de `nShear` y las distancias al borde del
-    pedestal. Considerar también armadura de anclaje (anchor reinforcement) como
-    opción que reemplaza al cono.
+  - [x] **A1 fase 2: corte al hormigón (17.7) + interacción (17.8)** (hecho
+    2026-07-03): breakout de corte hacia el borde por componente con la fila
+    delantera tomando toda la componente (17.7.2), pryout con el grupo completo
+    (17.7.3) e interacción N/φNn + V/φVn ≤ 1.2 (17.8.3). Secciones §5.4–5.5 en la
+    nota. Queda fuera (documentado): armadura de anclaje (17.5.2), anclajes
+    post-instalados y llave de corte.
 - [ ] **A2. Memoria de cálculo imprimible (placa base)** — los `CheckResult` ya traen
   demanda/capacidad/ratio y el detalle de cada fórmula; una vista print-friendly
   (print CSS) convierte cada corrida en una memoria entregable que cita la nota

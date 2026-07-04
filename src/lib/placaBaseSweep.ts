@@ -22,6 +22,9 @@ export const SHORT_CHECK_LABEL: Record<string, string> = {
   'anclaje-breakout': 'Cono de arrancamiento (17.6.2)',
   'anclaje-pullout': 'Extracción perno (17.6.3)',
   'anclaje-blowout': 'Blowout lateral (17.6.4)',
+  'anclaje-corte-breakout': 'Breakout de corte (17.7.2)',
+  'anclaje-pryout': 'Pryout (17.7.3)',
+  'anclaje-interaccion': 'N+V hormigón (17.8)',
   equilibrio: 'Sin equilibrio',
 };
 

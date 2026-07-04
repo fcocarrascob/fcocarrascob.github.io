@@ -17,10 +17,10 @@ interface NumInputs {
 
 const DEFAULTS: NumInputs = {
   B: 45, N: 45, t: 2.5, Fy: 2530,
-  fc: 250, B2: 70, N2: 70,
+  fc: 250, B2: 80, N2: 80,
   d: 30, bf: 30,
   nx: 2, ny: 2, ex: 5, ey: 5, dRod: 2.54, hEf: 40, nShear: 4,
-  Pu: 40, Mux: 8, Muy: 0, Vux: 3, Vuy: 0,
+  Pu: 40, Mux: 8, Muy: 0, Vux: 2, Vuy: 0,
 };
 
 interface Field { key: keyof NumInputs; label: string; unit: string; step: number }

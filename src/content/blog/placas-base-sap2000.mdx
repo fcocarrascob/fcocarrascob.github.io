@@ -1,6 +1,6 @@
 ---
 title: "Placas Base: teoría y verificaciones de la herramienta"
-description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3), anclaje al hormigón en tracción (ACI 318 Cap. 17) y barrido de combinaciones de SAP2000."
+description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3), anclaje al hormigón en tracción y corte (ACI 318 Cap. 17) y barrido de combinaciones de SAP2000."
 pubDate: 2026-07-02
 updatedDate: 2026-07-03
 tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "SAP2000"]
@@ -18,7 +18,7 @@ Esta nota documenta la **teoría y las verificaciones** que implementa la herram
 [Placa base de columna](/herramientas/placa-base). La herramienta resuelve la distribución
 de presiones bajo una placa base sometida a carga axial (compresión o tracción), momento
 biaxial y corte, y la verifica por LRFD según AISC 360-22, la Design Guide 1 y el
-Capítulo 17 de ACI 318-25 (anclaje al hormigón en tracción). Todo lo que
+Capítulo 17 de ACI 318-25 (anclaje al hormigón en tracción y corte). Todo lo que
 la herramienta calcula está descrito aquí: este documento es la fuente de cada fórmula,
 factor y supuesto, para que los resultados puedan auditarse y reproducirse a mano.
 
@@ -341,10 +341,11 @@ entrega la tracción $T_i$ de *cada* perno, así que la demanda del grupo tracci
 su excentricidad real — está disponible directamente para las verificaciones del
 Capítulo 17.
 
-Los supuestos, comunes a las tres verificaciones: perno **embebido con tuerca/cabeza**
-(*cast-in headed*), hormigón **fisurado** ($\psi_c = 1.0$, conservador), hormigón de peso
-normal ($\lambda_a = 1$), pedestal $B_2 \times N_2$ concéntrico con la placa, y **sin
-refuerzo suplementario** — condición B, $\phi = 0.70$ (17.5.3).
+Los supuestos, comunes a todas las verificaciones del capítulo: perno **embebido con
+tuerca/cabeza** (*cast-in headed*), hormigón **fisurado** ($\psi_c = 1.0$, conservador),
+hormigón de peso normal ($\lambda_a = 1$), pedestal $B_2 \times N_2$ concéntrico con la
+placa, y **sin refuerzo suplementario ni armadura de anclaje** — condición B,
+$\phi = 0.70$ (17.5.3).
 
 ### 5.1 Cono de arrancamiento (breakout, 17.6.2)
 
@@ -412,12 +413,72 @@ $s < 6\,c_{a1}$, la capacidad conjunta es $(1 + s/(6\,c_{a1}))\,N_{sb}$ repartid
 los pernos de ese borde. La herramienta revisa los cuatro bordes del pedestal y reporta
 el que gobierna; si ningún perno cumple $c_{a1} < 0.4\,h_{ef}$, el modo no aplica.
 
+### 5.4 Corte al hormigón: breakout y pryout (17.7)
+
+El corte que resiste el acero del perno (§4) también tiene que poder entrar al pedestal,
+y el hormigón puede fallar por dos mecanismos opuestos.
+
+**Breakout de corte hacia el borde (17.7.2).** El perno empuja un semi-cono de hormigón
+hacia el borde. La resistencia básica de un anclaje depende de la distancia al borde en
+la dirección del corte, $c_{a1}$, elevada a 1.5:
+
+<Equation label="Ec. 19">
+$$
+V_b = \min\!\left( 1.92\,\Big(\tfrac{l_e}{d_a}\Big)^{0.2}\sqrt{d_a},\ \ 3.74 \right)
+\sqrt{f'_c}\; c_{a1}^{1.5} \quad [\text{kgf, cm}]
+$$
+</Equation>
+
+con $l_e = \min(h_{ef},\, 8\,d_a)$. Para el grupo, $V_{cbg} = (A_{Vc}/A_{Vco})\,
+\psi_{ed,V}\, V_b$ con $A_{Vco} = 4.5\,c_{a1}^2$ y el área proyectada $A_{Vc}$ sobre la
+cara lateral del pedestal, recortada por los bordes perpendiculares.
+
+Las decisiones de modelación, explícitas en el detalle de la verificación:
+
+- **Cada componente del corte se verifica contra el borde hacia el que apunta**
+  ($V_{ux}$ contra el borde $x\pm$, $V_{uy}$ contra $y\pm$), y gobierna la peor.
+- **La fila delantera toma toda la componente** — el caso conservador cuando los
+  agujeros de la placa tienen holgura y no puede garantizarse que las filas traseras
+  participen antes de que la delantera falle.
+- $\psi_{ec,V} = 1$ (reparto uniforme en la fila) y $\psi_{h,V} = 1$ (**pedestal
+  profundo**, $h_a \geq 1.5\,c_{a1}$ — cierto en pedestales típicos).
+
+**Pryout (17.7.3).** En el otro extremo, sin borde cercano pero con embebido corto, el
+corte hace palanca y desprende el cono *hacia atrás*. Reutiliza directamente el breakout
+de tracción del §5.1:
+
+<Equation label="Ec. 20">
+$$
+V_{cpg} = k_{cp} \cdot N_{cbg},
+\qquad k_{cp} = \begin{cases} 1.0 & h_{ef} < 6.35\ \text{cm} \\ 2.0 & h_{ef} \geq 6.35\ \text{cm} \end{cases}
+$$
+</Equation>
+
+con $N_{cbg}$ del grupo completo de pernos ($\psi_{ec} = 1$) y demanda el corte
+resultante $\sqrt{V_{ux}^2 + V_{uy}^2}$.
+
+### 5.5 Interacción tracción–corte en el hormigón (17.8)
+
+Cuando la tracción y el corte sobre el hormigón son ambos significativos (más del 20 %
+de su capacidad), los modos interactúan — el mismo cono no puede estar al 80 % en
+tracción y al 80 % en corte a la vez:
+
+<Equation label="Ec. 21">
+$$
+\frac{N_{ua}}{\phi N_n} + \frac{V_{ua}}{\phi V_n} \leq 1.2
+$$
+</Equation>
+
+usando en cada término el **modo de hormigón gobernante** (el de mayor ratio en
+tracción, y el de mayor ratio en corte). Esta verificación es frecuentemente la que
+decide: cada modo puede pasar individualmente y la suma superar 1.2.
+
 <Note type="warning" title="Lo que falta del Cap. 17">
-Esta implementación cubre la **tracción** (17.6). El **corte al hormigón** — breakout de
-corte hacia el borde y pryout (17.7) — no se verifica todavía: si el corte se transfiere
-por los pernos cerca de un borde de pedestal, esa verificación debe hacerse aparte.
-Tampoco se considera armadura de anclaje (*anchor reinforcement*), que permite reemplazar
-la resistencia del cono por la del refuerzo.
+No se considera **armadura de anclaje** (*anchor reinforcement*, 17.5.2), que permite
+reemplazar la resistencia del cono por la del refuerzo — es la salida típica cuando el
+breakout no da. Tampoco **anclajes post-instalados** (las constantes $k_c$, $k_{cp}$ y
+los ψ usados son de anclajes embebidos) ni **llave de corte**, que releva a los pernos
+de transferir el corte.
 </Note>
 
 ---
@@ -573,9 +634,10 @@ de splitting.
 La herramienta es de **prediseño**, y su alcance está delimitado por lo que este documento
 describe. Lo que **no** verifica:
 
-- **Corte al hormigón (ACI 318 17.7):** breakout de corte hacia el borde y pryout. El
-  anclaje en tracción (17.6) sí está cubierto (§5), pero si el corte se transfiere por
-  pernos cercanos a un borde del pedestal, esa verificación debe hacerse aparte.
+- **Armadura de anclaje y llave de corte:** el anclaje al hormigón (§5) se verifica
+  sin refuerzo suplementario ni armadura de anclaje (17.5.2); cuando el cono no da, esas
+  son las soluciones de diseño, y su verificación se hace aparte. Tampoco se cubren
+  anclajes post-instalados (las constantes usadas son de anclajes embebidos).
 - **Soldadura columna-placa** y su compatibilidad con el bloque de presiones.
 - **Placas con atiesadores o silletas:** el modelo de flexión (§3) supone placa plana; con
   rigidizadores los mecanismos de líneas de fluencia cambian por completo.
