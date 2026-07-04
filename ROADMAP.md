@@ -17,10 +17,12 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
     (17.7.3) e interacción N/φNn + V/φVn ≤ 1.2 (17.8.3). Secciones §5.4–5.5 en la
     nota. Queda fuera (documentado): armadura de anclaje (17.5.2), anclajes
     post-instalados y llave de corte.
-- [ ] **A2. Memoria de cálculo imprimible (placa base)** — los `CheckResult` ya traen
-  demanda/capacidad/ratio y el detalle de cada fórmula; una vista print-friendly
-  (print CSS) convierte cada corrida en una memoria entregable que cita la nota
-  teórica como referencia.
+- [x] **A2. Memoria de cálculo imprimible (placa base)** (hecho 2026-07-03): botón
+  «Memoria de cálculo» que imprime/guarda como PDF una memoria con cabecera (fecha y
+  referencias normativas), datos de entrada, derivados, equilibrio, la tabla completa
+  de verificaciones con sus detalles, avisos y la planta con presiones; el resto de
+  la página se oculta con `print:hidden`. Además, cada verificación de la tabla
+  enlaza a su sección exacta (§n) de la nota teórica.
 - [ ] **A3. Barrido SAP2000 en la zapata biaxial** — replicar el patrón de
   `SapSweepPanel` de placa base: pegar la tabla Joint Reactions y correr el surrogate
   sobre todas las combinaciones de todos los apoyos. El parseo ya existe

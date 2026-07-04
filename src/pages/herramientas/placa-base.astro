@@ -9,9 +9,11 @@ const description =
   'Verifica placas base de columnas de acero con carga axial (compresión o tracción), momento biaxial y corte: distribución de presiones bajo la placa, aplastamiento del hormigón, espesor de placa y pernos de anclaje según AISC 360 y Design Guide 1 (LRFD).';
 ---
 <BaseLayout title={title} description={description}>
-  <Header />
+  <div class="print:hidden">
+    <Header />
+  </div>
   <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8">
-    <header class="mb-5">
+    <header class="mb-5 print:hidden">
       <h1 class="text-2xl font-semibold text-ink">Placa base de columna</h1>
       <p class="mt-2 text-sm text-muted leading-relaxed">
         Ingresa las cargas mayoradas, la placa, la columna y los pernos: la herramienta resuelve
@@ -33,7 +35,7 @@ const description =
 
     <PlacaBaseTool client:only="react" />
 
-    <details class="mt-6 text-xs text-muted">
+    <details class="mt-6 text-xs text-muted print:hidden">
       <summary class="cursor-pointer font-medium text-ink">Supuestos y notas del modelo</summary>
       <p class="mt-2 leading-relaxed">
         Resumen de los supuestos; el desarrollo completo (modelo mecánico, ecuaciones y
@@ -95,11 +97,13 @@ const description =
       </ul>
     </details>
 
-    <p class="mt-4 text-xs text-muted">
+    <p class="mt-4 text-xs text-muted print:hidden">
       Herramienta de <strong>prediseño</strong>, no de proyecto definitivo. El diseño final
       requiere verificar además las soldaduras (y la armadura de anclaje o llave de corte, si
       el hormigón las necesita), y contrastar con el análisis de la estructura.
     </p>
   </main>
-  <Footer />
+  <div class="print:hidden">
+    <Footer />
+  </div>
 </BaseLayout>

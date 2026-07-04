@@ -75,6 +75,23 @@ const GROUPS: Group[] = [
   },
 ];
 
+// Enlace de cada verificación a su sección en la nota teórica.
+const NOTE_URL = '/blog/placas-base-sap2000';
+const THEORY: Record<string, { sec: string; hash: string }> = {
+  aplastamiento: { sec: '§2', hash: '2-aplastamiento-del-hormigón--aisc-360-j8' },
+  'flexion-compresion': { sec: '§3.1', hash: '31-lado-comprimido-voladizos-m-y-n' },
+  'flexion-traccion': { sec: '§3.3', hash: '33-lado-traccionado-flexión-por-tracción-de-pernos' },
+  'perno-traccion': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
+  'perno-corte': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
+  'perno-interaccion': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
+  'anclaje-breakout': { sec: '§5.1', hash: '51-cono-de-arrancamiento-breakout-1762' },
+  'anclaje-pullout': { sec: '§5.2', hash: '52-extracción-pullout-1763' },
+  'anclaje-blowout': { sec: '§5.3', hash: '53-desprendimiento-lateral-side-face-blowout-1764' },
+  'anclaje-corte-breakout': { sec: '§5.4', hash: '54-corte-al-hormigón-breakout-y-pryout-177' },
+  'anclaje-pryout': { sec: '§5.4', hash: '54-corte-al-hormigón-breakout-y-pryout-177' },
+  'anclaje-interaccion': { sec: '§5.5', hash: '55-interacción-traccióncorte-en-el-hormigón-178' },
+};
+
 const REGIME_LABEL: Record<SolverResult['regime'], string> = {
   'sin-carga': 'sin carga',
   'compresion-total': 'compresión total',
@@ -286,12 +303,45 @@ export default function PlacaBaseTool() {
 
   const fmtEcc = (e: number) => (Number.isFinite(e) ? e.toFixed(1) : '∞');
 
+  const fechaMemoria = new Date().toLocaleDateString('es-CL', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+
   return (
     <div ref={rootRef}>
-    <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto]">
+    {/* ── Cabecera de la memoria de cálculo (solo impresión) ── */}
+    <section className="hidden print:block mb-6">
+      <h1 className="text-xl font-bold text-ink">Memoria de cálculo — Placa base de columna</h1>
+      <p className="mt-1 text-xs leading-relaxed text-muted">
+        Generada el {fechaMemoria} con la herramienta «Placa base de columna»
+        (https://fcocarrascob.github.io/herramientas/placa-base). Verificación LRFD según
+        AISC 360-22, Design Guide 1 y ACI 318-25 Cap. 17. La base teórica, las ecuaciones
+        (Ecs. 1–21) y los supuestos de cada verificación están documentados en
+        https://fcocarrascob.github.io/blog/placas-base-sap2000 — las referencias §n de la
+        tabla de verificaciones apuntan a sus secciones.
+      </p>
+      <h2 className="mt-4 mb-1 text-sm font-semibold text-ink">Datos de entrada</h2>
+      <div className="grid grid-cols-3 gap-x-6 gap-y-0.5 text-xs">
+        {GROUPS.flatMap((g) => g.fields).map((f) => (
+          <div key={f.key} className="flex justify-between border-b border-border/60 py-0.5">
+            <span className="text-muted">{f.label}</span>
+            <span className="font-mono">{inp[f.key]} {f.unit}</span>
+          </div>
+        ))}
+        <div className="flex justify-between border-b border-border/60 py-0.5">
+          <span className="text-muted">Grado F1554</span>
+          <span className="font-mono">Gr. {grade}</span>
+        </div>
+        <div className="flex justify-between border-b border-border/60 py-0.5">
+          <span className="text-muted">Pernos solo perímetro</span>
+          <span className="font-mono">{perim ? 'sí' : 'no'}</span>
+        </div>
+      </div>
+    </section>
+    <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] print:block">
       {/* ── Panel de inputs y resultados ── */}
       <div>
-        <div className="space-y-4">
+        <div className="space-y-4 print:hidden">
           {GROUPS.map(({ legend, fields }) => (
             <fieldset key={legend} className="rounded border border-border p-3">
               <legend className="px-1 text-xs font-medium text-muted">{legend}</legend>
@@ -389,7 +439,17 @@ export default function PlacaBaseTool() {
         )}
 
         {/* ── Tabla de checks ── */}
-        <div className="mt-5 overflow-x-auto">
+        <div className="mt-5 flex items-center justify-end print:hidden">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-accent hover:text-accent"
+            title="Imprime (o guarda como PDF) una memoria de cálculo con los datos de entrada, resultados y verificaciones"
+          >
+            🖨 Memoria de cálculo
+          </button>
+        </div>
+        <div className="mt-2 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs text-muted">
@@ -403,7 +463,20 @@ export default function PlacaBaseTool() {
               {res.checks.map((c) => (
                 <tr key={c.id} className="border-b border-border/60 align-top">
                   <td className="py-1.5 pr-2">
-                    <div className="text-ink">{c.nombre}</div>
+                    <div className="text-ink">
+                      {c.nombre}
+                      {THEORY[c.id] && (
+                        <a
+                          href={`${NOTE_URL}#${THEORY[c.id].hash}`}
+                          target="_blank"
+                          rel="noopener"
+                          title="Ver la teoría de esta verificación"
+                          className="ml-1.5 text-xs text-accent hover:underline"
+                        >
+                          {THEORY[c.id].sec}
+                        </a>
+                      )}
+                    </div>
                     <div className="text-xs text-muted">{c.detalle}</div>
                   </td>
                   <td className="py-1.5 pr-2 font-mono whitespace-nowrap">{fmtDemCap(c.demanda, c.unidad)}</td>
@@ -443,7 +516,9 @@ export default function PlacaBaseTool() {
     </div>
 
     {/* ── Barrido de combinaciones desde SAP2000 ── */}
-    <SapSweepPanel geom={geom} onLoadRow={loadSweepRow} />
+    <div className="print:hidden">
+      <SapSweepPanel geom={geom} onLoadRow={loadSweepRow} />
+    </div>
     </div>
   );
 }
