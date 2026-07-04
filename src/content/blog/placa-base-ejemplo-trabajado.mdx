@@ -1,0 +1,232 @@
+---
+title: "Placa base, ejemplo trabajado: la Design Guide 1 a mano vs. la herramienta"
+description: "Un mismo caso con excentricidad grande resuelto dos veces: a mano con el bloque rectangular de la Design Guide 1 y con el modelo elástico de la herramienta. Dónde coinciden, dónde difieren (tracción de pernos, flexión de placa) y qué verificación decisiva la DG1 nunca pregunta: el anclaje al hormigón."
+pubDate: 2026-07-04
+tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "ejemplo trabajado"]
+norm: "AISC 360 / ACI 318"
+section: "Acero"
+draft: false
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+En la [nota teórica de placas base](/blog/placas-base-sap2000) está cada fórmula que usa la
+[herramienta](/herramientas/placa-base); acá cerramos el triángulo con la **práctica**: un mismo
+caso resuelto dos veces — a mano, con el método clásico de la AISC *Design Guide 1* (bloque
+rectangular de presiones, excentricidad grande), y con el modelo elástico de la herramienta.
+El objetivo no es que los números coincidan (no lo hacen, y eso es lo interesante), sino
+entender **por qué difieren, en qué dirección se equivoca cada uno**, y qué verificación
+decisiva queda fuera del método clásico.
+
+## El caso
+
+Una columna HEB 300 ($d = b_f = 30$ cm) sobre placa cuadrada, anclada a un pedestal
+concéntrico. Son los valores por defecto de la herramienta, con el momento subido de 8 a
+12 tonf·m para entrar de lleno en el régimen de excentricidad grande:
+
+| | |
+|---|---|
+| Placa | $B = N = 45$ cm, $t = 2.5$ cm, acero A36 ($F_y = 2530$ kgf/cm²) |
+| Pedestal | $80 \times 80$ cm, $f'_c = 250$ kgf/cm² |
+| Pernos | 4 × 1″ F1554 gr. 36, en las esquinas a 5 cm de cada borde, $h_{ef} = 40$ cm |
+| Cargas | $P_u = 40$ tonf (compresión), $M_{ux} = 12$ tonf·m, $V_u = 2$ tonf |
+
+La excentricidad es $e = M_u / P_u = 12 \cdot 10^5 / 40\,000 = 30$ cm — bastante más que
+$N/6 = 7.5$ cm, así que hay despegue seguro. La fila de pernos traccionada está a
+$f = N/2 - 5 = 17.5$ cm del centro de la placa.
+
+## 1. A mano con la Design Guide 1
+
+### 1.1 Presión de aplastamiento máxima
+
+Con el pedestal $80 \times 80$ concéntrico, $\sqrt{A_2/A_1} = 80/45 = 1.78 \le 2$:
+
+<Equation label="Ec. 1">
+$$f_{p,m\acute{a}x} = \phi_c \cdot 0.85 f'_c \sqrt{A_2/A_1} = 0.65 \cdot 0.85 \cdot 250 \cdot 1.78 = 245.6 \ \text{kgf/cm}^2$$
+</Equation>
+
+y por unidad de largo de placa, $q_{m\acute{a}x} = f_{p,m\acute{a}x} \cdot B = 245.6 \cdot 45 = 11\,050$ kgf/cm.
+
+### 1.2 ¿Excentricidad pequeña o grande?
+
+La DG1 distingue los dos regímenes con la excentricidad crítica:
+
+<Equation label="Ec. 2">
+$$e_{crit} = \frac{N}{2} - \frac{P_u}{2\,q_{m\acute{a}x}} = 22.5 - \frac{40\,000}{2 \cdot 11\,050} = 20.7 \ \text{cm}$$
+</Equation>
+
+Como $e = 30 > 20.7$ cm, estamos en **excentricidad grande**: el equilibrio ya no se logra
+solo con el bloque comprimido y los pernos *deben* tomar tracción.
+
+### 1.3 Largo del bloque y tracción de pernos
+
+Tomando momentos respecto de la fila traccionada, con el bloque rectangular a presión
+$f_{p,m\acute{a}x}$ pegado al borde comprimido:
+
+<Equation label="Ec. 3">
+$$Y = \left(f + \tfrac{N}{2}\right) - \sqrt{\left(f + \tfrac{N}{2}\right)^2 - \frac{2 P_u (e + f)}{q_{m\acute{a}x}}} = 40 - \sqrt{1600 - 344} = 4.56 \ \text{cm}$$
+</Equation>
+
+(el discriminante es positivo: la placa alcanza a equilibrar la carga). La tracción total
+sale del equilibrio vertical:
+
+<Equation label="Ec. 4">
+$$T_u = q_{m\acute{a}x} \cdot Y - P_u = 11\,050 \cdot 4.56 - 40\,000 = 10\,370 \ \text{kgf} \;\Rightarrow\; 5.19 \ \text{tonf/perno}$$
+</Equation>
+
+repartida entre los 2 pernos de la fila.
+
+### 1.4 Flexión de la placa
+
+El voladizo crítico hacia el borde comprimido es $m = (N - 0.95d)/2 = (45 - 28.5)/2 = 8.25$ cm.
+Como el bloque es más corto que el voladizo ($Y = 4.56 < m$), el momento por unidad de ancho
+en la línea $0.95d$ es el del bloque completo con su brazo:
+
+<Equation label="Ec. 5">
+$$M_{pl} = f_{p,m\acute{a}x} \cdot Y \left(m - \tfrac{Y}{2}\right) = 245.6 \cdot 4.56 \cdot 5.97 = 6\,680 \ \text{kgf·cm/cm}$$
+</Equation>
+
+<Equation label="Ec. 6">
+$$t_{req} = \sqrt{\frac{4\,M_{pl}}{\phi_b F_y}} = \sqrt{\frac{4 \cdot 6\,680}{0.9 \cdot 2530}} = 3.43 \ \text{cm} > 2.5 \ \text{cm} \quad \text{✗}$$
+</Equation>
+
+**La placa de 25 mm no cumple**; la DG1 pide 35 mm. El lado traccionado no gobierna: con el
+brazo desde el perno a la línea $0.95d$ ($x = f - 0.95d/2 = 3.25$ cm) y el ancho completo,
+$M_{pl,T} = T_u \cdot x / B \approx 750$ kgf·cm/cm, que pide apenas $t = 1.15$ cm.
+
+### 1.5 Pernos
+
+Para 1″ F1554 gr. 36: $A_b = 5.07$ cm² y $\phi F_{nt} A_b = 0.75 \cdot (0.75 \cdot 58 \ \text{ksi}) \cdot A_b = 11.6$ tonf.
+Con $5.19$ tonf por perno, el ratio es **0.45** ✓. El corte es despreciable
+($0.5$ tonf/perno contra $7.0$ tonf de capacidad).
+
+**Veredicto DG1**: todo bien salvo el espesor — se cambia la placa a 35 mm y el diseño queda,
+aparentemente, cerrado.
+
+## 2. El mismo caso en la herramienta
+
+Ingresando exactamente los mismos datos en la [herramienta](/herramientas/placa-base)
+(basta partir de los valores por defecto y cambiar $M_{ux}$ a 12), el solver converge al
+régimen de **contacto parcial** con el 39 % de la placa comprimida, y reporta:
+
+| Verificación | Demanda | Capacidad | Ratio | |
+|---|---|---|---|---|
+| Aplastamiento (J8) | 141.0 kgf/cm² | 245.6 kgf/cm² | 0.57 | ✓ |
+| Flexión de placa, lado comprimido (DG1) | 4 045 kgf·cm/cm | 3 558 kgf·cm/cm | 1.14 | ✗ |
+| Flexión de placa, lado traccionado | 1 954 kgf·cm/cm | 3 558 kgf·cm/cm | 0.55 | ✓ |
+| Perno a tracción (J3) | 7.82 tonf | 11.62 tonf | 0.67 | ✓ |
+| Perno a corte (J3) | 0.50 tonf | 6.97 tonf | 0.07 | ✓ |
+| **Anclaje: breakout en tracción (17.6.2)** | 15.63 tonf | 10.21 tonf | **1.53** | ✗ |
+| Anclaje: pullout (17.6.3) | 7.82 tonf | 10.51 tonf | 0.74 | ✓ |
+| Anclaje: breakout en corte (17.7.2) | 2.00 tonf | 4.71 tonf | 0.42 | ✓ |
+| Anclaje: pryout (17.7.3) | 2.00 tonf | 20.42 tonf | 0.10 | ✓ |
+| **Anclaje: interacción N–V (17.8)** | 1.53 + 0.42 = 1.95 | 1.2 | **1.63** | ✗ |
+
+Dos cosas saltan a la vista. La primera: la herramienta también reprueba la placa de 25 mm,
+pero pide menos ($t_{req} = 2.67$ cm contra los 3.43 de la DG1). La segunda: **fallan dos
+verificaciones que la DG1 ni siquiera formula** — el cono de arrancamiento del grupo
+traccionado y la interacción tracción–corte en el hormigón.
+
+## 3. Por qué difieren: el mismo equilibrio, otro brazo
+
+Los dos métodos resuelven las **mismas dos ecuaciones de equilibrio**; lo único que cambia
+es la forma supuesta de la distribución de presiones. Y esa forma se puede leer completa en
+una sola cuenta: momentos respecto de la fila de pernos traccionada,
+
+<Equation label="Ec. 7">
+$$R \cdot \text{brazo} = P_u \,(e + f) = 40\,000 \cdot 47.5 = 19.0 \ \text{tonf·m}$$
+</Equation>
+
+- **DG1**: el bloque plástico a $f_{p,m\acute{a}x}$ pega la resultante al borde
+  (centroide a $Y/2 = 2.3$ cm), con brazo $= 37.7$ cm $\Rightarrow R = 50.4$ tonf
+  $\Rightarrow T_u = R - P_u = 10.4$ tonf.
+- **Herramienta**: la distribución elástica es un triángulo más profundo (el eje neutro
+  queda a 17.5 cm del borde) cuyo centroide está más adentro, con brazo $= 34.2$ cm
+  $\Rightarrow R = 55.6$ tonf $\Rightarrow T_u = 15.6$ tonf.
+
+<Figure
+  src="/placa-base-ejemplo/fig-dg1-vs-elastico.svg"
+  alt="Comparación entre el bloque rectangular de la DG1 y la distribución elástica de la herramienta para el mismo caso: mismo equilibrio de momentos con distinto brazo de la resultante"
+  caption="El mismo caso resuelto por los dos modelos. La DG1 concentra la presión en el borde (brazo máximo, tracción mínima); la solución elástica la reparte (presión punta menor, tracción de pernos 50 % mayor)."
+/>
+
+De ahí salen las dos discrepancias, **en direcciones opuestas**:
+
+| | DG1 (bloque plástico) | Herramienta (elástico) |
+|---|---|---|
+| Presión punta | 245.6 kgf/cm² (= capacidad) | 141.0 kgf/cm² |
+| Zona comprimida | $Y = 4.6$ cm (10 % de $N$) | 17.5 cm (39 % del área) |
+| Tracción por perno | 5.19 tonf | 7.82 tonf (**+51 %**) |
+| $t$ requerido (flexión) | 3.43 cm (**+28 %**) | 2.67 cm |
+
+La DG1 es un diseño por **teorema del límite inferior**: cualquier distribución de presiones
+en equilibrio que no viole la capacidad de aplastamiento es admisible, *si el sistema tiene
+la ductilidad para redistribuirse hacia ella*. Al concentrar la presión en el borde obtiene
+la mínima tracción de pernos posible — y, como contrapartida, el máximo momento en el
+voladizo de la placa. La solución elástica es la que corresponde a las rigideces reales
+(placa rígida, hormigón y pernos elásticos): reparte la presión (menos flexión de placa)
+pero acerca la resultante al centro (más tracción de pernos). En resumen: **la DG1 es
+conservadora para la placa y optimista para los pernos y su anclaje; el modelo elástico,
+al revés** — con la diferencia de que la placa de acero sí puede plastificar y
+redistribuir, mientras que el cono de hormigón que ancla los pernos es frágil.
+
+<Note type="info" title="La discrepancia también existe con excentricidad 'pequeña'">
+Con el momento original de 8 tonf·m ($e = 20$ cm $< e_{crit}$), la DG1 responde con su caso
+de excentricidad pequeña: bloque $Y = N - 2e = 5$ cm, presión 178 kgf/cm² y **tracción cero**
+en los pernos. El modelo elástico, con las mismas cargas, ya tiene despegue del 50 % de la
+placa y $T = 3.1$ tonf/perno. La tracción de anclaje aparece mucho antes de lo que el método
+clásico sugiere — relevante si esos pernos, además, anclan un cono de hormigón.
+</Note>
+
+## 4. La verificación que la DG1 nunca pregunta
+
+El método clásico termina en el perno de acero. Pero el perno está embebido en hormigón, y
+el Capítulo 17 de ACI 318 pregunta si el **cono de arrancamiento** del grupo traccionado
+resiste ([§5.1 de la nota teórica](/blog/placas-base-sap2000#51-cono-de-arrancamiento-breakout-1762)).
+Para la fila de 2 pernos con $h_{ef} = 40$ cm en el pedestal de 80×80:
+
+<Equation label="Ec. 8">
+$$\phi N_{cbg} = 0.70 \cdot \frac{A_{Nc}}{A_{Nco}} \, \psi_{ed} \, N_b = 0.70 \cdot 0.44 \cdot 0.81 \cdot 40.4 = 10.2 \ \text{tonf}$$
+</Equation>
+
+contra una demanda de 15.6 tonf según el modelo elástico: **ratio 1.53**. Y no es un
+artefacto del modelo: incluso con la tracción optimista de la DG1 (10.4 tonf), el ratio
+sería 1.02 y la interacción con el corte daría $1.02 + 0.42 = 1.44 > 1.2$ — **el anclaje
+falla con cualquiera de los dos métodos**. El perno de acero trabaja al 45–67 % mientras
+el hormigón que lo rodea está al 150 %: el modo frágil gobierna y el método clásico no lo ve.
+
+## 5. Cerrar el diseño
+
+Dos cambios cierran todas las verificaciones:
+
+1. **Placa de 35 mm** — lo que ya pedía la DG1 (la herramienta se conforma con 27 mm, pero
+   35 mm es la lámina comercial siguiente y deja margen).
+2. **Pedestal de 110 × 110 cm** — el breakout no se arregla con más embebido: con el cono ya
+   limitado por las caras del pedestal, subir $h_{ef}$ de 40 a 45 cm *no cambia nada*
+   (la capacidad crece con $A_{Nc} \cdot h_{ef}^{-0.5}$ cuando $A_{Nc}$ está fijado por la
+   planta). La palanca real es la **distancia al borde**: con 110 × 110, $c_a$ pasa de 22.5
+   a 37.5 cm y el breakout baja a 0.84, con interacción $0.84 + 0.24 = 1.08 \le 1.2$.
+
+Con eso la herramienta reporta todo en verde: aplastamiento 0.51 (el √(A₂/A₁) satura en 2),
+flexión 0.58, perno a tracción 0.67, breakout 0.84, interacción 0.90. Alternativas si agrandar el
+pedestal no es opción: **armadura de anclaje** (ACI 318 17.5.2, fuera del alcance de la
+herramienta) que cose el cono y permite diseñar por el acero, o pernos con placa de anclaje
+inferior que cambian el modo de falla.
+
+## 6. Conclusiones
+
+- **Los dos métodos son el mismo equilibrio con distinta distribución supuesta.** Toda la
+  diferencia numérica se resume en el brazo de la resultante de compresión: 37.7 cm
+  (plástico) vs. 34.2 cm (elástico).
+- **La DG1 no es "la respuesta conservadora"**: lo es para la flexión de la placa (+28 % de
+  espesor requerido), pero subestima la tracción de pernos en un tercio, y esa tracción es
+  la demanda del modo de falla frágil del sistema (el cono de hormigón).
+- **El diseño no lo cerró ni la placa ni el perno, sino el pedestal.** La verificación
+  decisiva (breakout, ratio 1.53) no existe en el método clásico; apareció al conectar el
+  Capítulo 17 de ACI 318 con la tracción real por perno que entrega el solver.
+- Para auditar cualquiera de los números de este post: las fórmulas están en la
+  [nota teórica](/blog/placas-base-sap2000) sección por sección, y la
+  [herramienta](/herramientas/placa-base) enlaza cada fila de su tabla de verificaciones
+  con la sección (§n) correspondiente.

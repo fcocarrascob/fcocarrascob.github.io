@@ -36,9 +36,13 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
 
 ## B. Posts
 
-- [ ] **B1. Ejemplo trabajado de placa base** — el mismo caso resuelto a mano con la
-  DG1 clásica (bloque rectangular, excentricidad grande) y con la herramienta,
-  mostrando dónde y por qué difieren. Cierra el triángulo teoría–herramienta–práctica.
+- [x] **B1. Ejemplo trabajado de placa base** (hecho 2026-07-04):
+  `src/content/blog/placa-base-ejemplo-trabajado.mdx` — el caso por defecto de la
+  herramienta con Mux = 12 tonf·m (e = 30 cm, excentricidad grande) resuelto a mano con
+  la DG1 y con la herramienta. Núcleo: mismo equilibrio con distinto brazo de la
+  resultante (37.7 vs 34.2 cm → T +51 % en el elástico; flexión de placa +28 % en la
+  DG1), y el breakout (Cap. 17) que la DG1 no formula falla con ambos métodos y termina
+  gobernando el pedestal. Figura comparativa en `public/placa-base-ejemplo/`.
 - [ ] **B2. Esquema opcional pendiente (post 3, experimento fundaciones)** — diagrama
   del diseño del barrido en dos niveles (LHS sobre el espacio adimensional × barrido
   de e/B por geometría). Prioridad baja: las tablas ya lo cuentan.
