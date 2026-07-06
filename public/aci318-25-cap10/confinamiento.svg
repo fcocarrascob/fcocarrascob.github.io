@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="fa2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <pattern id="spall" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#f3e2d9"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#c9a28e" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+  <rect width="940" height="420" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Por qué la norma premia al zuncho: qué pasa después de que salta el recubrimiento</text>
+
+  <!-- ===== Left: tied column ===== -->
+  <g>
+    <text x="240" y="60" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Estribos — φ = 0.65 · P_n,max = 0.80·P₀</text>
+    <!-- section -->
+    <rect x="150" y="80" width="180" height="150" fill="url(#spall)" stroke="#8a857c"/>
+    <rect x="175" y="102" width="130" height="106" fill="#efece6" stroke="#1c7c3c" stroke-width="3"/>
+    <g fill="#3f3f3f">
+      <circle cx="188" cy="115" r="6"/><circle cx="240" cy="115" r="6"/><circle cx="292" cy="115" r="6"/>
+      <circle cx="188" cy="195" r="6"/><circle cx="240" cy="195" r="6"/><circle cx="292" cy="195" r="6"/>
+    </g>
+    <text x="345" y="95" font-size="11.5" fill="#b35c0e">recubrimiento:</text>
+    <text x="345" y="109" font-size="11.5" fill="#b35c0e">salta cerca de P_n</text>
+    <text x="345" y="135" font-size="11.5" fill="#1c7c3c">estribo: soporte</text>
+    <text x="345" y="149" font-size="11.5" fill="#1c7c3c">discreto, confina poco</text>
+    <!-- P-delta curve -->
+    <line x1="140" y1="390" x2="430" y2="390" stroke="#333" stroke-width="1.3" marker-end="url(#fa2)"/>
+    <line x1="140" y1="390" x2="140" y2="260" stroke="#333" stroke-width="1.3" marker-end="url(#fa2)"/>
+    <text x="424" y="406" font-size="11.5" fill="#333">δ</text>
+    <text x="134" y="258" font-size="11.5" fill="#333" text-anchor="end">P</text>
+    <path d="M 140,390 C 180,320 215,288 245,285 C 268,284 285,330 320,372" fill="none" stroke="#c0392b" stroke-width="2.8"/>
+    <text x="278" y="320" font-size="11.5" fill="#c0392b">cae de golpe:</text>
+    <text x="278" y="334" font-size="11.5" fill="#c0392b">falla frágil</text>
+  </g>
+
+  <!-- ===== Right: spiral column ===== -->
+  <g>
+    <text x="700" y="60" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Zuncho (espiral) — φ = 0.75 · P_n,max = 0.85·P₀</text>
+    <!-- section -->
+    <circle cx="700" cy="155" r="85" fill="url(#spall)" stroke="#8a857c"/>
+    <circle cx="700" cy="155" r="62" fill="#efece6" stroke="#1c7c3c" stroke-width="4"/>
+    <g fill="#3f3f3f">
+      <circle cx="700" cy="102" r="6"/><circle cx="746" cy="128" r="6"/><circle cx="746" cy="182" r="6"/>
+      <circle cx="700" cy="208" r="6"/><circle cx="654" cy="182" r="6"/><circle cx="654" cy="128" r="6"/>
+    </g>
+    <text x="800" y="120" font-size="11.5" fill="#1c7c3c">la hélice aprieta el núcleo</text>
+    <text x="800" y="134" font-size="11.5" fill="#1c7c3c">de forma continua: triaxial</text>
+    <text x="800" y="160" font-size="11.5" fill="#b35c0e">el recubrimiento salta</text>
+    <text x="800" y="174" font-size="11.5" fill="#b35c0e">igual... pero no importa</text>
+    <!-- P-delta curve -->
+    <line x1="580" y1="390" x2="895" y2="390" stroke="#333" stroke-width="1.3" marker-end="url(#fa2)"/>
+    <line x1="580" y1="390" x2="580" y2="260" stroke="#333" stroke-width="1.3" marker-end="url(#fa2)"/>
+    <text x="889" y="406" font-size="11.5" fill="#333">δ</text>
+    <text x="574" y="258" font-size="11.5" fill="#333" text-anchor="end">P</text>
+    <path d="M 580,390 C 620,320 655,288 685,285 C 700,284 705,300 715,305 C 745,318 800,310 855,300" fill="none" stroke="#1c7c3c" stroke-width="2.8"/>
+    <text x="762" y="352" font-size="11.5" fill="#1c7c3c">el núcleo confinado sigue</text>
+    <text x="762" y="366" font-size="11.5" fill="#1c7c3c">cargando: falla dúctil, avisada</text>
+  </g>
+</svg>

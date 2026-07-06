@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 410" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+    <marker id="aar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="aag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="410" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">La adherencia por dentro: bielas radiales, anillo de tracción y las dos formas de fallar</text>
+
+  <!-- ===== Left: cross section, radial struts and ring ===== -->
+  <g>
+    <text x="235" y="62" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Sección transversal: qué empuja la barra</text>
+    <rect x="90" y="80" width="290" height="240" fill="#efece6" stroke="#8a857c"/>
+    <!-- bar -->
+    <circle cx="235" cy="250" r="20" fill="#3f3f3f"/>
+    <!-- radial struts -->
+    <g stroke="#1a63a8" stroke-width="2.2">
+      <line x1="235" y1="226" x2="235" y2="186" marker-end="url(#aa)"/>
+      <line x1="252" y1="233" x2="284" y2="204" marker-end="url(#aa)"/>
+      <line x1="259" y1="250" x2="302" y2="250" marker-end="url(#aa)"/>
+      <line x1="252" y1="267" x2="284" y2="296" marker-end="url(#aa)"/>
+      <line x1="218" y1="267" x2="186" y2="296" marker-end="url(#aa)"/>
+      <line x1="211" y1="250" x2="168" y2="250" marker-end="url(#aa)"/>
+      <line x1="218" y1="233" x2="186" y2="204" marker-end="url(#aa)"/>
+    </g>
+    <text x="318" y="222" font-size="11.5" fill="#1a63a8">bielas radiales</text>
+    <text x="318" y="237" font-size="11.5" fill="#1a63a8">(las corrugas empujan)</text>
+    <!-- tension ring -->
+    <circle cx="235" cy="250" r="52" fill="none" stroke="#b02a1a" stroke-width="2.2" stroke-dasharray="7 5"/>
+    <text x="118" y="188" font-size="11.5" fill="#b02a1a">anillo de tracción</text>
+    <text x="118" y="203" font-size="11.5" fill="#b02a1a">en el hormigón</text>
+    <!-- splitting cracks to cover -->
+    <line x1="235" y1="272" x2="235" y2="318" stroke="#c0392b" stroke-width="2.4"/>
+    <line x1="219" y1="266" x2="150" y2="318" stroke="#c0392b" stroke-width="2.4"/>
+    <line x1="251" y1="266" x2="320" y2="318" stroke="#c0392b" stroke-width="2.4"/>
+    <!-- cover dim -->
+    <line x1="415" y1="270" x2="415" y2="320" stroke="#666" stroke-width="1" marker-start="url(#aag)" marker-end="url(#aag)" transform="translate(-12,0)"/>
+    <text x="412" y="298" font-size="11.5" fill="#666">c_b</text>
+    <text x="235" y="345" font-size="12" fill="#c0392b" text-anchor="middle">si el anillo revienta hacia el recubrimiento: SPLITTING</text>
+    <text x="235" y="362" font-size="12" fill="#555" text-anchor="middle">por eso ℓ_d depende de c_b y de los estribos (K_tr), no solo de la barra</text>
+  </g>
+
+  <!-- ===== Right: longitudinal, force dripping in ===== -->
+  <g>
+    <text x="705" y="62" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Longitudinal: la fuerza entra de a poco</text>
+    <rect x="530" y="80" width="360" height="180" fill="#efece6" stroke="#8a857c"/>
+    <!-- bar entering from left face -->
+    <rect x="490" y="160" width="330" height="16" fill="#3f3f3f"/>
+    <line x1="488" y1="168" x2="448" y2="168" stroke="#b02a1a" stroke-width="3" marker-end="url(#aar)"/>
+    <text x="448" y="152" font-size="13.5" fill="#b02a1a" font-weight="bold">T = A_b·f_y</text>
+    <!-- bond stress arrows along embedment -->
+    <g stroke="#1a63a8" stroke-width="1.8">
+      <line x1="560" y1="150" x2="545" y2="150" marker-end="url(#aa)"/>
+      <line x1="610" y1="150" x2="595" y2="150" marker-end="url(#aa)"/>
+      <line x1="660" y1="150" x2="645" y2="150" marker-end="url(#aa)"/>
+      <line x1="710" y1="150" x2="695" y2="150" marker-end="url(#aa)"/>
+      <line x1="760" y1="150" x2="745" y2="150" marker-end="url(#aa)"/>
+      <line x1="560" y1="186" x2="545" y2="186" marker-end="url(#aa)"/>
+      <line x1="610" y1="186" x2="595" y2="186" marker-end="url(#aa)"/>
+      <line x1="660" y1="186" x2="645" y2="186" marker-end="url(#aa)"/>
+      <line x1="710" y1="186" x2="695" y2="186" marker-end="url(#aa)"/>
+      <line x1="760" y1="186" x2="745" y2="186" marker-end="url(#aa)"/>
+    </g>
+    <text x="770" y="140" font-size="11.5" fill="#1a63a8">adherencia repartida</text>
+    <!-- ld dim -->
+    <line x1="530" y1="285" x2="820" y2="285" stroke="#666" stroke-width="1.2" marker-start="url(#aag)" marker-end="url(#aag)"/>
+    <text x="675" y="302" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">ℓ_d: el largo necesario para "colgar" f_y completo</text>
+    <text x="705" y="338" font-size="12" fill="#555" text-anchor="middle">bien confinada, la barra no revienta el anillo: la falla es por</text>
+    <text x="705" y="355" font-size="12" fill="#555" text-anchor="middle">extracción (PULLOUT) — el tope (c_b+K_tr)/d_b ≤ 2.5 marca ese cambio</text>
+  </g>
+
+  <text x="470" y="394" font-size="12.5" text-anchor="middle" fill="#555">Más recubrimiento y más estribos ayudan hasta que deja de mandar el splitting; después, solo queda alargar la barra.</text>
+</svg>

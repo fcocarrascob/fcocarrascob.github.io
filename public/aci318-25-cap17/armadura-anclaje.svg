@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="arr4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="760" height="500" fill="#ffffff"/>
+  <text x="300" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Armadura de anclaje (§17.5.2.1): la armadura "cose" el cono</text>
+  <g transform="translate(0,40)">
+  <!-- pedestal section -->
+  <rect x="120" y="80" width="360" height="350" fill="#efece6" stroke="#8a857c"/>
+  <rect x="160" y="67" width="280" height="13" fill="#5b6470"/>
+
+  <!-- failure cone from anchor heads -->
+  <polygon points="253,340 267,340 120,192 120,80 480,80 480,206 361,325 347,325" fill="#d9480f" fill-opacity="0.10"/>
+  <line x1="253" y1="340" x2="120" y2="192" stroke="#d9480f" stroke-width="2" stroke-dasharray="7 4"/>
+  <line x1="361" y1="325" x2="480" y2="206" stroke="#d9480f" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="410" y="250" font-size="12" fill="#d9480f" transform="rotate(-45 410,250)">plano de falla</text>
+
+  <!-- anchors -->
+  <rect x="254" y="40" width="12" height="300" fill="#3f3f3f"/>
+  <rect x="244" y="340" width="32" height="10" fill="#3f3f3f"/>
+  <rect x="348" y="40" width="12" height="285" fill="#3f3f3f"/>
+  <rect x="338" y="325" width="32" height="10" fill="#3f3f3f"/>
+  <line x1="260" y1="40" x2="260" y2="14" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#arr4r)"/>
+  <line x1="354" y1="40" x2="354" y2="14" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#arr4r)"/>
+  <text x="268" y="24" font-size="13" fill="#b02a1a" font-weight="bold">N_ua</text>
+
+  <!-- vertical anchor reinforcement bars, hooked at top, running deep past the cone -->
+  <g stroke="#1a63a8" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M212,96 h-38 M212,96 v330"/>
+    <path d="M308,96 h-38 M308,96 v330"/>
+    <path d="M398,96 h38 M398,96 v330"/>
+  </g>
+  <text x="497" y="120" font-size="12.5" fill="#1a63a8">barras verticales del pedestal:</text>
+  <text x="497" y="136" font-size="12.5" fill="#1a63a8">desarrolladas a AMBOS lados</text>
+  <text x="497" y="152" font-size="12.5" fill="#1a63a8">del plano de falla</text>
+  <line x1="493" y1="130" x2="404" y2="130" stroke="#1a63a8" stroke-width="1.4" marker-end="url(#arr4)"/>
+
+  <!-- development lengths annotation -->
+  <line x1="163" y1="96" x2="163" y2="245" stroke="#666" stroke-width="1" marker-start="url(#arr4)" marker-end="url(#arr4)"/>
+  <text x="157" y="175" font-size="12" fill="#666" text-anchor="end">l_d sobre</text>
+  <text x="157" y="190" font-size="12" fill="#666" text-anchor="end">el cono</text>
+  <line x1="163" y1="255" x2="163" y2="420" stroke="#666" stroke-width="1" marker-start="url(#arr4)" marker-end="url(#arr4)"/>
+  <text x="157" y="330" font-size="12" fill="#666" text-anchor="end">l_d bajo el</text>
+  <text x="157" y="345" font-size="12" fill="#666" text-anchor="end">cono (a la</text>
+  <text x="157" y="360" font-size="12" fill="#666" text-anchor="end">fundación)</text>
+
+  <!-- distance bar-anchor -->
+  <line x1="212" y1="60" x2="254" y2="60" stroke="#666" stroke-width="1" marker-start="url(#arr4)" marker-end="url(#arr4)"/>
+  <text x="233" y="52" font-size="12" fill="#666" text-anchor="middle">≤ 0.5·h_ef</text>
+
+  <!-- stirrups (top ones take shear) -->
+  <g stroke="#1c7c3c" stroke-width="3" fill="none">
+    <rect x="140" y="106" width="320" height="8" rx="4"/>
+    <rect x="140" y="132" width="320" height="8" rx="4"/>
+    <rect x="140" y="158" width="320" height="8" rx="4"/>
+    <rect x="140" y="230" width="320" height="8" rx="4"/>
+    <rect x="140" y="310" width="320" height="8" rx="4"/>
+    <rect x="140" y="390" width="320" height="8" rx="4"/>
+  </g>
+  <text x="497" y="190" font-size="12.5" fill="#1c7c3c">estribos: los superiores</text>
+  <text x="497" y="206" font-size="12.5" fill="#1c7c3c">(≤ 0.5·c_a1) toman el corte V</text>
+  <line x1="493" y1="200" x2="464" y2="162" stroke="#1c7c3c" stroke-width="1.4" marker-end="url(#arr4)"/>
+
+  <!-- design box -->
+  <rect x="497" y="250" width="248" height="120" rx="6" fill="#eef4fb" stroke="#1a63a8"/>
+  <text x="509" y="274" font-size="13" fill="#222" font-weight="bold">Diseño (φ = 0.75):</text>
+  <text x="509" y="296" font-size="13" fill="#222">A_s ≥ N_ua,grupo / (0.75·f_y)</text>
+  <text x="509" y="318" font-size="12.5" fill="#222">Si cumple → se IGNORA el</text>
+  <text x="509" y="334" font-size="12.5" fill="#222">breakout (T2/V2) y el modo</text>
+  <text x="509" y="350" font-size="12.5" fill="#222">pasa a ser dúctil ✓</text>
+
+  <text x="380" y="450" font-size="12.5" text-anchor="middle" fill="#555">Es exactamente lo que hacen las barras con gancho y los estribos del pedestal en el corte 1A del plano</text>
+  </g>
+</svg>

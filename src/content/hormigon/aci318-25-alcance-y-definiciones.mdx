@@ -1,29 +1,90 @@
 ---
-title: "ACI 318-25 — Alcance, Materiales y Definiciones Clave"
-description: "Resumen del Capítulo 1 y términos fundamentales de ACI 318-25: alcance de la norma, materiales cubiertos y definiciones esenciales para el diseño."
+title: "ACI 318-25 — Alcance, Materiales y el Contrato de la Norma"
+description: "La nota fundacional de la serie: el contrato φRn ≥ U y por qué usa dos factores, la tabla de φ leída como el mapa de miedos de la norma (dúctil vs frágil), alcance de ACI 318-25, materiales y definiciones clave."
 pubDate: 2026-06-11
-tags: ["aci318", "definiciones", "materiales"]
+updatedDate: 2026-07-06
+tags: ["aci318", "definiciones", "materiales", "lrfd", "factores de reducción"]
 subsection: "aci318-25"
 chapter: "Cap. 1 — Alcance"
 ---
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## El contrato de la norma
+
+Todo ACI 318 se sostiene sobre una sola desigualdad, que conviene entender antes de
+abrir cualquier capítulo:
+
+$$
+\phi R_n \geq U
+$$
+
+La **resistencia de diseño** (lo que el elemento ofrece, recortado) debe superar a la
+**carga mayorada** (lo que se le exige, inflado). Que sean *dos* factores — γ inflando
+las cargas y φ recortando la resistencia — y no un solo "factor de seguridad" no es
+burocracia: es que las dos incertidumbres son de naturaleza distinta y se calibran por
+separado.
+
+<Figure
+  src="/aci318-25-cap1/margen-lrfd.svg"
+  alt="Dos distribuciones de probabilidad, el efecto real de las cargas y la resistencia real, con los valores nominales y mayorados marcados: gamma infla las cargas hacia la derecha, phi recorta la resistencia hacia la izquierda, y el margen de diseño queda entre U y phi Rn"
+  caption="Las cargas se conocen mal y varían durante la vida útil (γ depende de la carga); la resistencia varía por materiales y ejecución, y equivocarse cuesta distinto según cómo falla el elemento (φ depende del modo de falla). La falla ocurre solo cuando ambas colas coinciden."
+/>
+
+- **γ depende de la carga**: el peso propio se conoce bien (γ = 1.2), la sobrecarga mal
+  (γ = 1.6). Los factores de carga (Sec. 5.3, basados en ASCE 7) miden *qué tan mal se
+  conoce la demanda*.
+- **φ depende del modo de falla**: mide la dispersión de la resistencia (materiales,
+  mano de obra, dimensiones) **y las consecuencias de equivocarse**. Y aquí está la
+  clave de lectura de toda la norma.
+
+## La tabla de φ es el mapa de miedos de la norma
+
+| Modo de falla | $\phi$ | Por qué |
+|---------------|:------:|---------|
+| Flexión controlada por tracción | 0.90 | El acero fluye: falla **dúctil**, avisada, con capacidad de redistribuir |
+| Corte y torsión | 0.75 | Los estribos fluyen, pero la falla es más brusca y más sensible a la ejecución |
+| Compresión (con espiral) | 0.75 | El núcleo confinado mantiene capacidad tras perder el recubrimiento |
+| Compresión (con estribos) | 0.65 | El hormigón se aplasta: falla **frágil**, sin aviso |
+| Aplastamiento del hormigón | 0.65 | Ídem: el hormigón trabajando solo, sin acero que fluya |
+
+Léase de arriba hacia abajo: **φ baja a medida que la falla pierde ductilidad**. La
+norma no premia la precisión del cálculo — premia el modo de falla. De esa jerarquía se
+desprende la estrategia que se repite en todos los capítulos de diseño y que vale la
+pena enunciar una vez:
+
+<Note type="tip" title="La estrategia transversal: proteger lo frágil, hacer fluir lo dúctil">
+Cada capítulo de la norma identifica sus modos dúctiles (acero que fluye) y sus modos
+frágiles (hormigón que se aplasta, corta o desprende), y organiza sus reglas para que el
+elemento **siempre tenga un modo dúctil disponible antes que el frágil**: mínimos de
+acero, topes de cuantía, confinamiento, refuerzos "de integridad". Cuando una regla de la
+norma parezca arbitraria, preguntarse primero *qué falla frágil está evitando* — casi
+siempre esa es la respuesta.
+</Note>
+
+---
 
 ## Alcance de ACI 318-25
 
-ACI 318-25 establece los requerimientos mínimos para el diseño y construcción de elementos estructurales de hormigón armado y pretensado en edificios y otras estructuras. Cubre:
+ACI 318-25 establece los requerimientos mínimos para el diseño y construcción de
+elementos estructurales de hormigón en edificios y otras estructuras. Cubre:
 
 - Hormigón estructural armado con barras o mallas de acero
 - Hormigón pretensado (pre y postesado)
 - Elementos compuestos hormigón-acero
 - Anclajes en hormigón
 
-La norma **no aplica** a estructuras de hormigón simple (sin refuerzo) ni a elementos de hormigón de masa (masa dams).
+La norma **no aplica** a estructuras de hormigón simple (sin refuerzo) ni a presas de
+hormigón masivo.
 
-<Note type="tip" title="Versión 2025">
-ACI 318-25 es la edición más reciente, con ciclo de actualización quinquenal. Los cambios respecto a ACI 318-19 se identifican con barras laterales en el texto de la norma.
+<Note type="info" title="Versión 2025">
+ACI 318-25 es la edición vigente, con ciclo de actualización quinquenal. Los cambios
+respecto de ACI 318-19 se identifican con barras laterales en el texto de la norma.
 </Note>
+
+---
 
 ## Materiales
 
@@ -32,10 +93,8 @@ ACI 318-25 es la edición más reciente, con ciclo de actualización quinquenal.
 | Parámetro | Símbolo | Rango típico |
 |-----------|---------|:------------:|
 | Resistencia cilíndrica especificada | $f'_c$ | 17 – 70 MPa |
-| Módulo de elasticidad (normal weight) | $E_c$ | ver Ec. 19.2.2 |
+| Módulo de elasticidad (peso normal) | $E_c$ | ver Ec. 19.2.2 |
 | Densidad normal | $w_c$ | 2300 kg/m³ |
-
-El módulo de elasticidad para hormigón de densidad normal se calcula como:
 
 <Equation label="Ec. 19.2.2.1a">
 $$
@@ -51,6 +110,11 @@ E_c = w_c^{1.5} \cdot 0.043 \sqrt{f'_c} \quad [\text{MPa}]
 $$
 </Equation>
 
+Nótese el patrón que se repetirá en toda la norma: casi todas las propiedades mecánicas
+del hormigón — módulo, resistencia a tracción, corte, adherencia — escalan con
+$\sqrt{f'_c}$, no con $f'_c$. Duplicar la resistencia especificada mejora esos modos
+solo un 41%.
+
 ### Acero de refuerzo
 
 | Tipo | Límite de fluencia $f_y$ | Norma |
@@ -60,27 +124,27 @@ $$
 | Grado 690 | 690 MPa | ASTM A615 |
 
 <Note type="warning" title="Límite en diseño por resistencia">
-ACI 318-25 limita el valor de $f_y$ utilizable en diseño a **550 MPa** para la mayoría de las aplicaciones (Sec. 20.2.2.4), independiente de la resistencia real del acero.
+ACI 318-25 limita el $f_y$ utilizable a **550 MPa** para la mayoría de las aplicaciones
+(Sec. 20.2.2.4), independiente de la resistencia real del acero. La razón vuelve a ser
+la ductilidad: con aceros de muy alta fluencia, las deformaciones necesarias para
+movilizarlos implican fisuras y flechas incompatibles con el servicio, y el margen entre
+fluencia y rotura se estrecha.
 </Note>
+
+---
 
 ## Definiciones clave
 
-**Resistencia nominal** ($R_n$) — resistencia calculada según las ecuaciones de ACI 318 usando las propiedades especificadas de materiales y las dimensiones nominales de la sección.
+**Resistencia nominal** ($R_n$) — la calculada con las ecuaciones de la norma usando
+las propiedades **especificadas** de los materiales y las dimensiones nominales. Es un
+valor de contrato, no una predicción del ensayo: la resistencia real suele ser mayor
+(materiales por sobre lo especificado), y esa reserva es parte de la calibración de φ.
 
-**Resistencia de diseño** ($\phi R_n$) — resistencia nominal reducida por el factor de reducción $\phi$. Debe ser mayor o igual al efecto de las cargas mayoradas:
+**Resistencia de diseño** ($\phi R_n$) — la nominal recortada por φ. Es el lado
+izquierdo del contrato.
 
-$$
-\phi R_n \geq U
-$$
+**Carga mayorada** ($U$) — la combinación de cargas de servicio amplificadas por los
+factores de la Sec. 5.3. Es el lado derecho.
 
-**Factor de reducción $\phi$** — refleja la variabilidad de materiales, mano de obra y consecuencias del tipo de falla. Varía según el modo de falla:
-
-| Modo de falla | $\phi$ |
-|---------------|:------:|
-| Flexión controlada por tensión | 0.90 |
-| Corte y torsión | 0.75 |
-| Compresión (estribos) | 0.65 |
-| Compresión (espiral) | 0.75 |
-| Aplastamiento en hormigón | 0.65 |
-
-**Carga mayorada** ($U$) — combinación de cargas de servicio amplificadas por factores de carga según ACI 318-25 Sec. 5.3 (basados en ASCE 7).
+**Resistencia requerida** — el efecto de $U$ en el elemento ($M_u$, $V_u$, $P_u$,
+$T_u$): lo que el análisis estructural entrega y el diseño debe cubrir.

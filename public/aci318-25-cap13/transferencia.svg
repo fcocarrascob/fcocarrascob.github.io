@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 460" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="tf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="tfr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="760" height="460" fill="#ffffff"/>
+  <text x="380" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">La interfaz columna–zapata: aplastamiento + dowels</text>
+
+  <!-- column -->
+  <rect x="290" y="60" width="120" height="140" fill="#dcd8d0" stroke="#8a857c"/>
+  <text x="350" y="54" font-size="12" fill="#555" text-anchor="middle">columna</text>
+  <line x1="350" y1="76" x2="350" y2="112" stroke="#b02a1a" stroke-width="3" marker-end="url(#tfr)"/>
+  <text x="360" y="90" font-size="13" fill="#b02a1a" font-weight="bold">P_u</text>
+
+  <!-- footing -->
+  <rect x="90" y="200" width="580" height="130" fill="#efece6" stroke="#8a857c"/>
+  <!-- footing rebar grid -->
+  <g fill="#3f3f3f">
+    <circle cx="130" cy="308" r="4.5"/><circle cx="200" cy="308" r="4.5"/><circle cx="270" cy="308" r="4.5"/>
+    <circle cx="340" cy="308" r="4.5"/><circle cx="410" cy="308" r="4.5"/><circle cx="480" cy="308" r="4.5"/>
+    <circle cx="550" cy="308" r="4.5"/><circle cx="620" cy="308" r="4.5"/>
+  </g>
+
+  <!-- bearing spread 2:1 -->
+  <line x1="290" y1="200" x2="170" y2="320" stroke="#1a63a8" stroke-width="2" stroke-dasharray="7 5"/>
+  <line x1="410" y1="200" x2="530" y2="320" stroke="#1a63a8" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="452" y="242" font-size="11.5" fill="#1a63a8" transform="rotate(45 452,242)">difusión 2:1</text>
+  <line x1="290" y1="206" x2="410" y2="206" stroke="#1a63a8" stroke-width="3"/>
+  <text x="424" y="212" font-size="12" fill="#1a63a8">A₁ (área cargada)</text>
+  <line x1="170" y1="324" x2="530" y2="324" stroke="#1a63a8" stroke-width="2"/>
+  <text x="544" y="328" font-size="12" fill="#1a63a8">A₂ (área similar)</text>
+
+  <!-- dowels -->
+  <g stroke="#1c7c3c" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M 312,110 L 312,296 L 282,296"/>
+    <path d="M 388,110 L 388,296 L 418,296"/>
+  </g>
+  <text x="472" y="146" font-size="12.5" fill="#1c7c3c" font-weight="bold">dowels ≥ 0.005·A_g</text>
+  <text x="472" y="163" font-size="12" fill="#1c7c3c">desarrollo en COMPRESIÓN</text>
+  <text x="472" y="179" font-size="12" fill="#1c7c3c">a ambos lados de la junta</text>
+  <line x1="468" y1="152" x2="394" y2="140" stroke="#1c7c3c" stroke-width="1.3" marker-end="url(#tf)"/>
+
+  <!-- ldc dims -->
+  <line x1="255" y1="200" x2="255" y2="110" stroke="#666" stroke-width="1" marker-start="url(#tf)" marker-end="url(#tf)"/>
+  <text x="247" y="158" font-size="11.5" fill="#666" text-anchor="end">l_dc arriba</text>
+  <line x1="255" y1="200" x2="255" y2="296" stroke="#666" stroke-width="1" marker-start="url(#tf)" marker-end="url(#tf)"/>
+  <text x="247" y="252" font-size="11.5" fill="#666" text-anchor="end">l_dc abajo</text>
+
+  <!-- notes -->
+  <rect x="90" y="352" width="580" height="94" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="104" y="374" font-size="12.5" fill="#222" font-weight="bold">Aplastamiento (Sec. 22.8): φ·(0.85·f'c·A₁)·√(A₂/A₁) con √(A₂/A₁) ≤ 2, φ = 0.65</text>
+  <text x="104" y="394" font-size="12" fill="#333">— el exceso sobre el aplastamiento (y toda la tracción, si hay uplift) viaja por los dowels.</text>
+  <text x="104" y="414" font-size="12" fill="#b35c0e" font-weight="bold">Ojo: el gancho NO cuenta para desarrollo en compresión</text>
+  <text x="104" y="432" font-size="12" fill="#555">— existe para apoyar la parrilla en obra; l_dc debe cumplirse en el tramo recto vertical.</text>
+</svg>

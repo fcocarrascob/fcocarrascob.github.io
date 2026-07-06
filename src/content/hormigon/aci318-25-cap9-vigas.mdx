@@ -1,69 +1,53 @@
 ---
 title: "ACI 318-25 Cap. 9 — Vigas"
-description: "Espesor mínimo, resistencia a flexión y cortante, refuerzo mínimo y máximo, límites de deformación, refuerzo transversal, torsión y detallado para vigas no pretensadas según ACI 318-25."
+description: "Vigas no pretensadas según ACI 318-25 contadas desde la ductilidad: las tres zonas de φ, por qué existen el refuerzo mínimo y el máximo, la analogía de celosía para el cortante, torsión, detallado y el orden de diseño completo."
 pubDate: 2026-06-11
-tags: ["vigas", "aci318", "flexión", "cortante", "torsión", "detallado"]
+updatedDate: 2026-07-06
+tags: ["vigas", "aci318", "flexión", "cortante", "torsión", "ductilidad", "detallado"]
 subsection: "aci318-25"
 chapter: "Cap. 9 — Vigas"
 ---
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
-## Alcance
+## La decisión que organiza el capítulo
 
-El Capítulo 9 aplica a vigas no pretensadas y pretensadas, incluyendo:
+Una viga de hormigón armado puede fallar de dos maneras: el **acero fluye** — la viga se
+agrieta, se deforma a la vista, avisa durante meses — o el **hormigón se aplasta** — la
+falla es súbita, sin aviso y sin capacidad residual. Todo el Capítulo 9 está construido
+para forzar la primera y prohibir la segunda: **diseñar una viga es decidir dónde y cómo
+fluye.**
 
-- Vigas que forman parte de pórticos o sistemas de losas con vigas.
-- Vigas compuestas de hormigón (Cap. 9 junto con Sec. 16.4).
-- Viguetas (sistemas nervados de la Sec. 9.8), que tienen disposiciones particulares de
-  geometría y cortante.
+Esa única decisión aparece tres veces con tres disfraces distintos, y conviene
+reconocerla en cada uno:
 
-Las vigas se diseñan para resistir simultáneamente **flexión**, **cortante** y, cuando
-corresponde, **torsión** y **carga axial**.
+| Requisito | Sección | Qué evita |
+|---|---|---|
+| Deformación mínima $\varepsilon_t \geq \varepsilon_{ty} + 0.003$ | 9.3.3.1 | Que el hormigón se aplaste antes de que el acero fluya (falla frágil *por exceso* de acero) |
+| Refuerzo mínimo $A_{s,\min}$ | 9.6.1 | Que la viga falle al abrirse la primera fisura (falla frágil *por falta* de acero) |
+| Jerarquía flexión–corte ($\phi = 0.90$ vs $0.75$, estribos mínimos, topes de $V_s$) | 9.6.3 / 22.5 | Que el corte — que no fluye — gobierne antes que la flexión |
 
----
+Ese lente — **proteger lo frágil, hacer fluir lo dúctil** — ordena todo lo que sigue:
+los modos frágiles no se "verifican y ya", se sacan de la ruta crítica.
 
-## Espesor mínimo (Tabla 9.3.1.1)
-
-Para vigas no pretensadas que **no soportan ni están unidas a particiones u otros elementos
-susceptibles de dañarse por deflexiones grandes**, se puede omitir el cálculo de
-deflexiones si la altura total cumple:
-
-| Condición de apoyo | Altura mínima $h$ |
-|--------------------|:------------------:|
-| Simplemente apoyada | $\ell / 16$ |
-| Un extremo continuo | $\ell / 18.5$ |
-| Ambos extremos continuos | $\ell / 21$ |
-| Ménsula (voladizo) | $\ell / 8$ |
-
-Los valores aplican para $f_y = 420\,\text{MPa}$ y hormigón de densidad normal; para otros
-$f_y$ se multiplican por $\left(0.4 + f_y/700\right)$. Para hormigón liviano se aplica el
-factor de la Sec. 9.3.1.1.1.
-
-<Note type="info">
-A diferencia de las losas (Cap. 7), en vigas la tabla usa la **luz $\ell$** según se
-define en la Sec. 9.3.1.1, no la luz libre $\ell_n$.
+<Note type="info" title="Alcance">
+Vigas no pretensadas y pretensadas, incluyendo vigas de pórticos y de sistemas de losas
+con vigas, vigas compuestas (con la Sec. 16.4) y viguetas (Sec. 9.8). Se diseñan para
+**flexión**, **cortante** y, cuando corresponde, **torsión** y carga axial. La resistencia
+requerida sale de las combinaciones de la Sec. 5.3: $\phi M_n \geq M_u$, $\phi V_n \geq V_u$,
+$\phi T_n \geq T_u$ en todas las secciones.
 </Note>
 
 ---
 
-## Resistencia requerida
+## 1. Flexión: el mecanismo antes que la fórmula
 
-La resistencia de diseño debe satisfacer en todas las secciones:
-
-$$
-\phi M_n \geq M_u \qquad \phi V_n \geq V_u \qquad \phi T_n \geq T_u
-$$
-
-Las solicitaciones $M_u$, $V_u$, $T_u$ se obtienen de las combinaciones mayoradas de la
-Sec. 5.3.
-
----
-
-## Resistencia a flexión
-
-Para una sección rectangular con refuerzo de tracción:
+En la sección fisurada, el par resistente lo forman el acero traccionado y un bloque de
+compresión en el hormigón. La distribución real de compresiones es curva; la norma la
+reemplaza por el **bloque rectangular equivalente** ($0.85 f'_c$ sobre una profundidad
+$a = \beta_1 c$), calibrado para reproducir la resultante y su posición:
 
 <Equation label="Ec. 22.2.2">
 $$
@@ -73,31 +57,55 @@ a = \frac{A_s \cdot f_y}{0.85 \cdot f'_c \cdot b}
 $$
 </Equation>
 
-### Factor de reducción según deformación (Tabla 21.2.2)
+La segunda ecuación es solo equilibrio horizontal (tracción = compresión), y dice algo
+útil: **más acero → bloque más profundo → eje neutro más abajo**. Guardar esa cadena,
+porque es la que conecta la cantidad de acero con la ductilidad.
 
-El factor $\phi$ depende de la deformación neta de tracción $\varepsilon_t$ en el acero
-más alejado:
+### 1.1 Las tres zonas de φ
+
+En el instante de la resistencia nominal, el hormigón está en $\varepsilon_{cu} = 0.003$
+y la geometría del triángulo de deformaciones fija cuánto se estiró el acero extremo:
+$\varepsilon_t = 0.003\,(d_t - c)/c$. Ese número — no la cuantía, no el momento — es el
+que la norma usa para clasificar la falla y asignar φ:
+
+<Figure
+  src="/aci318-25-cap9/zonas-deformacion.svg"
+  alt="Sección de viga con su triángulo de deformaciones, y gráfico de φ en función de la deformación del acero extremo mostrando las tres zonas: compresión-controlada con φ 0.65, transición, y tracción-controlada con φ 0.90 donde deben diseñarse las vigas"
+  caption="La Tabla 21.2.2 en una figura: φ no premia la precisión del cálculo, premia el modo de falla. La cadena completa: menos acero → c más chico → ε_t más grande → falla más dúctil → φ más alto."
+/>
 
 | Clasificación | $\varepsilon_t$ | $\phi$ |
 |---------------|:---------------:|:------:|
 | Controlada por compresión | $\leq \varepsilon_{ty}$ | 0.65 (estribos) / 0.75 (zunchos) |
-| Transición | $\varepsilon_{ty} < \varepsilon_t < \varepsilon_{ty}+0.003$ | interpolación lineal |
+| Transición | $\varepsilon_{ty} \lt \varepsilon_t \lt \varepsilon_{ty}+0.003$ | interpolación lineal |
 | Controlada por tracción | $\geq \varepsilon_{ty}+0.003$ | 0.90 |
 
-donde $\varepsilon_{ty} = f_y / E_s$. Para acero Gr 420, $\varepsilon_{ty} \approx 0.0021$
-y el límite de tracción controlada es $\varepsilon_t \geq 0.005$.
+con $\varepsilon_{ty} = f_y/E_s$ ($\approx 0.0021$ para Gr 420, de donde sale el límite
+familiar de 0.005).
 
-<Note type="warning" title="Límite de deformación en vigas (Sec. 9.3.3.1)">
-Las vigas no pretensadas con carga axial mayorada $< 0.10 f'_c A_g$ deben diseñarse con
-$\varepsilon_t \geq \varepsilon_{ty} + 0.003$ (controladas por tracción). Esto obliga a
-secciones dúctiles y evita fallas frágiles por aplastamiento del hormigón.
+<Note type="warning" title="Las vigas no pueden vivir en transición (Sec. 9.3.3.1)">
+Para vigas con carga axial menor que $0.10 f'_c A_g$, la zona de transición está
+**prohibida**: deben ser controladas por tracción. No es una penalización de φ, es un
+requisito. En la práctica equivale a acotar el eje neutro a $c/d_t \leq 0.375$ (Gr 420) —
+y es el **límite máximo de acero** del capítulo, impuesto por ductilidad y no por una
+cuantía tabulada.
 </Note>
 
 ---
 
-## Refuerzo mínimo de flexión (Sec. 9.6.1.2)
+## 2. Refuerzo mínimo: la otra falla frágil (Sec. 9.6.1)
 
-El área de tracción no puede ser inferior al mayor de:
+El límite máximo evita la falla frágil por *exceso* de acero. El mínimo evita la
+opuesta, menos intuitiva: una viga con muy poco acero resiste **más antes de fisurarse
+que después**. El hormigón traccionado aporta $M_{cr}$; al abrirse la primera fisura esa
+contribución desaparece de golpe, y si el acero no alcanza a tomarla, la viga falla en
+ese instante — frágil, con el acero rompiéndose de una vez.
+
+<Figure
+  src="/aci318-25-cap9/refuerzo-minimo.svg"
+  alt="Curva momento-deflexión mostrando la rama elástica hasta Mcr y las dos ramas posteriores: con acero bajo el mínimo la resistencia cae bajo Mcr y la falla es frágil; con As mínimo la sección fisurada sigue subiendo hasta la fluencia dúctil"
+  caption="A_s,min garantiza que M_n ≥ M_cr: la fisuración debe ser un evento en la vida de la viga, no el final."
+/>
 
 <Equation label="Ec. 9.6.1.2">
 $$
@@ -109,23 +117,51 @@ A_{s,\min} = \max\left(
 $$
 </Equation>
 
-No se exige $A_{s,\min}$ si el refuerzo provisto supera en un tercio al requerido por
-análisis (Sec. 9.6.1.3).
+Los dos términos son el mismo requisito en rangos distintos: el primero escala con
+$\sqrt{f'_c}$ igual que el módulo de rotura (hormigones más resistentes se fisuran a
+momentos mayores y piden más acero mínimo); el segundo es el piso para hormigones
+corrientes. Y la excepción de la Sec. 9.6.1.3 — no se exige $A_{s,\min}$ si el acero
+provisto supera en un tercio al requerido por análisis — es coherente con el mecanismo:
+si ya hay margen sobre la demanda real, el salto de la fisuración está cubierto.
 
 ---
 
-## Refuerzo máximo
+## 3. Espesor mínimo (Tabla 9.3.1.1)
 
-El límite máximo se impone indirectamente a través del requisito de ductilidad: como las
-vigas deben ser controladas por tracción ($\varepsilon_t \geq \varepsilon_{ty}+0.003$), la
-cuantía queda acotada. Equivale a limitar la profundidad del eje neutro a
-$c/d_t \leq 0.375$ para acero Gr 420.
+Para vigas que no soportan ni están unidas a elementos susceptibles de dañarse por
+deflexiones, la tabla permite **omitir el cálculo de deflexiones** — es un subrogante de
+rigidez, no un requisito de resistencia:
+
+| Condición de apoyo | Altura mínima $h$ |
+|--------------------|:------------------:|
+| Simplemente apoyada | $\ell / 16$ |
+| Un extremo continuo | $\ell / 18.5$ |
+| Ambos extremos continuos | $\ell / 21$ |
+| Ménsula (voladizo) | $\ell / 8$ |
+
+Los valores aplican para $f_y = 420$ MPa y hormigón de densidad normal; para otros $f_y$
+se multiplican por $(0.4 + f_y/700)$, y para hormigón liviano aplica la Sec. 9.3.1.1.1.
+
+<Note type="info">
+A diferencia de las losas (Cap. 7), la tabla de vigas usa la **luz $\ell$** de la
+Sec. 9.3.1.1, no la luz libre $\ell_n$.
+</Note>
 
 ---
 
-## Resistencia a cortante (Cap. 22)
+## 4. Cortante: la viga fisurada es una celosía
 
-La resistencia nominal combina la contribución del hormigón y del refuerzo transversal:
+Cuando las fisuras diagonales se abren, la viga deja de ser un sólido y pasa a trabajar
+como una **celosía**: el hormigón entre fisuras forma bielas comprimidas a ~45°, el
+acero longitudinal es el cordón traccionado, la cabeza comprimida el cordón superior, y
+los estribos son los **montantes traccionados** que cierran el circuito. Casi todas las
+reglas de cortante del capítulo se leen directamente de esa imagen:
+
+<Figure
+  src="/aci318-25-cap9/celosia-corte.svg"
+  alt="Viga en elevación con fisuras diagonales a 45 grados y la celosía equivalente superpuesta: cordón comprimido de hormigón, cordón traccionado de acero, bielas diagonales comprimidas y estribos como montantes; con la deducción de s menor o igual a d/2 y el tope de Vs que protege la biela"
+  caption="La analogía de celosía: cada regla de cortante corresponde a un elemento. Estribos = montantes (V_s), bielas = tope de 0.66√f'c, y el espaciamiento máximo d/2 sale de exigir que toda fisura cruce al menos un estribo."
+/>
 
 <Equation label="Ec. 22.5.1.1">
 $$
@@ -133,37 +169,48 @@ V_n = V_c + V_s \qquad \phi V_n \geq V_u \quad (\phi = 0.75)
 $$
 </Equation>
 
-### Contribución del hormigón (Tabla 22.5.5.1)
+El φ de 0.75 — y no 0.90 — es el lente dúctil/frágil otra vez: aunque los estribos
+fluyan, la falla de corte es menos avisada y más sensible a la ejecución que la de
+flexión.
 
-Para elementos no pretensados sin fuerza axial, $V_c$ es el menor entre las expresiones que
-incorporan la cuantía de refuerzo longitudinal $\rho_w$ y el efecto de tamaño:
+### 4.1 Contribución del hormigón (Tabla 22.5.5.1)
+
+$V_c$ agrupa lo que la celosía no dibuja: el cordón comprimido no fisurado, el
+engranaje de áridos entre caras de fisura y el efecto pasador del acero longitudinal.
+Para elementos no pretensados:
 
 <Equation label="Ec. 22.5.5.1">
 $$
-V_c = \left(0.66\,\lambda\,(\rho_w)^{1/3}\sqrt{f'_c} + \frac{N_u}{6 A_g}\right) b_w d
+V_c = \left(0.66\,\lambda_s\,\lambda\,(\rho_w)^{1/3}\sqrt{f'_c} + \frac{N_u}{6 A_g}\right) b_w d
 $$
 </Equation>
 
-con el factor de tamaño $\lambda_s = \sqrt{2/(1+0.004 d)} \leq 1.0$ aplicado cuando no hay
-estribos mínimos. (En la edición 25 se mantiene el enfoque ACI 318-19 que incorpora $\rho_w$
-en lugar del clásico $0.17\sqrt{f'_c}$.)
+Los términos no son decorativos: $(\rho_w)^{1/3}$ está porque más acero longitudinal
+mantiene las fisuras más cerradas y el engranaje de áridos vivo (herencia del ACI
+318-19, reemplaza al clásico $0.17\sqrt{f'_c}$); la compresión axial $N_u$ cierra
+fisuras y suma. Y el **factor de tamaño** $\lambda_s = \sqrt{2/(1+0.004d)} \leq 1$
+(aplicable sin estribos mínimos) reconoce que las vigas altas fallan a tensiones de
+corte *menores* — las fisuras más anchas degradan el engranaje — uno de los resultados
+experimentales más importantes de las últimas décadas.
 
-### Contribución de los estribos (Ec. 22.5.10.5.3)
+### 4.2 Contribución de los estribos
 
 <Equation label="Ec. 22.5.10.5.3">
 $$
-V_s = \frac{A_v \, f_{yt} \, d}{s}
+V_s = \frac{A_v \, f_{yt} \, d}{s} \qquad \text{con } V_s \leq 0.66\sqrt{f'_c}\,b_w d
 $$
 </Equation>
 
-donde $A_v$ es el área de las ramas de estribo, $f_{yt}$ su límite elástico y $s$ el
-espaciamiento. La resistencia $V_s$ está limitada a $V_s \leq 0.66\sqrt{f'_c}\,b_w d$.
+La fórmula es literalmente la celosía: una fisura de proyección horizontal $\approx d$
+cruza $d/s$ estribos, cada uno aportando $A_v f_{yt}$. Y el tope de $0.66\sqrt{f'_c}$
+protege a la **biela**: pasado ese punto, agregar estribos no sirve porque el hormigón
+diagonal se aplasta antes de que fluyan — la falla volvería a ser frágil.
 
----
+### 4.3 Mínimos y espaciamientos (Sec. 9.6.3 / Tabla 9.7.6.2.2)
 
-## Refuerzo transversal mínimo (Sec. 9.6.3)
-
-Se requiere refuerzo de cortante mínimo cuando $V_u > 0.5\,\phi V_c$:
+Se requiere estribo mínimo cuando $V_u > 0.5\,\phi V_c$ — el mismo argumento del
+$A_{s,\min}$ de flexión, ahora en diagonal: que la formación de la primera fisura de
+corte no sea la falla.
 
 <Equation label="Ec. 9.6.3.4">
 $$
@@ -175,19 +222,23 @@ A_{v,\min} = \max\left(
 $$
 </Equation>
 
-### Espaciamiento máximo de estribos (Tabla 9.7.6.2.2)
-
 | $V_s$ | $s_{\max}$ (el menor) |
 |-------|:--------------------:|
 | $\leq 0.33\sqrt{f'_c}\,b_w d$ | $\min(d/2,\; 600\,\text{mm})$ |
 | $> 0.33\sqrt{f'_c}\,b_w d$ | $\min(d/4,\; 300\,\text{mm})$ |
 
+El $d/2$ sale de la figura: toda fisura potencial debe cruzar al menos un estribo. Con
+corte alto ($V_s$ grande) las bielas se empinan y se exige $d/4$ — al menos dos estribos
+por fisura.
+
 ---
 
-## Torsión (Cap. 22.7)
+## 5. Torsión (Sec. 22.7)
 
-La torsión puede despreciarse si el momento torsor mayorado es menor que el umbral de
-fisuración por torsión:
+La torsión convierte a la viga en un **tubo de pared delgada**: el flujo de corte
+circula por el perímetro (el núcleo casi no participa — por eso las fórmulas usan
+$A_{cp}$ y $p_{cp}$, área y perímetro exteriores, y no la inercia polar). Puede
+despreciarse bajo el umbral de fisuración:
 
 <Equation label="Ec. 22.7.4.1">
 $$
@@ -195,47 +246,66 @@ T_u \leq \phi\,\lambda\sqrt{f'_c}\left(\frac{A_{cp}^2}{p_{cp}}\right)
 $$
 </Equation>
 
-donde $A_{cp}$ es el área encerrada por el perímetro exterior y $p_{cp}$ ese perímetro.
-Cuando se supera, se dimensiona refuerzo transversal cerrado (estribos) **y** longitudinal
-para resistir la torsión, combinados con los del cortante y la flexión.
+Superado el umbral, el tubo fisurado trabaja como **celosía espacial** — la misma del
+cortante, envuelta alrededor de la sección — y por eso el diseño pide *ambos* refuerzos:
+estribos **cerrados** (los montantes, ahora en las cuatro caras) y acero **longitudinal
+adicional** (los cordones, en todo el perímetro), combinados con los de flexión y corte.
 
 <Note type="tip" title="Torsión de equilibrio vs. compatibilidad">
-Si la torsión es necesaria para el equilibrio, debe diseñarse íntegra. Si proviene de la
-compatibilidad de deformaciones (estructura hiperestática), $T_u$ puede reducirse al valor
-de fisuración $\phi\,\lambda\sqrt{f'_c}\,(A_{cp}^2/p_{cp})$ y redistribuir.
+Si la torsión es necesaria para el equilibrio, se diseña íntegra. Si proviene de
+compatibilidad (estructura hiperestática), $T_u$ puede reducirse al valor de fisuración
+$\phi\lambda\sqrt{f'_c}(A_{cp}^2/p_{cp})$ y redistribuir: al fisurarse, la rigidez
+torsional se desploma y la viga "suelta" la torsión que no necesita.
 </Note>
 
 ---
 
-## Refuerzo longitudinal de piel (Sec. 9.7.2.3)
+## 6. Detallado: tres reglas con historia
 
-En vigas con $h > 900\,\text{mm}$ se debe disponer refuerzo de piel cerca de las caras
-laterales en la zona de tracción, distribuido en una altura $h/2$ desde la armadura de
-tracción, para controlar la fisuración.
+- **Refuerzo de piel (Sec. 9.7.2.3):** en vigas con $h > 900$ mm, barras repartidas en
+  las caras laterales de la mitad traccionada. Sin ellas, entre la armadura de fondo y el
+  eje neutro quedan 400+ mm de alma donde las fisuras de flexión se abren sin control.
+- **Integridad estructural (Sec. 9.7.7):** en vigas perimetrales, al menos un cuarto del
+  acero positivo y dos barras continuas en todo el vano, con estribos cerrados. Es
+  armadura *post-falla*: si un apoyo desaparece, la viga cuelga en catenaria en vez de
+  soltarse.
+- **Recubrimiento y separación:** 40 mm a la cara del estribo en ambiente interior
+  (Tabla 20.5.1.3); espaciamiento libre entre barras
+  $\geq \max(25\,\text{mm},\, d_b,\, 4/3\,d_{agg})$ (Sec. 25.2).
 
 ---
 
-## Detallado del refuerzo
+## 7. El orden de diseño
 
-- **Recubrimiento mínimo (Tabla 20.5.1.3):** 40 mm para vigas no expuestas a la intemperie
-  (cara de estribos), 20 mm para barras principales en ambiente interior según el caso.
-- **Refuerzo de integridad estructural (Sec. 9.7.7):** en vigas perimetrales, al menos un
-  cuarto del acero positivo y dos barras continuas, con estribos cerrados a lo largo del vano.
-- **Espaciamiento libre entre barras (Sec. 25.2):** $\geq \max(25\,\text{mm},\, d_b,\, 4/3\,d_{agg})$.
+```mermaid
+flowchart TD
+    A["1. Geometría<br/>h por Tabla 9.3.1.1 (o calcular<br/>deflexiones, Cap. 24)"] --> B["2. Flexión<br/>A_s por M_u con φ = 0.90"]
+    B --> C{"3. ¿Dúctil?<br/>ε_t ≥ ε_ty + 0.003<br/>y A_s ≥ A_s,min"}
+    C -- "falla por exceso<br/>de acero" --> D["agrandar sección o f'c<br/>(no sirve agregar acero)"]
+    D --> B
+    C -- "Sí" --> E["4. Cortante<br/>V_c + estribos; verificar<br/>tope de biela 0.66√f'c"]
+    E --> F["5. Torsión<br/>¿supera el umbral? →<br/>estribos cerrados + longitudinal"]
+    F --> G["6. Detallado<br/>s_max, piel, integridad,<br/>recubrimientos, desarrollo"]
+```
+
+El paso 3 es el corazón: si la ductilidad no sale, la respuesta **nunca** es más acero —
+es más sección o más hormigón. Es el error clásico del que la cadena
+*acero → c → ε_t* protege.
 
 ---
 
 ## Resumen de verificaciones para vigas
 
-| Verificación | Requisito |
-|--------------|-----------|
-| Altura mínima | Tabla 9.3.1.1 o cálculo de deflexión (Cap. 24) |
-| Ductilidad | $\varepsilon_t \geq \varepsilon_{ty} + 0.003$ (Sec. 9.3.3.1) |
-| Resistencia a flexión | $\phi M_n \geq M_u$, $\phi$ según Tabla 21.2.2 |
-| Refuerzo mínimo de flexión | $\max(0.25\sqrt{f'_c}/f_y,\; 1.4/f_y)\,b_w d$ |
-| Resistencia a cortante | $\phi V_n = \phi(V_c+V_s) \geq V_u$, $\phi=0.75$ |
-| Estribos mínimos | Si $V_u > 0.5\phi V_c$ (Sec. 9.6.3) |
-| Espaciamiento de estribos | Tabla 9.7.6.2.2 |
-| Torsión | $T_u \leq \phi\lambda\sqrt{f'_c}(A_{cp}^2/p_{cp})$ o diseñar |
-| Refuerzo de piel | Si $h > 900$ mm (Sec. 9.7.2.3) |
-| Integridad estructural | Barras continuas y estribos cerrados (Sec. 9.7.7) |
+| Verificación | Requisito | Naturaleza |
+|--------------|-----------|:---:|
+| Altura mínima | Tabla 9.3.1.1 o cálculo de deflexión (Cap. 24) | servicio |
+| Ductilidad | $\varepsilon_t \geq \varepsilon_{ty} + 0.003$ (Sec. 9.3.3.1) | **protege lo dúctil** |
+| Resistencia a flexión | $\phi M_n \geq M_u$, $\phi = 0.90$ | dúctil ✅ |
+| Refuerzo mínimo de flexión | $\max(0.25\sqrt{f'_c}/f_y,\; 1.4/f_y)\,b_w d$ | **protege lo dúctil** |
+| Resistencia a cortante | $\phi(V_c+V_s) \geq V_u$, $\phi=0.75$ | frágil — sobreproteger |
+| Estribos mínimos | Si $V_u > 0.5\phi V_c$ (Sec. 9.6.3) | **protege lo dúctil** |
+| Tope de estribos | $V_s \leq 0.66\sqrt{f'_c}\,b_w d$ (biela) | frágil — no negociable |
+| Espaciamiento de estribos | $d/2$ (o $d/4$ con corte alto) | geometría de la celosía |
+| Torsión | Umbral Ec. 22.7.4.1 o diseñar tubo + celosía espacial | frágil sin refuerzo |
+| Refuerzo de piel | Si $h > 900$ mm (Sec. 9.7.2.3) | servicio/fisuración |
+| Integridad estructural | Barras continuas y estribos cerrados (Sec. 9.7.7) | post-falla |

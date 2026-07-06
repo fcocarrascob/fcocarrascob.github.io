@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="tar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="tab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="420" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">El momento desbalanceado M_sc se transfiere por dos caminos a la vez</text>
+
+  <!-- ===== Left: gamma_f, flexure in effective width (plan) ===== -->
+  <g>
+    <text x="240" y="62" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">γ_f · M_sc → flexión en la franja efectiva</text>
+    <rect x="80" y="80" width="320" height="240" fill="#efece6" stroke="#8a857c"/>
+    <!-- effective width band -->
+    <rect x="80" y="155" width="320" height="90" fill="#1c7c3c" fill-opacity="0.10"/>
+    <!-- column -->
+    <rect x="210" y="175" width="60" height="50" fill="#8a857c"/>
+    <!-- concentrated bars in band -->
+    <g stroke="#1c7c3c" stroke-width="2.6">
+      <line x1="90" y1="168" x2="390" y2="168"/>
+      <line x1="90" y1="186" x2="390" y2="186"/>
+      <line x1="90" y1="214" x2="390" y2="214"/>
+      <line x1="90" y1="232" x2="390" y2="232"/>
+    </g>
+    <!-- sparse bars outside -->
+    <g stroke="#9aa59d" stroke-width="1.6">
+      <line x1="90" y1="105" x2="390" y2="105"/>
+      <line x1="90" y1="135" x2="390" y2="135"/>
+      <line x1="90" y1="270" x2="390" y2="270"/>
+      <line x1="90" y1="300" x2="390" y2="300"/>
+    </g>
+    <!-- band width dim -->
+    <line x1="415" y1="155" x2="415" y2="245" stroke="#1c7c3c" stroke-width="1.2" marker-start="url(#ta)" marker-end="url(#ta)"/>
+    <text x="424" y="196" font-size="12" fill="#1c7c3c">c₂ + 3h</text>
+    <text x="240" y="345" font-size="12.5" fill="#333" text-anchor="middle">el acero de flexión se <tspan font-weight="bold">concentra</tspan> en c₂ + 1.5h a cada lado</text>
+    <text x="240" y="363" font-size="12.5" fill="#555" text-anchor="middle">γ_f = 1 / (1 + ⅔·√(b₁/b₂))   (Ec. 8.4.2.3.2)</text>
+  </g>
+
+  <!-- ===== Right: gamma_v, eccentric shear on critical perimeter ===== -->
+  <g>
+    <text x="700" y="62" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">γ_v · M_sc → corte excéntrico en b_o</text>
+    <!-- critical perimeter (pseudo-3D box top) -->
+    <rect x="590" y="120" width="220" height="140" fill="none" stroke="#1a63a8" stroke-width="2.6" stroke-dasharray="8 5"/>
+    <rect x="655" y="160" width="90" height="60" fill="#8a857c"/>
+    <text x="700" y="196" font-size="11.5" fill="#fff" text-anchor="middle">columna</text>
+    <!-- moment arrow on column -->
+    <path d="M 700,140 m -28,0 a 28,18 0 1 1 56,0" fill="none" stroke="#b02a1a" stroke-width="2.4" marker-end="url(#tar)"/>
+    <text x="700" y="112" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">M_sc</text>
+    <!-- shear stress arrows: left face big down, right face small up (linear) -->
+    <g stroke="#b02a1a" stroke-width="2.2">
+      <line x1="590" y1="270" x2="590" y2="322" marker-end="url(#tar)"/>
+      <line x1="640" y1="270" x2="640" y2="308" marker-end="url(#tar)"/>
+    </g>
+    <g stroke="#1a63a8" stroke-width="2.2">
+      <line x1="760" y1="308" x2="760" y2="270" marker-start="url(#tab)" transform="translate(0,34)"/>
+      <line x1="810" y1="322" x2="810" y2="270" marker-start="url(#tab)" transform="translate(0,52)"/>
+    </g>
+    <!-- linear stress diagram -->
+    <line x1="590" y1="285" x2="810" y2="285" stroke="#999" stroke-width="1" stroke-dasharray="4 4" transform="translate(0,52)"/>
+    <line x1="590" y1="322" x2="810" y2="352" stroke="#333" stroke-width="1.6"/>
+    <text x="588" y="342" font-size="12" fill="#b02a1a" text-anchor="end">v_max</text>
+    <text x="700" y="382" font-size="12.5" fill="#333" text-anchor="middle">v_u(x) = V_u/(b_o·d) ± γ_v·M_sc·c / J_c</text>
+    <text x="700" y="400" font-size="12.5" fill="#555" text-anchor="middle">γ_v = 1 − γ_f ; se verifica v_max ≤ φ·v_c — suele gobernar el espesor</text>
+  </g>
+</svg>

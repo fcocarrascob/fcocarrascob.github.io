@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="pn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+    <marker id="pnr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="500" fill="#ffffff"/>
+  <text x="470" y="26" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">El puntal se hincha y el nodo se degrada con cada tensor</text>
+
+  <!-- ===== Left: bottle-shaped strut ===== -->
+  <g>
+    <text x="220" y="60" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Puntal interior: forma de botella</text>
+    <path d="M 190,86 L 250,86 C 240,146 300,180 300,206 C 300,232 240,266 250,326 L 190,326 C 200,266 140,232 140,206 C 140,180 200,146 190,86 Z"
+          fill="#1a63a8" fill-opacity="0.13" stroke="#1a63a8" stroke-width="2" stroke-dasharray="8 5"/>
+    <line x1="220" y1="50" x2="220" y2="82" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+    <line x1="220" y1="362" x2="220" y2="330" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+    <!-- transverse tension -->
+    <line x1="203" y1="206" x2="158" y2="206" stroke="#b02a1a" stroke-width="2.6" marker-end="url(#pnr)"/>
+    <line x1="237" y1="206" x2="282" y2="206" stroke="#b02a1a" stroke-width="2.6" marker-end="url(#pnr)"/>
+    <text x="220" y="196" font-size="11.5" fill="#b02a1a" text-anchor="middle">tracción transversal</text>
+    <!-- distributed reinforcement -->
+    <g stroke="#1c7c3c" stroke-width="2.6">
+      <line x1="120" y1="146" x2="320" y2="146"/>
+      <line x1="120" y1="240" x2="320" y2="240"/>
+      <line x1="120" y1="288" x2="320" y2="288"/>
+    </g>
+    <text x="330" y="150" font-size="11.5" fill="#1c7c3c">armadura distribuida</text>
+    <text x="330" y="165" font-size="11.5" fill="#1c7c3c">(23.5): cose la botella</text>
+    <text x="220" y="386" font-size="12" fill="#555" text-anchor="middle">f_ce = 0.85·β_c·β_s·f'_c</text>
+    <!-- beta_s box -->
+    <rect x="60" y="404" width="360" height="78" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+    <text x="74" y="426" font-size="12.5" fill="#222" font-weight="bold">β_s del puntal (Tabla 23.4.3):</text>
+    <text x="74" y="446" font-size="12.5" fill="#222">de borde: 1.0 · interior armado: 0.75</text>
+    <text x="74" y="466" font-size="12.5" fill="#222">interior SIN armar: <tspan font-weight="bold" fill="#b02a1a">0.40 — la mitad de capacidad</tspan></text>
+  </g>
+
+  <!-- ===== Right: node types ===== -->
+  <g>
+    <text x="700" y="60" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Nodos: cada tensor descuenta 20%</text>
+    <!-- CCC -->
+    <g transform="translate(560,100)">
+      <polygon points="0,60 90,60 45,0" fill="#efece6" stroke="#333" stroke-width="2"/>
+      <line x1="45" y1="-38" x2="45" y2="-6" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <line x1="-36" y1="94" x2="-6" y2="68" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <line x1="126" y1="94" x2="96" y2="68" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <text x="45" y="128" font-size="12.5" fill="#222" text-anchor="middle" font-weight="bold">CCC — β_n = 1.0</text>
+      <text x="45" y="145" font-size="11.5" fill="#555" text-anchor="middle">solo compresión</text>
+    </g>
+    <!-- CCT -->
+    <g transform="translate(766,100)">
+      <polygon points="0,60 90,60 45,0" fill="#efece6" stroke="#333" stroke-width="2"/>
+      <line x1="45" y1="-38" x2="45" y2="-6" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <line x1="-36" y1="94" x2="-6" y2="68" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <line x1="96" y1="64" x2="134" y2="64" stroke="#b02a1a" stroke-width="3" marker-end="url(#pnr)"/>
+      <text x="45" y="128" font-size="12.5" fill="#222" text-anchor="middle" font-weight="bold">CCT — β_n = 0.80</text>
+      <text x="45" y="145" font-size="11.5" fill="#555" text-anchor="middle">un tensor</text>
+    </g>
+    <!-- CTT -->
+    <g transform="translate(663,296)">
+      <polygon points="0,60 90,60 45,0" fill="#efece6" stroke="#333" stroke-width="2"/>
+      <line x1="45" y1="-38" x2="45" y2="-6" stroke="#1a63a8" stroke-width="3" marker-end="url(#pn)"/>
+      <line x1="-6" y1="64" x2="-44" y2="64" stroke="#b02a1a" stroke-width="3" marker-end="url(#pnr)"/>
+      <line x1="96" y1="64" x2="134" y2="64" stroke="#b02a1a" stroke-width="3" marker-end="url(#pnr)"/>
+      <text x="45" y="128" font-size="12.5" fill="#222" text-anchor="middle" font-weight="bold">CTT — β_n = 0.60</text>
+      <text x="45" y="145" font-size="11.5" fill="#555" text-anchor="middle">dos o más tensores</text>
+    </g>
+    <text x="660" y="272" font-size="11.5" fill="#555" text-anchor="end">f_ce = 0.85·β_n·f'_c (caras del nodo)</text>
+    <text x="700" y="472" font-size="12" fill="#333" text-anchor="middle">el tensor "tira" del nodo y le abre microfisuras: por eso cada</text>
+    <text x="700" y="489" font-size="12" fill="#333" text-anchor="middle">tensor que llega descuenta 20% de la capacidad de apoyo</text>
+  </g>
+</svg>

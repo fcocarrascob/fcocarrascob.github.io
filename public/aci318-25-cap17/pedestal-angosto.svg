@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="440" fill="#ffffff"/>
+
+  <!-- ================= IZQUIERDA: hormigón masivo ================= -->
+  <g>
+    <text x="230" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Hormigón masivo: el cono se desarrolla completo</text>
+    <rect x="10" y="110" width="440" height="270" fill="#efece6" stroke="#8a857c"/>
+    <!-- cone: head at (230,240), hef=130, tips at 230±195 -->
+    <polygon points="216,240 244,240 425,110 35,110" fill="#d9480f" fill-opacity="0.12"/>
+    <line x1="216" y1="240" x2="35" y2="110" stroke="#d9480f" stroke-width="2.2" stroke-dasharray="7 4"/>
+    <line x1="244" y1="240" x2="425" y2="110" stroke="#d9480f" stroke-width="2.2" stroke-dasharray="7 4"/>
+    <!-- anchor -->
+    <rect x="223" y="60" width="14" height="180" fill="#3f3f3f"/>
+    <rect x="210" y="240" width="40" height="11" fill="#3f3f3f"/>
+    <!-- dims -->
+    <line x1="285" y1="110" x2="285" y2="240" stroke="#666" stroke-width="1" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+    <text x="292" y="180" font-size="13" fill="#666">h_ef</text>
+    <line x1="35" y1="96" x2="230" y2="96" stroke="#666" stroke-width="1" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+    <text x="120" y="88" font-size="13" fill="#666">1.5·h_ef</text>
+    <line x1="230" y1="96" x2="425" y2="96" stroke="#666" stroke-width="1" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+    <text x="310" y="88" font-size="13" fill="#666">1.5·h_ef</text>
+    <text x="230" y="410" font-size="13" text-anchor="middle" fill="#444">N_b ∝ √f'c · h_ef^1.5  →  crece con la profundidad</text>
+  </g>
+
+  <!-- ================= DERECHA: pedestal angosto ================= -->
+  <g>
+    <text x="710" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Pedestal 800×800: el cono no cabe</text>
+    <!-- pedestal -->
+    <rect x="610" y="110" width="200" height="290" fill="#efece6" stroke="#8a857c"/>
+    <!-- breakout prism: cone lines hit the faces, then the whole prism above pops -->
+    <polygon points="653,265 667,265 610,151 610,110 810,110 810,164 767,251 753,251" fill="#d9480f" fill-opacity="0.12"/>
+    <line x1="653" y1="265" x2="610" y2="151" stroke="#d9480f" stroke-width="2.2" stroke-dasharray="7 4"/>
+    <line x1="767" y1="251" x2="810" y2="164" stroke="#d9480f" stroke-width="2.2" stroke-dasharray="7 4"/>
+    <!-- crack continues down the faces -->
+    <line x1="610" y1="151" x2="610" y2="110" stroke="#d9480f" stroke-width="3.5"/>
+    <line x1="810" y1="164" x2="810" y2="110" stroke="#d9480f" stroke-width="3.5"/>
+    <!-- two anchors (outer columns of the 4x4 grid, section view) -->
+    <rect x="653" y="60" width="12" height="205" fill="#3f3f3f"/>
+    <rect x="643" y="265" width="32" height="10" fill="#3f3f3f"/>
+    <rect x="755" y="60" width="12" height="191" fill="#3f3f3f"/>
+    <rect x="745" y="251" width="32" height="10" fill="#3f3f3f"/>
+    <text x="710" y="54" font-size="12" text-anchor="middle" fill="#555">(pernos largos, h_ef ≈ 1000)</text>
+    <!-- annotations -->
+    <line x1="565" y1="130" x2="606" y2="130" stroke="#b02a1a" stroke-width="2" marker-end="url(#arr2)"/>
+    <text x="558" y="120" font-size="12.5" fill="#b02a1a" text-anchor="end">la grieta sale por la</text>
+    <text x="558" y="135" font-size="12.5" fill="#b02a1a" text-anchor="end">cara lateral: se</text>
+    <text x="558" y="150" font-size="12.5" fill="#b02a1a" text-anchor="end">"descorcha" el prisma</text>
+    <!-- width dim -->
+    <line x1="610" y1="418" x2="810" y2="418" stroke="#666" stroke-width="1" marker-start="url(#arr2)" marker-end="url(#arr2)"/>
+    <text x="710" y="434" font-size="13" text-anchor="middle" fill="#666">800 (bordes 200–235 ≪ 1.5·h_ef = 1500)</text>
+    <!-- rule box -->
+    <rect x="600" y="310" width="330" height="86" rx="6" fill="#fff4ec" stroke="#d9480f"/>
+    <text x="612" y="332" font-size="13" fill="#222" font-weight="bold">§17.6.2.1.2 — 3 o más bordes &lt; 1.5·h_ef:</text>
+    <text x="612" y="352" font-size="13" fill="#222">h'_ef = max(c_a,max/1.5,  s/3)</text>
+    <text x="612" y="372" font-size="13" fill="#222">      = max(235/1.5, 200/3) = 156.7 mm</text>
+    <text x="612" y="390" font-size="12.5" fill="#b02a1a">→ alargar el perno NO mejora el breakout</text>
+  </g>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 380" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="wa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="wab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="380" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">¿En qué dirección trabaja una losa? La carga viaja por el camino más rígido</text>
+
+  <!-- ===== Left: one-way ===== -->
+  <g>
+    <text x="250" y="62" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">ℓ₂/ℓ₁ &gt; 2 → unidireccional</text>
+    <!-- supports (two long edges) -->
+    <rect x="80" y="90" width="340" height="16" fill="#8a857c"/>
+    <rect x="80" y="250" width="340" height="16" fill="#8a857c"/>
+    <text x="430" y="103" font-size="11.5" fill="#555">apoyo</text>
+    <text x="430" y="263" font-size="11.5" fill="#555">apoyo</text>
+    <!-- slab -->
+    <rect x="80" y="106" width="340" height="144" fill="#efece6" stroke="#8a857c"/>
+    <!-- load arrows: all in short direction -->
+    <g stroke="#1a63a8" stroke-width="2.4">
+      <line x1="130" y1="130" x2="130" y2="230" marker-end="url(#wab)"/>
+      <line x1="210" y1="130" x2="210" y2="230" marker-end="url(#wab)"/>
+      <line x1="290" y1="130" x2="290" y2="230" marker-end="url(#wab)"/>
+      <line x1="370" y1="130" x2="370" y2="230" marker-end="url(#wab)"/>
+    </g>
+    <!-- dims -->
+    <line x1="80" y1="292" x2="420" y2="292" stroke="#666" stroke-width="1" marker-start="url(#wa)" marker-end="url(#wa)"/>
+    <text x="250" y="308" font-size="12" fill="#666" text-anchor="middle">ℓ₂</text>
+    <line x1="56" y1="106" x2="56" y2="250" stroke="#666" stroke-width="1" marker-start="url(#wa)" marker-end="url(#wa)"/>
+    <text x="48" y="182" font-size="12" fill="#666" text-anchor="end">ℓ₁</text>
+    <text x="250" y="336" font-size="12" fill="#555" text-anchor="middle">la franja corta es (ℓ₂/ℓ₁)⁴ veces más rígida — con ℓ₂/ℓ₁ = 2</text>
+    <text x="250" y="352" font-size="12" fill="#555" text-anchor="middle">ya se lleva el 94% de la carga: se diseña como viga ancha de 1 m</text>
+  </g>
+
+  <!-- ===== Right: two-way ===== -->
+  <g>
+    <text x="710" y="62" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">ℓ₂/ℓ₁ ≤ 2 → bidireccional</text>
+    <!-- supports all edges -->
+    <rect x="560" y="90" width="300" height="176" fill="none" stroke="#8a857c" stroke-width="14"/>
+    <rect x="567" y="97" width="286" height="162" fill="#efece6"/>
+    <!-- load arrows both directions from center -->
+    <g stroke="#1a63a8" stroke-width="2.4">
+      <line x1="710" y1="178" x2="710" y2="120" marker-end="url(#wab)"/>
+      <line x1="710" y1="178" x2="710" y2="236" marker-end="url(#wab)"/>
+      <line x1="710" y1="178" x2="620" y2="178" marker-end="url(#wab)"/>
+      <line x1="710" y1="178" x2="800" y2="178" marker-end="url(#wab)"/>
+    </g>
+    <circle cx="710" cy="178" r="5" fill="#1a63a8"/>
+    <!-- dims -->
+    <line x1="560" y1="292" x2="860" y2="292" stroke="#666" stroke-width="1" marker-start="url(#wa)" marker-end="url(#wa)"/>
+    <text x="710" y="308" font-size="12" fill="#666" text-anchor="middle">ℓ₂</text>
+    <line x1="536" y1="90" x2="536" y2="266" stroke="#666" stroke-width="1" marker-start="url(#wa)" marker-end="url(#wa)"/>
+    <text x="528" y="182" font-size="12" fill="#666" text-anchor="end">ℓ₁</text>
+    <text x="710" y="336" font-size="12" fill="#555" text-anchor="middle">las dos direcciones compiten en rigidez y ambas</text>
+    <text x="710" y="352" font-size="12" fill="#555" text-anchor="middle">cargan: requiere el diseño en dos direcciones</text>
+  </g>
+</svg>

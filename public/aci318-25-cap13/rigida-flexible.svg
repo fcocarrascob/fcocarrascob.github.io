@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 380" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ra2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="380" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">La hipótesis detrás de todo el capítulo: presión lineal = zapata rígida</text>
+
+  <!-- ===== Left: rigid ===== -->
+  <g>
+    <text x="250" y="62" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Zapata rígida (vuelo corto / canto grande)</text>
+    <line x1="215" y1="80" x2="215" y2="120" stroke="#b02a1a" stroke-width="3" marker-end="url(#ra2)" transform="translate(35,0)"/>
+    <text x="262" y="92" font-size="12.5" fill="#b02a1a" font-weight="bold">P_u</text>
+    <rect x="215" y="120" width="70" height="60" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="110" y="180" width="280" height="80" fill="#efece6" stroke="#8a857c"/>
+    <!-- uniform pressure diagram -->
+    <rect x="110" y="272" width="280" height="40" fill="#8a7449" fill-opacity="0.25" stroke="#8a7449"/>
+    <text x="250" y="298" font-size="12" fill="#6b5a38" text-anchor="middle">presión ~lineal (uniforme si P centrada)</text>
+    <text x="250" y="340" font-size="12.5" fill="#333" text-anchor="middle">la zapata se asienta como cuerpo rígido:</text>
+    <text x="250" y="357" font-size="12.5" fill="#333" text-anchor="middle">la presión queda definida por la estática (P, M, área)</text>
+  </g>
+
+  <!-- ===== Right: flexible ===== -->
+  <g>
+    <text x="690" y="62" font-size="13.5" text-anchor="middle" fill="#b35c0e" font-weight="bold">Zapata flexible (vuelo largo / canto chico)</text>
+    <line x1="655" y1="80" x2="655" y2="120" stroke="#b02a1a" stroke-width="3" marker-end="url(#ra2)"/>
+    <text x="662" y="92" font-size="12.5" fill="#b02a1a" font-weight="bold">P_u</text>
+    <rect x="620" y="120" width="70" height="70" fill="#dcd8d0" stroke="#8a857c"/>
+    <!-- thin footing, deflected -->
+    <path d="M 510,206 L 870,206 L 870,232 L 510,232 Z" fill="#efece6" stroke="#8a857c"/>
+    <path d="M 510,200 C 590,200 610,190 655,190 C 700,190 750,200 870,200" fill="none" stroke="#666" stroke-width="1.4" stroke-dasharray="6 4" transform="translate(0,16)"/>
+    <!-- concentrated pressure bulb -->
+    <path d="M 510,244 C 570,244 600,244 625,290 C 645,322 665,322 685,290 C 710,244 740,244 870,244" fill="#8a7449" fill-opacity="0.25" stroke="#8a7449" transform="translate(0,4)"/>
+    <text x="655" y="345" font-size="12" fill="#6b5a38" text-anchor="middle">la presión se concentra bajo la columna; los extremos se descargan</text>
+    <text x="690" y="370" font-size="12.5" fill="#333" text-anchor="middle">los bordes se levantan (flecha propia) y el suelo responde donde la zapata baja</text>
+  </g>
+</svg>

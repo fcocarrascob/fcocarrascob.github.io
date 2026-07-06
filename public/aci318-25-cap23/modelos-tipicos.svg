@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="mt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="mtr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="26" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Dibujar la celosía que el elemento quiere ser: los dos modelos clásicos</text>
+
+  <!-- ===== Left: deep beam ===== -->
+  <g>
+    <text x="140" y="58" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Viga alta (luz/canto ≤ 4)</text>
+    <rect x="80" y="80" width="340" height="250" fill="#efece6" stroke="#8a857c"/>
+    <!-- load -->
+    <line x1="250" y1="40" x2="250" y2="76" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#mtr)"/>
+    <text x="264" y="52" font-size="13" fill="#b02a1a" font-weight="bold">P</text>
+    <!-- supports -->
+    <polygon points="130,330 112,362 148,362" fill="#5b6470"/>
+    <polygon points="370,330 352,362 388,362" fill="#5b6470"/>
+    <!-- struts -->
+    <line x1="250" y1="100" x2="134" y2="308" stroke="#1a63a8" stroke-width="7" stroke-dasharray="14 8" stroke-opacity="0.75"/>
+    <line x1="250" y1="100" x2="366" y2="308" stroke="#1a63a8" stroke-width="7" stroke-dasharray="14 8" stroke-opacity="0.75"/>
+    <text x="152" y="200" font-size="12" fill="#1a63a8" transform="rotate(60 152,200)" font-weight="bold">puntal</text>
+    <!-- tie -->
+    <line x1="134" y1="308" x2="366" y2="308" stroke="#c0392b" stroke-width="6"/>
+    <text x="250" y="298" font-size="12.5" fill="#c0392b" text-anchor="middle" font-weight="bold">tensor (armadura inferior)</text>
+    <!-- nodes -->
+    <circle cx="250" cy="100" r="10" fill="#fff" stroke="#333" stroke-width="2.4"/>
+    <circle cx="134" cy="308" r="10" fill="#fff" stroke="#333" stroke-width="2.4"/>
+    <circle cx="366" cy="308" r="10" fill="#fff" stroke="#333" stroke-width="2.4"/>
+    <text x="250" y="128" font-size="11.5" fill="#333" text-anchor="middle">nodo CCC</text>
+    <text x="112" y="290" font-size="11.5" fill="#333">nodo CCT</text>
+    <text x="340" y="290" font-size="11.5" fill="#333">nodo CCT</text>
+    <text x="250" y="392" font-size="12" fill="#555" text-anchor="middle">la carga baja DIRECTO a los apoyos por dos puntales;</text>
+    <text x="250" y="409" font-size="12" fill="#555" text-anchor="middle">el tensor impide que se abran — y debe ANCLARSE sobre los apoyos</text>
+  </g>
+
+  <!-- ===== Right: corbel ===== -->
+  <g>
+    <text x="700" y="58" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Ménsula (a_v/d ≤ 2)</text>
+    <!-- column -->
+    <rect x="580" y="70" width="110" height="330" fill="#efece6" stroke="#8a857c"/>
+    <!-- corbel -->
+    <polygon points="690,150 810,150 810,220 690,265" fill="#efece6" stroke="#8a857c"/>
+    <!-- load -->
+    <line x1="775" y1="106" x2="775" y2="146" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#mtr)"/>
+    <text x="789" y="120" font-size="13" fill="#b02a1a" font-weight="bold">V_u</text>
+    <!-- a_v dim -->
+    <line x1="690" y1="96" x2="775" y2="96" stroke="#666" stroke-width="1" marker-start="url(#mt)" marker-end="url(#mt)"/>
+    <text x="732" y="88" font-size="11.5" fill="#666" text-anchor="middle">a_v</text>
+    <!-- strut -->
+    <line x1="775" y1="160" x2="640" y2="330" stroke="#1a63a8" stroke-width="7" stroke-dasharray="14 8" stroke-opacity="0.75"/>
+    <text x="676" y="266" font-size="12" fill="#1a63a8" transform="rotate(52 676,266)" font-weight="bold">puntal</text>
+    <!-- tie: horizontal at top of corbel, anchored into column and at load end -->
+    <path d="M 800,182 L 775,162 L 600,162 L 600,200" fill="none" stroke="#c0392b" stroke-width="6" stroke-linejoin="round"/>
+    <text x="700" y="146" font-size="12.5" fill="#c0392b" text-anchor="middle" font-weight="bold">tensor principal (arriba)</text>
+    <!-- nodes -->
+    <circle cx="775" cy="162" r="9" fill="#fff" stroke="#333" stroke-width="2.4"/>
+    <circle cx="640" cy="330" r="9" fill="#fff" stroke="#333" stroke-width="2.4"/>
+    <text x="800" y="245" font-size="11.5" fill="#333">nodo CCT bajo la carga:</text>
+    <text x="800" y="260" font-size="11.5" fill="#333">el tensor debe anclarse</text>
+    <text x="800" y="275" font-size="11.5" fill="#333">AQUÍ (barra soldada,</text>
+    <text x="800" y="290" font-size="11.5" fill="#333">gancho o cabeza)</text>
+    <line x1="796" y1="240" x2="782" y2="172" stroke="#333" stroke-width="1.2" marker-end="url(#mt)"/>
+    <text x="700" y="392" font-size="12" fill="#555" text-anchor="middle">el tensor va ARRIBA (donde nadie lo espera) y su anclaje</text>
+    <text x="700" y="409" font-size="12" fill="#555" text-anchor="middle">en la punta es la falla típica de ménsulas mal detalladas</text>
+  </g>
+</svg>

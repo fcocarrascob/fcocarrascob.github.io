@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="lar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="lab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="420" fill="#ffffff"/>
+  <text x="470" y="30" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">φR_n ≥ U: dos incertidumbres distintas, dos factores distintos</text>
+
+  <!-- axis -->
+  <line x1="60" y1="310" x2="900" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#la)"/>
+  <text x="895" y="330" font-size="12" fill="#333">fuerza</text>
+
+  <!-- load distribution (left bell) -->
+  <path d="M 130,310 C 210,310 240,130 300,130 C 360,130 390,310 470,310" fill="#b02a1a" fill-opacity="0.10" stroke="#b02a1a" stroke-width="2"/>
+  <text x="300" y="112" font-size="13" fill="#b02a1a" font-weight="bold" text-anchor="middle">efecto real de las cargas, Q</text>
+  <text x="300" y="96" font-size="11.5" fill="#b02a1a" text-anchor="middle">(se conocen mal y varían durante la vida útil)</text>
+
+  <!-- resistance distribution (right bell) -->
+  <path d="M 500,310 C 580,310 610,110 680,110 C 750,110 780,310 870,310" fill="#1c7c3c" fill-opacity="0.10" stroke="#1c7c3c" stroke-width="2"/>
+  <text x="688" y="94" font-size="13" fill="#1c7c3c" font-weight="bold" text-anchor="middle">resistencia real, R</text>
+  <text x="688" y="78" font-size="11.5" fill="#1c7c3c" text-anchor="middle">(materiales, mano de obra, dimensiones)</text>
+
+  <!-- overlap tail annotation -->
+  <path d="M 445,310 C 458,300 470,285 485,282 C 500,285 512,300 525,310 Z" fill="#c0392b" fill-opacity="0.30"/>
+  <line x1="485" y1="285" x2="485" y2="230" stroke="#c0392b" stroke-width="1.2"/>
+  <text x="485" y="206" font-size="11.5" fill="#c0392b" text-anchor="middle">la falla vive aquí: carga alta</text>
+  <text x="485" y="220" font-size="11.5" fill="#c0392b" text-anchor="middle">y resistencia baja a la vez</text>
+
+  <!-- nominal / factored markers -->
+  <line x1="340" y1="310" x2="340" y2="345" stroke="#b02a1a" stroke-width="2"/>
+  <text x="340" y="362" font-size="12" fill="#b02a1a" text-anchor="middle">Q_n (servicio)</text>
+  <line x1="452" y1="310" x2="452" y2="345" stroke="#b02a1a" stroke-width="2.6"/>
+  <text x="452" y="362" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">U = Σγ·Q</text>
+  <line x1="346" y1="338" x2="446" y2="338" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#lar)"/>
+  <text x="396" y="380" font-size="11.5" fill="#b02a1a" text-anchor="middle">γ &gt; 1 infla las cargas</text>
+
+  <line x1="640" y1="310" x2="640" y2="345" stroke="#1c7c3c" stroke-width="2"/>
+  <text x="648" y="362" font-size="12" fill="#1c7c3c" text-anchor="middle">R_n (nominal)</text>
+  <line x1="528" y1="310" x2="528" y2="345" stroke="#1a63a8" stroke-width="2.6"/>
+  <text x="528" y="362" font-size="12.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">φR_n</text>
+  <line x1="634" y1="338" x2="534" y2="338" stroke="#1a63a8" stroke-width="1.8" marker-end="url(#lab)"/>
+  <text x="585" y="380" font-size="11.5" fill="#1a63a8" text-anchor="middle">φ &lt; 1 recorta la resistencia</text>
+
+  <!-- design margin -->
+  <line x1="452" y1="150" x2="452" y2="310" stroke="#b02a1a" stroke-width="1" stroke-dasharray="5 4"/>
+  <line x1="528" y1="150" x2="528" y2="310" stroke="#1a63a8" stroke-width="1" stroke-dasharray="5 4"/>
+  <line x1="452" y1="158" x2="528" y2="158" stroke="#333" stroke-width="1.6" marker-start="url(#la)" marker-end="url(#la)"/>
+  <text x="490" y="148" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">el contrato: φR_n ≥ U</text>
+
+  <text x="470" y="410" font-size="12.5" text-anchor="middle" fill="#555">γ depende de la carga (qué tan mal se conoce); φ depende del modo de falla (qué tan grave es equivocarse) — por eso son dos factores y no uno</text>
+</svg>

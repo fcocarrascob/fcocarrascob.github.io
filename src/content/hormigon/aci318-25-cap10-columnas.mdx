@@ -1,73 +1,52 @@
 ---
 title: "ACI 318-25 Cap. 10 — Columnas"
-description: "Límites geométricos, resistencia axial y a flexión combinada, resistencia axial máxima, límites de refuerzo longitudinal, refuerzo transversal (estribos y zunchos), cortante y detallado para columnas no pretensadas según ACI 318-25."
+description: "Columnas según ACI 318-25 contadas desde el diagrama de interacción: por qué una columna no tiene una resistencia sino una frontera, el tope de carga axial y la excentricidad accidental, el confinamiento como compra de ductilidad, límites de refuerzo, cortante, esbeltez y detallado."
 pubDate: 2026-06-13
-tags: ["columnas", "aci318", "flexocompresión", "esbeltez", "zunchos", "detallado"]
+updatedDate: 2026-07-06
+tags: ["columnas", "aci318", "flexocompresión", "esbeltez", "zunchos", "confinamiento", "detallado"]
 subsection: "aci318-25"
 chapter: "Cap. 10 — Columnas"
 ---
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
-## Alcance
+## La idea que organiza el capítulo
 
-El Capítulo 10 aplica a columnas no pretensadas y pretensadas que resisten principalmente
-**carga axial de compresión**, con o sin momentos flectores, incluyendo:
+Una viga se verifica con un número: $\phi M_n \geq M_u$. Una columna no puede, porque su
+resistencia a flexión **depende de cuánta carga axial la acompaña** — la compresión
+precomprime la sección y retrasa la fisuración (ayuda), hasta que empieza a acercar el
+hormigón a su aplastamiento (perjudica). Por eso la columna no tiene *una* resistencia:
+tiene una **frontera** en el plano $P$–$M$, el diagrama de interacción, y el diseño
+consiste en que todas las combinaciones de carga queden dentro.
 
-- Columnas de pórticos y de sistemas de losas con o sin vigas.
-- Pedestales y elementos de compresión con o sin refuerzo transversal en espiral.
-- Columnas compuestas de hormigón y acero estructural (en conjunto con la Sec. 10.5 y el
-  Cap. 22).
+La segunda idea del capítulo es de naturaleza: la falla por compresión es **frágil** —
+el hormigón se aplasta sin fluencia previa del acero, sin aviso. La norma responde en
+tres frentes que atraviesan todo el capítulo: castiga el φ (0.65 contra el 0.90 de
+flexión), **prohíbe acercarse a la compresión pura** (el tope $P_{n,\max}$), y **premia
+el confinamiento** que convierte la falla frágil en dúctil (zunchos: φ = 0.75).
 
-Las columnas se diseñan para resistir la combinación simultánea de **carga axial $P_u$**,
-**momento $M_u$** (flexocompresión), **cortante $V_u$** y, cuando corresponde, **torsión**.
-
----
-
-## Límites de diseño (Sec. 10.3)
-
-### Dimensiones mínimas
-
-El ACI 318-25 no fija una dimensión mínima absoluta, pero la geometría debe permitir alojar
-el refuerzo con los recubrimientos y espaciamientos del Cap. 25. Para columnas con sección
-mayor que la requerida por las cargas, la Sec. 10.3.1.2 permite diseñar con un **área bruta
-reducida** $A_{g,\text{eff}}$ no menor que la mitad del área total real, a efectos de
-refuerzo mínimo y resistencia.
-
-<Note type="info">
-A diferencia de las vigas, no existe una tabla de altura mínima: el control de la columna lo
-gobiernan la **resistencia** (diagrama de interacción) y la **esbeltez** (Cap. 6), no la
-deflexión.
+<Note type="info" title="Alcance">
+Columnas no pretensadas y pretensadas que resisten principalmente **carga axial de
+compresión** con o sin momentos: columnas de pórticos y de sistemas de losas, pedestales,
+elementos con espiral, y columnas compuestas hormigón-acero (con la Sec. 10.5 y el
+Cap. 22). Se diseñan para la combinación simultánea de $P_u$, $M_u$ (flexocompresión),
+$V_u$ y, cuando corresponde, torsión, para todas las combinaciones de la Sec. 5.3.
 </Note>
 
 ---
 
-## Resistencia requerida
+## 1. El diagrama de interacción: la frontera
 
-La resistencia de diseño debe satisfacer en todas las secciones y para todas las
-combinaciones de la Sec. 5.3:
+<Figure
+  src="/aci318-25-cap10/diagrama-interaccion.svg"
+  alt="Diagrama de interacción P-M anotado: curva nominal con el punto teórico P0, el tope Pn,max al 80 por ciento, el punto balanceado donde el momento es máximo, la flexión pura, las zonas de phi por deformación y la curva de diseño phi Pn phi Mn con puntos de carga dentro y fuera"
+  caption="La frontera completa, anotada: P₀ nunca está disponible (tope por excentricidad accidental), el momento máximo ocurre en el punto balanceado, y φ cambia a lo largo de la curva según cómo falla la sección en cada tramo."
+/>
 
-$$
-\phi P_n \geq P_u \qquad \phi M_n \geq M_u \qquad \phi V_n \geq V_u
-$$
-
-Las solicitaciones se evalúan considerando los **efectos de esbeltez** de la Sec. 6.2.5
-(momentos amplificados $M_c$ en columnas esbeltas).
-
----
-
-## Resistencia a flexocompresión
-
-La resistencia de una columna se representa mediante el **diagrama de interacción**
-$P_n$–$M_n$, obtenido por compatibilidad de deformaciones ($\varepsilon_{cu}=0.003$) y
-equilibrio de la sección. Cada punto corresponde a una posición distinta del eje neutro.
-
-### Construcción del diagrama (proceso iterativo)
-
-El diagrama no tiene forma cerrada: se construye barriendo la **profundidad del eje neutro
-$c$** desde compresión pura hasta flexión pura. Para cada valor de $c$ se resuelve el
-equilibrio de la sección y se obtiene un punto $(\phi M_n,\, \phi P_n)$.
+Cada punto de la curva corresponde a una posición distinta del eje neutro; la curva se
+construye barriéndolo:
 
 ```mermaid
 flowchart TD
@@ -82,8 +61,7 @@ flowchart TD
     H -- Sí --> I[Trazar curva de interacción]
 ```
 
-En cada iteración, fijada $c$ y con $\varepsilon_{cu}=0.003$ en la fibra extrema comprimida,
-se evalúa:
+En cada iteración, fijada $c$ y con $\varepsilon_{cu}=0.003$ en la fibra extrema comprimida:
 
 1. **Compatibilidad** — deformación de cada capa de acero por el triángulo de deformaciones:
    $$\varepsilon_{si} = 0.003\,\frac{c - d_i}{c}$$
@@ -93,20 +71,28 @@ se evalúa:
    $$a = \beta_1\,c, \qquad C_c = 0.85\,f'_c\,a\,b$$
 4. **Equilibrio** axial y de momentos respecto al centroide plástico:
    $$P_n = C_c + \sum_i f_{si}\,A_{si}, \qquad M_n = \sum (\text{momentos de } C_c \text{ y } f_{si}A_{si})$$
-5. **Factor $\phi$** según $\varepsilon_t$ del acero extremo en tracción (Tabla 21.2.2) y tope
-   $P_{n,\max}$; se registra el punto $(\phi M_n,\, \phi P_n)$.
+5. **Factor $\phi$** según $\varepsilon_t$ del acero extremo en tracción (Tabla 21.2.2) y
+   tope $P_{n,\max}$; se registra $(\phi M_n,\, \phi P_n)$.
 
-Tres puntos notables anclan la curva: **compresión pura** ($c \to \infty$, limitada a
-$P_{n,\max}$), el **punto balanceado** ($\varepsilon_t = \varepsilon_{ty}$, donde el hormigón
-y el acero llegan al límite simultáneamente) y la **flexión pura** ($P_n = 0$).
+Tres puntos anclan la curva y conviene saber leerlos:
+
+- **Compresión pura $P_0$** — teórica: hormigón y todo el acero al límite a la vez.
+  Nunca está disponible (§1.2).
+- **Punto balanceado** ($\varepsilon_t = \varepsilon_{ty}$) — hormigón y acero llegan al
+  límite simultáneamente. Es el **momento máximo de toda la frontera**, y la divisoria
+  entre las dos ramas: arriba de él, más carga axial *quita* capacidad de momento; abajo,
+  la *agrega* (la compresión cierra las fisuras y retrasa la fluencia).
+- **Flexión pura** ($P_n = 0$) — la columna trabajando como viga.
 
 <Note type="tip" title="Cómo se usa el diagrama">
-Un par $(M_u,\, P_u)$ es admisible si cae **dentro** de la curva $\phi P_n$–$\phi M_n$. Cada
-combinación de carga de la Sec. 5.3 genera un punto distinto; todos deben quedar contenidos por
-la envolvente de diseño.
+Un par $(M_u, P_u)$ es admisible si cae **dentro** de la curva $\phi P_n$–$\phi M_n$.
+Cada combinación de la Sec. 5.3 genera un punto y todos deben quedar contenidos. El error
+clásico: verificar solo la combinación de $P_u$ máximo — en la rama baja, la combinación
+con $P_u$ *mínimo* (por ejemplo $0.9D + E$) suele ser la crítica, porque perder
+compresión acerca el punto a la frontera.
 </Note>
 
-### Resistencia axial nominal pura (Ec. 22.4.2.2)
+### 1.1 Compresión pura (Ec. 22.4.2.2)
 
 <Equation label="Ec. 22.4.2.2">
 $$
@@ -114,12 +100,9 @@ P_0 = 0.85\,f'_c\,(A_g - A_{st}) + f_y\,A_{st}
 $$
 </Equation>
 
-donde $A_g$ es el área bruta y $A_{st}$ el área total del refuerzo longitudinal.
+con $A_g$ el área bruta y $A_{st}$ el refuerzo longitudinal total.
 
-### Resistencia axial máxima (Sec. 22.4.2.1)
-
-La carga axial de diseño nunca puede alcanzar $P_0$: se limita para considerar excentricidades
-accidentales inevitables.
+### 1.2 El tope: la excentricidad que siempre existe (Sec. 22.4.2.1)
 
 <Equation label="Ec. 22.4.2.1">
 $$
@@ -131,33 +114,85 @@ P_{n,\max} =
 $$
 </Equation>
 
-El mayor factor para zunchos refleja la **mayor ductilidad y confinamiento** del núcleo
-helicoidal.
+El recorte no es un factor de seguridad más: reconoce que la compresión perfectamente
+centrada **no existe** — tolerancias de hormigonado, barras corridas, momentos
+accidentales que el análisis no captura. El tope equivale a exigir una excentricidad
+mínima, y corta la punta superior del diagrama donde la falla sería la más frágil de
+todas.
 
-### Factor de reducción según deformación (Tabla 21.2.2)
+### 1.3 φ a lo largo de la frontera (Tabla 21.2.2)
 
 | Clasificación | $\varepsilon_t$ | $\phi$ (estribos) | $\phi$ (zunchos) |
 |---------------|:---------------:|:-----------------:|:----------------:|
 | Controlada por compresión | $\leq \varepsilon_{ty}$ | 0.65 | 0.75 |
-| Transición | $\varepsilon_{ty} < \varepsilon_t < \varepsilon_{ty}+0.003$ | interpolación | interpolación |
+| Transición | $\varepsilon_{ty} \lt \varepsilon_t \lt \varepsilon_{ty}+0.003$ | interpolación | interpolación |
 | Controlada por tracción | $\geq \varepsilon_{ty}+0.003$ | 0.90 | 0.90 |
 
-La mayoría de las columnas trabajan en la zona **controlada por compresión** ($\phi=0.65$ o
-$0.75$). En la rama inferior del diagrama (flexión dominante) pueden entrar en transición o
-tracción controlada.
-
-<Note type="tip" title="Por qué los zunchos tienen mejor φ">
-El refuerzo en espiral confina el núcleo de hormigón de forma continua: tras el
-desprendimiento del recubrimiento, la columna mantiene capacidad y falla de manera dúctil. Por
-eso la norma premia los zunchos con $\phi = 0.75$ frente a $0.65$ de los estribos y con
-$P_{n,\max} = 0.85\,P_0$ frente a $0.80\,P_0$.
-</Note>
+La mayoría de las columnas trabajan controladas por compresión ($\phi = 0.65$ o 0.75);
+en la rama baja del diagrama pueden entrar en transición o tracción controlada y
+recuperar φ. El diagrama de diseño "se despega" del nominal de forma no uniforme por
+esta razón.
 
 ---
 
-## Límites de refuerzo longitudinal (Sec. 10.6.1)
+## 2. Confinamiento: comprar ductilidad (Sec. 25.7)
 
-La cuantía del refuerzo longitudinal $\rho_g = A_{st}/A_g$ debe cumplir:
+<Figure
+  src="/aci318-25-cap10/confinamiento.svg"
+  alt="Comparación de sección con estribos y sección con zuncho: en ambas salta el recubrimiento cerca de la carga máxima, pero la curva carga-deformación con estribos cae de golpe mientras que con zuncho el núcleo confinado triaxialmente sigue cargando con falla dúctil"
+  caption="La diferencia no está en la resistencia sino en lo que pasa después del peak: el zuncho confina el núcleo de forma continua (compresión triaxial) y la columna sigue cargando tras perder el recubrimiento. La norma lo paga con φ = 0.75 y P_n,max = 0.85·P₀."
+/>
+
+Cerca de la carga máxima, el recubrimiento **siempre** salta — está fuera del núcleo
+confinado y nada lo sujeta. La pregunta de diseño es qué pasa después:
+
+- **Estribos**: soporte discreto, confinan poco. Perdido el recubrimiento, la capacidad
+  cae de golpe → φ = 0.65, $P_{n,\max} = 0.80\,P_0$.
+- **Zuncho**: la hélice aprieta el núcleo de forma continua (estado triaxial). El núcleo
+  compensa la pérdida del recubrimiento y la falla es dúctil y avisada → φ = 0.75,
+  $P_{n,\max} = 0.85\,P_0$.
+
+La cuantía volumétrica mínima del zuncho sale exactamente de esa compensación — que el
+núcleo confinado recupere lo que aporta el recubrimiento que se pierde:
+
+<Equation label="Ec. 25.7.3.3">
+$$
+\rho_s \geq 0.45\left(\frac{A_g}{A_{ch}} - 1\right)\frac{f'_c}{f_{yt}}
+$$
+</Equation>
+
+con $A_{ch}$ el área del núcleo (al exterior de la espiral) y $f_{yt} \leq 700$ MPa. El
+término $(A_g/A_{ch} - 1)$ es literalmente "cuánto recubrimiento hay que reemplazar".
+Paso libre de la hélice: entre 25 y 75 mm.
+
+<Note type="warning" title="Continuidad del zuncho">
+El zuncho debe anclarse con 1.5 vueltas adicionales en cada extremo y mantenerse desde
+la cara superior de la zapata o losa hasta el refuerzo horizontal más bajo del elemento
+soportado (Sec. 25.7.3): el confinamiento solo existe donde la hélice está cerrada y
+continua.
+</Note>
+
+### Estribos (Sec. 25.7.2)
+
+- **Diámetro mínimo:** Nº 10 (#3) para longitudinales hasta Nº 32 (#10); Nº 13 (#4) para
+  mayores o paquetes.
+- **Espaciamiento vertical máximo:**
+
+<Equation label="Sec. 25.7.2.1">
+$$
+s \leq \min\left(16\,d_{b,\text{long}},\; 48\,d_{b,\text{estribo}},\; \text{menor dimensión de la columna}\right)
+$$
+</Equation>
+
+Los tres límites son la misma función con tres disfraces: evitar el **pandeo de las
+barras longitudinales** entre apoyos. Por eso además cada barra de esquina y barras
+alternas deben tener soporte lateral de una esquina de estribo con ángulo interior
+$\leq 135°$, y ninguna barra puede quedar a más de 150 mm libres de una soportada
+(Sec. 25.7.2.3).
+
+---
+
+## 3. Límites de refuerzo longitudinal (Sec. 10.6.1)
 
 <Equation label="Ec. 10.6.1.1">
 $$
@@ -165,10 +200,11 @@ $$
 $$
 </Equation>
 
-- **Mínimo $0.01\,A_g$:** controla la fluencia lenta y el flujo plástico, y asegura una
-  resistencia a flexión mínima frente a momentos imprevistos.
-- **Máximo $0.08\,A_g$:** evita congestión del acero; en la práctica, por los empalmes
-  (donde la cuantía se duplica), conviene no superar $\rho_g \approx 0.04$.
+- **Mínimo 1%:** bajo carga sostenida, el flujo plástico del hormigón le transfiere
+  carga al acero con el tiempo; con muy poco acero, éste termina fluyendo en servicio.
+  El mínimo también garantiza resistencia a flexión frente a momentos no calculados.
+- **Máximo 8%:** congestión — pero es un límite teórico. En los **empalmes por traslape
+  la cuantía local se duplica**, así que el máximo práctico es $\rho_g \approx 0.04$.
 
 ### Número mínimo de barras (Sec. 10.7.3.1)
 
@@ -178,51 +214,24 @@ $$
 | Estribos triangulares | 3 |
 | Zunchos (espirales) | 6 |
 
----
+### Dimensiones mínimas (Sec. 10.3)
 
-## Refuerzo transversal
+El ACI 318-25 no fija una dimensión mínima absoluta: la geometría debe alojar el
+refuerzo con los recubrimientos y separaciones del Cap. 25. Para secciones mayores que
+lo requerido, la Sec. 10.3.1.2 permite diseñar con un área bruta reducida
+$A_{g,\text{eff}} \geq 0.5\,A_g$ a efectos de mínimos y resistencia.
 
-### Columnas con estribos (Sec. 25.7.2)
-
-- **Diámetro mínimo del estribo:** barra Nº 10 (#3) para longitudinales hasta Nº 32 (#10);
-  barra Nº 13 (#4) para longitudinales mayores o paquetes de barras.
-- **Espaciamiento vertical máximo (Sec. 25.7.2.1):**
-
-<Equation label="Sec. 25.7.2.1">
-$$
-s \leq \min\left(16\,d_{b,\text{long}},\; 48\,d_{b,\text{estribo}},\; \text{menor dimensión de la columna}\right)
-$$
-</Equation>
-
-- **Disposición (Sec. 25.7.2.3):** cada barra de esquina y barras alternas deben tener
-  soporte lateral por la esquina de un estribo con ángulo interior $\leq 135^\circ$; ninguna
-  barra puede quedar a más de 150 mm libres de una barra soportada.
-
-### Columnas con zunchos (Sec. 25.7.3)
-
-La cuantía volumétrica del zuncho debe cumplir:
-
-<Equation label="Ec. 25.7.3.3">
-$$
-\rho_s \geq 0.45\left(\frac{A_g}{A_{ch}} - 1\right)\frac{f'_c}{f_{yt}}
-$$
-</Equation>
-
-donde $A_{ch}$ es el área del núcleo confinado (medida al exterior de la espiral) y $f_{yt}
-\leq 700\,\text{MPa}$. El espaciamiento libre de la hélice debe estar entre **25 mm y 75 mm**.
-
-<Note type="warning" title="Continuidad del zuncho">
-El zuncho debe anclarse con 1.5 vueltas adicionales en cada extremo y mantenerse desde la cara
-superior de la zapata o losa hasta el refuerzo horizontal más bajo del elemento soportado
-superior (Sec. 25.7.3).
+<Note type="info">
+No existe una tabla de altura mínima como en elementos de flexión: a la columna la
+gobiernan la **resistencia** (el diagrama) y la **esbeltez** (Cap. 6), no la deflexión.
 </Note>
 
 ---
 
-## Resistencia a cortante (Cap. 22.5)
+## 4. Cortante (Cap. 22.5)
 
-Para columnas con carga axial de compresión $N_u$, la contribución del hormigón puede tomarse,
-de forma simplificada (Tabla 22.5.5.1), como:
+La compresión axial ayuda al corte — cierra las fisuras diagonales y mantiene el
+engranaje de áridos trabajando. La forma simplificada de la Tabla 22.5.5.1 lo captura:
 
 <Equation label="Ec. 22.5.5.1">
 $$
@@ -230,8 +239,8 @@ V_c = 0.17\left(1 + \frac{N_u}{14\,A_g}\right)\lambda\sqrt{f'_c}\;b_w d
 $$
 </Equation>
 
-con $N_u/A_g$ en MPa y $N_u$ positiva en compresión. La contribución de los estribos sigue la
-expresión general:
+con $N_u/A_g$ en MPa, positiva en compresión. La contribución de los estribos es la
+general:
 
 <Equation label="Ec. 22.5.10.5.3">
 $$
@@ -241,9 +250,11 @@ $$
 
 ---
 
-## Efectos de esbeltez (Sec. 6.2.5)
+## 5. Esbeltez (Sec. 6.2.5): cuándo el equilibrio se escribe en la deformada
 
-Los efectos de segundo orden pueden **despreciarse** cuando:
+Una columna esbelta se flecta, y la carga axial actuando sobre esa flecha genera momento
+adicional ($P$–$\delta$): el equilibrio hay que plantearlo en la configuración
+deformada. La norma permite **despreciar** el efecto cuando es menor al ~5%:
 
 <Equation label="Sec. 6.2.5">
 $$
@@ -255,40 +266,56 @@ $$
 $$
 </Equation>
 
-donde $\ell_u$ es la longitud libre, $k$ el factor de longitud efectiva, $r$ el radio de giro
-($\approx 0.30 h$ en secciones rectangulares, $0.25 D$ en circulares) y $M_1/M_2$ la relación
-de momentos de extremo (positiva en curvatura simple). Si se supera el límite, se amplifican
-los momentos por el método de **magnificación de momentos** (Sec. 6.6.4) o un análisis de
-segundo orden.
+con $\ell_u$ la longitud libre, $k$ el factor de longitud efectiva, $r \approx 0.30h$
+(rectangular) o $0.25D$ (circular), y $M_1/M_2$ la relación de momentos de extremo
+(positiva en curvatura simple — la doble curvatura es más estable y el límite lo
+reconoce). Superado el límite: **magnificación de momentos** (Sec. 6.6.4) o análisis de
+segundo orden. El efecto de la esbeltez nunca es reducir la resistencia de la sección —
+es **amplificar la demanda** $M_u$ que entra al diagrama.
 
 ---
 
-## Detallado del refuerzo
+## 6. Detallado del refuerzo
 
-- **Recubrimiento mínimo (Tabla 20.5.1.3):** 40 mm para columnas no expuestas a la intemperie
-  ni en contacto con el suelo (medido a la cara del estribo o zuncho).
-- **Empalmes (Sec. 10.7.5):** se permiten empalmes por traslape, soldados o mecánicos. En el
-  traslape la cuantía local se duplica; conviene escalonarlos y mantener $\rho_g$ holgada
-  respecto al límite de 0.08.
-- **Barras de transferencia / dowels (Sec. 16.3):** la conexión columna–zapata requiere
-  refuerzo que cruce la interfaz con al menos $0.005\,A_g$ y respete las longitudes de
-  desarrollo en compresión.
-- **Espaciamiento libre entre barras longitudinales (Sec. 25.2.3):**
+- **Recubrimiento mínimo (Tabla 20.5.1.3):** 40 mm a la cara del estribo o zuncho en
+  ambiente interior.
+- **Empalmes (Sec. 10.7.5):** por traslape, soldados o mecánicos. En el traslape la
+  cuantía local se duplica: escalonarlos y mantener $\rho_g$ holgada.
+- **Barras de transferencia / dowels (Sec. 16.3):** la interfaz columna–zapata requiere
+  refuerzo que la cruce con al menos $0.005\,A_g$, con desarrollo en compresión a ambos
+  lados.
+- **Separación libre entre longitudinales (Sec. 25.2.3):**
   $\geq \max(40\,\text{mm},\; 1.5\,d_b,\; 4/3\,d_{agg})$.
+
+---
+
+## 7. El orden de diseño
+
+```mermaid
+flowchart TD
+    A["1. Sección tentativa<br/>ρ_g objetivo 1–4% y<br/>geometría que aloje empalmes"] --> B["2. ¿Esbelta?<br/>kℓ_u/r vs límites Sec. 6.2.5"]
+    B -- "Sí" --> C["amplificar momentos<br/>(Sec. 6.6.4) o análisis 2º orden"]
+    C --> D
+    B -- "No" --> D["3. Diagrama de interacción<br/>φP_n–φM_n con tope P_n,max"]
+    D --> E{"4. ¿TODAS las combinaciones<br/>dentro? (incluida la de<br/>P_u mínimo)"}
+    E -- "No" --> A
+    E -- "Sí" --> F["5. Cortante<br/>φ(V_c+V_s) ≥ V_u con el<br/>beneficio de N_u"]
+    F --> G["6. Detallado<br/>estribos/zuncho, soporte de barras,<br/>empalmes escalonados, dowels"]
+```
 
 ---
 
 ## Resumen de verificaciones para columnas
 
-| Verificación | Requisito |
-|--------------|-----------|
-| Cuantía longitudinal | $0.01 \leq \rho_g \leq 0.08$ (Sec. 10.6.1.1) |
-| Número de barras | 4 (estribos) / 3 (triangular) / 6 (zunchos) |
-| Resistencia a flexocompresión | Punto $(P_u, M_u)$ dentro del diagrama $\phi P_n$–$\phi M_n$ |
-| Carga axial máxima | $P_{n,\max} = 0.80\,P_0$ (estribos) / $0.85\,P_0$ (zunchos) |
-| Factor de reducción | $\phi = 0.65$ (estribos) / $0.75$ (zunchos), Tabla 21.2.2 |
-| Refuerzo transversal | Estribos (Sec. 25.7.2) o zuncho $\rho_s$ (Ec. 25.7.3.3) |
-| Espaciamiento de estribos | $\min(16 d_{b,\ell},\, 48 d_{b,t},\, b_{\min})$ |
-| Resistencia a cortante | $\phi V_n = \phi(V_c+V_s) \geq V_u$, $\phi=0.75$ |
-| Esbeltez | Despreciable si $k\ell_u/r \leq$ límite (Sec. 6.2.5), o magnificar |
-| Recubrimiento | 40 mm a la cara del estribo (Tabla 20.5.1.3) |
+| Verificación | Requisito | Naturaleza |
+|--------------|-----------|:---:|
+| Flexocompresión | Todas las $(P_u, M_u)$ dentro de $\phi P_n$–$\phi M_n$ | frontera — frágil arriba, dúctil abajo |
+| Carga axial máxima | $P_{n,\max} = 0.80\,P_0$ (estribos) / $0.85\,P_0$ (zunchos) | **corta la punta más frágil** |
+| Factor de reducción | 0.65 / 0.75 / hasta 0.90 según $\varepsilon_t$ (Tabla 21.2.2) | castiga lo frágil |
+| Cuantía longitudinal | $0.01 \leq \rho_g \leq 0.08$ (práctico $\leq 0.04$ por empalmes) | flujo plástico / congestión |
+| Número de barras | 4 (estribos) / 3 (triangular) / 6 (zunchos) | geometría del confinamiento |
+| Refuerzo transversal | Estribos Sec. 25.7.2 o zuncho Ec. 25.7.3.3 | **compra ductilidad** |
+| Espaciamiento de estribos | $\min(16 d_{b,\ell},\, 48 d_{b,t},\, b_{\min})$ | anti-pandeo de barras |
+| Cortante | $\phi(V_c+V_s) \geq V_u$, con beneficio de $N_u$ | frágil — sobreproteger |
+| Esbeltez | $k\ell_u/r \leq$ límite o amplificar momentos | amplifica demanda, no reduce capacidad |
+| Recubrimiento | 40 mm a la cara del estribo (Tabla 20.5.1.3) | durabilidad |

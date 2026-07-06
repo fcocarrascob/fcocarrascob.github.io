@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 520" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="da" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="dag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="520" fill="#ffffff"/>
+  <text x="420" y="30" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">La columna no tiene una resistencia: tiene una frontera</text>
+
+  <!-- phi zone bands -->
+  <rect x="110" y="70" width="590" height="225" fill="#c0392b" fill-opacity="0.07"/>
+  <rect x="110" y="295" width="590" height="55" fill="#e67e22" fill-opacity="0.10"/>
+  <rect x="110" y="350" width="590" height="110" fill="#1c7c3c" fill-opacity="0.08"/>
+  <text x="695" y="180" font-size="11.5" fill="#c0392b" text-anchor="end">compresión-controlada · φ = 0.65</text>
+  <text x="128" y="326" font-size="11.5" fill="#b35c0e">transición</text>
+  <text x="695" y="440" font-size="11.5" fill="#1c7c3c" text-anchor="end">tracción-controlada · φ = 0.90</text>
+
+  <!-- axes -->
+  <line x1="110" y1="460" x2="720" y2="460" stroke="#333" stroke-width="1.5" marker-end="url(#da)"/>
+  <line x1="110" y1="460" x2="110" y2="55" stroke="#333" stroke-width="1.5" marker-end="url(#da)"/>
+  <text x="712" y="480" font-size="13" fill="#333">M_n</text>
+  <text x="102" y="52" font-size="13" fill="#333" text-anchor="end">P_n</text>
+
+  <!-- nominal curve -->
+  <path d="M 110,90 C 350,95 545,165 575,290 C 592,368 520,425 420,460" fill="none" stroke="#8a857c" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <!-- Pn,max cap -->
+  <line x1="110" y1="158" x2="452" y2="158" stroke="#b02a1a" stroke-width="2.5"/>
+  <!-- design curve (phi applied) -->
+  <path d="M 110,262 C 270,265 415,300 445,363 C 458,405 415,438 350,460" fill="none" stroke="#1a63a8" stroke-width="3"/>
+  <line x1="110" y1="262" x2="285" y2="262" stroke="#1a63a8" stroke-width="3"/>
+
+  <!-- notable points -->
+  <circle cx="110" cy="90" r="5.5" fill="#8a857c"/>
+  <text x="122" y="86" font-size="12.5" fill="#555">P₀ = 0.85f'c(A_g−A_st) + f_y·A_st — teórico: nunca disponible</text>
+  <text x="460" y="150" font-size="12.5" fill="#b02a1a">tope P_n,max = 0.80·P₀ (estribos): excentricidad accidental</text>
+  <circle cx="575" cy="290" r="5.5" fill="#333"/>
+  <text x="590" y="284" font-size="12.5" fill="#333" font-weight="bold">punto balanceado (ε_t = ε_ty)</text>
+  <text x="590" y="300" font-size="12" fill="#555">hormigón y acero al límite a la vez;</text>
+  <text x="590" y="315" font-size="12" fill="#555">M máximo de toda la frontera</text>
+  <circle cx="420" cy="460" r="5.5" fill="#1c7c3c"/>
+  <text x="432" y="450" font-size="12.5" fill="#1c7c3c">flexión pura (P = 0)</text>
+
+  <!-- curve labels -->
+  <text x="330" y="128" font-size="12" fill="#8a857c">nominal P_n–M_n</text>
+  <text x="240" y="248" font-size="12.5" fill="#1a63a8" font-weight="bold">diseño φP_n–φM_n</text>
+
+  <!-- sample load points -->
+  <circle cx="270" cy="330" r="6" fill="#1c7c3c"/>
+  <text x="282" y="335" font-size="12" fill="#1c7c3c">(M_u, P_u) dentro: cumple</text>
+  <circle cx="520" cy="240" r="6" fill="#c0392b"/>
+  <text x="532" y="236" font-size="12" fill="#c0392b">fuera: no cumple, aunque</text>
+  <text x="532" y="251" font-size="12" fill="#c0392b">P_u sea "bajo"</text>
+
+  <!-- bottom note -->
+  <text x="470" y="496" font-size="12.5" text-anchor="middle" fill="#555">Cada combinación de carga es un punto, y todos deben quedar dentro de la curva azul.</text>
+  <text x="470" y="513" font-size="12.5" text-anchor="middle" fill="#555">En la rama baja, más carga axial ayuda; en la rama alta, perjudica.</text>
+</svg>

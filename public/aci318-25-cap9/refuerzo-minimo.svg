@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="760" height="400" fill="#ffffff"/>
+  <text x="380" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Por qué existe A_s,min: la viga no debe fallar al fisurarse</text>
+
+  <!-- axes -->
+  <line x1="90" y1="330" x2="720" y2="330" stroke="#333" stroke-width="1.5" marker-end="url(#ra)"/>
+  <line x1="90" y1="330" x2="90" y2="55" stroke="#333" stroke-width="1.5" marker-end="url(#ra)"/>
+  <text x="710" y="350" font-size="12.5" fill="#333">deflexión</text>
+  <text x="84" y="50" font-size="12.5" fill="#333" text-anchor="end">M</text>
+
+  <!-- Mcr level -->
+  <line x1="90" y1="150" x2="700" y2="150" stroke="#999" stroke-width="1" stroke-dasharray="6 5"/>
+  <text x="84" y="154" font-size="12.5" fill="#555" text-anchor="end">M_cr</text>
+
+  <!-- elastic branch (common) -->
+  <line x1="90" y1="330" x2="280" y2="150" stroke="#333" stroke-width="3"/>
+  <text x="140" y="245" font-size="12" fill="#555" transform="rotate(-43 140,245)">sección no fisurada</text>
+
+  <!-- branch A: under-reinforced below Mcr -->
+  <line x1="280" y1="150" x2="286" y2="252" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="4 3"/>
+  <line x1="286" y1="252" x2="420" y2="248" stroke="#c0392b" stroke-width="3"/>
+  <circle cx="280" cy="150" r="5" fill="#c0392b"/>
+  <line x1="90" y1="250" x2="286" y2="250" stroke="#c0392b" stroke-width="0.8" stroke-dasharray="6 5"/>
+  <text x="84" y="254" font-size="12.5" fill="#c0392b" text-anchor="end">M_n</text>
+  <text x="315" y="285" font-size="12.5" fill="#c0392b" font-weight="bold">A_s bajo el mínimo: M_n menor que M_cr</text>
+  <text x="315" y="302" font-size="12.5" fill="#c0392b">al abrirse la primera fisura, el acero no alcanza</text>
+  <text x="315" y="319" font-size="12.5" fill="#c0392b">a tomar lo que soltó el hormigón → falla frágil</text>
+
+  <!-- branch B: with As,min -->
+  <line x1="280" y1="150" x2="560" y2="95" stroke="#1c7c3c" stroke-width="3"/>
+  <line x1="560" y1="95" x2="690" y2="88" stroke="#1c7c3c" stroke-width="3"/>
+  <circle cx="560" cy="95" r="5" fill="#1c7c3c"/>
+  <text x="452" y="112" font-size="12" fill="#1c7c3c" transform="rotate(-11 452,112)">sección fisurada</text>
+  <text x="628" y="76" font-size="12" fill="#1c7c3c">fluencia dúctil</text>
+  <text x="470" y="145" font-size="12.5" fill="#1c7c3c" font-weight="bold">con A_s,min: M_n ≥ M_cr</text>
+  <text x="470" y="162" font-size="12.5" fill="#1c7c3c">la fisuración es un evento, no el final</text>
+
+  <!-- formula box -->
+  <rect x="110" y="62" width="330" height="56" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="122" y="84" font-size="12.5" fill="#222" font-weight="bold">A_s,min = max( 0.25·√f'c / f_y ,  1.4 / f_y ) · b_w·d</text>
+  <text x="122" y="104" font-size="12" fill="#555">dimensionado para que M_n supere a M_cr con margen</text>
+
+  <text x="380" y="382" font-size="12" text-anchor="middle" fill="#555">El mismo argumento explica la excepción 9.6.1.3: si A_s provisto ≥ 4/3 del requerido por análisis, el margen ya existe y el mínimo no aplica</text>
+</svg>

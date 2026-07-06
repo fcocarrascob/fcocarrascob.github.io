@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="saq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a7449"/>
+    </marker>
+  </defs>
+  <rect width="940" height="450" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Tres cortes, tres verificaciones: el mapa de secciones críticas de la zapata</text>
+
+  <!-- column -->
+  <rect x="430" y="70" width="80" height="120" fill="#dcd8d0" stroke="#8a857c"/>
+  <text x="470" y="62" font-size="12" fill="#555" text-anchor="middle">columna</text>
+  <!-- footing -->
+  <rect x="150" y="190" width="640" height="100" fill="#efece6" stroke="#8a857c"/>
+  <!-- rebar -->
+  <g fill="#3f3f3f">
+    <circle cx="190" cy="272" r="4.5"/><circle cx="250" cy="272" r="4.5"/><circle cx="310" cy="272" r="4.5"/>
+    <circle cx="370" cy="272" r="4.5"/><circle cx="430" cy="272" r="4.5"/><circle cx="490" cy="272" r="4.5"/>
+    <circle cx="550" cy="272" r="4.5"/><circle cx="610" cy="272" r="4.5"/><circle cx="670" cy="272" r="4.5"/>
+    <circle cx="730" cy="272" r="4.5"/><circle cx="750" cy="272" r="4.5"/>
+  </g>
+  <!-- soil pressure upward -->
+  <g stroke="#8a7449" stroke-width="2">
+    <line x1="180" y1="340" x2="180" y2="298" marker-end="url(#saq)"/>
+    <line x1="260" y1="340" x2="260" y2="298" marker-end="url(#saq)"/>
+    <line x1="340" y1="340" x2="340" y2="298" marker-end="url(#saq)"/>
+    <line x1="420" y1="340" x2="420" y2="298" marker-end="url(#saq)"/>
+    <line x1="500" y1="340" x2="500" y2="298" marker-end="url(#saq)"/>
+    <line x1="580" y1="340" x2="580" y2="298" marker-end="url(#saq)"/>
+    <line x1="660" y1="340" x2="660" y2="298" marker-end="url(#saq)"/>
+    <line x1="740" y1="340" x2="740" y2="298" marker-end="url(#saq)"/>
+  </g>
+  <text x="805" y="330" font-size="12.5" fill="#8a7449">q_u (presión</text>
+  <text x="805" y="345" font-size="12.5" fill="#8a7449">mayorada)</text>
+
+  <!-- critical section: moment at face -->
+  <line x1="430" y1="190" x2="430" y2="290" stroke="#c0392b" stroke-width="3"/>
+  <line x1="430" y1="160" x2="430" y2="188" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="424" y="152" font-size="12.5" fill="#c0392b" text-anchor="end" font-weight="bold">M_u: en la CARA de la columna</text>
+
+  <!-- critical section: one-way shear at d -->
+  <line x1="345" y1="190" x2="345" y2="290" stroke="#1c7c3c" stroke-width="3"/>
+  <line x1="345" y1="190" x2="430" y2="190" stroke="#1c7c3c" stroke-width="1.2" marker-start="url(#sa)" marker-end="url(#sa)" transform="translate(0,-12)"/>
+  <text x="387" y="168" font-size="11.5" fill="#1c7c3c" text-anchor="middle">d</text>
+  <text x="330" y="118" font-size="12.5" fill="#1c7c3c" text-anchor="end" font-weight="bold">V unidireccional: a d de la cara</text>
+  <line x1="334" y1="122" x2="345" y2="186" stroke="#1c7c3c" stroke-width="1" stroke-dasharray="4 3"/>
+
+  <!-- critical section: punching at d/2 -->
+  <line x1="388" y1="190" x2="388" y2="290" stroke="#1a63a8" stroke-width="2.6" stroke-dasharray="8 5"/>
+  <line x1="552" y1="190" x2="552" y2="290" stroke="#1a63a8" stroke-width="2.6" stroke-dasharray="8 5"/>
+  <line x1="510" y1="204" x2="552" y2="204" stroke="#1a63a8" stroke-width="1.2" marker-start="url(#sa)" marker-end="url(#sa)"/>
+  <text x="531" y="220" font-size="11.5" fill="#1a63a8" text-anchor="middle">d/2</text>
+  <text x="600" y="152" font-size="12.5" fill="#1a63a8" font-weight="bold">punzonamiento: perímetro a d/2</text>
+  <line x1="596" y1="156" x2="556" y2="186" stroke="#1a63a8" stroke-width="1" stroke-dasharray="4 3"/>
+
+  <!-- d dim -->
+  <line x1="815" y1="190" x2="815" y2="272" stroke="#666" stroke-width="1" marker-start="url(#sa)" marker-end="url(#sa)"/>
+  <text x="823" y="235" font-size="12.5" fill="#666">d</text>
+
+  <!-- development note -->
+  <line x1="190" y1="272" x2="430" y2="272" stroke="#e67e22" stroke-width="2" transform="translate(0,14)"/>
+  <text x="262" y="281" font-size="11" fill="#b35c0e" text-anchor="middle">l_d disponible</text>
+
+  <!-- legend / notes -->
+  <rect x="150" y="366" width="640" height="72" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="165" y="388" font-size="12.5" fill="#333"><tspan fill="#c0392b" font-weight="bold">■ flexión</tspan> y <tspan fill="#e67e22" font-weight="bold">■ desarrollo</tspan> se cortan en la cara; <tspan fill="#1c7c3c" font-weight="bold">■ corte 1D</tspan> a d; <tspan fill="#1a63a8" font-weight="bold">■ punzonamiento</tspan> a d/2 — el canto lo decide casi siempre el azul.</text>
+  <text x="165" y="410" font-size="12" fill="#555">Columna de acero con placa base: las secciones se miden a medio camino entre la cara de la columna</text>
+  <text x="165" y="426" font-size="12" fill="#555">y el borde de la placa (13.2.7.1). Muro de albañilería: a medio camino entre el eje y la cara del muro.</text>
+</svg>

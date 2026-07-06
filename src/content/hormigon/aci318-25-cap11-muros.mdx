@@ -1,7 +1,8 @@
 ---
 title: "ACI 318-25 Cap. 11 — Muros"
-description: "Espesor mínimo, método simplificado de carga axial, resistencia a cortante en el plano y fuera del plano, cuantías mínimas de refuerzo vertical y horizontal, número de capas, espaciamiento y detallado para muros no pretensados según ACI 318-25."
+description: "Muros según ACI 318-25 contados desde su doble naturaleza: el muro de corte que resiste en su plano (fisuras diagonales cosidas por el refuerzo horizontal) y el muro que flecta fuera de él (sótanos, muros esbeltos), con el método simplificado, cuantías, detallado y el orden de diseño."
 pubDate: 2026-06-15
+updatedDate: 2026-07-06
 tags: ["muros", "aci318", "cortante", "carga axial", "muro esbelto", "detallado"]
 subsection: "aci318-25"
 chapter: "Cap. 11 — Muros"
@@ -9,37 +10,45 @@ chapter: "Cap. 11 — Muros"
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
-## Alcance
+## Los dos muros del capítulo
 
-El Capítulo 11 aplica al diseño de **muros no pretensados y pretensados** que resisten
-combinaciones de carga axial, cortante en el plano y fuera del plano, y flexión, incluyendo:
+El Capítulo 11 junta bajo una palabra dos elementos que trabajan de forma opuesta, y la
+mitad de las confusiones con muros vienen de no separarlos desde el principio:
 
-- Muros de carga (bearing walls) que soportan cargas gravitacionales de losas y vigas.
-- Muros de corte (shear walls) que resisten fuerzas laterales de viento o sismo en su plano.
-- Muros de sótano y de fundación que resisten empuje lateral del suelo (flexión fuera del
-  plano).
+1. **El muro de corte**: la fuerza vive **en** su plano (sismo, viento). Es un elemento
+   enorme y rígido cuyo problema es el corte diagonal y la flexocompresión en su plano.
+2. **El muro que recibe empuje**: la fuerza **empuja** su plano (suelo en sótanos,
+   cargas excéntricas en muros esbeltos). Es, mecánicamente, una **losa vertical**: su
+   problema es la flexión fuera del plano.
 
-Los muros se diseñan como **elementos de compresión** cuando resisten principalmente carga
-axial con flexión (aplica también el Cap. 10), pero el Cap. 11 agrega disposiciones propias de
-geometría, cortante y refuerzo distribuido. Los muros que actúan como diafragmas se rigen por
-el Cap. 12, y los muros estructurales especiales sismorresistentes por la Sec. 18.10.
+<Figure
+  src="/aci318-25-cap11/dos-muros.svg"
+  alt="Dos esquemas: muro de corte en elevación con la fuerza en su plano y fisuras diagonales cosidas por el refuerzo horizontal, y muro de sótano en sección flectando fuera del plano bajo el empuje triangular del suelo con el refuerzo vertical en la cara traccionada"
+  caption="El mismo elemento, dos mecánicas opuestas. En el plano: fisuras diagonales → manda el refuerzo horizontal ρ_t. Fuera del plano: flexión de losa vertical → manda el refuerzo vertical ρ_ℓ. Identificar cuál domina es el primer paso de todo diseño de muros."
+/>
 
-<Note type="info">
-Conviene distinguir las dos acciones dominantes: el **cortante en el plano** (in-plane)
-gobierna los muros de corte que resisten sismo o viento, mientras que la **flexión fuera del
-plano** (out-of-plane) gobierna los muros de sótano y los muros esbeltos. Cada una tiene su
-propio procedimiento de verificación.
+Cada mecánica tiene su refuerzo protagonista — horizontal para el corte en el plano,
+vertical para la flexión fuera de él — y sus propias verificaciones. Un mismo muro real
+(un muro perimetral de sótano en zona sísmica, por ejemplo) puede ser los dos a la vez y
+requiere ambas revisiones.
+
+<Note type="info" title="Alcance">
+Muros no pretensados y pretensados: de carga, de corte, de sótano y fundación. Se
+diseñan como elementos de compresión (aplica también el Cap. 10 de la norma) más las
+disposiciones propias de geometría, cortante y refuerzo distribuido de este capítulo.
+Los diafragmas se rigen por el Cap. 12 y los muros estructurales especiales
+sismorresistentes por la Sec. 18.10. Resistencia requerida:
+$\phi P_n \geq P_u$, $\phi M_n \geq M_u$, $\phi V_n \geq V_u$ para las combinaciones de
+la Sec. 5.3.
 </Note>
 
 ---
 
-## Límites de diseño (Sec. 11.3)
+## 1. Límites de diseño (Sec. 11.3)
 
-### Espesor mínimo
-
-Para muros no esbeltos diseñados por el **método simplificado** (Sec. 11.5.3), el espesor debe
-cumplir:
+Para muros diseñados por el **método simplificado** (Sec. 11.5.3), el espesor debe cumplir:
 
 <Equation label="Tabla 11.3.1.1">
 $$
@@ -47,36 +56,18 @@ h \geq \max\left(100\ \text{mm},\; \frac{1}{25}\,\min(\ell_w,\, h_w)\right)
 $$
 </Equation>
 
-donde $\ell_w$ es la longitud del muro y $h_w$ su altura no soportada. Para **muros exteriores
-de sótano y muros de fundación** el espesor mínimo es **190 mm**.
+con $\ell_w$ la longitud y $h_w$ la altura no soportada. Muros exteriores de sótano y de
+fundación: **190 mm** mínimo.
 
 <Note type="info">
-El límite de espesor mínimo de la Tabla 11.3.1.1 sólo es obligatorio cuando se usa el método
-simplificado de carga axial (Sec. 11.5.3). Si el muro se analiza con el método general de
-flexocompresión del Cap. 10 o con el método de muro esbelto (Sec. 11.8), el espesor lo gobierna
-la resistencia y la estabilidad, no esta tabla.
+El límite solo es obligatorio con el método simplificado. Si el muro se analiza por
+flexocompresión general (Cap. 10) o como muro esbelto (Sec. 11.8), el espesor lo
+gobiernan la resistencia y la estabilidad, no esta tabla.
 </Note>
 
 ---
 
-## Resistencia requerida
-
-La resistencia de diseño debe satisfacer en todas las secciones y para todas las combinaciones
-de la Sec. 5.3:
-
-$$
-\phi P_n \geq P_u \qquad \phi M_n \geq M_u \qquad \phi V_n \geq V_u
-$$
-
-Las solicitaciones se obtienen con un análisis que considere los efectos fuera del plano (para
-muros que reciben empuje lateral o cargas excéntricas) y los efectos de esbeltez cuando
-corresponda.
-
----
-
-## Resistencia axial y a flexión
-
-Un muro puede diseñarse por dos vías:
+## 2. Carga axial y flexión: tres rutas
 
 ```mermaid
 flowchart TD
@@ -90,10 +81,10 @@ flowchart TD
     F --> I[Diagrama de interacción<br/>φPn–φMn]
 ```
 
-### Método simplificado de carga axial (Sec. 11.5.3)
+### 2.1 Método simplificado (Sec. 11.5.3)
 
-Aplicable a muros de sección rectangular sólida con la resultante de la carga axial dentro del
-**tercio medio** del espesor ($e \leq h/6$):
+Para sección rectangular sólida con la resultante dentro del **tercio medio** del
+espesor ($e \leq h/6$ — es decir, sin tracción en ninguna fibra):
 
 <Equation label="Ec. 11.5.3.1">
 $$
@@ -101,158 +92,30 @@ $$
 $$
 </Equation>
 
-con $\phi = 0.65$, $A_g$ el área bruta de la sección del muro, $\ell_c$ la altura libre
-(vertical) y $h$ el espesor. El factor de longitud efectiva $k$ vale:
+con $\phi = 0.65$. La estructura de la fórmula se deja leer: el $0.55 f'_c A_g$ es una
+compresión admisible conservadora (nótese que el acero vertical ni aparece — el método
+lo regala), y el corchete es la **penalización por esbeltez**: cae con el cuadrado de
+$k\ell_c/h$, y en $k\ell_c = 32h$ la capacidad llega a cero. El factor de longitud
+efectiva:
 
 | Condición de restricción de los extremos | $k$ |
 |------------------------------------------|:---:|
-| Restringidos contra rotación en uno o ambos extremos (arriba, abajo o ambos) | 0.8 |
+| Restringidos contra rotación en uno o ambos extremos | 0.8 |
 | No restringidos contra rotación en ambos extremos | 1.0 |
 | Muros no arriostrados contra traslación lateral | 2.0 |
 
-El término entre corchetes captura la **reducción por esbeltez** del muro a compresión.
+### 2.2 Método general (Cap. 10)
 
-### Método general (Cap. 10)
+Con excentricidad mayor que $h/6$ o flexión significativa, se construye el **diagrama de
+interacción** $P_n$–$M_n$ de la sección (compatibilidad con $\varepsilon_{cu} = 0.003$ y
+equilibrio, como en columnas) y todas las combinaciones $(P_u, M_u)$ deben quedar dentro
+de la envolvente de diseño.
 
-Cuando la excentricidad supera $h/6$ o el muro resiste flexión y carga axial combinadas
-significativas, se construye el **diagrama de interacción** $P_n$–$M_n$ de la sección como en
-columnas (compatibilidad de deformaciones con $\varepsilon_{cu}=0.003$ y equilibrio), y el par
-$(P_u, M_u)$ debe quedar dentro de la envolvente de diseño.
+### 2.3 Muro esbelto fuera del plano (Sec. 11.8)
 
----
-
-## Resistencia a cortante en el plano (Sec. 11.5.4)
-
-Para muros de corte, la resistencia al cortante en el plano se evalúa sobre el área
-$A_{cv} = h\,\ell_w$ (espesor por longitud del muro):
-
-<Equation label="Ec. 11.5.4.3">
-$$
-V_n = \left(\alpha_c\,\lambda\sqrt{f'_c} + \rho_t\,f_{yt}\right) A_{cv}
-$$
-</Equation>
-
-donde $\rho_t$ es la cuantía del refuerzo horizontal y el coeficiente $\alpha_c$ depende de la
-esbeltez del muro $h_w/\ell_w$:
-
-<Equation label="Sec. 11.5.4.3">
-$$
-\alpha_c =
-\begin{cases}
-0.25 & h_w/\ell_w \leq 1.5 \\[4pt]
-0.17 & h_w/\ell_w \geq 2.0 \\[4pt]
-\text{interpolación lineal} & 1.5 < h_w/\ell_w < 2.0
-\end{cases}
-$$
-</Equation>
-
-Los muros **bajos y largos** ($h_w/\ell_w \leq 1.5$) movilizan más el mecanismo de puntal y
-reciben mayor $\alpha_c$. En todos los casos la resistencia está acotada por:
-
-<Equation label="Ec. 11.5.4.2">
-$$
-V_n \leq 0.66\,\sqrt{f'_c}\;A_{cv}
-$$
-</Equation>
-
-con $\phi = 0.75$ para cortante. Este tope evita la falla por aplastamiento del alma del
-hormigón antes de que fluya el refuerzo.
-
-<Note type="warning" title="Refuerzo horizontal como contribución a cortante">
-En la Ec. 11.5.4.3 es el refuerzo **horizontal** ($\rho_t$) el que aporta a la resistencia al
-cortante en el plano, no el vertical. Esto invierte la intuición que se trae de vigas, donde el
-refuerzo transversal a cortante es perpendicular al eje. En un muro de corte, las fisuras
-diagonales son cosidas por las barras horizontales distribuidas en el alma.
-</Note>
-
----
-
-## Resistencia a cortante fuera del plano
-
-El cortante perpendicular al plano del muro (por ejemplo, en muros de sótano que reciben empuje
-de suelo) se trata como **cortante en una dirección** según el Cap. 22.5, igual que una losa o
-viga ancha:
-
-<Equation label="Cap. 22.5">
-$$
-V_c = 0.17\,\lambda\sqrt{f'_c}\;b_w d \qquad \phi V_n \geq V_u \quad (\phi = 0.75)
-$$
-</Equation>
-
-En la mayoría de los muros de espesor normal, $\phi V_c$ por sí solo supera el cortante fuera
-del plano y no se requiere refuerzo adicional por cortante.
-
----
-
-## Límites de refuerzo (Sec. 11.6)
-
-Los muros llevan **dos mallas de refuerzo distribuido**, una vertical ($\rho_\ell$) y una
-horizontal ($\rho_t$), referidas al área bruta de hormigón. Cuando $V_u \leq 0.5\,\phi V_c$, las
-cuantías mínimas son las de la Tabla 11.6.1:
-
-| Tipo de barra / malla | $\rho_\ell$ mínima (vertical) | $\rho_t$ mínima (horizontal) |
-|-----------------------|:-----------------------------:|:----------------------------:|
-| Barras corrugadas $\leq$ Nº 16 (#5) con $f_y \geq 420$ MPa | 0.0012 | 0.0020 |
-| Otras barras corrugadas | 0.0015 | 0.0025 |
-| Malla electrosoldada $\leq$ W31 o D31 | 0.0012 | 0.0020 |
-
-Cuando $V_u > 0.5\,\phi V_c$, el muro debe diseñarse para cortante en el plano según la
-Sec. 11.5.4 y cumplir además $\rho_\ell$ y $\rho_t$ no menores a las de la Sec. 11.6 (con un
-mínimo de $\rho_t = 0.0025$ y $\rho_\ell$ relacionado con la esbeltez según la Ec. 11.6.2).
-
-<Equation label="Ec. 11.6.2">
-$$
-\rho_\ell \geq 0.0025 + 0.5\left(2.5 - \frac{h_w}{\ell_w}\right)\left(\rho_t - 0.0025\right) \geq 0.0025
-$$
-</Equation>
-
-<Note type="tip" title="Vertical vs. horizontal">
-La cuantía **horizontal** mínima ($0.0020$) es mayor que la **vertical** ($0.0012$) porque el
-refuerzo horizontal controla la fisuración por retracción y temperatura a lo largo de muros
-generalmente más largos que altos, y porque aporta a la resistencia al cortante en el plano.
-</Note>
-
----
-
-## Detallado del refuerzo (Sec. 11.7)
-
-### Número de capas (Sec. 11.7.2.3)
-
-Se requieren **dos cortinas (capas) de refuerzo**, una en cada cara, cuando:
-
-- El espesor del muro $h > 250\ \text{mm}$, o
-- El cortante en el plano $V_u > 0.17\,\lambda\sqrt{f'_c}\,A_{cv}$.
-
-Muros más delgados y poco solicitados a cortante pueden llevar una sola capa centrada.
-
-### Espaciamiento máximo (Sec. 11.7.2.1)
-
-<Equation label="Sec. 11.7.2.1">
-$$
-s \leq \min\left(3h,\; 450\ \text{mm}\right)
-$$
-</Equation>
-
-tanto para el refuerzo vertical como para el horizontal.
-
-### Refuerzo en aberturas (Sec. 11.7.5)
-
-Alrededor de ventanas, puertas y otras aberturas se debe colocar al menos **dos barras Nº 16
-(#5)** en cada dirección, extendidas con la longitud de desarrollo más allá de la esquina de la
-abertura, para controlar la fisuración diagonal que parte de las esquinas.
-
-### Refuerzo mínimo alrededor de barras verticales
-
-En muros donde $\rho_\ell$ excede $0.01$, o donde las barras verticales actúan como refuerzo a
-compresión, deben confinarse con estribos como en columnas (Sec. 10.7.6 / Sec. 11.7.4).
-
----
-
-## Método alternativo para muros esbeltos fuera del plano (Sec. 11.8)
-
-Para muros esbeltos sometidos a flexión fuera del plano y carga axial baja
-($P_u \leq 0.06\,f'_c\,A_g$), la Sec. 11.8 permite un análisis directo de segundo orden que
-incluye el efecto $P\text{-}\Delta$. El momento amplificado de diseño es:
+Para muros esbeltos con carga axial baja ($P_u \leq 0.06 f'_c A_g$) y flexión fuera del
+plano dominante — el muro prefabricado o *tilt-up* típico — se admite un análisis
+directo de segundo orden:
 
 <Equation label="Ec. 11.8.3.1">
 $$
@@ -260,32 +123,150 @@ M_u = M_{ua} + P_u\,\Delta_u
 $$
 </Equation>
 
-donde $M_{ua}$ es el momento de primer orden (cargas laterales y excentricidad) y $\Delta_u$ la
-deflexión fuera del plano en la mitad de la altura, calculada con la rigidez fisurada efectiva
-$I_{cr}$. La deflexión bajo cargas de servicio $\Delta_s$ se limita a $\ell_c/150$
-(Sec. 11.8.4.1) para controlar la estabilidad y el confort.
+el momento de primer orden más el efecto $P\text{-}\Delta$: la carga axial actuando
+sobre la flecha $\Delta_u$ a media altura (calculada con la rigidez fisurada $I_{cr}$).
+La deflexión de servicio se limita a $\Delta_s \leq \ell_c/150$ (Sec. 11.8.4.1).
 
 <Note type="warning" title="Condiciones del método de muro esbelto">
-El método de la Sec. 11.8 sólo es válido si la sección es controlada por tracción
-($\varepsilon_t \geq 0.004$), la carga axial es baja ($\leq 0.06\,f'_c A_g$) y el muro está
-arriostrado en su parte superior e inferior contra desplazamiento lateral fuera del plano. Fuera
-de estos límites se debe usar un análisis general de segundo orden.
+Solo válido si la sección es controlada por tracción ($\varepsilon_t \geq 0.004$), la
+carga axial es baja ($\leq 0.06 f'_c A_g$) y el muro está arriostrado arriba y abajo
+contra desplazamiento fuera del plano. Fuera de esos límites: análisis general de
+segundo orden.
 </Note>
+
+---
+
+## 3. Cortante en el plano (Sec. 11.5.4)
+
+El muro de corte trabaja sobre el área $A_{cv} = h\,\ell_w$:
+
+<Equation label="Ec. 11.5.4.3">
+$$
+V_n = \left(\alpha_c\,\lambda\sqrt{f'_c} + \rho_t\,f_{yt}\right) A_{cv}
+$$
+</Equation>
+
+Los dos sumandos son el hormigón y el acero, y el acero que suma es el **horizontal**:
+
+<Note type="warning" title="El refuerzo horizontal es el que corta">
+Las fisuras de corte en el plano son **diagonales** (ver la figura de apertura), y las
+barras que las cruzan y las cosen son las horizontales distribuidas en el alma — no las
+verticales. Esto invierte la intuición que se trae de vigas (donde el refuerzo de corte
+es perpendicular al eje del elemento)... hasta que se nota que es la misma regla: el
+refuerzo de corte es perpendicular al **canto**, y el "canto" de un muro es vertical.
+</Note>
+
+El coeficiente $\alpha_c$ depende de la esbeltez del muro:
+
+<Equation label="Sec. 11.5.4.3">
+$$
+\alpha_c =
+\begin{cases}
+0.25 & h_w/\ell_w \leq 1.5 \\[4pt]
+0.17 & h_w/\ell_w \geq 2.0 \\[4pt]
+\text{interpolación lineal} & 1.5 \lt h_w/\ell_w \lt 2.0
+\end{cases}
+$$
+</Equation>
+
+Los muros **bajos y largos** ($h_w/\ell_w \leq 1.5$) reciben más: la carga puede viajar
+directo del punto de aplicación a la fundación por un **puntal diagonal comprimido**,
+un mecanismo extra que los muros esbeltos no tienen. Y en todos los casos:
+
+<Equation label="Ec. 11.5.4.2">
+$$
+V_n \leq 0.66\,\sqrt{f'_c}\;A_{cv} \qquad (\phi = 0.75)
+$$
+</Equation>
+
+el tope que protege el alma: pasado ese punto, más refuerzo horizontal no sirve porque
+el hormigón diagonal se aplasta antes de que fluya — la falla sería frágil, y la norma
+la saca del menú.
+
+### Cortante fuera del plano
+
+El corte perpendicular al plano (empuje de suelo) se trata como cortante en una
+dirección del Cap. 22.5, igual que una losa:
+
+<Equation label="Cap. 22.5">
+$$
+V_c = 0.17\,\lambda\sqrt{f'_c}\;b_w d \qquad \phi V_n \geq V_u \quad (\phi = 0.75)
+$$
+</Equation>
+
+En espesores normales, $\phi V_c$ solo suele bastar.
+
+---
+
+## 4. Cuantías mínimas (Sec. 11.6)
+
+Los muros llevan **dos mallas distribuidas**, vertical ($\rho_\ell$) y horizontal
+($\rho_t$), referidas al área bruta. Con $V_u \leq 0.5\,\phi V_c$:
+
+| Tipo de barra / malla | $\rho_\ell$ mínima (vertical) | $\rho_t$ mínima (horizontal) |
+|-----------------------|:-----------------------------:|:----------------------------:|
+| Barras corrugadas $\leq$ Nº 16 (#5) con $f_y \geq 420$ MPa | 0.0012 | 0.0020 |
+| Otras barras corrugadas | 0.0015 | 0.0025 |
+| Malla electrosoldada $\leq$ W31 o D31 | 0.0012 | 0.0020 |
+
+Que el mínimo horizontal (0.0020) supere al vertical (0.0012) es coherente con los dos
+roles del refuerzo horizontal: controla la retracción a lo largo de muros generalmente
+más largos que altos, y es el que aporta al cortante en el plano.
+
+Con $V_u > 0.5\,\phi V_c$, el muro se diseña a cortante según la Sec. 11.5.4 con
+$\rho_t \geq 0.0025$, y el vertical acompaña según la esbeltez:
+
+<Equation label="Ec. 11.6.2">
+$$
+\rho_\ell \geq 0.0025 + 0.5\left(2.5 - \frac{h_w}{\ell_w}\right)\left(\rho_t - 0.0025\right) \geq 0.0025
+$$
+</Equation>
+
+— en muros bajos, el puntal diagonal necesita también del acero vertical para cerrar el
+mecanismo, y la ecuación lo exige en proporción.
+
+---
+
+## 5. Detallado (Sec. 11.7)
+
+- **Dos capas de refuerzo** (una por cara) cuando $h > 250$ mm o
+  $V_u > 0.17\lambda\sqrt{f'_c}A_{cv}$ (Sec. 11.7.2.3); muros delgados y poco
+  solicitados pueden llevar una sola capa centrada.
+- **Espaciamiento máximo** (Sec. 11.7.2.1): $s \leq \min(3h,\ 450\ \text{mm})$ para
+  ambas direcciones.
+- **Aberturas** (Sec. 11.7.5): al menos 2 barras Nº 16 (#5) en cada dirección alrededor
+  de ventanas y puertas, desarrolladas más allá de las esquinas — las fisuras diagonales
+  nacen justamente en las esquinas de las aberturas.
+- **Confinamiento de barras verticales**: si $\rho_\ell > 0.01$ o las barras actúan como
+  refuerzo a compresión, se confinan con estribos como en columnas (Sec. 11.7.4).
+
+---
+
+## 6. El orden de diseño
+
+```mermaid
+flowchart TD
+    A["1. Clasificar el muro<br/>¿la fuerza vive en el plano,<br/>lo empuja, o ambas?"] --> B["2. Geometría<br/>h por Tabla 11.3.1.1 (o por<br/>resistencia si método general)"]
+    B --> C["3. Axial + flexión<br/>simplificado / diagrama de<br/>interacción / muro esbelto"]
+    C --> D["4. Cortante en el plano<br/>(α_c + ρ_t·f_yt)·A_cv,<br/>tope 0.66√f'c·A_cv"]
+    D --> E["5. Cortante fuera del plano<br/>como losa (Cap. 22.5)"]
+    E --> F["6. Cuantías y detallado<br/>ρ_ℓ, ρ_t, capas, s_max,<br/>refuerzo de aberturas"]
+```
 
 ---
 
 ## Resumen de verificaciones para muros
 
-| Verificación | Requisito |
-|--------------|-----------|
-| Espesor mínimo (método simplificado) | $h \geq \max(100\ \text{mm},\, \tfrac{1}{25}\min(\ell_w, h_w))$; sótano $\geq 190$ mm |
-| Carga axial (método simplificado) | $\phi P_n = 0.55\,\phi f'_c A_g[1-(k\ell_c/32h)^2]$, $\phi=0.65$ |
-| Flexocompresión (método general) | Punto $(P_u, M_u)$ dentro del diagrama $\phi P_n$–$\phi M_n$ (Cap. 10) |
-| Cortante en el plano | $V_n = (\alpha_c\lambda\sqrt{f'_c} + \rho_t f_{yt})A_{cv} \leq 0.66\sqrt{f'_c}A_{cv}$ |
-| Cortante fuera del plano | $\phi V_n \geq V_u$ como cortante en una dirección (Cap. 22.5) |
-| Cuantía vertical mínima | $\rho_\ell \geq 0.0012$ (Tabla 11.6.1) |
-| Cuantía horizontal mínima | $\rho_t \geq 0.0020$ (Tabla 11.6.1) |
-| Número de capas | Dos cortinas si $h>250$ mm o $V_u>0.17\lambda\sqrt{f'_c}A_{cv}$ |
-| Espaciamiento máximo | $s \leq \min(3h,\, 450\ \text{mm})$ |
-| Refuerzo en aberturas | $\geq 2$ barras Nº 16 (#5) por dirección, desarrolladas en esquinas |
-| Muro esbelto (Sec. 11.8) | $M_u = M_{ua}+P_u\Delta_u$; $\Delta_s \leq \ell_c/150$ |
+| Verificación | Requisito | Naturaleza |
+|--------------|-----------|:---:|
+| Espesor mínimo (m. simplificado) | $h \geq \max(100,\, \tfrac{1}{25}\min(\ell_w, h_w))$; sótano $\geq 190$ mm | geometría |
+| Carga axial (m. simplificado) | $\phi P_n = 0.55\,\phi f'_c A_g[1-(k\ell_c/32h)^2]$, $\phi=0.65$ | frágil — φ bajo |
+| Flexocompresión (m. general) | $(P_u, M_u)$ dentro del diagrama $\phi P_n$–$\phi M_n$ | frontera |
+| Muro esbelto (Sec. 11.8) | $M_u = M_{ua}+P_u\Delta_u$; $\Delta_s \leq \ell_c/150$ | 2º orden + servicio |
+| Cortante en el plano | $(\alpha_c\lambda\sqrt{f'_c} + \rho_t f_{yt})A_{cv}$ | dúctil si manda ρ_t |
+| Tope del alma | $V_n \leq 0.66\sqrt{f'_c}A_{cv}$ | **frágil — no negociable** |
+| Cortante fuera del plano | Como losa, Cap. 22.5 | rara vez controla |
+| Cuantía vertical mínima | $\rho_\ell \geq 0.0012$ (más Ec. 11.6.2 si hay corte alto) | protege lo dúctil |
+| Cuantía horizontal mínima | $\rho_t \geq 0.0020$ (0.0025 con corte alto) | corte + retracción |
+| Capas y espaciamiento | 2 capas si $h>250$ mm; $s \leq \min(3h, 450)$ | detallado |
+| Aberturas | $\geq 2$ barras Nº 16 por dirección, desarrolladas | fisuración de esquinas |

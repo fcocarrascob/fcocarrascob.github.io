@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 370" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="bd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="bdr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="370" fill="#ffffff"/>
+  <text x="470" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Regiones B y D: dónde vale la teoría de vigas y dónde no</text>
+
+  <!-- beam -->
+  <rect x="60" y="130" width="820" height="120" fill="#efece6" stroke="#8a857c"/>
+  <!-- D region bands -->
+  <rect x="60" y="130" width="180" height="120" fill="#e67e22" fill-opacity="0.20"/>
+  <rect x="210" y="130" width="240" height="120" fill="#e67e22" fill-opacity="0.20"/>
+  <rect x="700" y="130" width="180" height="120" fill="#e67e22" fill-opacity="0.20"/>
+  <!-- load -->
+  <line x1="330" y1="80" x2="330" y2="126" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#bdr)"/>
+  <text x="330" y="68" font-size="13.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">P (carga concentrada)</text>
+  <!-- supports -->
+  <polygon points="120,250 102,282 138,282" fill="#5b6470"/>
+  <polygon points="820,250 802,282 838,282" fill="#5b6470"/>
+  <!-- labels -->
+  <text x="330" y="196" font-size="13" fill="#b35c0e" text-anchor="middle" font-weight="bold">D</text>
+  <text x="150" y="196" font-size="13" fill="#b35c0e" text-anchor="middle" font-weight="bold">D</text>
+  <text x="790" y="196" font-size="13" fill="#b35c0e" text-anchor="middle" font-weight="bold">D</text>
+  <text x="575" y="190" font-size="13" fill="#1c7c3c" text-anchor="middle" font-weight="bold">B</text>
+  <text x="575" y="210" font-size="11.5" fill="#1c7c3c" text-anchor="middle">secciones planas ✓</text>
+  <!-- h dim -->
+  <line x1="905" y1="130" x2="905" y2="250" stroke="#666" stroke-width="1" marker-start="url(#bd)" marker-end="url(#bd)"/>
+  <text x="913" y="194" font-size="12" fill="#666">h</text>
+  <!-- extent of D from load -->
+  <line x1="210" y1="112" x2="330" y2="112" stroke="#b35c0e" stroke-width="1.1" marker-start="url(#bd)" marker-end="url(#bd)"/>
+  <text x="270" y="104" font-size="11.5" fill="#b35c0e" text-anchor="middle">~h</text>
+  <line x1="330" y1="112" x2="450" y2="112" stroke="#b35c0e" stroke-width="1.1" marker-start="url(#bd)" marker-end="url(#bd)"/>
+  <text x="390" y="104" font-size="11.5" fill="#b35c0e" text-anchor="middle">~h</text>
+
+  <text x="470" y="312" font-size="12.5" text-anchor="middle" fill="#333">Cada discontinuidad — carga concentrada, apoyo, cambio de sección, abertura — perturba el flujo de tensiones</text>
+  <text x="470" y="330" font-size="12.5" text-anchor="middle" fill="#333">en un largo ≈ h hacia cada lado (Saint-Venant). Dentro de esas zonas <tspan fill="#b35c0e" font-weight="bold">D</tspan>, la hipótesis de secciones planas no describe nada.</text>
+  <text x="470" y="354" font-size="12.5" text-anchor="middle" fill="#555">Una viga alta, una ménsula o un cabezal de pilotes son elementos que son PURA región D — ahí vive este capítulo.</text>
+</svg>
