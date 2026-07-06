@@ -1,0 +1,103 @@
+---
+title: "El Estimador de T₁: Destilar 840 Análisis Modales en una Herramienta"
+description: "Cierre del experimento de períodos: cómo se convierte el dataset en un estimador interactivo del período fundamental — por qué el mejor surrogate resultó ser la tabla exacta, por qué las irregularidades no combinan multiplicativamente, y una fórmula de bolsillo con sus límites a la vista."
+pubDate: 2026-07-05
+tags: ["períodos", "herramientas", "surrogate", "análisis modal", "SAP2000", "pórticos"]
+section: "Sísmica"
+series: "Sísmica"
+seriesPart: 3
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De la nota anterior a la herramienta
+
+La [nota anterior](/blog/periodos-fundamentales-exponente) dejó un dataset limpio: 840
+análisis modales de pórticos planos, validados contra formas cerradas a menos del
+0.05 %, cubriendo alturas de 1 a 30 pisos, rigideces relativas viga/columna $\rho$ de
+0.1 a ∞, y tres ejes de irregularidad vertical. Esta nota corta cierra el experimento
+con la parte constructiva de la fórmula de la serie: **el surrogate y la herramienta** —
+el [estimador de T₁](/herramientas/estimador-t1), que responde en milisegundos lo que a
+SAP le toma un modelo.
+
+<Figure
+  src="/periodos/tool-estimador-t1.png"
+  alt="La herramienta estimador de T1: formulario con las propiedades del pórtico e irregularidades a la izquierda, y a la derecha el período fundamental, la forma modal dibujada, la masa participante y la comparación contra las fórmulas de código"
+  caption="El estimador: pórtico e irregularidades a la izquierda; T₁–T₃, forma modal, masa participante y la comparación contra Ct·H^x a la derecha. Interpola las tablas exactas del experimento — cada valor mostrado es trazable a un análisis de SAP2000."
+/>
+
+## El surrogate más honesto resultó ser la tabla
+
+En fundaciones el surrogate fue un modelo de machine learning, porque el despegue
+biaxial es genuinamente no lineal y de alta dimensión. Aquí no: el período adimensional
+
+<Equation label="Ec. 1">
+$$
+\hat{T}_1 = T_1 \sqrt{\frac{E \, I_c}{m \, h^3}}
+$$
+</Equation>
+
+es una función **suave y de dos variables** $(n, \rho)$ — las curvas de la nota
+anterior, casi rectas en log-log. Para eso el mejor "modelo" es el más simple posible:
+**la tabla medida, interpolada** (log-lineal en $n$, lineal en $u = 1/(1+\rho)$). Exacta
+en los 70 nodos por construcción, sin hiperparámetros, y cada número trazable a su
+corrida. La lección de diseño vale más que cualquier R²: *antes de entrenar un modelo,
+pregúntate si tu función es lo bastante complicada como para merecerlo*.
+
+Las irregularidades sí guardaban una trampa que justificó medir el factorial completo:
+
+<Note type="warning" title="Las irregularidades no multiplican">
+La tentación era componer: $T(\text{taper}, \text{piso blando}, \text{taper masa})
+\approx T_{reg} \cdot r_1 \cdot r_2 \cdot r_3$. El dataset la rechaza: la mediana del
+error de esa hipótesis es 0.7 %, pero las colas llegan al **22 %** (piso blando + taper
+de rigidez + taper de masa interactúan, peor en pórticos bajos de viga rígida). Por eso
+la herramienta interpola la **tabla factorial completa** — los 12 combos medidos por
+cada punto $(n, \rho)$ — en vez de asumir separabilidad. Medir barato tiene ese
+dividendo: no hay que suponer nada que se pueda mirar.
+</Note>
+
+## La fórmula de bolsillo (con sus límites a la vista)
+
+Para cálculos a mano quedó también una expresión compacta, anclada en la forma cerrada
+del shear building: $\hat{T}_1 = \hat{T}_{corte}(n) \cdot F$, con el factor de
+ablandamiento por vigas flexibles
+
+<Equation label="Ec. 2">
+$$
+\ln F = u\,(0{,}123 + 0{,}281 \ln n - 0{,}053 \ln^2 n)
+      + u^2\,(0{,}501 + 0{,}344 \ln n - 0{,}044 \ln^2 n),
+\qquad u = \tfrac{1}{1+\rho}
+$$
+</Equation>
+
+Error mediano 3.5 %, máximo 8.5 % sobre la grilla regular — útil para tantear, no para
+reemplazar la tabla. (El intento de darle estructura física —descomposición
+corte + flexural tipo Dunkerley— degeneró por una razón instructiva: el límite flexural
+del pórtico se activa según $\rho \cdot n^2$, no según $\rho$; con vigas "flexibles" de
+$\rho = 0{,}1$ un pórtico sigue estando lejísimos del voladizo. Es el mismo hallazgo de
+la masa modal que nunca baja del 73 %.)
+
+## Cuándo usar qué
+
+La jerarquía que deja el experimento completo, de más a menos información disponible:
+
+| Tienes… | Usa… | Error esperable |
+|:---|:---|:---:|
+| Un modelo (aunque sea estático) | **Rayleigh** con la deformada bajo carga lateral | < 2 % siempre |
+| Las propiedades del pórtico | **El estimador** (tablas del experimento) | exacto en la grilla; interpolación entre nodos |
+| Solo la altura | $C_t \cdot H^x$ de la norma | cota inferior deliberada — y ahora sabes [de dónde sale el x](/blog/periodos-fundamentales-exponente) |
+
+La herramienta declara sus fronteras: pórticos planos elásticos de un vano, columnas
+cuasi-inextensibles, sin rigidez no estructural ni agrietamiento; fuera de la grilla
+muestreada aplica *clamp* y lo avisa. Para muros y sistemas duales no aplica — ese es
+otro experimento.
+
+## La serie hasta aquí
+
+Con esto el experimento de períodos completa la fórmula entera que veníamos usando
+desde fundaciones: *referencia cerrada + barrido adimensional + mapa de error +
+surrogate + herramienta*. La serie sísmica sigue con la combinación modal — SRSS vs
+CQC y el coeficiente de correlación de Der Kiureghian, que predice exactamente dónde
+SRSS falla; el barrido lo va a dibujar.

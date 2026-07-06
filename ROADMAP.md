@@ -65,7 +65,7 @@ Ordenados de menor a mayor esfuerzo:
   +1.0 % donde el clásico pierde +5.6 %); frontera θ_lim(5 %) = 0.10–0.25 según ρ/n,
   con B₂ 0.30–0.50 salvo el rincón flexural alto. Densificación pendiente (opcional,
   fase 5): flexibilidad axial de columnas, grandes desplazamientos, patrón uniforme.
-- [~] **C2. Períodos fundamentales: fórmulas aproximadas vs. modal** — barrido de
+- [x] **C2. Períodos fundamentales: fórmulas aproximadas vs. modal** — barrido de
   pórticos (n pisos, H, distribución de masa/rigidez, acero y hormigón) midiendo T₁
   modal en SAP; validar T ≈ C_t·H^0.75 (NCh433/ASCE 7) y Rayleigh, mapear el error
   según irregularidad vertical. Modal cuesta segundos → dataset grande gratis →
@@ -79,8 +79,12 @@ Ordenados de menor a mayor esfuerzo:
     queda entre regímenes); Rayleigh ≤ 0.06 % regular / ≤ 1.6 % irregular; mr₁ =
     73–85 % siempre (el 61 % es del muro puro); piso blando concentra deriva modo 1
     ×1.6–1.9 (gancho a C4).
-  - Pendiente **fase 5**: fórmula ajustada/surrogate de T₁ y φ₁ + herramienta
-    "estimador de T₁" en `/herramientas/` + post 3 de la serie.
+  - Fase 5 hecha (2026-07-05): herramienta `/herramientas/estimador-t1` (tablas
+    exactas interpoladas + factorial de irregularidades — la hipótesis
+    multiplicativa se rechazó: interacciones de hasta 22 %; fórmula de bolsillo
+    mediana 3.5 %) + post 3 `estimador-t1.mdx`. **C2 completo** — la fórmula
+    entera de la serie (mapa + surrogate + herramienta) por primera vez en
+    sísmica.
 - [ ] **C3. SRSS vs CQC: el error de combinación modal** — estructuras con modos
   acoplados (plantas con excentricidad torsional variable); medir el error de SRSS
   respecto de CQC en función de β = Tᵢ/Tⱼ y el amortiguamiento, validando el
@@ -98,10 +102,7 @@ Ordenados de menor a mayor esfuerzo:
 Hecho hasta aquí: A1–A3, B1–B2, C1 completo y C2 fases 0–4 (dos posts de la serie
 Sísmica publicados). Lo que sigue:
 
-1. **C2 fase 5** — estimador de T₁: fórmula ajustada/surrogate de T̂₁(n, ρ) y φ₁ +
-   herramienta en `/herramientas/` + post 3. Cierra C2 al 100 % y es la primera
-   herramienta nacida de la serie sísmica (el rol de la zapata biaxial en
-   fundaciones); el post 2 ya la anuncia.
+1. ~~C2 fase 5~~ ✅ (2026-07-05) — estimador de T₁ publicado.
 2. **A4** como intercalado liviano entre experimentos (mecánico y acotado).
 3. **C3 → C4** como cierre del arco: C3 estrena la modelación torsional/espectral
    (referencia cerrada de lujo: el coeficiente de correlación de Der Kiureghian);

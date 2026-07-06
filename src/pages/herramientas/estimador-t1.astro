@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
+import T1EstimadorTool from '../../components/periodos/T1EstimadorTool.tsx';
+
+const title = 'Estimador de T₁';
+const description =
+  'Estima el período fundamental, la forma modal y la masa participante de un pórtico plano en milisegundos, interpolando las tablas exactas de 840 análisis modales en SAP2000 — con irregularidad vertical y comparación contra las fórmulas Ct·H^x de las normas.';
+---
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8">
+    <header class="mb-5">
+      <h1 class="text-2xl font-semibold text-ink">Estimador de T₁</h1>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Ingresa el pórtico (pisos, rigideces, masa por piso) y obtén el
+        <strong>período fundamental</strong>, T₂ y T₃, la <strong>forma modal</strong> y la
+        masa participante del modo 1 — sin abrir SAP. El motor interpola las tablas
+        <em>exactas</em> del experimento de períodos (840 análisis modales, validado contra
+        formas cerradas a &lt;0.05&nbsp;%), incluida la tabla factorial completa de
+        irregularidades verticales (taper de rigidez, piso blando, taper de masa — que
+        <strong>no</strong> combinan multiplicativamente). Ver
+        <a href="/blog/periodos-fundamentales-exponente"
+          class="text-accent hover:underline">la nota de la serie sísmica</a> para el detalle.
+      </p>
+    </header>
+
+    <T1EstimadorTool client:only="react" />
+
+    <details class="mt-6 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">Supuestos y notas del modelo</summary>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
+        <li>
+          <strong>Pórtico plano de 1 vano y 2 columnas</strong>, elástico, empotrado en la
+          base, masa concentrada por piso. I_c es la inercia de <em>una</em> columna; la
+          rigidez relativa viga/columna es ρ = (I_b/L_b)/(I_c/h).
+        </li>
+        <li>
+          <strong>Adimensional:</strong> T₁ = T̂₁·√(m·h³/(E·I_c)) con m = W/g. Los resultados
+          escalan exactos a cualquier E, I y masa; la grilla medida cubre n = 1–30 y
+          ρ = 0.1–∞ (fuera de eso se aplica clamp con aviso).
+        </li>
+        <li>
+          <strong>Columnas cuasi-inextensibles:</strong> la flexión global por acortamiento
+          de columnas (~1 % en 20 pisos, más en pórticos altos y angostos) no está incluida.
+        </li>
+        <li>
+          <strong>Sin rigidez no estructural ni agrietamiento:</strong> es el T₁ del modelo
+          elástico desnudo — por eso las fórmulas de código (cotas inferiores calibradas
+          sobre edificios reales) dan valores menores.
+        </li>
+        <li>
+          <strong>Forma modal con piso blando:</strong> interpolada entre la tabla regular y
+          la tabla medida con k₁ × 0.5 — muestra la concentración de deriva en el primer
+          piso (×1.6–1.9 según ρ).
+        </li>
+        <li>
+          <strong>Rayleigh:</strong> si ya tienes un modelo estático, el cociente de Rayleigh
+          da T₁ con error &lt;2 % incluso con irregularidades — esta herramienta es para
+          cuando no lo tienes.
+        </li>
+      </ul>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
+      Herramienta de <strong>prediseño</strong>, no de proyecto definitivo. Válida dentro de
+      la envolvente del experimento (pórticos planos regulares o con la irregularidad
+      vertical muestreada). El proyecto definitivo se verifica con el análisis modal.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>
