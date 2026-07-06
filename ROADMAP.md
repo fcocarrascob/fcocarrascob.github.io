@@ -93,10 +93,21 @@ Ordenados de menor a mayor esfuerzo:
   surrogate de campo (POD, mismo truco que u_z en fundaciones) que predice el perfil
   de deriva completo desde parámetros adimensionales → herramienta en el navegador.
 
-## Recomendación de orden
+## Recomendación de orden (actualizada 2026-07-05)
 
-1. **A1** (en curso) — cierra la brecha más citada de la herramienta de placa base.
-2. **C1** como post corto para estrenar la serie sísmica con victoria rápida.
-3. **C2 → C3 → C4** como arco largo, terminando —igual que fundaciones— en un
-   surrogate y una herramienta.
-4. A2/A3/B1 como intercalados de bajo esfuerzo entre experimentos.
+Hecho hasta aquí: A1–A3, B1–B2, C1 completo y C2 fases 0–4 (dos posts de la serie
+Sísmica publicados). Lo que sigue:
+
+1. **C2 fase 5** — estimador de T₁: fórmula ajustada/surrogate de T̂₁(n, ρ) y φ₁ +
+   herramienta en `/herramientas/` + post 3. Cierra C2 al 100 % y es la primera
+   herramienta nacida de la serie sísmica (el rol de la zapata biaxial en
+   fundaciones); el post 2 ya la anuncia.
+2. **A4** como intercalado liviano entre experimentos (mecánico y acotado).
+3. **C3 → C4** como cierre del arco: C3 estrena la modelación torsional/espectral
+   (referencia cerrada de lujo: el coeficiente de correlación de Der Kiureghian);
+   C4 reutiliza el modal de C2 (el piso blando ×1.6–1.9 es su gancho) y el espectral
+   de C3, conecta con el generador de espectros y termina en el surrogate de campo
+   (POD del perfil de deriva, el truco de u_z de fundaciones).
+4. **Densificación de C1** (fase 5 opcional: flexibilidad axial, grandes
+   desplazamientos, patrón uniforme) solo si C3/C4 levantan preguntas que la
+   necesiten; si no, se deja caer.
