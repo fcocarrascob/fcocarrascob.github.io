@@ -1,0 +1,205 @@
+---
+title: "Períodos Fundamentales: ¿De Dónde Sale el 0.75?"
+description: "840 análisis modales en SAP2000 contra dos formas cerradas exactas: por qué el exponente de T ≈ Ct·H^0.75 no es una propiedad del edificio sino del espectro con que se diseña, por qué Rayleigh casi nunca falla, y qué le hace un piso blando a la forma modal."
+pubDate: 2026-07-05
+tags: ["períodos", "análisis modal", "SAP2000", "experimento", "ASCE 7", "NCh433", "Rayleigh", "pórticos"]
+section: "Sísmica"
+series: "Sísmica"
+seriesPart: 2
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+Todo método estático equivalente arranca igual: estimando el período fundamental. Y las
+normas ofrecen dos caminos. El empírico,
+
+<Equation label="Ec. 1">
+$$
+T_a = C_t \cdot H^{x}
+$$
+</Equation>
+
+con exponentes tabulados ($x = 0{,}75$ para "otros sistemas", $0{,}8$ para marcos de
+acero, $0{,}9$ para marcos de hormigón en ASCE 7), y el mecánico: el **cociente de
+Rayleigh**, que con cualquier deformada estática $\delta_i$ bajo fuerzas $f_i$ entrega
+
+<Equation label="Ec. 2">
+$$
+T = 2\pi \sqrt{\frac{\sum m_i \, \delta_i^2}{\sum f_i \, \delta_i}}
+$$
+</Equation>
+
+Dos preguntas quedan siempre flotando: **¿de dónde sale ese exponente 0.75** que nadie
+deriva nunca, **y cuánto error comete cada fórmula** frente al análisis modal? Este es el
+segundo experimento de la serie —mismo método que el
+[de P-Delta](/blog/pdelta-cuando-confiar-amplificador): referencia cerrada, barrido
+adimensional en SAP2000, mapa de error— y esta vez el barrido salió aún más barato, por
+un truco que vale la pena contar.
+
+---
+
+## El truco: un modal por geometría, el diseño en post-proceso
+
+Los períodos escalan **exactamente** con $\sqrt{m/k}$: multiplicar todas las rigideces
+por $s$ y todas las masas por $\mu$ multiplica todos los períodos por $\sqrt{\mu/s}$ sin
+tocar las formas modales. Eso significa que *no hace falta barrer niveles de diseño en
+SAP*: basta **un análisis modal adimensional por geometría**, y el "pórtico dimensionado
+por deriva" —la rigidez escalada para que la deriva bajo la carga sísmica $c \cdot W$
+valga el límite $\gamma$— se construye después, en álgebra pura:
+
+<Equation label="Ec. 3">
+$$
+k \propto \frac{c \, W}{\gamma \, h}
+\quad\Longrightarrow\quad
+T \propto \sqrt{\frac{\gamma \, H}{c \, g}}
+$$
+</Equation>
+
+La Ec. 3 es la clave de todo el post. Dice que en un edificio dimensionado por deriva el
+período no es una propiedad libre: queda **atado a la altura por el criterio de diseño**.
+Y fija la apuesta del experimento: si el coeficiente sísmico $c$ es constante (zona
+plana del espectro), $T \propto H^{0{,}5}$; si $c \propto 1/T$ (rama descendente), el
+punto fijo da $T \propto H^{1{,}0}$. **El 0.75 de las normas queda exactamente entre
+ambos regímenes** — el exponente sería una huella del espectro de diseño, no de la
+estructura. Eso es lo que el barrido pone a prueba.
+
+El modelo es el mismo pórtico plano paramétrico del experimento P-Delta (un vano,
+elástico, secciones cuasi-inextensibles), ahora con masa por piso y un caso modal:
+**840 geometrías** — 10 alturas (1 a 30 pisos) × 7 rigideces relativas viga/columna
+$\rho$ × 12 combinaciones de irregularidad vertical (taper de rigidez, piso blando,
+taper de masa) — a ~7 s cada una, **cero errores**.
+
+### El control de sanidad
+
+Las anclas del eje $\rho$ tienen solución exacta y SAP debe reproducirlas antes de
+creerle nada al barrido:
+
+| Ancla | Referencia discreta exacta | Error máximo (n = 1–20) |
+|:---|:---|:---:|
+| Corte (viga rígida) | $\omega_j = 2\sqrt{k/m}\,\sin\!\frac{(2j-1)\pi}{2(2n+1)}$ | $0{,}02\,\%$ en $T_1$–$T_3$ |
+| Flexural ($\rho \to 0$) | voladizo Euler-Bernoulli (eig con condensación) | $0{,}05\,\%$ |
+
+Las masas participantes calzaron a $0{,}005\,\%$ y las formas modales con RMS
+$\leq 10^{-4}$. De regalo, dos lecciones de modelación quedaron documentadas: el modelo
+discreto de masas concentradas queda sistemáticamente $\approx 1/n$ *por debajo* del
+voladizo continuo (la masa del último piso vive completa en la punta), y la deformación
+axial de columnas —que parecía despreciable— alargaba $T_1$ un 1 % en 20 pisos hasta que
+la eliminamos explícitamente del barrido base.
+
+---
+
+## El paisaje: T̂₁ sobre el plano (n, ρ)
+
+<Figure
+  src="/periodos/periodo_adimensional.png"
+  alt="Período adimensional del primer modo versus número de pisos en escala log-log: siete curvas casi paralelas por rho, con la forma cerrada del shear building cayendo exactamente sobre la curva de viga rígida"
+  caption="El período adimensional T̂₁ = T₁·√(E·Ic/(m·h³)) para las 70 geometrías regulares. Los círculos negros son la forma cerrada exacta del shear building: caen dígito a dígito sobre la curva de viga rígida. Aflojar las vigas (ρ → 0.1) alarga el período hasta 4.4× a igual columna."
+/>
+
+Dos lecturas rápidas: las curvas son casi rectas en log-log (un cuasi-power-law en $n$ —
+la materia prima del estimador de la próxima nota), y el efecto de $\rho$ es enorme: a
+igual columna, pasar de viga rígida a $\rho = 0{,}1$ multiplica el período por
+**4.4** en 30 pisos. Las irregularidades mueven el período en dirección predecible:
+taper de rigidez $+10$ a $+18\,\%$, piso blando $+6\,\%$ (hasta $+20\,\%$ en pórticos
+flexurales), y quitar masa arriba lo *acorta* $-20\,\%$ — más de lo que sugiere la masa
+total, porque la masa alta pesa donde $\varphi_1$ es grande.
+
+---
+
+## El resultado central: el exponente es del espectro
+
+Con la Ec. 3, cada geometría genera su familia de edificios "bien diseñados" a lo largo
+de la altura, y se puede ajustar $T = C_t \cdot H^x$ por familia y régimen espectral:
+
+<Figure
+  src="/periodos/exponente_regimenes.png"
+  alt="Familias T contra H en log-log: haz azul con pendiente 0.44 para coeficiente sísmico constante, haz rojo con pendiente 0.88 para c proporcional a 1 sobre T, y la recta de pendiente 0.75 de las normas pasando entre ambos haces"
+  caption="Las mismas 7 familias de ρ, dimensionadas por deriva bajo dos regímenes espectrales. El régimen — no la estructura — fija la pendiente: c constante da x ≈ 0.44, c ∝ 1/T da exactamente el doble. La recta 0.75 de las normas pasa entre ambos haces."
+/>
+
+Los números del ajuste son elocuentes:
+
+| | $x$ con $c$ constante | $x$ con $c \propto 1/T$ |
+|:---|:---:|:---:|
+| Regulares, todo $\rho$ | $0{,}43$–$0{,}45$ | $0{,}85$–$0{,}89$ |
+| Con irregularidad vertical | $0{,}40$–$0{,}51$ | $0{,}80$–$1{,}03$ |
+
+Cambiar la estructura —$\rho$ de 0.1 a ∞, taper, piso blando— mueve el exponente en
+$\pm 0{,}05$. Cambiar el **régimen de diseño** lo multiplica por dos, exactamente como
+manda el álgebra del punto fijo. La conclusión es difícil de esquivar:
+
+<Note type="info" title="De dónde sale el 0.75">
+El exponente de $T \approx C_t H^x$ **no es una propiedad de los edificios: es una
+propiedad del criterio con que se diseñan**. Un parque de edificios dimensionados por
+deriva, unos cayendo en la zona plana del espectro (los bajos) y otros en la rama
+descendente (los altos), produce una nube $T$–$H$ cuya pendiente empírica queda entre
+0.5 y 1.0 — el $0{,}75$ tabulado es la huella estadística de ese cruce de regímenes,
+medida sobre edificios reales. Por eso ajusta "misteriosamente" bien y por eso no hay
+derivación estructural que lo produzca: la derivación pasa por el espectro.
+</Note>
+
+---
+
+## Rayleigh casi no falla — y el modo 1 siempre domina
+
+<Figure
+  src="/periodos/rayleigh_masamodal.png"
+  alt="Dos paneles: error del cociente de Rayleigh versus número de pisos en escala logarítmica, siempre bajo 1.6 por ciento; y masa modal del primer modo por rho, estancada entre 76 y 85 por ciento, lejos de la línea del 61 por ciento del voladizo puro"
+  caption="Izquierda: el error de Rayleigh contra el T₁ modal — 0.06 % con el patrón triangular en pórticos regulares, 0.66 % con el patrón «equivocado» (uniforme), 1.6 % en el peor caso con irregularidad combinada. Derecha: la masa modal del modo 1 se queda en 76–85 % para todo ρ práctico; el 61 % del voladizo puro nunca se alcanza en pórticos."
+/>
+
+La hipótesis decía "Rayleigh < 2 %". El barrido la volvió conservadora: con el patrón
+triangular y pórticos regulares el error máximo es **0.06 %**; con el patrón uniforme
+—la deformada deliberadamente equivocada— 0.66 %; y con piso blando y tapers combinados,
+1.6 %. Siempre por el lado correcto (es una cota superior de frecuencia). La conclusión
+práctica es filosa:
+
+<Note type="tip" title="La regla práctica">
+Si existe **cualquier** modelo estático del edificio, la Ec. 2 entrega $T_1$ con error
+inferior al 2 % — irregularidades incluidas. La fórmula empírica $C_t H^x$ solo se
+justifica cuando no hay modelo alguno; usarla teniendo el modelo es regalar precisión
+(y las normas la castigan además con topes tipo $C_u T_a$, precisamente porque
+subestima a propósito).
+</Note>
+
+El panel derecho guarda la otra sorpresa: la **masa modal del modo 1 no baja del
+~73 %** en ningún pórtico del barrido, por flexible que sea la viga o irregular la
+elevación. El 61 % del voladizo es exclusivo de los muros puros; en pórticos, la
+hipótesis de "primer modo dominante" del estático equivalente es más robusta de lo que
+esperábamos — una hipótesis nuestra refutada con gusto.
+
+---
+
+## El piso blando distorsiona lo que el estático no ve
+
+<Figure
+  src="/periodos/piso_blando.png"
+  alt="Barras por rho comparando la deriva del primer piso relativa a la media del modo 1: el piso blando la amplifica entre 1.6 y 1.9 veces, más en pórticos de viga rígida"
+  caption="Concentración de deriva del modo 1 en el primer piso (deriva piso 1 / deriva media). El piso blando (k₁ × 0.5) la amplifica ×1.6–1.9 — y castiga más al pórtico de corte, que ya concentraba abajo, que al flexural, cuya forma modal casi no deriva en la base."
+/>
+
+Sobre el período, el piso blando es benigno ($+6\,\%$ mediano). Sobre la **forma
+modal**, no: la deriva del primer piso pasa de 1.5× la media (pórtico de corte regular)
+a **2.85×**, y la amplificación ×1.6–1.9 es mayor justo donde la forma ya concentraba.
+Es la distorsión que la distribución lineal de fuerzas del método estático no puede ver
+— y la razón de que las normas lo persigan con clasificaciones de irregularidad. Ese
+hilo — *cuándo el estático equivalente deja de valer* — es exactamente el experimento
+C4 de esta serie.
+
+## Qué queda fuera, y lo que viene
+
+El barrido es plano, elástico y de un vano: mide la mecánica de las fórmulas de período,
+no el agrietamiento del hormigón ni la rigidez no estructural (dos razones por las que
+los $T$ medidos en edificios reales salen más cortos que los de los modelos — y parte de
+por qué el $C_t$ empírico es una cota inferior deliberada). La flexibilidad axial de
+columnas quedó fuera del barrido base tras medirla (~1 % en 20 pisos).
+
+La próxima nota cierra el experimento con la parte constructiva: las curvas de la
+primera figura son tan suaves que admiten una **fórmula ajustada interpretable** para
+$T_1(n, \rho)$ y la forma modal — el "estimador de T₁" como herramienta interactiva,
+validado contra estas 840 corridas. El dataset completo y el código viven en el
+repositorio del experimento; esta nota es su bitácora.

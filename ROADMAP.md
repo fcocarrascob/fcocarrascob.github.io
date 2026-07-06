@@ -65,11 +65,22 @@ Ordenados de menor a mayor esfuerzo:
   +1.0 % donde el clásico pierde +5.6 %); frontera θ_lim(5 %) = 0.10–0.25 según ρ/n,
   con B₂ 0.30–0.50 salvo el rincón flexural alto. Densificación pendiente (opcional,
   fase 5): flexibilidad axial de columnas, grandes desplazamientos, patrón uniforme.
-- [ ] **C2. Períodos fundamentales: fórmulas aproximadas vs. modal** — barrido de
+- [~] **C2. Períodos fundamentales: fórmulas aproximadas vs. modal** — barrido de
   pórticos (n pisos, H, distribución de masa/rigidez, acero y hormigón) midiendo T₁
   modal en SAP; validar T ≈ C_t·H^0.75 (NCh433/ASCE 7) y Rayleigh, mapear el error
   según irregularidad vertical. Modal cuesta segundos → dataset grande gratis →
   surrogate de período y forma modal → herramienta "estimador de T₁".
+  - Fases 0–4 hechas (2026-07-05), fuente de verdad en
+    `APP_sap2000\periodos_fundamentales\EXPERIMENTO.md`: 840/840 geometrías, 0
+    errores, anclas cerradas a <0.05 %. Post publicado:
+    `periodos-fundamentales-exponente.mdx` (serie Sísmica, parte 2, figuras en
+    `public/periodos/`). Veredictos: el exponente de T–H es del régimen de diseño
+    (x = 0.44 con c cte, 0.88 con c∝1/T, casi inmune a ρ e irregularidad — el 0.75
+    queda entre regímenes); Rayleigh ≤ 0.06 % regular / ≤ 1.6 % irregular; mr₁ =
+    73–85 % siempre (el 61 % es del muro puro); piso blando concentra deriva modo 1
+    ×1.6–1.9 (gancho a C4).
+  - Pendiente **fase 5**: fórmula ajustada/surrogate de T₁ y φ₁ + herramienta
+    "estimador de T₁" en `/herramientas/` + post 3 de la serie.
 - [ ] **C3. SRSS vs CQC: el error de combinación modal** — estructuras con modos
   acoplados (plantas con excentricidad torsional variable); medir el error de SRSS
   respecto de CQC en función de β = Tᵢ/Tⱼ y el amortiguamiento, validando el
