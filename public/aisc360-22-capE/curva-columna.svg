@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="eag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La curva de columna: cuánto de F_y puede usar según la esbeltez</text>
+
+  <!-- zone bands -->
+  <rect x="120" y="90" width="310" height="295" fill="#e67e22" fill-opacity="0.09"/>
+  <rect x="430" y="90" width="440" height="295" fill="#b02a1a" fill-opacity="0.08"/>
+
+  <!-- axes -->
+  <line x1="120" y1="385" x2="872" y2="385" stroke="#333" stroke-width="1.5" marker-end="url(#ea)"/>
+  <line x1="120" y1="385" x2="120" y2="85" stroke="#333" stroke-width="1.5" marker-end="url(#ea)"/>
+  <text x="876" y="402" font-size="13" fill="#333">L_c / r</text>
+  <text x="114" y="80" font-size="13" fill="#333" text-anchor="end">F_cr</text>
+
+  <!-- Fy ceiling -->
+  <line x1="120" y1="108" x2="860" y2="108" stroke="#1c7c3c" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="114" y="112" font-size="12.5" fill="#1c7c3c" text-anchor="end" font-weight="bold">F_y</text>
+  <text x="128" y="102" font-size="11.5" fill="#1c7c3c">aplastamiento — el techo del material (columna ideal corta)</text>
+
+  <!-- Euler ideal curve (grey dashed) -->
+  <path d="M175,92 C 300,175 385,235 430,258 C 560,320 700,352 862,366" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="600" y="330" font-size="12" fill="#777">Euler ideal: F_e = π²E / (L_c/r)²</text>
+
+  <!-- AISC column curve (blue solid) -->
+  <path d="M120,108 C 250,124 365,205 430,272 C 560,332 700,360 862,372" fill="none" stroke="#1a63a8" stroke-width="3.5"/>
+
+  <!-- transition vertical -->
+  <line x1="430" y1="108" x2="430" y2="385" stroke="#333" stroke-width="1.3" stroke-dasharray="4 4"/>
+  <line x1="430" y1="381" x2="430" y2="389" stroke="#333" stroke-width="1.4"/>
+  <text x="430" y="405" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">L_c/r = 4.71√(E/F_y)</text>
+  <text x="430" y="421" font-size="11" fill="#555" text-anchor="middle">(F_y / F_e = 2.25)</text>
+
+  <!-- 0.877 knockdown arrow between Euler and AISC in elastic zone -->
+  <line x1="640" y1="345" x2="640" y2="362" stroke="#b02a1a" stroke-width="1.4" marker-start="url(#eag)" marker-end="url(#eag)"/>
+  <text x="648" y="358" font-size="11.5" fill="#b02a1a">× 0.877 (imperfecciones)</text>
+
+  <!-- zone labels -->
+  <text x="275" y="140" font-size="13" fill="#b35c0e" text-anchor="middle" font-weight="bold">PANDEO INELÁSTICO</text>
+  <text x="275" y="160" font-size="12" fill="#555" text-anchor="middle">columna corta / intermedia</text>
+  <text x="275" y="178" font-size="12.5" fill="#b35c0e" text-anchor="middle">F_cr = 0.658^(F_y/F_e) · F_y</text>
+  <text x="275" y="196" font-size="11.5" fill="#555" text-anchor="middle">(Ec. E3-2)</text>
+
+  <text x="650" y="140" font-size="13" fill="#b02a1a" text-anchor="middle" font-weight="bold">PANDEO ELÁSTICO</text>
+  <text x="650" y="160" font-size="12" fill="#555" text-anchor="middle">columna esbelta</text>
+  <text x="650" y="178" font-size="12.5" fill="#b02a1a" text-anchor="middle">F_cr = 0.877 · F_e</text>
+  <text x="650" y="196" font-size="11.5" fill="#555" text-anchor="middle">(Ec. E3-3)</text>
+
+  <!-- takeaway -->
+  <text x="470" y="447" font-size="12.5" text-anchor="middle" fill="#333">Más esbelta la columna (mayor L_c/r) → menos de su F_y aprovecha. Nunca se aplasta: <tspan fill="#b02a1a" font-weight="bold">pandea antes</tspan>, y el pandeo es súbito.</text>
+  <text x="470" y="466" font-size="12" text-anchor="middle" fill="#555">Bajar L_c/r —arriostrar o empotrar mejor los apoyos (K)— sube F_cr y mueve la columna hacia el techo F_y.</text>
+</svg>
