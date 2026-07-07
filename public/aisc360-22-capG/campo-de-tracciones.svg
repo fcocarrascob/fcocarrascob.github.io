@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="tc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Campo de tracciones: tras pandear, el alma atiesada trabaja como celosía</text>
+
+  <!-- flanges (chords) -->
+  <rect x="90" y="80" width="760" height="16" fill="#efece6" stroke="#8a857c"/>
+  <rect x="90" y="284" width="760" height="16" fill="#efece6" stroke="#8a857c"/>
+  <text x="470" y="72" font-size="11.5" fill="#555" text-anchor="middle">ala = cordón comprimido</text>
+  <text x="470" y="320" font-size="11.5" fill="#555" text-anchor="middle">ala = cordón traccionado</text>
+
+  <!-- web panels bounded by stiffeners -->
+  <rect x="90" y="96" width="760" height="188" fill="#efece6" fill-opacity="0.35" stroke="none"/>
+  <!-- transverse stiffeners (compression posts) -->
+  <g stroke="#1a63a8" stroke-width="5">
+    <line x1="230" y1="96" x2="230" y2="284"/>
+    <line x1="470" y1="96" x2="470" y2="284"/>
+    <line x1="710" y1="96" x2="710" y2="284"/>
+  </g>
+  <text x="470" y="360" font-size="12.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">atiesadores = montantes comprimidos</text>
+  <line x1="470" y1="345" x2="470" y2="290" stroke="#1a63a8" stroke-width="1.2" marker-end="url(#tc)"/>
+
+  <!-- buckled web (faint diagonal wrinkles) -->
+  <g stroke="#bbb" stroke-width="1.2" opacity="0.7">
+    <path d="M100,278 q 30,-40 60,-80 q 20,-30 55,-88" fill="none"/>
+    <path d="M340,278 q 30,-40 60,-80 q 20,-30 55,-88" fill="none"/>
+    <path d="M580,278 q 30,-40 60,-80 q 20,-30 55,-88" fill="none"/>
+  </g>
+
+  <!-- diagonal tension bands (the tension field) -->
+  <g stroke="#b02a1a" stroke-width="3">
+    <line x1="105" y1="278" x2="220" y2="102" marker-end="url(#ta)"/>
+    <line x1="140" y1="278" x2="228" y2="145" marker-end="url(#ta)"/>
+    <line x1="345" y1="278" x2="460" y2="102" marker-end="url(#ta)"/>
+    <line x1="380" y1="278" x2="468" y2="145" marker-end="url(#ta)"/>
+    <line x1="585" y1="278" x2="700" y2="102" marker-end="url(#ta)"/>
+    <line x1="620" y1="278" x2="708" y2="145" marker-end="url(#ta)"/>
+  </g>
+  <text x="150" y="258" font-size="12" fill="#b02a1a" font-weight="bold" transform="rotate(-56 150,258)">tracción diagonal</text>
+
+  <!-- shear arrows at ends -->
+  <line x1="70" y1="130" x2="70" y2="250" stroke="#333" stroke-width="2.5" marker-end="url(#ta)"/>
+  <text x="55" y="195" font-size="13" fill="#333" font-weight="bold">V</text>
+
+  <!-- Pratt truss note -->
+  <text x="470" y="392" font-size="12.5" text-anchor="middle" fill="#333">Reserva <tspan font-weight="bold">post-pandeo</tspan>: aunque el alma ya pandeó, sigue tomando corte como diagonales traccionadas de una celosía Pratt.</text>
+  <text x="470" y="413" font-size="12" text-anchor="middle" fill="#555">V_n = 0.6 F_y A_w [ C_v2 + (1 − C_v2) / (1.15√(1+(a/h)²)) ]  (Ec. G2-7) — no se permite en paneles extremos ni con a/h &gt; 3.</text>
+</svg>

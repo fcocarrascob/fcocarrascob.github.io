@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 410" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="410" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El alma toma el corte — y puede fluir (dúctil) o pandear (súbito)</text>
+
+  <!-- dividers -->
+  <line x1="315" y1="55" x2="315" y2="350" stroke="#e5e2dc" stroke-width="1.5"/>
+  <line x1="605" y1="55" x2="605" y2="350" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ===== Panel A: cross-section + shear distribution ===== -->
+  <g>
+    <text x="170" y="72" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Dónde vive el corte</text>
+    <!-- I-section -->
+    <rect x="70" y="95" width="110" height="16" fill="#efece6" stroke="#8a857c"/>
+    <rect x="117" y="111" width="16" height="150" fill="#1a63a8" fill-opacity="0.18" stroke="#8a857c"/>
+    <rect x="70" y="261" width="110" height="16" fill="#efece6" stroke="#8a857c"/>
+    <!-- shear stress diagram to the right -->
+    <line x1="205" y1="95" x2="205" y2="277" stroke="#999" stroke-width="1.2"/>
+    <path d="M205,95 L212,103 L212,111 C 268,120 272,181 272,186 C 272,191 268,252 212,261 L212,269 L205,277 Z" fill="#1a63a8" fill-opacity="0.16" stroke="#1a63a8" stroke-width="1.5"/>
+    <text x="278" y="150" font-size="11.5" fill="#1a63a8">τ ≈ 0.6 F_y</text>
+    <text x="278" y="167" font-size="11" fill="#555">(fluencia</text>
+    <text x="278" y="182" font-size="11" fill="#555">por corte)</text>
+    <!-- Aw dim -->
+    <line x1="52" y1="111" x2="52" y2="261" stroke="#666" stroke-width="1" marker-start="url(#ga)" marker-end="url(#ga)"/>
+    <text x="45" y="190" font-size="12" fill="#666" text-anchor="end">d</text>
+    <text x="170" y="305" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">A_w = d · t_w</text>
+    <text x="170" y="325" font-size="11.5" fill="#555" text-anchor="middle">casi todo el corte va por el alma</text>
+    <text x="170" y="341" font-size="11.5" fill="#555" text-anchor="middle">(las alas casi no participan)</text>
+  </g>
+
+  <!-- ===== Panel B: stocky web yields ===== -->
+  <g>
+    <text x="460" y="72" font-size="13" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Alma robusta → fluye</text>
+    <!-- panel -->
+    <rect x="390" y="95" width="140" height="160" fill="#1c7c3c" fill-opacity="0.10" stroke="#1c7c3c" stroke-width="2"/>
+    <!-- 45 yield lines -->
+    <g stroke="#1c7c3c" stroke-width="1.4" opacity="0.7">
+      <line x1="390" y1="135" x2="430" y2="95"/>
+      <line x1="390" y1="175" x2="470" y2="95"/>
+      <line x1="390" y1="215" x2="510" y2="95"/>
+      <line x1="390" y1="255" x2="530" y2="115"/>
+      <line x1="430" y1="255" x2="530" y2="155"/>
+      <line x1="470" y1="255" x2="530" y2="195"/>
+    </g>
+    <text x="460" y="285" font-size="12" fill="#1c7c3c" text-anchor="middle" font-weight="bold">h/t_w bajo → C_v = 1</text>
+    <text x="460" y="306" font-size="11.5" fill="#333" text-anchor="middle">V_n = 0.6 F_y A_w</text>
+    <text x="460" y="326" font-size="11.5" fill="#1c7c3c" text-anchor="middle">DÚCTIL — fluye por corte</text>
+    <text x="460" y="343" font-size="11" fill="#555" text-anchor="middle">(perfiles W laminados: φ_v = 1.00)</text>
+  </g>
+
+  <!-- ===== Panel C: slender web buckles ===== -->
+  <g>
+    <text x="748" y="72" font-size="13" text-anchor="middle" fill="#b02a1a" font-weight="bold">Alma esbelta → pandea</text>
+    <!-- panel -->
+    <rect x="678" y="95" width="140" height="160" fill="#b02a1a" fill-opacity="0.07" stroke="#8a857c" stroke-width="1.6"/>
+    <!-- diagonal shear buckle waves -->
+    <g stroke="#b02a1a" stroke-width="2.4" fill="none">
+      <path d="M690,245 q 40,-55 55,-75 q 15,-20 55,-65"/>
+      <path d="M705,250 q 40,-55 60,-80 q 15,-20 48,-60"/>
+    </g>
+    <text x="748" y="285" font-size="12" fill="#b02a1a" text-anchor="middle" font-weight="bold">h/t_w alto → C_v &lt; 1</text>
+    <text x="748" y="306" font-size="11.5" fill="#333" text-anchor="middle">V_n = 0.6 F_y A_w · C_v1</text>
+    <text x="748" y="326" font-size="11.5" fill="#b02a1a" text-anchor="middle">SÚBITO — pandea en diagonal</text>
+    <text x="748" y="343" font-size="11" fill="#555" text-anchor="middle">(atiesar el alma sube k_v y C_v)</text>
+  </g>
+
+  <!-- V arrow bottom -->
+  <text x="470" y="390" font-size="12.5" text-anchor="middle" fill="#333">El coeficiente C_v es la fracción de la fluencia por corte (0.6 F_y A_w) que el alma alcanza a desarrollar antes de pandear.</text>
+</svg>
