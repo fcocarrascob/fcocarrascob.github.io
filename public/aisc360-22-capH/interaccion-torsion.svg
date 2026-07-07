@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 400" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ta2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="ga2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="400" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Estados combinados con torsión (H3): normales suman lineal, cortantes al cuadrado</text>
+
+  <!-- ===== LEFT: HSS under torsion ===== -->
+  <g>
+    <text x="205" y="70" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Torsión en HSS (H3.1)</text>
+    <!-- tube (rectangular HSS in perspective) -->
+    <polygon points="150,120 250,120 290,100 190,100" fill="#efece6" stroke="#8a857c"/>
+    <polygon points="150,120 150,250 250,250 250,120" fill="#efece6" stroke="#8a857c"/>
+    <polygon points="250,120 290,100 290,230 250,250" fill="#e5e2dc" stroke="#8a857c"/>
+    <!-- twist arrows top -->
+    <path d="M175,92 A 40 14 0 0 1 265,88" fill="none" stroke="#b02a1a" stroke-width="2.2" marker-end="url(#ta2)"/>
+    <text x="300" y="92" font-size="12.5" fill="#b02a1a" font-weight="bold">T</text>
+    <!-- bottom twist -->
+    <path d="M265,262 A 40 14 0 0 1 175,266" fill="none" stroke="#b02a1a" stroke-width="2.2" marker-end="url(#ta2)"/>
+    <text x="205" y="300" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">T_n = F_cr · C</text>
+    <text x="205" y="320" font-size="11.5" fill="#555" text-anchor="middle">C = constante torsional del HSS</text>
+    <text x="205" y="337" font-size="11.5" fill="#555" text-anchor="middle">F_cr = pandeo por corte torsional (≤ 0.6 F_y)</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="390" y1="55" x2="390" y2="350" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ===== RIGHT: the combined equation dissected ===== -->
+  <g>
+    <text x="665" y="70" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Interacción combinada (Ec. H3-6)</text>
+
+    <!-- braces + groups -->
+    <text x="450" y="150" font-size="14" fill="#333">(</text>
+    <text x="500" y="150" font-size="14" fill="#1a63a8" font-weight="bold">P_r/P_c + M_r/M_c</text>
+    <text x="655" y="150" font-size="14" fill="#333">) + (</text>
+    <text x="720" y="150" font-size="14" fill="#b02a1a" font-weight="bold">V_r/V_c + T_r/T_c</text>
+    <text x="862" y="150" font-size="14" fill="#333">)² ≤ 1</text>
+
+    <!-- group labels -->
+    <text x="575" y="185" font-size="11.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">tensiones normales</text>
+    <text x="575" y="201" font-size="11" fill="#555" text-anchor="middle">(axial + flexión): pesan LINEAL</text>
+    <line x1="497" y1="158" x2="640" y2="158" stroke="#1a63a8" stroke-width="1"/>
+
+    <text x="775" y="225" font-size="11.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">tensiones de corte</text>
+    <text x="775" y="241" font-size="11" fill="#555" text-anchor="middle">(corte + torsión): pesan AL CUADRADO</text>
+    <line x1="715" y1="158" x2="838" y2="158" stroke="#b02a1a" stroke-width="1"/>
+
+    <!-- why squared: small values barely matter -->
+    <rect x="440" y="265" width="440" height="70" rx="8" fill="#f7f4ee" stroke="#8a857c"/>
+    <text x="660" y="290" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">Como el corte+torsión va al cuadrado, si es chico casi no cuenta:</text>
+    <text x="660" y="311" font-size="12.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">si T_r/T_c ≤ 0.2 → se desprecia la torsión y se diseña por H1</text>
+    <text x="660" y="328" font-size="11" fill="#555" text-anchor="middle">(0.2² = 0.04: aporta menos del 4% del presupuesto)</text>
+  </g>
+</svg>

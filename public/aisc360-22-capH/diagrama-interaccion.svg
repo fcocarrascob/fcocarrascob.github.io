@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El diagrama de interacción: el presupuesto compartido de axial y flexión</text>
+
+  <!-- safe region (under bilinear envelope): polygon origin -> A(0,1) -> K(0.9,0.2) -> B(1,0) -> origin -->
+  <polygon points="140,400 140,110 752,342 820,400" fill="#1c7c3c" fill-opacity="0.08"/>
+
+  <!-- axes -->
+  <line x1="140" y1="400" x2="872" y2="400" stroke="#333" stroke-width="1.5" marker-end="url(#ia)"/>
+  <line x1="140" y1="400" x2="140" y2="95" stroke="#333" stroke-width="1.5" marker-end="url(#ia)"/>
+  <text x="876" y="417" font-size="13" fill="#333">M_r / M_c</text>
+  <text x="134" y="88" font-size="13" fill="#333" text-anchor="end">P_r / P_c</text>
+  <!-- ticks -->
+  <line x1="820" y1="396" x2="820" y2="404" stroke="#333" stroke-width="1.2"/>
+  <text x="820" y="418" font-size="11.5" fill="#555" text-anchor="middle">1.0</text>
+  <line x1="136" y1="110" x2="144" y2="110" stroke="#333" stroke-width="1.2"/>
+  <text x="132" y="114" font-size="11.5" fill="#555" text-anchor="end">1.0</text>
+  <line x1="136" y1="342" x2="144" y2="342" stroke="#333" stroke-width="1.2"/>
+  <text x="132" y="346" font-size="11.5" fill="#b35c0e" text-anchor="end" font-weight="bold">0.2</text>
+  <line x1="140" y1="342" x2="752" y2="342" stroke="#b35c0e" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+
+  <!-- pure linear reference (grey dashed) A->B -->
+  <line x1="140" y1="110" x2="820" y2="400" stroke="#999" stroke-width="1.6" stroke-dasharray="7 5"/>
+  <text x="470" y="238" font-size="11.5" fill="#888" transform="rotate(23 470,238)">interacción lineal simple (más conservadora)</text>
+
+  <!-- bilinear AISC envelope (blue): A(140,110) -> K(752,342) -> B(820,400) -->
+  <polyline points="140,110 752,342 820,400" fill="none" stroke="#1a63a8" stroke-width="3.5"/>
+  <!-- kink marker -->
+  <circle cx="752" cy="342" r="5" fill="#b35c0e"/>
+  <text x="742" y="332" font-size="11.5" fill="#b35c0e" text-anchor="end" font-weight="bold">quiebre P_r/P_c = 0.2</text>
+
+  <!-- segment labels -->
+  <text x="360" y="150" font-size="12.5" fill="#1a63a8" font-weight="bold">H1-1a  (P_r/P_c ≥ 0.2)</text>
+  <text x="360" y="169" font-size="12" fill="#333">P_r/P_c + 8/9·(M_rx/M_cx + M_ry/M_cy) ≤ 1</text>
+  <text x="360" y="185" font-size="11" fill="#555">el axial domina → la flexión pesa 8/9</text>
+
+  <text x="470" y="380" font-size="12.5" fill="#1a63a8" font-weight="bold">H1-1b  (P_r/P_c &lt; 0.2)</text>
+  <text x="470" y="399" font-size="12" fill="#333">P_r/2P_c + (M_rx/M_cx + M_ry/M_cy) ≤ 1</text>
+
+  <!-- demand point inside -->
+  <circle cx="412" cy="255" r="6" fill="#1c7c3c"/>
+  <line x1="412" y1="255" x2="412" y2="400" stroke="#1c7c3c" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="412" y1="255" x2="140" y2="255" stroke="#1c7c3c" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="422" y="250" font-size="12" fill="#1c7c3c" font-weight="bold">demanda (P_r, M_r)</text>
+  <text x="422" y="267" font-size="11" fill="#555">debe caer DENTRO del envolvente</text>
+
+  <!-- safe region label -->
+  <text x="250" y="360" font-size="13" fill="#1c7c3c" font-weight="bold">REGIÓN SEGURA</text>
+
+  <!-- takeaway -->
+  <text x="470" y="447" font-size="12" text-anchor="middle" fill="#555">El envolvente bilineal (dos rectas con quiebre en 0.2) va por fuera de la recta simple: AISC aprovecha la forma real de la interacción.</text>
+</svg>
