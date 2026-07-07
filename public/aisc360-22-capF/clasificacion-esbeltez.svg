@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 400" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="940" height="400" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Clasificación de placas por esbeltez λ = b/t (Tabla B4.1b)</text>
+
+  <!-- number line -->
+  <line x1="120" y1="150" x2="880" y2="150" stroke="#333" stroke-width="1.6" marker-end="url(#sa)"/>
+  <text x="884" y="154" font-size="13" fill="#333">λ = b/t</text>
+
+  <!-- zone bands under the line -->
+  <rect x="120" y="150" width="270" height="70" fill="#1c7c3c" fill-opacity="0.10"/>
+  <rect x="390" y="150" width="270" height="70" fill="#e67e22" fill-opacity="0.12"/>
+  <rect x="660" y="150" width="220" height="70" fill="#b02a1a" fill-opacity="0.10"/>
+
+  <!-- thresholds -->
+  <line x1="390" y1="132" x2="390" y2="228" stroke="#333" stroke-width="1.4"/>
+  <text x="390" y="124" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">λ_p</text>
+  <line x1="660" y1="132" x2="660" y2="228" stroke="#333" stroke-width="1.4"/>
+  <text x="660" y="124" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">λ_r</text>
+
+  <!-- zone labels -->
+  <text x="255" y="180" font-size="14" fill="#1c7c3c" text-anchor="middle" font-weight="bold">COMPACTA</text>
+  <text x="255" y="205" font-size="12" fill="#1c7c3c" text-anchor="middle">alcanza M_p</text>
+  <text x="525" y="180" font-size="14" fill="#b35c0e" text-anchor="middle" font-weight="bold">NO COMPACTA</text>
+  <text x="525" y="205" font-size="12" fill="#b35c0e" text-anchor="middle">pandeo local inelástico</text>
+  <text x="770" y="180" font-size="14" fill="#b02a1a" text-anchor="middle" font-weight="bold">ESBELTA</text>
+  <text x="770" y="205" font-size="12" fill="#b02a1a" text-anchor="middle">pandeo local elástico</text>
+
+  <!-- captions above bands: what happens to Mn -->
+  <text x="255" y="262" font-size="11.5" fill="#555" text-anchor="middle">la placa fluye antes de arrugarse</text>
+  <text x="525" y="262" font-size="11.5" fill="#555" text-anchor="middle">M_n baja lineal de M_p a M_pandeo</text>
+  <text x="770" y="262" font-size="11.5" fill="#555" text-anchor="middle">se arruga antes de fluir</text>
+
+  <!-- little illustration: flange plate wrinkling (right) -->
+  <g transform="translate(700,300)">
+    <text x="90" y="-6" font-size="12" fill="#333" text-anchor="middle" font-weight="bold">placa esbelta comprimida</text>
+    <!-- compression arrows -->
+    <line x1="0" y1="20" x2="30" y2="20" stroke="#b02a1a" stroke-width="2" marker-end="url(#sa)"/>
+    <line x1="180" y1="20" x2="150" y2="20" stroke="#b02a1a" stroke-width="2" marker-end="url(#sa)"/>
+    <!-- wavy buckle -->
+    <path d="M35,20 q 12,-14 24,0 q 12,14 24,0 q 12,-14 24,0 q 12,14 24,0 q 12,-14 24,0" fill="none" stroke="#1a63a8" stroke-width="2.5"/>
+  </g>
+
+  <!-- takeaway -->
+  <text x="120" y="335" font-size="12.5" fill="#333">Cada ala y cada alma se clasifica por separado.</text>
+  <text x="120" y="356" font-size="12.5" fill="#333">El elemento <tspan font-weight="bold">más esbelto</tspan> fija el estado límite de pandeo local que puede impedir llegar a M_p.</text>
+  <text x="120" y="380" font-size="12" fill="#555">En perfiles W laminados el alma es siempre compacta → suele gobernar la Sección F2 (solo LTB).</text>
+</svg>
