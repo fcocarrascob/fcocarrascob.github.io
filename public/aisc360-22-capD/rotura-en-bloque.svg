@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 380" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ba" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="380" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Rotura en bloque: la conexión desgarra un bloque entero (Sec. J4.3)</text>
+
+  <!-- member plate -->
+  <rect x="150" y="90" width="640" height="210" fill="#efece6" stroke="#8a857c" stroke-width="1.6"/>
+
+  <!-- the tear-out block (shaded) : from left free end to bolt line, between the two shear planes -->
+  <rect x="150" y="150" width="230" height="100" fill="#e67e22" fill-opacity="0.16"/>
+
+  <!-- bolts (vertical line at the tension plane) -->
+  <circle cx="330" cy="180" r="9" fill="#ffffff" stroke="#5b6470" stroke-width="1.6"/>
+  <circle cx="330" cy="220" r="9" fill="#ffffff" stroke="#5b6470" stroke-width="1.6"/>
+
+  <!-- shear planes (parallel to load = horizontal), green -->
+  <line x1="150" y1="150" x2="380" y2="150" stroke="#1c7c3c" stroke-width="3.5"/>
+  <line x1="150" y1="250" x2="380" y2="250" stroke="#1c7c3c" stroke-width="3.5"/>
+  <!-- tension plane (perpendicular = vertical), red -->
+  <line x1="380" y1="150" x2="380" y2="250" stroke="#b02a1a" stroke-width="3.5"/>
+
+  <!-- P arrow: pulls the block out to the left -->
+  <line x1="240" y1="200" x2="120" y2="200" stroke="#333" stroke-width="2.5" marker-end="url(#ba)"/>
+  <text x="150" y="192" font-size="13" fill="#333" font-weight="bold">P</text>
+
+  <!-- labels -->
+  <text x="265" y="140" font-size="12.5" fill="#1c7c3c" font-weight="bold">planos de corte ∥ P</text>
+  <line x1="265" y1="145" x2="265" y2="150" stroke="#1c7c3c" stroke-width="1"/>
+  <text x="410" y="120" font-size="12.5" fill="#b02a1a" font-weight="bold">plano de tracción ⊥ P</text>
+  <line x1="410" y1="126" x2="384" y2="158" stroke="#b02a1a" stroke-width="1.2" marker-end="url(#ba)"/>
+  <text x="255" y="278" font-size="12" fill="#b35c0e" text-anchor="middle" font-weight="bold">el bloque se desgarra</text>
+
+  <!-- resistances -->
+  <text x="610" y="118" font-size="13" fill="#1c7c3c" font-weight="bold">corte:  0.60 · F_u · A_nv</text>
+  <text x="610" y="143" font-size="13" fill="#b02a1a" font-weight="bold">tracción:  U_bs · F_u · A_nt</text>
+
+  <!-- formula -->
+  <rect x="150" y="315" width="640" height="34" rx="7" fill="#f7f4ee" stroke="#8a857c"/>
+  <text x="470" y="338" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">R_n = 0.60 F_u·A_nv + U_bs·F_u·A_nt  ≤  0.60 F_y·A_gv + U_bs·F_u·A_nt      (φ = 0.75)</text>
+
+  <!-- takeaway -->
+  <text x="610" y="210" font-size="12.5" fill="#333">Falla frágil que combina</text>
+  <text x="610" y="229" font-size="12.5" fill="#333">corte y tracción en la conexión.</text>
+  <text x="610" y="255" font-size="12" fill="#555">Gobierna cuando esos planos ceden</text>
+  <text x="610" y="272" font-size="12" fill="#555">antes que el cuerpo del miembro.</text>
+</svg>

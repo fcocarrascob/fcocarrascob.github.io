@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="da" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="dag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1c7c3c"/>
+    </marker>
+    <marker id="dar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Un miembro en tracción falla de dos maneras opuestas</text>
+
+  <!-- divider -->
+  <line x1="470" y1="60" x2="470" y2="360" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ===== LEFT: gross yielding (ductile) ===== -->
+  <g>
+    <text x="240" y="64" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Fluencia en el área bruta</text>
+    <!-- bar, uniformly yielding -->
+    <rect x="110" y="120" width="270" height="56" fill="#1c7c3c" fill-opacity="0.15" stroke="#1c7c3c" stroke-width="2"/>
+    <g stroke="#1c7c3c" stroke-width="1" opacity="0.5">
+      <line x1="140" y1="120" x2="120" y2="176"/>
+      <line x1="180" y1="120" x2="160" y2="176"/>
+      <line x1="220" y1="120" x2="200" y2="176"/>
+      <line x1="260" y1="120" x2="240" y2="176"/>
+      <line x1="300" y1="120" x2="280" y2="176"/>
+      <line x1="340" y1="120" x2="320" y2="176"/>
+    </g>
+    <!-- tension arrows -->
+    <line x1="110" y1="148" x2="60" y2="148" stroke="#666" stroke-width="2" marker-end="url(#da)"/>
+    <line x1="380" y1="148" x2="430" y2="148" stroke="#666" stroke-width="2" marker-end="url(#da)"/>
+    <text x="55" y="152" font-size="13" fill="#666" text-anchor="end">P</text>
+    <text x="435" y="152" font-size="13" fill="#666">P</text>
+    <!-- Ag dim -->
+    <line x1="110" y1="196" x2="380" y2="196" stroke="#888" stroke-width="1" marker-start="url(#da)" marker-end="url(#da)"/>
+    <text x="245" y="212" font-size="12" fill="#666" text-anchor="middle">toda la longitud bruta A_g fluye</text>
+    <!-- text -->
+    <text x="240" y="252" font-size="14" fill="#1c7c3c" text-anchor="middle" font-weight="bold">P_n = F_y · A_g</text>
+    <text x="240" y="278" font-size="13" fill="#1c7c3c" text-anchor="middle">φ = 0.90  (Ω = 1.67)</text>
+    <text x="240" y="308" font-size="12.5" fill="#555" text-anchor="middle">la barra se estira a la vista</text>
+    <text x="240" y="326" font-size="12.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">DÚCTIL — avisa</text>
+  </g>
+
+  <!-- ===== RIGHT: net fracture (brittle) ===== -->
+  <g>
+    <text x="700" y="64" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Rotura en el área neta efectiva</text>
+    <!-- bar, intact grey -->
+    <rect x="560" y="120" width="270" height="56" fill="#efece6" stroke="#8a857c" stroke-width="2"/>
+    <!-- bolt holes near connection -->
+    <circle cx="640" cy="138" r="7" fill="#ffffff" stroke="#5b6470" stroke-width="1.4"/>
+    <circle cx="640" cy="158" r="7" fill="#ffffff" stroke="#5b6470" stroke-width="1.4"/>
+    <!-- fracture zigzag across net section through holes -->
+    <polyline points="640,120 632,138 648,158 640,176" fill="none" stroke="#b02a1a" stroke-width="3"/>
+    <!-- tension arrows -->
+    <line x1="560" y1="148" x2="510" y2="148" stroke="#666" stroke-width="2" marker-end="url(#da)"/>
+    <line x1="830" y1="148" x2="880" y2="148" stroke="#666" stroke-width="2" marker-end="url(#da)"/>
+    <text x="505" y="152" font-size="13" fill="#666" text-anchor="end">P</text>
+    <text x="885" y="152" font-size="13" fill="#666">P</text>
+    <!-- Ae dim: only the net section at the holes -->
+    <line x1="640" y1="196" x2="640" y2="182" stroke="#b02a1a" stroke-width="1"/>
+    <text x="645" y="212" font-size="12" fill="#b02a1a">rompe en la sección neta (A_e &lt; A_g)</text>
+    <!-- text -->
+    <text x="700" y="252" font-size="14" fill="#b02a1a" text-anchor="middle" font-weight="bold">P_n = F_u · A_e</text>
+    <text x="700" y="278" font-size="13" fill="#b02a1a" text-anchor="middle">φ = 0.75  (Ω = 2.00)</text>
+    <text x="700" y="308" font-size="12.5" fill="#555" text-anchor="middle">fractura súbita en la conexión</text>
+    <text x="700" y="326" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">FRÁGIL — sin aviso</text>
+  </g>
+
+  <!-- takeaway -->
+  <text x="470" y="380" font-size="12.5" text-anchor="middle" fill="#333">Aunque F_u &gt; F_y, la rotura puede gobernar: actúa sobre <tspan font-weight="bold">menos área</tspan> (A_e &lt; A_g) y con un <tspan font-weight="bold">φ más estricto</tspan> (0.75 &lt; 0.90).</text>
+  <text x="470" y="401" font-size="12.5" text-anchor="middle" fill="#555">Se verifican los dos y gobierna el menor P_n — la norma se asegura de que, si algo cede, ceda lo dúctil.</text>
+</svg>
