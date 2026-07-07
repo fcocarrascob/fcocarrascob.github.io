@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="340" fill="#ffffff"/>
+
+  <!-- LEFT branch: closed vocabulary fails -->
+  <text x="180" y="34" text-anchor="middle" font-size="13" fill="#6b7280" font-weight="600">Vocabulario cerrado</text>
+  <rect x="70" y="50" width="220" height="42" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="180" y="76" text-anchor="middle" font-size="15" fill="#1a1a1a" font-family="'JetBrains Mono', ui-monospace, monospace">"Akwirw ier"</text>
+  <line x1="180" y1="92" x2="180" y2="124" stroke="#9ca3af" stroke-width="2" marker-end="url(#ab)"/>
+  <rect x="120" y="128" width="120" height="40" rx="6" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="180" y="153" text-anchor="middle" font-size="14" fill="#b91c1c" font-family="'JetBrains Mono', ui-monospace, monospace">&lt;|unk|&gt;</text>
+  <text x="180" y="192" text-anchor="middle" font-size="12.5" fill="#b91c1c">✗ pierde la palabra</text>
+
+  <!-- divider -->
+  <line x1="360" y1="46" x2="360" y2="250" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- RIGHT branch: BPE splits into subwords -->
+  <text x="540" y="34" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="600">Byte Pair Encoding</text>
+  <rect x="430" y="50" width="220" height="42" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="540" y="76" text-anchor="middle" font-size="15" fill="#1a1a1a" font-family="'JetBrains Mono', ui-monospace, monospace">"Akwirw ier"</text>
+  <line x1="540" y1="92" x2="540" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#ab)"/>
+  <text x="576" y="112" font-size="12" fill="#2563eb">parte en subpalabras</text>
+
+  <!-- subword pills -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="14" fill="#1e3a8a" text-anchor="middle">
+    <rect x="412" y="126" width="42" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="433" y="149">Ak</text>
+    <rect x="458" y="126" width="34" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="475" y="149">w</text>
+    <rect x="496" y="126" width="38" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="515" y="149">ir</text>
+    <rect x="538" y="126" width="34" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="555" y="149">w</text>
+    <rect x="576" y="126" width="34" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="593" y="149">·</text>
+    <rect x="614" y="126" width="42" height="34" rx="5" fill="#eff6ff" stroke="#93c5fd"/><text x="635" y="149">ier</text>
+  </g>
+  <line x1="540" y1="166" x2="540" y2="190" stroke="#2563eb" stroke-width="2" marker-end="url(#ab)"/>
+
+  <!-- IDs -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12.5" fill="#374151" text-anchor="middle">
+    <rect x="412" y="194" width="42" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="433" y="214">33901</text>
+    <rect x="458" y="194" width="34" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="475" y="214">86</text>
+    <rect x="496" y="194" width="38" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="515" y="214">343</text>
+    <rect x="538" y="194" width="34" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="555" y="214">86</text>
+    <rect x="576" y="194" width="34" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="593" y="214">220</text>
+    <rect x="614" y="194" width="42" height="30" rx="4" fill="#f3f4f6" stroke="#d1d5db"/><text x="635" y="214">959</text>
+  </g>
+  <text x="540" y="246" text-anchor="middle" font-size="12.5" fill="#166534">✓ cualquier palabra es codificable</text>
+
+  <!-- caption -->
+  <text x="360" y="296" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">BPE nunca se queda sin representación: en el peor caso baja a caracteres sueltos.</text>
+  <text x="360" y="318" text-anchor="middle" font-size="13" fill="#6b7280">Por eso el tokenizador de GPT (vocab. 50 257) no necesita un token &lt;|unk|&gt;.</text>
+</svg>

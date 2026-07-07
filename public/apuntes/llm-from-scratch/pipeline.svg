@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="560" fill="#ffffff"/>
+
+  <!-- STEP 1: texto crudo -->
+  <rect x="150" y="24" width="420" height="46" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="360" y="52" text-anchor="middle" font-size="17" fill="#1a1a1a" font-family="'JetBrains Mono', ui-monospace, monospace">"This is an example."</text>
+  <text x="588" y="51" font-size="12.5" fill="#6b7280">texto crudo</text>
+
+  <line x1="360" y1="70" x2="360" y2="104" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="372" y="92" font-size="12.5" fill="#2563eb" font-weight="600">tokenizar</text>
+
+  <!-- STEP 2: tokens -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="15">
+    <rect x="150" y="108" width="86" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="193" y="133" text-anchor="middle" fill="#1e3a8a">This</text>
+    <rect x="244" y="108" width="64" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="276" y="133" text-anchor="middle" fill="#1e3a8a">is</text>
+    <rect x="316" y="108" width="64" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="348" y="133" text-anchor="middle" fill="#1e3a8a">an</text>
+    <rect x="388" y="108" width="118" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="447" y="133" text-anchor="middle" fill="#1e3a8a">example</text>
+    <rect x="514" y="108" width="40" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="534" y="133" text-anchor="middle" fill="#1e3a8a">.</text>
+  </g>
+  <text x="588" y="132" font-size="12.5" fill="#6b7280">tokens</text>
+
+  <line x1="360" y1="148" x2="360" y2="182" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="372" y="170" font-size="12.5" fill="#2563eb" font-weight="600">vocabulario</text>
+
+  <!-- STEP 3: token IDs -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="15" fill="#1a1a1a">
+    <rect x="150" y="186" width="86" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="193" y="211" text-anchor="middle">40134</text>
+    <rect x="244" y="186" width="64" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="276" y="211" text-anchor="middle">2052</text>
+    <rect x="316" y="186" width="64" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="348" y="211" text-anchor="middle">133</text>
+    <rect x="388" y="186" width="118" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="447" y="211" text-anchor="middle">389</text>
+    <rect x="514" y="186" width="40" height="40" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="534" y="211" text-anchor="middle">12</text>
+  </g>
+  <text x="588" y="210" font-size="12.5" fill="#6b7280">token IDs</text>
+
+  <line x1="360" y1="226" x2="360" y2="260" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="372" y="248" font-size="12.5" fill="#2563eb" font-weight="600">capa embedding (lookup)</text>
+
+  <!-- STEP 4: token embeddings (vector columns) -->
+  <g>
+    <rect x="150" y="264" width="404" height="70" rx="6" fill="#ffffff" stroke="#e5e7eb"/>
+    <!-- five columns of 4 cells each -->
+    <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9.5" fill="#1e3a8a" text-anchor="middle">
+      <!-- col template repeated; just show shaded cells -->
+      <g>
+        <rect x="164" y="272" width="52" height="54" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="190" y="285">0.31</text><text x="190" y="298">-0.18</text><text x="190" y="311">0.90</text><text x="190" y="324">1.27</text>
+      </g>
+      <g>
+        <rect x="242" y="272" width="52" height="54" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="268" y="285">0.92</text><text x="268" y="298">1.58</text><text x="268" y="311">-0.20</text><text x="268" y="324">0.13</text>
+      </g>
+      <g>
+        <rect x="320" y="272" width="52" height="54" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="346" y="285">-0.40</text><text x="346" y="298">0.96</text><text x="346" y="311">1.30</text><text x="346" y="324">-1.14</text>
+      </g>
+      <g>
+        <rect x="398" y="272" width="52" height="54" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="424" y="285">1.27</text><text x="424" y="298">-0.20</text><text x="424" y="311">0.32</text><text x="424" y="324">0.66</text>
+      </g>
+      <g>
+        <rect x="476" y="272" width="52" height="54" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="502" y="285">-2.84</text><text x="502" y="298">-0.78</text><text x="502" y="311">-1.40</text><text x="502" y="324">0.45</text>
+      </g>
+    </g>
+  </g>
+  <text x="588" y="303" font-size="12.5" fill="#6b7280">token</text>
+  <text x="588" y="318" font-size="12.5" fill="#6b7280">embeddings</text>
+
+  <!-- plus sign -->
+  <text x="360" y="360" text-anchor="middle" font-size="22" fill="#1a1a1a" font-weight="700">+</text>
+
+  <!-- STEP 5: positional embeddings -->
+  <g>
+    <rect x="150" y="372" width="404" height="46" rx="6" fill="#fff7ed" stroke="#fed7aa"/>
+    <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9.5" fill="#9a3412" text-anchor="middle">
+      <rect x="164" y="380" width="52" height="30" rx="3" fill="#ffedd5" stroke="#fdba74"/><text x="190" y="399">pos 0</text>
+      <rect x="242" y="380" width="52" height="30" rx="3" fill="#ffedd5" stroke="#fdba74"/><text x="268" y="399">pos 1</text>
+      <rect x="320" y="380" width="52" height="30" rx="3" fill="#ffedd5" stroke="#fdba74"/><text x="346" y="399">pos 2</text>
+      <rect x="398" y="380" width="52" height="30" rx="3" fill="#ffedd5" stroke="#fdba74"/><text x="424" y="399">pos 3</text>
+      <rect x="476" y="380" width="52" height="30" rx="3" fill="#ffedd5" stroke="#fdba74"/><text x="502" y="399">pos 4</text>
+    </g>
+  </g>
+  <text x="588" y="392" font-size="12.5" fill="#6b7280">positional</text>
+  <text x="588" y="407" font-size="12.5" fill="#6b7280">embeddings</text>
+
+  <line x1="360" y1="418" x2="360" y2="452" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="372" y="440" font-size="12.5" fill="#2563eb" font-weight="600">=</text>
+
+  <!-- STEP 6: input embeddings -->
+  <rect x="150" y="456" width="404" height="46" rx="6" fill="#2563eb"/>
+  <text x="352" y="484" text-anchor="middle" font-size="15" fill="#ffffff" font-weight="600">input embeddings</text>
+  <text x="588" y="483" font-size="12.5" fill="#6b7280">entrada al LLM</text>
+
+  <line x1="360" y1="502" x2="360" y2="524" stroke="#1a1a1a" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="360" y="546" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">→ bloque transformer (Cap. 3)</text>
+</svg>

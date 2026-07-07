@@ -1,0 +1,34 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { SUBSECTIONS } from '../../lib/apuntes';
+import type { SubsectionKey } from '../../lib/apuntes';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('apuntes', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const subKey = post.data.subsection as SubsectionKey;
+const sub = SUBSECTIONS[subKey];
+---
+<BlogPost
+  frontmatter={{
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    updatedDate: post.data.updatedDate,
+    tags: post.data.tags,
+    norm: sub?.author,
+    section: post.data.chapter ?? sub?.label,
+  }}
+  breadcrumb={{ href: `/apuntes/${post.data.subsection}`, label: sub?.label ?? post.data.subsection }}
+>
+  <Content />
+</BlogPost>

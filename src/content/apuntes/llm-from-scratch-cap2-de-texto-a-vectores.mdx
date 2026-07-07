@@ -1,0 +1,206 @@
+---
+title: "De texto a vectores: cómo un LLM prepara lo que lee"
+description: "El pipeline de entrada de un modelo de lenguaje, paso a paso: tokenización, token IDs y vocabulario, byte pair encoding para codificar cualquier palabra, muestreo por ventana deslizante, y la revelación de que la capa de embedding no es más que una tabla de búsqueda entrenable a la que se le suma la posición. Apuntes del Cap. 2 de Raschka."
+pubDate: 2026-07-06
+tags: ["llm", "gpt", "tokenización", "embeddings", "bpe", "positional encoding"]
+subsection: "llm-from-scratch"
+chapter: "Cap. 2 — Trabajando con datos de texto"
+source: "Sebastian Raschka, Build a Large Language Model (From Scratch), Manning 2024, Cap. 2 (pp. 17–49)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una red neuronal no sabe leer. En el fondo es una máquina de multiplicar y sumar
+números: le puedes dar `0.73` y `-1.2`, pero no la palabra *"gato"*. El texto es
+**categórico** —símbolos— y las operaciones de la red son **numéricas y continuas**.
+Entre ambos hay un abismo, y todo el trabajo previo al entrenamiento de un LLM consiste
+en construir el puente.
+
+Ese puente es una tubería con una entrada y una salida muy concretas: entra una cadena
+de texto, salen los **input embeddings**, los vectores que consume la primera capa del
+modelo. Esta nota recorre esa tubería entera.
+
+<Figure
+  src="/apuntes/llm-from-scratch/pipeline.svg"
+  alt="Pipeline vertical: texto crudo se tokeniza en piezas, cada token se convierte en un ID entero vía el vocabulario, la capa de embedding transforma los IDs en vectores, se les suman los embeddings posicionales y el resultado son los input embeddings que entran al bloque transformer"
+  caption="El pipeline de entrada completo: texto → tokens → token IDs → token embeddings, más los embeddings posicionales, igual a los input embeddings que recibe el LLM."
+  width={620}
+/>
+
+Vamos pieza por pieza.
+
+## 1. Tokenizar: partir el texto en piezas
+
+Antes de numerar nada, hay que **cortar**. ¿En qué unidades? Lo intuitivo es "por
+palabras", pero enseguida aparece la puntuación: en `"cheap genius--though"`, el `--` y
+las comas son piezas con significado propio que no queremos pegadas a las palabras. Una
+tokenización simple con expresiones regulares separa palabras y signos, y descarta los
+espacios:
+
+```python
+import re
+text = "Hello, world. Is this-- a test?"
+result = re.split(r'([,.:;?_!"()\']|--|\s)', text)
+result = [item.strip() for item in result if item.strip()]
+# ['Hello', ',', 'world', '.', 'Is', 'this', '--', 'a', 'test', '?']
+```
+
+Dos decisiones que Raschka justifica y conviene no pasar por alto: **no** se pasa todo a
+minúsculas (la mayúscula ayuda al modelo con nombres propios y estructura de frase), y
+aquí se descartan los espacios por simplicidad —aunque se conservarían si el texto fuera
+sensible al espaciado, como código Python.
+
+## 2. Token IDs y el vocabulario
+
+Los tokens siguen siendo texto. El siguiente paso los cambia por **enteros**, porque un
+entero es un índice, y con índices se buscan filas en una tabla (lo veremos en la §5). El
+diccionario que asigna un número a cada token es el **vocabulario**: se toman todos los
+tokens únicos, se ordenan, y cada uno recibe un ID.
+
+Un tokenizador implementa dos métodos inversos: `encode` (texto → IDs) para preparar la
+entrada, y `decode` (IDs → texto) para volver a leer la salida del modelo.
+
+<Note type="warning" title="El problema del vocabulario cerrado">
+Si `encode` recibe una palabra que no está en el vocabulario, falla. Entrenado solo con
+el cuento *"The Verdict"*, el tokenizador lanza `KeyError: 'Hello'` porque esa palabra
+nunca apareció. Un vocabulario fijo **no puede representar lo que nunca vio** — y ese es
+exactamente el agujero que tapa el byte pair encoding.
+</Note>
+
+## 3. Byte Pair Encoding: codificar *cualquier* palabra
+
+El dilema del vocabulario tiene dos salidas malas. Una entrada por palabra completa se
+queda corta ante palabras nuevas; una entrada por carácter hace las secuencias
+larguísimas. **BPE** toma el punto medio: unidades de **subpalabra**. Las palabras
+comunes quedan enteras, las raras se parten en trozos frecuentes, y en el peor caso se
+bajan a caracteres sueltos. Así *cualquier* cadena es representable.
+
+<Figure
+  src="/apuntes/llm-from-scratch/bpe.svg"
+  alt="Comparación de dos ramas: a la izquierda, un vocabulario cerrado convierte la palabra desconocida Akwirw ier en un token unk, perdiéndola; a la derecha, BPE la descompone en las subpalabras Ak, w, ir, w, ier con sus IDs, codificándola sin pérdida"
+  caption="Ante una palabra que nunca vio, un vocabulario cerrado la reemplaza por <|unk|> y la pierde; BPE la descompone en subpalabras conocidas."
+  width={640}
+/>
+
+BPE construye su vocabulario **fusionando iterativamente** los pares de
+caracteres/subpalabras más frecuentes. Es el tokenizador de GPT-2, GPT-3 y el ChatGPT
+original; su vocabulario tiene **50 257** tokens. En la práctica se usa vía la librería
+`tiktoken`:
+
+```python
+import tiktoken
+tokenizer = tiktoken.get_encoding("gpt2")
+tokenizer.encode("someunknownPlace")   # → subpalabras, sin errores
+```
+
+<Note type="tip" title="Por qué GPT no necesita un token de 'desconocido'">
+Como BPE siempre puede bajar hasta caracteres individuales, nunca hay nada verdaderamente
+*fuera de vocabulario*. Por eso el tokenizador de GPT prescinde de `<|unk|>` y solo
+conserva `<|endoftext|>`, que marca el límite entre documentos independientes al
+concatenarlos para entrenar.
+</Note>
+
+## 4. Ventana deslizante: fabricar los pares de entrenamiento
+
+Un LLM se entrena **prediciendo la siguiente palabra**. Para eso necesita ejemplos con
+forma `(contexto, siguiente token)`. Salen de **deslizar una ventana** por el texto ya
+tokenizado: lo que cae dentro de la ventana es la entrada `x`; ese mismo tramo desplazado
+una posición a la derecha es el objetivo `y`.
+
+```python
+context_size = 4
+x = enc_sample[:context_size]      # [290, 4920, 2241, 287]
+y = enc_sample[1:context_size+1]   # [4920, 2241, 287, 257]
+```
+
+Desplegado, cada prefijo predice el token que sigue:
+
+| Contexto de entrada | → | Objetivo |
+|---|:---:|---|
+| `[290]` | → | `4920` |
+| `[290, 4920]` | → | `2241` |
+| `[290, 4920, 2241]` | → | `287` |
+| `[290, 4920, 2241, 287]` | → | `257` |
+
+El paso con que avanza la ventana es el `stride`. Ponerlo igual al `context_size` hace que
+los tramos **no se solapen**: se recorre el texto sin repetir, lo que evita el sobreajuste
+que traería reutilizar los mismos tokens una y otra vez. Tanto `context_size` como
+`stride` son hiperparámetros —los fijas tú antes de entrenar.
+
+## 5. Token embeddings: la capa que es solo una tabla
+
+Aquí está la revelación del capítulo. Ya tenemos IDs enteros; ¿cómo se vuelven vectores?
+La respuesta desmitifica toda la maquinaria: una capa de embedding es **una tabla de
+números** con una fila por cada token del vocabulario. "Embeber" el token con ID 3 es,
+literalmente, **ir a buscar la fila 3**.
+
+<Figure
+  src="/apuntes/llm-from-scratch/embedding-lookup.svg"
+  alt="A la izquierda, los token IDs 2, 3, 5, 1. En el centro, la matriz de pesos del embedding de 6 filas por 3 columnas, con las filas 1, 2, 3 y 5 resaltadas. Flechas conectan cada ID con su fila correspondiente. A la derecha, las filas extraídas en el orden de los IDs forman la matriz de embeddings de salida"
+  caption="La capa de embedding no calcula nada: recupera la fila cuyo índice es el token ID. Es una operación de búsqueda (lookup)."
+  width={680}
+/>
+
+En PyTorch:
+
+```python
+embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+embedding_layer(torch.tensor([3]))   # devuelve la fila de índice 3
+```
+
+Nada de multiplicaciones misteriosas. Es matemáticamente equivalente a un one-hot por una
+matriz densa, pero muchísimo más eficiente. Y como la tabla son **pesos**, se inicializa
+al azar y se **optimiza por backpropagation** durante el entrenamiento: ahí es donde los
+vectores van capturando significado.
+
+## 6. Codificar la posición
+
+La capa de embedding tiene un punto ciego: le da al mismo token ID **el mismo vector sin
+importar dónde esté** en la frase. Y el mecanismo de atención del Cap. 3 también es ciego
+al orden. Como el orden sí importa, hay que añadírselo con un segundo vector que diga "yo
+soy la posición 0", "yo la 1", y así.
+
+<Figure
+  src="/apuntes/llm-from-scratch/positional.svg"
+  alt="Tres filas de vectores en cuatro posiciones. Arriba, los token embeddings, todos con el mismo valor 1.0. En medio, los positional embeddings, distintos en cada posición. Abajo, su suma: los input embeddings, ahora únicos en cada posición"
+  caption="Los token embeddings no cambian con la posición; sumarles un vector posicional distinto le da a cada lugar de la secuencia una identidad propia."
+  width={620}
+/>
+
+GPT usa embeddings posicionales **absolutos y aprendidos**: otra capa `Embedding`, una
+fila por posición del contexto. La combinación con el token embedding es una simple suma
+elemento a elemento —posible porque ambos vectores tienen la misma dimensión:
+
+<Equation label="input embedding">
+$$
+\mathbf{x}_i = \mathbf{e}_{\text{token}}(id_i) + \mathbf{e}_{\text{pos}}(i)
+$$
+</Equation>
+
+```python
+input_embeddings = token_embeddings + pos_embeddings
+```
+
+<Note type="info" title="¿Por qué sumar y no concatenar?">
+Sumar mantiene la dimensión de entrada (concatenar la duplicaría) y deja que el vector
+resultante lleve, a la vez, *qué* token es y *en qué posición* está. Si omitieras la parte
+posicional, el modelo trataría "perro muerde hombre" igual que "hombre muerde perro".
+</Note>
+
+## El resultado
+
+Esos `input_embeddings` son la salida de toda la tubería y la entrada real del modelo: un
+tensor que, para cada token, codifica su identidad y su lugar. A partir de aquí empieza lo
+que casi todo el mundo asocia con "el LLM" —el mecanismo de atención—, pero nada de eso
+funcionaría sin este trabajo previo, callado, de convertir texto en vectores.
+
+Ese mecanismo de atención es justamente el tema del próximo capítulo, y el próximo apunte
+de esta serie.
+
+---
+
+*Apunte del Capítulo 2 de [Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
+de Sebastian Raschka (Manning, 2024). Los valores numéricos y ejemplos de código siguen
+los del libro.*
