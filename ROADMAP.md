@@ -97,6 +97,45 @@ Ordenados de menor a mayor esfuerzo:
   surrogate de campo (POD, mismo truco que u_z en fundaciones) que predice el perfil
   de deriva completo desde parámetros adimensionales → herramienta en el navegador.
 
+## D. Técnicas de modelación SAP2000 (posts de verificación)
+
+Formato del post Gap/Hook (`gap-hook-sap2000-puntal-cumbre.mdx`, 2026-07-07): una
+técnica de modelación con un pitfall real, validada contra teoría o un chequeo cruzado
+en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni surrogate
+(eso es la serie C) — un modelo, bien elegido, alcanza.
+
+- [ ] **D1. Zonas rígidas en nudos (End Length Offset + Rigid Zone Factor)** — pórtico
+  simple con nudo de ancho finito; comparar centerline puro, offset sin zona rígida y
+  offset con zona rígida calibrada contra la rigidez teórica de luz neta. Pitfall:
+  dejar el factor en su default y sub/sobreestimar la rigidez.
+- [ ] **D2. Rótulas plásticas en pushover (Static Nonlinear, hinges ASCE 41/FEMA 356)**
+  — pórtico o columna en voladizo con mecanismo de colapso calculable a mano (My,
+  secuencia de fluencia, carga de mecanismo); validar que la curva de capacidad y el
+  orden de aparición de rótulas coinciden. Gancho a la serie de hormigón (ACI 318) con
+  interacción P-M real en vez de M3 puro.
+- [ ] **D3. Amortiguamiento de Rayleigh en Time History (α, β vs. decaimiento libre)**
+  — impulso en un modelo simple (Direct Integration), medir el decremento logarítmico
+  de la vibración libre y compararlo contra el ξ objetivo. Pitfall: calibrar α, β en
+  solo dos frecuencias y dejar el resto de los modos mal amortiguados.
+- [ ] **D4. Aislación sísmica (Link Isolator — Friction Pendulum / Rubber Isolator)** —
+  edificio aislado vs. base fija; validar T_eff y ξ_eff medidos en el loop de
+  histéresis contra la fórmula cerrada de ASCE 7 Cap. 17, y el corte basal reducido
+  contra el espectro con ese amortiguamiento.
+- [ ] **D5. Muros agrietados con Layered Shell (material no lineal por capas)** — muro
+  con `Layered Shell` y backbone de hormigón no lineal, midiendo rigidez secante bajo
+  carga lateral creciente; validar contra los factores de ACI 318 Tabla 6.6.3.1.1(a)
+  (0.35 Ig fisurado, 0.70 Ig no fisurado) y ver dónde se desvían (axial bajo, muros
+  esbeltos). Conecta con la serie de hormigón ya publicada.
+- [ ] **D6. Cómo arma SAP2000 la respuesta espectral modo a modo (Response Spectrum
+  Modal Information)** — pórtico de varios pisos con 2-3 modos de masa participante
+  relevante; calcular a mano Γᵢ y S_a(Tᵢ) por modo y verificar que
+  Amplitudᵢ = Γᵢ·S_a(Tᵢ)/ωᵢ² coincide con `U1Amp`/`U2Amp` de la tabla *Response
+  Spectrum Modal Information*. Reconstruir el corte basal modo a modo (amplitud ×
+  fuerza modal, sumado por SRSS/CQC) y verificar contra *Base Reactions* del caso
+  combinado. Precursor conceptual de C3: acá se abre la caja negra de la respuesta
+  modal espectral con un caso simple; C3 más adelante cuantifica el error de SRSS vs
+  CQC barriendo geometrías.
+
 ## Recomendación de orden (actualizada 2026-07-05)
 
 Hecho hasta aquí: A1–A3, B1–B2, C1 completo y C2 fases 0–4 (dos posts de la serie

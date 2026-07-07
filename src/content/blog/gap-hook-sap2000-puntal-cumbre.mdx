@@ -177,7 +177,11 @@ $$
 <Note type="tip">
 Conviene medir siempre esta razón en el modelo completo con los Links puestos, no en una versión
 simplificada sin el elemento. La rigidez que aporta el resto de la conexión —aunque el Hook esté
-abierto— cambia la relación entre ambas deformaciones.
+abierto— cambia la relación entre ambas deformaciones. "Hook abierto" no es lo mismo que "puntal
+ausente": el Link Linear rígido en corte (RIGIDO_UV) sigue conectando las diagonales aunque el
+Hook no transmita fuerza axial, y esa continuidad transversal ya restringe cómo se deforma el
+pórtico. Borrar el puntal completo mide la razón en una estructura distinta —más flexible— a la
+que realmente se va a construir.
 </Note>
 
 ---
