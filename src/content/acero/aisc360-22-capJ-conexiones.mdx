@@ -1,66 +1,60 @@
 ---
-title: "AISC 360-22 Cap. J — Diseño de conexiones"
-description: "Diseño de conexiones según el Capítulo J de AISC 360-22: soldaduras de filete (J2), pernos en corte, tracción, aplastamiento y deslizamiento crítico (J3), y resistencia de elementos con rotura en bloque (J4)."
+title: "AISC 360-22 Cap. J — Conexiones"
+description: "El Capítulo J de AISC 360-22 contado como cadena de transferencia: la fuerza pasa por cada eslabón (conectores, apoyo en la plancha, elementos conectados) y gobierna el más débil. Soldaduras de filete y el bono por ángulo, pernos en corte/tracción/aplastamiento/deslizamiento crítico, rotura en bloque y la filosofía de conexión más fuerte que el miembro."
 pubDate: 2026-06-18
-tags: ["aisc360", "conexiones", "soldadura", "pernos", "aplastamiento", "rotura en bloque", "LRFD", "ASD"]
+updatedDate: 2026-07-07
+tags: ["aisc360", "conexiones", "soldadura", "pernos", "aplastamiento", "rotura en bloque", "deslizamiento crítico", "LRFD", "ASD"]
 subsection: "aisc360-22"
 chapter: "Cap. J — Conexiones"
 ---
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
 
-## Alcance
+## La pelea que organiza el capítulo
 
-El Capítulo J cubre el diseño de los **elementos de conexión** (soldaduras, pernos,
-planchas) y de las partes afectadas de los miembros conectados.
+Una conexión no es un punto: es una **cadena de transferencia**. La fuerza sale de un
+miembro, entra a los conectores (pernos o soldaduras), pasa por el apoyo de esos conectores
+en la plancha, atraviesa los elementos de conexión y sale al otro miembro. Cada tramo de
+esa cadena es un estado límite, y la conexión resiste **lo que resiste su eslabón más
+débil**. Diseñar la conexión es recorrer la cadena y verificar cada eslabón.
 
-| Sección | Contenido |
-|---------|-----------|
-| J1 | Disposiciones generales |
-| J2 | Soldaduras (tope y filete) |
-| J3 | Pernos y partes roscadas |
-| J4 | Resistencia de elementos afectados y de conexión |
-| J5–J6 | Rellenos (fillers) y empalmes |
-| J7–J9 | Aplastamiento, bases de columna, pernos de anclaje |
-| J10 | Alas y almas con fuerzas concentradas |
+Y hay una diferencia de fondo con los capítulos de miembros: casi todos los estados límite
+de conexión son **frágiles** — el perno se corta, la plancha se desgarra, el bloque se
+arranca —, fallas súbitas sin aviso. De ahí la filosofía que organiza todo el diseño de
+conexiones:
 
----
+> **Hacer la conexión más fuerte que el miembro**, para que la ductilidad —el aviso, la
+> deformación visible— viva en el miembro y no en el nudo. El nudo es el eslabón que *no*
+> queremos que gobierne.
 
-## J2.2 — Soldaduras de filete
+| Familia de eslabones | Sección | Naturaleza |
+|---|---|:---:|
+| **Los conectores** (pernos, soldaduras) | J2, J3 | frágil — fractura súbita |
+| **El apoyo en la plancha** (aplastamiento/desgarre) | J3.11 | frágil — súbito |
+| **Los elementos conectados** (planchas: tracción, corte, bloque) | J4 | dúctil (fluencia) o frágil (rotura) |
 
-<Equation label="Ec. J2-4">
-$$
-R_n = F_{nw} \, A_{we} \qquad (\phi = 0.75, \;\; \Omega = 2.00)
-$$
-</Equation>
+<Figure
+  src="/aisc360-22-capJ/cadena-de-transferencia.svg"
+  alt="Empalme apernado de dos barras traccionadas: la fuerza P pasa por cuatro eslabones numerados — (1) fluencia/rotura del elemento, (2) corte del perno, (3) aplastamiento y desgarre en la plancha, (4) rotura en bloque — cada uno un estado límite a verificar; gobierna el más débil"
+  caption="La conexión como cadena. La fuerza recorre cada eslabón (elemento → perno → apoyo en la plancha → bloque), y cada uno es un estado límite. La conexión resiste lo que resiste el más débil."
+/>
 
-donde $A_{we}$ es el área efectiva (garganta efectiva $\times$ longitud) y $F_{nw}$ la
-resistencia del metal de soldadura, que **aumenta con el ángulo de carga** $\theta$:
-
-<Equation label="Ec. J2-5">
-$$
-F_{nw} = 0.60 \, F_{EXX} \left( 1.0 + 0.50 \sin^{1.5}\theta \right)
-$$
-</Equation>
-
-con $\theta$ el ángulo entre la carga y el eje de la soldadura. Así, una soldadura
-**longitudinal** ($\theta = 0°$) da $F_{nw} = 0.60\,F_{EXX}$, y una **transversal**
-($\theta = 90°$) da $0.90\,F_{EXX}$ (50% más resistente).
-
-<Note type="info">
-La garganta efectiva de un filete de cateto $w$ es $0.707\,w$ (para filetes de lados
-iguales). Los tamaños **mínimos** dependen del espesor de la parte más delgada (Tabla J2.4)
-y el **máximo** a lo largo de bordes es $w = t$ si $t < 6\,$mm, o $w = t - 2\,$mm si
-$t \geq 6\,$mm. En filetes muy largos cargados en el extremo ($l/w > 100$) la longitud
-efectiva se reduce por el factor $\beta = 1.2 - 0.002(l/w) \leq 1.0$.
+<Note type="info" title="Alcance">
+El Capítulo J cubre los **elementos de conexión** y las partes afectadas de los miembros:
+J2 soldaduras, J3 pernos y partes roscadas, J4 resistencia de elementos afectados y de
+conexión, J5–J6 rellenos y empalmes, J7–J10 aplastamiento, bases de columna, anclajes y
+fuerzas concentradas. Casi todos los estados de fractura llevan $\phi = 0.75$
+($\Omega = 2.00$); la fluencia lleva factores más generosos.
 </Note>
 
 ---
 
-## J3 — Pernos
+## 1. Los conectores I: pernos (J3)
 
-### Corte y tracción
+La resistencia de un perno a corte o tracción es simplemente su tensión nominal por su
+área:
 
 <Equation label="Ec. J3-1">
 $$
@@ -68,26 +62,26 @@ R_n = F_n \, A_b \qquad (\phi = 0.75, \;\; \Omega = 2.00)
 $$
 </Equation>
 
-donde $A_b$ es el área bruta del perno y $F_n$ la tensión nominal a corte ($F_{nv}$) o
-tracción ($F_{nt}$), de la Tabla J3.2:
+con $A_b$ el área bruta del perno y $F_n$ igual a $F_{nv}$ (corte) o $F_{nt}$ (tracción) de
+la Tabla J3.2:
 
-| Conector | $F_{nt}$ | $F_{nv}$ (rosca **incluida**, N) | $F_{nv}$ (rosca **excluida**, X) |
+| Conector | $F_{nt}$ | $F_{nv}$ rosca **incluida** (N) | $F_{nv}$ rosca **excluida** (X) |
 |----------|:--------:|:--------------------------------:|:--------------------------------:|
-| Pernos A307 | 310 MPa | 188 MPa | 188 MPa |
+| A307 | 310 MPa | 188 MPa | 188 MPa |
 | Grupo A (A325) | 620 MPa | 372 MPa | 469 MPa |
 | Grupo B (A490) | 780 MPa | 469 MPa | 579 MPa |
-| Partes roscadas (A3.4) | $0.75\,F_u$ | $0.450\,F_u$ | $0.563\,F_u$ |
+| Partes roscadas | $0.75 F_u$ | $0.450 F_u$ | $0.563 F_u$ |
 
-<Note type="info">
-Para conexiones de extremo con un patrón de conectores **más largo que 965 mm** (38 in)
-medido paralelo a la línea de fuerza, $F_{nv}$ se reduce al **83.3%** de los valores
-tabulados. En pernos A307 los valores se reducen 1% por cada 2 mm de agarre que exceda 5
-diámetros.
-</Note>
+El perno puede fallar de cuatro maneras, y conviene tenerlas juntas porque compiten:
 
-### Tracción y corte combinados (tipo aplastamiento)
+<Figure
+  src="/aisc360-22-capJ/pernos-estados-limite.svg"
+  alt="Cuatro estados límite del perno: corte (el perno se corta en el plano entre planchas, Rn = Fnv Ab), tracción (el perno se estira o rompe axialmente, Rn = Fnt Ab), aplastamiento y desgarre (la plancha se aplasta o se desgarra hacia el borde a lo largo de lc), y deslizamiento crítico (la fricción entre planchas resiste, el perno no toca el agujero)"
+  caption="Los estados límite del perno. Corte, tracción y aplastamiento/desgarre son fracturas frágiles (φ = 0.75). El deslizamiento crítico es de servicio: la pretensión genera fricción que impide el movimiento antes de llegar al aplastamiento."
+/>
 
-Si actúan a la vez, se reduce la resistencia a tracción según la demanda de corte $f_{rv}$:
+- **Corte / tracción combinados** (conexión tipo aplastamiento): si actúan a la vez, la
+  tracción disponible se reduce según la demanda de corte $f_{rv}$:
 
 <Equation label="Ec. J3-3a">
 $$
@@ -95,31 +89,8 @@ F_{nt}' = 1.3 \, F_{nt} - \frac{F_{nt}}{\phi \, F_{nv}} \, f_{rv} \leq F_{nt}
 $$
 </Equation>
 
-### Aplastamiento y desgarre en los agujeros (J3.11)
-
-El estado límite combina **aplastamiento** (tope $\propto d$) y **desgarre/tearout**
-(término $\propto l_c$). Con la deformación del agujero como consideración de diseño:
-
-<Equation label="Ec. J3-6a">
-$$
-R_n = 1.2 \, l_c \, t \, F_u \leq 2.4 \, d \, t \, F_u
-$$
-</Equation>
-
-Si la deformación **no** es una consideración de diseño:
-
-<Equation label="Ec. J3-6b">
-$$
-R_n = 1.5 \, l_c \, t \, F_u \leq 3.0 \, d \, t \, F_u
-$$
-</Equation>
-
-donde $l_c$ es la distancia libre entre el borde del agujero y el borde del agujero
-adyacente o del material, $d$ el diámetro del perno y $t$ el espesor de la plancha.
-
-### Deslizamiento crítico (slip-critical)
-
-Cuando no se admite deslizamiento bajo cargas de servicio:
+- **Deslizamiento crítico** (cuando no se admite movimiento bajo cargas de servicio): la
+  pretensión $T_b$ genera fricción entre las caras, y esa fricción —no el perno— resiste:
 
 <Equation label="Ec. J3-4">
 $$
@@ -127,70 +98,91 @@ R_n = \mu \, D_u \, h_f \, T_b \, n_s
 $$
 </Equation>
 
-con $\mu$ = coeficiente de deslizamiento (0.30 Clase A, 0.50 Clase B), $D_u = 1.13$, $h_f$
-factor de relleno, $T_b$ la pretensión mínima (Tabla J3.1) y $n_s$ el número de planos de
-deslizamiento. $\phi = 1.00$ para agujeros estándar (0.85 sobredimensionados, 0.70 ranurados
-largos).
+con $\mu = 0.30$ (Clase A) o $0.50$ (Clase B), $D_u = 1.13$, $h_f$ factor de relleno, $T_b$
+la pretensión mínima (Tabla J3.1) y $n_s$ el número de planos de deslizamiento.
+$\phi = 1.00$ para agujeros estándar.
 
-### Separaciones y distancias al borde (J3.3–J3.5)
-
-**Separación mínima (J3.3).** La distancia entre centros de agujeros (estándar,
-sobredimensionados o ranurados) debe cumplir:
-
-<Equation label="J3.3">
-$$
-s \geq 2\tfrac{2}{3}\, d \quad (\text{preferible } 3d)
-$$
-</Equation>
-
-donde $d$ es el diámetro nominal del perno. Esta separación garantiza espacio para el
-apriete y un comportamiento adecuado al aplastamiento/desgarre.
-
-**Distancia mínima al borde (J3.4).** Medida desde el centro de un agujero estándar al
-borde de la parte conectada (Tabla J3.4M):
-
-| Diámetro del perno $d$ (mm) | Distancia mínima al borde (mm) |
-|:---------------------------:|:------------------------------:|
-| 16 | 22 |
-| 20 | 26 |
-| 22 | 28 |
-| 24 | 30 |
-| 27 | 34 |
-| 30 | 38 |
-| 36 | 46 |
-| $> 36$ | $1.25\,d$ |
-
-Para agujeros sobredimensionados o ranurados, se aumenta la distancia al borde según los
-incrementos $C_2$ de la Tabla J3.5M.
-
-**Máximos (J3.5).** La distancia al borde no debe exceder $12\,t$ ni $150\,$mm. La
-separación máxima entre pernos en elementos pintados o no expuestos a corrosión es $24\,t$ o
-$305\,$mm (el menor); en acero patinable expuesto a la intemperie, $14\,t$ o $180\,$mm.
-
-<Note type="tip">
-Estos límites geométricos suelen controlar el detallado más que la propia resistencia.
-Además, la distancia al borde y la separación definen la distancia libre $l_c$ que entra en
-el cálculo de aplastamiento/desgarre (Ecs. J3-6a/J3-6b), así que están directamente
-ligadas a la resistencia de la conexión.
+<Note type="tip" title="Aplastamiento vs deslizamiento crítico">
+Son dos filosofías. En la conexión **tipo aplastamiento** se deja que el perno apoye contra
+el agujero y se verifica la resistencia última. En la **deslizamiento crítico** se impide
+que la conexión llegue siquiera a moverse (fatiga, cargas reversibles, agujeros
+sobredimensionados): es un estado límite de *servicio* que se agrega, no reemplaza, a los de
+resistencia.
 </Note>
 
 ---
 
-## J4 — Resistencia de elementos afectados y de conexión
+## 2. Los conectores II: soldaduras de filete (J2)
 
-### Tracción
+Una soldadura de filete no falla por su cateto sino por su **garganta** —el plano a 45° de
+menor sección—, y su resistencia es la del metal de aporte sobre esa área:
 
-- Fluencia en área bruta: $R_n = F_y A_g$ ($\phi = 0.90$).
-- Rotura en área neta: $R_n = F_u A_e$ ($\phi = 0.75$).
+<Equation label="Ec. J2-4">
+$$
+R_n = F_{nw} \, A_{we} \qquad (\phi = 0.75, \;\; \Omega = 2.00)
+$$
+</Equation>
 
-### Corte
+Lo interesante es que $F_{nw}$ **crece con el ángulo** entre la carga y el eje de la
+soldadura:
 
-- Fluencia: $R_n = 0.60 \, F_y A_{gv}$ ($\phi = 1.00$).
-- Rotura: $R_n = 0.60 \, F_u A_{nv}$ ($\phi = 0.75$).
+<Figure
+  src="/aisc360-22-capJ/soldadura-filete.svg"
+  alt="Soldadura de filete: a la izquierda la sección transversal mostrando los catetos w y la garganta efectiva 0.707w como plano de falla a 45 grados; a la derecha el bono por ángulo, con soldadura longitudinal (theta 0, Fnw = 0.6 FEXX) y transversal (theta 90, Fnw = 0.9 FEXX, +50%) y una curva creciente de Fnw con theta"
+  caption="La soldadura de filete falla por la garganta (0.707w para catetos iguales). F_nw sube con el ángulo de carga θ: una soldadura transversal es un 50% más resistente que una longitudinal, porque moviliza mejor la garganta."
+/>
 
-### Rotura en bloque (block shear)
+<Equation label="Ec. J2-5">
+$$
+F_{nw} = 0.60 \, F_{EXX} \left( 1.0 + 0.50 \sin^{1.5}\theta \right)
+$$
+</Equation>
 
-Mecanismo combinado de rotura en tracción y cortante en un "bloque" de la conexión:
+Una soldadura **longitudinal** ($\theta = 0°$) da $F_{nw} = 0.60\,F_{EXX}$; una
+**transversal** ($\theta = 90°$) da $0.90\,F_{EXX}$ — 50 % más.
+
+<Note type="info" title="Geometría de la garganta">
+La garganta efectiva de un filete de cateto $w$ (lados iguales) es $0.707\,w$. Los tamaños
+**mínimos** dependen del espesor de la parte más delgada (Tabla J2.4); el **máximo** a lo
+largo de bordes es $w = t$ si $t < 6\,$mm, o $w = t - 2\,$mm si $t \geq 6\,$mm. En filetes
+largos cargados en el extremo ($l/w > 100$) la longitud efectiva se reduce por
+$\beta = 1.2 - 0.002(l/w) \leq 1.0$: los extremos se sobrecargan y el centro trabaja poco.
+</Note>
+
+---
+
+## 3. El apoyo en la plancha: aplastamiento y desgarre (J3.11)
+
+Aunque el perno resista, la **plancha** puede ceder donde el perno apoya. El estado límite
+combina dos mecanismos en una sola fórmula: **aplastamiento** (el agujero se ovala, tope
+$\propto d$) y **desgarre** o *tearout* (el perno arranca el material hasta el borde,
+término $\propto l_c$). Con la deformación del agujero como consideración de diseño:
+
+<Equation label="Ec. J3-6a">
+$$
+R_n = 1.2 \, l_c \, t \, F_u \leq 2.4 \, d \, t \, F_u
+$$
+</Equation>
+
+donde $l_c$ es la distancia **libre** entre el borde del agujero y el borde adyacente (otro
+agujero o el borde del material), $d$ el diámetro del perno y $t$ el espesor. El primer
+término gobierna cuando el perno está cerca del borde (poco $l_c$ → desgarre); el tope
+$2.4\,dtF_u$ gobierna cuando hay espacio de sobra (aplastamiento puro). Si la deformación
+**no** es consideración de diseño, los coeficientes suben a $1.5$ y $3.0$ (Ec. J3-6b).
+
+---
+
+## 4. Los elementos conectados (J4)
+
+El último eslabón son las propias planchas y las partes afectadas de los miembros. Aquí
+reaparece el par dúctil/frágil de siempre:
+
+- **Tracción:** fluencia en área bruta $R_n = F_y A_g$ ($\phi = 0.90$, dúctil) o rotura en
+  área neta $R_n = F_u A_e$ ($\phi = 0.75$, frágil).
+- **Corte:** fluencia $R_n = 0.60 F_y A_{gv}$ ($\phi = 1.00$) o rotura $R_n = 0.60 F_u A_{nv}$
+  ($\phi = 0.75$).
+- **Rotura en bloque** (*block shear*): un bloque de la conexión se arranca combinando
+  **corte** en unos planos y **tracción** en otro:
 
 <Equation label="Ec. J4-5">
 $$
@@ -198,15 +190,66 @@ R_n = 0.60 \, F_u A_{nv} + U_{bs} \, F_u A_{nt} \leq 0.60 \, F_y A_{gv} + U_{bs}
 $$
 </Equation>
 
-con $\phi = 0.75$, $\Omega = 2.00$. $A_{gv}, A_{nv}$ son áreas bruta/neta sometidas a
-cortante; $A_{nt}$ el área neta en tracción; y $U_{bs} = 1.0$ si la tracción es uniforme
-(0.5 si no lo es, p. ej. conexiones de ángulos a una sola línea de pernos en el alma de una
-viga despatinada).
+con $\phi = 0.75$; $A_{gv}, A_{nv}$ áreas bruta/neta en corte, $A_{nt}$ área neta en
+tracción, y $U_{bs} = 1.0$ si la tracción es uniforme ($0.5$ si no lo es). El tope del lado
+derecho limita el término de corte a la **fluencia** en vez de la rotura: no se confía en
+fracturar el plano de corte más de lo debido.
+
+---
+
+## 5. Geometría: separaciones y distancias al borde (J3.3–J3.5)
+
+Estos límites suelen controlar el detallado, y están ligados a la resistencia porque
+definen el $l_c$ del aplastamiento/desgarre:
+
+- **Separación mínima entre centros (J3.3):** $s \geq 2\tfrac{2}{3}\,d$ (preferible $3d$).
+- **Distancia mínima al borde (J3.4):** de la Tabla J3.4M — p. ej. 22 mm para $d=16$, 26 mm
+  para $d=20$, 30 mm para $d=24$; $1.25\,d$ para $d>36$ mm.
+- **Máximos (J3.5):** distancia al borde $\leq 12t$ y $\leq 150$ mm; separación
+  $\leq 24t$ o 305 mm (menos en acero patinable expuesto).
+
+<Note type="tip">
+La distancia al borde y la separación no son solo detallado: fijan el $l_c$ que entra en
+las Ecs. J3-6a/b. Un perno demasiado cerca del borde no falla por su corte, falla por
+**desgarre** de la plancha — un eslabón distinto de la cadena.
+</Note>
+
+---
+
+## 6. El orden de diseño
+
+```mermaid
+flowchart TD
+    A["Fuerza a transferir en la conexión"] --> B["Eslabón 1 — conectores<br/>pernos: F_n·A_b (J3) / soldaduras: F_nw·A_we (J2)"]
+    B --> C["Eslabón 2 — apoyo en la plancha<br/>aplastamiento + desgarre (J3.11)"]
+    C --> D["Eslabón 3 — elementos conectados<br/>tracción, corte, rotura en bloque (J4)"]
+    D --> E["Eslabón 4 — geometría<br/>separaciones y distancias al borde (J3.3–J3.5)"]
+    E --> F{"R_n de gobierno =<br/>el MENOR de los eslabones"}
+    F --> G["φ·R_n ≥ demanda, y<br/>¿R_conexión &gt; R_miembro?"]
+```
+
+El último rombo es la filosofía hecha chequeo: no basta con que la conexión aguante la
+demanda; se busca que sea **más fuerte que el miembro que une**, de modo que si el sistema
+se sobrecarga, ceda primero —dúctil, avisando— el miembro y no —frágil, de golpe— el nudo.
+
+---
+
+## Resumen de verificaciones para conexiones
+
+| Eslabón | Verificación | Naturaleza |
+|---|---|:---:|
+| Perno — corte/tracción | $R_n = F_n A_b$ (Tabla J3.2) | frágil — fractura |
+| Perno — corte+tracción | $F_{nt}'$ reducido (Ec. J3-3a) | frágil |
+| Deslizamiento crítico | $\mu D_u h_f T_b n_s$ (Ec. J3-4) | servicio (fricción) |
+| Soldadura de filete | $R_n = F_{nw} A_{we}$; bono por ángulo (Ec. J2-5) | frágil — por la garganta |
+| Apoyo en la plancha | $1.2 l_c t F_u \leq 2.4 d t F_u$ (Ec. J3-6a) | frágil — aplastam./desgarre |
+| Elemento — tracción | $F_y A_g$ (dúctil) / $F_u A_e$ (frágil) | ambas |
+| Elemento — rotura en bloque | Ec. J4-5 | frágil |
+| Geometría | $s \geq 2\tfrac{2}{3}d$, distancias al borde (J3.3–J3.5) | detallado / fija $l_c$ |
 
 <Note type="warning">
-Quedan fuera de esta nota: J2.1 (soldaduras de tope), las tablas completas J3.1–J3.5
-(pretensión, dimensiones de agujeros, separaciones), y las Secciones J7–J10 (aplastamiento,
-bases de columna, anclajes y fuerzas concentradas en alas/almas, que incluyen estados como
-fluencia y arrugamiento local del alma). Verificar valores contra la edición vigente de
-AISC 360-22.
+Quedan fuera de esta nota J2.1 (soldaduras de tope), las tablas completas de pretensión y
+dimensiones de agujeros, y las Secciones J7–J10 (bases de columna, anclajes y fuerzas
+concentradas en alas/almas, con estados como fluencia y arrugamiento local del alma).
+Verificar valores contra la edición vigente de AISC 360-22.
 </Note>

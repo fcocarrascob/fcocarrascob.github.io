@@ -1,0 +1,282 @@
+---
+title: "Links Gap y Hook en SAP2000: cómo modelar un elemento que solo trabaja pasado un umbral"
+description: "Guía práctica para modelar y calibrar un Link no lineal Gap/Hook en SAP2000: cuál de los dos usar, cómo conectarlo sin perder continuidad transversal, y cómo calibrar la holgura contra un criterio de deformación admisible. Aplicado a un puntal de respaldo bajo la cumbre de un pórtico."
+pubDate: 2026-07-07
+tags: ["SAP2000", "links no lineales", "GAP", "Hook", "análisis no lineal", "pórticos"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## ¿Para qué sirve un Gap o un Hook?
+
+Los Link no lineales **Gap** y **Hook** modelan un elemento que se mantiene inerte hasta que la
+deformación relativa entre sus dos extremos supera una holgura inicial. Son la herramienta
+natural para un elemento de **respaldo**: un puntal o tirante que no debe aportar rigidez bajo
+carga de servicio normal (no cambia el período, no cambia la distribución de esfuerzos), pero que
+entra a trabajar si la estructura se deforma más de lo previsto —una sobrecarga excepcional, un
+evento que no se consideró en el diseño original.
+
+Esta nota muestra cómo modelarlo y calibrarlo con un caso concreto: un pórtico triangular de 6 m
+de luz con un puntal horizontal bajo la cumbre, que debe empezar a trabajar solo si la cumbre baja
+más de lo admisible.
+
+---
+
+## Gap vs. Hook: la misma curva, distinto sentido
+
+<Figure
+  src="/gap-hook-sap2000/fig-gap-vs-hook.svg"
+  alt="Comparación Gap vs Hook: Gap son dos bloques que se acercan y cierran la holgura al comprimirse, con curva fuerza-deformación plana en cero hasta el acortamiento igual a la holgura y luego rampa; Hook es un cable flojo que se tensa al separarse, con la misma curva pero en el sentido de alargamiento"
+  caption="La curva fuerza-deformación es idéntica en ambos —plana en cero hasta que la holgura se consume, luego rampa con rigidez K—. Lo único que cambia es qué signo de deformación la cierra."
+/>
+
+- **Gap**: no transmite fuerza hasta que el elemento se **acorta** lo suficiente para cerrar la
+  holgura; a partir de ahí trabaja en **compresión**. Si se estira, el gap se abre más y la
+  fuerza vuelve a cero.
+- **Hook**: es la imagen especular. No transmite fuerza hasta que se **alarga** lo suficiente
+  para tensar la holgura; a partir de ahí trabaja en **tracción**. Si se acorta, queda flojo.
+
+<Note type="tip" title="Cómo elegir entre los dos">
+Se corre el modelo **con el elemento como frame rígido normal** (sin ningún Link) bajo la carga
+de interés, y se observa el signo de la fuerza axial. Si el elemento se traccionaría, corresponde
+**Hook**; si se comprimiría, corresponde **Gap**. Es un chequeo de un minuto que evita definir la
+propiedad equivocada —un Gap nunca engancha si el elemento en realidad se estira, y viceversa.
+</Note>
+
+El modelo de ejemplo: pórtico de 6 m de luz, columnas empotradas, cumbre libre a 1 m sobre los
+hombros, con un puntal horizontal entre los puntos medios de ambas diagonales, 0.5 m bajo la
+cumbre. Bajo carga de nieve, ese puntal se **tracciona** cuando la cumbre baja (las diagonales lo
+empujan hacia afuera): corresponde un **Hook**.
+
+<Figure
+  src="/gap-hook-sap2000/fig-modelo.svg"
+  alt="Pórtico triangular con columnas empotradas en 2 y 3, diagonales 1-6-5 y 5-7-4, cumbre libre en el punto 5, y el puntal horizontal entre los puntos 6 y 7 pasando 0.5 m bajo la cumbre, con cargas de nieve distribuidas sobre las diagonales"
+  caption="El modelo. El puntal (azul) conecta los puntos medios de ambas diagonales, 0.5 m bajo la cumbre, sin tocarla."
+/>
+
+---
+
+## Cómo conectar el Link sin perder continuidad
+
+Una propiedad Gap/Hook en SAP2000 define el comportamiento no lineal en **un solo grado de
+libertad** (el axial, U1). Los otros cinco —corte transversal y rotaciones— quedan libres a menos
+que se agregue **otro Link en paralelo** con una propiedad Linear rígida en esas direcciones. Sin
+ese segundo Link, el puntal queda conectado axialmente pero "flotando" en corte respecto al resto
+del pórtico.
+
+<Figure
+  src="/gap-hook-sap2000/fig-conexion-links.svg"
+  alt="Cadena de conexión: nodo 6 conectado a un nodo interior 8 mediante dos links en paralelo (uno Hook axial, otro Linear rígido en corte), luego el frame PUNTAL real hasta el nodo 9, y la misma pareja de links en paralelo hasta el nodo 7"
+  caption="El puntal partido en tres tramos en serie: Hook (U1) + Linear rígido (U2, U3) en paralelo en cada extremo, con el frame PUNTAL real —con su sección y rigidez a flexión— en el tramo central."
+/>
+
+Cada extremo necesita un nodo interior nuevo (coincidente o desplazado una fracción de milímetro,
+para evitar el auto-merge de puntos coincidentes de SAP2000) y dos Link objects entre el nodo
+original y el interior:
+
+```python
+# Propiedad Hook: solo U1 no lineal, con su holgura y rigidez enganchada
+SapModel.PropLink.SetHook(
+    "HOOK1",
+    [True, False, False, False, False, False],   # DOF activo: solo U1
+    [False, False, False, False, False, False],  # Fixed: no aplica en Gap/Hook
+    [True, False, False, False, False, False],    # NonLinear: solo U1
+    [Ke_lineal, 0, 0, 0, 0, 0],                    # Ke (para casos lineales)
+    [0, 0, 0, 0, 0, 0],                            # Ce (amortiguamiento)
+    [Ke_enganchado, 0, 0, 0, 0, 0],                # K no lineal una vez cerrado
+    [holgura_m, 0, 0, 0, 0, 0],                    # Dis: la holgura
+    0.0, 0.0,                                      # dj2, dj3 (escalares)
+)
+
+# Propiedad Linear: rígida solo en corte (U2, U3), sin tocar U1
+SapModel.PropLink.SetLinear(
+    "RIGIDO_UV",
+    [False, True, True, False, False, False],
+    [False, False, False, False, False, False],
+    [0, 1e9, 1e9, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    0.0, 0.0,
+)
+```
+
+Lo mismo, hecho a mano desde la interfaz (*Define → Section Properties → Link/Support
+Properties*, botón *Modify/Show* de la dirección U1), es la ventana *Link/Support Directional
+Properties*:
+
+<Figure
+  src="/gap-hook-sap2000/dialogo-hook1.png"
+  alt="Ventana Link/Support Directional Properties de SAP2000 para la propiedad HOOK1: Direction U1, Type Hook, NonLinear Yes, Effective Stiffness 3000000, Effective Damping 0, Stiffness 3000000, Open 2.460E-03"
+  caption="La misma propiedad HOOK1 definida a mano. Cada campo corresponde a un parámetro de SetHook — ver la tabla debajo."
+/>
+
+| Campo del diálogo | Valor | De dónde sale |
+|:---|:---:|:---|
+| Direction | U1 | el eje axial del puntal — el único grado de libertad no lineal |
+| Type | Hook | del chequeo de signo: el puntal se traccionaría |
+| NonLinear | Yes | habilita el comportamiento Gap/Hook en casos no lineales |
+| Effective Stiffness / Damping | 3,000,000 / 0 | solo se usan si este Link aparece en un caso **lineal**; no representan nada físico aquí |
+| Stiffness (no lineal) | 3,000,000 | rigidez una vez enganchado — mucho mayor que la rigidez axial del propio frame PUNTAL, para que el Link no le agregue flexibilidad espuria |
+| Open | 2.460E-03 | la holgura calibrada, Ec. 2 |
+
+La propiedad del segundo Link, RIGIDO_UV, se ve distinta: no tiene pestaña de No Lineal porque
+es puramente **Linear**, y las direcciones activas son U2 y U3, no U1:
+
+<Figure
+  src="/gap-hook-sap2000/dialogo-rigido-uv.png"
+  alt="Ventana Linear Link/Support Directional Properties de SAP2000 para la propiedad RIGIDO_UV: direcciones U2 y U3 activas (sin Fixed), rigidez 1.000E+09 en ambas, U1 y las rotaciones sin marcar"
+  caption="RIGIDO_UV: U2 y U3 activas con rigidez 1×10⁹ tonf/m, sin marcar Fixed. U1 queda sin marcar a propósito — ese eje lo controla exclusivamente el Link Hook en paralelo."
+/>
+
+| Campo del diálogo | Valor | De dónde sale |
+|:---|:---:|:---|
+| Direction | U2, U3 marcadas | el corte transversal que hay que mantener continuo |
+| Fixed | sin marcar | se usa rigidez alta en vez de "Fixed" — ver la nota más abajo |
+| Stiffness U2, U3 | 1,000E+09 | el `1e9` del código: mucho mayor que cualquier rigidez del pórtico, para que se comporte como rígido sin serlo literalmente |
+| Direction U1 | sin marcar | el eje axial no lo toca esta propiedad — es exclusivo del Link Hook |
+
+<Note type="warning" title="Por qué no usar el checkbox Fixed">
+Aunque el diálogo ofrece un checkbox "Fixed" por dirección, en la propiedad Hook/Gap ese
+checkbox no tiene efecto: la API lo acepta sin error pero no lo guarda. Por eso la continuidad
+transversal se resuelve con una rigidez muy alta en una propiedad Linear aparte, no marcando
+Fixed en ningún lado.
+</Note>
+
+<Note type="info">
+Después de correr un análisis, SAP2000 bloquea el modelo para edición. Hay que llamar
+`SapModel.SetModelIsLocked(False)` antes de redefinir propiedades, borrar frames o agregar
+puntos —de lo contrario esas llamadas devuelven error sin ninguna pista de la causa.
+</Note>
+
+---
+
+## Cómo calibrar la holgura
+
+La holgura (`Dis`) se elige a partir de un criterio de deformación admisible en la magnitud que
+importa —en este caso, la flecha de la cumbre— y se traduce a la elongación axial del Link:
+
+<Equation label="Ec. 1">
+$$
+\delta_{adm} = \frac{L}{250} = \frac{6000\ \text{mm}}{250} = 24\ \text{mm}
+$$
+</Equation>
+
+Para traducir esa flecha a una holgura axial hace falta la razón entre ambas deformaciones. Se
+mide corriendo el **modelo completo** (con los Links ya instalados, Hook abierto) bajo la carga de
+referencia, y comparando cuánto se separan los dos extremos del puntal por cada milímetro que baja
+la cumbre. En este ejemplo esa razón dio **10.25 %**, así que:
+
+<Equation label="Ec. 2">
+$$
+\text{Dis} = 0.1025 \times 24\ \text{mm} \approx 2.46\ \text{mm}
+$$
+</Equation>
+
+<Note type="tip">
+Conviene medir siempre esta razón en el modelo completo con los Links puestos, no en una versión
+simplificada sin el elemento. La rigidez que aporta el resto de la conexión —aunque el Hook esté
+abierto— cambia la relación entre ambas deformaciones.
+</Note>
+
+---
+
+## Resultados
+
+Con la holgura de 2.46 mm, se corrió una serie de casos no lineales estáticos escalando la
+sobrecarga de nieve de 5× a 40× su valor base (100 kgf/m² proyectados), para trazar la curva
+completa de activación. Cada nivel de carga es un caso independiente, por ejemplo NL_S14 (SNOW
+×14.3, justo en el umbral):
+
+<Figure
+  src="/gap-hook-sap2000/dialogo-caso-nolineal.png"
+  alt="Ventana Load Case Data - Nonlinear Static de SAP2000 para el caso NL_S14: Analysis Type Nonlinear, Geometric Nonlinearity None, Loads Applied DEAD escala 1 y SNOW escala 14.3"
+  caption="El caso NL_S14: DEAD ×1 + SNOW ×14.3. El campo que no puede faltar es Analysis Type = Nonlinear —en un caso Linear, el Hook simplemente usa su Effective Stiffness y nunca 'abre', sin importar la holgura."
+/>
+
+| Campo del diálogo | Valor | De dónde sale |
+|:---|:---:|:---|
+| Analysis Type | Nonlinear | imprescindible: en un caso Linear el Hook ignora la holgura y usa Effective Stiffness siempre |
+| Geometric Nonlinearity | None | la no linealidad de interés es la del Link, no P-Delta |
+| Loads Applied — DEAD | escala 1 | peso propio, sin escalar |
+| Loads Applied — SNOW | escala 14.3 | el multiplicador que lleva la flecha a 24 mm (Ec. 1) |
+| Initial Conditions | Zero — Start from Unstressed | cada caso parte de cero, no se acumulan (no son incrementales entre sí) |
+
+<Figure
+  src="/gap-hook-sap2000/fig-resultados.svg"
+  alt="Gráfico de flecha de cumbre en milímetros versus multiplicador de sobrecarga SNOW, de 0 a 40. Dos curvas: sin puntal (roja, discontinua, creciente) y con puntal más Hook (azul, coincide con la roja hasta el umbral de 14.3x y luego se aplana). Línea vertical discontinua naranja marca el umbral en 14.3x, correspondiente a 24 mm de flecha (L/250)"
+  caption="Hasta el umbral (SNOW ×14.3 ≈ 1430 kgf/m²) ambas curvas coinciden: el Hook está abierto y el puntal no aporta nada. Pasado el umbral, la curva con Hook se aplana —el puntal engancha en tracción y reduce el crecimiento de la flecha en 35-40 %."
+/>
+
+| SNOW × | Sobrecarga | Flecha cumbre (con Hook) | Flecha cumbre (sin puntal) | Fuerza en el puntal |
+|:---:|:---:|:---:|:---:|:---:|
+| 5 | 500 kgf/m² | 8.62 mm | 8.52 mm | 0 (abierto) |
+| 10 | 1000 kgf/m² | 16.93 mm | 16.83 mm | 0 (abierto) |
+| **14.3** | **1430 kgf/m²** | **24.05 mm** | 23.99 mm | **0.08 tonf (enganchando)** |
+| 18 | 1800 kgf/m² | 27.93 mm | 30.14 mm | 5.80 tonf |
+| 40 | 4000 kgf/m² | 50.98 mm | 66.73 mm | 39.80 tonf |
+
+Hasta el umbral la fuerza en el puntal es cero y la flecha sigue la curva "sin puntal" casi punto
+a punto: el Hook no aporta nada mientras no hace falta. Pasado el umbral, la fuerza crece con la
+carga y la pendiente de la flecha cae de ~1.66 mm por unidad de sobrecarga a ~1.05 mm por unidad
+—una reducción de rigidez adicional de 35-40 % una vez enganchado.
+
+Esto último no hace falta tomarlo de la curva: la tabla de resultados del propio Link lo muestra
+directamente, en *Display → Show Tables → Link Forces*:
+
+<Figure
+  src="/gap-hook-sap2000/tabla-link-forces.png"
+  alt="Tabla de Link Forces de SAP2000 para el Link 2, extremo I-End, en los casos NL_S5, NL_S10, NL_S14, NL_S18, NL_S25, NL_S30 y NL_S40: fuerza axial P en tonf, 0 hasta NL_S10, 0.0804 en NL_S14, y creciendo hasta 39.8016 en NL_S40"
+  caption="P (tonf) en el Link, extremo I-End: exactamente cero hasta NL_S10, 0.08 tonf en NL_S14 —el instante del enganche— y creciendo con la carga de ahí en adelante. La fila StepType Max/Min coincide porque el caso es estático: no hay variación dentro del paso."
+/>
+
+Es la misma fuente de datos que arma la tabla y la curva de arriba, leída directamente de SAP2000
+sin pasar por ningún cálculo intermedio.
+
+---
+
+## Y un Gap, para cerrar el círculo
+
+Todo el ejemplo numérico de arriba usa Hook porque el tirante horizontal se traccionaba. Para ver
+un **Gap** trabajando de verdad basta cambiar la geometría del elemento: un puntal **vertical**
+apoyado en una nueva fundación a nivel de piso, que sube hasta casi tocar la cumbre por debajo,
+con una holgura de 10 mm. Cuando la cumbre baja, se **acerca** al puntal y termina
+**comprimiéndolo** — el mecanismo exactamente opuesto al tirante:
+
+<Figure
+  src="/gap-hook-sap2000/fig-modelo-gap.svg"
+  alt="El mismo pórtico con un puntal vertical nuevo, apoyado en una fundación a nivel de piso, subiendo hasta 10 mm bajo la cumbre. El tirante Hook horizontal queda de fondo, atenuado"
+  caption="El puntal vertical (naranjo) se agrega al mismo modelo, sin tocar el tirante Hook ya calibrado. Holgura de 10 mm, cierra en compresión."
+/>
+
+Se define igual que el Hook —Link no lineal en el eje que trabaja (aquí, vertical) más un Link
+Linear rígido en las otras dos direcciones para no perder continuidad—, pero con
+`SapModel.PropLink.SetGap` en vez de `SetHook`, y la misma propiedad Linear rígida ya definida
+(`RIGIDO_UV`) reutilizada tal cual: es agnóstica a la orientación del Link, así que sirve para
+cualquier eje que necesite quedar rígido.
+
+| SNOW × | Flecha cumbre | Fuerza en el puntal vertical |
+|:---:|:---:|:---:|
+| 5 | 8.62 mm | 0 (abierto) |
+| **6** | **10.02 mm** | **−0.16 tonf (enganchando, compresión)** |
+| 10 | 10.34 mm | −4.14 tonf |
+
+El signo es el opuesto al del tirante: **P negativo, compresión**, justo lo que predice un Gap. Y
+el efecto una vez enganchado es más drástico que el del tirante —la flecha prácticamente se
+congela entre SNOW ×6 y ×10 (10.02 → 10.34 mm)—, porque este puntal actúa directamente sobre el
+punto que se quiere limitar, no de forma indirecta a través de dos apoyos que se separan.
+
+---
+
+## En resumen
+
+1. **Elegir Gap o Hook midiendo el signo**, no adivinando: correr el caso rígido y leer P decide.
+2. **Conectar con dos Links en paralelo** —el no lineal en el eje que trabaja, uno Linear rígido en
+   las demás direcciones— para no perder continuidad transversal.
+3. **Calibrar la holgura en el modelo completo**, con la razón elongación/deformación medida ahí,
+   no en una versión simplificada.
+
+Con estos tres pasos, un Gap o Hook se modela y calibra en una tarde, con la certeza de que el
+elemento va a comportarse exactamente como se diseñó: inerte bajo servicio, activo solo cuando
+tiene que estarlo.

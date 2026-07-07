@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="rfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="940" height="460" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Flecha de cumbre vs. sobrecarga — el Hook engancha justo en L/250</text>
+
+  <!-- axes -->
+  <line x1="110" y1="380" x2="900" y2="380" stroke="#333" stroke-width="1.5" marker-end="url(#rfa)"/>
+  <line x1="110" y1="380" x2="110" y2="55" stroke="#333" stroke-width="1.5" marker-end="url(#rfa)"/>
+  <text x="905" y="398" font-size="12.5" fill="#333">SNOW ×N</text>
+  <text x="104" y="50" font-size="12.5" fill="#333" text-anchor="end">flecha (mm)</text>
+
+  <!-- y gridlines -->
+  <g stroke="#e1e0d9" stroke-width="1" stroke-dasharray="4 4">
+    <line x1="110" y1="302.5" x2="900" y2="302.5"/>
+    <line x1="110" y1="225" x2="900" y2="225"/>
+    <line x1="110" y1="147.5" x2="900" y2="147.5"/>
+    <line x1="110" y1="70" x2="900" y2="70"/>
+  </g>
+  <g font-size="11" fill="#898781" text-anchor="end">
+    <text x="104" y="384">0</text>
+    <text x="104" y="306">17.5</text>
+    <text x="104" y="229">35</text>
+    <text x="104" y="151">52.5</text>
+    <text x="104" y="74">70 mm</text>
+  </g>
+
+  <!-- x ticks -->
+  <g font-size="11" fill="#898781" text-anchor="middle">
+    <text x="110" y="396">0</text>
+    <text x="206" y="396">5</text>
+    <text x="303" y="396">10</text>
+    <text x="457" y="396">18</text>
+    <text x="591" y="396">25</text>
+    <text x="688" y="396">30</text>
+    <text x="880" y="396">40</text>
+  </g>
+
+  <!-- threshold: vertical line at x=14.3 (px 385), horizontal at 24mm (px 273.5) -->
+  <line x1="385" y1="55" x2="385" y2="380" stroke="#b35c0e" stroke-width="1.3" stroke-dasharray="5 3"/>
+  <line x1="110" y1="273.5" x2="385" y2="273.5" stroke="#b35c0e" stroke-width="1.3" stroke-dasharray="5 3"/>
+  <text x="392" y="70" font-size="11.5" fill="#b35c0e" font-weight="bold">umbral L/250 = 24 mm</text>
+  <text x="392" y="85" font-size="11" fill="#b35c0e">(SNOW ×14.3 → 1430 kgf/m²)</text>
+
+  <!-- sin puntal (red) -->
+  <polyline points="110,379 206,342 303,305 385,274 457,247 591,195 688,158 880,84"
+    fill="none" stroke="#e34948" stroke-width="2.2" stroke-dasharray="7 4"/>
+  <text x="700" y="140" font-size="12.5" fill="#e34948" font-weight="bold">sin puntal (referencia)</text>
+
+  <!-- con Hook (blue) -->
+  <polyline points="110,380 206,342 303,305 385,274 457,256 591,224 688,201 880,154"
+    fill="none" stroke="#1a63a8" stroke-width="3"/>
+  <g fill="#1a63a8">
+    <circle cx="206" cy="342" r="3.5"/>
+    <circle cx="303" cy="305" r="3.5"/>
+    <circle cx="385" cy="274" r="4.5"/>
+    <circle cx="457" cy="256" r="3.5"/>
+    <circle cx="591" cy="224" r="3.5"/>
+    <circle cx="688" cy="201" r="3.5"/>
+    <circle cx="880" cy="154" r="3.5"/>
+  </g>
+  <text x="700" y="230" font-size="12.5" fill="#1a63a8" font-weight="bold">con puntal + Hook (holgura 2.46 mm)</text>
+  <text x="395" y="290" font-size="11" fill="#1a63a8" font-weight="bold">engancha aquí (P≈0→0.08 tonf)</text>
+
+  <text x="470" y="430" font-size="12.5" text-anchor="middle" fill="#555">Hasta el umbral las curvas coinciden (Hook abierto, el puntal no aporta nada); pasado el umbral la</text>
+  <text x="470" y="447" font-size="12.5" text-anchor="middle" fill="#555">curva azul se aplana ~35-40 % — el puntal empieza a trabajar en tracción</text>
+</svg>

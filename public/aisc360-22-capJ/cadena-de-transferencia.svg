@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ja" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="jc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="420" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Una conexión es una cadena: la fuerza pasa por cada eslabón — gobierna el más débil</text>
+
+  <!-- bar A (top, pulled left) -->
+  <rect x="70" y="185" width="450" height="34" fill="#efece6" stroke="#8a857c"/>
+  <!-- bar B (bottom, pulled right, overlapping) -->
+  <rect x="420" y="219" width="450" height="34" fill="#e5e2dc" stroke="#8a857c"/>
+  <!-- overlap shear plane -->
+  <line x1="420" y1="219" x2="520" y2="219" stroke="#b02a1a" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+  <!-- bolts at overlap (on the shear plane) -->
+  <circle cx="452" cy="219" r="10" fill="#ffffff" stroke="#5b6470" stroke-width="1.8"/>
+  <circle cx="488" cy="219" r="10" fill="#ffffff" stroke="#5b6470" stroke-width="1.8"/>
+
+  <!-- P arrows -->
+  <line x1="70" y1="202" x2="20" y2="202" stroke="#333" stroke-width="2.5" marker-end="url(#ja)"/>
+  <text x="30" y="194" font-size="13" fill="#333" font-weight="bold">P</text>
+  <line x1="870" y1="236" x2="920" y2="236" stroke="#333" stroke-width="2.5" marker-end="url(#ja)"/>
+  <text x="895" y="228" font-size="13" fill="#333" font-weight="bold">P</text>
+
+  <!-- callouts ABOVE -->
+  <!-- (1) member yield/fracture -->
+  <circle cx="200" cy="130" r="12" fill="#1c7c3c"/>
+  <text x="200" y="135" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">1</text>
+  <line x1="200" y1="142" x2="200" y2="183" stroke="#1c7c3c" stroke-width="1.2" marker-end="url(#jc)"/>
+  <text x="216" y="120" font-size="11.5" fill="#1c7c3c" font-weight="bold">elemento: fluencia / rotura</text>
+  <text x="216" y="135" font-size="11" fill="#555">F_y·A_g  (dúctil)  /  F_u·A_e  (frágil)</text>
+
+  <!-- (2) bolt shear -->
+  <circle cx="470" cy="95" r="12" fill="#b02a1a"/>
+  <text x="470" y="100" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">2</text>
+  <line x1="470" y1="107" x2="470" y2="209" stroke="#b02a1a" stroke-width="1.2" marker-end="url(#jc)"/>
+  <text x="486" y="90" font-size="11.5" fill="#b02a1a" font-weight="bold">corte del perno</text>
+  <text x="486" y="105" font-size="11" fill="#555">R_n = F_nv·A_b  (frágil)</text>
+
+  <!-- callouts BELOW -->
+  <!-- (3) bearing / tearout -->
+  <circle cx="452" cy="315" r="12" fill="#b02a1a"/>
+  <text x="452" y="320" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">3</text>
+  <line x1="452" y1="303" x2="452" y2="230" stroke="#b02a1a" stroke-width="1.2" marker-end="url(#jc)"/>
+  <text x="130" y="330" font-size="11.5" fill="#b02a1a" font-weight="bold">aplastamiento + desgarre en la plancha</text>
+  <text x="130" y="345" font-size="11" fill="#555">R_n = 1.2 l_c t F_u ≤ 2.4 d t F_u  (frágil)</text>
+
+  <!-- (4) block shear -->
+  <circle cx="640" cy="315" r="12" fill="#b02a1a"/>
+  <text x="640" y="320" font-size="13" fill="#fff" text-anchor="middle" font-weight="bold">4</text>
+  <line x1="640" y1="303" x2="560" y2="248" stroke="#b02a1a" stroke-width="1.2" marker-end="url(#jc)"/>
+  <text x="660" y="330" font-size="11.5" fill="#b02a1a" font-weight="bold">rotura en bloque</text>
+  <text x="660" y="345" font-size="11" fill="#555">0.60 F_u A_nv + U_bs F_u A_nt  (frágil)</text>
+
+  <!-- takeaway -->
+  <text x="470" y="385" font-size="12.5" text-anchor="middle" fill="#333">Se verifica <tspan font-weight="bold">cada</tspan> eslabón; la conexión resiste lo que resiste el más débil.</text>
+  <text x="470" y="405" font-size="12.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Filosofía: hacer la conexión más fuerte que el miembro, para que la ductilidad quede en el miembro y no en el nudo.</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="gha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="900" height="380" fill="#ffffff"/>
+  <text x="450" y="28" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Mismo resorte bilineal — distinto sentido de cierre</text>
+
+  <!-- ===== Left: GAP ===== -->
+  <g>
+    <text x="220" y="58" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">GAP — cierra en compresión</text>
+    <!-- mechanism icon: two blocks approaching -->
+    <rect x="120" y="80" width="50" height="34" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="270" y="80" width="50" height="34" fill="#dcd8d0" stroke="#8a857c"/>
+    <line x1="170" y1="97" x2="270" y2="97" stroke="#b02a1a" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="220" y="90" font-size="11" text-anchor="middle" fill="#b02a1a">holgura</text>
+    <line x1="150" y1="70" x2="165" y2="70" stroke="#b02a1a" stroke-width="2" marker-end="url(#gha)"/>
+    <line x1="290" y1="70" x2="275" y2="70" stroke="#b02a1a" stroke-width="2" marker-end="url(#gha)"/>
+    <text x="220" y="65" font-size="10.5" text-anchor="middle" fill="#555">se acortan → cierran el gap</text>
+
+    <!-- F-delta curve -->
+    <line x1="90" y1="290" x2="350" y2="290" stroke="#333" stroke-width="1.3" marker-end="url(#gha)"/>
+    <line x1="220" y1="290" x2="220" y2="150" stroke="#333" stroke-width="1.3" marker-end="url(#gha)"/>
+    <text x="356" y="294" font-size="11.5" fill="#333">acortamiento →</text>
+    <text x="212" y="146" font-size="11.5" fill="#333" text-anchor="end">F</text>
+    <polyline points="90,290 220,290 320,175" fill="none" stroke="#b02a1a" stroke-width="3"/>
+    <line x1="220" y1="285" x2="220" y2="295" stroke="#333" stroke-width="1.4"/>
+    <text x="220" y="310" font-size="11" text-anchor="middle" fill="#333">Dis (holgura)</text>
+    <text x="150" y="278" font-size="11" fill="#777">F = 0 (abierto)</text>
+    <text x="270" y="205" font-size="11" fill="#b02a1a" font-weight="bold">F = K·(δ−Dis)</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="450" y1="45" x2="450" y2="330" stroke="#e1e0d9" stroke-width="1.5"/>
+
+  <!-- ===== Right: HOOK ===== -->
+  <g>
+    <text x="680" y="58" font-size="13.5" text-anchor="middle" fill="#1a63a8" font-weight="bold">HOOK — cierra en tracción</text>
+    <!-- mechanism icon: chain with slack -->
+    <rect x="580" y="80" width="50" height="34" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="730" y="80" width="50" height="34" fill="#dcd8d0" stroke="#8a857c"/>
+    <path d="M630,97 C 660,115 650,80 680,97 S 700,80 730,97" fill="none" stroke="#1a63a8" stroke-width="2"/>
+    <text x="680" y="90" font-size="11" text-anchor="middle" fill="#1a63a8">holgura (cable flojo)</text>
+    <line x1="610" y1="70" x2="595" y2="70" stroke="#1a63a8" stroke-width="2" marker-end="url(#gha)"/>
+    <line x1="750" y1="70" x2="765" y2="70" stroke="#1a63a8" stroke-width="2" marker-end="url(#gha)"/>
+    <text x="680" y="65" font-size="10.5" text-anchor="middle" fill="#555">se separan → estiran el cable</text>
+
+    <!-- F-delta curve, mirrored logic (same shape) -->
+    <line x1="550" y1="290" x2="810" y2="290" stroke="#333" stroke-width="1.3" marker-end="url(#gha)"/>
+    <line x1="680" y1="290" x2="680" y2="150" stroke="#333" stroke-width="1.3" marker-end="url(#gha)"/>
+    <text x="816" y="294" font-size="11.5" fill="#333">alargamiento →</text>
+    <text x="672" y="146" font-size="11.5" fill="#333" text-anchor="end">F</text>
+    <polyline points="550,290 680,290 780,175" fill="none" stroke="#1a63a8" stroke-width="3"/>
+    <line x1="680" y1="285" x2="680" y2="295" stroke="#333" stroke-width="1.4"/>
+    <text x="680" y="310" font-size="11" text-anchor="middle" fill="#333">Dis (holgura)</text>
+    <text x="610" y="278" font-size="11" fill="#777">F = 0 (flojo)</text>
+    <text x="730" y="205" font-size="11" fill="#1a63a8" font-weight="bold">F = K·(δ−Dis)</text>
+  </g>
+
+  <text x="450" y="352" font-size="12.5" text-anchor="middle" fill="#555">La curva F-δ es idéntica (bilineal, con holgura); lo único que cambia es qué signo de deformación la cierra</text>
+</svg>
