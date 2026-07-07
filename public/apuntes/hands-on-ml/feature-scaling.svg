@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="fs" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="660" height="340" fill="#ffffff"/>
+
+  <!-- ===== LEFT: escaladas (round bowl) ===== -->
+  <text x="165" y="32" text-anchor="middle" font-size="14.5" fill="#16a34a" font-weight="600">Features escaladas</text>
+  <g fill="none" stroke="#cbd5e1" stroke-width="1.4">
+    <circle cx="165" cy="185" r="100"/>
+    <circle cx="165" cy="185" r="74"/>
+    <circle cx="165" cy="185" r="48"/>
+    <circle cx="165" cy="185" r="24"/>
+  </g>
+  <circle cx="165" cy="185" r="4.5" fill="#16a34a"/>
+  <!-- direct path -->
+  <g stroke="#2563eb" stroke-width="2" fill="none">
+    <path d="M232,120 L200,152" marker-end="url(#fs)"/>
+    <path d="M196,156 L176,174" marker-end="url(#fs)"/>
+    <path d="M172,178 L167,183" marker-end="url(#fs)"/>
+  </g>
+  <circle cx="238" cy="114" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.4"/>
+  <text x="165" y="312" text-anchor="middle" font-size="12.5" fill="#6b7280">Cuenco redondo → el descenso</text>
+  <text x="165" y="329" text-anchor="middle" font-size="12.5" fill="#6b7280">va directo al mínimo.</text>
+
+  <!-- ===== RIGHT: sin escalar (elongated bowl) ===== -->
+  <text x="495" y="32" text-anchor="middle" font-size="14.5" fill="#dc2626" font-weight="600">Sin escalar</text>
+  <g fill="none" stroke="#cbd5e1" stroke-width="1.4">
+    <ellipse cx="495" cy="185" rx="150" ry="52"/>
+    <ellipse cx="495" cy="185" rx="112" ry="39"/>
+    <ellipse cx="495" cy="185" rx="74" ry="26"/>
+    <ellipse cx="495" cy="185" rx="36" ry="13"/>
+  </g>
+  <circle cx="495" cy="185" r="4.5" fill="#16a34a"/>
+  <!-- zigzag path: steep drop to valley, then slow oscillation along it -->
+  <g stroke="#2563eb" stroke-width="2" fill="none">
+    <path d="M560,128 L548,170" marker-end="url(#fs)"/>
+    <path d="M547,174 L575,196" marker-end="url(#fs)"/>
+    <path d="M571,196 L540,174" marker-end="url(#fs)"/>
+    <path d="M537,177 L560,193" marker-end="url(#fs)"/>
+    <path d="M556,192 L522,176" marker-end="url(#fs)"/>
+    <path d="M519,178 L500,184" marker-end="url(#fs)"/>
+  </g>
+  <circle cx="565" cy="122" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.4"/>
+  <text x="495" y="312" text-anchor="middle" font-size="12.5" fill="#6b7280">Cuenco alargado → zigzaguea largo</text>
+  <text x="495" y="329" text-anchor="middle" font-size="12.5" fill="#6b7280">rato por un valle casi plano.</text>
+</svg>

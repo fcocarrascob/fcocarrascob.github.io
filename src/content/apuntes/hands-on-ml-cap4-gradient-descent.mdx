@@ -1,0 +1,176 @@
+---
+title: "Gradient descent: cómo un modelo baja la montaña"
+description: "Qué significa exactamente 'entrenar' un modelo: minimizar una función de costo. El descenso por gradiente explicado como bajar una montaña con niebla — el papel decisivo del learning rate, por qué hay que escalar las features, y las tres variantes (batch, stochastic, mini-batch) y cuándo usar cada una. Apuntes del Cap. 4 de Géron."
+pubDate: 2026-07-06
+tags: ["machine learning", "gradient descent", "sgd", "función de costo", "learning rate", "geron"]
+subsection: "hands-on-ml"
+chapter: "Cap. 4 — Entrenamiento de modelos"
+source: "Aurélien Géron, Hands-On Machine Learning (3.ª ed.), O'Reilly 2023, Cap. 4 (pp. 196–244)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+"Entrenar un modelo" suena a algo místico, pero es mucho más terrenal de lo que parece:
+es **probar valores de los parámetros hasta que el modelo se equivoque lo menos posible**.
+Toda la magia está en cómo se hace esa búsqueda de forma eficiente. Y el método que la
+resuelve —el mismo que, más adelante, entrena las redes neuronales— es el **descenso por
+gradiente**.
+
+Esta nota lo recorre con el modelo más simple que existe, la regresión lineal, porque ahí
+la idea se ve limpia y sin distracciones.
+
+## 1. Primero, un termómetro del error
+
+No puedes minimizar lo que no puedes medir. Antes de "mejorar" el modelo necesitas un
+número que diga **cuán mal** ajusta los datos. Ese número es la **función de costo**. Para
+regresión se usa el **error cuadrático medio** (MSE): el promedio de las diferencias al
+cuadrado entre lo que el modelo predice y lo que realmente ocurrió.
+
+<Equation label="MSE">
+$$
+\text{MSE}(\boldsymbol{\theta}) = \frac{1}{m} \sum_{i=1}^{m} \left(\boldsymbol{\theta}^\intercal \mathbf{x}^{(i)} - y^{(i)}\right)^2
+$$
+</Equation>
+
+Cuanto más grande el MSE, peor el modelo. Así que **entrenar = encontrar los parámetros
+$\boldsymbol{\theta}$ que ponen ese termómetro en su valor mínimo.** La pregunta es cómo
+encontrarlos sin probar infinitas combinaciones a ciegas.
+
+<Note type="info" title="Existe un atajo… hasta que deja de existir">
+Para la regresión lineal hay una fórmula cerrada (la *Normal equation*) que entrega el
+óptimo de un solo golpe. El problema es que implica invertir una matriz, y su costo se
+dispara con el número de features (~O(n³)). Con cientos de miles de features —o cuando los
+datos no caben en memoria— deja de ser viable. Ahí entra el descenso por gradiente.
+</Note>
+
+## 2. Bajar la montaña con niebla
+
+Imagina que estás perdido en una montaña con niebla densa. No ves nada, pero sientes la
+**pendiente** bajo tus pies. La estrategia sensata para llegar al valle: palpar hacia
+dónde baja más y dar un paso en esa dirección. Repetir.
+
+Eso es el descenso por gradiente. El "valle" es el mínimo de la función de costo; la
+"pendiente" es el **gradiente** (la derivada del costo respecto a cada parámetro). En cada
+paso se mide el gradiente y se mueven los parámetros en la dirección **opuesta** —cuesta
+abajo:
+
+<Equation label="paso de descenso">
+$$
+\boldsymbol{\theta} \;\leftarrow\; \boldsymbol{\theta} - \eta \, \nabla_{\boldsymbol{\theta}}\,\text{MSE}(\boldsymbol{\theta})
+$$
+</Equation>
+
+<Figure
+  src="/apuntes/hands-on-ml/cuenco-costo.svg"
+  alt="Una parábola que representa la función de costo. Una pelota parte arriba a la derecha (parámetros iniciales al azar) y baja por la curva en pasos cada vez más cortos hasta el mínimo en el fondo. Una flecha naranja marca la pendiente (gradiente) en el punto de partida"
+  caption="Se arranca con parámetros al azar y se baja el cuenco paso a paso, siempre contra el gradiente. Los pasos se acortan solos: cerca del mínimo la pendiente se aplana."
+  width={600}
+/>
+
+Se resta el gradiente porque este apunta hacia donde el costo **crece** más rápido; para
+minimizar, vamos al revés.
+
+<Note type="tip" title="Por qué en regresión lineal esto siempre funciona">
+El MSE de una regresión lineal es una función **convexa** —un cuenco sin bordes ni
+mesetas—, así que no tiene mínimos locales donde quedar atrapado: solo hay un mínimo
+global. Con un learning rate razonable y tiempo suficiente, el descenso está *garantizado*
+de acercarse a él. En modelos más complejos (redes neuronales) el terreno tiene valles
+falsos, y ahí la cosa se complica.
+</Note>
+
+## 3. El tamaño del paso lo decide todo
+
+Ese $\eta$ de la fórmula es el **learning rate** (tasa de aprendizaje): cuánto avanzas en
+cada paso. Es el hiperparámetro más importante del método, y elegirlo mal rompe el
+entrenamiento en cualquiera de dos direcciones opuestas.
+
+<Figure
+  src="/apuntes/hands-on-ml/learning-rate.svg"
+  alt="Tres paneles con la misma parábola de costo. Con learning rate muy pequeño, muchos pasitos diminutos que apenas bajan. Con learning rate bueno, pocos pasos que llegan al mínimo. Con learning rate muy grande, los pasos saltan el valle y rebotan cada vez más arriba, divergiendo"
+  caption="Demasiado pequeño: converge, pero tras muchísimas iteraciones. Demasiado grande: salta el valle y diverge. El punto justo llega al mínimo en pocos pasos."
+  width={640}
+/>
+
+No hay un valor universal: se busca (por ejemplo con grid search), limitando el número de
+iteraciones para descartar rápido los learning rates demasiado lentos.
+
+## 4. Escala tus features (siempre)
+
+Hay una trampa silenciosa. Si una feature va de 0 a 1 y otra de 0 a un millón, el "cuenco"
+del costo deja de ser redondo y se vuelve un valle **alargado**. El descenso entonces baja
+rápido por la pared empinada, pero luego avanza lentísimo zigzagueando por el fondo casi
+plano.
+
+<Figure
+  src="/apuntes/hands-on-ml/feature-scaling.svg"
+  alt="Dos mapas de contorno. A la izquierda, con features escaladas, los contornos son círculos concéntricos y el camino de descenso va recto al centro. A la derecha, sin escalar, los contornos son elipses muy alargadas y el camino zigzaguea largamente por un valle estrecho antes de llegar al centro"
+  caption="Con features de escalas parecidas el cuenco es redondo y el descenso va directo; con escalas dispares se alarga y el algoritmo pierde el tiempo zigzagueando."
+  width={640}
+/>
+
+<Note type="warning" title="Regla práctica">
+**Escala siempre las features antes de usar descenso por gradiente** (por ejemplo con
+`StandardScaler` de Scikit-Learn). Es una línea de código que puede convertir un
+entrenamiento eterno en uno que converge en segundos.
+</Note>
+
+## 5. ¿Cuántos datos por paso? Batch, stochastic y mini-batch
+
+Queda una decisión: ¿cuántas instancias usas para estimar el gradiente en cada paso? Las
+tres respuestas definen las tres variantes del algoritmo.
+
+<Figure
+  src="/apuntes/hands-on-ml/variantes-gd.svg"
+  alt="Un mapa de contorno con el mínimo en el centro y tres trayectorias desde el mismo punto de inicio. La de batch gradient descent es suave y directa y se detiene en el mínimo. La de mini-batch es moderadamente ondulada. La de stochastic es muy quebrada y rebota alrededor del mínimo sin detenerse"
+  caption="Las tres trayectorias hacia el mínimo. Batch va suave y se detiene; stochastic es barato pero ruidoso y rebota; mini-batch es el punto medio."
+  width={620}
+/>
+
+- **Batch gradient descent** usa **todo** el training set en cada paso. La dirección es
+  exacta y la trayectoria suave, pero cada paso es caro: con datasets enormes se arrastra,
+  y no sirve si los datos no caben en memoria.
+- **Stochastic gradient descent (SGD)** usa **una sola instancia al azar** por paso.
+  Baratísimo y capaz de entrenar sobre datos gigantes, pero la dirección es ruidosa: el
+  costo no baja suave, rebota, y al llegar cerca del mínimo **nunca se asienta** del todo.
+- **Mini-batch gradient descent** usa **lotes pequeños** (p. ej. 32 instancias). El punto
+  medio, y el favorito en la práctica: menos errático que SGD y —el argumento decisivo—
+  aprovecha la optimización de las GPUs para operaciones matriciales.
+
+En código, el corazón de batch GD son literalmente dos líneas dentro de un bucle:
+
+```python
+for epoch in range(n_epochs):
+    gradients = 2 / m * X_b.T @ (X_b @ theta - y)   # el gradiente
+    theta = theta - eta * gradients                 # el paso cuesta abajo
+```
+
+El ruido de SGD tiene una cara buena: en terrenos con mínimos locales (no en la regresión
+lineal, pero sí en redes neuronales), ese rebote aleatorio puede **sacar al algoritmo de un
+valle falso** de un empujón. Para que igual termine asentándose, se reduce el learning rate
+poco a poco durante el entrenamiento —una idea prestada de la metalurgia llamada *simulated
+annealing*.
+
+<Note type="tip" title="El detalle que se olvida con SGD">
+SGD supone que las instancias llegan en orden aleatorio. Si tu dataset está ordenado por
+etiqueta y no lo **barajas**, el algoritmo optimizará primero para una clase, luego para
+otra, y no convergerá bien. Baraja en cada epoch.
+</Note>
+
+## Lo que hay que llevarse
+
+Detrás de "entrenar un modelo" hay una idea simple y poderosa: definir un termómetro del
+error y **bajar su cuenco a tientas**, guiándose solo por la pendiente local. Tres cosas
+deciden si funciona —el learning rate, el escalado de las features, y cuántos datos usas
+por paso— y las tres reaparecen, idénticas, cuando el modelo deja de ser una recta y pasa a
+ser una red neuronal de millones de parámetros.
+
+Ese es justamente el puente que este capítulo tiende hacia el resto del libro.
+
+---
+
+*Apunte del Capítulo 4 de [Hands-On Machine Learning](https://github.com/ageron/handson-ml3)
+de Aurélien Géron (O'Reilly, 3.ª ed.). El capítulo cubre además la regresión polinómica, las
+curvas de aprendizaje, el trade-off sesgo/varianza y la regularización (ridge, lasso, elastic
+net); esta nota se concentra en el motor que los mueve a todos.*

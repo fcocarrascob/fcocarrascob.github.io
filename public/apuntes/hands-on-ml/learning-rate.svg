@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 310" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="lr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="lrd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect width="660" height="310" fill="#ffffff"/>
+
+  <!-- ===== Panel A: eta muy pequeño ===== -->
+  <text x="110" y="28" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">η muy pequeño</text>
+  <path d="M40,70 L58,128 L75,167 L93,192 L110,200 L127,192 L145,167 L162,128 L180,70" fill="none" stroke="#1e3a8a" stroke-width="2.2"/>
+  <g stroke="#2563eb" stroke-width="1.6" fill="none">
+    <path d="M178,78 L169,96" marker-end="url(#lr)"/>
+    <path d="M167,100 L159,120" marker-end="url(#lr)"/>
+    <path d="M157,124 L150,143" marker-end="url(#lr)"/>
+    <path d="M148,147 L142,163" marker-end="url(#lr)"/>
+  </g>
+  <text x="150" y="200" font-size="20" fill="#9ca3af">…</text>
+  <text x="110" y="248" text-anchor="middle" font-size="12.5" fill="#6b7280">Converge, pero tras</text>
+  <text x="110" y="265" text-anchor="middle" font-size="12.5" fill="#6b7280">muchísimas iteraciones.</text>
+
+  <!-- ===== Panel B: eta bueno ===== -->
+  <text x="330" y="28" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">η bueno</text>
+  <path d="M260,70 L278,128 L295,167 L313,192 L330,200 L347,192 L365,167 L382,128 L400,70" fill="none" stroke="#1e3a8a" stroke-width="2.2"/>
+  <g stroke="#2563eb" stroke-width="1.8" fill="none">
+    <path d="M396,80 Q365,120 342,168" marker-end="url(#lr)"/>
+    <path d="M340,172 Q332,188 331,196" marker-end="url(#lr)"/>
+  </g>
+  <circle cx="330" cy="200" r="6" fill="#16a34a" stroke="#fff" stroke-width="1.4"/>
+  <text x="330" y="248" text-anchor="middle" font-size="12.5" fill="#16a34a" font-weight="600">Llega al mínimo</text>
+  <text x="330" y="265" text-anchor="middle" font-size="12.5" fill="#6b7280">en pocos pasos.</text>
+
+  <!-- ===== Panel C: eta muy grande ===== -->
+  <text x="550" y="28" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">η muy grande</text>
+  <path d="M480,70 L498,128 L515,167 L533,192 L550,200 L567,192 L585,167 L602,128 L620,70" fill="none" stroke="#1e3a8a" stroke-width="2.2"/>
+  <g stroke="#dc2626" stroke-width="1.8" fill="none">
+    <path d="M600,92 Q545,150 505,120" marker-end="url(#lrd)"/>
+    <path d="M508,116 Q560,150 622,58" marker-end="url(#lrd)"/>
+  </g>
+  <text x="550" y="248" text-anchor="middle" font-size="12.5" fill="#dc2626" font-weight="600">Salta el valle y diverge:</text>
+  <text x="550" y="265" text-anchor="middle" font-size="12.5" fill="#6b7280">acaba más arriba que antes.</text>
+
+  <!-- footer -->
+  <text x="330" y="298" text-anchor="middle" font-size="13" fill="#1a1a1a">El learning rate (η) es el tamaño del paso: el hiperparámetro que decide si el descenso funciona.</text>
+</svg>

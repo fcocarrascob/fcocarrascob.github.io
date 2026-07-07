@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="640" height="400" fill="#ffffff"/>
+
+  <!-- contours (compact, upper area) -->
+  <g fill="none" stroke="#e2e8f0" stroke-width="1.4">
+    <circle cx="360" cy="150" r="150"/>
+    <circle cx="360" cy="150" r="112"/>
+    <circle cx="360" cy="150" r="74"/>
+    <circle cx="360" cy="150" r="38"/>
+  </g>
+  <circle cx="360" cy="150" r="4.5" fill="#16a34a"/>
+  <text x="372" y="146" font-size="11.5" fill="#16a34a" font-weight="600">mínimo</text>
+
+  <!-- start -->
+  <circle cx="95" cy="60" r="6" fill="#334155" stroke="#fff" stroke-width="1.4"/>
+  <text x="95" y="47" text-anchor="middle" font-size="11.5" fill="#334155">inicio</text>
+
+  <!-- Batch GD: smooth, direct, stops -->
+  <path d="M99,64 C190,92 285,120 353,146" fill="none" stroke="#2563eb" stroke-width="2.4"/>
+  <circle cx="360" cy="150" r="5.5" fill="#2563eb" stroke="#fff" stroke-width="1.3"/>
+
+  <!-- Mini-batch GD: moderate zigzag -->
+  <path d="M97,66 L165,108 L235,102 L288,146 L330,128 L354,154 L358,148" fill="none" stroke="#16a34a" stroke-width="2.2"/>
+
+  <!-- Stochastic GD: very jagged, bounces around min -->
+  <path d="M93,68 L150,112 L205,86 L250,150 L305,104 L338,170 L372,120 L392,166 L356,140 L366,152" fill="none" stroke="#d97706" stroke-width="2"/>
+
+  <!-- legend (single column, below plot) -->
+  <g font-size="13">
+    <rect x="60" y="318" width="520" height="74" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+    <line x1="80" y1="338" x2="116" y2="338" stroke="#2563eb" stroke-width="2.8"/>
+    <text x="126" y="342" fill="#1a1a1a"><tspan font-weight="600">Batch</tspan> — usa todo el set; directo y se detiene en el mínimo.</text>
+    <line x1="80" y1="360" x2="116" y2="360" stroke="#16a34a" stroke-width="2.8"/>
+    <text x="126" y="364" fill="#1a1a1a"><tspan font-weight="600">Mini-batch</tspan> — lotes pequeños; algo errático, aprovecha la GPU.</text>
+    <line x1="80" y1="382" x2="116" y2="382" stroke="#d97706" stroke-width="2.8"/>
+    <text x="126" y="386" fill="#1a1a1a"><tspan font-weight="600">Stochastic</tspan> — 1 dato por paso; barato, ruidoso, rebota.</text>
+  </g>
+</svg>

@@ -10,6 +10,12 @@ export const SUBSECTIONS = {
     description:
       'Apuntes didácticos del libro de Sebastian Raschka: construir un modelo de lenguaje grande desde cero, paso a paso — de los datos de texto al modelo GPT entrenado.',
   },
+  'hands-on-ml': {
+    label: 'Hands-On Machine Learning',
+    author: 'Aurélien Géron',
+    description:
+      'Apuntes didácticos del libro de Aurélien Géron (3.ª ed.): los fundamentos del machine learning con Scikit-Learn, Keras y TensorFlow, concepto a concepto.',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;
