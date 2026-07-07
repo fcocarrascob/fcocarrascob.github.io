@@ -256,16 +256,27 @@ Linear rígido en las otras dos direcciones para no perder continuidad—, pero 
 (`RIGIDO_UV`) reutilizada tal cual: es agnóstica a la orientación del Link, así que sirve para
 cualquier eje que necesite quedar rígido.
 
+Reutilizando los mismos casos no lineales del barrido anterior (NL_S5 a NL_S40, más NL_S6 para
+capturar el instante justo del enganche), la relación completa entre flecha y fuerza queda:
+
 | SNOW × | Flecha cumbre | Fuerza en el puntal vertical |
 |:---:|:---:|:---:|
 | 5 | 8.62 mm | 0 (abierto) |
 | **6** | **10.02 mm** | **−0.16 tonf (enganchando, compresión)** |
 | 10 | 10.34 mm | −4.14 tonf |
+| 14.3 | 10.69 mm | −8.41 tonf |
+| 18 | 10.99 mm | −12.09 tonf |
+| 25 | 11.55 mm | −19.05 tonf |
+| 30 | 11.95 mm | −24.02 tonf |
+| 40 | 12.75 mm | −33.96 tonf |
 
 El signo es el opuesto al del tirante: **P negativo, compresión**, justo lo que predice un Gap. Y
-el efecto una vez enganchado es más drástico que el del tirante —la flecha prácticamente se
-congela entre SNOW ×6 y ×10 (10.02 → 10.34 mm)—, porque este puntal actúa directamente sobre el
-punto que se quiere limitar, no de forma indirecta a través de dos apoyos que se separan.
+la relación flecha-fuerza es reveladora: una vez enganchado (SNOW ×6), la flecha prácticamente se
+**congela** —de 10.02 a 12.75 mm entre ×6 y ×40, apenas 2.7 mm en un rango de carga que multiplica
+por casi 7— mientras la fuerza crece de forma casi lineal con la carga, de −0.16 a −34 tonf. El
+puntal se vuelve, en la práctica, un tope rígido: como actúa directamente sobre el punto que se
+quiere limitar (no de forma indirecta, a través de dos apoyos que se separan, como el tirante),
+casi toda la carga adicional termina pasando por él en vez de seguir deformando la cumbre.
 
 ---
 

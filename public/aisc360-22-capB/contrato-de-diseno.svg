@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 410" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="410" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El contrato de diseño: demanda ≤ capacidad, en dos dialectos equivalentes</text>
+
+  <!-- shared Rn box at top -->
+  <rect x="360" y="55" width="220" height="52" rx="8" fill="#eaf1fa" stroke="#1a63a8" stroke-width="2"/>
+  <text x="470" y="78" font-size="14" fill="#1a63a8" text-anchor="middle" font-weight="bold">Resistencia nominal R_n</text>
+  <text x="470" y="97" font-size="11.5" fill="#555" text-anchor="middle">la MISMA para ambos métodos</text>
+
+  <!-- split arrows -->
+  <line x1="410" y1="107" x2="250" y2="150" stroke="#666" stroke-width="1.6" marker-end="url(#ca)"/>
+  <line x1="530" y1="107" x2="690" y2="150" stroke="#666" stroke-width="1.6" marker-end="url(#ca)"/>
+
+  <!-- ===== LEFT: LRFD ===== -->
+  <g>
+    <text x="235" y="172" font-size="14" text-anchor="middle" fill="#1c7c3c" font-weight="bold">LRFD</text>
+    <text x="235" y="190" font-size="11" text-anchor="middle" fill="#555">factores de carga y resistencia</text>
+    <!-- capacity side -->
+    <rect x="95" y="210" width="280" height="46" rx="8" fill="#eaf5ee" stroke="#1c7c3c"/>
+    <text x="235" y="230" font-size="12.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">capacidad:  φ R_n</text>
+    <text x="235" y="248" font-size="11" fill="#555" text-anchor="middle">φ ≤ 1.0  (reduce la resistencia)</text>
+    <!-- inequality -->
+    <text x="235" y="288" font-size="20" fill="#333" text-anchor="middle" font-weight="bold">R_u  ≤  φ R_n</text>
+    <!-- demand side -->
+    <text x="235" y="314" font-size="11.5" fill="#333" text-anchor="middle">R_u = demanda con cargas <tspan font-weight="bold">mayoradas</tspan></text>
+    <text x="235" y="331" font-size="11" fill="#555" text-anchor="middle">(1.2D + 1.6L, …)</text>
+    <text x="235" y="352" font-size="11" fill="#888" text-anchor="middle">Ec. B3-1</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="470" y1="150" x2="470" y2="360" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ===== RIGHT: ASD ===== -->
+  <g>
+    <text x="705" y="172" font-size="14" text-anchor="middle" fill="#b35c0e" font-weight="bold">ASD</text>
+    <text x="705" y="190" font-size="11" text-anchor="middle" fill="#555">resistencias admisibles</text>
+    <rect x="565" y="210" width="280" height="46" rx="8" fill="#fdf1e6" stroke="#b35c0e"/>
+    <text x="705" y="230" font-size="12.5" fill="#b35c0e" text-anchor="middle" font-weight="bold">capacidad:  R_n / Ω</text>
+    <text x="705" y="248" font-size="11" fill="#555" text-anchor="middle">Ω ≥ 1.0  (divide la resistencia)</text>
+    <text x="705" y="288" font-size="20" fill="#333" text-anchor="middle" font-weight="bold">R_a  ≤  R_n / Ω</text>
+    <text x="705" y="314" font-size="11.5" fill="#333" text-anchor="middle">R_a = demanda con cargas de <tspan font-weight="bold">servicio</tspan></text>
+    <text x="705" y="331" font-size="11" fill="#555" text-anchor="middle">(D + L, …)</text>
+    <text x="705" y="352" font-size="11" fill="#888" text-anchor="middle">Ec. B3-2</text>
+  </g>
+
+  <!-- calibration band -->
+  <rect x="250" y="372" width="440" height="30" rx="7" fill="#f7f4ee" stroke="#8a857c"/>
+  <text x="470" y="392" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">Calibrados al mismo R_n:  Ω = 1.5/φ   →   φ 0.90 ↔ Ω 1.67,   φ 0.75 ↔ Ω 2.00</text>
+</svg>
