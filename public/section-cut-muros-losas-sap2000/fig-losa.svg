@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="960" height="480" fill="#ffffff"/>
+  <text x="480" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Losa unidireccional — el corte central da momento máximo y cortante nulo (By Quadrilateral)</text>
+
+  <defs>
+    <marker id="ld" viewBox="0 0 10 10" refX="5" refY="9" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L5,10 L10,0 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+
+  <!-- x: 0..6 m mapped 200..680 (80 px/m). Cut lines at x=0.75(260),1.5(320),3.0(440) -->
+
+  <!-- vertical guide lines through all three diagrams -->
+  <g stroke="#c8c8c8" stroke-width="1.2" stroke-dasharray="5 4">
+    <line x1="260" y1="60" x2="260" y2="430"/>
+    <line x1="320" y1="60" x2="320" y2="430"/>
+    <line x1="440" y1="60" x2="440" y2="430"/>
+  </g>
+  <g font-size="10.5" fill="#888" text-anchor="middle">
+    <text x="260" y="58">x=0.75</text>
+    <text x="320" y="58">x=1.5</text>
+    <text x="440" y="58">x=3.0 (centro)</text>
+  </g>
+
+  <!-- ===== Slab strip with load + supports ===== -->
+  <g transform="translate(0,88)">
+    <!-- UDL arrows -->
+    <g>
+      <line x1="210" y1="-18" x2="210" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="250" y1="-18" x2="250" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="290" y1="-18" x2="290" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="330" y1="-18" x2="330" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="370" y1="-18" x2="370" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="410" y1="-18" x2="410" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="450" y1="-18" x2="450" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="490" y1="-18" x2="490" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="530" y1="-18" x2="530" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="570" y1="-18" x2="570" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="610" y1="-18" x2="610" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+      <line x1="650" y1="-18" x2="650" y2="-2" stroke="#b02a1a" stroke-width="2" marker-end="url(#ld)"/>
+    </g>
+    <text x="680" y="-20" font-size="11.5" fill="#b02a1a">q = 1 tonf/m²</text>
+    <!-- slab strip -->
+    <rect x="200" y="0" width="480" height="14" fill="#eef2f6" stroke="#333" stroke-width="2"/>
+    <!-- supports (triangles) -->
+    <path d="M200,14 l-11,20 l22,0 z" fill="none" stroke="#333" stroke-width="2"/>
+    <path d="M680,14 l-11,20 l22,0 z" fill="none" stroke="#333" stroke-width="2"/>
+    <circle cx="680" cy="34" r="3" fill="#fff" stroke="#333"/>
+    <text x="440" y="52" font-size="11" text-anchor="middle" fill="#555">L = 6 m  ·  ancho B = 4 m</text>
+  </g>
+
+  <!-- ===== Shear diagram ===== -->
+  <g transform="translate(0,205)">
+    <text x="120" y="4" font-size="12" fill="#333" font-weight="bold">Cortante V(x)</text>
+    <line x1="200" y1="0" x2="680" y2="0" stroke="#999" stroke-width="1"/>
+    <!-- V linear: +12 at x=0 (up 36) to -12 at x=6 (down 36); scale 3px/tonf -->
+    <polygon points="200,-36 680,36 680,0 200,0" fill="#dfe7f0" stroke="none"/>
+    <line x1="200" y1="-36" x2="680" y2="36" stroke="#1a63a8" stroke-width="2.5"/>
+    <text x="196" y="-38" font-size="10.5" text-anchor="end" fill="#1a63a8" font-weight="bold">+12</text>
+    <text x="684" y="46" font-size="10.5" text-anchor="start" fill="#1a63a8" font-weight="bold">−12</text>
+    <text x="450" y="-6" font-size="10.5" fill="#1a7a3a" font-weight="bold">V = 0 al centro</text>
+    <circle cx="440" cy="0" r="3.5" fill="#1a7a3a"/>
+    <text x="150" y="30" font-size="10.5" fill="#777">máx en el apoyo</text>
+  </g>
+
+  <!-- ===== Moment diagram ===== -->
+  <g transform="translate(0,320)">
+    <text x="120" y="4" font-size="12" fill="#333" font-weight="bold">Momento M(x)</text>
+    <line x1="200" y1="0" x2="680" y2="0" stroke="#999" stroke-width="1"/>
+    <!-- parabola: 0 at ends, 18 at center. scale 4.5px/tonfm -> 81px peak, drawn downward -->
+    <path d="M200,0 Q440,162 680,0" fill="#f6e4e0" stroke="#b02a1a" stroke-width="2.5"/>
+    <line x1="440" y1="0" x2="440" y2="81" stroke="#b02a1a" stroke-width="1" stroke-dasharray="3 3"/>
+    <circle cx="440" cy="81" r="3.5" fill="#b02a1a"/>
+    <text x="450" y="86" font-size="11" fill="#b02a1a" font-weight="bold">M máx = 18 al centro</text>
+  </g>
+
+  <!-- ===== Values table (SAP vs mano) ===== -->
+  <g transform="translate(720,120)" font-size="11">
+    <rect x="0" y="0" width="220" height="150" rx="6" fill="#fafafa" stroke="#ddd"/>
+    <text x="110" y="22" font-size="11.5" text-anchor="middle" fill="#333" font-weight="bold">M2 del corte  (SAP / mano)</text>
+    <line x1="12" y1="32" x2="208" y2="32" stroke="#e2e2e2"/>
+    <text x="16" y="52" fill="#555">x = 0.75</text><text x="204" y="52" text-anchor="end" fill="#333"><tspan font-weight="bold">8.0</tspan> / 7.9</text>
+    <text x="16" y="76" fill="#555">x = 1.5</text><text x="204" y="76" text-anchor="end" fill="#333"><tspan font-weight="bold">13.6</tspan> / 13.5</text>
+    <text x="16" y="100" fill="#555">x = 3.0</text><text x="204" y="100" text-anchor="end" fill="#333"><tspan font-weight="bold">18.1</tspan> / 18.0</text>
+    <line x1="12" y1="112" x2="208" y2="112" stroke="#e2e2e2"/>
+    <text x="110" y="132" font-size="10.5" text-anchor="middle" fill="#1a7a3a">coincide con la viga &lt; 1 %</text>
+  </g>
+
+  <text x="480" y="466" font-size="11.5" text-anchor="middle" fill="#777">El momento del Section Cut reproduce la parábola de viga qL²B/8 = 18 tonf·m; el cortante es máximo en el apoyo y nulo al centro — al revés de la intuición.</text>
+</svg>

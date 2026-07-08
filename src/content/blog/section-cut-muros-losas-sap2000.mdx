@@ -1,0 +1,272 @@
+---
+title: "Section Cut en SAP2000: cortante y momento en losas y muros, y la convención de signos"
+description: "Cómo usar Section Cut en SAP2000 sin obtener ceros ni signos invertidos: la diferencia entre By Group y By Quadrilateral, dónde se reporta el momento, y qué fija el signo. Con dos casos verificados a mano: el cortante y volcamiento de un muro, y el cortante y momento de una losa unidireccional."
+pubDate: 2026-07-09
+tags: ["SAP2000", "Section Cut", "losas", "muros", "shells", "convención de signos"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Por qué el Section Cut confunde
+
+En vigas y columnas, SAP2000 entrega cortante y momento directamente en `Frame Forces`. En
+elementos *shell* —losas, muros, zapatas— los resultados nativos son **tensiones y fuerzas por
+unidad de ancho**: $F_{11}$, $M_{22}$, $V_{13}$… Para obtener la **resultante** que atraviesa una
+sección —el cortante total de una losa, el momento de volcamiento de un muro— la herramienta es el
+**Section Cut**.
+
+El problema no es definirlo, es interpretarlo. Es habitual obtener **ceros**, **signos
+invertidos**, o un número que no se parece a lo que uno esperaba. Casi siempre es por una de tres
+razones, y las tres son fáciles de evitar una vez que se entienden:
+
+1. **El método equivocado.** SAP tiene dos formas de cortar —*By Group* y *By Quadrilateral*— y
+   **no calculan lo mismo**. Usar la que no corresponde da el número de otra cosa.
+2. **La ubicación del momento.** El momento se reporta respecto a un punto, y por defecto ese
+   punto **no es el que uno cree**.
+3. **El signo.** Lo fija la orientación del corte, no la física. Hay que saber qué lo controla
+   para leerlo bien.
+
+Esta nota recorre las tres con dos casos que se resuelven exactamente a mano: el **cortante y
+volcamiento de un muro** y el **cortante y momento de una losa**. Todos los números de SAP2000 de
+abajo salieron de correr los modelos; los cálculos a mano son el patrón contra el que se comparan.
+
+---
+
+## Los dos métodos no son intercambiables
+
+Esta es la distinción que hay que tener clara antes de definir nada:
+
+<Figure
+  src="/section-cut-muros-losas-sap2000/fig-metodos.svg"
+  alt="Comparación de los dos métodos de Section Cut. By Group: se agrupan los objetos de un lado del corte y SAP suma las reacciones de apoyo y cargas nodales de ese grupo; sirve para cortante basal de un muro. By Quadrilateral: se define un plano con cuatro puntos y SAP suma las fuerzas internas de los elementos shell que el plano cruza; sirve para el esfuerzo interno en una sección cualquiera."
+  caption="By Group suma las reacciones y cargas nodales del conjunto agrupado (bueno para el cortante basal de un muro-pilar). By Quadrilateral corta un plano y suma las fuerzas internas de los elementos que atraviesa (bueno para el esfuerzo en una sección interior). No devuelven lo mismo."
+/>
+
+| | **By Group** | **By Quadrilateral** |
+|---|---|---|
+| Qué suma | reacciones de apoyo + cargas nodales de los objetos del **grupo** | fuerzas internas de los elementos que el **plano** cruza |
+| Qué necesita | un grupo con los objetos (y sus nudos) de **un lado** | cuatro puntos que definen el plano de corte |
+| Sirve para | cortante basal y volcamiento de un muro o pilar completo | $V$ y $M$ en una sección interior (centro de losa, media altura) |
+| Falla típica | devuelve la **reacción**, no el esfuerzo interno de la sección | devuelve **cero** si el plano no cruza ningún elemento |
+
+<Note type="warning" title="El error número uno">
+Usar *By Group* para el esfuerzo interior de una losa. Si agrupas la mitad izquierda de una losa y
+cortas, SAP te devuelve la **reacción del apoyo** de esa mitad —no el cortante interno en la línea
+de corte—. Son cosas distintas: más abajo se ve el caso concreto, donde *By Group* da 12 tonf (la
+reacción) donde el cortante interno vale otra cosa.
+</Note>
+
+---
+
+## Caso 1 — Muro: cortante basal y volcamiento (By Group)
+
+### Modelo
+
+Un muro de corte en voladizo, empotrado en la base: 6 m de ancho, 3 m de alto, espesor 0,20 m,
+hormigón. Una carga lateral horizontal total $P = 10$ tonf aplicada en el borde superior, en el
+plano del muro.
+
+<Figure
+  src="/section-cut-muros-losas-sap2000/fig-muro.svg"
+  alt="Muro en voladizo de 6 m de ancho y 3 m de alto, empotrado en la base, con una carga lateral P igual a 10 tonf en el borde superior. Se marcan dos section cuts By Group: uno en la base (agrupa todo el muro sobre los apoyos) que da cortante basal 10 y momento de volcamiento 30, y uno a media altura z igual 2 que da cortante 10 y momento 10."
+  caption="Muro en voladizo con carga lateral P = 10 tonf. El corte en la base da el cortante basal (P) y el volcamiento (P·H); el corte a media altura da el cortante (P) y el momento hasta ese nivel."
+/>
+
+### Cálculo a mano
+
+Es puro voladizo. El cortante en cualquier nivel es toda la carga que queda por encima, y el
+momento es esa carga por su brazo:
+
+<Equation label="Ec. 1">
+$$V_{base} = P = 10\ \text{tonf} \qquad M_{vuelco} = P \cdot H = 10 \cdot 3 = 30\ \text{tonf·m}$$
+</Equation>
+
+A media altura ($z = 2$ m, con la carga a $z = 3$):
+
+<Equation label="Ec. 2">
+$$V = P = 10\ \text{tonf} \qquad M = P \cdot (3 - 2) = 10\ \text{tonf·m}$$
+</Equation>
+
+### Definir el corte By Group
+
+1. Selecciona **todos los objetos del muro y sus nudos**, salvo los nudos de apoyo de la base, y
+   asígnalos a un grupo (por ejemplo `MURO_SOBRE_BASE`). El corte queda entre el muro y sus
+   apoyos.
+2. *Define → Section Cuts → Add New Section Cut*, tipo **Group**, grupo `MURO_SOBRE_BASE`,
+   *Result Type = Analysis*.
+3. Corre y lee la tabla `Section Cut Forces - Analysis`.
+
+### Resultado y la primera trampa: dónde se reporta el momento
+
+| Componente | SAP2000 | A mano (Ec. 1) | Δ |
+|---|---|---|---|
+| `F1` (cortante basal, X) | 10,00 tonf | 10,0 | exacto |
+| `M2` (volcamiento, con la ubicación **por defecto**) | **10,0 tonf·m** | 30,0 | ✗ |
+| `M2` (volcamiento, con la ubicación en la **base**) | **30,0 tonf·m** | 30,0 | exacto |
+
+El cortante `F1 = 10` cuadra de inmediato. Pero el momento sale **10, no 30**, con la ubicación
+por defecto. No es un error: SAP reporta el momento respecto al **centroide de los nudos del
+grupo**, que está a $z = 2$ m (el centro del muro). El momento de $P$ (a $z = 3$) respecto a
+$z = 2$ es $10 \cdot 1 = 10$ — exactamente lo que devuelve.
+
+<Note type="tip" title="Fija la Result Location a mano">
+Para leer el volcamiento respecto a la **base**, entra a la definición del Section Cut y fija la
+*Result Location* en $z = 0$ (desmarca "Program Determined" y escribe las coordenadas del punto de
+momento). Recién ahí `M2 = 30 = P·H`. Este es el origen más común del "el momento me da cualquier
+cosa": el número está bien, pero está tomado respecto a un punto que no es el que uno quiere.
+</Note>
+
+---
+
+## Caso 2 — Losa: cortante y momento en una sección (By Quadrilateral)
+
+### Modelo
+
+Una losa que salva $L = 6$ m en la dirección $x$, de ancho $B = 4$ m, espesor 0,20 m, simplemente
+apoyada en los **dos bordes** $x = 0$ y $x = 6$ (losa unidireccional). Carga uniforme
+$q = 1{,}0$ tonf/m² hacia abajo.
+
+### Cálculo a mano
+
+Como se apoya solo en dos bordes, trabaja como una **viga de ancho $B$**. El cortante y el momento
+son los de viga, multiplicados por el ancho:
+
+<Equation label="Ec. 3">
+$$V(x) = q\left(\tfrac{L}{2} - x\right) B \qquad M(x) = q\,\frac{x(L-x)}{2}\,B$$
+</Equation>
+
+Esto deja dos hitos que conviene tener en la cabeza —y que el Section Cut va a confirmar—:
+
+- **En el centro** ($x = 3$): el cortante es **cero** y el momento es **máximo**,
+  $M = qL^2B/8 = 1 \cdot 36 / 8 \cdot 4 = 18$ tonf·m.
+- **Junto al apoyo**: el cortante es **máximo** ($V = qLB/2 = 12$ tonf) y el momento tiende a cero.
+
+<Figure
+  src="/section-cut-muros-losas-sap2000/fig-losa.svg"
+  alt="Losa unidireccional de 6 por 4 m con carga uniforme, apoyada en los bordes x igual 0 y x igual 6. Debajo, los diagramas de cortante (lineal, máximo 12 en los apoyos, cero al centro) y de momento (parabólico, máximo 18 al centro). Se marcan tres cortes verticales By Quadrilateral en x igual 0.75, 1.5 y 3.0, con los valores de momento de SAP comparados con el cálculo a mano."
+  caption="Losa unidireccional: el corte central da momento máximo y cortante nulo; el corte junto al apoyo da cortante máximo. Es justo al revés de lo que la intuición sugiere si uno cree que 'al centro pasa más cortante'."
+/>
+
+### Definir el corte By Quadrilateral
+
+Para el momento en una sección interior hace falta un **plano de corte**, no un grupo. En
+$x = 3$ (centro), el plano vertical se define con cuatro puntos que cruzan el espesor de la losa:
+
+- $(3;\ 0;\ -0{,}3)$ · $(3;\ 4;\ -0{,}3)$ · $(3;\ 4;\ +0{,}3)$ · $(3;\ 0;\ +0{,}3)$
+
+Tipo **Quadrilateral**, *Result Type = Analysis*, y —igual que en el muro— conviene fijar la
+*Result Location* en el plano medio de la losa ($z = 0$) para que el momento salga respecto al eje
+neutro.
+
+### Resultado: el momento cuadra con la teoría de viga
+
+| Sección | `M2` SAP2000 | $M$ a mano (Ec. 3) | Δ |
+|---|---|---|---|
+| $x = 0{,}75$ (junto al apoyo) | 8,0 tonf·m | 7,875 | 1,6 % |
+| $x = 1{,}5$ (cuarto de luz) | 13,6 tonf·m | 13,5 | 0,9 % |
+| $x = 3{,}0$ (centro) | 18,1 tonf·m | 18,0 | 0,7 % |
+
+El momento del Section Cut reproduce la parábola de viga dentro del 1 %. La pequeña diferencia es
+la malla y el efecto bidimensional de borde; se cierra al refinar. Y el cortante confirma el
+perfil: **máximo junto al apoyo, prácticamente nulo al centro** —la corrección directa al error de
+intuición de creer que el corte central "lleva más cortante"—.
+
+<Note type="info" title="El cortante transversal es más sensible a la malla">
+En un shell, el momento (que sale de las tensiones de flexión, integradas) converge rápido y de
+forma robusta —lo garantiza la estática—. El **cortante transversal** de un Section Cut, en
+cambio, converge más lento con la malla y es sensible a dónde cae el plano respecto a los
+elementos. Regla práctica: usa el momento como verificación fina, y para el cortante **máximo**
+—el de diseño, junto al apoyo— léelo como la reacción del apoyo, que es exacta.
+</Note>
+
+### La segunda trampa: el método equivocado
+
+¿Y si en vez del plano se hubiera usado *By Group*, agrupando la mitad izquierda de la losa? SAP
+devuelve:
+
+| | By Group (mitad izquierda) | Lo que uno buscaba |
+|---|---|---|
+| `F3` | **12 tonf** | cortante interno en $x = 3$ ($\approx 0$) |
+| `M2` | 36 tonf·m | momento interno en $x = 3$ (18) |
+
+Los 12 tonf son la **reacción del apoyo** $x = 0$ ($qLB/2$), no el cortante en el centro. *By
+Group* sumó las reacciones del conjunto agrupado —que es lo que hace— y el resultado no tiene nada
+que ver con el esfuerzo interno de la línea de corte. Es exactamente el error de la nota de
+advertencia del principio, con números.
+
+---
+
+## La convención de signos
+
+Es la pregunta que más ceros y signos raros genera. La clave: **el signo lo fija la orientación
+del corte, no la física**. Cada Section Cut tiene ejes locales:
+
+- **Eje 1**: normal al plano del corte.
+- **Ejes 2 y 3**: en el plano del corte, completando la terna derecha.
+
+<Figure
+  src="/section-cut-muros-losas-sap2000/fig-signos.svg"
+  alt="Convención de signos del Section Cut. Un plano de corte con su eje local 1 normal, definido por el orden de los cuatro puntos según la regla de la mano derecha. A la izquierda, orden de puntos 1-2-3-4 con la normal apuntando en un sentido y el momento con signo negativo. A la derecha, el mismo plano con el orden invertido: la normal apunta al sentido opuesto y el momento cambia de signo, de menos 18 a más 18."
+  caption="El signo lo fija la orientación del eje 1 (la normal), y esa normal la define el orden de los cuatro puntos por la regla de la mano derecha. Invertir el orden de los puntos invierte la normal y, con ella, el signo del resultado — sin que cambie nada de la física."
+/>
+
+Lo que controla el signo depende del método:
+
+- **By Quadrilateral**: la normal (eje 1) la fija el **orden de los cuatro puntos**, por la regla
+  de la mano derecha. Invertir el orden invierte la normal y el signo. Comprobado en el corte
+  central de la losa: con un orden, `M2 = −18,1`; con el orden invertido, `M2 = +18,1`. La losa no
+  cambió; cambió la referencia.
+- **By Group**: el resultado es la fuerza sobre el **lado agrupado**. Agrupar el otro lado da el
+  signo opuesto.
+
+<Note type="tip" title="No pelees con el signo: fíjalo con un diagrama de cuerpo libre">
+El valor absoluto siempre es correcto. Para el signo, dibuja el cuerpo libre del lado que cortaste
+y decide a mano si esa cara está traccionada o comprimida, si el cortante va hacia arriba o abajo.
+Después ajusta el orden de los puntos (o el lado del grupo) para que el signo de SAP coincida con
+tu diagrama. Así el modelo queda consistente y no te sorprende un signo al armar combinaciones.
+</Note>
+
+### Qué componente es cada cosa
+
+Con los ejes locales alineados al global (lo habitual si no rotas el corte), para los dos casos de
+esta nota:
+
+| Corte | Plano | `F1` | `F3` | `M2` |
+|---|---|---|---|---|
+| Muro (vertical, en su plano) | normal a X | cortante basal (X) | axial vertical (Z) | volcamiento (sobre Y) |
+| Losa (vertical, corta la luz) | normal a X | fuerza en el plano | cortante vertical (Z) | momento flector (sobre Y) |
+
+---
+
+## Errores comunes
+
+| Síntoma | Causa | Solución |
+|---|---|---|
+| Todo sale **cero** (By Quad) | el plano no cruza ningún elemento | agranda el cuadrilátero para que atraviese el espesor y el ancho completo |
+| Todo sale **cero** (By Group) | el grupo no incluye los **nudos** de un lado, o incluye ambos lados (queda en equilibrio, neto cero) | agrupa objetos **y** nudos de un solo lado; para un corte en la base, excluye los nudos de apoyo |
+| El **momento** no cuadra | se reporta respecto al centroide del grupo, no donde crees | fija la *Result Location* en el punto correcto (base del muro, plano medio de la losa) |
+| **By Group** te da la reacción, no el esfuerzo interno | usaste el método de grupo para una sección interior | usa **By Quadrilateral** para esfuerzos internos; reserva *By Group* para reacciones de un conjunto |
+| **Signo** invertido | orden de los puntos (Quad) o lado agrupado (Group) | invierte el orden de los cuatro puntos, o agrupa el otro lado; verifica contra un cuerpo libre |
+
+---
+
+## Resumen
+
+1. **Elige el método según lo que buscas.** *By Group* suma reacciones y cargas nodales de un
+   conjunto —cortante basal y volcamiento de un muro—; *By Quadrilateral* corta un plano y suma
+   fuerzas internas —$V$ y $M$ en una sección interior—. No son intercambiables.
+2. **El muro** (By Group): `F1 = P` da el cortante basal y `M2 = P·H` el volcamiento —pero solo si
+   fijas la *Result Location* en la base; por defecto el momento sale respecto al centroide del
+   grupo.
+3. **La losa** (By Quadrilateral): el momento del corte reproduce la viga ($qL^2B/8$) dentro del
+   1 %. El corte **central** da momento máximo y cortante nulo; el cortante máximo está **junto al
+   apoyo**.
+4. **El signo lo fija la orientación del corte**: el orden de los cuatro puntos en un Quad, el lado
+   agrupado en un Group. Si el signo te sorprende, no es la física: es la referencia. Fíjala contra
+   un diagrama de cuerpo libre.
+
+Con eso, un Section Cut deja de dar ceros y signos misteriosos: cada número tiene un porqué, y se
+puede verificar a mano antes de confiar en él.
