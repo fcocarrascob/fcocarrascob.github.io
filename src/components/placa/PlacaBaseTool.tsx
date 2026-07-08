@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Grade, PlacaInputs, SolverResult } from '../../lib/placaBase';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { expandPattern, type Grade, type PlacaInputs, type RodLayout, type SolverResult } from '../../lib/placaBase';
 import { runPlaca, type PlacaResults } from '../../lib/placaBaseChecks';
 import type { PlacaGeom } from '../../lib/placaBaseSweep';
 import type { PlateLoadRow } from '../../lib/sapReactions';
@@ -52,18 +52,6 @@ const GROUPS: Group[] = [
     ],
   },
   {
-    legend: 'Pernos de anclaje',
-    fields: [
-      { key: 'nx', label: 'Pernos en x', unit: 'u', step: 1 },
-      { key: 'ny', label: 'Pernos en y', unit: 'u', step: 1 },
-      { key: 'ex', label: 'Dist. borde eₓ', unit: 'cm', step: 1 },
-      { key: 'ey', label: 'Dist. borde e_y', unit: 'cm', step: 1 },
-      { key: 'dRod', label: 'Diámetro', unit: 'cm', step: 0.1 },
-      { key: 'hEf', label: 'Embebido h_ef', unit: 'cm', step: 5 },
-      { key: 'nShear', label: 'Pernos al corte', unit: 'u', step: 1 },
-    ],
-  },
-  {
     legend: 'Cargas mayoradas (LRFD)',
     fields: [
       { key: 'Pu', label: 'Axial Pu (+ comprime)', unit: 'tonf', step: 5 },
@@ -74,6 +62,24 @@ const GROUPS: Group[] = [
     ],
   },
 ];
+
+// Campos del grupo «Pernos de anclaje», renderizado aparte porque alterna entre
+// dos modos de disposición (grilla paramétrica vs. coordenadas explícitas).
+const ANCHOR_GLOBAL: Field[] = [
+  { key: 'dRod', label: 'Diámetro', unit: 'cm', step: 0.1 },
+  { key: 'hEf', label: 'Embebido h_ef', unit: 'cm', step: 5 },
+  { key: 'nShear', label: 'Pernos al corte', unit: 'u', step: 1 },
+];
+const ANCHOR_PATTERN: Field[] = [
+  { key: 'nx', label: 'Pernos en x', unit: 'u', step: 1 },
+  { key: 'ny', label: 'Pernos en y', unit: 'u', step: 1 },
+  { key: 'ex', label: 'Dist. borde eₓ', unit: 'cm', step: 1 },
+  { key: 'ey', label: 'Dist. borde e_y', unit: 'cm', step: 1 },
+];
+
+type RodMode = 'pattern' | 'coords';
+interface Coord { x: number; y: number }
+const round1 = (v: number) => Math.round(v * 10) / 10;
 
 // Enlace de cada verificación a su sección en la nota teórica.
 const NOTE_URL = '/blog/placas-base-sap2000';
@@ -236,25 +242,59 @@ export default function PlacaBaseTool() {
   const [inp, setInp] = useState<NumInputs>(DEFAULTS);
   const [grade, setGrade] = useState<Grade>(36);
   const [perim, setPerim] = useState(true);
+  const [rodMode, setRodMode] = useState<RodMode>('pattern');
+  const [coordRods, setCoordRods] = useState<Coord[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const set = (key: keyof NumInputs, v: string) =>
     setInp((s) => ({ ...s, [key]: v === '' ? 0 : Number(v) }));
 
-  const geom = useMemo<PlacaGeom>(
-    () => ({
-      B: inp.B, N: inp.N, t: inp.t, fc: inp.fc, Fy: inp.Fy,
-      B2: inp.B2, N2: inp.N2, d: inp.d, bf: inp.bf,
-      pattern: {
+  // Pernos expandidos a partir de la grilla paramétrica actual.
+  const patternRods = () =>
+    expandPattern(
+      {
         nx: Math.max(0, Math.round(inp.nx)),
         ny: Math.max(0, Math.round(inp.ny)),
         ex: inp.ex, ey: inp.ey, perimeterOnly: perim,
       },
+      inp.B, inp.N
+    ).map((r) => ({ x: round1(r.x), y: round1(r.y) }));
+
+  // Al pasar a coordenadas por primera vez, sembrar la tabla con la grilla.
+  const switchMode = (mode: RodMode) => {
+    if (mode === 'coords' && coordRods.length === 0) setCoordRods(patternRods());
+    setRodMode(mode);
+  };
+  const fillFromPattern = () => setCoordRods(patternRods());
+  const setCoord = (i: number, axis: 'x' | 'y', v: string) =>
+    setCoordRods((rs) => rs.map((r, j) => (j === i ? { ...r, [axis]: v === '' ? 0 : Number(v) } : r)));
+  const addRod = () => setCoordRods((rs) => [...rs, { x: 0, y: 0 }]);
+  const delRod = (i: number) => setCoordRods((rs) => rs.filter((_, j) => j !== i));
+
+  const layout = useMemo<RodLayout>(
+    () =>
+      rodMode === 'coords'
+        ? { mode: 'coords', rods: coordRods.map((r) => ({ x: r.x, y: r.y })) }
+        : {
+            mode: 'pattern',
+            pattern: {
+              nx: Math.max(0, Math.round(inp.nx)),
+              ny: Math.max(0, Math.round(inp.ny)),
+              ex: inp.ex, ey: inp.ey, perimeterOnly: perim,
+            },
+          },
+    [rodMode, coordRods, inp.nx, inp.ny, inp.ex, inp.ey, perim]
+  );
+
+  const geom = useMemo<PlacaGeom>(
+    () => ({
+      B: inp.B, N: inp.N, t: inp.t, fc: inp.fc, Fy: inp.Fy,
+      B2: inp.B2, N2: inp.N2, d: inp.d, bf: inp.bf,
+      layout,
       dRod: inp.dRod, grade, hEf: inp.hEf, nShear: Math.max(1, Math.round(inp.nShear)),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [inp.B, inp.N, inp.t, inp.fc, inp.Fy, inp.B2, inp.N2, inp.d, inp.bf,
-     inp.nx, inp.ny, inp.ex, inp.ey, inp.dRod, inp.hEf, inp.nShear, grade, perim]
+     inp.dRod, inp.hEf, inp.nShear, grade, layout]
   );
 
   const res = useMemo(() => {
@@ -322,7 +362,7 @@ export default function PlacaBaseTool() {
       </p>
       <h2 className="mt-4 mb-1 text-sm font-semibold text-ink">Datos de entrada</h2>
       <div className="grid grid-cols-3 gap-x-6 gap-y-0.5 text-xs">
-        {GROUPS.flatMap((g) => g.fields).map((f) => (
+        {[...GROUPS.flatMap((g) => g.fields), ...ANCHOR_GLOBAL].map((f) => (
           <div key={f.key} className="flex justify-between border-b border-border/60 py-0.5">
             <span className="text-muted">{f.label}</span>
             <span className="font-mono">{inp[f.key]} {f.unit}</span>
@@ -333,37 +373,71 @@ export default function PlacaBaseTool() {
           <span className="font-mono">Gr. {grade}</span>
         </div>
         <div className="flex justify-between border-b border-border/60 py-0.5">
-          <span className="text-muted">Pernos solo perímetro</span>
-          <span className="font-mono">{perim ? 'sí' : 'no'}</span>
+          <span className="text-muted">Disposición pernos</span>
+          <span className="font-mono">{rodMode === 'coords' ? 'coordenadas' : 'grilla'}</span>
         </div>
+        {rodMode === 'pattern' &&
+          ANCHOR_PATTERN.map((f) => (
+            <div key={f.key} className="flex justify-between border-b border-border/60 py-0.5">
+              <span className="text-muted">{f.label}</span>
+              <span className="font-mono">{inp[f.key]} {f.unit}</span>
+            </div>
+          ))}
+        {rodMode === 'pattern' && (
+          <div className="flex justify-between border-b border-border/60 py-0.5">
+            <span className="text-muted">Pernos solo perímetro</span>
+            <span className="font-mono">{perim ? 'sí' : 'no'}</span>
+          </div>
+        )}
       </div>
+      {rodMode === 'coords' && (
+        <div className="mt-1 text-xs">
+          <div className="text-muted">Pernos por coordenadas (x, y) cm desde el centro:</div>
+          <div className="font-mono">
+            {coordRods.length > 0
+              ? coordRods.map((r, i) => `#${i + 1} (${r.x}, ${r.y})`).join('   ')
+              : '— sin pernos —'}
+          </div>
+        </div>
+      )}
     </section>
     <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] print:block">
       {/* ── Panel de inputs y resultados ── */}
       <div>
         <div className="space-y-4 print:hidden">
           {GROUPS.map(({ legend, fields }) => (
-            <fieldset key={legend} className="rounded border border-border p-3">
-              <legend className="px-1 text-xs font-medium text-muted">{legend}</legend>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {fields.map(({ key, label, unit, step }) => (
-                  <label key={key} className="text-sm">
-                    <span className="block text-muted">{label}</span>
-                    <span className="mt-1 flex items-baseline gap-1">
-                      <input
-                        type="number"
+            <Fragment key={legend}>
+              <fieldset className="rounded border border-border p-3">
+                <legend className="px-1 text-xs font-medium text-muted">{legend}</legend>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {fields.map(({ key, label, unit, step }) => (
+                    <NumField
+                      key={key}
+                      label={label}
+                      unit={unit}
+                      step={step}
+                      value={inp[key]}
+                      onChange={(v) => set(key, v)}
+                    />
+                  ))}
+                </div>
+              </fieldset>
+
+              {/* Bloque de pernos: campos globales + selector de disposición */}
+              {legend === 'Columna' && (
+                <fieldset className="rounded border border-border p-3">
+                  <legend className="px-1 text-xs font-medium text-muted">Pernos de anclaje</legend>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {ANCHOR_GLOBAL.map(({ key, label, unit, step }) => (
+                      <NumField
+                        key={key}
+                        label={label}
+                        unit={unit}
                         step={step}
-                        autoComplete="off"
                         value={inp[key]}
-                        onChange={(e) => set(key, (e.target as HTMLInputElement).value)}
-                        className="w-full rounded border border-border bg-white px-2 py-1 text-ink focus:border-accent focus:outline-none"
+                        onChange={(v) => set(key, v)}
                       />
-                      <span className="shrink-0 text-xs text-muted">{unit}</span>
-                    </span>
-                  </label>
-                ))}
-                {legend === 'Pernos de anclaje' && (
-                  <>
+                    ))}
                     <label className="text-sm">
                       <span className="block text-muted">Grado F1554</span>
                       <select
@@ -376,19 +450,145 @@ export default function PlacaBaseTool() {
                         <option value={105}>Gr. 105</option>
                       </select>
                     </label>
-                    <label className="flex items-end gap-2 pb-1 text-sm text-muted">
-                      <input
-                        type="checkbox"
-                        checked={perim}
-                        onChange={(e) => setPerim(e.target.checked)}
-                        className="accent-current"
-                      />
-                      Solo perímetro
-                    </label>
-                  </>
-                )}
-              </div>
-            </fieldset>
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="text-xs text-muted">Disposición</span>
+                    <div className="inline-flex overflow-hidden rounded border border-border text-xs">
+                      <button
+                        type="button"
+                        onClick={() => switchMode('pattern')}
+                        className={`px-2.5 py-1 ${rodMode === 'pattern' ? 'bg-accent text-white' : 'bg-white text-muted hover:text-accent'}`}
+                      >
+                        Grilla
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => switchMode('coords')}
+                        className={`border-l border-border px-2.5 py-1 ${rodMode === 'coords' ? 'bg-accent text-white' : 'bg-white text-muted hover:text-accent'}`}
+                      >
+                        Coordenadas
+                      </button>
+                    </div>
+                  </div>
+
+                  {rodMode === 'pattern' ? (
+                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {ANCHOR_PATTERN.map(({ key, label, unit, step }) => (
+                        <NumField
+                          key={key}
+                          label={label}
+                          unit={unit}
+                          step={step}
+                          value={inp[key]}
+                          onChange={(v) => set(key, v)}
+                        />
+                      ))}
+                      <label className="flex items-end gap-2 pb-1 text-sm text-muted">
+                        <input
+                          type="checkbox"
+                          checked={perim}
+                          onChange={(e) => setPerim(e.target.checked)}
+                          className="accent-current"
+                        />
+                        Solo perímetro
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <p className="mb-2 text-xs text-muted">
+                        Coordenadas desde el centro de la placa (0, 0). Rango físico:
+                        x ∈ ±{(inp.B / 2).toFixed(1)} cm, y ∈ ±{(inp.N / 2).toFixed(1)} cm.
+                      </p>
+                      {coordRods.length > 0 ? (
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse text-sm">
+                            <thead>
+                              <tr className="border-b border-border text-left text-xs text-muted">
+                                <th className="py-1 pr-2 font-medium">#</th>
+                                <th className="py-1 pr-2 font-medium">X [cm]</th>
+                                <th className="py-1 pr-2 font-medium">Y [cm]</th>
+                                <th className="py-1 font-medium"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {coordRods.map((r, i) => {
+                                const outside =
+                                  Math.abs(r.x) > inp.B / 2 + 1e-6 || Math.abs(r.y) > inp.N / 2 + 1e-6;
+                                const cls = `w-20 rounded border px-2 py-1 text-ink focus:border-accent focus:outline-none ${
+                                  outside ? 'border-red-400 bg-red-50' : 'border-border bg-white'
+                                }`;
+                                return (
+                                  <tr key={i} className="border-b border-border/60">
+                                    <td className="py-1 pr-2 font-mono text-xs text-muted">{i + 1}</td>
+                                    <td className="py-1 pr-2">
+                                      <input
+                                        type="number"
+                                        step={1}
+                                        value={r.x}
+                                        onChange={(e) => setCoord(i, 'x', (e.target as HTMLInputElement).value)}
+                                        className={cls}
+                                      />
+                                    </td>
+                                    <td className="py-1 pr-2">
+                                      <input
+                                        type="number"
+                                        step={1}
+                                        value={r.y}
+                                        onChange={(e) => setCoord(i, 'y', (e.target as HTMLInputElement).value)}
+                                        className={cls}
+                                      />
+                                    </td>
+                                    <td className="py-1">
+                                      <button
+                                        type="button"
+                                        onClick={() => delRod(i)}
+                                        title="Eliminar perno"
+                                        className="rounded border border-border px-2 py-0.5 text-xs text-muted hover:border-red-400 hover:text-red-600"
+                                      >
+                                        ✕
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-amber-700">Sin pernos definidos.</p>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={addRod}
+                          className="rounded border border-border px-2 py-1 text-xs text-muted hover:border-accent hover:text-accent"
+                        >
+                          ＋ Agregar perno
+                        </button>
+                        <button
+                          type="button"
+                          onClick={fillFromPattern}
+                          title="Rellenar la tabla con la grilla nx·ny actual"
+                          className="rounded border border-border px-2 py-1 text-xs text-muted hover:border-accent hover:text-accent"
+                        >
+                          Generar desde grilla
+                        </button>
+                        {coordRods.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setCoordRods([])}
+                            className="rounded border border-border px-2 py-1 text-xs text-muted hover:border-red-400 hover:text-red-600"
+                          >
+                            Limpiar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </fieldset>
+              )}
+            </Fragment>
           ))}
         </div>
 
@@ -520,6 +720,37 @@ export default function PlacaBaseTool() {
       <SapSweepPanel geom={geom} onLoadRow={loadSweepRow} />
     </div>
     </div>
+  );
+}
+
+function NumField({
+  label,
+  unit,
+  step,
+  value,
+  onChange,
+}: {
+  label: string;
+  unit: string;
+  step: number;
+  value: number;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label className="text-sm">
+      <span className="block text-muted">{label}</span>
+      <span className="mt-1 flex items-baseline gap-1">
+        <input
+          type="number"
+          step={step}
+          autoComplete="off"
+          value={value}
+          onChange={(e) => onChange((e.target as HTMLInputElement).value)}
+          className="w-full rounded border border-border bg-white px-2 py-1 text-ink focus:border-accent focus:outline-none"
+        />
+        <span className="shrink-0 text-xs text-muted">{unit}</span>
+      </span>
+    </label>
   );
 }
 

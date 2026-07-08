@@ -7,8 +7,8 @@
 import {
   clipHalfPlane,
   contactPolygon,
-  expandPattern,
   monomials,
+  resolveRods,
   solveBearing,
   type PlacaInputs,
   type Rod,
@@ -184,7 +184,7 @@ function bendingFromTension(
 // ── Orquestador ──────────────────────────────────────────────────────────────
 
 export function runPlaca(inp: PlacaInputs): PlacaResults {
-  const rods = expandPattern(inp.pattern, inp.B, inp.N);
+  const rods = resolveRods(inp.layout, inp.B, inp.N);
   const Ab = (Math.PI * inp.dRod ** 2) / 4;
   const Ec = 15100 * Math.sqrt(Math.max(inp.fc, 1));
   const rho = (ES / Ec) * Ab;

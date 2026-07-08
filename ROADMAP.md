@@ -126,15 +126,20 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   carga lateral creciente; validar contra los factores de ACI 318 Tabla 6.6.3.1.1(a)
   (0.35 Ig fisurado, 0.70 Ig no fisurado) y ver dónde se desvían (axial bajo, muros
   esbeltos). Conecta con la serie de hormigón ya publicada.
-- [ ] **D6. Cómo arma SAP2000 la respuesta espectral modo a modo (Response Spectrum
-  Modal Information)** — pórtico de varios pisos con 2-3 modos de masa participante
-  relevante; calcular a mano Γᵢ y S_a(Tᵢ) por modo y verificar que
-  Amplitudᵢ = Γᵢ·S_a(Tᵢ)/ωᵢ² coincide con `U1Amp`/`U2Amp` de la tabla *Response
-  Spectrum Modal Information*. Reconstruir el corte basal modo a modo (amplitud ×
-  fuerza modal, sumado por SRSS/CQC) y verificar contra *Base Reactions* del caso
-  combinado. Precursor conceptual de C3: acá se abre la caja negra de la respuesta
-  modal espectral con un caso simple; C3 más adelante cuantifica el error de SRSS vs
-  CQC barriendo geometrías.
+- [x] **D6. Cómo arma SAP2000 la respuesta espectral modo a modo (Response Spectrum
+  Modal Information)** (hecho 2026-07-08): torre de traspaso minera 3D (6×4 m, 4
+  niveles) con arriostramiento asimétrico a propósito (3 de 4 caras, la de ingreso de
+  correa sin diagonal) para generar acoplamiento torsión-traslación real — modo 1
+  (T=0.859 s) mezcla 55.5 % X con 26.8 % torsión, modo 3 (T=0.398 s) es más torsional
+  (56.4 %) que traslacional (29.2 %). Espectro NCh2369 reutilizando
+  `nch2369-spectrum.ts` (mismo módulo del SAP Script Builder) vía `Func.FuncRS.SetUser`.
+  Verificado a mano: Amplitudᵢ = Γᵢ·S_a(Tᵢ)/ωᵢ² (Γᵢ = `UX`/`ModalMass` de *Modal
+  Participation Factors*) coincide con `U1Amp` a 0.2 % en 4 modos; corte basal
+  reconstruido modo a modo (`Ux`·M_tot·Sa) combinado por SRSS y CQC (Der Kiureghian,
+  ξ=3 %) coincide con *Base Reactions* a 0.5 %, con CQC 0.57 % por sobre SRSS (ρᵢⱼ
+  máximo 3.8 %, entre modos 2-3) — gancho cuantitativo directo a C3. Post
+  `respuesta-espectral-modal-torre-traspaso.mdx`, figuras SVG en
+  `public/respuesta-espectral-modal-torre-traspaso/`.
 
 ## Recomendación de orden (actualizada 2026-07-05)
 

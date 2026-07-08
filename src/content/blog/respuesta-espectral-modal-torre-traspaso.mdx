@@ -1,0 +1,226 @@
+---
+title: "Cómo arma SAP2000 la respuesta espectral modo a modo: Amplitud, U1Amp y el corte basal (SRSS vs CQC)"
+description: "Se abre la caja negra de la tabla Response Spectrum Modal Information de SAP2000: se verifica a mano que Amplitud_i = Γ_i·Sa(T_i)/ω_i² coincide con U1Amp, y se reconstruye el corte basal modo a modo (SRSS y CQC) contra Base Reactions, en una torre de traspaso minera con arriostramiento asimétrico."
+pubDate: 2026-07-08
+tags: ["SAP2000", "análisis modal", "espectro de respuesta", "NCh2369", "SRSS", "CQC"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## Qué hay detrás de un caso de Response Spectrum
+
+Cuando se corre un caso de *Response Spectrum* en SAP2000, el programa no resuelve nada nuevo:
+reutiliza los modos ya calculados en el caso modal y, para cada uno, calcula una **amplitud
+modal** — cuánto se mueve ese modo bajo el espectro de diseño — con una fórmula cerrada de
+sistemas de 1 GDL:
+
+<Equation label="Ec. 1">
+$$
+\text{Amplitud}_i = \frac{\Gamma_i \cdot S_a(T_i)}{\omega_i^2}
+$$
+</Equation>
+
+donde $\Gamma_i$ es el factor de participación modal, $S_a(T_i)$ la aceleración espectral en el
+período del modo, y $\omega_i$ su frecuencia circular. SAP2000 publica exactamente este número en
+la tabla *Response Spectrum Modal Information*, columnas `U1Amp`/`U2Amp` — pero rara vez se
+verifica a mano. Esta nota lo hace, con un modelo 3D con acoplamiento torsional real, y de paso
+reconstruye el corte basal modo a modo comparando **SRSS** contra **CQC** contra el propio
+*Base Reactions* de SAP2000.
+
+---
+
+## El modelo: una torre de traspaso con arriostramiento asimétrico
+
+Un pórtico plano simétrico da modos limpios y desacoplados — poco interesante para esto. En vez
+de eso, el caso de estudio es una **torre de traspaso de correas** (transfer tower), típica de
+faena minera: 4 niveles de 4 m (16 m de altura total), planta rectangular de 6×4 m, columnas de
+esquina HSS 300×300×12, vigas perimetrales HSS 250×250×10 y diagonales HSS 150×150×8, todo en
+acero (E = 2.1×10⁶ kgf/cm², ρ = 7.85 tonf/m³). Diafragma rígido por nivel, base empotrada.
+
+El arriostramiento es **deliberadamente asimétrico**: 3 de las 4 caras llevan una diagonal por
+piso (alternada), y la cuarta —la cara de ingreso de la correa, Y=0— queda como pórtico a momento
+puro, sin diagonal:
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/fig-modelo.svg"
+  alt="Planta de 6x4 m con las caras X=0, X=6 e Y=4 arriostradas con diagonales y la cara Y=0 sin arriostrar; centro de masa CM y centro de rigidez CR desplazados; elevaciones de la cara frontal sin diagonales y de la cara trasera con diagonal alternada por piso"
+  caption="3 de 4 caras arriostradas — la cara Y=0 (ingreso de correa) queda como pórtico a momento. Eso desplaza el centro de rigidez respecto del centro de masa y acopla traslación con torsión."
+/>
+
+Esa asimetría no es cosmética: desplaza el centro de rigidez respecto del centro de masa (que
+queda en el centroide de planta), y ese desfase es lo que **acopla traslación con torsión** en los
+modos — el fenómeno real que esta nota quiere verificar, no uno forzado artificialmente.
+
+Las masas se concentraron en las 4 esquinas de cada nivel (mayor en el nivel superior, donde se
+apoya el equipo de traspaso): 1.0 tonf·s²/m por esquina en los niveles 1 y 2, 1.2 en el nivel 3,
+2.5 en el nivel 4. Sumando el autopeso de los perfiles, SAP2000 reporta una masa total
+(tabla *Assembled Joint Masses*, fila `SumAccelUX`) de **24.39 tonf·s²/m**.
+
+---
+
+## Los tres modos relevantes
+
+El modal (`Modal Periods And Frequencies` + `Modal Participating Mass Ratios`) da:
+
+| Modo | T (s) | ω (rad/s) | Ux | Uy | Rz |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | 0.859 | 7.314 | **55.5 %** | 0.0 % | 26.8 % |
+| 2 | 0.537 | 11.700 | 0.0 % | **81.2 %** | 0.2 % |
+| 3 | 0.398 | 15.799 | 29.2 % | 0.2 % | **56.4 %** |
+| 4 | 0.210 | 29.852 | 8.7 % | 0.0 % | 5.4 % |
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/fig-modos.svg"
+  alt="Tres paneles en planta mostrando el modo 1 (traslación X 55.5% con torsión 26.8%), modo 2 (traslación Y 81.2% casi pura) y modo 3 (torsión 56.4% dominante con algo de traslación X 29.2%)"
+  caption="Ninguno de los tres es un modo 'puro'. El modo 3 es, de hecho, más torsional que traslacional — la cara sin arriostrar deja su huella ahí."
+/>
+
+Ningún modo es puramente traslacional ni puramente torsional: el modo 1 mezcla X con 27 % de
+torsión, y el modo 3 —más rígido, T=0.398 s— es **mayoritariamente torsional** (56 %) con una
+componente de X todavía significativa (29 %). El modo 2 es la excepción: 81 % Y con torsión
+prácticamente nula (0.2 %), porque las dos caras que resisten Y (X=0 y X=6) son idénticas y
+simétricas entre sí — la asimetría vive en el par Y=0/Y=4, no ahí.
+
+Entre los tres, capturan 85 % de la masa en X y 81 % en Y — suficiente para el resto de esta nota.
+
+---
+
+## El espectro: NCh2369, sin reimplementar la fórmula
+
+El espectro de diseño se generó con `computeNchSpectrum` de
+`src/lib/sap-scripts/nch2369-spectrum.ts` — el mismo módulo que alimenta el generador de espectros
+del [SAP Script Builder](/herramientas/sap-scripts) — para Zona 3, Suelo B, categoría C (I=1.0),
+R=4 (arriostramientos concéntricos) y ξ=3 % (típico de acero industrial NCh2369):
+
+<Equation label="Ec. 2">
+$$
+S_a(T) = \frac{I \cdot A_0 \cdot S \cdot \dfrac{1 + r\left(\frac{T}{T_0}\right)^p}{1 + \left(\frac{T}{T_0}\right)^q} \cdot \left(\dfrac{0.05}{\xi}\right)^{0.4}}{R^*(T)}
+$$
+</Equation>
+
+<Note type="tip" title="Por qué no la función NCh2369 que trae SAP2000">
+SAP2000 ya incluye "Chile Norma NCh2369-2003" como función de espectro nativa. Se usó igual la
+versión propia (vía `Func.FuncRS.SetUser`, con 131 pares período-valor calculados por el módulo
+TypeScript) a propósito: así el número que entra al modelo es exactamente el mismo que calcula la
+herramienta del sitio, y el ejercicio de verificación de esta nota queda cerrado sobre código que
+ya existe, no sobre una caja negra distinta.
+</Note>
+
+El resultado, evaluado en los cuatro períodos de la tabla anterior:
+
+| Modo | T (s) | $S_a(T)$ [g] | $S_a(T)$ [m/s²] |
+|:---:|:---:|:---:|:---:|
+| 1 | 0.859 | 0.1770 | 1.7353 |
+| 2 | 0.537 | 0.3167 | 3.1065 |
+| 3 | 0.398 | 0.4160 | 4.0790 |
+| 4 | 0.210 | 0.4527 | 4.4399 |
+
+---
+
+## Verificación: Amplitud = Γ·Sa(T)/ω² contra U1Amp
+
+SAP2000 no publica $\Gamma_i$ directamente — la tabla *Modal Participation Factors* da el
+numerador $L_i = \sum_j m_j \varphi_{ij}$ (columna `UX`) y la masa modal $M_i$ (columna
+`ModalMass`, bajo la normalización interna de SAP), y $\Gamma_i = L_i / M_i$:
+
+<Equation label="Ec. 3">
+$$
+\Gamma_i = \frac{L_i}{M_i}
+$$
+</Equation>
+
+| Modo | $L_i$ (`UX`) | $M_i$ (`ModalMass`) | $\Gamma_i$ | Amplitud calculada (Ec. 1) | `U1Amp` (SAP) | Δ |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | 0.010003 | 0.0115 | 0.8698 | 0.028226 m | 0.028166 m | 0.21 % |
+| 2 | −0.000244 | 0.0115 | −0.02122 | −0.0004815 m | −0.000481 m | 0.10 % |
+| 3 | −0.00726 | 0.0115 | −0.6313 | −0.010316 m | −0.010297 m | 0.18 % |
+| 4 | 0.003954 | 0.0115 | 0.34383 | 0.001713 m | 0.001710 m | 0.20 % |
+
+Coincide en los cuatro modos dentro de 0.2 % — la diferencia es enteramente redondeo de las
+tablas mostradas a 6 cifras. La Ec. 1 no es una aproximación: es literalmente lo que SAP2000
+calcula internamente antes de combinar modos.
+
+<Note type="info">
+$L_i$ y $M_i$ están en la normalización interna de SAP2000 para el modo (no necesariamente
+tonf·s²/m) — pero como $\Gamma_i$ es un cociente de la misma cantidad consigo misma, es
+adimensional e independiente de esa normalización. Por eso Ec. 3 funciona sin tener que
+averiguar en qué unidades quedó `ModalMass`.
+</Note>
+
+---
+
+## Reconstrucción del corte basal: SRSS vs CQC
+
+Para el corte basal no hace falta pasar por $\Gamma_i$: la masa efectiva de cada modo en X es
+directamente `Ux` (la tabla *Modal Participating Mass Ratios*, fracción de la masa total, entre 0
+y 1 — sin la ambigüedad de unidades de `ModalMass`) multiplicada por la masa total:
+
+<Equation label="Ec. 4">
+$$
+V_i = \left(U_{x,i} \cdot M_{tot}\right) \cdot S_a(T_i)
+$$
+</Equation>
+
+| Modo | $U_{x,i}$ | $M_{tot}$ | $S_a(T_i)$ [m/s²] | $V_i$ [tonf] |
+|:---:|:---:|:---:|:---:|:---:|
+| 1 | 0.5546 | 24.39 | 1.7353 | 23.47 |
+| 2 | 0.0003 | 24.39 | 3.1065 | 0.03 |
+| 3 | 0.2922 | 24.39 | 4.0790 | 29.07 |
+| 4 | 0.0867 | 24.39 | 4.4399 | 9.38 |
+| 5–12 | — | — | — | 6.23 (suma simple, solo referencia de escala) |
+
+Combinando los 12 modos por **SRSS** y por **CQC** —con el coeficiente de correlación de Der
+Kiureghian, $\xi=3\%$—:
+
+<Equation label="Ec. 5">
+$$
+\rho_{ij} = \frac{8\xi^2(1+r)r^{1.5}}{(1-r^2)^2 + 4\xi^2 r (1+r)^2}, \qquad r = \frac{T_j}{T_i} \le 1
+$$
+</Equation>
+
+| Par de modos | $T_i$ / $T_j$ (s) | r | $\rho_{ij}$ |
+|:---:|:---:|:---:|:---:|
+| 1–2 | 0.859 / 0.537 | 0.625 | 0.0153 |
+| 1–3 | 0.859 / 0.398 | 0.463 | 0.0053 |
+| 2–3 | 0.537 / 0.398 | 0.741 | **0.0377** |
+| 3–4 | 0.398 / 0.210 | 0.529 | 0.0081 |
+
+La correlación más alta es entre los modos 2 y 3 (3.8 %) — modesta, porque sus períodos todavía
+están razonablemente separados. Aun así, con los 12 modos completos:
+
+| Combinación | Reconstruido a mano | `Base Reactions` (SAP) | Δ |
+|:---:|:---:|:---:|:---:|
+| SRSS | 38.696 tonf | 38.506 tonf | 0.49 % |
+| CQC | 38.917 tonf | 38.726 tonf | 0.49 % |
+
+Ambas reconstrucciones caen a 0.5 % de SAP2000 (el mismo redondeo de tablas que en la sección
+anterior), y **CQC queda 0.57 % por encima de SRSS** — consistente en ambos cálculos. La
+diferencia es pequeña porque ninguna correlación $\rho_{ij}$ supera el 4 % en este modelo: los
+modos están separados, no lo suficientemente cerca como para que la falta de correlación cruzada
+de SRSS importe mucho.
+
+<Note type="tip" title="El gancho a C3">
+Eso es exactamente lo que **C3** (roadmap) va a cuantificar con un barrido: acá se vio un caso
+donde $\rho_{ij}$ máximo es 3.8 % y la brecha SRSS-CQC es 0.6 %. La pregunta de C3 es qué pasa
+cuando el diseño empuja dos períodos a converger — ahí $\rho_{ij}$ deja de ser una curiosidad y
+empieza a mover el resultado de diseño.
+</Note>
+
+---
+
+## En resumen
+
+1. **Amplitud$_i$ = $\Gamma_i \cdot S_a(T_i)/\omega_i^2$** no es una fórmula de manual — es
+   literalmente lo que SAP2000 calcula antes de combinar modos, verificable a 0.2 % contra
+   `U1Amp` de *Response Spectrum Modal Information*.
+2. **$\Gamma_i$ se obtiene de la tabla *Modal Participation Factors*** como $L_i/M_i$ — el
+   cociente es adimensional, así que la normalización interna de SAP no importa.
+3. **El corte basal modo a modo** se reconstruye sin pasar por $\Gamma_i$: basta la masa
+   participante (`Ux`, tabla *Modal Participating Mass Ratios*) por la masa total y $S_a(T_i)$ —
+   y combinar por SRSS o CQC reproduce `Base Reactions` a 0.5 %.
+4. **La asimetría de arriostramiento acopla los modos de verdad**: ningún modo de esta torre es
+   puramente traslacional, y el modo 3 es más torsional que traslacional — el precio de dejar
+   una cara sin diagonal para que entre la correa.

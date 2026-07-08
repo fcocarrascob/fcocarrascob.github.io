@@ -37,6 +37,21 @@ export interface RodPattern {
   perimeterOnly: boolean;
 }
 
+/**
+ * Origen de los pernos: una grilla paramétrica (se expande con expandPattern)
+ * o una lista explícita de coordenadas (x, y en cm desde el centro de placa,
+ * estilo PROFIS). El solver y las verificaciones trabajan sobre el Rod[] final,
+ * así que ambos modos recorren exactamente el mismo camino aguas abajo.
+ */
+export type RodLayout =
+  | { mode: 'pattern'; pattern: RodPattern }
+  | { mode: 'coords'; rods: Rod[] };
+
+/** Resuelve el layout a la lista de pernos que consume el motor. */
+export function resolveRods(layout: RodLayout, B: number, N: number): Rod[] {
+  return layout.mode === 'coords' ? layout.rods : expandPattern(layout.pattern, B, N);
+}
+
 export interface PlacaInputs {
   B: number; // ancho de placa (eje x) [cm]
   N: number; // largo de placa (eje y) [cm]
@@ -47,7 +62,7 @@ export interface PlacaInputs {
   N2: number; // pedestal en y [cm]
   d: number; // peralte de columna (eje y) [cm]
   bf: number; // ala de columna (eje x) [cm]
-  pattern: RodPattern;
+  layout: RodLayout; // grilla paramétrica o coordenadas explícitas
   dRod: number; // diámetro del perno [cm]
   grade: Grade; // F1554
   hEf: number; // embebido efectivo del anclaje [cm] (ACI 318 Cap. 17)
