@@ -140,6 +140,24 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   máximo 3.8 %, entre modos 2-3) — gancho cuantitativo directo a C3. Post
   `respuesta-espectral-modal-torre-traspaso.mdx`, figuras SVG en
   `public/respuesta-espectral-modal-torre-traspaso/`.
+  - **Reescritura didáctica (2026-07-08, misma sesión de estreno)**: se reforzó al
+    nivel del post Gap/Hook. Tesis de apertura (SAP desarma → resuelve 1-GDL →
+    recombina); descomposición física de la amplitud (Amplitud = Γ·Sd, oscilador de
+    1 GDL) con fig `fig-desacople.svg`; mapeo GUI (columnas *Response Spectrum Modal
+    Information* → símbolos); pitfall del **factor de escala del caso RS** (9.80665 en
+    metros, no el default 386.089 = g en in/s²). **Dos torres nuevas** (mismo todo
+    salvo arriostramiento, fig `fig-tres-torres.svg`): **gemelo simétrico** (4 caras →
+    modos puros X/Y/torsión desacoplados, Rz≈0, CQC−SRSS = 0.2 %) y **modos cercanos**
+    (2 caras adyacentes → modos 3,4 a 3.7 %, ρ₃₄=0.72, SRSS subestima Vx −6.7 %, Mz
+    −12.7 %, reacción de esquina −11.9 % — teaser cuantitativo de C3). **Sección nueva
+    de recuperación de signo para fundaciones** (fig `fig-recuperar-signo.svg`):
+    Base/Joint Reactions salen como magnitudes ±; técnica del **modo dominante** (el
+    signo es sign(Γ) del modo que domina esa respuesta) para obtener reacciones
+    firmadas y concurrentes; patrón diagonal de vuelco por la torsión del modo 1;
+    caveat de que la dominancia es por-respuesta (el modo 3 torsional domina las
+    esquinas, no el modo 1). Datos de las 3 torres corridos en vivo por MCP SAP2000,
+    modelos guardados en `Temp/sap2000_scripts/d6_modelA|B|C.sdb`. Model A reproduce
+    el post original exacto (SRSS 38.506 / CQC 38.726 tonf, U1Amp 0.028166).
 
 ## Recomendación de orden (actualizada 2026-07-05)
 

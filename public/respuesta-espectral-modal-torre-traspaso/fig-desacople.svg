@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="960" height="400" fill="#ffffff"/>
+  <text x="480" y="26" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">El análisis espectral: desarmar en osciladores de 1 GDL, leer el espectro, recombinar</text>
+
+  <defs>
+    <marker id="dArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="dArrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Paso 1: estructura completa ===== -->
+  <g transform="translate(30,60)">
+    <text x="80" y="0" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">1 · Estructura</text>
+    <!-- braced frame elevation -->
+    <rect x="30" y="20" width="100" height="220" fill="#f4f4f4" stroke="#333" stroke-width="2"/>
+    <line x1="30" y1="75" x2="130" y2="75" stroke="#333" stroke-width="1.2"/>
+    <line x1="30" y1="130" x2="130" y2="130" stroke="#333" stroke-width="1.2"/>
+    <line x1="30" y1="185" x2="130" y2="185" stroke="#333" stroke-width="1.2"/>
+    <line x1="30" y1="20" x2="130" y2="75" stroke="#888" stroke-width="1.2"/>
+    <line x1="130" y1="130" x2="30" y2="185" stroke="#888" stroke-width="1.2"/>
+    <line x1="30" y1="75" x2="130" y2="130" stroke="#888" stroke-width="1.2"/>
+    <!-- base -->
+    <line x1="20" y1="240" x2="140" y2="240" stroke="#333" stroke-width="3"/>
+    <text x="80" y="262" font-size="11" text-anchor="middle" fill="#555">torre 3D · 12 modos</text>
+  </g>
+  <line x1="185" y1="170" x2="235" y2="170" stroke="#555" stroke-width="2.5" marker-end="url(#dArr)"/>
+
+  <!-- ===== Paso 2: 3 osciladores SDOF + espectro ===== -->
+  <g transform="translate(250,52)">
+    <text x="150" y="8" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">2 · Un oscilador de 1 GDL por modo</text>
+
+    <!-- spectrum mini-curve -->
+    <g transform="translate(0,24)">
+      <line x1="10" y1="70" x2="10" y2="14" stroke="#999" stroke-width="1"/>
+      <line x1="10" y1="70" x2="120" y2="70" stroke="#999" stroke-width="1"/>
+      <text x="6" y="12" font-size="9" text-anchor="end" fill="#777">Sa</text>
+      <text x="122" y="80" font-size="9" text-anchor="start" fill="#777">T</text>
+      <path d="M10,60 C30,20 45,22 60,34 C80,50 100,60 120,64" fill="none" stroke="#1a63a8" stroke-width="2"/>
+      <text x="65" y="16" font-size="9" text-anchor="middle" fill="#1a63a8">espectro NCh2369</text>
+      <!-- points read off -->
+      <circle cx="54" cy="31" r="3" fill="#b02a1a"/><text x="54" y="26" font-size="8.5" text-anchor="middle" fill="#b02a1a">3</text>
+      <circle cx="72" cy="43" r="3" fill="#b02a1a"/><text x="76" y="40" font-size="8.5" text-anchor="middle" fill="#b02a1a">2</text>
+      <circle cx="99" cy="59" r="3" fill="#b02a1a"/><text x="103" y="56" font-size="8.5" text-anchor="middle" fill="#b02a1a">1</text>
+    </g>
+
+    <!-- three SDOF oscillators -->
+    <g transform="translate(0,120)" font-size="9.5">
+      <!-- osc 1 -->
+      <g transform="translate(20,0)">
+        <line x1="0" y1="60" x2="40" y2="60" stroke="#333" stroke-width="2"/>
+        <path d="M20,60 q-6,-8 0,-14 q6,-6 0,-12 q-6,-6 0,-12 q6,-6 0,-8" fill="none" stroke="#333" stroke-width="1.3"/>
+        <rect x="8" y="6" width="24" height="14" fill="#b02a1a" opacity="0.85"/>
+        <line x1="32" y1="13" x2="52" y2="13" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#dArrR)"/>
+        <text x="20" y="78" text-anchor="middle" fill="#222">T₁=0.86</text>
+        <text x="20" y="90" text-anchor="middle" fill="#555">Γ₁=0.87</text>
+      </g>
+      <!-- osc 2 -->
+      <g transform="translate(110,0)">
+        <line x1="0" y1="60" x2="40" y2="60" stroke="#333" stroke-width="2"/>
+        <path d="M20,60 q-6,-8 0,-14 q6,-6 0,-12 q-6,-6 0,-12 q6,-6 0,-8" fill="none" stroke="#333" stroke-width="1.3"/>
+        <rect x="11" y="6" width="18" height="14" fill="#b02a1a" opacity="0.4"/>
+        <line x1="29" y1="13" x2="37" y2="13" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#dArrR)"/>
+        <text x="20" y="78" text-anchor="middle" fill="#222">T₂=0.54</text>
+        <text x="20" y="90" text-anchor="middle" fill="#555">Γ₂≈0</text>
+      </g>
+      <!-- osc 3 -->
+      <g transform="translate(200,0)">
+        <line x1="0" y1="60" x2="40" y2="60" stroke="#333" stroke-width="2"/>
+        <path d="M20,60 q-6,-8 0,-14 q6,-6 0,-12 q-6,-6 0,-12 q6,-6 0,-8" fill="none" stroke="#333" stroke-width="1.3"/>
+        <rect x="9" y="6" width="22" height="14" fill="#b02a1a" opacity="0.7"/>
+        <line x1="9" y1="13" x2="-11" y2="13" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#dArrR)"/>
+        <text x="20" y="78" text-anchor="middle" fill="#222">T₃=0.40</text>
+        <text x="20" y="90" text-anchor="middle" fill="#555">Γ₃=−0.63</text>
+      </g>
+    </g>
+    <text x="150" y="238" font-size="10.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Amplitudᵢ = Γᵢ · Sa(Tᵢ) / ωᵢ²</text>
+  </g>
+  <line x1="565" y1="170" x2="615" y2="170" stroke="#555" stroke-width="2.5" marker-end="url(#dArr)"/>
+
+  <!-- ===== Paso 3: recombinación ===== -->
+  <g transform="translate(630,60)">
+    <text x="150" y="0" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">3 · Recombinar (SRSS / CQC)</text>
+    <!-- modal contribution bars -->
+    <g transform="translate(20,30)">
+      <line x1="0" y1="150" x2="230" y2="150" stroke="#999" stroke-width="1"/>
+      <rect x="14" y="72" width="26" height="78" fill="#b02a1a" opacity="0.8"/><text x="27" y="166" font-size="9" text-anchor="middle" fill="#555">V₁</text><text x="27" y="66" font-size="9" text-anchor="middle" fill="#555">23</text>
+      <rect x="52" y="149" width="26" height="1" fill="#b02a1a" opacity="0.8"/><text x="65" y="166" font-size="9" text-anchor="middle" fill="#555">V₂</text>
+      <rect x="90" y="53" width="26" height="97" fill="#b02a1a" opacity="0.8"/><text x="103" y="166" font-size="9" text-anchor="middle" fill="#555">V₃</text><text x="103" y="47" font-size="9" text-anchor="middle" fill="#555">29</text>
+      <rect x="128" y="119" width="26" height="31" fill="#b02a1a" opacity="0.8"/><text x="141" y="166" font-size="9" text-anchor="middle" fill="#555">V₄</text>
+      <!-- envelope -->
+      <line x1="178" y1="22" x2="178" y2="150" stroke="#1a7a3a" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <rect x="180" y="22" width="34" height="128" fill="#1a7a3a" opacity="0.85"/>
+      <text x="197" y="166" font-size="9" text-anchor="middle" fill="#1a7a3a" font-weight="bold">V</text>
+      <text x="197" y="16" font-size="9" text-anchor="middle" fill="#1a7a3a" font-weight="bold">38.7</text>
+    </g>
+    <text x="150" y="222" font-size="10.5" text-anchor="middle" fill="#555">envolvente = √(ΣΣ ρᵢⱼ VᵢVⱼ)  [tonf]</text>
+  </g>
+
+  <text x="480" y="360" font-size="11.5" text-anchor="middle" fill="#555">
+    La amplitud modal (paso 2) es solo el desplazamiento de un resorte con masa —Sa/ω² = desplazamiento espectral— escalado por cuánto participa el modo (Γ).
+  </text>
+  <text x="480" y="378" font-size="11.5" text-anchor="middle" fill="#555">
+    SAP2000 no resuelve nada nuevo en un caso de Response Spectrum: solo hace estos tres pasos con los modos que ya calculó.
+  </text>
+</svg>

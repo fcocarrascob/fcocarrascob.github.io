@@ -1,8 +1,8 @@
 ---
 title: "Cómo arma SAP2000 la respuesta espectral modo a modo: Amplitud, U1Amp y el corte basal (SRSS vs CQC)"
-description: "Se abre la caja negra de la tabla Response Spectrum Modal Information de SAP2000: se verifica a mano que Amplitud_i = Γ_i·Sa(T_i)/ω_i² coincide con U1Amp, y se reconstruye el corte basal modo a modo (SRSS y CQC) contra Base Reactions, en una torre de traspaso minera con arriostramiento asimétrico."
+description: "Se abre la caja negra del análisis espectral de SAP2000: la amplitud modal es un oscilador de 1 GDL (Amplitud = Γ·Sd), verificada contra U1Amp; el corte basal se reconstruye modo a modo (SRSS vs CQC) sobre tres torres con distinto acoplamiento torsional; y se muestra cómo recuperar el signo de las reacciones —que el espectro borra— para diseñar fundaciones."
 pubDate: 2026-07-08
-tags: ["SAP2000", "análisis modal", "espectro de respuesta", "NCh2369", "SRSS", "CQC"]
+tags: ["SAP2000", "análisis modal", "espectro de respuesta", "NCh2369", "SRSS", "CQC", "fundaciones", "torsión"]
 section: "SAP2000"
 ---
 
@@ -10,25 +10,55 @@ import Note from '../../components/content/Note.astro';
 import Figure from '../../components/content/Figure.astro';
 import Equation from '../../components/content/Equation.astro';
 
-## Qué hay detrás de un caso de Response Spectrum
+## La tesis: un análisis espectral no resuelve la estructura, la desarma
 
-Cuando se corre un caso de *Response Spectrum* en SAP2000, el programa no resuelve nada nuevo:
-reutiliza los modos ya calculados en el caso modal y, para cada uno, calcula una **amplitud
-modal** — cuánto se mueve ese modo bajo el espectro de diseño — con una fórmula cerrada de
-sistemas de 1 GDL:
+Cuando se corre un caso de *Response Spectrum*, SAP2000 no resuelve ningún sistema nuevo. Hace
+tres cosas, en este orden:
+
+1. **Desarma** la estructura en osciladores de un grado de libertad —uno por modo—, cada uno con
+   su período $T_i$ y su factor de participación $\Gamma_i$.
+2. **Resuelve** cada oscilador con una fórmula cerrada, leyendo su aceleración directamente del
+   espectro de diseño.
+3. **Recombina** las respuestas modales en una sola envolvente (SRSS o CQC).
+
+Toda esta nota abre esa caja. Primero se verifica a mano que la **amplitud modal** que publica
+SAP2000 (columna `U1Amp`) es exactamente la respuesta de un oscilador de 1 GDL. Después se
+reconstruye el **corte basal** modo a modo —y se comparan SRSS y CQC— sobre **tres torres** que
+solo se diferencian en su arriostramiento, para ver de primera mano cuándo la recombinación
+importa y cuándo no. Y al cierre se ataca un problema que la recombinación deja abierto: **el
+espectro borra el signo** de las reacciones, y sin signo no se puede diseñar una fundación.
+
+---
+
+## La amplitud modal es un oscilador de 1 GDL
+
+El corazón del paso 2 es esta fórmula:
 
 <Equation label="Ec. 1">
 $$
 \text{Amplitud}_i = \frac{\Gamma_i \cdot S_a(T_i)}{\omega_i^2}
+= \Gamma_i \cdot \underbrace{\frac{S_a(T_i)}{\omega_i^2}}_{S_d(T_i)}
 $$
 </Equation>
 
-donde $\Gamma_i$ es el factor de participación modal, $S_a(T_i)$ la aceleración espectral en el
-período del modo, y $\omega_i$ su frecuencia circular. SAP2000 publica exactamente este número en
-la tabla *Response Spectrum Modal Information*, columnas `U1Amp`/`U2Amp` — pero rara vez se
-verifica a mano. Esta nota lo hace, con un modelo 3D con acoplamiento torsional real, y de paso
-reconstruye el corte basal modo a modo comparando **SRSS** contra **CQC** contra el propio
-*Base Reactions* de SAP2000.
+No es una fórmula de manual: es literalmente lo que SAP2000 calcula antes de combinar modos. Y se
+lee como el producto de **dos piezas familiares**:
+
+- $S_a(T_i)/\omega_i^2 = S_d(T_i)$ es el **desplazamiento espectral** — el desplazamiento pico de
+  un oscilador de 1 GDL con período $T_i$ sometido a ese sismo. Es puro dinámica de un resorte con
+  una masa.
+- $\Gamma_i$ es el **factor de participación** — cuánto "agarra" el sismo a ese modo, es decir qué
+  fracción de la masa se mueve con esa forma.
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/fig-desacople.svg"
+  alt="Diagrama de tres pasos: a la izquierda la torre 3D completa; al centro se descompone en tres osciladores de 1 GDL, cada uno con su período T y su participación Gamma, y cada uno lee su aceleración espectral Sa(T) de la curva del espectro NCh2369; a la derecha las tres respuestas modales se recombinan por SRSS o CQC en una envolvente"
+  caption="El análisis espectral en una imagen: la estructura se desarma en osciladores de 1 GDL (uno por modo), cada uno lee su Sa(T) del espectro y responde con Amplitud = Γ·Sa/ω², y las respuestas se recombinan. La amplitud modal no es más que el desplazamiento de un resorte con masa, escalado por cuánto participa el modo."
+/>
+
+SAP2000 publica exactamente ese número —el resultado de la Ec. 1— en la tabla *Response Spectrum
+Modal Information*, columnas `U1Amp`/`U2Amp`. Rara vez se verifica a mano. El resto de esta
+sección lo hace, con un modelo 3D que tiene acoplamiento torsional real.
 
 ---
 
@@ -59,9 +89,7 @@ apoya el equipo de traspaso): 1.0 tonf·s²/m por esquina en los niveles 1 y 2, 
 2.5 en el nivel 4. Sumando el autopeso de los perfiles, SAP2000 reporta una masa total
 (tabla *Assembled Joint Masses*, fila `SumAccelUX`) de **24.39 tonf·s²/m**.
 
----
-
-## Los tres modos relevantes
+### Los tres modos relevantes
 
 El modal (`Modal Periods And Frequencies` + `Modal Participating Mass Ratios`) da:
 
@@ -118,6 +146,16 @@ El resultado, evaluado en los cuatro períodos de la tabla anterior:
 | 3 | 0.398 | 0.4160 | 4.0790 |
 | 4 | 0.210 | 0.4527 | 4.4399 |
 
+<Note type="warning" title="La unidad del factor de escala del caso RS">
+El espectro NCh2369 es **adimensional** (entrega $S_a/g$). Para que SAP lo interprete como
+aceleración hay que multiplicarlo por $g$ en las **unidades de longitud del modelo**. Con el
+modelo en metros (Ton_m_C), el factor de escala del caso *Response Spectrum* debe ser
+**9.80665** (m/s²), no el default 386.089 (que es $g$ en in/s²). Poner el número equivocado
+escala todo el resultado por 39.4× — o, si el espectro ya viene en g, deja las amplitudes en la
+unidad incorrecta. Es el error silencioso más común en un modelo espectral: no da error, solo da
+un corte basal absurdo.
+</Note>
+
 ---
 
 ## Verificación: Amplitud = Γ·Sa(T)/ω² contra U1Amp
@@ -142,6 +180,18 @@ $$
 Coincide en los cuatro modos dentro de 0.2 % — la diferencia es enteramente redondeo de las
 tablas mostradas a 6 cifras. La Ec. 1 no es una aproximación: es literalmente lo que SAP2000
 calcula internamente antes de combinar modos.
+
+Para leer la tabla *Response Spectrum Modal Information* sin adivinar qué es cada columna:
+
+| Columna de SAP | Símbolo | Qué es |
+|:---|:---:|:---|
+| `Period` | $T_i$ | período del modo (viene del caso modal) |
+| `U1Acc` | $S_a(T_i)$ | la aceleración espectral que SAP leyó del espectro, en la dir. U1 |
+| `U1Amp` | $\text{Amplitud}_i$ | el resultado de la Ec. 1 — el desplazamiento modal pico |
+| `DampRatio` | $\xi$ | amortiguamiento usado (0.03) |
+
+Los dos números que la alimentan salen de *Modal Participation Factors*: `UX` es $L_i$ y
+`ModalMass` es $M_i$; su cociente es $\Gamma_i$.
 
 <Note type="info">
 $L_i$ y $M_i$ están en la normalización interna de SAP2000 para el modo (no necesariamente
@@ -197,30 +247,171 @@ están razonablemente separados. Aun así, con los 12 modos completos:
 | CQC | 38.917 tonf | 38.726 tonf | 0.49 % |
 
 Ambas reconstrucciones caen a 0.5 % de SAP2000 (el mismo redondeo de tablas que en la sección
-anterior), y **CQC queda 0.57 % por encima de SRSS** — consistente en ambos cálculos. La
-diferencia es pequeña porque ninguna correlación $\rho_{ij}$ supera el 4 % en este modelo: los
-modos están separados, no lo suficientemente cerca como para que la falta de correlación cruzada
-de SRSS importe mucho.
+anterior), y **CQC queda 0.57 % por encima de SRSS**. La diferencia es pequeña porque ninguna
+correlación $\rho_{ij}$ supera el 4 % en este modelo: los modos están separados.
+
+<Note type="tip" title="La regla de bolsillo SRSS vs CQC">
+Dos modos empiezan a estar correlacionados —y SRSS a quedarse corto— cuando sus períodos están a
+menos de ~10 % uno del otro ($T_j/T_i \gtrsim 0.9$) para $\xi=3$–5 %. Por encima de esa
+separación, $\rho_{ij}$ cae rápido y SRSS ≈ CQC. Aquí el par más cercano está a 74 % ($\rho=0.038$)
+y la brecha es 0.6 %. La pregunta interesante es qué pasa cuando el diseño empuja dos períodos a
+juntarse — y eso se ve mejor cambiando la estructura.
+</Note>
+
+---
+
+## Tres torres, tres acoplamientos
+
+La torre de arriba —3 caras arriostradas— es solo un punto en un espectro de posibilidades. Para
+ver qué controla el acoplamiento modal y la brecha SRSS-CQC, basta mover el arriostramiento y
+dejar **todo lo demás idéntico** (misma planta, mismas masas, mismo espectro). Tres torres:
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/fig-tres-torres.svg"
+  alt="Tres plantas comparadas. Izquierda (torre asimétrica, 3 caras): modos mezclados, rho max 0.04, brecha SRSS-CQC 0.6%. Centro (gemelo simétrico, 4 caras): modos puros X, Y, torsión desacoplados, rho 0, CQC igual a SRSS. Derecha (dos caras adyacentes): dos modos colapsan a 3.7% de separación, rho 0.72, SRSS subestima el corte 7% y la torsion 13%"
+  caption="Misma planta, mismas masas, mismo espectro — solo cambia el arriostramiento. La simetría desacopla los modos y anula la diferencia SRSS-CQC; quitar una diagonal más junta dos períodos, dispara ρ a 0.72 y hace que SRSS subestime."
+/>
+
+### El gemelo simétrico: arriostrar las 4 caras
+
+Si se arriostra también la cara Y=0 (el gemelo simétrico), el centro de rigidez vuelve al centro
+de masa y **los modos se desacoplan por completo**:
+
+| Modo | T (s) | Participación dominante |
+|:---:|:---:|:---|
+| 1 | 0.535 | **Uy = 81 %** (Rz ≈ 0) — Y puro |
+| 2 | 0.440 | **Ux = 83 %** (Rz ≈ 0) — X puro |
+| 3 | 0.379 | **Rz = 87 %** — torsión pura |
+
+Comparado con la torre asimétrica —donde *ningún* modo era puro— acá cada modo es una sola cosa.
+La torsión ya no se cuela en la traslación porque no hay excentricidad que la acople. Y el corte
+basal: **SRSS = 77.20 tonf, CQC = 77.36 tonf** — 0.2 %, indistinguibles, porque un solo modo
+(el 2, con 83 % de la masa en X) domina la respuesta y los demás están lejos.
+
+<Note type="info">
+El corte basal del gemelo (77 tonf) es el doble del de la torre asimétrica (38.5 tonf), pero eso
+no es comparable directamente: al arriostrar la cuarta cara la estructura se vuelve más rígida, su
+período en X baja de 0.859 s a 0.440 s, sube por el espectro y toma más aceleración. Lo que aísla
+el gemelo no es la magnitud del corte, sino el **desacople**: es el control que muestra qué hacía
+exactamente la asimetría.
+</Note>
+
+### La torre de modos cercanos: quitar una diagonal más
+
+Ahora el experimento opuesto. Se parte de la torre asimétrica y se **quita una línea de
+arriostramiento más** —queda solo con 2 caras adyacentes arriostradas (X=0 e Y=4)—, algo que
+puede pasar de verdad: una diagonal que se omitió en obra, o que se dañó y no se repuso. La
+estructura se vuelve **torsionalmente muy flexible** (su primer modo es torsión pura con T=1.70 s)
+y, más importante, **dos modos colapsan casi al mismo período**:
+
+| Modo | T (s) | Ux | Rz |
+|:---:|:---:|:---:|:---:|
+| 1 | 1.702 | 14 % | 41 % |
+| 2 | 0.708 | 40 % | 3 % |
+| **3** | **0.448** | 4 % | 31 % |
+| **4** | **0.432** | 28 % | 16 % |
+
+Los modos 3 y 4 están a **3.7 %** uno del otro ($T_4/T_3 = 0.963$), y ambos mezclan traslación X
+con torsión. El coeficiente de correlación se dispara:
+
+<Equation label="Ec. 6">
+$$
+\rho_{34} = 0.72 \qquad \text{(contra un máximo de } 0.038 \text{ en la torre asimétrica)}
+$$
+</Equation>
+
+Con $\rho_{34}=0.72$, SRSS —que ignora toda correlación cruzada— **subestima**. Medido en SAP2000:
+
+| Respuesta | SRSS | CQC | SRSS se queda corto |
+|:---|:---:|:---:|:---:|
+| Corte basal $V_x$ | 34.76 tonf | 37.11 tonf | **−6.7 %** |
+| Torsión basal $M_z$ | 121.4 tonf·m | 136.8 tonf·m | **−12.7 %** |
+| Reacción esquina C0 ($F_z$) | 62.4 tonf | 69.8 tonf | **−11.9 %** |
+
+La brecha en el corte basal (7 %) ya no es despreciable, pero donde de verdad muerde es en las
+respuestas que **los dos modos cercanos alimentan a la vez**: la torsión basal y la reacción de la
+esquina, ambas ~12 %. Ahí usar SRSS deja la fundación de esquina 12 % por debajo de lo que CQC
+—la combinación correcta— exige.
 
 <Note type="tip" title="El gancho a C3">
-Eso es exactamente lo que **C3** (roadmap) va a cuantificar con un barrido: acá se vio un caso
-donde $\rho_{ij}$ máximo es 3.8 % y la brecha SRSS-CQC es 0.6 %. La pregunta de C3 es qué pasa
-cuando el diseño empuja dos períodos a converger — ahí $\rho_{ij}$ deja de ser una curiosidad y
-empieza a mover el resultado de diseño.
+Estas tres torres son tres puntos: $\rho_{max}$ = 0.00 (simétrica) → 0.04 (asimétrica) → 0.72
+(modos cercanos), con brechas SRSS-CQC de 0 % → 0.6 % → 12 %. **C3** (roadmap) va a barrer el
+continuo entre ellos: excentricidad torsional variable, midiendo el error de SRSS respecto de CQC
+en función de $\beta = T_i/T_j$ y de $\xi$, validando el coeficiente de Der Kiureghian punto a
+punto. Lo que acá se vio en tres estructuras, el barrido lo dibuja como un mapa.
+</Note>
+
+---
+
+## Recuperar el signo: reacciones para diseñar fundaciones
+
+Hay un problema que SRSS y CQC dejan abierto, y que aparece apenas uno baja de la envolvente
+global a las reacciones de apoyo: **la combinación modal borra el signo**. SRSS y CQC son raíces
+de sumas de cuadrados — siempre positivas. SAP2000 reporta la reacción espectral como una
+**magnitud** (o, en las combinaciones de diseño, como un par ±simétrico): la reacción vertical en
+la base de la columna A0 sale como `Fz = 60.96 tonf`, sin decir si es **compresión o
+levantamiento**.
+
+Para una fundación eso no sirve. El anclaje se diseña para tracción; la zapata, para la
+combinación de axial y momento con su signo. Y peor: las cuatro esquinas salen todas positivas
+—A0 = 60.96, B0 = 67.49, C0 = 94.67, D0 = 94.49 tonf— como si las cuatro pudieran estar en
+compresión máxima **al mismo tiempo**, lo cual es físicamente imposible: el sismo que hunde un
+lado levanta el opuesto.
+
+### La técnica del modo dominante
+
+La recuperación estándar es apoyarse en el **modo que domina la respuesta de interés** y prestarle
+su patrón de signos. Para el vuelco en X, el modo dominante es el **modo 1** (55 % de la masa en
+X). Su factor de participación tiene signo —$\Gamma_1 > 0$— y sus reacciones modales traen un
+patrón de signos consistente que se le impone a las magnitudes CQC:
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/fig-recuperar-signo.svg"
+  alt="Dos plantas de la torre. Izquierda: bajo CQC las cuatro esquinas A0 B0 C0 D0 muestran reacciones Fz todas positivas (60.96, 67.49, 94.67, 94.49) con signo de interrogación, sin poder decir compresión o tracción. Derecha: el modo 1 impone un patrón diagonal de signos (A0 y C0 negativas = levantan, B0 y D0 positivas = comprimen), y las magnitudes CQC quedan firmadas: A0=-60.96, B0=+67.49, C0=-94.67, D0=+94.49"
+  caption="Recuperación de signo por modo dominante. Bajo CQC las cuatro esquinas son magnitudes positivas indistinguibles. El modo 1 impone un patrón diagonal (dos esquinas levantan, dos comprimen) — su torsión del 27% inclina el vuelco a la diagonal en vez de a una cara. Ese patrón vuelve las magnitudes CQC un set firmado y concurrente, usable para diseñar cada zapata."
+/>
+
+| Junta (columna) | Posición | CQC (magnitud) | Signo del modo 1 | Reacción firmada |
+|:---:|:---:|:---:|:---:|:---:|
+| A0 | X=0, Y=0 | 60.96 | − (levanta) | **−60.96** (tracción) |
+| B0 | X=6, Y=0 | 67.49 | + (comprime) | **+67.49** |
+| C0 | X=6, Y=4 | 94.67 | − (levanta) | **−94.67** (tracción) |
+| D0 | X=0, Y=4 | 94.49 | + (comprime) | **+94.49** |
+
+El patrón que impone el modo 1 no es "una cara arriba, la otra abajo": es **diagonal** (A0 y C0
+levantan; B0 y D0 comprimen). Es la firma de que el modo 1 ya trae 27 % de torsión — el vuelco se
+inclina hacia la diagonal en vez de repartirse limpio entre las dos caras en X. Recuperar ese
+patrón entrega un set de reacciones **firmado y concurrente**: la zapata de A0 se verifica a
+tracción −60.96 tonf mientras la de B0 se comprime a +67.49, como ocurren *juntas* en la
+estructura — no cada una con su máximo independiente.
+
+<Note type="warning" title="La dominancia es por respuesta, no global">
+El modo dominante para el corte basal (modo 1, el de más masa en X) no tiene por qué ser el que
+domina *cada* reacción. En esta torre, el **modo 3** (torsional) produce reacciones de esquina
+mucho mayores que el modo 1 (en el modo 3, la esquina C0 mueve casi el triple de $F_z$), porque la
+torsión levanta las esquinas con fuerza. Al recuperar el signo de una reacción de esquina,
+conviene tomar el patrón del modo que domina *esa* reacción —no el del corte basal global—, o al
+menos verificar cuál de los dos modos manda en ese punto. Es la misma lección que la sección de
+modos cercanos, vista desde el otro lado: cuando dos modos comparten una respuesta, ninguno la
+"posee" solo.
 </Note>
 
 ---
 
 ## En resumen
 
-1. **Amplitud$_i$ = $\Gamma_i \cdot S_a(T_i)/\omega_i^2$** no es una fórmula de manual — es
-   literalmente lo que SAP2000 calcula antes de combinar modos, verificable a 0.2 % contra
-   `U1Amp` de *Response Spectrum Modal Information*.
-2. **$\Gamma_i$ se obtiene de la tabla *Modal Participation Factors*** como $L_i/M_i$ — el
-   cociente es adimensional, así que la normalización interna de SAP no importa.
-3. **El corte basal modo a modo** se reconstruye sin pasar por $\Gamma_i$: basta la masa
-   participante (`Ux`, tabla *Modal Participating Mass Ratios*) por la masa total y $S_a(T_i)$ —
-   y combinar por SRSS o CQC reproduce `Base Reactions` a 0.5 %.
-4. **La asimetría de arriostramiento acopla los modos de verdad**: ningún modo de esta torre es
-   puramente traslacional, y el modo 3 es más torsional que traslacional — el precio de dejar
-   una cara sin diagonal para que entre la correa.
+1. **La amplitud modal es un oscilador de 1 GDL**: $\text{Amplitud}_i = \Gamma_i \cdot S_d(T_i)$,
+   el desplazamiento espectral escalado por la participación. Es literalmente lo que SAP2000
+   calcula antes de combinar modos, verificable a 0.2 % contra `U1Amp`.
+2. **$\Gamma_i = L_i/M_i$** sale de *Modal Participation Factors*; el cociente es adimensional, así
+   que la normalización interna de SAP no importa.
+3. **El corte basal modo a modo** se reconstruye con `Ux`·$M_{tot}$·$S_a$ y se combina por SRSS o
+   CQC, reproduciendo `Base Reactions` a 0.5 %. **CQC importa cuando dos períodos están a menos de
+   ~10 %** uno del otro.
+4. **Tres torres, mismo todo salvo el arriostramiento**: la simétrica desacopla los modos y anula
+   la brecha SRSS-CQC; la asimétrica los mezcla pero los deja separados (brecha 0.6 %); quitar una
+   diagonal más junta dos períodos a 3.7 % ($\rho=0.72$) y hace que SRSS subestime la torsión y la
+   reacción de esquina en ~12 %.
+5. **El espectro borra el signo**: para diseñar fundaciones hay que recuperarlo con el patrón del
+   modo dominante de esa respuesta, obteniendo reacciones firmadas y concurrentes en vez de cuatro
+   magnitudes positivas que no pueden ocurrir a la vez.
