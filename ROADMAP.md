@@ -104,6 +104,12 @@ técnica de modelación con un pitfall real, validada contra teoría o un cheque
 en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni surrogate
 (eso es la serie C) — un modelo, bien elegido, alcanza.
 
+- [x] **D0 (origen del formato). Links Gap y Hook** (hecho 2026-07-07):
+  `gap-hook-sap2000-puntal-cumbre.mdx` — Link no lineal Gap/Hook en un puntal de
+  respaldo bajo la cumbre de un pórtico; elección Gap vs Hook por el signo, conexión
+  con dos links en paralelo (no lineal U1 + Linear rígido en corte), calibración de la
+  holgura en el modelo completo. Define el formato de la serie D. SVG + capturas de
+  diálogos en `public/gap-hook-sap2000/`.
 - [ ] **D1. Zonas rígidas en nudos (End Length Offset + Rigid Zone Factor)** — pórtico
   simple con nudo de ancho finito; comparar centerline puro, offset sin zona rígida y
   offset con zona rígida calibrada contra la rigidez teórica de luz neta. Pitfall:
@@ -158,19 +164,61 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
     esquinas, no el modo 1). Datos de las 3 torres corridos en vivo por MCP SAP2000,
     modelos guardados en `Temp/sap2000_scripts/d6_modelA|B|C.sdb`. Model A reproduce
     el post original exacto (SRSS 38.506 / CQC 38.726 tonf, U1Amp 0.028166).
+- [x] **D7. Section Cut en losas y muros: By Group vs By Quad y la convención de
+  signos** (hecho 2026-07-09): reescritura completa de un borrador flojo (números
+  inventados, un ejemplo físicamente al revés, placeholders). Distinción clave
+  verificada en vivo por MCP SAP2000: *By Group* suma **reacciones + cargas nodales**
+  del grupo (muro voladizo P=10 tonf, H=3 m → F1=10 cortante basal, M2=30 volcamiento,
+  exacto); *By Quadrilateral* suma **fuerzas internas** de los elementos que el plano
+  cruza (losa unidireccional q=1, L=6, B=4 → M=18.1 vs qL²B/8=18.0, 0.7 %). Tres
+  trampas decodificadas: (1) el momento se reporta respecto al **centroide del grupo**
+  por defecto (M=10 vs 30 sin fijar la Result Location); (2) By Group da la **reacción**,
+  no el esfuerzo interno (losa: 12 = reacción de apoyo, no el cortante); (3) el **signo
+  lo fija el orden de los 4 puntos** (regla mano derecha → eje 1; M2 −18.1 ↔ +18.1 al
+  invertir). Firmas OAPI (`SetByGroup`/`SetByQuad`/`SectionCutAnalysis`) obtenidas por
+  reverse-engineering — no están en la doc del MCP. Post
+  `section-cut-muros-losas-sap2000.mdx`, 4 SVG limpios en
+  `public/section-cut-muros-losas-sap2000/`, modelos `sc_wall.sdb` + `sc_slab2.sdb`.
+- [ ] **D8. Resortes de solo compresión: estabilidad y despegue de una zapata (SAP vs
+  cerrado)** — UNA zapata rígida bajo carga excéntrica sobre lecho de resortes de
+  **solo compresión** (no toman tracción → despegue parcial). Comparar el mapa de
+  presión y la extensión del despegue contra la **solución cerrada de contacto
+  parcial** (kern L/6; ancho de contacto 3(L/2−e); q_max = 2N/(B·c)) y el factor de
+  seguridad al vuelco con la reacción efectiva. Enseña la técnica: resortes de
+  compresión (o gap links) + caso **no lineal estático**, y el pitfall de resortes
+  lineales que "traccionan" el suelo. **Cierre teórico-SAP de la serie de Fundaciones**
+  en formato D (un modelo), reusando la teoría cerrada de `presiones-contacto-winkler`
+  y `prediseno-fundaciones-aisladas`. (Idea del usuario, 2026-07-09.)
+- [ ] **D9. Pandeo lineal (Linear Buckling) vs Euler y el factor K** — análisis de
+  pandeo lineal en SAP de una columna/pórtico → factor de carga crítica y modo de
+  pandeo, validado contra Euler P_cr = π²EI/(KL)² en casos de K conocido (biarticulada
+  K=1, voladizo K=2, pórtico con desplazamiento lateral). Valida el **factor de
+  longitud efectiva K** que usa AISC Cap. E (nota de acero ya publicada). Pitfall: el
+  pandeo lineal ignora imperfecciones e inelasticidad → cuándo NO confiar en P_cr
+  (columnas intermedias, gancho a la curva de columna del Cap. E).
+- [ ] **D10. Diafragma rígido vs flexible: cómo se reparte el corte a los muros** — un
+  nivel con muros de distinta rigidez y excentricidad en planta; el diafragma **rígido**
+  reparte por rigidez relativa + torsión, el **flexible** por área tributaria. Validar
+  SAP contra el reparto a mano (rigidez-proporcional con el término torsional).
+  Pitfall: dejar el default de diafragma equivocado reparte mal el corte (muy común).
+  Conecta con el acoplamiento torsional de D6 y con los muros. *Alternativa candidata:*
+  arriostramiento **tension-only** (X-bracing donde solo trabaja la diagonal
+  traccionada), gancho directo a los Links de D0.
 
-## Recomendación de orden (actualizada 2026-07-05)
+## Recomendación de orden (actualizada 2026-07-09)
 
-Hecho hasta aquí: A1–A3, B1–B2, C1 completo y C2 fases 0–4 (dos posts de la serie
-Sísmica publicados). Lo que sigue:
+Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;
+**C1 y C2 completos** (2 posts de la serie Sísmica); **serie D técnica** con Gap/Hook
+(D0), Respuesta espectral (D6) y Section Cut (D7). Lo que sigue:
 
-1. ~~C2 fase 5~~ ✅ (2026-07-05) — estimador de T₁ publicado.
-2. **A4** como intercalado liviano entre experimentos (mecánico y acotado).
-3. **C3 → C4** como cierre del arco: C3 estrena la modelación torsional/espectral
-   (referencia cerrada de lujo: el coeficiente de correlación de Der Kiureghian);
-   C4 reutiliza el modal de C2 (el piso blando ×1.6–1.9 es su gancho) y el espectral
-   de C3, conecta con el generador de espectros y termina en el surrogate de campo
-   (POD del perfil de deriva, el truco de u_z de fundaciones).
-4. **Densificación de C1** (fase 5 opcional: flexibilidad axial, grandes
-   desplazamientos, patrón uniforme) solo si C3/C4 levantan preguntas que la
-   necesiten; si no, se deja caer.
+1. **D8 (resortes de solo compresión)** — cierre teórico-SAP de la serie de Fundaciones:
+   un solo modelo, reusa toda la teoría cerrada ya publicada, alto valor didáctico y
+   bajo esfuerzo. Buen próximo paso (idea del usuario).
+2. **C3 → C4** como cierre del arco sísmico: C3 ya tiene su teaser cuantitativo desde D6
+   (ρ=0.72, gap SRSS-CQC ~12 %); C4 reutiliza el modal de C2 (piso blando ×1.6–1.9) y el
+   espectral de C3, conecta con el generador de espectros y termina en el surrogate de
+   campo (POD del perfil de deriva).
+3. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
+   de un modelo entre experimentos; **A4** (sub-tool SAP Scripts) cuando convenga algo
+   mecánico y acotado.
+4. **Densificación de C1** (fase 5 opcional) solo si C3/C4 la piden; si no, se deja caer.
