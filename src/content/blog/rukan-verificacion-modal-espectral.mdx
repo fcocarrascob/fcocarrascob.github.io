@@ -1,0 +1,158 @@
+---
+title: "Rukan (3): el salto a SAP2000 — modal espectral NCh2369 con CQC y SRSS a mano"
+description: "Tercer peldaño de verificación de Rukan y el decisivo: el punto donde el cálculo a mano deja de alcanzar y el patrón de referencia pasa a ser SAP2000. Se arma un pórtico plano de momento de dos pisos en ambos motores, con las mismas secciones —definidas en SAP con área de corte nula para igualar el Euler-Bernoulli de OpenSees— y el mismo espectro NCh2369 alimentado como una única tabla (T, Sa/g). Rukan corre el análisis modal, aplica el espectro modo a modo y combina las respuestas con CQC y SRSS implementados a mano, porque OpenSees no hace la respuesta espectral de un botón. El resultado: períodos, masas modales efectivas, corte basal combinado y desplazamiento de techo que reproducen SAP2000 con error inferior al 0,01%. Se explican además las dos trampas que hay que clavar para que la comparación sea legítima: el área de corte y el factor de escala g."
+pubDate: 2026-07-09
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "análisis modal espectral", "NCh2369", "CQC", "SRSS", "SAP2000", "verificación", "sísmica"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 3
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Donde el cálculo a mano se queda corto
+
+Los tres peldaños anteriores de [Rukan](https://github.com/fcocarrascob/rukan) —la columna en voladizo, el edificio de corte de 2 GDL y el [reticulado isostático](/blog/rukan-verificacion-estatica-reticulado/)— compartían un lujo: todos tenían solución cerrada. Podíamos escribir el período, la forma modal o la fuerza de barra en una servilleta y exigirle al motor que la reprodujera. Ese lujo se acaba aquí.
+
+Este post es el **peldaño decisivo** de la serie, porque da el salto que un motor de análisis tiene que dar para servir de verdad: el **análisis modal espectral** con el espectro **NCh2369**, el que efectivamente se usa para diseñar un galpón o un pórtico industrial en Chile. Dos cosas cambian de golpe:
+
+1. **El cálculo a mano ya no es tractable.** En cuanto las vigas dejan de ser infinitamente rígidas, los nudos giran, los modos se acoplan y los períodos dejan de tener fórmula. La respuesta correcta existe, pero no cabe en una servilleta.
+2. **Aparece maquinaria nueva y riesgosa.** OpenSees resuelve el problema de autovalores, pero **no** hace la respuesta espectral "de un botón": aplicar el espectro modo a modo y **combinar las respuestas modales (CQC / SRSS)** hay que programarlo y validarlo explícitamente. Es exactamente el tipo de código donde se esconden los errores.
+
+Cuando la teoría de servilleta se acaba, el patrón de referencia pasa a ser **SAP2000**. La pregunta de este post es si Rukan reproduce, número a número, lo que SAP2000 calcula para el mismo modelo.
+
+## El sistema
+
+Un pórtico plano de momento: un vano de 6 m, dos pisos de 4 m, columnas y vigas de acero. Masas sísmicas concentradas de 10 t en el primer piso y 8 t en el techo.
+
+<Figure
+  src="/rukan-verificacion-modal-espectral/fig-portico.svg"
+  alt="Pórtico plano de dos pisos y un vano, empotrado en la base, con masas de 10 t en el primer nivel y 8 t en el techo. A la derecha, las dos formas modales: el modo 1 (T=0,526 s, 87% de la masa) con ambos pisos moviéndose en el mismo sentido, y el modo 2 (T=0,157 s, 13% de la masa) con los pisos en sentido opuesto."
+  caption="El pórtico (izquierda) y sus dos modos laterales. El modo 1 barre los dos pisos en fase (formas +0,46 y +1,00); el modo 2 los enfrenta (+1,00 y −0,57). Entre ambos capturan el 100% de la masa sísmica."
+/>
+
+La elección importa. Este **no** es un edificio de corte como el del caso 2: allí las vigas eran infinitamente rígidas, los nudos no giraban y el período tenía fórmula (la razón áurea). Aquí las vigas son flexibles —un marco de momento real—, los nudos giran y la rigidez lateral depende del acople viga-columna. Justo esa flexibilidad es la que borra la solución de servilleta y obliga a apoyarse en SAP2000.
+
+<Note type="info" title="Igualar los dos motores exige cuidado">
+Para que la comparación sea legítima, ambos modelos tienen que ser *el mismo* modelo. Las secciones se definen con propiedades explícitas idénticas ($A$, $I$, $J$) en los dos motores, y —esto es clave— en SAP2000 se les asigna **área de corte nula**, lo que desactiva la deformación por corte y las vuelve vigas de Euler-Bernoulli, exactamente como el `elasticBeamColumn` de OpenSees. Volvemos sobre esto al final.
+</Note>
+
+## Paso 1 — Los modos
+
+Lo primero es el análisis modal: `engine.build(model)` arma el pórtico en OpenSees y `ops.eigen` extrae los modos. De cada modo nos interesan el **período** y la **masa modal efectiva** —cuánta de la masa total "participa" en ese modo—, que se calculan a partir del autovector $\phi_i$ y de las masas $m_k$:
+
+<Equation label="Ec. 1">
+$$
+\Gamma_i = \frac{\sum_k m_k\,\phi_{i,k}}{\sum_k m_k\,\phi_{i,k}^2},
+\qquad
+M^\ast_i = \frac{\left(\sum_k m_k\,\phi_{i,k}\right)^2}{\sum_k m_k\,\phi_{i,k}^2}
+$$
+</Equation>
+
+Contra SAP2000:
+
+| Modo | T Rukan [s] | T SAP2000 [s] | Error | M\*/M Rukan | M\*/M SAP |
+|---|---:|---:|---:|---:|---:|
+| 1 | 0,526046 | 0,526046 | **0,0000 %** | 86,95 % | 86,95 % |
+| 2 | 0,156774 | 0,156774 | **0,0002 %** | 13,05 % | 13,05 % |
+| 3 | 0,023279 | 0,023279 | 0,0015 % | 0,00 % | 0,00 % |
+| 4 | 0,020948 | 0,020948 | 0,0023 % | 0,00 % | 0,00 % |
+
+Los dos primeros modos —los de barrido lateral— se llevan el 100 % de la masa. Los modos 3 y 4 existen (involucran el estiramiento axial de las vigas) pero no mueven masa lateral: no contribuyen. El análisis modal del ensamblador 3D de Rukan reproduce SAP2000 hasta la sexta cifra.
+
+## Paso 2 — El espectro NCh2369
+
+El espectro de diseño es la demanda: para cada período, cuánta aceleración "siente" la estructura. Lo portamos a Python en [`rukan/spectra.py`](https://github.com/fcocarrascob/rukan) desde el mismo puerto que ya usa este sitio, y —para que la verificación sea limpia— generamos **una sola tabla** $(T, S_a/g)$ que se alimenta idéntica a los dos motores: a SAP2000 como función de espectro de usuario y a Rukan para la combinación modal. Si ambos ven la misma curva, cualquier diferencia en el resultado es del *análisis*, no de la *demanda*.
+
+<Figure
+  src="/rukan-verificacion-modal-espectral/fig-espectro.svg"
+  alt="Espectro de diseño NCh2369 para zona 2, suelo C, R=5 y amortiguamiento del 3%. La ordenada Sa/g parte en 0,36, sube a una meseta de alrededor de 0,31 entre 0,1 y 0,2 s y luego decae. Se marcan los dos períodos del pórtico: el modo 1 en T=0,526 s con Sa/g=0,257 (en la rama descendente) y el modo 2 en T=0,157 s con Sa/g=0,310 (cerca del máximo)."
+  caption="El espectro NCh2369 (zona 2, suelo C, R=5, ξ=3%) y los dos períodos del pórtico. El modo 2, más corto, cae cerca del pico del espectro; el modo 1, más largo, ya en la rama descendente. Cada modo lee su propia aceleración de esta curva."
+/>
+
+Sobre este espectro, cada modo lee su ordenada:
+
+- Modo 1 ($T_1 = 0{,}526$ s): $S_a/g = 0{,}257$
+- Modo 2 ($T_2 = 0{,}157$ s): $S_a/g = 0{,}310$
+
+## Paso 3 — Aplicar el espectro modo a modo
+
+El corte basal que aporta cada modo es su masa efectiva por su pseudo-aceleración espectral:
+
+<Equation label="Ec. 2">
+$$
+V_i = M^\ast_i \cdot A_i,
+\qquad A_i = \left(\frac{S_a}{g}\right)_{\!T_i} \cdot g
+$$
+</Equation>
+
+Con las masas efectivas del paso 1 ($M^\ast_1 = 0{,}8695 \times 18 = 15{,}65$ t, $M^\ast_2 = 2{,}35$ t) y las ordenadas del paso 2:
+
+| Modo | M\* [t] | Sa/g | V modal [kN] |
+|---|---:|---:|---:|
+| 1 | 15,65 | 0,257 | 39,49 |
+| 2 | 2,35 | 0,310 | 7,15 |
+
+El modo 1 domina el corte por lejos: tiene poca aceleración pero mucha masa. El modo 2 tiene más aceleración pero poca masa, y aporta un séptimo. Ahora hay que **sumarlos** — y ahí está el problema.
+
+## Paso 4 — Combinar: CQC y SRSS
+
+No se pueden sumar directamente: los máximos modales no ocurren en el mismo instante, así que sumarlos sería groseramente conservador. Las respuestas modales se **combinan estadísticamente**. La regla clásica es **SRSS** (raíz de la suma de cuadrados):
+
+<Equation label="Ec. 3">
+$$
+V_{\text{SRSS}} = \sqrt{\textstyle\sum_i V_i^2}
+$$
+</Equation>
+
+SRSS es válida cuando los modos están bien separados en frecuencia. Cuando hay modos cercanos —típico en 3D con torsión— subestima, y se usa **CQC** (combinación cuadrática completa), que agrega los términos cruzados pesados por un coeficiente de correlación $\rho_{ij}$:
+
+<Equation label="Ec. 4">
+$$
+V_{\text{CQC}} = \sqrt{\textstyle\sum_i \sum_j \rho_{ij}\, V_i\, V_j},
+\qquad
+\rho_{ij} = \frac{8\xi^2 (1+r)\, r^{3/2}}{(1-r^2)^2 + 4\xi^2 r (1+r)^2},
+\quad r = \frac{\omega_j}{\omega_i}
+$$
+</Equation>
+
+Ninguna de las dos viene con OpenSees: son unas veinte líneas de Python en [`rukan/modal.py`](https://github.com/fcocarrascob/rukan), y son justamente el código que hay que verificar. En este pórtico los modos están separados ($T_1/T_2 \approx 3{,}4$), así que la correlación cruzada es diminuta —$\rho_{12} \approx 0{,}0018$— y CQC apenas supera a SRSS. Ese "apenas" es medible, y tiene que coincidir con SAP:
+
+| Respuesta | Rukan | SAP2000 | Error |
+|---|---:|---:|---:|
+| Corte basal CQC | 40,1427 kN | 40,1427 kN | **0,0000 %** |
+| Corte basal SRSS | 40,1298 kN | 40,1298 kN | **0,0000 %** |
+| Despl. techo CQC | 22,0422 mm | 22,0422 mm | **0,0000 %** |
+| Despl. techo SRSS | 22,0430 mm | 22,0430 mm | **0,0000 %** |
+
+CQC entrega 40,143 kN y SRSS 40,130 kN: la diferencia es el término cruzado $2\rho_{12} V_1 V_2 \approx 1{,}0$ dentro de la raíz, apenas 0,03 %. Rukan reproduce **ambas** combinaciones —y hasta esa diferencia de tercer orden— a cuatro cifras. La maquinaria riesgosa quedó clavada.
+
+## Dos trampas que hay que clavar
+
+El error nulo no salió al primer intento. Dos detalles, invisibles si uno no los busca, escalan o desplazan el resultado sin dar ningún aviso:
+
+<Note type="warning" title="Trampa 1 — el área de corte">
+SAP2000, por defecto, incluye deformación por corte en sus secciones; el `elasticBeamColumn` de OpenSees es Euler-Bernoulli puro (sin corte). Con secciones normales, SAP queda un poco más flexible y los períodos no calzan. La solución: definir las secciones en SAP con **área de corte nula** (`As2 = As3 = 0`), lo que le dice que ignore la deformación por corte. Recién ahí los dos motores modelan la misma viga.
+</Note>
+
+<Note type="warning" title="Trampa 2 — el factor de escala g">
+El espectro NCh2369 es adimensional ($S_a/g$). Para convertirlo en aceleración, el caso de respuesta espectral de SAP necesita un factor de escala igual a **g = 9,80665** (en m/s², porque el modelo está en metros), no el valor por defecto de SAP en pulgadas. Un factor equivocado escala *todo* el resultado sin producir error. Rukan usa esa misma `g` para pasar de $S_a/g$ a pseudo-aceleración, así que la conversión es idéntica de los dos lados.
+</Note>
+
+## El veredicto
+
+Este era el peldaño que decidía si Rukan sirve para diseñar de verdad, y lo pasa sin margen: períodos, masas modales, corte basal por CQC y por SRSS, y desplazamiento de techo, todos con error **inferior al 0,01 %** contra SAP2000. Y lo pasa en la parte que más importaba —la respuesta espectral y la combinación modal—, que es código propio, no algo que OpenSees regale.
+
+<Note type="tip" title="Por qué este caso vale más que los tres anteriores">
+Los peldaños 1 a 3 verificaban a Rukan contra la teoría. Este lo verifica contra la herramienta que el ingeniero ya usa y en la que ya confía. Reproducir SAP2000 número a número en un análisis sísmico completo es la evidencia que un motor opensource necesita para que alguien se atreva a firmar con él.
+</Note>
+
+## Lo que llevamos
+
+Cuatro peldaños —voladizo, edificio de corte, reticulado y ahora el modal espectral NCh2369—, los dos últimos ya en el terreno donde SAP2000 es el árbitro. Quedan verificados el ensamblador 3D, el análisis modal, el espectro NCh2369 y la combinación CQC/SRSS propia.
+
+El próximo salto es a **tres dimensiones de verdad**: un galpón completo, con sismo en dos direcciones, combinación direccional **100/30** y el espectro vertical de la NCh2369. Ahí la combinación direccional se suma a la modal como segunda capa de maquinaria a validar. Pero la pieza que daba más miedo —la respuesta espectral modo a modo— ya está probada.
+
+Los scripts de esta serie viven en la carpeta `verification/` del [repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus propios `assert` contra SAP2000.
