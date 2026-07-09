@@ -1,0 +1,264 @@
+---
+title: "Rukan (1): cómo se valida un motor de análisis, de la columna en voladizo a la razón áurea"
+description: "Primer post de Rukan, un motor de análisis estructural opensource sobre OpenSeesPy pensado como alternativa a SAP2000 para el ingeniero independiente. La regla fundacional es que no se confía en lo que no se verifica: cada capacidad nace de un caso contrastado contra cálculo a mano o SAP2000. Aquí se validan los dos primeros peldaños del análisis modal —una columna en voladizo de 1 GDL y un edificio de corte de 2 GDL— y se muestra cómo el segundo entrega períodos, formas modales en razón áurea y masas modales efectivas que suman exactamente el 100%, todos con error nulo frente a la solución analítica."
+pubDate: 2026-07-08
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "análisis modal", "dinámica de estructuras", "verificación", "opensource"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 1
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La tesis: un motor de análisis vale lo que se puede verificar de él
+
+SAP2000 es caro. Para un ingeniero independiente que recién parte, o que lleva pocos proyectos
+al año, pagar la licencia para resolver estructuras simples y cotidianas —un galpón, un pórtico,
+una torre de equipos— no siempre se justifica. Pero las alternativas gratuitas asustan por una
+razón legítima: **nadie firma cálculos que no puede verificar**. Un motor de análisis no es
+confiable porque lo diga su autor; es confiable cuando reproduce, número a número, lo que ya
+sabemos calcular por otras vías.
+
+**Rukan** es un intento de construir esa alternativa: un motor de análisis estructural opensource
+que usa [OpenSeesPy](https://openseespydoc.readthedocs.io/) —el intérprete Python de OpenSees, el
+motor de elementos finitos de PEER/Berkeley— como núcleo de cálculo, con una capa de conveniencia
+encima pensada para la práctica chilena (NCh2369, NCh433, perfiles ICHA). El nombre viene de *ruka*,
+casa o estructura en mapudungun.
+
+Este es el primer post de una serie, y la serie **es** el método de desarrollo. La regla fundacional
+de Rukan es una sola:
+
+<Note type="warning" title="Regla no negociable">
+No se construye ninguna capacidad del motor sin su caso de verificación. Cada caso se contrasta
+contra el cálculo a mano (donde la teoría lo permite) o contra SAP2000 (donde ya no), y cada caso
+es, a la vez, un test de regresión automático y un post como este.
+</Note>
+
+Empezamos por lo más simple que aún sea real: dos problemas de dinámica de estructuras cuya
+solución exacta cabe en una servilleta. Si el motor no los reproduce, no merece que le confiemos
+un galpón.
+
+---
+
+## Un detalle que no es un detalle: las unidades
+
+OpenSees no gestiona unidades. Un número es un número; la consistencia entre fuerza, longitud, masa
+y tiempo es responsabilidad de quien arma el modelo, y es la fuente número uno de errores silenciosos
+en análisis dinámico —un módulo de elasticidad en las unidades equivocadas no da error, da un período
+mal—. Rukan lo resuelve poniendo [Pint](https://pint.readthedocs.io/) **en la frontera**: la entrada
+se escribe con unidades explícitas y se valida dimensionalmente; el núcleo numérico recibe *floats*
+en un sistema interno único y consistente (kN, m, s, y por lo tanto masa en toneladas):
+
+```python
+from rukan import units as u
+
+E  = 200 * u.ureg.GPa      # se escribe con unidades reales…
+Iz = 1.0e-4 * u.ureg.m**4
+L  = 3.0 * u.ureg.m
+
+E_  = u.stress(E)          # …y se cruza al sistema interno (kN/m²) en el borde
+Iz_ = u.inertia(Iz)        # m⁴
+L_  = u.length(L)          # m
+```
+
+Si algo entra sin unidades, falla ruidosamente en el borde en vez de contaminar el cálculo. Con eso
+resuelto, vamos a los dos casos.
+
+---
+
+## Caso 1 — la columna en voladizo (1 GDL)
+
+El sistema más simple de la dinámica: una columna vertical empotrada en la base, con una masa $m$
+concentrada en la punta.
+
+<Figure
+  src="/rukan-verificacion-modal-opensees/fig-caso1-voladizo.svg"
+  alt="Columna vertical empotrada en la base con una masa concentrada en la punta; se muestra la posición sin deformar en línea de segmentos y la forma deformada por el desplazamiento lateral u, con la longitud L, la rigidez EI y la rigidez lateral de punta k = 3EI/L³."
+  caption="El oscilador de 1 GDL: una columna empotrada-libre con masa en la punta. La rigidez lateral k = 3EI/L³ es la de una viga en voladizo cargada en el extremo."
+/>
+
+Una columna empotrada-libre cargada lateralmente en la punta tiene rigidez lateral gobernada por
+flexión:
+
+<Equation label="Ec. 1">
+$$
+k = \frac{3\,E\,I}{L^3}
+$$
+</Equation>
+
+y, como oscilador de un grado de libertad, un único período natural:
+
+<Equation label="Ec. 2">
+$$
+T = 2\pi\sqrt{\frac{m}{k}} = 2\pi\sqrt{\frac{m\,L^3}{3\,E\,I}}
+$$
+</Equation>
+
+En OpenSees el modelo son dos nodos y un elemento `elasticBeamColumn`. Como usa funciones de forma
+cúbicas —exactas para una viga prismática de Euler-Bernoulli— la rigidez de punta reproduce
+$3EI/L^3$ de forma exacta, no aproximada:
+
+```python
+ops.model("basic", "-ndm", 2, "-ndf", 3)
+ops.node(1, 0.0, 0.0);  ops.node(2, 0.0, L_)
+ops.fix(1, 1, 1, 1)                       # base empotrada
+ops.mass(2, m_, 0.0, 0.0)                 # masa lateral en la punta
+ops.geomTransf("Linear", 1)
+ops.element("elasticBeamColumn", 1, 1, 2, A_, E_, Iz_, 1)
+
+omega2 = ops.eigen("-fullGenLapack", 1)[0]
+T_opensees = 2*math.pi / math.sqrt(omega2)
+```
+
+Con $E = 200\ \text{GPa}$, $I = 1{,}0\times10^{-4}\ \text{m}^4$, $L = 3\ \text{m}$ y $m = 1000\ \text{kg}$:
+
+| Cantidad | A mano | OpenSees | Error |
+|---|---:|---:|---:|
+| $k$ [kN/m] | 2222,222 | — | — |
+| $T$ [s] | 0,133286 | 0,133286 | **0,000000 %** |
+
+El motor pasa el primer peldaño. Pero un solo GDL no ejercita lo interesante de un análisis modal
+—los modos, su acoplamiento, cuánta masa moviliza cada uno—. Para eso subimos a dos.
+
+---
+
+## Caso 2 — el edificio de corte (2 GDL) y la razón áurea
+
+Dos pisos, masa concentrada en cada uno, vigas infinitamente rígidas (los nudos no rotan). Es la
+idealización clásica de **edificio de corte**: cada columna trabaja doblemente empotrada, de modo
+que la rigidez lateral de un piso pasa a ser
+
+<Equation label="Ec. 3">
+$$
+k = \frac{12\,E\,I}{h^3}
+$$
+</Equation>
+
+Nótese el puente con el Caso 1: es la misma columna, la misma $EI$, la misma altura, pero con giro
+impedido en ambos extremos la rigidez es **cuatro veces** la del voladizo ($12EI/h^3$ contra
+$3EI/L^3$). Las condiciones de borde, no el material, mandan.
+
+Con pisos iguales ($k_1=k_2=k$, $m_1=m_2=m$), las matrices de rigidez y masa son
+
+<Equation label="Ec. 4">
+$$
+\mathbf{K} = k\begin{bmatrix} 2 & -1 \\ -1 & 1 \end{bmatrix},
+\qquad
+\mathbf{M} = m\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}
+$$
+</Equation>
+
+y el problema de valores propios $(\mathbf{K}-\omega^2\mathbf{M})\,\boldsymbol{\phi}=\mathbf{0}$ se
+resuelve a mano. Definiendo $\beta = \omega^2 m / k$:
+
+<Equation label="Ec. 5">
+$$
+\det\begin{bmatrix} 2-\beta & -1 \\ -1 & 1-\beta \end{bmatrix}
+= \beta^2 - 3\beta + 1 = 0
+\;\;\Rightarrow\;\;
+\beta = \frac{3 \mp \sqrt{5}}{2} = \{0{,}381966,\; 2{,}618034\}
+$$
+</Equation>
+
+Aquí aparece lo bonito. Las formas modales son $\boldsymbol{\phi} = (1,\; 2-\beta)$, es decir
+
+<Equation label="Ec. 6">
+$$
+\boldsymbol{\phi}^{(1)} = (1,\; 1{,}618034), \qquad
+\boldsymbol{\phi}^{(2)} = (1,\; -0{,}618034)
+$$
+</Equation>
+
+donde $1{,}618034 = (1+\sqrt5)/2 = \varphi$ es la **razón áurea**. No es una coincidencia decorativa:
+sale directo de que $\mathbf{K}$ tenga esa estructura tridiagonal. El modo 1 es el sismo empujando
+ambos pisos en fase (el techo se mueve $\varphi$ veces el piso 1); el modo 2 los mueve en oposición.
+
+Reproducir esto en OpenSees de forma **exacta** —no aproximada con vigas de rigidez alta— se logra
+fijando en cada piso el giro ($R_z$) y el desplazamiento vertical ($U_y$): ambos extremos de cada
+columna quedan sin rotación, que es precisamente la hipótesis de vigas rígidas.
+
+```python
+ops.node(1, 0,0);  ops.node(2, 0,h_);  ops.node(3, 0,2*h_)
+ops.fix(1, 1, 1, 1)          # base empotrada
+ops.fix(2, 0, 1, 1)          # piso 1: solo Ux libre (edificio de corte)
+ops.fix(3, 0, 1, 1)          # piso 2: solo Ux libre
+ops.mass(2, m_, 0, 0);  ops.mass(3, m_, 0, 0)
+ops.element("elasticBeamColumn", 1, 1, 2, A_, E_, Iz_, 1)
+ops.element("elasticBeamColumn", 2, 2, 3, A_, E_, Iz_, 1)
+
+vals = ops.eigen("-fullGenLapack", 2)     # [ω₁², ω₂²]
+phi2_1 = ops.nodeEigenvector(3, 1, 1) / ops.nodeEigenvector(2, 1, 1)  # forma modo 1
+```
+
+### El otro número que tiene que cuadrar: la masa modal efectiva
+
+Un período correcto no basta; un análisis espectral reparte el sismo entre los modos según cuánta
+masa moviliza cada uno. El **factor de participación** y la **masa modal efectiva** de cada modo son
+
+<Equation label="Ec. 7">
+$$
+\Gamma_n = \frac{\boldsymbol{\phi}_n^{\!\top}\mathbf{M}\,\boldsymbol{\iota}}
+{\boldsymbol{\phi}_n^{\!\top}\mathbf{M}\,\boldsymbol{\phi}_n},
+\qquad
+M_n^{*} = \frac{\left(\boldsymbol{\phi}_n^{\!\top}\mathbf{M}\,\boldsymbol{\iota}\right)^2}
+{\boldsymbol{\phi}_n^{\!\top}\mathbf{M}\,\boldsymbol{\phi}_n}
+$$
+</Equation>
+
+con $\boldsymbol{\iota}=(1,1)$ el vector de influencia del movimiento horizontal del suelo. La suma
+de las masas efectivas de **todos** los modos debe dar la masa total —es la prueba de oro de que no
+falta masa en ningún lado—.
+
+### Resultados
+
+Con $E = 200\ \text{GPa}$, $I = 1{,}0\times10^{-4}\ \text{m}^4$ (columna del orden de un HEB240),
+$h = 3\ \text{m}$ y $m = 10\ \text{t}$ por piso (rigidez de piso $k = 8888{,}9\ \text{kN/m}$):
+
+| | A mano | OpenSees | Error |
+|---|---:|---:|---:|
+| $T_1$ [s] | 0,340992 | 0,340992 | **0,000000 %** |
+| $T_2$ [s] | 0,130247 | 0,130247 | **0,000000 %** |
+| $\phi_2/\phi_1$ modo 1 | 1,618034 | 1,618034 | 0 |
+| $\phi_2/\phi_1$ modo 2 | −0,618034 | −0,618034 | 0 |
+| Masa efectiva modo 1 | 94,7214 % | 94,7214 % | 0 |
+| Masa efectiva modo 2 | 5,2786 % | 5,2786 % | 0 |
+
+<Figure
+  src="/rukan-verificacion-modal-opensees/fig-caso2-modos.svg"
+  alt="Tres paneles. Izquierda: el modelo de edificio de corte, un stick empotrado con dos masas iguales y rigidez de piso k = 12EI/h³. Centro: la forma del modo 1, ambos pisos desplazados en el mismo sentido con el techo 1,618 veces el piso 1 (razón áurea), período 0,341 s, moviliza 94,7 % de la masa. Derecha: el modo 2, los dos pisos en oposición con relación −0,618, período 0,130 s, moviliza 5,3 % de la masa."
+  caption="Los dos modos del edificio de corte. El modo 1 mueve ambos pisos en fase (techo = 1,618 × piso 1, la razón áurea) y se lleva el 94,7 % de la masa; el modo 2 los mueve en oposición y aporta el 5,3 % restante. Las dos masas modales efectivas suman el 100 %."
+/>
+
+El motor reproduce los dos períodos, las dos formas modales en razón áurea, y el reparto de masa
+—94,7 % en el primer modo, 5,3 % en el segundo— que **suma exactamente 100 %**. Cero discrepancia,
+como debe ser: el elemento es exacto para este problema, así que cualquier diferencia habría sido un
+error nuestro, no del método.
+
+<Note type="tip" title="Por qué el primer modo se lleva casi toda la masa">
+El 94,7 % del modo 1 es la razón por la que, para estructuras regulares, el primer modo domina el
+diseño sísmico. No es una regla empírica: cae directamente de la geometría de las formas modales.
+Aquí se ve nacer en el caso más pequeño posible.
+</Note>
+
+---
+
+## Lo que esto valida, y lo que viene
+
+Estos dos casos confirman lo básico pero indispensable: el *toolchain* completo —capa de unidades,
+armado del modelo, solver de valores propios— entrega dinámica correcta. Es el suelo firme sobre el
+que se puede construir el resto.
+
+El detalle importante es que aquí la teoría alcanzó: pudimos verificar contra fórmulas cerradas. En
+los próximos peldaños eso se acaba. El reticulado (Caso 3) todavía se comprueba a mano barra por
+barra, pero desde el **análisis modal espectral con el espectro NCh2369** —el que de verdad importa
+para un galpón— el cálculo manual deja de ser tratable, y el patrón de referencia pasa a ser
+SAP2000. Ahí es donde se juega la confianza real de Rukan, porque OpenSees no hace el análisis
+espectral "de un botón": la combinación modal (CQC/SRSS) hay que armarla y validarla. Ese será el
+caso que decida si esto sirve para diseñar de verdad.
+
+Los scripts de verificación de este post viven en la carpeta `verification/` del
+[repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus
+propios `assert`. Se corren solos; si algún día un cambio rompe un período, el peldaño se pone rojo
+antes de que llegue a un proyecto.

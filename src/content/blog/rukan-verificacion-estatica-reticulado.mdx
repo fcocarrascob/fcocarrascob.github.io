@@ -1,0 +1,128 @@
+---
+title: "Rukan (2): el reticulado isostático, o por qué las fuerzas no saben de acero"
+description: "Segundo peldaño de verificación de Rukan y el primero de estática: un reticulado triangular isostático resuelto por el método de los nudos y contrastado con OpenSees. El caso se apoya en una propiedad que lo vuelve un patrón de verificación ideal —en una estructura isostática las fuerzas de barra salen solo del equilibrio, sin depender de E ni de A— y se demuestra numéricamente multiplicando el área por diez: las fuerzas quedan idénticas y solo cambian los desplazamientos. Al cierre se muestra qué rompe esa propiedad: la hiperestaticidad, donde la rigidez vuelve a mandar."
+pubDate: 2026-07-09
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "reticulados", "análisis estático", "isostático", "método de los nudos", "verificación"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 2
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De la dinámica a la estática
+
+En el [primer post](/blog/rukan-verificacion-modal-opensees/) de esta serie [Rukan](https://github.com/fcocarrascob/rukan) —el motor de análisis estructural opensource sobre OpenSeesPy— verificamos el análisis modal contra soluciones cerradas de dinámica: una columna en voladizo y un edificio de corte, ambos con error nulo. Toca el primer caso de **estática**, y para eso el candidato natural es un reticulado.
+
+Pero no cualquier reticulado. Elegimos uno **isostático** a propósito, porque tiene una propiedad que lo convierte en un patrón de verificación casi perfecto:
+
+<Note type="tip" title="La propiedad que hace del reticulado isostático un test ideal">
+En una estructura isostática las fuerzas internas se determinan **solo con las ecuaciones de equilibrio**. No dependen del material ni de la sección: cambiar el acero por aluminio, o duplicar el área de las barras, no altera una sola de las fuerzas. La respuesta correcta es un número que no admite "ajuste" — o el motor lo da, o está mal.
+</Note>
+
+## El sistema
+
+Un reticulado triangular simétrico, tipo pendolón: apoyo fijo (rótula) en A, apoyo móvil (rodillo) en B, y una carga vertical $P = 100\ \text{kN}$ en el vértice C.
+
+<Figure
+  src="/rukan-verificacion-estatica-reticulado/fig-reticulado.svg"
+  alt="Reticulado triangular con base de 6 m y altura de 3 m. Apoyo de rótula en A y de rodillo en B, ambos en la base, con reacciones verticales de 50 kN cada uno. Carga vertical de 100 kN hacia abajo en el vértice C. Las dos diagonales trabajan en compresión con −70,7 kN cada una y el cordón inferior en tracción con +50,0 kN."
+  caption="El reticulado isostático: dos diagonales en compresión (−70,7 kN) y un cordón inferior en tracción (+50,0 kN), con reacciones de 50 kN en cada apoyo. Las diagonales forman 45° con la horizontal (b = 6 m, h = 3 m)."
+/>
+
+Antes de resolverlo conviene confirmar que es isostático. La condición para una armadura plana es que el número de barras $m$ más el de reacciones $r$ iguale al doble del número de nudos $j$:
+
+<Equation label="Ec. 1">
+$$
+m + r = 2j \;\;\Rightarrow\;\; 3 + 3 = 2 \times 3 = 6 \;\checkmark
+$$
+</Equation>
+
+Tres barras, tres reacciones (dos en la rótula, una en el rodillo), tres nudos. Isostático: podemos resolverlo con equilibrio puro.
+
+## A mano: método de los nudos
+
+Por simetría, cada apoyo toma la mitad de la carga: $R_A = R_B = P/2 = 50\ \text{kN}$ hacia arriba. Las diagonales forman un ángulo $\theta$ con la horizontal tal que $\tan\theta = h/(b/2) = 3/3 = 1$, es decir $\theta = 45°$.
+
+Planteamos el equilibrio del **nudo C**, con la convención de tracción positiva (la fuerza de una barra "tira" del nudo hacia la barra). Por simetría $N_{AC} = N_{CB}$, y solo hace falta el equilibrio vertical:
+
+<Equation label="Ec. 2">
+$$
+\sum F_y = 0:\quad 2\,N_{AC}\sin\theta - P = 0
+\;\;\Rightarrow\;\;
+N_{AC} = \frac{P}{2\sin\theta} = \frac{100}{2\sin 45°} = -70{,}711\ \text{kN}
+$$
+</Equation>
+
+El signo negativo dice que la barra empuja al nudo: está en **compresión**, como corresponde a una diagonal que sostiene una carga desde abajo. Ahora el **nudo A**, con su reacción de 50 kN:
+
+<Equation label="Ec. 3">
+$$
+\sum F_x = 0:\quad N_{AC}\cos\theta + N_{AB} = 0
+\;\;\Rightarrow\;\;
+N_{AB} = -N_{AC}\cos\theta = 70{,}711 \times \cos 45° = +50{,}0\ \text{kN}
+$$
+</Equation>
+
+El cordón inferior queda en **tracción**: hace de tensor, evitando que las diagonales abran el apoyo. Estos son los tres números que el motor tiene que reproducir.
+
+## En OpenSees
+
+El elemento `Truss` de OpenSees es una barra biarticulada: solo carga axial, exactamente el modelo de una armadura. El script arma la geometría, aplica la carga y corre un análisis estático lineal:
+
+```python
+ops.model("basic", "-ndm", 2, "-ndf", 2)      # 2D, 2 GDL por nodo (sin giro)
+ops.node(1, 0.0, 0.0);  ops.node(2, b_, 0.0);  ops.node(3, b_/2, h_)
+ops.fix(1, 1, 1)                                # A: rótula
+ops.fix(2, 0, 1)                                # B: rodillo (solo vertical)
+
+ops.uniaxialMaterial("Elastic", 1, E_)
+ops.element("Truss", 1, 1, 3, A_, 1)           # A-C
+ops.element("Truss", 2, 3, 2, A_, 1)           # C-B
+ops.element("Truss", 3, 1, 2, A_, 1)           # A-B
+
+ops.timeSeries("Linear", 1);  ops.pattern("Plain", 1, 1)
+ops.load(3, 0.0, -P_)                           # carga vertical en el vértice
+
+ops.system("BandSPD");  ops.numberer("RCM");  ops.constraints("Plain")
+ops.integrator("LoadControl", 1.0);  ops.algorithm("Linear");  ops.analysis("Static")
+ops.analyze(1)
+
+N = [ops.eleResponse(t, "axialForce")[0] for t in (1, 2, 3)]   # + = tracción
+```
+
+Y el resultado, contra el cálculo a mano:
+
+| Barra | A mano | OpenSees | Error |
+|---|---:|---:|---:|
+| A-C (diagonal) | −70,7107 kN (C) | −70,7107 | **0,000000 %** |
+| C-B (diagonal) | −70,7107 kN (C) | −70,7107 | **0,000000 %** |
+| A-B (cordón inferior) | +50,0000 kN (T) | +50,0000 | **0,000000 %** |
+| Reacciones $R_A$, $R_B$ | 50 / 50 kN | 50 / 50 | ✓ |
+
+Tercer peldaño superado, y también con error nulo.
+
+## La prueba que solo un computador hace vívida
+
+Hasta acá todo confirma la teoría, pero hay un experimento que vuelve tangible la propiedad del recuadro de arriba —y que a mano es tedioso pero en el motor es gratis—: **multiplicar el área de todas las barras por diez** y volver a correr.
+
+| Área de barra | $N$ diagonales | $N$ cordón | Desc. vertical del vértice |
+|---|---:|---:|---:|
+| 20 cm² | −70,7107 kN | +50,0000 kN | −1,436 mm |
+| 200 cm² (×10) | −70,7107 kN | +50,0000 kN | −0,144 mm |
+
+Las fuerzas son **idénticas** hasta el último decimal; solo el desplazamiento cambió, y exactamente en factor diez. Es la propiedad isostática hecha número: la rigidez gobierna cuánto se **mueve** la estructura, no cuánto se **carga** cada barra. Por eso este caso es un patrón tan limpio —la respuesta correcta no depende de ningún parámetro que podamos haber tecleado mal—.
+
+<Note type="warning" title="Qué rompe esta propiedad: la hiperestaticidad">
+Todo esto vale mientras la estructura sea isostática. Si agregáramos una cuarta barra —digamos un pendolón vertical de C a un apoyo intermedio—, la armadura se vuelve **hiperestática**: el equilibrio ya no basta y las fuerzas pasan a depender de las rigideces relativas de las barras. Ahí, cambiar un área **sí** redistribuye las fuerzas, y el cálculo a mano exige compatibilidad (método de las fuerzas). Es justo donde un motor como OpenSees deja de ser una comodidad y empieza a ser necesario — y será un caso propio más adelante.
+</Note>
+
+## Lo que llevamos
+
+Con tres peldaños —voladizo, edificio de corte y reticulado— quedan verificados el análisis modal, el estático, el elemento de barra y la extracción de fuerzas, todos contra soluciones cerradas y con error nulo. Es el máximo que la teoría de servilleta nos permite comprobar.
+
+El próximo peldaño abandona ese lujo: el **análisis modal espectral con el espectro NCh2369**, el que de verdad se usa para diseñar un galpón. Ahí el cálculo a mano ya no alcanza, la combinación modal (CQC/SRSS) hay que armarla explícitamente, y el patrón de referencia pasa a ser SAP2000. Es la prueba que decide si Rukan sirve para diseñar de verdad.
+
+Los scripts de esta serie viven en la carpeta `verification/` del [repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus propios `assert`.
