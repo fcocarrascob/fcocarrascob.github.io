@@ -1,0 +1,272 @@
+---
+title: "El factor R (1): la anatomía de la reducción, o qué firma uno al dividir el espectro"
+description: "Apertura de la serie sobre el factor de reducción de respuesta: la curva pushover que ordena todo (Ve, Vy, Vd), la descomposición R = Rμ·Ω₀, la hipótesis de Newmark (Cd = R) con sus reglas de igual desplazamiento e igual energía, y por qué un análisis espectral reducido es 100 % lineal — el pacto inelástico vive fuera del software."
+pubDate: 2026-07-09
+tags: ["factor R", "NCh2369", "ductilidad", "sobrerresistencia", "pushover", "diseño por capacidad", "sísmica"]
+norm: "NCh2369"
+section: "Sísmica"
+series: "El factor R"
+seriesPart: 1
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## El pacto
+
+Un sismo de diseño chileno, leído en un espectro elástico, le pide a una estructura
+industrial rígida aceleraciones del orden del peso propio — cortes basales que ningún
+presupuesto convencional resiste manteniendo todo el acero elástico. Los códigos sísmicos
+modernos resuelven la tensión con un pacto explícito: se acepta **daño controlado** en
+lugares elegidos de la estructura, y a cambio la solicitación de diseño baja de la demanda
+elástica $V_e$ a $V_d = V_e/R$, con $R$ el **factor de reducción de la respuesta**.
+
+El problema es que el pacto se firma en un solo gesto —dividir el espectro— y todo lo
+que ese gesto implica queda fuera del análisis. De ahí viene un censo de confusiones que
+cualquiera reconoce:
+
+- *"R es un factor de seguridad al revés"* — no: es el producto de **dos fenómenos
+  físicos distintos**, uno del material y otro del sistema, que se miden en experimentos
+  distintos.
+- *"SAP2000 ya sabe de R"* — no: el análisis espectral con espectro reducido es
+  **100 % lineal**. El modelo nunca plastifica nada.
+- *"Las deformaciones del análisis son las reales"* — no: son $R$ veces menores que las
+  que la estructura va a recorrer, y hay que amplificarlas de vuelta.
+- *"El Ω₀ = 0.7R de la norma es un número arbitrario"* — no: es una estimación de la
+  sobrerresistencia real del sistema, y se puede *medir* con un pushover.
+
+Esta serie desarma esas confusiones al modo de la casa: teoría contra SAP2000. Esta
+primera nota pone los conceptos sobre una sola figura, siguiendo la presentación del
+capítulo 7 de *Proyectar en Acero: práctica chilena*; las dos siguientes miden cada
+mitad de $R$ con un experimento numérico; la última convierte lo medido en decisiones
+de diseño.
+
+---
+
+## La curva que ordena todo: tres niveles de corte basal
+
+Todo el vocabulario de $R$ vive en una sola curva: la respuesta de un sistema resistente
+lateral a una carga monotónica creciente (un **pushover**), corte basal contra
+desplazamiento de techo.
+
+<Figure
+  src="/factor-r/fig-curva-respuesta.svg"
+  alt="Curva de corte basal contra desplazamiento de techo: recta elástica hasta el punto A en Ve, curva real en rojo que se separa en el punto B (Vd), alcanza su máximo en Vy y degrada hasta δu; cotas verticales Rμ entre Ve y Vy, Ω₀ entre Vy y Vd, R entre Ve y Vd, y cota horizontal Cd entre δd y δu"
+  caption="La curva de respuesta lateral y sus tres niveles de corte. El punto A es lo que el sismo pediría a un sistema elástico; el punto B es el nivel al que se diseña; Vy es lo que el sistema realmente desarrolla. R = Rμ·Ω₀ es la distancia completa entre A y B."
+/>
+
+La recta es el sistema idealmente elástico: llevado por el sismo de diseño llegaría al
+punto **A**, con corte $V_e$ y desplazamiento $\delta_e$. La curva roja es el sistema
+real: comparte la rigidez inicial, pero en algún momento aparece el primer evento no
+lineal relevante —una rótula plástica en un marco de momento, el pandeo de una diagonal
+en uno arriostrado—, la curva se ablanda, alcanza su capacidad máxima $V_y$, y degrada
+hasta la deformación última $\delta_u$.
+
+El punto **B** es distinto de los otros dos: no es un evento físico sino una decisión.
+Es el nivel de solicitación al que los códigos permiten diseñar, $V_d = V_e/R$. Si la
+resistencia del sistema se apegara *estrictamente* a ese nivel —sin factores de
+seguridad, con las propiedades esperadas del material—, el primer evento no lineal
+ocurriría justo ahí. En la práctica nunca es así: los perfiles disponibles vienen en
+tamaños discretos, muchas verificaciones que controlan no son de resistencia (esbelteces
+límite, derivas), y el sistema redistribuye esfuerzos desde las zonas que plastifican
+hacia las que no. Todo eso separa $V_y$ de $V_d$, y esa separación tiene nombre:
+
+<Equation label="Ec. 1">
+$$\Omega_0 = \frac{V_y}{V_d}$$
+</Equation>
+
+es la **sobrerresistencia**: cuánta capacidad desarrolla el sistema por encima de lo que
+se le pidió. Y la distancia restante, entre lo que el sismo pediría elásticamente y lo
+que el sistema puede desarrollar, la cubre la ductilidad:
+
+<Equation label="Ec. 2">
+$$R_\mu = \frac{V_e}{V_y}$$
+</Equation>
+
+es la **reducción por ductilidad**: la fracción de la demanda elástica que el sistema
+*no necesita resistir* porque la absorbe deformándose plásticamente. Multiplicando:
+
+<Equation label="Ec. 3">
+$$R = R_\mu \cdot \Omega_0$$
+</Equation>
+
+<Equation label="Ec. 4">
+$$V_d = \frac{V_e}{R}$$
+</Equation>
+
+<Note type="info" title="Por qué importa la descomposición">
+Las dos mitades de la Ec. 3 viven en lugares distintos del edificio. $R_\mu$ vive en el
+comportamiento histerético: existe incluso en un oscilador de un grado de libertad, y por
+eso se puede medir en uno (Post 2). $\Omega_0$ vive en el sistema completo: en el
+inventario de perfiles, en qué verificación mandó en cada barra, en la redundancia — y
+por eso solo se puede medir empujando el sistema completo (Post 3). Tratar a $R$ como un
+solo número borra esa distinción, que es exactamente donde empiezan los malentendidos.
+</Note>
+
+Los $R$ tabulados en las normas no salen de evaluar la Ec. 3 proyecto a proyecto: son
+valores de consenso por tipología, calibrados con desempeño observado. Pero la Ec. 3 es
+el esqueleto conceptual que los sostiene, y lo que esta serie va a hacer es evaluarla
+—las dos mitades por separado— en modelos donde todo se puede ver.
+
+---
+
+## Lo que el análisis espectral hace con R — y lo que no
+
+Cuando uno corre un análisis modal espectral con el espectro NCh2369 —que ya viene
+dividido por $R$—, SAP2000 hace exactamente lo que [hace con cualquier
+espectro](/blog/respuesta-espectral-modal-torre-traspaso): desarma la estructura en
+modos, lee $S_a(T_i)$ para cada uno y combina respuestas **lineales**. En ninguna parte
+de ese cálculo hay una rótula, una diagonal pandeada ni un ciclo histerético. El modelo
+no sabe que el espectro fue reducido; solo ve fuerzas más chicas.
+
+Las dos consecuencias prácticas:
+
+1. **Las fuerzas del análisis son un piso contable, no una predicción.** El análisis
+   entrega esfuerzos al nivel $V_d$. Durante el sismo real, los esfuerzos treparán hasta
+   donde la estructura *pueda* desarrollarlos — hasta $V_y = \Omega_0 V_d$, no hasta
+   $V_d$. Para dimensionar los elementos dúctiles eso está bien (para eso es el nivel de
+   diseño); para dimensionar lo que **no** debe fallar antes que ellos —conexiones,
+   columnas, anclajes— está peligrosamente mal, y de ahí nace el diseño por capacidad
+   (Post 4).
+2. **Los desplazamientos del análisis son ficticiamente chicos.** Salen de un análisis
+   lineal con fuerzas divididas por $R$, así que son $\approx \delta_e/R$. La estructura
+   real no va a recorrer eso: va a recorrer del orden de $\delta_e$. La sección siguiente
+   es sobre cómo se recupera el desplazamiento verdadero.
+
+<Note type="warning" title="El pacto vive fuera del software">
+Ninguna casilla del modelo espectral registra que se aceptó daño. La incursión
+inelástica, su ubicación (los fusibles) y su magnitud (la demanda de ductilidad) son
+compromisos que el ingeniero administra fuera del análisis: eligiendo qué elementos
+plastifican, detallándolos para que resistan los ciclos, y protegiendo al resto con
+resistencia extra. Dividir el espectro es la parte fácil del pacto; el resto de la
+serie es sobre la parte difícil.
+</Note>
+
+---
+
+## La otra mitad del pacto: la deformación no se reduce
+
+Alcanzada la capacidad máxima, el sistema degrada hasta su **deformación última**
+$\delta_u$. La pregunta operativa es cómo estimarla desde lo único que el análisis
+reducido entrega, $\delta_d$. La respuesta de los códigos es el **coeficiente de
+deformación** $C_d$:
+
+<Equation label="Ec. 5">
+$$\delta_u = \delta_d \cdot C_d$$
+</Equation>
+
+y la respuesta específica de la norma industrial chilena es la **hipótesis de Newmark**:
+$C_d = R$, es decir
+
+<Equation label="Ec. 6">
+$$\delta_u = \delta_d \cdot R$$
+</Equation>
+
+Vale la pena ver de dónde sale, porque su derivación marca su límite de validez — el
+mismo patrón de la [nota de P-Delta](/blog/pdelta-cuando-confiar-amplificador).
+
+<Figure
+  src="/factor-r/fig-newmark.svg"
+  alt="Dos diagramas fuerza-desplazamiento: a la izquierda, regla de igual desplazamiento donde el sistema elástico y el elastoplástico terminan en el mismo δ y Rμ = μ; a la derecha, regla de igual energía en períodos cortos donde el elastoplástico debe viajar más allá de δe para igualar el área, con Rμ = raíz de 2μ−1"
+  caption="Las dos reglas de Newmark. Izquierda: en períodos moderados y largos, recortar la fuerza no cambia el desplazamiento final (δu ≈ δe) y Rμ = μ. Derecha: en períodos cortos manda el balance de energía, el sistema viaja más lejos, y el mismo Rμ exige μ = (Rμ²+1)/2."
+/>
+
+**Igual desplazamiento.** La observación empírica de Newmark: para períodos moderados y
+largos, un oscilador elastoplástico y su gemelo elástico, sometidos al mismo registro,
+terminan desplazándose *prácticamente lo mismo*: $\delta_u \approx \delta_e$. Recortar
+la resistencia no cambia cuánto viaja el sistema — solo cambia cuánta fuerza desarrolla
+en el viaje. Si además se define la **ductilidad** como la capacidad de deformación
+inelástica del sistema,
+
+<Equation label="Ec. 7">
+$$\mu = \frac{\delta_u}{\delta_y}$$
+</Equation>
+
+la regla se traduce en $R_\mu = \mu$: cada unidad de reducción se paga con una unidad de
+demanda de ductilidad. Y encadenando: si $\delta_u \approx \delta_e$ y
+$\delta_e \approx R\,\delta_d$ (misma rigidez, $R$ veces la fuerza), se recupera la
+Ec. 6. La hipótesis de Newmark *es* la regla de igual desplazamiento escrita como
+coeficiente.
+
+**Igual energía.** En períodos cortos la regla anterior falla del lado inseguro: el
+oscilador rígido no tiene "tiempo espectral" para que la fluencia lo aísle de la demanda,
+y lo que se conserva no es el desplazamiento sino, aproximadamente, la energía — el área
+bajo la curva fuerza-desplazamiento. Igualando áreas:
+
+<Equation label="Ec. 8">
+$$R_\mu = \sqrt{2\mu - 1} \quad\Longleftrightarrow\quad \mu = \frac{R_\mu^2 + 1}{2}$$
+</Equation>
+
+El mismo $R_\mu = 4$ que en un período largo exige $\mu = 4$, en uno corto exige
+$\mu = 8{,}5$. La lección de diseño es directa: **elegir $R$ no reduce la deformación
+ni el daño — reduce la fuerza, y le transfiere la diferencia a los fusibles como demanda
+de ductilidad**, con un tipo de cambio que empeora mientras más rígida la estructura.
+
+Las consecuencias de la Ec. 6 aparecen en cadena en cualquier proyecto: las derivas se
+verifican con $\delta_d \cdot R$, no con $\delta_d$; las separaciones entre estructuras
+se dimensionan con la deformación amplificada; y el coeficiente de estabilidad de
+P-Delta se evalúa con las derivas verdaderas — no con las del análisis reducido.
+
+---
+
+## La letra chica: menor solicitación, más detallamiento
+
+Queda la parte del pacto que no aparece en ninguna ecuación de esta nota pero gobierna
+el detallamiento completo del proyecto. Si el límite de deformación del sistema es fijo,
+entre mayor el $R$ elegido, mayor la incursión inelástica requerida — y esa incursión no
+se reparte democráticamente: se concentra en los **elementos fusibles**, los que el
+diseñador eligió para plastificar de manera predecible y controlada (las diagonales de
+un marco arriostrado, las rótulas de viga de un marco de momento).
+
+De ahí la relación inversa que el libro enuncia y que ordena todo el capítulo de diseño
+en acero: **a menor solicitación de diseño, más riguroso el detallamiento**. Un fusible
+que va a sostener ciclos estables de plastificación necesita compacidad local, esbeltez
+global acotada y materialidad controlada; y el resto de la estructura —conexiones,
+columnas, vigas puntales— debe resistir **lo que el fusible es capaz de entregar**, que
+no es la fuerza del análisis sino su *capacidad esperada* (en tracción,
+$T_{ye} = R_y F_y A_g$; los valores para compresión, flexión y capacidad residual quedan
+para el Post 4).
+
+Cuando estimar ese equilibrio plástico elemento a elemento es impracticable, la norma
+ofrece el atajo que cierra el círculo de esta nota: amplificar las fuerzas sísmicas de
+diseño por $\Omega_0 = 0{,}7R$ — una estimación de la sobrerresistencia característica,
+que en condiciones convencionales ronda entre $2{,}0$ y $3{,}5$. No es un número mágico:
+es una apuesta sobre dónde queda $V_y$ respecto de $V_d$ en la figura del comienzo. Y
+las apuestas se pueden auditar.
+
+---
+
+## Las dos preguntas medibles
+
+Todo lo anterior es teoría contable sobre una curva dibujada a mano alzada. Lo que la
+distingue de una convención arbitraria es que sus dos piezas centrales son **hipótesis
+físicas verificables**, y las dos se pueden poner a prueba en SAP2000 con experimentos
+independientes — igual que la descomposición misma:
+
+<Figure
+  src="/factor-r/fig-mapa-serie.svg"
+  alt="Diagrama de la serie: la ecuación R = Rμ·Ω₀ con una flecha hacia una caja azul (Rμ, se mide con un oscilador de 1 GDL elastoplástico en tiempo-historia no lineal, Post 2) y otra hacia una caja verde (Ω₀, se mide con un pushover del marco diseñado con NCh2369, Post 3); abajo, el Post 4 usa ambas para fusibles y capacidad esperada"
+  caption="La estructura de la serie es la Ec. 3: cada factor se mide en el experimento donde vive."
+/>
+
+- **¿$R_\mu$ vale lo que promete Newmark?** Un oscilador de un grado de libertad
+  elastoplástico bajo un registro chileno: se mide $V_e$ y $\delta_e$ con tiempo-historia
+  lineal, se recorta la fluencia a $V_e/R$ para varios $R$, y se mide cuánto viaja y
+  cuánta ductilidad consume cada versión. Si la regla de igual desplazamiento es real,
+  debe *emerger* del análisis — y en períodos cortos debe romperse exactamente como la
+  Ec. 8 anticipa.
+- **¿Cuánto $\Omega_0$ tiene de verdad una estructura diseñada a norma?** Un marco
+  arriostrado chevron dimensionado con el espectro NCh2369 reducido, empujado con un
+  pushover no lineal hasta dibujar la curva completa. Sobre esa curva se marcan $V_d$,
+  $V_y$ y $V_e$ — la figura de esta nota, pero con datos — y se compara el $\Omega_0$
+  medido contra el $0{,}7R$ de la norma, descomponiendo de dónde salió cada porción de
+  sobrerresistencia.
+
+Con las dos mitades medidas, el Post 4 cierra con la parte de diseño: cuánta fuerza pasa
+realmente por la diagonal al plastificar (contra $R_y F_y A_g$), qué desbalance recibe la
+viga puntal del chevron, y cuándo conviene el enfoque de capacidad esperada versus el
+atajo $0{,}7R$ — con el $\Omega_0$ medido en la mano para juzgarlo.
+
+El espectro dividido es un pagaré: promete que alguien, más adelante, va a poner la
+ductilidad. La serie es sobre verificar que las cuentas del pagaré cuadran.

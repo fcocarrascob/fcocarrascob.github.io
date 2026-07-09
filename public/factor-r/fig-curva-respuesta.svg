@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 560" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="mblue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+    <marker id="mgreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f7d32"/>
+    </marker>
+    <marker id="mdark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="morange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e67e22"/>
+    </marker>
+  </defs>
+  <rect width="940" height="560" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Respuesta de un sistema a carga lateral creciente: los tres niveles de corte basal</text>
+
+  <!-- axes -->
+  <line x1="110" y1="470" x2="890" y2="470" stroke="#333" stroke-width="1.5" marker-end="url(#ea)"/>
+  <line x1="110" y1="470" x2="110" y2="70" stroke="#333" stroke-width="1.5" marker-end="url(#ea)"/>
+  <text x="880" y="494" font-size="13" fill="#333">δ_techo</text>
+  <text x="110" y="58" font-size="13" fill="#333" text-anchor="middle">V_basal</text>
+
+  <!-- horizontal dashed levels -->
+  <line x1="110" y1="130" x2="845" y2="130" stroke="#999" stroke-width="1" stroke-dasharray="5 4"/>
+  <line x1="110" y1="246" x2="845" y2="246" stroke="#999" stroke-width="1" stroke-dasharray="5 4"/>
+  <line x1="110" y1="365" x2="845" y2="365" stroke="#999" stroke-width="1" stroke-dasharray="5 4"/>
+  <text x="102" y="134" font-size="13" fill="#333" text-anchor="end" font-weight="bold">V_e</text>
+  <text x="102" y="250" font-size="13" fill="#333" text-anchor="end" font-weight="bold">V_y</text>
+  <text x="102" y="369" font-size="13" fill="#333" text-anchor="end" font-weight="bold">V_d</text>
+
+  <!-- vertical dashed guides -->
+  <line x1="255" y1="365" x2="255" y2="470" stroke="#999" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="420" y1="246" x2="420" y2="470" stroke="#999" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="580" y1="130" x2="580" y2="470" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="790" y1="282" x2="790" y2="470" stroke="#999" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="255" y="490" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">δ_d</text>
+  <text x="420" y="490" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">δ_y</text>
+  <text x="580" y="490" font-size="12.5" fill="#999" text-anchor="middle">δ_e</text>
+  <text x="790" y="490" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">δ_u</text>
+
+  <!-- elastic line -->
+  <line x1="110" y1="470" x2="580" y2="130" stroke="#333" stroke-width="1.6"/>
+  <text x="486" y="188" font-size="12" fill="#555" text-anchor="end">sistema elástico</text>
+
+  <!-- real (pushover) curve -->
+  <path d="M110,470 L255,365 C 310,325 360,285 430,262 C 490,247 550,244 610,248 C 670,252 730,264 790,282"
+        fill="none" stroke="#b02a1a" stroke-width="3"/>
+  <text x="520" y="224" font-size="12" fill="#b02a1a" font-weight="bold" text-anchor="middle">respuesta real (pushover)</text>
+
+  <!-- points A and B -->
+  <circle cx="580" cy="130" r="4.5" fill="#333"/>
+  <text x="572" y="115" font-size="12.5" fill="#333" text-anchor="end" font-weight="bold">A: respuesta elástica esperada</text>
+  <circle cx="255" cy="365" r="4.5" fill="#333"/>
+  <text x="243" y="352" font-size="12.5" fill="#333" text-anchor="end" font-weight="bold">B: nivel de diseño</text>
+
+  <!-- vertical dimension arrows: R_mu, Omega_0, R -->
+  <line x1="805" y1="136" x2="805" y2="240" stroke="#1a63a8" stroke-width="1.6" marker-start="url(#mblue)" marker-end="url(#mblue)"/>
+  <text x="815" y="192" font-size="13.5" fill="#1a63a8" font-weight="bold">R_μ</text>
+  <line x1="805" y1="252" x2="805" y2="359" stroke="#2f7d32" stroke-width="1.6" marker-start="url(#mgreen)" marker-end="url(#mgreen)"/>
+  <text x="815" y="310" font-size="13.5" fill="#2f7d32" font-weight="bold">Ω₀</text>
+  <line x1="858" y1="136" x2="858" y2="359" stroke="#333" stroke-width="1.8" marker-start="url(#mdark)" marker-end="url(#mdark)"/>
+  <text x="868" y="252" font-size="14.5" fill="#333" font-weight="bold">R</text>
+
+  <!-- Cd horizontal dimension -->
+  <line x1="255" y1="508" x2="790" y2="508" stroke="#e67e22" stroke-width="1.6" marker-start="url(#morange)" marker-end="url(#morange)"/>
+  <text x="522" y="527" font-size="13" fill="#e67e22" text-anchor="middle" font-weight="bold">C_d = δ_u / δ_d</text>
+
+  <!-- takeaway -->
+  <text x="470" y="552" font-size="12.5" text-anchor="middle" fill="#333">La distancia entre A y B se baja en dos tramos: <tspan fill="#1a63a8" font-weight="bold">R_μ la paga la ductilidad</tspan>, <tspan fill="#2f7d32" font-weight="bold">Ω₀ la paga el sistema</tspan>. R = R_μ · Ω₀ es la escalera completa.</text>
+</svg>
