@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" font-family="Segoe UI, Arial, sans-serif">
+<rect width="560" height="300" fill="#ffffff"/>
+<defs><marker id="agp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/></marker></defs>
+<text x="280" y="24" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Galpon 3D - flujo de esfuerzos y deriva (Rukan = SAP2000)</text>
+<text x="135" y="58" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">sismo X</text>
+<line x1="80.0" y1="150.0" x2="80.0" y2="87.5" stroke="#555" stroke-width="2.2"/>
+<line x1="188.3" y1="212.5" x2="188.3" y2="150.0" stroke="#555" stroke-width="2.2"/>
+<line x1="123.3" y1="250.0" x2="123.3" y2="187.5" stroke="#555" stroke-width="2.2"/>
+<line x1="15.0" y1="187.5" x2="15.0" y2="125.0" stroke="#555" stroke-width="2.2"/>
+<line x1="80.0" y1="87.5" x2="188.3" y2="150.0" stroke="#555" stroke-width="2.2"/>
+<line x1="188.3" y1="150.0" x2="123.3" y2="187.5" stroke="#555" stroke-width="2.2"/>
+<line x1="123.3" y1="187.5" x2="15.0" y2="125.0" stroke="#555" stroke-width="2.2"/>
+<line x1="15.0" y1="125.0" x2="80.0" y2="87.5" stroke="#555" stroke-width="2.2"/>
+<line x1="80.0" y1="150.0" x2="188.3" y2="150.0" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="188.3" y1="212.5" x2="80.0" y2="87.5" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="15.0" y1="187.5" x2="123.3" y2="187.5" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="123.3" y1="250.0" x2="15.0" y2="125.0" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="80.0" y1="150.0" x2="15.0" y2="125.0" stroke="#bbb" stroke-width="1.4"/>
+<line x1="15.0" y1="187.5" x2="80.0" y2="87.5" stroke="#bbb" stroke-width="1.4"/>
+<line x1="188.3" y1="212.5" x2="123.3" y2="187.5" stroke="#bbb" stroke-width="1.4"/>
+<line x1="123.3" y1="250.0" x2="188.3" y2="150.0" stroke="#bbb" stroke-width="1.4"/>
+<circle cx="80.0" cy="150.0" r="3" fill="#333"/>
+<circle cx="188.3" cy="212.5" r="3" fill="#333"/>
+<circle cx="123.3" cy="250.0" r="3" fill="#333"/>
+<circle cx="15.0" cy="187.5" r="3" fill="#333"/>
+<rect x="75.0" y="82.5" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="183.3" y="145.0" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="118.3" y="182.5" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="10.0" y="120.0" width="10" height="10" rx="2" fill="#c77d11"/>
+<line x1="188.3" y1="150.0" x2="222.3" y2="150.0" stroke="#1a63a8" stroke-width="2.5" marker-end="url(#agp)"/>
+<text x="222" y="144" font-size="10.5" fill="#1a63a8" font-weight="bold">deriva 0,369 mm</text>
+<text x="135" y="245" font-size="11" text-anchor="middle" fill="#b02a1a" font-weight="bold">diagonales activas: 19,51 kN</text>
+<text x="395" y="58" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">sismo Y</text>
+<line x1="340.0" y1="150.0" x2="340.0" y2="87.5" stroke="#555" stroke-width="2.2"/>
+<line x1="448.3" y1="212.5" x2="448.3" y2="150.0" stroke="#555" stroke-width="2.2"/>
+<line x1="383.3" y1="250.0" x2="383.3" y2="187.5" stroke="#555" stroke-width="2.2"/>
+<line x1="275.0" y1="187.5" x2="275.0" y2="125.0" stroke="#555" stroke-width="2.2"/>
+<line x1="340.0" y1="87.5" x2="448.3" y2="150.0" stroke="#555" stroke-width="2.2"/>
+<line x1="448.3" y1="150.0" x2="383.3" y2="187.5" stroke="#555" stroke-width="2.2"/>
+<line x1="383.3" y1="187.5" x2="275.0" y2="125.0" stroke="#555" stroke-width="2.2"/>
+<line x1="275.0" y1="125.0" x2="340.0" y2="87.5" stroke="#555" stroke-width="2.2"/>
+<line x1="340.0" y1="150.0" x2="448.3" y2="150.0" stroke="#bbb" stroke-width="1.4"/>
+<line x1="448.3" y1="212.5" x2="340.0" y2="87.5" stroke="#bbb" stroke-width="1.4"/>
+<line x1="275.0" y1="187.5" x2="383.3" y2="187.5" stroke="#bbb" stroke-width="1.4"/>
+<line x1="383.3" y1="250.0" x2="275.0" y2="125.0" stroke="#bbb" stroke-width="1.4"/>
+<line x1="340.0" y1="150.0" x2="275.0" y2="125.0" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="275.0" y1="187.5" x2="340.0" y2="87.5" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="448.3" y1="212.5" x2="383.3" y2="187.5" stroke="#b02a1a" stroke-width="3.2"/>
+<line x1="383.3" y1="250.0" x2="448.3" y2="150.0" stroke="#b02a1a" stroke-width="3.2"/>
+<circle cx="340.0" cy="150.0" r="3" fill="#333"/>
+<circle cx="448.3" cy="212.5" r="3" fill="#333"/>
+<circle cx="383.3" cy="250.0" r="3" fill="#333"/>
+<circle cx="275.0" cy="187.5" r="3" fill="#333"/>
+<rect x="335.0" y="82.5" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="443.3" y="145.0" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="378.3" y="182.5" width="10" height="10" rx="2" fill="#c77d11"/>
+<rect x="270.0" y="120.0" width="10" height="10" rx="2" fill="#c77d11"/>
+<line x1="448.3" y1="150.0" x2="414.3" y2="170.0" stroke="#1a63a8" stroke-width="2.5" marker-end="url(#agp)"/>
+<text x="414" y="164" font-size="10.5" fill="#1a63a8" font-weight="bold">deriva 0,370 mm</text>
+<text x="395" y="245" font-size="11" text-anchor="middle" fill="#b02a1a" font-weight="bold">diagonales activas: 22,67 kN</text>
+</svg>

@@ -1,0 +1,121 @@
+---
+title: "Rukan (5): el galpón 3D completo, o cuando todo tiene que funcionar junto"
+description: "Quinto y culminante peldaño de verificación de Rukan: un galpón 3D real que reúne todo lo construido antes —modelo tridimensional, arriostramientos con momentos liberados, análisis modal espectral NCh2369— y agrega la combinación direccional 100/30. Se arma un galpón rectangular con arriostramiento en cruz en ambos motores y se contrastan, dirección por dirección, el corte basal, las reacciones de las columnas de esquina, la fuerza axial en las diagonales y la deriva de techo, más la combinación 100/30 sobre la columna de esquina que recibe carga de los dos sismos ortogonales. Todo reproduce SAP2000 con error inferior al 0,01%. Se explica además un detalle de modelación que el lector práctico agradecerá: las diagonales en cruz deben partirse en su intersección y liberarse solo en el extremo que llega a la columna —si se dibujan cruzándose sin un nodo compartido, SAP las trata como si no se tocaran—."
+pubDate: 2026-07-09
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "galpón", "3D", "NCh2369", "análisis espectral", "combinación direccional", "100/30", "SAP2000", "verificación"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 5
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Cuando todo tiene que funcionar junto
+
+Los peldaños anteriores de [Rukan](https://github.com/fcocarrascob/rukan) fueron verificando piezas por separado: el [análisis modal espectral](/blog/rukan-verificacion-modal-espectral/) con NCh2369 y combinación CQC/SRSS, y la [liberación de momentos](/blog/rukan-verificacion-arriostramiento-releases/) que modela las diagonales de arriostramiento como bielas. Este post las junta —en tres dimensiones de verdad— y agrega la última pieza que un galpón industrial necesita: la **combinación direccional 100/30**.
+
+Es el caso donde todo tiene que funcionar a la vez. Un error en cualquiera de las piezas —el ensamble 3D, las liberaciones, el espectro, la combinación modal, la combinación direccional— se delata al comparar contra SAP2000. Si el galpón completo reproduce SAP número a número, es porque todas las piezas están bien y encajan.
+
+## El galpón
+
+Un galpón rectangular de un piso: 10 m × 6 m en planta, 5 m de alto, con columnas y vigas de sección tubular y **arriostramiento en cruz** en los cuatro muros. La masa sísmica se concentra en las cuatro esquinas del techo.
+
+<Figure
+  src="/rukan-verificacion-galpon-3d/fig-galpon.svg"
+  alt="Dos vistas isométricas del galpón. Bajo sismo X se activan las diagonales de los dos muros paralelos a X, cada una con 19,51 kN de axial, y el techo se deriva 0,369 mm en X. Bajo sismo Y se activan las diagonales de los dos muros paralelos a Y con 22,67 kN, y el techo se deriva 0,370 mm en Y."
+  caption="Flujo de esfuerzos y deriva. El sismo en cada dirección se lleva a la base por las diagonales de los muros paralelos a esa dirección (rojas), que trabajan en axial; los muros perpendiculares casi no participan. Rukan y SAP2000 dan los mismos valores."
+/>
+
+Un detalle de modelación: las secciones son **tubulares** (I₂₂ = I₃₃, isótropas a flexión). En 3D eso elimina cualquier ambigüedad sobre la orientación de los ejes locales de cada barra —un tubo flecta igual en todas las direcciones—, lo que hace la comparación entre motores más limpia y es realista para un galpón.
+
+## El detalle que importa: las diagonales se parten en el cruce
+
+Antes de comparar números, hay una decisión de modelación que en la práctica separa un modelo correcto de uno que miente en silencio. Las dos diagonales de una cruz **se conectan en su intersección** —con un gusset, en la realidad—, y esa conexión las arriostra mutuamente. Modelarlas bien exige:
+
+<Note type="warning" title="Partir en la intersección, liberar solo en la columna">
+Cada diagonal se **corta en el punto de cruce** creando un nodo compartido, de modo que las dos diagonales quedan efectivamente conectadas ahí. Los momentos se liberan **solo en el extremo que conecta a la columna** (la conexión de gusset, que no toma momento); el nodo de intersección queda continuo. Si en cambio se dibujan dos diagonales de largo completo que se cruzan **sin** un nodo común, el motor —SAP2000 incluido— las trata como si no se tocaran, pasando una por encima de la otra sin conectarse. La geometría se ve igual; el modelo no lo es.
+</Note>
+
+Rukan modela esto con las diagonales partidas y la liberación de momentos aplicada solo en el extremo de columna (la capacidad que verificamos en el post anterior, ahora en 3D y en un solo extremo). El efecto sobre la respuesta elástica global es pequeño, pero el modelo queda fiel a cómo se construye y se comporta la conexión —y a cómo se calcula la longitud de pandeo de la diagonal comprimida, que es la mitad—.
+
+## Los modos
+
+Con arriostramiento en cruz simétrico, los modos salen limpios: uno de traslación pura en X, uno en Y, y dos de torsión, todos agrupados cerca de 0,07 s. Rukan y SAP coinciden:
+
+| Modo | T Rukan [s] | Carácter |
+|---|---:|---|
+| 1 | 0,07176 | torsión |
+| 2 | 0,07033 | traslación Y (100% masa) |
+| 3 | 0,07026 | traslación X (100% masa) |
+| 4 | 0,06841 | torsión |
+
+Que los cuatro modos estén tan juntos (dentro de un 5%) es justamente el escenario donde la combinación **CQC** importa: los modos cercanos se correlacionan, y las respuestas que comparten —como la torsión que sienten las esquinas— no se pueden combinar con la simple SRSS.
+
+## La respuesta espectral, ahora para cualquier esfuerzo
+
+El [caso del pórtico 2D](/blog/rukan-verificacion-modal-espectral/) combinaba el corte basal, que se obtiene directo de las masas modales. Pero para diseñar necesitamos **cualquier** esfuerzo: la reacción de una columna, la axial de una diagonal, la deriva de una esquina. Eso exige resolver la estructura bajo las fuerzas inerciales de cada modo. Para el modo $i$ y el sismo en la dirección $d$, el vector de fuerzas equivalentes es
+
+<Equation label="Ec. 1">
+$$
+\mathbf{s}_i = \Gamma_{i,d}\, A_i\, \mathbf{M}\, \boldsymbol{\phi}_i
+\qquad\Rightarrow\qquad
+F_c = \Gamma_{i,d}\, A_i\, m_c\, \phi_{i,c}
+$$
+</Equation>
+
+Se aplican esas fuerzas como carga estática, se resuelve, se guarda la respuesta modal de interés, y se combinan las contribuciones de todos los modos por CQC. Es el procedimiento general de análisis de respuesta espectral, y Rukan lo hace en `rukan.modal` (`run_directional_spectral`), delegando cada solución estática a OpenSees.
+
+## Comparación, dirección por dirección
+
+Con esa maquinaria, comparamos contra SAP2000 el corte basal, las reacciones de la columna de esquina (nudo 1), la axial de una diagonal y la deriva de techo, para el sismo en X y en Y:
+
+| Respuesta | Sismo | Rukan | SAP2000 | Error |
+|---|---|---:|---:|---:|
+| Corte basal | X | 70,888 kN | 70,888 kN | **0,000 %** |
+| Corte basal | Y | 70,883 kN | 70,883 kN | **0,000 %** |
+| Reacción esquina Fx | X | 17,722 kN | 17,722 kN | 0,000 % |
+| Reacción esquina Fz | X | 17,524 kN | 17,524 kN | 0,000 % |
+| Reacción esquina Fz | Y | 29,185 kN | 29,185 kN | 0,000 % |
+| Axial diagonal | X | 19,514 kN | 19,514 kN | 0,000 % |
+| Deriva de techo | X | 0,3693 mm | 0,3693 mm | 0,001 % |
+| Deriva de techo | Y | 0,3700 mm | 0,3700 mm | 0,001 % |
+
+Todo con error inferior al 0,01%. El ensamble 3D, las diagonales partidas y liberadas, el espectro y la combinación modal reproducen SAP2000 sobre cualquier esfuerzo, no solo el corte basal.
+
+## La combinación direccional 100/30
+
+Falta la última pieza. El sismo no llega "en X" o "en Y": llega en una dirección cualquiera, y la norma exige verificar la estructura para el sismo actuando en cada dirección principal **más un porcentaje en la ortogonal**. La regla clásica (NCh2369, ASCE) es la **100/30**:
+
+<Equation label="Ec. 2">
+$$
+r_{\text{diseño}} = \max\big(\,|r_X| + 0{,}3\,|r_Y|,\ \ 0{,}3\,|r_X| + |r_Y|\,\big)
+$$
+</Equation>
+
+Donde importa es en los elementos que reciben carga de **ambos** sismos. La columna de esquina es el caso de libro: su carga axial (levantamiento o compresión) crece tanto con el sismo en X como con el sismo en Y.
+
+<Figure
+  src="/rukan-verificacion-galpon-3d/fig-100-30.svg"
+  alt="Diagrama de barras de la axial de diseño de la columna de esquina. La axial por sismo X es 17,52 kN y por sismo Y 29,19 kN. La combinación 100% X + 30% Y da 26,28 kN; la combinación 30% X + 100% Y da 34,44 kN y gobierna; la SRSS direccional da 34,04 kN. Rukan y SAP2000 coinciden a cuatro cifras."
+  caption="La axial de diseño de la columna de esquina. Cada sismo aporta lo suyo (17,52 y 29,19 kN); la 100/30 los combina y gobierna con 34,44 kN, algo por encima de la SRSS direccional (34,04 kN). Rukan reproduce SAP a cuatro cifras."
+/>
+
+La axial de la esquina es 17,52 kN por el sismo en X y 29,19 kN por el sismo en Y. La combinación que gobierna es 30% X + 100% Y = **34,44 kN** —un 18% más que cualquiera de los sismos por separado, y por encima de la SRSS direccional (34,04 kN)—. Rukan da 34,4425 kN; SAP2000, 34,4424 kN.
+
+## El veredicto
+
+<Note type="tip" title="La escalera completa">
+Con este peldaño quedan verificados, todos contra SAP2000 y con error nulo, el ensamble 3D, el análisis modal, la respuesta espectral NCh2369, la combinación modal CQC/SRSS, las diagonales de arriostramiento con momentos liberados y la combinación direccional 100/30. Es el conjunto completo que un galpón industrial de acero necesita para su análisis sísmico.
+</Note>
+
+Cinco peldaños —del voladizo de 1 GDL al galpón 3D completo— y en cada uno Rukan reprodujo, número a número, primero la teoría y después SAP2000. El motor de análisis está verificado para lo que se propuso: estructuras de acero simples y cotidianas bajo NCh2369.
+
+## Lo que viene
+
+Queda un detalle para el galpón "completo del todo": el **espectro vertical** de la NCh2369, que en esta caja arriostrada rígida es despreciable (la masa está sobre columnas axialmente rígidas) pero cobra importancia en elementos verticalmente flexibles —vigas de gran luz, voladizos—; se tratará aparte, con un modelo que tenga esa flexibilidad.
+
+Y con el análisis ya verificado, el foco se mueve a **lo que se paga**: el chequeo de código por elemento (AISC 360 / NCh427) —tracción, compresión con pandeo, flexión, interacción— y la memoria de cálculo automática. Analizar bien es la mitad del trabajo; la otra mitad es decir si la estructura **pasa**.
+
+Los scripts de esta serie viven en la carpeta `verification/` del [repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus propios `assert` contra SAP2000.
