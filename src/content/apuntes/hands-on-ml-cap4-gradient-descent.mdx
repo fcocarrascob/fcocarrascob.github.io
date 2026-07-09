@@ -1,8 +1,9 @@
 ---
 title: "Gradient descent: cómo un modelo baja la montaña"
-description: "Qué significa exactamente 'entrenar' un modelo: minimizar una función de costo. El descenso por gradiente explicado como bajar una montaña con niebla — el papel decisivo del learning rate, por qué hay que escalar las features, y las tres variantes (batch, stochastic, mini-batch) y cuándo usar cada una. Apuntes del Cap. 4 de Géron."
+description: "Qué significa exactamente 'entrenar' un modelo: minimizar una función de costo. El descenso por gradiente explicado como bajar una montaña con niebla — el papel decisivo del learning rate, por qué hay que escalar las features, y las tres variantes (batch, stochastic, mini-batch). Y luego el otro gran problema: la complejidad del modelo — regresión polinómica, curvas de aprendizaje, sesgo/varianza, regularización (ridge/lasso/elastic net) y early stopping. Apuntes del Cap. 4 de Géron."
 pubDate: 2026-07-06
-tags: ["machine learning", "gradient descent", "sgd", "función de costo", "learning rate", "geron"]
+updatedDate: 2026-07-08
+tags: ["machine learning", "gradient descent", "sgd", "función de costo", "learning rate", "overfitting", "regularización", "sesgo-varianza", "geron"]
 subsection: "hands-on-ml"
 chapter: "Cap. 4 — Entrenamiento de modelos"
 source: "Aurélien Géron, Hands-On Machine Learning (3.ª ed.), O'Reilly 2023, Cap. 4 (pp. 196–244)"
@@ -158,6 +159,123 @@ etiqueta y no lo **barajas**, el algoritmo optimizará primero para una clase, l
 otra, y no convergerá bien. Baraja en cada epoch.
 </Note>
 
+---
+
+Hasta aquí vimos **cómo** un modelo encuentra sus parámetros. Queda la otra mitad del
+oficio: decidir **cuán flexible** dejarlo. Muy rígido y no captura el patrón; demasiado
+flexible y termina memorizando el ruido. El resto de la nota recorre —más rápido, porque el
+motor ya lo entendiste— ese equilibrio.
+
+## 6. Una recta que dibuja curvas: regresión polinómica
+
+Si tus datos no siguen una línea recta, no hace falta cambiar de modelo: basta **cambiar los
+datos**. Añade a la feature $x$ una nueva feature $x^2$, y el modelo lineal aprenderá
+$\hat{y} = \theta_0 + \theta_1 x + \theta_2 x^2$ —una parábola en $x$, pero todavía una suma
+ponderada en los parámetros. Toda la maquinaria anterior (gradient descent, MSE convexo)
+sigue aplicando; la curvatura vive solo en el preprocesamiento.
+
+En Scikit-Learn eso es `PolynomialFeatures(degree=d)`, que además genera las **interacciones**
+entre features (con `a`, `b` y grado 2: `a²`, `b²`, `ab`), algo que la regresión lineal simple
+no puede capturar.
+
+<Note type="warning" title="El grado es un arma de doble filo">
+Subir el grado da flexibilidad, pero se paga doble: el número de features **explota**
+combinatoriamente (10 features a grado 3 ya son 286), y con tantos grados de libertad el
+modelo empieza a **memorizar el ruido** en vez del patrón. Ese segundo peligro —el
+sobreajuste— es el hilo de las próximas secciones.
+</Note>
+
+## 7. El estetoscopio del ajuste: curvas de aprendizaje
+
+¿Cómo sabes si tu modelo se quedó corto (**underfitting**) o se pasó de listo
+(**overfitting**), cuando no conoces la función real que generó los datos? Con un
+estetoscopio: las **curvas de aprendizaje**, que grafican el error en entrenamiento y en
+validación a medida que crece el training set. La forma de las dos curvas revela la
+enfermedad.
+
+<Figure
+  src="/apuntes/hands-on-ml/curvas-aprendizaje.svg"
+  alt="Dos paneles. En underfitting, la curva de error de entrenamiento sube desde cero y la de validación baja, hasta juntarse en una meseta alta: las dos curvas quedan altas y pegadas. En overfitting, el error de entrenamiento se mantiene bajo y el de validación queda por encima, dejando una brecha persistente entre ambas."
+  caption="Underfitting: ambas curvas se estancan altas y pegadas. Overfitting: el entrenamiento va bien pero queda una brecha con la validación. La forma es el diagnóstico."
+  width={620}
+/>
+
+- **Underfitting** — las dos curvas terminan **juntas y en una meseta alta**. El modelo es
+  demasiado simple: ni siquiera ajusta bien el training set. *Añadir más datos no ayuda*:
+  necesitas un modelo más potente o mejores features.
+- **Overfitting** — el error de entrenamiento es bajo, pero queda una **brecha** con la
+  validación: el modelo rinde mucho mejor en los datos que ya vio. Aquí *conseguir más
+  datos sí ayuda* (la brecha se cierra), igual que regularizar o reducir la complejidad.
+
+## 8. Sesgo y varianza: por qué no puedes tenerlo todo
+
+Detrás de esos dos síntomas hay un resultado teórico. El error de generalización se
+descompone en tres partes. Piénsalo con dos arqueros:
+
+- **Sesgo (bias)** — el arquero con la mira desviada: sus flechas se agrupan, pero lejos del
+  centro. Es el error por supuestos equivocados (asumir una recta cuando los datos son
+  curvos). Sesgo alto → *underfitting*.
+- **Varianza (variance)** — el arquero de pulso tembloroso: sus flechas rodean el centro
+  pero muy dispersas. Es la hipersensibilidad a pequeñas variaciones del training set
+  (demasiados grados de libertad). Varianza alta → *overfitting*.
+- **Error irreducible** — el viento que desvía a ambos: el ruido intrínseco de los datos.
+  Solo baja limpiando los datos (sensores, outliers), no con un mejor modelo.
+
+El **trade-off**: subir la complejidad del modelo baja el sesgo pero sube la varianza, y
+viceversa. No puedes minimizar ambos con el mismo dial —de ahí que el punto óptimo esté
+siempre en un compromiso.
+
+<Note type="info" title="Ojo con la palabra 'bias'">
+Este *sesgo* del trade-off **no** es el *bias term* $\theta_0$ del modelo lineal. Misma
+palabra, conceptos distintos.
+</Note>
+
+## 9. Regularización: un impuesto sobre los pesos
+
+El overfitting nace de la libertad excesiva: pesos que crecen sin freno persiguiendo el
+ruido. La cura es ponerles un **impuesto**: cuanto más grandes los $\theta$, más paga el
+modelo. El entrenamiento pasa entonces a negociar entre ajustar los datos y mantener los
+pesos pequeños. La tasa del impuesto es el hiperparámetro $\alpha$.
+
+<Equation label="Ridge (ℓ2)">
+$$
+J(\boldsymbol{\theta}) = \text{MSE}(\boldsymbol{\theta}) + \frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2
+$$
+</Equation>
+
+Hay tres sabores, y la diferencia entre ellos importa:
+
+- **Ridge (ℓ2)** — penaliza el **cuadrado** de los pesos. Los encoge a todos de forma
+  proporcional, pero nunca los mata del todo. Es el default razonable.
+- **Lasso (ℓ1)** — penaliza el **valor absoluto**. Empuja los pesos hacia cero a ritmo
+  constante, así que los inútiles llegan a **cero exacto**: hace *selección de features*
+  automática y deja un modelo disperso e interpretable.
+- **Elastic net** — una mezcla de ambos con una perilla; en general preferible a lasso puro
+  cuando hay muchas features correlacionadas o más features que instancias.
+
+<Note type="warning" title="Dos reglas que se olvidan">
+**(1)** El bias $\theta_0$ nunca se regulariza —solo desplaza la predicción, no aporta
+flexibilidad para perseguir el ruido. **(2)** Escala siempre las features antes de
+regularizar: como el descenso por gradiente, los modelos regularizados son sensibles a la
+escala. Y $\alpha$ es un dial de sesgo/varianza: $\alpha \to 0$ recupera la regresión sin
+regularizar (más varianza); $\alpha$ enorme aplasta todos los pesos hasta una línea plana
+(máximo sesgo).
+</Note>
+
+## 10. Early stopping: parar en el punto justo
+
+Hay una última forma de regularizar, casi gratis. Al entrenar iterativamente, el error de
+validación primero baja (el modelo aprende la señal) y luego, en algún momento, **vuelve a
+subir** (empieza a memorizar el ruido) mientras el de entrenamiento sigue cayendo. La receta
+del **early stopping** es simplemente: detente —o guarda el modelo— en el mínimo de
+validación. Geoffrey Hinton lo llamó *"un hermoso almuerzo gratis"*.
+
+<Note type="tip" title="El matiz con SGD">
+Con stochastic o mini-batch GD las curvas rebotan, y una subida puntual no significa que ya
+pasaste el mínimo. En la práctica se sigue entrenando, se guarda el mejor modelo visto, y al
+final se **revierte** (roll back) a esos parámetros.
+</Note>
+
 ## Lo que hay que llevarse
 
 Detrás de "entrenar un modelo" hay una idea simple y poderosa: definir un termómetro del
@@ -166,11 +284,15 @@ deciden si funciona —el learning rate, el escalado de las features, y cuántos
 por paso— y las tres reaparecen, idénticas, cuando el modelo deja de ser una recta y pasa a
 ser una red neuronal de millones de parámetros.
 
-Ese es justamente el puente que este capítulo tiende hacia el resto del libro.
+Y una vez que el modelo sabe bajar, aparece la segunda pregunta: **cuánta flexibilidad
+darle**. Las curvas de aprendizaje diagnostican si se quedó corto o se pasó, el sesgo y la
+varianza explican por qué no puedes tener ambas cosas a la vez, y la regularización
+(más el early stopping) es el dial para encontrar el punto justo. Ese par de ideas —bajar
+el costo y controlar la complejidad— es el puente que este capítulo tiende hacia el resto
+del libro.
 
 ---
 
 *Apunte del Capítulo 4 de [Hands-On Machine Learning](https://github.com/ageron/handson-ml3)
-de Aurélien Géron (O'Reilly, 3.ª ed.). El capítulo cubre además la regresión polinómica, las
-curvas de aprendizaje, el trade-off sesgo/varianza y la regularización (ridge, lasso, elastic
-net); esta nota se concentra en el motor que los mueve a todos.*
+de Aurélien Géron (O'Reilly, 3.ª ed.). Del capítulo quedan fuera de esta nota la logística y
+la softmax para clasificación, que merecen su propio apunte.*
