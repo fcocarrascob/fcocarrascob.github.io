@@ -1,0 +1,133 @@
+---
+title: "Rukan (6): peso propio, casos de carga y combinaciones — el galpón a dos aguas completo"
+description: "Sexto peldaño de verificación de Rukan y el que aterriza una estructura real completa: un galpón a dos aguas con marco a momento en la sección transversal y arriostramiento en el sentido longitudinal, cargado como se carga de verdad —gravedad más otros casos, combinados—. Se introduce el peso propio con sus dos alcances: distribuido sobre la barra (el correcto para los esfuerzos, que captura la flexión bajo el propio peso) y concentrado en los nudos (correcto para la masa sísmica, pero que pierde esa flexión). Se muestra el fenómeno del pórtico que se abre bajo la carga de techo, se arma el análisis modal como chequeo de sanidad, y se combinan casos estáticos y espectrales tal como en SAP2000 (1.2D+1.6Lr, 1.2D±E). Todo reproduce SAP2000 con error inferior al 0,02%."
+pubDate: 2026-07-09
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "peso propio", "casos de carga", "combinaciones", "galpón", "dos aguas", "NCh2369", "SAP2000", "verificación"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 6
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De un caso de carga a una estructura completa
+
+Hasta aquí, cada peldaño de [Rukan](https://github.com/fcocarrascob/rukan) verificaba **un** caso de carga: una carga lateral, un espectro, un empuje. Pero ningún cálculo real vive de un solo caso. Una estructura se analiza bajo **gravedad + otros casos** —peso propio, sobrecarga de techo, sismo— y se diseña con las **combinaciones** de todos ellos. Este post agrega justamente eso: el **peso propio**, los **casos de carga** y las **combinaciones**, sobre una estructura por fin completa.
+
+El vehículo es un galpón a dos aguas, el caso típico de la industria: **marco a momento** en la sección transversal, **arriostrado** en el sentido longitudinal.
+
+<Figure
+  src="/rukan-verificacion-peso-propio-combinaciones/fig-galpon.svg"
+  alt="Vista isométrica de un galpón a dos aguas de tres marcos: columnas y dinteles inclinados que forman los marcos a momento transversales (en rojo), arriostramiento en cruz en los muros longitudinales (en azul) y diafragma de diagonales en el techo (en verde). Luz 6 m, alero 3 m, cumbrera 4 m, largo 12 m con tres marcos."
+  caption="El galpón: tres marcos a dos aguas. La sección transversal resiste por marco a momento (rojo); el sentido longitudinal, por arriostramiento de muro (azul) y diafragma de techo (verde). Dos sistemas sismorresistentes distintos en una misma estructura."
+/>
+
+## El peso propio y sus dos alcances
+
+El peso de cada barra se obtiene de su material y su geometría —densidad por área por largo—:
+
+<Equation label="Ec. 1">
+$$
+w = \rho \, A \, g \quad [\text{kN/m}], \qquad W = w \cdot L
+$$
+</Equation>
+
+La pregunta interesante no es *cuánto* pesa, sino **cómo se reparte** ese peso al modelo. Hay dos alcances, y elegir mal es una fuente silenciosa de error:
+
+<Figure
+  src="/rukan-verificacion-peso-propio-combinaciones/fig-apertura-pesopropio.svg"
+  alt="A la izquierda, un marco a dos aguas que se deforma bajo su peso propio: los aleros se abren hacia afuera y el vértice baja, con empuje horizontal en las bases. A la derecha, los dos alcances de peso propio: distribuido como carga de barra, que produce un momento parabólico wL²/8 (la barra flecta bajo su peso), y concentrado en los nudos, que da momento casi nulo (se pierde la flexión de la barra); ambos dan las mismas reacciones y masa."
+  caption="Izquierda: el pórtico se abre bajo su peso. Derecha: los dos alcances del peso propio. Distribuido sobre la barra reproduce la flexión bajo su propio peso (parábola wL²/8); concentrado en los nudos la pierde. Las reacciones y la masa coinciden en ambos."
+/>
+
+<Note type="tip" title="Distribuido vs. concentrado — cuándo sirve cada uno">
+**Distribuido** (carga de barra): el correcto para los **esfuerzos** estáticos. Reproduce el momento que la barra toma bajo su propio peso —una viga horizontal flecta $wL^2/8$; un dintel inclinado, además, empuja—. En Rukan se aplica proyectando la gravedad global a los ejes locales de cada barra.
+
+**Concentrado en los nudos** (mitad del peso a cada extremo): el correcto para la **masa** sísmica del análisis modal (es como se arma la masa de piso). Pero para los esfuerzos estáticos **pierde la flexión de la barra bajo su peso**: si el dintel es un solo elemento, su momento por peso propio se va a cero.
+</Note>
+
+En el galpón, la diferencia es medible: el momento del dintel bajo su peso es **−0,50 kN·m** con el enfoque distribuido y apenas **−0,02 kN·m** al concentrar en los nudos. Las reacciones y el peso total, en cambio, coinciden en ambos: concentrar conserva la resultante, no la flexión.
+
+## El pórtico que se abre
+
+Un galpón a dos aguas tiene un comportamiento que un pórtico de vigas rectas no: bajo la carga vertical de techo, los **dinteles inclinados empujan las columnas hacia afuera**, y el pórtico **se abre**. Ese empuje nace directamente de la carga gravitacional sobre el dintel inclinado —es exactamente la razón por la que el peso propio hay que distribuirlo bien—.
+
+Bajo su propio peso, los aleros del galpón se abren **±0,18 mm** en los marcos de borde y **−0,29 mm** en el marco central (que carga más área tributaria de techo), con empuje horizontal en las bases articuladas. Rukan reproduce SAP2000 en todo:
+
+| Respuesta (peso propio) | Rukan | SAP2000 | Error |
+|---|---:|---:|---:|
+| Peso total en la base | 52,817 kN | 52,817 kN | **0,000 %** |
+| Apertura del alero (borde) | −0,1815 mm | −0,1815 mm | 0,002 % |
+| Apertura del alero (central) | −0,2855 mm | −0,2855 mm | 0,000 % |
+| Descenso del vértice (central) | −0,8941 mm | −0,8941 mm | 0,000 % |
+| Empuje en la base | 0,756 kN | 0,756 kN | 0,006 % |
+
+## El chequeo de sanidad modal
+
+Antes de aplicar sismo, un paso que ningún análisis debería saltarse: **mirar el modal**. Los períodos y las masas participantes son el chequeo de sanidad más barato para cazar inconsistencias —masas mal puestas, mecanismos, modos espurios—.
+
+<Note type="info" title="La masa sísmica sale del peso propio">
+En SAP2000 el peso y la masa están **acoplados** (peso = masa · g): no se puede tener peso sin masa. Así que la masa sísmica del galpón sale de su propio peso, que SAP **concentra en los nudos**. Rukan hace lo mismo (`self_mass_lumped`), y los períodos coinciden hasta la cuarta cifra —la confirmación de que ambos arman la misma masa—.
+</Note>
+
+El modal cuenta una historia clara, coherente con los dos sistemas del galpón:
+
+| Modo | T Rukan [s] | Carácter |
+|---|---:|---|
+| 1 | 0,22356 | traslación transversal (marco a momento, flexible) — 99% masa |
+| 8 | 0,02453 | traslación longitudinal (arriostrado, rígido) |
+
+El marco a momento es casi diez veces más flexible que la dirección arriostrada. Eso es exactamente lo que uno espera —y si no fuera así, el modal lo delataría—. Rukan reproduce los doce períodos de SAP2000 con error inferior al 0,04%.
+
+## Casos de carga y combinaciones
+
+Con el peso propio y la masa resueltos, el galpón se analiza bajo cuatro casos y se combinan como en SAP2000:
+
+- **D** — peso propio (distribuido).
+- **Lr** — carga de techo.
+- **E_X** — sismo espectral NCh2369 transversal (la dirección del marco a momento).
+- **E_Y** — sismo espectral NCh2369 longitudinal (la dirección arriostrada).
+
+Cada caso, contra SAP2000:
+
+| Respuesta | Caso | Rukan | SAP2000 | Error |
+|---|---|---:|---:|---:|
+| Reacción vertical total | D | 52,817 kN | 52,817 kN | 0,000 % |
+| Reacción vertical total | Lr | 45,000 kN | 45,000 kN | 0,000 % |
+| Corte basal transversal | E_X | 13,572 kN | 13,572 kN | 0,005 % |
+| Deriva de alero | E_X | 3,911 mm | 3,911 mm | 0,000 % |
+| Axial columna esquina | E_Y | 3,268 kN | 3,268 kN | 0,001 % |
+
+<Note type="warning" title="La suma de reacciones bajo sismo es engañosa">
+Una sutileza al comparar contra SAP en un caso espectral: la respuesta modal se combina por CQC en **magnitud** (siempre positiva). Si uno suma las reacciones de las columnas, SAP suma magnitudes por columna, mientras que sumar las reacciones con signo por modo (y luego combinar) da algo distinto —para el corte vertical bajo sismo horizontal, el volcamiento hace que la suma con signo tienda a cero—. La lección: en respuesta espectral se comparan cantidades **por nudo o por elemento**, no sumas globales con signo.
+</Note>
+
+Y la combinación es lo que cierra el ciclo. Una combinación es la suma lineal de los casos, cada uno por su factor —el patrón exacto de SAP2000—:
+
+<Equation label="Ec. 2">
+$$
+r_{\text{comb}} = \sum_c \gamma_c \, r_c
+$$
+</Equation>
+
+Sobre la axial de la columna de esquina (nudo 1), las combinaciones dan:
+
+| Combinación | Axial columna esquina | Apertura de alero |
+|---|---:|---:|
+| 1,2 D + 1,6 Lr | 22,18 kN | −0,65 mm |
+| 1,2 D + E_X | 12,42 kN | +3,69 mm |
+| 1,2 D − E_X | 7,96 kN | −4,13 mm |
+
+El sismo, sumado a la gravedad con ambos signos, envuelve el diseño: la columna de esquina pasa de 22 kN en compresión de gravedad a un rango de 8–12 kN cuando entra el sismo, y el alero oscila ±4 mm. Como la combinación es lineal y cada caso reproduce SAP2000, las combinaciones lo reproducen por construcción.
+
+## El veredicto
+
+<Note type="tip" title="Una estructura completa, verificada">
+Peso propio (distribuido y concentrado), sobrecarga, sismo espectral en dos direcciones, chequeo modal y combinaciones de carga: el conjunto completo de un análisis real, sobre un galpón a dos aguas con dos sistemas sismorresistentes, reproduce SAP2000 con error inferior al 0,02%. Rukan ya no verifica piezas sueltas: verifica un modelo como el que se firma.
+</Note>
+
+Seis peldaños, del voladizo de 1 GDL a un galpón a dos aguas cargado y combinado como en la práctica. Lo que queda es **el otro medio del trabajo**: con el análisis verificado, viene el **chequeo de código** por elemento (AISC 360 / NCh427) —tracción, compresión con pandeo, flexión, interacción— y la memoria de cálculo. Analizar bien es la mitad; la otra mitad es decir si la estructura **pasa**.
+
+Los scripts de esta serie viven en la carpeta `verification/` del [repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus propios `assert` contra SAP2000.
