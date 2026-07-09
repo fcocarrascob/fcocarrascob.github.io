@@ -1,0 +1,97 @@
+---
+title: "Rukan (4): arriostramientos y la liberación de momentos, o cómo se modela una conexión que no toma momento"
+description: "Cuarto peldaño de verificación de Rukan, dedicado a una técnica de modelación que sostiene todo el diseño de arriostramientos: liberar los momentos flectores en los extremos de la diagonal. Una diagonal se conecta con un gusset apernado o una rótula —transmite fuerza axial pero no momento—, y modelarla rígidamente conectada mete en la conexión un momento espurio que en la realidad no existe. Se arma un pórtico de un vano arriostrado en Rukan y SAP2000 y se comparan tres modelos: diagonal rígida, diagonal con momentos liberados, y diagonal como elemento de reticulado puro. Los tres coinciden número a número, y el hallazgo es fiel a la física: liberar los momentos casi no cambia la respuesta global —la diagonal trabaja en axial de todas formas— pero anula el momento en la conexión, que es justo la fuerza para la que un gusset no está diseñado. Se documentan además dos trampas: en 3D OpenSees exige -releasez/-releasey (el -release a secas se ignora), y en SAP2000 la práctica es liberar M2 y M3 en ambos extremos."
+pubDate: 2026-07-09
+tags: ["OpenSees", "OpenSeesPy", "Rukan", "arriostramientos", "liberación de momentos", "conexiones", "NCh2369", "SAP2000", "verificación", "acero"]
+section: "Rukan"
+series: "Rukan — verificación"
+seriesPart: 4
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Del sismo global al detalle de la conexión
+
+El [peldaño anterior](/blog/rukan-verificacion-modal-espectral/) de [Rukan](https://github.com/fcocarrascob/rukan) subió hasta el análisis sísmico completo: modal espectral NCh2369 con combinación CQC/SRSS, contra SAP2000 y con error nulo. Este baja al detalle —a una decisión de modelación que parece menor pero decide si un cálculo de arriostramientos tiene sentido físico—: **liberar los momentos en los extremos de las barras**.
+
+La motivación es concreta. Una diagonal de arriostramiento no llega a la estructura soldada como un empotramiento: llega con un **gusset apernado**, una plancha con un puñado de pernos, o directamente una rótula. Esa conexión transmite fuerza **axial** (y algo de corte), pero **no toma momento** —no tiene ni la rigidez ni la resistencia para hacerlo—. Si uno modela la diagonal rígidamente conectada, el análisis le mete a esa conexión un momento que en la realidad no existe, y que el gusset no podría resistir aunque quisiera.
+
+<Note type="warning" title="La regla de modelación">
+Una diagonal de arriostramiento se modela como una **biela**: una barra que solo trabaja en fuerza axial. Se consigue **liberando el momento flector en sus dos extremos** (rótulas). El resultado es un elemento que transmite tracción o compresión, nunca momento — exactamente lo que hace la conexión real.
+</Note>
+
+Este post verifica que Rukan implementa esa liberación correctamente, contrastándola contra SAP2000.
+
+## El sistema
+
+Un pórtico de un vano (6 m) y un piso (4 m), empotrado en la base, con una diagonal del apoyo izquierdo al techo derecho. Una carga lateral de 100 kN en el techo.
+
+<Figure
+  src="/rukan-verificacion-arriostramiento-releases/fig-arriostramiento.svg"
+  alt="A la izquierda, un pórtico de un vano con una diagonal en tracción que trabaja con 116 kN de axial; la diagonal reduce la deriva de techo de 18,97 mm (sin ella) a 0,67 mm (con ella), 28 veces más rígido. A la derecha, dos modelos de la conexión: la rígida, con momento no nulo en los extremos (−0,39 y −0,19 kN·m), donde el gusset tendría que resistir un momento que no puede; y la liberada, con rótulas en ambos extremos, momento cero y solo axial, idéntica a un elemento Truss."
+  caption="La diagonal se lleva el corte lateral en fuerza axial (116 kN), reduciendo la deriva 28 veces. La diferencia entre conectarla rígida o liberada casi no afecta la deriva, pero cambia el momento en la conexión de un valor pequeño pero no nulo a exactamente cero."
+/>
+
+Antes de comparar conexiones, conviene ver **para qué sirve** la diagonal. Sin ella, el pórtico es un marco de momento y bajo los 100 kN se deriva 18,97 mm. Con la diagonal, la deriva cae a 0,67 mm: **28 veces más rígido**. El arriostramiento se lleva el corte lateral convirtiéndolo en fuerza axial en la diagonal (116 kN de tracción), que es lo que hace eficiente a un sistema arriostrado. Esa es su razón de ser.
+
+## Rígida vs. liberada
+
+Ahora la pregunta del post: ¿importa si la diagonal se conecta rígida o con los momentos liberados? Comparamos ambos modelos en Rukan y en SAP2000:
+
+| Respuesta | Rígida (Rukan / SAP) | Liberada (Rukan / SAP) |
+|---|---:|---:|
+| Deriva de techo | 0,67389 / 0,67389 mm | 0,67419 / 0,67419 mm |
+| Axial en la diagonal | 116,49 / 116,49 kN | 116,55 / 116,55 kN |
+| **Momento en extremos** | **−0,39 / −0,19 kN·m** | **0,00 / 0,00 kN·m** |
+| Momento en base de columna | −4,45 / −4,45 kN·m | −4,08 / −4,08 kN·m |
+
+Los dos motores coinciden hasta la última cifra en los dos modelos. Y el resultado es revelador en su sutileza:
+
+- **La deriva casi no cambia** (0,67389 → 0,67419 mm, un 0,04 %). La diagonal trabaja en axial de todas formas; el momento que toma cuando está rígidamente conectada es un aporte de rigidez marginal.
+- **El axial casi no cambia** (116,49 → 116,55 kN). La fuerza que la conexión realmente tiene que transmitir es prácticamente la misma.
+- **El momento en los extremos pasa de un valor pequeño pero no nulo a exactamente cero.** Ese es el punto. La conexión rígida atrae 0,39 kN·m que el gusset apernado no puede tomar. Liberar el momento lo elimina —y redistribuye ese pequeño desequilibrio a las bases de las columnas (−4,45 → −4,08 kN·m)—, dejando la diagonal en axial puro.
+
+<Note type="tip" title="Por qué se libera si casi no cambia la respuesta">
+No se libera para cambiar la deriva —apenas lo hace—, sino para que el **modelo sea honesto con la conexión real**. La versión rígida reporta un momento en el gusset que, si un ingeniero lo toma en serio, lo lleva a diseñar una conexión para una solicitación inventada; y si lo ignora, deja una inconsistencia entre el modelo y el detalle. Liberar el momento hace que el análisis entregue exactamente lo que la conexión transmite: axial, y nada más.
+</Note>
+
+## Dos trampas al liberar en 3D
+
+Rukan es 3D desde el día uno, y liberar momentos en 3D tiene dos detalles que hay que clavar —los dos aparecieron al construir este caso—:
+
+<Note type="warning" title="Trampa 1 — en OpenSees 3D es -releasez / -releasey, no -release">
+El elemento `elasticBeamColumn` de OpenSees acepta liberar momentos de extremo, pero en **3D** la opción `-release` a secas **se ignora en silencio** (sí funciona en 2D). Hay que usar `-releasez` para el momento en el plano fuerte y `-releasey` para el débil, cada uno con un código (0 = ninguno, 1 = extremo i, 2 = extremo j, 3 = ambos). Con el flag equivocado el momento no se libera y nadie avisa.
+</Note>
+
+<Note type="warning" title="Trampa 2 — en 3D se liberan M2 y M3, no solo M3">
+Una biela en el espacio no debe tomar momento en **ningún** plano, así que se liberan los dos momentos flectores (M2 y M3 en la convención de SAP2000), no solo el del plano del pórtico. En este caso plano el momento fuera de plano (M2) es inerte —las restricciones lo anulan de todos modos—, pero se libera igual para reflejar la práctica real y para que el modelo escale bien al galpón 3D, donde la diagonal sí puede flectar en ambos planos.
+</Note>
+
+## La prueba de coherencia: la biela liberada es un reticulado
+
+Hay una forma independiente de confirmar que la liberación quedó bien hecha. Una barra con los dos momentos liberados **es**, por definición, un elemento de reticulado (una biela axial). Así que si modelamos la misma diagonal como un elemento `Truss` puro de OpenSees —que no tiene grados de libertad de rotación en absoluto— tiene que dar idénticamente lo mismo:
+
+| | Diagonal liberada | Elemento Truss |
+|---|---:|---:|
+| Deriva de techo | 0,674189 mm | 0,674189 mm |
+| Axial en la diagonal | 116,55375 kN | 116,55375 kN |
+
+Idénticos hasta el sexto decimal. La liberación de momentos y la idealización de reticulado son la misma cosa, y Rukan las hace coincidir. Es la confirmación de que el `elasticBeamColumn` con los extremos liberados no arrastra ninguna rigidez rotacional residual.
+
+## El veredicto
+
+Rukan reproduce SAP2000 en los tres modelos —rígido, liberado y reticulado— con error inferior al 0,01 %, y hace coincidir la biela liberada con el elemento de reticulado hasta el error de máquina. La liberación de momentos, la técnica con que se modela cada arriostramiento de un galpón, quedó verificada.
+
+<Note type="info" title="Un detalle de convención de signos">
+Al comparar el momento en el extremo j de la diagonal apareció una diferencia de signo entre los motores: OpenSees entrega el **momento nodal de extremo**, mientras SAP2000 reporta el **diagrama de momento interno**, que invierte el signo en el extremo j. La relación es `M_diagrama = (M_i,\ -M_j)`. No es un error de ninguno de los dos: es la diferencia de convención entre reportar la fuerza sobre el nudo y reportar el momento de la sección. Reconocerla es parte de comparar dos motores con honestidad.
+</Note>
+
+## Lo que llevamos
+
+Con este peldaño Rukan ya modela lo esencial de un sistema arriostrado: diagonales que trabajan en axial puro, con conexiones que no fingen tomar momento. Sumado al modal espectral del post anterior, quedan las dos piezas que un galpón industrial necesita.
+
+El próximo paso las junta: un **galpón 3D completo**, con marcos arriostrados en dos direcciones, sismo espectral NCh2369 con combinación direccional 100/30, y el espectro vertical. Las diagonales de ese galpón se modelarán exactamente con la liberación de momentos que este post acaba de verificar.
+
+Los scripts de esta serie viven en la carpeta `verification/` del [repositorio de Rukan](https://github.com/fcocarrascob/rukan), cada uno autocontenido y con sus propios `assert` contra SAP2000.

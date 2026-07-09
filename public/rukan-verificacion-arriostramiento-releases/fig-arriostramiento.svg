@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 392" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="680" height="392" fill="#ffffff"/>
+  <text x="340" y="26" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">Diagonal de arriostramiento · conexión rígida vs. momentos liberados</text>
+
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+
+  <!-- =============== PANEL A: pórtico arriostrado =============== -->
+  <text x="150" y="52" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">pórtico arriostrado</text>
+  <!-- columnas y viga -->
+  <line x1="80" y1="320" x2="80" y2="150" stroke="#333" stroke-width="3.5"/>
+  <line x1="240" y1="320" x2="240" y2="150" stroke="#333" stroke-width="3.5"/>
+  <line x1="80" y1="150" x2="240" y2="150" stroke="#333" stroke-width="3.5"/>
+  <!-- diagonal (en tracción) -->
+  <line x1="80" y1="320" x2="240" y2="150" stroke="#1a63a8" stroke-width="4.5"/>
+  <text x="150" y="245" font-size="11.5" fill="#1a63a8" font-weight="bold" transform="rotate(-46 150 245)">N = 116 kN (axial)</text>
+  <!-- empotramientos -->
+  <line x1="64" y1="320" x2="96" y2="320" stroke="#333" stroke-width="3"/>
+  <line x1="224" y1="320" x2="256" y2="320" stroke="#333" stroke-width="3"/>
+  <!-- carga lateral -->
+  <line x1="30" y1="150" x2="76" y2="150" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#ar)"/>
+  <text x="30" y="140" font-size="12" fill="#b02a1a" font-weight="bold">100 kN</text>
+  <!-- nudos -->
+  <circle cx="80" cy="320" r="4" fill="#333"/><circle cx="240" cy="320" r="4" fill="#333"/>
+  <circle cx="80" cy="150" r="4" fill="#333"/><circle cx="240" cy="150" r="4" fill="#333"/>
+
+  <!-- barra de deriva -->
+  <text x="150" y="352" font-size="11" text-anchor="middle" fill="#555">deriva de techo</text>
+  <text x="150" y="372" font-size="11" text-anchor="middle" fill="#333">sin diagonal 18,97 mm  →  con diagonal 0,67 mm (28×)</text>
+
+  <!-- divisor -->
+  <line x1="330" y1="48" x2="330" y2="372" stroke="#e2e2e2"/>
+
+  <!-- =============== PANEL B: los dos modelos de conexión =============== -->
+  <!-- rígida -->
+  <text x="505" y="80" font-size="12.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">conexión rígida</text>
+  <line x1="390" y1="140" x2="560" y2="90" stroke="#333" stroke-width="3.5"/>
+  <rect x="382" y="134" width="12" height="12" fill="#333"/>
+  <rect x="556" y="84" width="12" height="12" fill="#333"/>
+  <!-- pequeño diagrama de momento en extremos -->
+  <path d="M390,140 q10,-14 24,-16 M560,90 q-10,10 -22,12" fill="none" stroke="#b02a1a" stroke-width="2"/>
+  <text x="475" y="128" font-size="10.5" fill="#b02a1a" text-anchor="middle">M ≠ 0 en los extremos (−0,39 / −0,19 kN·m)</text>
+  <text x="475" y="162" font-size="10" fill="#777" text-anchor="middle">el gusset tendría que resistir momento que no puede</text>
+
+  <!-- liberada -->
+  <text x="505" y="240" font-size="12.5" text-anchor="middle" fill="#2f7d32" font-weight="bold">momentos liberados (rótulas)</text>
+  <line x1="390" y1="300" x2="560" y2="250" stroke="#333" stroke-width="3.5"/>
+  <circle cx="390" cy="300" r="6" fill="#fff" stroke="#2f7d32" stroke-width="2.5"/>
+  <circle cx="560" cy="250" r="6" fill="#fff" stroke="#2f7d32" stroke-width="2.5"/>
+  <text x="475" y="288" font-size="10.5" fill="#2f7d32" text-anchor="middle">M = 0 · solo axial (biela)</text>
+  <text x="475" y="322" font-size="10" fill="#777" text-anchor="middle">idéntico a un elemento Truss — el modelo honesto</text>
+</svg>
