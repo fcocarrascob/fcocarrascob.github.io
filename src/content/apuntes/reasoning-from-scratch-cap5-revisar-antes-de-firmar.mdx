@@ -1,0 +1,168 @@
+---
+title: "Revisar antes de firmar: self-refinement y la confianza del modelo"
+description: "El capítulo 5 de Raschka cierra las técnicas sin entrenamiento con el ritual más familiar para un calculista: revisar la memoria antes de firmarla. El modelo critica su propio borrador y lo corrige, guiado por scorers que juzgan sin conocer la respuesta — incluido el logprob, la confianza interna del modelo. En nuestro benchmark el refinamiento corrigió la fórmula de Euler… y entregó el número sin unidad. El diagnóstico quedó nítido: el modelo ya sabe calcular; lo que no sabe es firmar."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "self-refinement", "logprob", "scorer", "inference-time scaling", "benchmark estructural"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 5 — Inference-time scaling vía self-refinement"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 5 (pp. 136–178)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Ningún calculista serio firma una memoria sin releerla. Se revisa que la fórmula
+sea la que corresponde, que los reemplazos numéricos estén bien, que las unidades
+cierren. El capítulo 5 lleva ese ritual al modelo: en vez de votar entre varios
+intentos independientes (el [self-consistency del capítulo
+anterior](/apuntes/reasoning-from-scratch-cap4-escalar-inferencia)), el modelo
+**critica su propio borrador y lo corrige**. Es la tercera y última técnica de
+mejora sin entrenamiento del libro, y la más versátil: no exige que la respuesta
+sea corta y comparable — sirve igual para un párrafo que para un número.
+
+Pero refinar plantea una pregunta previa que la votación no tenía: si el modelo
+produce un borrador y una revisión, **¿cómo saber cuál es mejor sin conocer la
+respuesta correcta?** El verificador del capítulo 3 no sirve aquí — ese compara
+contra el ground truth, que en producción no existe. Se necesita otra cosa: un
+*scorer*.
+
+## 1. Juzgar sin la respuesta: los scorers
+
+El capítulo construye dos jueces que operan a ciegas:
+
+El **scorer heurístico** es puro sentido común codificado: +2.0 puntos si la
+respuesta tiene un `\boxed{}` extraíble, +1.0 si al menos contiene un número, y
+un bono de brevedad `1.5·e^(−len/500)` que favorece respuestas compactas. No
+sabe nada de matemática — juzga **formato y economía**, bajo la apuesta de que
+una respuesta bien entregada y concisa suele ser mejor que un divague.
+
+El segundo es más interesante: preguntarle **al propio modelo** cuánto cree en
+la respuesta.
+
+## 2. Logprobs: la confianza interna del modelo
+
+Cada vez que el modelo genera un token, asigna una probabilidad a cada candidato
+del vocabulario. La idea del *logprob scoring* es usar esa maquinaria al revés:
+tomar una respuesta **ya escrita** y leer, posición por posición, qué
+probabilidad le asignaba el modelo al token que efectivamente sigue. No se
+genera nada — es una lectura retrospectiva.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/logprob.svg"
+  alt="Diagrama del logprob scoring: para el prompt What is the capital of Germany, dos respuestas candidatas — Berlin y Bridge — pasan por una lectura retrospectiva de tres pasos: log softmax de los logits en cada posición, tomar el logprob del token que sigue, y promediar solo los tokens de la respuesta. Berlin obtiene −0.204 (confianza alta) y Bridge −3.891 (confianza baja). Abajo una advertencia: confianza no es corrección, el error confiado puede puntuar más alto que una respuesta correcta pero rara"
+  caption="El logprob scorer: promedio de log-probabilidades de los tokens de la respuesta. 'Berlin' puntúa −0.204 y 'Bridge' −3.891 — el modelo sabe cuál le calza mejor. Saber si es verdad es otro asunto."
+  width={680}
+/>
+
+Dos detalles técnicos hacen esto usable. Primero, multiplicar las probabilidades
+de una secuencia colapsa a cero (0.46 × 0.017 × 0.74 × … ≈ 10⁻⁸): se trabaja en
+**espacio logarítmico**, donde el producto se vuelve suma y los números se
+mantienen legibles ("Berlin" −16.6 vs. "Bridge" −29.9). Segundo, se **promedia**
+sobre los tokens de la respuesta (excluyendo el prompt), para comparar justo
+respuestas de largos distintos.
+
+<Note type="warning" title="Confianza ≠ corrección">
+El logprob mide qué tan <em>natural</em> le parece la respuesta al modelo bajo
+sus patrones aprendidos. Un error fluido y familiar puede puntuar más alto que
+una respuesta correcta pero inusual — el <strong>error confiado</strong>. En la
+tabla 5.1 del libro, el logprob scorer fue el peor de los tres en ambos modelos.
+¿Por qué dedicarle medio capítulo entonces? Porque los logprobs son la pieza
+central del <em>objetivo de entrenamiento</em> del RL en el capítulo 6. Este
+capítulo es su introducción encubierta.
+</Note>
+
+## 3. El loop: borrador, crítica, revisión
+
+Con scorers disponibles, el mecanismo de self-refinement son tres prompts
+encadenados: (1) responder el problema (borrador); (2) un *critique prompt* —
+"eres un revisor meticuloso: identifica errores lógicos, pasos faltantes o
+aritmética mala, y propone un plan de corrección" — sobre el borrador; (3) un
+*refine prompt* con problema + borrador + crítica que pide la versión revisada.
+El scorer decide si la revisión reemplaza al borrador: **solo se acepta si su
+score no empeora**.
+
+En la demo del libro funciona de manual: el base contesta `\boxed{18}` (mal), la
+crítica detecta el error de planteo y escribe el plan de corrección — que
+contiene la respuesta correcta —, y la revisión entrega `\boxed{83}` ✓. Detalle
+honesto que me gustó: la crítica afirmaba cosas falsas ("la pregunta está
+incompleta") y aun así empujó hacia la revisión correcta. Una crítica puede ser
+útil sin ser perfecta.
+
+Para el benchmark estructural adaptamos los prompts al dominio: el revisor es un
+**revisor de memorias de cálculo**, con la checklist que nuestro verificador
+castiga — fórmulas, aritmética, conversiones, *y que el resultado final tenga
+unidad*.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/refinamiento.svg"
+  alt="Diagrama del loop de self-refinement con un caso real del benchmark: el borrador del problema de Euler responde 555.56 (incorrecto), el mismo modelo escribe una crítica que detecta que la fórmula usa pi en vez de pi cuadrado y propone recalcular, la revisión entrega 136.96 que es numéricamente correcto, y un scorer decide si aceptarla comparando scores. Una nota final advierte que la revisión entregó el número sin unidad y el chequeo dimensional la rechaza igual"
+  caption="El loop borrador → crítica → revisión con el caso real de Euler en nuestro benchmark: la crítica encontró el error de fórmula y la revisión corrigió el número… pero lo entregó sin unidad."
+  width={680}
+/>
+
+## 4. Los resultados: el libro, el benchmark, y el diagnóstico
+
+En MATH-500 (tabla 5.1 del libro), el patrón es sutil: el base mejora de 15.2 %
+a **25.0 %** con una iteración **sin scorer** — ambos scorers lo *empeoran*
+(21–22 %), porque a veces vetan revisiones buenas o aceptan malas. El razonador,
+en cambio, sube de 48.2 % a **57.8 %** con el heurístico. Y todo self-refinement
+queda por debajo del self-consistency del capítulo 4 (52.0 %) para este modelo.
+
+Nuestros números fueron más tozudos — **todas las configuraciones dieron 1/6**:
+
+| Config | Accuracy | Tiempo |
+|---|---|---|
+| base + refine×1, sin scorer | 1/6 = 17 % | 2.2 min |
+| base + refine×1, heurístico | 1/6 = 17 % | 2.8 min |
+| base + refine×1, logprob | 1/6 = 17 % | 2.2 min |
+| base + refine×2, sin scorer | 1/6 = 17 % | 5.4 min |
+| razonador + refine×1, heurístico | 1/6 = 17 % | 14.9 min |
+
+Pero la accuracy plana esconde un registro lleno de movimiento — el JSONL guarda
+cada borrador, crítica y revisión:
+
+- **La crítica sí encuentra errores**: en Euler, detectó el error de fórmula y la
+  revisión pasó de 555.56 a 136.96 (la respuesta es 137.1 MPa) — matemática
+  corregida, **entregada sin unidad**, rechazada por el chequeo dimensional.
+- **El heurístico rechazó todas las revisiones** — incluida la de Euler. Los
+  borradores cortos siempre ganan el bono de brevedad. Protege contra el
+  deterioro y contra la mejora, por igual.
+- **El logprob aceptó basura confiada**: una revisión que perdió el `\boxed{}`
+  entero le pareció más "natural" que el borrador. La advertencia del libro,
+  medida en casa.
+- **Iterar dos veces degenera**: la segunda revisión produjo perlas como
+  "Mayor fluidez de la matriz." y un literal `VALOR UNIDAD` copiado del template.
+  Más iteraciones sobre un modelo débil no convergen: derivan.
+
+Y el hallazgo que reordena el proyecto entero: el **razonador entregó el valor
+numéricamente correcto en 4 de los 6 problemas** (450, 137, 225, 0.78) — y solo
+la razón de utilización, que es adimensional, pasó el verificador. Los otros
+tres vinieron **sin unidad**, y ni siquiera una crítica que pide unidades
+explícitamente logró que las agregara.
+
+<Note type="tip" title="El diagnóstico después de dos capítulos de inference scaling">
+El cuello de botella ya no es la matemática: es la <strong>disciplina de
+entrega</strong>. Las técnicas de inferencia (votar, criticar, revisar)
+amplifican la competencia que el modelo ya tiene, pero no le corrigen los
+hábitos. Corregir hábitos es, literalmente, entrenamiento — y un verificador
+que rechaza respuestas sin unidad es exactamente la señal de recompensa que un
+entrenamiento necesita.
+</Note>
+
+## Fin de la etapa "sin entrenar"
+
+Con esto cierra la etapa 3 del libro: medimos el techo de mejorar sin tocar los
+pesos — en nuestro benchmark, del 17 % baseline al 33 % con votación, y ni un
+punto más con refinamiento. Los capítulos 6 y 7 atacan la raíz con
+*reinforcement learning con recompensas verificables*: el modelo genera, el
+verificador califica, y esa calificación **actualiza los pesos**. Nuestro
+verificador estructural — que lleva tres capítulos rechazando respuestas sin
+unidad — deja de ser el juez que reprueba y pasa a ser el profesor que enseña.
+Ahí sabremos si el 0.6B puede aprender a firmar como corresponde.
+
+---
+
+*Apunte del Capítulo 5 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los resultados de MATH-500 son de la tabla 5.1
+del libro; los del benchmark estructural son mediciones propias en una RTX 4060,
+versionadas en el repo del proyecto (`bench_estructural/results/`).*

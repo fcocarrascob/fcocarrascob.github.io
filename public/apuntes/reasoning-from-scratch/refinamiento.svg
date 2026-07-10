@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 540" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+  <rect width="720" height="540" fill="#ffffff"/>
+
+  <text x="360" y="28" text-anchor="middle" font-size="15" fill="#1a1a1a" font-weight="700">Self-refinement: el calculista que revisa antes de firmar</text>
+
+  <!-- Paso 1: borrador -->
+  <rect x="40" y="50" width="300" height="88" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="60" y="74" font-size="12.5" fill="#374151" font-weight="700">1 · Borrador</text>
+  <text x="60" y="96" font-size="12" fill="#374151">Problema de Euler (esbeltez 120)</text>
+  <text x="60" y="118" font-size="13" fill="#b91c1c" font-family="'JetBrains Mono', ui-monospace, monospace">\boxed{555.56}  ✗</text>
+
+  <line x1="340" y1="94" x2="392" y2="94" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Paso 2: crítica -->
+  <rect x="396" y="50" width="284" height="140" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="416" y="74" font-size="12.5" fill="#9a3412" font-weight="700">2 · Crítica (el mismo modelo)</text>
+  <text x="416" y="96" font-size="11.5" fill="#374151">"Eres un revisor meticuloso de memorias de</text>
+  <text x="416" y="112" font-size="11.5" fill="#374151">cálculo: busca errores de fórmula, aritmética</text>
+  <text x="416" y="128" font-size="11.5" fill="#374151">y unidades; propone un plan de corrección."</text>
+  <text x="416" y="152" font-size="11.5" fill="#9a3412" font-style="italic">— La fórmula usa π en vez de π².</text>
+  <text x="416" y="170" font-size="11.5" fill="#9a3412" font-style="italic">— Plan: Fe = π²E/(KL/r)² y recalcular.</text>
+
+  <line x1="538" y1="190" x2="538" y2="234" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Paso 3: revision -->
+  <rect x="396" y="238" width="284" height="96" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="416" y="262" font-size="12.5" fill="#374151" font-weight="700">3 · Revisión</text>
+  <text x="416" y="284" font-size="11.5" fill="#374151">problema + borrador + crítica →</text>
+  <text x="416" y="308" font-size="13" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">\boxed{136.96}  ≈ 137.1 ✓*</text>
+
+  <!-- Scorer decision -->
+  <line x1="396" y1="286" x2="250" y2="286" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="60" y="238" width="190" height="96" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="155" y="262" text-anchor="middle" font-size="12.5" fill="#1e3a8a" font-weight="700">¿Aceptar la revisión?</text>
+  <text x="155" y="284" text-anchor="middle" font-size="11.5" fill="#374151">score(revisada) ≥ score(actual)</text>
+  <text x="155" y="304" text-anchor="middle" font-size="11.5" fill="#6b7280">scorer heurístico o logprob</text>
+  <text x="155" y="322" text-anchor="middle" font-size="11.5" fill="#6b7280">(sin scorer: acepta siempre)</text>
+
+  <line x1="155" y1="334" x2="155" y2="374" stroke="#16a34a" stroke-width="2" marker-end="url(#arg)"/>
+  <text x="168" y="358" font-size="11.5" fill="#16a34a" font-weight="600">iterar N veces</text>
+  <path d="M 250 300 C 330 340 380 220 396 190" stroke="#9ca3af" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+
+  <rect x="55" y="378" width="200" height="42" rx="6" fill="#2563eb"/>
+  <text x="155" y="404" text-anchor="middle" font-size="13.5" fill="#ffffff" font-weight="700">respuesta final</text>
+
+  <!-- Nota -->
+  <rect x="40" y="444" width="640" height="76" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="60" y="468" font-size="12.5" fill="#b91c1c" font-weight="700">* La letra chica de este ejemplo real del benchmark:</text>
+  <text x="60" y="489" font-size="12" fill="#374151">la crítica corrigió la matemática (555.56 → 136.96 ≈ 137.1) pero la revisión entregó el número SIN unidad —</text>
+  <text x="60" y="508" font-size="12" fill="#374151">el chequeo dimensional del verificador la rechaza igual. Revisar mejora el cálculo; la disciplina es otra cosa.</text>
+</svg>

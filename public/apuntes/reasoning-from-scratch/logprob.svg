@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="720" height="500" fill="#ffffff"/>
+
+  <text x="360" y="28" text-anchor="middle" font-size="15" fill="#1a1a1a" font-weight="700">Logprob scoring: preguntarle al modelo cuánto cree en su respuesta</text>
+
+  <!-- Prompt -->
+  <rect x="200" y="48" width="320" height="40" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="360" y="73" text-anchor="middle" font-size="12.5" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">What is the capital of Germany?</text>
+
+  <!-- Dos respuestas -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12">
+    <rect x="60" y="116" width="280" height="40" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="200" y="141" text-anchor="middle" fill="#166534">The capital ... is Berlin.</text>
+    <rect x="380" y="116" width="280" height="40" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="520" y="141" text-anchor="middle" fill="#b91c1c">The capital ... is Bridge.</text>
+  </g>
+  <line x1="290" y1="88" x2="210" y2="116" stroke="#9ca3af" stroke-width="1.6"/>
+  <line x1="430" y1="88" x2="510" y2="116" stroke="#9ca3af" stroke-width="1.6"/>
+
+  <!-- proceso -->
+  <rect x="140" y="184" width="440" height="102" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="360" y="208" text-anchor="middle" font-size="12.5" fill="#1e3a8a" font-weight="700">Lectura retrospectiva (no se genera nada)</text>
+  <text x="360" y="230" text-anchor="middle" font-size="12" fill="#374151">1 · log_softmax de los logits en cada posición de la respuesta</text>
+  <text x="360" y="250" text-anchor="middle" font-size="12" fill="#374151">2 · tomar el logprob del token que efectivamente sigue</text>
+  <text x="360" y="270" text-anchor="middle" font-size="12" fill="#374151">3 · promediar SOLO los tokens de la respuesta (no el prompt)</text>
+
+  <!-- Scores -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace">
+    <rect x="100" y="314" width="200" height="56" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="200" y="338" text-anchor="middle" font-size="15" fill="#166534" font-weight="700">−0.204</text>
+    <text x="200" y="358" text-anchor="middle" font-size="11" fill="#374151">confianza alta (cerca de 0)</text>
+    <rect x="420" y="314" width="200" height="56" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="520" y="338" text-anchor="middle" font-size="15" fill="#b91c1c" font-weight="700">−3.891</text>
+    <text x="520" y="358" text-anchor="middle" font-size="11" fill="#374151">confianza baja (muy negativo)</text>
+  </g>
+  <line x1="200" y1="286" x2="200" y2="314" stroke="#16a34a" stroke-width="2"/>
+  <line x1="520" y1="286" x2="520" y2="314" stroke="#dc2626" stroke-width="2"/>
+
+  <!-- advertencia -->
+  <rect x="40" y="400" width="640" height="84" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="60" y="424" font-size="12.5" fill="#9a3412" font-weight="700">La trampa: confianza ≠ corrección.</text>
+  <text x="60" y="446" font-size="12" fill="#374151">El logprob mide qué tan "natural" le parece la respuesta al modelo. Un error fluido y familiar puede puntuar</text>
+  <text x="60" y="465" font-size="12" fill="#374151">más alto que una respuesta correcta pero rara: el "error confiado". En la tabla 5.1 del libro, el logprob scorer</text>
+  <text x="60" y="484" font-size="12" fill="#374151">fue el PEOR de los tres para aceptar revisiones — pero será la pieza central del RL del capítulo 6.</text>
+</svg>
