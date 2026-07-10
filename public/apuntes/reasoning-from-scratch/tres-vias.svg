@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="470" fill="#ffffff"/>
+
+  <!-- Pipeline convencional -->
+  <text x="360" y="28" text-anchor="middle" font-size="13" fill="#6b7280" font-weight="600">EL PIPELINE CONVENCIONAL</text>
+
+  <rect x="30" y="46" width="130" height="46" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="95" y="66" text-anchor="middle" font-size="13" fill="#1a1a1a">LLM inicial</text>
+  <text x="95" y="83" text-anchor="middle" font-size="11" fill="#6b7280">pesos aleatorios</text>
+
+  <line x1="160" y1="69" x2="196" y2="69" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="200" y="46" width="150" height="46" rx="6" fill="#f3f4f6" stroke="#9ca3af"/>
+  <text x="275" y="66" text-anchor="middle" font-size="13" fill="#1a1a1a">Pretraining</text>
+  <text x="275" y="83" text-anchor="middle" font-size="11" fill="#6b7280">predecir el token siguiente</text>
+
+  <line x1="350" y1="69" x2="386" y2="69" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="390" y="40" width="170" height="58" rx="6" fill="#f3f4f6" stroke="#9ca3af"/>
+  <text x="475" y="58" text-anchor="middle" font-size="13" fill="#1a1a1a">Post-training</text>
+  <text x="475" y="75" text-anchor="middle" font-size="11" fill="#6b7280">instruction tuning</text>
+  <text x="475" y="90" text-anchor="middle" font-size="11" fill="#6b7280">preference tuning</text>
+
+  <line x1="560" y1="69" x2="596" y2="69" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="600" y="46" width="106" height="46" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="653" y="66" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="600">LLM</text>
+  <text x="653" y="83" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="600">convencional</text>
+
+  <!-- Bajada -->
+  <line x1="653" y1="92" x2="653" y2="130" stroke="#2563eb" stroke-width="2"/>
+  <line x1="653" y1="130" x2="360" y2="130" stroke="#2563eb" stroke-width="2"/>
+  <line x1="360" y1="130" x2="360" y2="158" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <text x="360" y="185" text-anchor="middle" font-size="13" fill="#6b7280" font-weight="600">TRES VÍAS PARA MEJORAR EL RAZONAMIENTO</text>
+
+  <!-- Tres cajas -->
+  <g>
+    <rect x="30" y="204" width="210" height="128" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="135" y="230" text-anchor="middle" font-size="13.5" fill="#1e3a8a" font-weight="700">1 · Inference-compute</text>
+    <text x="135" y="247" text-anchor="middle" font-size="13.5" fill="#1e3a8a" font-weight="700">scaling</text>
+    <text x="135" y="272" text-anchor="middle" font-size="11.5" fill="#374151">más cómputo al generar:</text>
+    <text x="135" y="288" text-anchor="middle" font-size="11.5" fill="#374151">CoT, sampling, votación,</text>
+    <text x="135" y="304" text-anchor="middle" font-size="11.5" fill="#374151">self-refinement</text>
+    <text x="135" y="324" text-anchor="middle" font-size="11" fill="#2563eb" font-weight="600">NO toca los pesos · caps. 4–5</text>
+  </g>
+  <g>
+    <rect x="255" y="204" width="210" height="128" rx="8" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="360" y="230" text-anchor="middle" font-size="13.5" fill="#9a3412" font-weight="700">2 · Reinforcement</text>
+    <text x="360" y="247" text-anchor="middle" font-size="13.5" fill="#9a3412" font-weight="700">learning</text>
+    <text x="360" y="272" text-anchor="middle" font-size="11.5" fill="#374151">recompensas verificables:</text>
+    <text x="360" y="288" text-anchor="middle" font-size="11.5" fill="#374151">¿la respuesta es correcta?</text>
+    <text x="360" y="304" text-anchor="middle" font-size="11.5" fill="#374151">(GRPO)</text>
+    <text x="360" y="324" text-anchor="middle" font-size="11" fill="#c2410c" font-weight="600">SÍ entrena · caps. 6–7</text>
+  </g>
+  <g>
+    <rect x="480" y="204" width="210" height="128" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="585" y="230" text-anchor="middle" font-size="13.5" fill="#166534" font-weight="700">3 · Distillation</text>
+    <text x="585" y="272" text-anchor="middle" font-size="11.5" fill="#374151">fine-tuning supervisado con</text>
+    <text x="585" y="288" text-anchor="middle" font-size="11.5" fill="#374151">razonamientos generados</text>
+    <text x="585" y="304" text-anchor="middle" font-size="11.5" fill="#374151">por un modelo mayor</text>
+    <text x="585" y="324" text-anchor="middle" font-size="11" fill="#15803d" font-weight="600">SÍ entrena · cap. 8</text>
+  </g>
+
+  <!-- Convergencia -->
+  <line x1="135" y1="332" x2="135" y2="368" stroke="#2563eb" stroke-width="2"/>
+  <line x1="360" y1="332" x2="360" y2="368" stroke="#2563eb" stroke-width="2"/>
+  <line x1="585" y1="332" x2="585" y2="368" stroke="#2563eb" stroke-width="2"/>
+  <line x1="135" y1="368" x2="585" y2="368" stroke="#2563eb" stroke-width="2"/>
+  <line x1="360" y1="368" x2="360" y2="392" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="245" y="396" width="230" height="48" rx="6" fill="#2563eb"/>
+  <text x="360" y="425" text-anchor="middle" font-size="16" fill="#ffffff" font-weight="700">Reasoning model</text>
+</svg>

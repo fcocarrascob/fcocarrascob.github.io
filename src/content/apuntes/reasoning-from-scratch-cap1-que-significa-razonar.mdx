@@ -1,0 +1,175 @@
+---
+title: "Qué significa que un modelo 'razone' (y por qué le importa a un calculista)"
+description: "Un LLM razona cuando genera pasos intermedios antes de la respuesta final — igual que una memoria de cálculo. El primer capítulo de Raschka define esa idea con precisión ingenieril: el pipeline estándar de entrenamiento, las tres vías para mejorar el razonamiento, la diferencia entre pattern matching y lógica, y lo que cuesta razonar. Cierra con el hilo propio de esta serie: un benchmark verificable de cálculo estructural."
+pubDate: 2026-07-09
+tags: ["reasoning", "llm", "chain of thought", "reinforcement learning", "benchmark", "ingeniería estructural"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 1 — Entendiendo los modelos de razonamiento"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 1 (pp. 1–17)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Imagina que le pides a un modelo la resistencia de diseño de una diagonal y te
+contesta, a secas: *"450 kN"*. ¿Firmarías eso? Ningún revisor lo aceptaría, y no
+porque el número esté mal, sino porque no hay **memoria de cálculo**: no se ve qué
+norma aplicó, qué estado límite controló ni dónde podría haberse equivocado. El valor
+de un cálculo no está solo en el resultado; está en los pasos que llevan a él.
+
+"Razonar", para un modelo de lenguaje, es exactamente eso. Raschka lo define en un
+sentido ingenieril, no filosófico: un LLM razona cuando **genera pasos intermedios
+antes de producir la respuesta final**. Con esta nota parte una serie nueva —el libro
+se llama *Build a Reasoning Model (From Scratch)*— y, como veremos al final, tiene
+una conexión directa con el cálculo estructural.
+
+## 1. Pasos intermedios: la definición operativa
+
+A esa cadena de pasos intermedios se le llama **chain of thought** (CoT, cadena de
+pensamiento). Los pasos pueden mostrarse al usuario o viajar ocultos entre etiquetas
+especiales como `<think>...</think>`; da igual — la idea central es que el modelo usa
+tokens para resolver el problema por partes en vez de saltar a la conclusión.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/cot.svg"
+  alt="El mismo prompt aritmético entra a dos modelos. El LLM convencional responde directamente 8. El reasoning LLM genera tres pasos intermedios — conteos iniciales, actualización tras el traspaso, suma final — antes de responder 8. Debajo se indica que los pasos pueden mostrarse o ir ocultos en etiquetas think"
+  caption="Un LLM convencional salta a la respuesta; un reasoning model construye una cadena de pasos intermedios antes de darla. Los pasos pueden mostrarse o quedar ocultos."
+  width={660}
+/>
+
+Un **reasoning model** es, entonces, un LLM mejorado —por entrenamiento o por
+técnicas de prompting— para producir esos pasos, lo que suele subir la exactitud en
+tareas de varios pasos: matemática, lógica, código.
+
+<Note type="warning" title="No confundir con lógica formal">
+Un motor simbólico o un demostrador de teoremas sigue reglas fijas que garantizan
+consistencia: con las mismas premisas, siempre la misma conclusión. Un LLM genera su
+"razonamiento" <strong>token a token, según patrones estadísticos</strong>. Los pasos
+pueden verse impecables y aun así no ser lógicamente válidos. Decir que el modelo
+"piensa" es jerga de ingeniería, no una afirmación sobre cognición.
+</Note>
+
+## 2. De dónde viene un LLM (y por qué no razona de fábrica)
+
+Antes de mejorar nada conviene recordar cómo se construye un LLM convencional. Dos
+etapas: **pretraining** —predecir el siguiente token sobre trillones de tokens de
+texto; miles de GPUs, millones de dólares— y **post-training**, que primero le enseña
+a seguir instrucciones (*instruction tuning*) y luego a responder con el estilo que
+la gente prefiere (*preference tuning*, del que RLHF es la técnica más conocida).
+
+El resultado es un modelo que completa texto de forma asombrosa. Pero todo su
+"conocimiento" es **asociación estadística**: cuando responde *"Berlín"* a *"la
+capital de Alemania es…"*, no está deduciendo nada — está recordando una correlación
+vista millones de veces. Los métodos de razonamiento se aplican **encima** de ese
+modelo ya entrenado.
+
+## 3. Las tres vías para mejorar el razonamiento
+
+Todo el campo —desde el o1 de OpenAI (2024) hasta DeepSeek-R1 (2025), que liberó
+pesos *y* receta de entrenamiento— se reduce a tres familias de técnicas:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/tres-vias.svg"
+  alt="Arriba, el pipeline convencional: LLM inicial con pesos aleatorios, pretraining por predicción del token siguiente, post-training con instruction y preference tuning, hasta llegar al LLM convencional. Debajo, tres cajas: inference-compute scaling que no toca los pesos, reinforcement learning con recompensas verificables, y distillation con datos de un modelo mayor. Las tres convergen en el reasoning model"
+  caption="Las tres vías se aplican sobre un LLM ya entrenado. Solo la primera no modifica los pesos del modelo."
+  width={680}
+/>
+
+- **Inference-compute scaling** (caps. 4–5): gastar más cómputo *al momento de
+  generar* — prompting con CoT, muestrear varios candidatos y votar, refinar la
+  propia respuesta. El modelo no cambia; cambia cómo lo usas.
+- **Reinforcement learning** (caps. 6–7): entrenar al modelo premiando las respuestas
+  correctas. La novedad frente al RLHF clásico es la fuente de la recompensa: en vez
+  de rankings humanos, **recompensas verificables** — un verificador automático decide
+  si la respuesta es correcta o no. Guarda esta idea: es la llave de la sección final.
+- **Distillation** (cap. 8): hacer fine-tuning supervisado de un modelo pequeño con
+  razonamientos de alta calidad generados por uno grande.
+
+## 4. Pattern matching que simula lógica
+
+La distinción más útil del capítulo es entre completar patrones y razonar. El ejemplo
+canónico:
+
+> *"Todas las aves vuelan. Un pingüino es un ave. ¿Puede volar un pingüino?"*
+
+En **mundo cerrado** (solo las premisas del prompt), la respuesta válida es "sí" — se
+deduce de las premisas, aunque la primera sea falsa. En **mundo abierto** (admitiendo
+lo que sabemos del mundo), hay una contradicción que un razonador debería detectar y
+señalar. Un LLM como GPT-4o suele responder "bien"… pero no porque ejecute lógica:
+porque *"los pingüinos no vuelan"* aparece tantas veces en su corpus que la
+contradicción está, digamos, precalculada en sus pesos.
+
+Ese truco —pattern matching a escala masiva— funciona sorprendentemente bien en
+escenarios familiares, y falla justo donde más duele: cuando el escenario es
+**novedoso** (no estaba en el corpus) o cuando la cadena lógica es **larga y
+compleja**. Que son, precisamente, las condiciones de un problema real de ingeniería.
+
+## 5. Razonar cuesta (y no siempre conviene)
+
+Cada token que genera un LLM exige un paso completo de cómputo por toda la red. Una
+respuesta con cadena de razonamiento el doble de larga cuesta aproximadamente el
+doble; y muchos métodos de razonamiento corren el modelo **varias veces** por
+pregunta (muestrear candidatos, verificar, refinar). Además existe el
+**overthinking**: para tareas simples, un reasoning model es más caro, más verboso y
+a veces *peor*.
+
+<Note type="tip" title="La herramienta correcta para cada tarea">
+Traducir un informe o resumir un correo no necesita razonamiento. Verificar un
+diseño en varios pasos normativos, sí. La regla es la misma que en la oficina de
+cálculo: no uses un análisis no lineal tiempo-historia para dimensionar una correa.
+</Note>
+
+## 6. El plan del libro
+
+El libro construye un reasoning model completo en cuatro etapas, partiendo de un
+modelo pequeño (Qwen3 0.6B) que corre en hardware de consumo:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/roadmap.svg"
+  alt="Cuatro etapas encadenadas: etapa 1, cargar el LLM convencional Qwen3 0.6B en el capítulo 2; etapa 2, evaluación en el capítulo 3; de ahí se bifurca hacia la etapa 3, técnicas de inferencia sin entrenar en los capítulos 4 y 5, y la etapa 4, técnicas de entrenamiento con RL y distillation en los capítulos 6 a 8. Flechas punteadas devuelven ambas etapas a la evaluación"
+  caption="El roadmap del libro. La evaluación (etapa 2) no es un trámite: cada técnica de las etapas 3 y 4 vuelve a ella para demostrar que de verdad ayuda."
+  width={680}
+/>
+
+Nótese dónde está la evaluación: **antes** que cualquier técnica de mejora. Sin una
+forma de medir, no hay manera de saber si un método sirve o solo genera texto más
+largo.
+
+## 7. ¿Y esto qué tiene que ver con calcular estructuras?
+
+Aquí está el hilo conductor de esta serie. El libro evalúa razonamiento con problemas
+de **matemática** por una razón muy concreta: son **verificables automáticamente**.
+La respuesta es un valor único que un script puede comprobar sin un humano al medio —
+y esa misma verificabilidad es la que después alimenta el reinforcement learning como
+señal de recompensa.
+
+Pero la matemática no es el único dominio verificable. **El cálculo estructural
+también lo es**: un problema de diseño bien planteado tiene una respuesta única —
+valor numérico, unidad, norma que lo gobierna— comparable con tolerancia:
+
+> Una barra de acero A36 (F<sub>y</sub> = 250 MPa) trabaja en tracción con área bruta
+> A<sub>g</sub> = 2000 mm². ¿Resistencia de diseño por fluencia según AISC 360 (LRFD)?
+>
+> **Respuesta verificable:** 450 kN (± 1 %)
+
+Así que, en paralelo a la lectura, este proyecto arranca con un **benchmark de
+razonamiento para cálculo estructural**: problemas de tracción, pandeo y flexión con
+respuesta única, y un verificador que replica el pipeline del libro — extraer la
+respuesta final, normalizar valor y unidad (acepta kN, tonf o kip), y comparar con
+tolerancia relativa, rechazando de paso respuestas con la dimensión equivocada. Donde
+el libro mida accuracy en problemas de matemática, aquí mediremos cuánto "sabe
+calcular" un modelo pequeño — y si las técnicas de cada capítulo lo mejoran.
+
+## El punto de partida
+
+El capítulo 1 deja tres ideas firmes: razonar es generar pasos intermedios; esos
+pasos son pattern matching sofisticado, no lógica con garantías; y mejorarlos tiene
+tres vías con costos muy distintos. El próximo apunte baja al código: cargar Qwen3
+0.6B, generar texto token a token y acelerarlo con KV cache y compilación — la base
+sobre la que se montará todo lo demás.
+
+---
+
+*Apunte del Capítulo 1 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los ejemplos y definiciones siguen los del
+libro; el benchmark estructural es un proyecto propio de esta serie.*

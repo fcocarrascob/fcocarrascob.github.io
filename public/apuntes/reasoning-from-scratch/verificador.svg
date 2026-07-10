@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="500" fill="#ffffff"/>
+
+  <!-- Salida del modelo -->
+  <rect x="80" y="20" width="560" height="74" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="100" y="44" font-size="12.5" fill="#374151">La fluencia en el área bruta controla: φPn = 0.90 · 250 MPa · 2000 mm²…</text>
+  <text x="100" y="62" font-size="12.5" fill="#374151">El resultado final es:</text>
+  <text x="100" y="82" font-size="13.5" fill="#1a1a1a" font-family="'JetBrains Mono', ui-monospace, monospace">\boxed{450 kN}</text>
+  <text x="560" y="44" font-size="12" fill="#6b7280">respuesta libre</text>
+  <text x="560" y="59" font-size="12" fill="#6b7280">del modelo</text>
+
+  <line x1="360" y1="94" x2="360" y2="126" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="374" y="115" font-size="12.5" fill="#2563eb" font-weight="600">1 · extraer el último \boxed{...}</text>
+
+  <rect x="230" y="130" width="260" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="360" y="155" text-anchor="middle" font-size="14" fill="#1e3a8a" font-family="'JetBrains Mono', ui-monospace, monospace">450 kN</text>
+
+  <line x1="360" y1="170" x2="360" y2="202" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="374" y="191" font-size="12.5" fill="#2563eb" font-weight="600">2 · normalizar (LaTeX fuera, miles, coma decimal)</text>
+
+  <rect x="230" y="206" width="260" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="360" y="231" text-anchor="middle" font-size="14" fill="#1e3a8a" font-family="'JetBrains Mono', ui-monospace, monospace">450 kn</text>
+
+  <line x1="360" y1="246" x2="360" y2="278" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="374" y="267" font-size="12.5" fill="#2563eb" font-weight="600">3 · valor + unidad → SI</text>
+
+  <rect x="230" y="282" width="260" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="360" y="307" text-anchor="middle" font-size="14" fill="#1e3a8a" font-family="'JetBrains Mono', ui-monospace, monospace">450 000 N · fuerza</text>
+
+  <!-- Ground truth al costado -->
+  <rect x="530" y="282" width="170" height="40" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="615" y="299" text-anchor="middle" font-size="11.5" fill="#9a3412">referencia (dataset)</text>
+  <text x="615" y="315" text-anchor="middle" font-size="12.5" fill="#9a3412" font-family="'JetBrains Mono', ui-monospace, monospace">450.0 kn ±1%</text>
+  <line x1="530" y1="302" x2="494" y2="302" stroke="#f59e0b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <line x1="360" y1="322" x2="360" y2="354" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="374" y="343" font-size="12.5" fill="#2563eb" font-weight="600">4 · verificar: misma dimensión + tolerancia relativa</text>
+
+  <rect x="230" y="358" width="260" height="46" rx="6" fill="#2563eb"/>
+  <text x="360" y="386" text-anchor="middle" font-size="15" fill="#ffffff" font-weight="700">CORRECTO</text>
+
+  <!-- Rechazos -->
+  <g font-size="11.5" fill="#b91c1c">
+    <rect x="30" y="424" width="660" height="56" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="45" y="446" font-weight="700">El verificador rechaza:</text>
+    <text x="45" y="466">sin \boxed{} · unidad desconocida · dimensión errada (MPa cuando se pide kN) · fuera de tolerancia — y acepta 450 kN ≡ 45.9 tonf ≡ 101.2 kip</text>
+  </g>
+</svg>

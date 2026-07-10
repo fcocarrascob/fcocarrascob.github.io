@@ -1,0 +1,137 @@
+---
+title: "El taller antes de la obra: generar texto con un modelo local"
+description: "Antes de mejorar el razonamiento hay que tener la máquina andando. El capítulo 2 de Raschka monta el taller: un Qwen3 de 0.6B parámetros corriendo local, el tokenizer que traduce texto a números, la generación token a token con greedy decoding, y las dos optimizaciones — KV cache y compilación — que convierten 5 tokens por segundo en 68. Con la GPU de escritorio como banco de pruebas."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "qwen3", "tokenizer", "kv cache", "pytorch", "inferencia"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 2 — Generando texto con un LLM preentrenado"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 2 (pp. 18–56)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Entrenar el modelo base de DeepSeek costó unos 5.5 millones de dólares: 2 048 GPUs
+H800 durante once semanas, con el consumo eléctrico de una casa durante 55 años. Ese
+dato del capítulo 2 no está para impresionar, sino para justificar una decisión de
+diseño que atraviesa todo el libro: **no vamos a entrenar un LLM desde cero**. Vamos a
+tomar uno pequeño ya preentrenado y a construir el razonamiento *encima*.
+
+La analogía de Raschka es perfecta para esta casa: si quieres aprender mecánica, no
+partes desarmando una Ferrari — partes con un Escarabajo, que tiene el mismo motor de
+cuatro tiempos pero te deja ver cada pieza. Nuestro Escarabajo es **Qwen3 0.6B**: 600
+millones de parámetros, la misma arquitectura que los modelos grandes, y corre entero
+en una GPU de escritorio. Este capítulo es el taller: dejarlo andando, entender cómo
+genera texto, y hacerlo rápido.
+
+## 1. Un modelo que corre en tu escritorio
+
+Tres cosas del modelo elegido que importan para el proyecto:
+
+- Es **base**: solo pretraining, sin instruction tuning ni razonamiento. Así, cuando
+  midamos mejoras, sabremos que vienen de los métodos que agreguemos y no de un
+  post-entrenamiento opaco.
+- Es **open-weight** y la implementación del libro es PyTorch puro, legible y
+  modificable, sin llamadas a APIs: todo local, tus datos no salen de tu máquina.
+  Para una oficina de cálculo, ese detalle no es menor.
+- Existe una **variante razonadora oficial** entrenada por el equipo Qwen sobre este
+  mismo base — la referencia contra la que compararemos lo que construyamos (ya la
+  usamos en el [apunte del capítulo 3](/apuntes/reasoning-from-scratch-cap3-verificar-respuestas)).
+
+Cargarlo son cuatro líneas: descargar los pesos (1.4 GB), instanciar la arquitectura,
+`load_state_dict`, y `.to(device)`. En nuestra RTX 4060 ocupa ~1.5 GB de VRAM.
+
+## 2. El tokenizer: la aduana entre el texto y el modelo
+
+Todo lo que entra y sale del modelo son **token IDs** — enteros. El tokenizer es el
+traductor de ida y de vuelta:
+
+```python
+tokenizer.encode("Explain large language models.")
+# → [840, 20772, 3460, 4128, 4119, 13]
+tokenizer.decode([840, 20772, 3460, 4128, 4119, 13])
+# → 'Explain large language models.'
+```
+
+Fíjate en que "Explain" se partió en dos tokens ("Ex" + "plain"): el tokenizer usa
+*byte pair encoding*, que mezcla palabras completas y subpalabras — así puede
+codificar cualquier texto, incluso el que nunca vio (si vienes del
+[apunte sobre tokenización](/apuntes/llm-from-scratch-cap2-de-texto-a-vectores) de la
+otra serie, es exactamente aquello, en producción). El vocabulario de Qwen3 tiene
+~151 000 tokens, y el trade-off es directo: vocabulario más grande = modelo más pesado
+pero secuencias más cortas; y duplicar los tokens de una secuencia duplica el cómputo.
+
+## 3. Generar es predecir, una palabra a la vez
+
+Aquí está la mecánica que explica casi todo lo que vimos en los otros apuntes — por
+qué razonar cuesta, por qué las respuestas se truncan:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/generacion.svg"
+  alt="Diagrama del ciclo de generación: el prompt de seis tokens entra al modelo Qwen3, que en un forward pass produce una matriz de seis filas por 151 936 columnas; solo la última fila se usa, el argmax de esa fila da el token ID 20286 que se decodifica como Large, y una flecha punteada devuelve ese token al prompt para repetir el ciclo completo"
+  caption="Un ciclo de generación. El modelo produce una predicción por cada posición de entrada, pero solo la última se usa: su argmax es el token nuevo, que se anexa al prompt para el siguiente ciclo."
+  width={680}
+/>
+
+En cada pasada, el modelo devuelve una matriz con una fila por token de entrada y una
+columna por token del vocabulario — scores de "qué tan probable es cada token como
+continuación". Para generar solo interesa la **última fila**: `argmax` da el índice
+del score más alto, ese índice *es* el token ID, se decodifica, se anexa a la
+secuencia, y vuelta a empezar. Elegir siempre el máximo se llama **greedy decoding** —
+determinista y simple, y justamente lo que el capítulo 4 va a cuestionar.
+
+<Note type="warning" title="El base model no sabe callarse">
+Probando la función de generación, el modelo responde bien… y sigue de largo:
+después de contestar emite el token <code>&lt;|endoftext|&gt;</code> y continúa con
+texto sin relación. Es la firma de un modelo base: aprendió a continuar documentos,
+no a conversar. La solución es mecánica — detener la generación al ver ese token —
+pero la lección es conceptual: seguir instrucciones es una capa que se agrega, no
+algo que emerge solo del pretraining.
+</Note>
+
+## 4. Hacerlo rápido: la parte que parece opcional y no lo es
+
+La versión ingenua del ciclo anterior tiene un problema estructural: en cada
+iteración le pasas al modelo *la secuencia completa*, y él recomputa todo lo que ya
+había computado. Generar n tokens cuesta O(n²). La solución es el **KV cache**:
+guardar las representaciones internas de la atención (keys y values) de los tokens ya
+procesados, para que cada iteración procese *solo el token nuevo* — O(n).
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/kv-cache.svg"
+  alt="Comparación lado a lado: sin KV cache cada iteración procesa la secuencia completa que crece de seis a siete a ocho tokens, en rojo; con KV cache la primera iteración procesa seis tokens y guarda keys y values, y cada iteración siguiente procesa un solo token, en verde. Abajo, barras con los tokens por segundo del libro: básica 5, con compile 6, con KV cache 29, con ambas 68"
+  caption="El KV cache elimina el recómputo (O(n²) → O(n)) y torch.compile optimiza los kernels. Juntas, las dos técnicas multiplican la velocidad por 13 sin cambiar ni un resultado."
+  width={680}
+/>
+
+La segunda palanca es `torch.compile(model)`: PyTorch analiza el grafo de cómputo y
+fusiona operaciones en kernels optimizados. La primera pasada es lenta (está
+compilando — siempre se descarta como *warm-up* al medir), las siguientes vuelan. En
+el banco del libro (tabla 2.1): de 5 tokens/segundo a **68** combinando ambas
+técnicas, con salida *idéntica* — ese es el sanity check de que la optimización no
+cambió la matemática.
+
+<Note type="tip" title="Por qué esto le importa al benchmark estructural">
+Estas optimizaciones parecen detalle de infraestructura hasta que corres una
+evaluación: en nuestro benchmark del capítulo 3, la variante razonadora tardó
+<strong>7.6 minutos en responder 6 problemas</strong> en la RTX 4060 — y los métodos
+de los próximos capítulos piden generar <em>varios candidatos por problema</em> y
+votar. Cada optimización de este capítulo se multiplica por cada token de cada
+intento de cada problema. El taller no era opcional.
+</Note>
+
+## El punto de partida, ahora sí completo
+
+Con esto queda montada la etapa 1 del libro: un modelo local cargado, un tokenizer
+entendido, una función de generación con parada limpia, y dos optimizaciones que
+hacen viable evaluar en serio. Sobre esta base se montó el verificador del
+[capítulo 3](/apuntes/reasoning-from-scratch-cap3-verificar-respuestas) — y sobre
+ambos se montará el capítulo 4: dejar de elegir siempre el token más probable
+(temperatura, top-p) y hacer que el modelo *vote consigo mismo*. Ahí veremos si la
+aguja del benchmark estructural se mueve.
+
+---
+
+*Apunte del Capítulo 2 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los valores y ejemplos de código siguen los del
+libro; los tiempos en RTX 4060 son mediciones propias del proyecto.*

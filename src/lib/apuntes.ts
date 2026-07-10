@@ -10,6 +10,12 @@ export const SUBSECTIONS = {
     description:
       'Apuntes didácticos del libro de Sebastian Raschka: construir un modelo de lenguaje grande desde cero, paso a paso — de los datos de texto al modelo GPT entrenado.',
   },
+  'reasoning-from-scratch': {
+    label: 'Build a Reasoning Model from Scratch',
+    author: 'Sebastian Raschka',
+    description:
+      'Apuntes didácticos del libro de Sebastian Raschka: cómo se construye un modelo de razonamiento desde cero — evaluación verificable, inference-time scaling, reinforcement learning y distillation — con un hilo propio: aplicar cada técnica al cálculo estructural.',
+  },
   'hands-on-ml': {
     label: 'Hands-On Machine Learning',
     author: 'Aurélien Géron',

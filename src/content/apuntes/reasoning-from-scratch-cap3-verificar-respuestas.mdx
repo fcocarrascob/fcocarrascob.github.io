@@ -1,0 +1,152 @@
+---
+title: "Cómo saber si un modelo sabe calcular: verificadores"
+description: "Antes de mejorar el razonamiento de un modelo hay que poder medirlo. El capítulo 3 de Raschka construye un verificador matemático — extraer la respuesta, normalizarla, compararla con la referencia — y aquí lo adaptamos al cálculo estructural: valor, unidad, dimensión y tolerancia. Con resultados reales: qué pasa cuando Qwen3-0.6B (base y razonador) rinde un examen de diseño en acero."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "evaluación", "benchmark", "verificador", "ingeniería estructural", "AISC 360"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 3 — Evaluando modelos de razonamiento"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 3 (pp. 57–93)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Cuando un ingeniero junior te entrega una memoria de cálculo, no la calificas por lo
+convincente que suena: vas al resultado, lo contrastas con la norma y con tu propio
+número, y recién ahí decides si confías. Con los modelos de lenguaje pasa lo mismo,
+con un agravante — un LLM *siempre* suena convincente. La evaluación es lo único que
+separa un modelo que suena bien de uno que calcula bien.
+
+En [el apunte anterior](/apuntes/reasoning-from-scratch-cap1-que-significa-razonar)
+quedó anunciado el proyecto de esta serie: un benchmark verificable de cálculo
+estructural. El capítulo 3 del libro es donde ese benchmark se vuelve código, porque
+construye la pieza central: el **verificador**.
+
+## 1. Cuatro formas de examinar un modelo
+
+El libro parte ordenando el terreno: en la práctica hay cuatro maneras de evaluar un
+LLM. Dos son **cuantitativas** (contra referencia): la *opción múltiple* y los
+**verificadores**. Dos son **cualitativas** (por juicio): los *leaderboards* de
+preferencias y el *LLM como juez*.
+
+Para modelos de razonamiento, el método que importa es el verificador: dejas que el
+modelo responda **en formato libre** — con todo su desarrollo — y un programa
+determinista extrae la respuesta final y la compara con la correcta. Sin humanos al
+medio, sin otro LLM opinando. La limitación es honesta: solo funciona en dominios
+donde la respuesta se puede chequear mecánicamente. La matemática es el ejemplo
+canónico del libro. El cálculo estructural es el nuestro.
+
+## 2. El pipeline: extraer, normalizar, verificar, calificar
+
+La convención (heredada de los benchmarks matemáticos) es pedirle al modelo que
+entregue su respuesta final dentro de `\boxed{...}` — el equivalente al "resultado
+final" subrayado en una memoria de cálculo. Sobre eso, el verificador hace cuatro
+cosas:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/verificador.svg"
+  alt="Pipeline vertical del verificador estructural: de la respuesta libre del modelo se extrae el último boxed con 450 kN, se normaliza a 450 kn, se convierte a 450 000 newtons con dimensión fuerza, y se compara contra la referencia del dataset de 450 kn con uno por ciento de tolerancia, dando CORRECTO. Abajo, una franja roja lista lo que el verificador rechaza: sin boxed, unidad desconocida, dimensión errada y fuera de tolerancia"
+  caption="El verificador estructural: cuatro pasos deterministas de la respuesta libre al veredicto. Acepta cualquier unidad de la dimensión correcta (450 kN ≡ 45.9 tonf) y rechaza lo demás."
+  width={660}
+/>
+
+1. **Extraer** el último `\boxed{...}` con un parser que cuenta llaves — así
+   `\boxed{\text{450 kN}}` no lo rompe. Nada de usar otro LLM para leer la respuesta:
+   la extracción es una tarea mecánica y conviene que sea determinista y reproducible.
+2. **Normalizar**: las mil formas de escribir lo mismo (`\frac{14}{3}`, `14/3`,
+   `$14/3$`) se reescriben a una forma canónica. En nuestra versión, además:
+   separadores de miles ("2 777.78" y "1,013"), coma decimal ("137,1 MPa") y
+   `kN\cdot m` → `kn*m`.
+3. **Verificar**: aquí el libro y nosotros divergimos, y la divergencia es
+   instructiva. Para matemática pura, Raschka usa **SymPy**, un motor simbólico que
+   reconoce que `28/6` y `14/3` son el mismo número. Para ingeniería, la
+   equivalencia es física, no simbólica: se parsea **valor + unidad**, se convierte
+   todo a SI, y se compara con **tolerancia relativa** (1–2 %, para absorber redondeos
+   de tablas y propiedades).
+4. **Calificar** y registrar: cada respuesta queda en un archivo JSONL con el texto
+   completo generado, lo extraído y el veredicto — porque el número de accuracy dice
+   *cuánto* falla el modelo, pero solo el registro dice *cómo* falla.
+
+<Note type="info" title="El chequeo que la matemática no necesita">
+Un verificador matemático nunca se pregunta si "450" son kilonewtons o megapascales.
+El estructural sí: responder <code>450 MPa</code> cuando se piden kN cuenta como
+incorrecto aunque el número coincida — la <strong>dimensión</strong> es parte de la
+respuesta. Y al revés: <code>103.3 tonf</code> es correcto para una referencia de
+1013 kN, porque el verificador convierte unidades antes de comparar. Ambas cosas
+serían invisibles para una comparación de texto.
+</Note>
+
+## 3. El examen: seis problemas de acero
+
+Con el verificador listo, el benchmark semilla son seis problemas de diseño en acero
+según AISC 360, autocontenidos (todas las propiedades en el enunciado) y con
+respuesta única: tracción por fluencia y por rotura, pandeo elástico de Euler, pandeo
+inelástico, momento plástico y razón de utilización. Cada uno registra la norma y
+cláusula que gobierna el resultado.
+
+Y aquí viene lo entretenido: le tomamos el examen a **Qwen3-0.6B** — el modelo
+pequeño del libro, corriendo local en una RTX 4060 — en sus dos variantes: el modelo
+**base** (solo pretraining) y la variante **razonadora oficial** que el equipo Qwen
+entrenó sobre ese mismo base, y que el libro usa como referencia de hacia dónde
+queremos llegar.
+
+## 4. Resultados: los números y, más importante, los modos de falla
+
+| Modelo | Prompt | Aciertos | Cómo responde |
+|---|---|---|---|
+| Base | "resuelve paso a paso" | 1/6 | razona largo, entra en bucles, 3 de 6 nunca llegan al `\boxed{}` |
+| Base | template del libro (corto) | 1/6 | respeta el formato… y **adivina**: "100 kN", "300", "1000" |
+| Razonador oficial (2048 tokens) | template del libro | 2/6 | razona de verdad, pero 4 de 6 se **truncan** antes del `\boxed{}` |
+| Razonador oficial (4096 tokens) | template del libro | 2/6 | termina de pensar… y aparecen los errores de ingeniería |
+
+Cuatro observaciones que valen más que la tabla:
+
+**La accuracy sola engaña.** Las dos filas del base dicen "1/6" y describen modelos
+completamente distintos: uno que razona sin disciplina y otro que no razona nada. Sin
+el registro JSONL de cada respuesta, esa diferencia — que es *la* información para
+decidir qué mejorar — sería invisible.
+
+**El prompt mueve el resultado tanto como el modelo.** El libro lo advierte con
+números propios: en MATH-500, quitar el template mejora el modelo base un 50 % y
+*empeora* el razonador un 40 %. Lo replicamos sin querer: nuestro template "paso a
+paso" hace razonar al base; el template corto del libro lo hace apostar. Moraleja
+incómoda: cualquier comparación de modelos que no fije y reporte el prompt es
+sospechosa.
+
+**Lo único que el base acierta es una división.** La razón de utilización
+(Pu/φPn = 0.778) no requiere saber acero, solo dividir. Todo lo que exige *aplicar
+una fórmula normativa correctamente* — es decir, todo lo que hace un calculista —
+falla. Ese es el punto de partida honesto del proyecto.
+
+**Los errores del razonador son errores de ingeniero novato.** Con presupuesto
+suficiente, el razonador plantea bien las fórmulas (φ<sub>t</sub>·A<sub>e</sub>·F<sub>u</sub>,
+la Euler completa) y ahí se delata en los detalles: en tracción-rotura convierte
+"400 MPa" en "400 N/m²" — le faltó el factor 10⁶ —, obtiene 0.36 N, *nota que el
+número es absurdo* y se queda dando vueltas sin encontrar el error. Y en Euler llega
+al valor exacto (137.08) pero lo entrega **sin unidad**, y el verificador lo rechaza.
+¿Severo? Es una decisión de diseño: una respuesta sin unidades no se firma. Razonar
+más tokens también cuesta: cada corrida del razonador tarda ~8 minutos donde el base
+tarda segundos — el trade-off que el libro reporta como 13 vs. 185 minutos en MATH-500
+completo (base 15.3 % vs. razonador 50.8 %).
+
+## 5. Por qué este examen vale doble
+
+Aquí está la jugada del libro completo, y la razón por la que valió la pena construir
+el verificador con tanto cuidado: **la métrica de hoy es la recompensa de mañana**.
+En el capítulo 6, el mismo `verify_answer` que hoy califica el examen se convertirá
+en la señal de *reinforcement learning* que entrena al modelo — premiar las memorias
+de cálculo que llegan al resultado correcto, penalizar las demás. Un verificador con
+chequeo dimensional y tolerancia no es solo un corrector exigente: es el profesor que
+va a entrenar al calculista.
+
+Antes de eso, los capítulos 4 y 5 atacan el problema sin entrenar nada: temperatura,
+muestreo, votación entre varios intentos y auto-refinamiento. El benchmark ya está
+listo para medir si esas técnicas mueven la aguja: el base parte en 17 % y el
+razonador oficial — la referencia a alcanzar — en 33 %. Ese es el próximo apunte.
+
+---
+
+*Apunte del Capítulo 3 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los resultados sobre el benchmark estructural
+son experimentos propios de esta serie (Qwen3-0.6B, RTX 4060); el código está en el
+repo del proyecto.*

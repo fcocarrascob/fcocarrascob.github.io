@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="720" height="400" fill="#ffffff"/>
+
+  <!-- SIN cache -->
+  <text x="185" y="32" text-anchor="middle" font-size="13.5" fill="#b91c1c" font-weight="700">SIN KV CACHE — O(n²)</text>
+  <g font-size="12" font-family="'JetBrains Mono', ui-monospace, monospace">
+    <rect x="40" y="48" width="180" height="32" rx="5" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="52" y="69" fill="#7f1d1d">iter 1: procesa 6 tokens</text>
+    <rect x="40" y="88" width="210" height="32" rx="5" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="52" y="109" fill="#7f1d1d">iter 2: procesa 7 tokens</text>
+    <rect x="40" y="128" width="240" height="32" rx="5" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="52" y="149" fill="#7f1d1d">iter 3: procesa 8 tokens</text>
+    <rect x="40" y="168" width="270" height="32" rx="5" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="52" y="189" fill="#7f1d1d">iter 4: procesa 9 tokens…</text>
+  </g>
+  <text x="185" y="228" text-anchor="middle" font-size="12" fill="#6b7280">recomputa TODO lo ya visto</text>
+  <text x="185" y="244" text-anchor="middle" font-size="12" fill="#6b7280">en cada iteración</text>
+
+  <!-- CON cache -->
+  <text x="535" y="32" text-anchor="middle" font-size="13.5" fill="#15803d" font-weight="700">CON KV CACHE — O(n)</text>
+  <g font-size="12" font-family="'JetBrains Mono', ui-monospace, monospace">
+    <rect x="410" y="48" width="180" height="32" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="422" y="69" fill="#14532d">iter 1: procesa 6 + guarda K/V</text>
+    <rect x="410" y="88" width="120" height="32" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="422" y="109" fill="#14532d">iter 2: 1 token</text>
+    <rect x="410" y="128" width="120" height="32" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="422" y="149" fill="#14532d">iter 3: 1 token</text>
+    <rect x="410" y="168" width="120" height="32" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="422" y="189" fill="#14532d">iter 4: 1 token…</text>
+  </g>
+  <text x="535" y="228" text-anchor="middle" font-size="12" fill="#6b7280">las representaciones de la atención</text>
+  <text x="535" y="244" text-anchor="middle" font-size="12" fill="#6b7280">(keys/values) se guardan y se reutilizan</text>
+
+  <!-- Barra de resultados -->
+  <text x="360" y="286" text-anchor="middle" font-size="13" fill="#374151" font-weight="600">tokens/segundo (Qwen3 0.6B, Mac Mini M4 CPU — tabla 2.1 del libro)</text>
+  <g font-size="12" fill="#374151">
+    <rect x="150" y="300" width="26" height="16" fill="#fecaca"/><text x="184" y="313">básica: 5</text>
+    <rect x="150" y="324" width="31" height="16" fill="#fda4af"/><text x="189" y="337">+ compile: 6</text>
+    <rect x="150" y="348" width="150" height="16" fill="#86efac"/><text x="308" y="361">+ KV cache: 29</text>
+    <rect x="150" y="372" width="352" height="16" fill="#22c55e"/><text x="510" y="385">+ KV cache + compile: 68</text>
+  </g>
+</svg>
