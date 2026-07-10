@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 540" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="540" fill="#ffffff"/>
+
+  <text x="360" y="28" text-anchor="middle" font-size="15" fill="#1a1a1a" font-weight="700">Self-consistency sobre el benchmark estructural</text>
+
+  <!-- Prompt -->
+  <rect x="210" y="46" width="300" height="54" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="360" y="68" text-anchor="middle" font-size="12.5" fill="#374151">Problema de tracción AISC 360</text>
+  <text x="360" y="88" text-anchor="middle" font-size="12" fill="#6b7280">+ CoT + temperatura 0.9 + top-p 0.9</text>
+
+  <!-- 5 muestras -->
+  <g stroke="#2563eb" stroke-width="1.6">
+    <line x1="290" y1="100" x2="105" y2="140" marker-end="url(#ar)"/>
+    <line x1="325" y1="100" x2="235" y2="140" marker-end="url(#ar)"/>
+    <line x1="360" y1="100" x2="360" y2="140" marker-end="url(#ar)"/>
+    <line x1="395" y1="100" x2="485" y2="140" marker-end="url(#ar)"/>
+    <line x1="430" y1="100" x2="615" y2="140" marker-end="url(#ar)"/>
+  </g>
+
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" text-anchor="middle">
+    <rect x="45" y="144" width="120" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="105" y="169" fill="#1e3a8a">450 kN</text>
+    <rect x="175" y="144" width="120" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="235" y="169" fill="#1e3a8a">450 000 N</text>
+    <rect x="305" y="144" width="120" height="40" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="365" y="169" fill="#b91c1c">277.78 kN</text>
+    <rect x="435" y="144" width="120" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="495" y="169" fill="#1e3a8a">45.9 tonf</text>
+    <rect x="565" y="144" width="120" height="40" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="625" y="169" fill="#b91c1c">sin \boxed{}</text>
+  </g>
+  <text x="360" y="204" text-anchor="middle" font-size="12" fill="#6b7280">5 muestras independientes del mismo prompt</text>
+
+  <!-- Normalización -->
+  <line x1="360" y1="212" x2="360" y2="244" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="374" y="233" font-size="12.5" fill="#2563eb" font-weight="600">normalizar con el verificador: valor + unidad → SI</text>
+
+  <!-- Grupos de voto -->
+  <rect x="60" y="250" width="380" height="86" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="250" y="274" text-anchor="middle" font-size="12.5" fill="#166534" font-weight="700">grupo "450 000 N · fuerza" — 3 votos</text>
+  <text x="250" y="296" text-anchor="middle" font-size="12" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">450 kN ≡ 450 000 N ≡ 45.9 tonf</text>
+  <text x="250" y="318" text-anchor="middle" font-size="11.5" fill="#6b7280">unidades distintas, la MISMA cantidad física → votan juntas</text>
+
+  <rect x="460" y="250" width="130" height="86" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="525" y="280" text-anchor="middle" font-size="12" fill="#b91c1c" font-weight="600">"277 780 N"</text>
+  <text x="525" y="300" text-anchor="middle" font-size="12" fill="#b91c1c">1 voto</text>
+
+  <rect x="610" y="250" width="80" height="86" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="650" y="284" text-anchor="middle" font-size="11.5" fill="#6b7280">sin voto</text>
+  <text x="650" y="302" text-anchor="middle" font-size="11.5" fill="#6b7280">(no llegó</text>
+  <text x="650" y="318" text-anchor="middle" font-size="11.5" fill="#6b7280">al box)</text>
+
+  <!-- Mayoría -->
+  <line x1="250" y1="336" x2="250" y2="368" stroke="#2563eb" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="264" y="357" font-size="12.5" fill="#2563eb" font-weight="600">mayoría (empate → gana el primero en aparecer)</text>
+
+  <rect x="120" y="372" width="260" height="46" rx="6" fill="#2563eb"/>
+  <text x="250" y="400" text-anchor="middle" font-size="15" fill="#ffffff" font-weight="700">respuesta final: 450 kN ✓</text>
+
+  <!-- Nota -->
+  <rect x="40" y="442" width="660" height="76" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="60" y="466" font-size="12.5" fill="#9a3412" font-weight="700">Diferencia con la votación del libro:</text>
+  <text x="60" y="487" font-size="12" fill="#374151">el libro vota por el string extraído ("450" y "450.0" serían votos distintos); aquí la clave de voto es la cantidad</text>
+  <text x="60" y="506" font-size="12" fill="#374151">física normalizada a SI — la misma normalización que ya usaba el verificador del capítulo 3.</text>
+</svg>

@@ -1,0 +1,177 @@
+---
+title: "Votar consigo mismo: mejorar el razonamiento sin entrenar"
+description: "El capítulo 4 de Raschka muestra que un modelo puede razonar mejor sin tocar un solo peso: pedirle que explique paso a paso, dejarlo muestrear respuestas distintas con temperatura y top-p, y hacer que vote entre sus propios intentos. En MATH-500 la receta lleva al base de 15% a 52%. La probamos sobre el benchmark estructural — la votación duplicó la accuracy, y de paso nos enseñó que la mayoría también se equivoca."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "inference-time scaling", "chain of thought", "self-consistency", "temperatura", "top-p", "benchmark estructural"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 4 — Mejorar el razonamiento con inference-time scaling"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 4 (pp. 94–135)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Hay dos maneras de que un modelo razone mejor: entrenarlo más, o **dejarlo trabajar
+más por pregunta**. La primera cuesta GPUs, datos y semanas; la segunda solo cuesta
+tokens: pedirle que explique, darle varios intentos, hacerlo votar entre sus propias
+respuestas. Eso es *inference-time scaling*, y el capítulo 4 lo pone a prueba con un
+resultado provocador: el modelo base de 0.6B, que en el
+[apunte anterior](/apuntes/reasoning-from-scratch-cap3-verificar-respuestas) sacaba
+15.2 % en MATH-500, llega a **52.0 %** combinando dos trucos de inferencia — más que
+la variante razonadora oficial decodificando greedy (48.2 %). Sin tocar un peso.
+
+La letra chica, como siempre, está en el costo: esa mejora multiplica el tiempo de
+cómputo por 85. Y en nuestro benchmark estructural la historia tiene más matices —
+incluyendo una votación donde ganó la respuesta equivocada por mayoría democrática.
+
+## 1. Truco 1: pedir la explicación (chain-of-thought prompting)
+
+La técnica más simple del repertorio: agregar al prompt una instrucción tipo
+`"Explain step by step."`. El base, que ante el problema de álgebra del libro
+contestaba `\boxed{20}` (mal) a secas, ahora escribe la solución completa paso a
+paso y llega a `\boxed{83}` (bien). En MATH-500: **de 15.2 % a 40.6 %**.
+
+¿Por qué funciona algo tan barato? Dos razones del capítulo: escribir los pasos le da
+al modelo más oportunidades de corregirse en el camino, y — la más interesante — el
+formato paso a paso **coincide con cómo están escritos sus datos de entrenamiento**:
+los corpus de matemática traen soluciones desarrolladas, así que pedir la cadena de
+razonamiento alinea al modelo con patrones que ya conoce. El CoT no le enseña nada
+nuevo; cambia *cómo usa lo que ya sabe*.
+
+<Note type="warning" title="En nuestro benchmark, el truco no transfirió tal cual">
+Probamos el equivalente ("Explica paso a paso: escribe las fórmulas…") sobre los 6
+problemas de acero. Primer intento: lo apendizamos después de "Respuesta:" — y el
+modelo emitió el token de fin de texto de inmediato, <strong>cero caracteres
+generados</strong> en los 6 problemas. Movida la instrucción al final del enunciado,
+el base greedy la <strong>ignoró olímpicamente</strong>: siguió adivinando en 14
+caracteres ("100 kN", "300"…). Nada del salto de 25 puntos de MATH-500. Es la
+lección del capítulo 3 amplificada: con modelos pequeños, dónde pones cada frase
+del prompt importa tanto como qué dice — y lo que funciona en inglés matemático no
+necesariamente funciona en español técnico.
+</Note>
+
+## 2. Truco 2 requiere diversidad: temperatura y top-p
+
+El segundo truco del capítulo es hacer que el modelo vote entre varios intentos.
+Pero hay un problema previo: nuestro generador es **greedy** — siempre elige el token
+más probable, así que la misma pregunta produce siempre la misma respuesta. Cinco
+copias idénticas no votan nada útil.
+
+La solución tiene tres piezas, todas operando sobre los *logits* (los scores que el
+modelo asigna a cada token candidato justo antes de elegir):
+
+- **Temperatura**: dividir los logits por T antes del softmax. T&lt;1 afila la
+  distribución (el favorito domina), T&gt;1 la aplana (los alternativos ganan
+  chance). Con T=5, el modelo completa "The capital of Germany is" con basura
+  aleatoria (" mistress"); con T=0.35, " Berlin" sale el 42 % de las veces.
+- **Muestreo multinomial**: en vez de `argmax`, sortear el token proporcional a su
+  probabilidad. Aquí entra la aleatoriedad controlada.
+- **Top-p (nucleus)**: antes de sortear, quedarse solo con el menor conjunto de
+  tokens que acumula probabilidad *p* (ordenar, suma acumulada, cortar, renormalizar).
+  Es el seguro contra sortear un token absurdo de la cola de la distribución.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/muestreo.svg"
+  alt="Pipeline de muestreo en cuatro pasos: logits crudos con un token dominante, escalado por temperatura mostrando que T menor que 1 afila la distribución y T mayor que 1 la aplana, filtro top-p que corta los tokens improbables con una línea punteada en p igual a 0.9, y sorteo multinomial. Abajo, dos cajas comparan greedy (determinista, sin diversidad) contra muestreo (respuestas distintas, materia prima para votar), y una nota explica que el muestreo solo no mejora la accuracy sino que habilita la votación"
+  caption="De greedy a muestreo: temperatura para controlar cuánta diversidad, top-p para no sortear disparates, multinomial para elegir. El muestreo solo no mejora nada — habilita la votación."
+  width={680}
+/>
+
+El dato que más me gustó del capítulo: el muestreo **por sí solo casi no mejora la
+accuracy** (15.2 % → 17.8 % en MATH-500). Controlar la diversidad no es escalar la
+inferencia — es solo la materia prima. Y lo comprobamos en carne propia: en el
+benchmark estructural, muestrear sin votar dio 0/6 y 1/6 según la corrida (con 6
+problemas, una sola muestra aleatoria es puro ruido).
+
+## 3. Self-consistency: la votación
+
+Con diversidad disponible, el mecanismo es votar: generar N respuestas independientes
+del mismo prompt, extraer el `\boxed{}` de cada una, y quedarse con **la más
+frecuente**. La intuición es estadística: hay muchas formas de equivocarse pero pocas
+de acertar — si el modelo acierta con probabilidad no trivial, los errores se
+dispersan y la respuesta correcta se acumula.
+
+En MATH-500 la receta completa rinde así (tabla 4.1 del libro): CoT solo, 40.6 %;
+CoT + votación n=3, 42.2 %; n=5, 48.0 %; **n=10, 52.0 %** — superando al razonador
+oficial greedy (48.2 %)… en 862.6 minutos contra los 10.1 del baseline. El trade-off
+del capítulo en una línea: **accuracy a cambio de cómputo**, sin excepciones.
+
+Para el benchmark estructural hicimos una adaptación que el dominio pide a gritos:
+el libro vota por el *string* extraído (para él, "450" y "450.0" son votos
+distintos), pero en ingeniería la misma respuesta puede venir en newtons, kilonewtons
+o toneladas-fuerza. Nuestra clave de votación es la **cantidad física normalizada a
+SI** — la misma normalización que ya usaba el verificador del capítulo 3:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/votacion.svg"
+  alt="Diagrama de self-consistency sobre el benchmark estructural: un problema de tracción AISC 360 genera cinco muestras con temperatura 0.9 y top-p 0.9: 450 kN, 450000 N, 277.78 kN, 45.9 tonf y una sin boxed. El verificador normaliza valor y unidad a SI, agrupando 450 kN, 450000 N y 45.9 tonf en un grupo de tres votos porque son la misma cantidad física; 277780 N queda con un voto y la muestra sin boxed no vota. La mayoría elige 450 kN como respuesta final correcta. Una nota explica la diferencia con la votación por string del libro"
+  caption="Self-consistency adaptado: dos respuestas votan juntas si son la misma cantidad física en SI, sin importar la unidad. Los empates los gana el primer grupo en aparecer (ejercicio 4.3 del libro)."
+  width={680}
+/>
+
+## 4. Los resultados: la votación duplica… y también se equivoca
+
+Todos los experimentos sobre los 6 problemas de acero, modelo base, RTX 4060,
+temperatura 0.9 y top-p 0.9 donde aplica:
+
+| Config | Accuracy | Largo medio | Tiempo |
+|---|---|---|---|
+| directo, greedy | 1/6 = 17 % | 14 car. | 0.1 min |
+| directo + CoT, greedy | 1/6 = 17 % | 14 car. | 0.1 min |
+| directo + muestreo | 0–1/6 (varía) | ~130–200 car. | 0.3 min |
+| directo + CoT + muestreo | 1/6 = 17 % | 625 car. | 0.7 min |
+| **directo + CoT + votación n=5** | **2/6 = 33 %** | 1208 car. | 5.8 min |
+| paso + votación n=5 | 0/6 = 0 % | 422 car. | **47.9 min** |
+
+La fila buena: **CoT + votación n=5 duplica el baseline** (17 → 33 %) e iguala a la
+variante razonadora oficial del capítulo 3 (33 % en 7.6 min) con costo comparable
+(5.8 min). La dirección del libro se replica: más intentos + votación &gt; un intento.
+
+Pero el registro JSONL — que guarda las 5 muestras completas de cada problema —
+cuenta la historia con más honestidad:
+
+- **Casi ningún voto tuvo mayoría real.** En tracción, las 5 muestras dieron 5
+  cantidades distintas; ganó la correcta (450 kN) por la regla de desempate
+  (primera aparición), no por consenso. Con 0.6B en español técnico, la
+  probabilidad de acertar es demasiado baja para que la estadística de la votación
+  actúe con n=5.
+- **La única mayoría genuina de todos los experimentos votó mal**: en la razón de
+  utilización, 2 de 5 muestras coincidieron en `0.5`… y la respuesta es `0.778`
+  (que también estaba entre los candidatos, con 1 voto). La mayoría amplifica la
+  competencia del modelo — si el error es el patrón dominante, lo consagra.
+- **La peor configuración fue la más cara**: el template "paso a paso" + votación
+  gastó 47.9 minutos para lograr 0/6 — las muestras divagan hasta el tope de tokens
+  y varias ni llegan al `\boxed{}`. Más cómputo sobre un generador incoherente
+  compra más incoherencia, a precio premium.
+
+<Note type="tip" title="El benchmark también se calibra a sí mismo">
+La votación expuso un defecto del <em>verificador</em>: una muestra respondió
+<code>450 \, \text&#123;kN&#125;</code> — correcta, pero con espaciadores LaTeX que
+la normalización no limpiaba, y fue rechazada. Un instrumento de medición también
+hay que calibrarlo, y nada lo calibra mejor que respuestas reales variadas — el
+muestreo resultó ser, de paso, un generador de casos borde para el verificador.
+Corregido y agregado a la suite: 15/15.
+</Note>
+
+## El techo de pensar más fuerte
+
+El capítulo deja el mapa claro: con el mismo modelo, pedir la explicación y votar
+entre intentos mueve la aguja de verdad — en MATH-500 llega a superar al modelo
+entrenado para razonar. Pero nuestros 6 problemas de acero muestran dónde está el
+techo: cuando la competencia de base es muy baja (español técnico, dominio
+específico, 0.6B), el inference-time scaling amplifica poco, porque **no hay señal
+que amplificar**. La votación no crea conocimiento; lo destila.
+
+Quedan dos caminos, y son los dos que siguen en el libro: el capítulo 5 explora la
+última técnica sin entrenamiento — que el modelo **revise y refine su propia
+respuesta**, como un calculista que relee su memoria antes de firmarla — y los
+capítulos 6 a 8 atacan la raíz: entrenar. Ahí nuestro verificador estructural deja
+de ser solo el juez y pasa a ser el **profesor**: la recompensa verificable del
+reinforcement learning.
+
+---
+
+*Apunte del Capítulo 4 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los resultados de MATH-500 son de la tabla 4.1
+del libro; los del benchmark estructural son mediciones propias en una RTX 4060,
+versionadas en el repo del proyecto (`bench_estructural/results/`).*
