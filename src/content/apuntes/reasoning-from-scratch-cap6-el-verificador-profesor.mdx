@@ -1,0 +1,155 @@
+---
+title: "El verificador se vuelve profesor: RL con recompensas verificables"
+description: "Después de dos capítulos midiendo el techo de las técnicas de inferencia, el capítulo 6 de Raschka cruza la línea: entrenar. RLVR reemplaza el reward model de RLHF por el verificador determinista, y GRPO convierte cada calificación en gradiente. En el libro, 50 pasos llevan al base de 15% a 47% en MATH-500. En nuestra RTX 4060, 30 pasos con el verificador estructural como recompensa duplicaron el benchmark — y el modelo aprendió lo que ni el CoT ni la crítica habían logrado: entregar con unidades."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "reinforcement learning", "rlvr", "grpo", "deepseek-r1", "entrenamiento", "benchmark estructural"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 6 — Entrenar modelos de razonamiento con reinforcement learning"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 6 (pp. 179–224)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Los capítulos 4 y 5 dejaron un diagnóstico incómodo: nuestro modelo de 0.6B ya
+sabe *calcular* — en el [experimento del capítulo
+5](/apuntes/reasoning-from-scratch-cap5-revisar-antes-de-firmar), el razonador
+acertó el valor numérico en 4 de 6 problemas — pero no sabe *firmar*: entrega
+los números sin unidad, y ninguna técnica de inferencia le corrigió el hábito.
+Votar amplifica, criticar reordena, pero los hábitos viven en los pesos. Y los
+pesos solo cambian entrenando.
+
+El capítulo 6 cruza esa línea con la receta que hizo famosa DeepSeek-R1:
+**reinforcement learning con recompensas verificables**. Y aquí el proyecto
+cobra todo su sentido: el verificador estructural que construimos en el
+[capítulo 3](/apuntes/reasoning-from-scratch-cap3-verificar-respuestas) — ese
+que lleva tres capítulos rechazando respuestas sin unidad — deja de ser el juez
+que reprueba y pasa a ser **el profesor que enseña**.
+
+## 1. De RLHF a RLVR: despedir al segundo modelo
+
+El RL sobre LLMs nació con **RLHF** (el ingrediente que convirtió GPT-3 en
+ChatGPT): humanos rankean respuestas, con esos rankings se entrena un *reward
+model* — otro LLM, caro de entrenar y mantener — y ese modelo puntúa las
+salidas del LLM que se está entrenando. Dos modelos, anotadores humanos,
+preferencias ruidosas.
+
+**RLVR** (la sigla de *verifiable rewards*) colapsa todo eso con una
+observación simple: en dominios donde una respuesta se puede verificar con un
+script — matemática, código, *cálculo estructural* — no hace falta aprender la
+recompensa. El verificador **es** la recompensa: 1.0 si la respuesta es
+correcta *y* viene en el formato exigido (`\boxed{}`), 0.0 si no. Determinista,
+reproducible, sin humanos en el loop, y escala a cualquier cantidad de
+problemas. Es la razón por la que este proyecto construyó primero el
+verificador: la misma función que mide (capítulo 3) es la que entrena
+(este capítulo).
+
+## 2. GRPO: convertir calificaciones en gradiente
+
+Falta el mecanismo que transforma "1.0 / 0.0" en cambios de pesos. DeepSeek usó
+**GRPO** (*Group Relative Policy Optimization*), más liviano que el clásico PPO
+porque no necesita un tercer modelo estimando valores. La idea cabe en una
+frase: **generar varios intentos, compararlos entre sí, y empujar al modelo
+hacia lo que funcionó mejor que el promedio del grupo**.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/grpo.svg"
+  alt="Diagrama del loop GRPO con recompensa estructural: un problema de tracción genera 4 rollouts con muestreo — 450 kN correcto, 450 sin unidad, 225 kN con valor errado, y una respuesta sin boxed. El verificador asigna recompensas 1.0, 0.5, 0.0 y 0.0; se calculan advantages estandarizadas dentro del grupo (+1.34, +0.27, −0.80, −0.80); la pérdida es menos el promedio de advantage por logprob de secuencia, y el backward con AdamW cambia los pesos. Una flecha punteada vuelve al siguiente problema, y una nota subraya que por primera vez la calificación del verificador se convierte en gradiente"
+  caption="Un paso de GRPO con la recompensa estructural: rollouts → verificador → advantages relativas al grupo → pérdida → los pesos cambian. El 0.5 es nuestro shaping: valor correcto sin unidad."
+  width={680}
+/>
+
+Los cinco movimientos, con lo que ya construimos en capítulos anteriores:
+
+1. **Rollouts**: N respuestas muestreadas al mismo problema (temperatura +
+   top-p del capítulo 4 — la diversidad vuelve a ser materia prima).
+2. **Rewards**: el verificador califica cada una.
+3. **Advantages**: se estandarizan las recompensas *dentro del grupo*:
+   `(r − μ)/(σ + ε)`. Lo mejor que el promedio queda positivo, lo peor
+   negativo. Detalle elegante: si los N intentos empatan (todo 0 o todo 1),
+   la desviación es cero, las advantages son cero y **no hay gradiente** — sin
+   contraste no hay lección.
+4. **Logprobs de secuencia**: los del capítulo 5, pero *sumados* en vez de
+   promediados — la recompensa es por la respuesta entera, y la suma además
+   favorece respuestas concisas.
+5. **La pérdida**: `−promedio(advantage × logprob)`. Minimizarla sube la
+   probabilidad de generar los intentos buenos y baja la de los malos.
+   Después: backward, recorte de gradientes, AdamW. Un loop de PyTorch
+   completamente estándar — lo único exótico es de dónde viene la pérdida.
+
+En el libro, el resultado es espectacular: **50 pasos** de esto (de un dataset
+de 12 000 problemas MATH, sin tocar MATH-500) llevan al base de 15.2 % a
+**47.4 %** — prácticamente el razonador oficial de Qwen (48.2 %), con
+respuestas 2.3× más cortas. Cincuenta pasos no *enseñan* matemática: **destapan**
+lo que el pretraining ya sabía y el modelo no usaba.
+
+## 3. Nuestro turno: la recompensa que castiga la falta de unidad
+
+Para el benchmark estructural, la recompensa es `verify_answer` con un
+*shaping* apuntado directo al diagnóstico del capítulo 5 (es el ejercicio 6.1
+del libro, adaptado al dominio):
+
+- **1.0** — valor y unidad verificados: la respuesta que se firma.
+- **0.5** — valor numéricamente correcto pero sin unidad (o con dimensión
+  errada): "supiste calcular, no firmaste".
+- **0.0** — todo lo demás.
+
+En la comparación grupal de GRPO, un rollout con unidad (1.0) siempre le gana a
+uno sin ella (0.5): el gradiente empuja *exactamente* el hábito que faltaba.
+
+Corrimos 30 pasos en la RTX 4060 (4 rollouts × 256 tokens por paso, 51
+minutos) sobre los 6 problemas semilla, y evaluamos el checkpoint contra el
+base sin entrenar, mismo template, greedy:
+
+| Modelo | Accuracy | Largo medio |
+|---|---|---|
+| base sin entrenar | 1/6 = 17 % | 14 caracteres |
+| **base + GRPO 30 pasos** | **2/6 = 33 %** | 192 caracteres |
+
+Duplicó. Iguala a la mejor técnica de inferencia del capítulo 4 (CoT + votación
+n=5), pero con una diferencia de fondo: aquella pagaba 5.8 minutos *por
+evaluación*; esta pagó 51 minutos **una sola vez** y ahora responde greedy en
+segundos. Y la anatomía del cambio es lo que más importa:
+
+- En momento plástico, el base decía `225000` — número correcto en N·m, sin
+  unidad, rechazado. El entrenado responde **`225 \, \text{kN·m}`** — valor y
+  unidad. Lo que ni el "explica paso a paso" ni el revisor crítico habían
+  logrado, 4 actualizaciones de gradiente lo movieron.
+- En tracción-rotura, de `300` a secas a `300 \text{ kN}`: el valor sigue
+  errado (son 360), pero el error **subió de categoría** — ya no falla por
+  formato sino por cálculo. Ese ascenso en la escala de errores es progreso
+  medible.
+
+<Note type="warning" title="La letra chica: el problema de la recompensa escasa">
+El registro de entrenamiento cuenta la parte dura: de 30 pasos, solo
+<strong>4 tuvieron gradiente distinto de cero</strong> — y los cuatro vinieron
+del único problema donde el base ya acertaba a veces (la razón de utilización).
+En los demás, los 4 rollouts empataban en 0.0 una y otra vez: sin contraste, sin
+lección. Es el problema clásico del <em>sparse reward</em>: el RL solo aprende
+donde ya hay competencia parcial. Y en el último paso, el grupo dio [1,1,1,1] —
+unanimidad, advantage cero: el modelo "dominó" ese problema y dejó de recibir
+señal de él. La conclusión práctica para el proyecto: <strong>ampliar el dataset
+con dificultad escalonada</strong> vale más que entrenar más pasos.
+</Note>
+
+## Lo que significa para el proyecto
+
+La cadena completa quedó demostrada de punta a punta, en hardware de
+escritorio: *problemas estructurales verificables → verificador → recompensa →
+gradiente → un modelo que entrega mejor*. Con 6 problemas es una prueba de
+mecánica, no de generalización — pero la mecánica es la difícil, y funciona. El
+camino a escalar es claro y es el que el benchmark tenía anotado desde el
+principio: más problemas (hormigón, sísmica, combinaciones), con dificultad
+escalonada para que el muestreo encuentre contraste.
+
+El capítulo 7 agrega lo que esta versión simplificada omitió — el término KL
+que ancla al modelo a su versión original, y las mejoras de estabilidad para
+corridas largas. Justo lo que necesitamos antes de soltar el entrenamiento
+sobre un dataset grande.
+
+---
+
+*Apunte del Capítulo 6 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los resultados de MATH-500 son de la tabla 6.1
+del libro; el entrenamiento GRPO estructural es medición propia en una RTX 4060
+(30 pasos, 51 min), con métricas y registros versionados en el repo del proyecto.*
