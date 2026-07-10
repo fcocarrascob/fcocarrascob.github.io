@@ -84,6 +84,22 @@ respuesta única: tracción por fluencia y por rotura, pandeo elástico de Euler
 inelástico, momento plástico y razón de utilización. Cada uno registra la norma y
 cláusula que gobierna el resultado.
 
+| # | Tema | Datos clave | Respuesta esperada | Cláusula |
+|---|---|---|---|---|
+| 1 | Tracción — fluencia | A36 (F<sub>y</sub>=250 MPa), A<sub>g</sub>=2000 mm² | 450 kN | AISC 360-22 D2(a) |
+| 2 | Tracción — rotura | A36 (F<sub>u</sub>=400 MPa), A<sub>e</sub>=1200 mm² | 360 kN | AISC 360-22 D2(b) |
+| 3 | Compresión — Euler | KL/r=120, E=200 000 MPa | 137.1 MPa | AISC 360-22 E3-4 |
+| 4 | Compresión — pandeo inelástico | F<sub>y</sub>=250 MPa, E=200 000 MPa, KL/r=60, A<sub>g</sub>=5000 mm² | 929.6 kN | AISC 360-22 E3 |
+| 5 | Flexión — momento plástico | F<sub>y</sub>=250 MPa, Z<sub>x</sub>=1000 cm³, arriostramiento continuo | 225 kN·m | AISC 360-22 F2.1 |
+| 6 | Razón de utilización | P<sub>u</sub>=350 kN, φ<sub>t</sub>P<sub>n</sub>=450 kN | 0.778 (adimensional) | AISC 360-22 |
+
+Cada problema pide la respuesta dentro de `\boxed{}` con unidad explícita (o sin ella,
+en el caso adimensional) y tolerancia relativa de 1–2 % — suficiente para absorber
+redondeos de tablas sin dejar pasar un error real. Los tres primeros son de nivel
+"básico" (una fórmula, un reemplazo); el pandeo inelástico es "medio": exige encadenar
+Euler → chequeo Fy/Fe → Fcr → φcPn, y es justo donde el modelo razonador empieza a
+tropezar (capítulo 5).
+
 Y aquí viene lo entretenido: le tomamos el examen a **Qwen3-0.6B** — el modelo
 pequeño del libro, corriendo local en una RTX 4060 — en sus dos variantes: el modelo
 **base** (solo pretraining) y la variante **razonadora oficial** que el equipo Qwen
