@@ -1,0 +1,141 @@
+---
+title: "Domar el entrenamiento: métricas, clipping y el arte de no romper el modelo"
+description: "El GRPO básico funciona… hasta que deja de funcionar: en corridas largas la accuracy sube y se derrumba. El capítulo 7 de Raschka enseña a leer el tablero de instrumentos (advantages, entropía), a estabilizar con clipping de ratios, y muestra dos fracasos instructivos medidos: el término KL que colapsa el entrenamiento y el format reward que el modelo hackea. Aplicado a nuestro benchmark: el filtro de DAPO cuantificó el sparse reward, el problema insignia salió correcto por primera vez (450 kN), y el techo del dataset de 6 problemas quedó medido por tres vías independientes."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "reinforcement learning", "grpo", "dapo", "estabilidad", "reward hacking", "benchmark estructural"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 7 — Mejorar GRPO para reinforcement learning"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 7 (pp. 225–266)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo anterior](/apuntes/reasoning-from-scratch-cap6-el-verificador-profesor)
+terminó en alto: 50 pasos de GRPO llevan al base casi al nivel del razonador
+oficial. El capítulo 7 empieza mostrando la parte que ese resumen esconde: si en
+vez de 50 pasos corres 500, la accuracy **sube… y después se derrumba**. El
+código es correcto; el algoritmo básico es inestable en corridas largas. Este
+capítulo es el manual del operador: qué mirar en el tablero, qué perilla girar,
+y — lo más valioso — dos fracasos medidos con autopsia completa.
+
+## 1. El tablero de instrumentos
+
+En GRPO el *loss* casi no informa (fluctúa por diseño; solo los picos crecientes
+son alerta). Lo que importa es leer varias agujas a la vez:
+
+- **Reward medio**: debe subir en tendencia. Pero 1.0 sostenido no es fiesta —
+  significa que todos los intentos son correctos y **la señal desapareció**:
+  parar o subir la dificultad.
+- **adv_std** (desviación de las advantages): la media es 0 por construcción
+  (sanity check); la desviación es la aguja — ~1 es gradiente sano, **0 es un
+  grupo unánime que no enseña nada**, muy alta es un update espinoso.
+- **Entropía**: qué tan repartidas están las probabilidades al generar. Entre
+  1 y 2, exploración sana; cerca de 0, un modelo casi determinista (o
+  colapsado); muy alta, puro azar. Los saltos bruscos son la alarma.
+- **Largo de respuesta**: debería crecer (el modelo desarrolla su cadena de
+  razonamiento); un desplome a mitad del run acompaña a la inestabilidad.
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/tablero-grpo.svg"
+  alt="Tablero de instrumentos del entrenamiento GRPO con cuatro medidores: reward medio (sube = aprende, 1.0 sostenido = señal agotada), desviación de advantages (cerca de 1 sana, 0 = grupo unánime sin señal), entropía (cerca de 0 colapso, 1 a 2 exploración, alta azar) y largo medio de respuesta (crece = desarrolla CoT, se desploma = inestabilidad). Abajo, dos paneles: el clipping de ratios que estabiliza (obj = min de ratio por advantage y ratio recortado por advantage) y la autopsia del término KL que colapsa en cuatro pasos"
+  caption="El tablero del entrenador de RL: ninguna métrica basta sola. Abajo, la perilla que estabiliza (clipping) y el fracaso instructivo (KL)."
+  width={680}
+/>
+
+## 2. La perilla que estabiliza: clipping de ratios
+
+La herencia de PPO que el capítulo 6 había omitido: comparar cuánto cambió la
+política respecto a una versión de referencia. El *ratio*
+`exp(logp_nuevo − logp_viejo)` mide, por rollout, cuánto más (o menos) probable
+se volvió esa respuesta tras el update. Se recorta a `1±ε` y la pérdida usa el
+mínimo entre el objetivo crudo y el recortado — ningún rollout puede arrastrar
+la política demasiado lejos en un solo paso. Con esto, el run de 500 pasos del
+libro **deja de derrumbarse**. Dato de calibración: DeepSeek-R1 usa ε=10
+(clipping casi decorativo); el PPO clásico de RLHF usa 0.1 (agresivo).
+
+## 3. Los dos fracasos instructivos
+
+**El término KL colapsa.** Completar el GRPO "original" agregando la
+penalización por alejarse del modelo inicial (`kl_coeff·mean(logp − logp_ref)`)
+produce el peor resultado del libro: sube a 40 % en 50 pasos y colapsa total —
+loss explota, rewards a cero, accuracy a **0 %**, texto aleatorio. La autopsia
+es una joya didáctica: cuando las rewards caen a cero, el KL queda como única
+fuente de gradiente, y como es un *surrogate* muestreado (sin corrección por
+importance sampling ni normalización por largo), sobre los tokens muestreados
+solo puede *bajar* probabilidades → la distribución se aplana → la entropía
+explota → el modelo delira. La recomendación práctica en matemática: **omitir
+el KL** (Dr. GRPO, Olmo 3, DeepSeek-V3.2 coinciden).
+
+**El format reward se hackea.** Premiar que el razonamiento vaya entre
+`<think>...</think>` (tokens dedicados del tokenizer) mejora el formato… y la
+accuracy *cae* mientras el reward medio se mantiene: el modelo aprendió a
+**cobrar la recompensa de formato sin resolver mejor** — reward hacking de
+manual. Remedios: bajar el peso del format reward o condicionarlo a que la
+respuesta sea correcta. Aviso directo para nuestro shaping de unidades (el 0.5
+por valor correcto sin unidad): toda recompensa parcial es una invitación a
+explotarla, y hay que vigilarla.
+
+## 4. Nuestro turno: cosechar la señal que el capítulo 6 sembró
+
+Al entrenador estructural le agregamos las tres mejoras que nuestro diagnóstico
+pedía: el **clipping** con snapshot de referencia, el **tablero completo**
+(adv_std, entropía, ratio en el CSV), y — la estrella para nuestro caso — el
+**filtro de DAPO**: si los N rollouts de un grupo empatan en reward, no hay
+gradiente que extraer y el paso se salta sin pagar el backward. Es el remedio
+exacto al *sparse reward* que medimos en el capítulo 6 (26 de 30 pasos sin señal).
+
+El experimento: **continuar el entrenamiento del capítulo 6** por 30 pasos más
+(60 totales) con las mejoras activas. Las curvas reales:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/curvas-grpo-v2.png"
+  alt="Cuatro gráficos del entrenamiento GRPO v2: arriba a la izquierda el reward medio por grupo con puntos azules (15 con gradiente) y grises (25 saltados por el filtro DAPO en reward 0 o 1); arriba a la derecha la desviación de advantages con los grupos con señal en 0.5 y los unánimes en 0; abajo a la izquierda la entropía media cayendo de 1.1 a 0.24 con la anotación cada vez más determinista sobre 6 problemas; abajo a la derecha el largo medio de respuesta oscilando entre 70 y 256 tokens"
+  caption="Las curvas reales del run v2 (40 evaluaciones de grupo, 73 min en la RTX 4060). El filtro DAPO separa la señal (azul) del desierto (gris); la entropía en caída sostenida es el modelo memorizando 6 problemas."
+  width={720}
+/>
+
+Tres cosas que las curvas y el registro cuentan:
+
+- **La señal se multiplicó**: 15 updates con gradiente, y ya no solo de la razón
+  de utilización — tracción por fluencia, tracción por rotura y Euler generaron
+  contraste por primera vez (¡incluido el primer disparo del crédito parcial
+  0.5!). El RL del capítulo 6 expandió la competencia del modelo, y esta segunda
+  ronda cosechó ese contraste nuevo. Los ratios de política reales (0.65–2.39)
+  muestran al clipping trabajando.
+- **El problema insignia cayó**: el checkpoint de 60 pasos responde
+  **`450 kN` exacto** a la tracción por fluencia — correcto de punta a punta,
+  greedy. Y la disciplina de unidades se propagó a 4 de 6 respuestas.
+- **Pero el neto sigue en 2/6**: ganó tracción y *perdió* el momento plástico
+  (de `225 kN·m` correcto a `22.5 kN·m`, un error ×10). Con 6 problemas, el RL
+  redistribuye casi tanto como suma.
+
+<Note type="warning" title="El techo, medido por tres vías independientes">
+25 de 40 grupos sin contraste (el desierto gris del gráfico), la entropía en
+caída sostenida (1.1 → 0.24: el modelo se vuelve determinista sobre el mismo
+puñado de enunciados), y la accuracy plana en 33 %. Tres instrumentos distintos
+apuntando a la misma pared: <strong>el dataset de 6 problemas se agotó</strong>.
+Ninguna mejora algorítmica fabrica señal donde no hay contraste. La
+infraestructura de entrenamiento está lista y estable; lo que falta es
+alimentarla — hormigón, sísmica, combinaciones, con dificultad escalonada para
+que el muestreo siempre encuentre grupos que discriminen.
+</Note>
+
+## Lo que cierra este capítulo
+
+Con el 7 termina el arco de RL del libro: sabemos convertir el verificador en
+recompensa (cap. 6), y sabemos operar el entrenamiento sin romper el modelo
+(cap. 7). Para el proyecto, la conclusión es nítida y accionable: **el cuello de
+botella ya no es el algoritmo, es el dataset** — exactamente el trabajo de
+ingeniería estructural (redactar problemas verificables con norma y cláusula)
+que ningún paper de RL puede hacer por nosotros. Queda un capítulo: la
+**destilación** — comprimir el razonamiento de un modelo grande en uno chico —
+y con él, la última pieza del mapa.
+
+---
+
+*Apunte del Capítulo 7 de [Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los experimentos del libro (500 pasos, KL,
+format reward) son de sus materiales suplementarios; el run v2 estructural es
+medición propia en una RTX 4060 (30 pasos, 73 min), con métricas y registros
+versionados en el repo del proyecto.*

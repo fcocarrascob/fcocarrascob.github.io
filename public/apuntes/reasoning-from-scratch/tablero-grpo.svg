@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="720" height="560" fill="#ffffff"/>
+
+  <text x="360" y="28" text-anchor="middle" font-size="15" fill="#1a1a1a" font-weight="700">El tablero de instrumentos del entrenamiento GRPO</text>
+  <text x="360" y="48" text-anchor="middle" font-size="12" fill="#6b7280">ninguna métrica basta sola — se leen juntas</text>
+
+  <!-- Gauge 1: reward -->
+  <rect x="40" y="70" width="310" height="130" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="60" y="94" font-size="13" fill="#1a1a1a" font-weight="700">reward medio</text>
+  <polyline points="60,175 110,168 150,150 200,135 250,128 300,125" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="60" y="120" font-size="11" fill="#16a34a">✓ sube en tendencia = aprende</text>
+  <text x="60" y="136" font-size="11" fill="#9a3412">⚠ 1.0 sostenido = señal agotada:</text>
+  <text x="60" y="150" font-size="11" fill="#9a3412">parar o subir la dificultad</text>
+
+  <!-- Gauge 2: adv_std -->
+  <rect x="370" y="70" width="310" height="130" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="390" y="94" font-size="13" fill="#1a1a1a" font-weight="700">desviación de advantages (adv_std)</text>
+  <polyline points="390,140 420,132 450,150 480,138 510,145 540,142 570,148 600,144 630,146" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="390" y1="185" x2="650" y2="185" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="390" y="120" font-size="11" fill="#16a34a">✓ ~1 y estable = gradiente sano</text>
+  <text x="530" y="180" font-size="11" fill="#dc2626">0 = grupo unánime, SIN señal</text>
+
+  <!-- Gauge 3: entropia -->
+  <rect x="40" y="220" width="310" height="130" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="60" y="244" font-size="13" fill="#1a1a1a" font-weight="700">entropía de la generación</text>
+  <rect x="60" y="290" width="80" height="20" rx="4" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="100" y="304" text-anchor="middle" font-size="10.5" fill="#b91c1c">≈0: colapso</text>
+  <rect x="150" y="290" width="100" height="20" rx="4" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="200" y="304" text-anchor="middle" font-size="10.5" fill="#166534">1–2: exploración</text>
+  <rect x="260" y="290" width="80" height="20" rx="4" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="300" y="304" text-anchor="middle" font-size="10.5" fill="#b91c1c">alta: azar</text>
+  <text x="60" y="270" font-size="11" fill="#374151">qué tan repartidas están las probabilidades</text>
+  <text x="60" y="336" font-size="11" fill="#9a3412">⚠ un salto brusco en cualquier dirección = alerta</text>
+
+  <!-- Gauge 4: largo -->
+  <rect x="370" y="220" width="310" height="130" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="390" y="244" font-size="13" fill="#1a1a1a" font-weight="700">largo medio de respuesta</text>
+  <polyline points="390,330 430,320 470,305 510,295 550,290 590,288 630,287" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+  <polyline points="390,330 430,318 470,300 510,310 550,330 590,338 630,340" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="390" y="270" font-size="11" fill="#16a34a">✓ crece: el modelo desarrolla CoT</text>
+  <text x="390" y="286" font-size="11" fill="#dc2626">⚠ se desploma a mitad del run = inestabilidad</text>
+
+  <!-- Historia inferior: las dos lecciones -->
+  <rect x="40" y="372" width="310" height="170" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="195" y="396" text-anchor="middle" font-size="12.5" fill="#1e3a8a" font-weight="700">Lo que estabiliza: clipping de ratios</text>
+  <text x="60" y="420" font-size="11.5" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">ratio = exp(logp_nuevo − logp_viejo)</text>
+  <text x="60" y="440" font-size="11.5" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">obj = min(ratio·A, clip(ratio)·A)</text>
+  <text x="60" y="466" font-size="11.5" fill="#374151">Limita cuánto puede moverse la política</text>
+  <text x="60" y="483" font-size="11.5" fill="#374151">en cada paso. Con esto, el run de 500</text>
+  <text x="60" y="500" font-size="11.5" fill="#374151">pasos del libro ya no se derrumba.</text>
+  <text x="60" y="524" font-size="11" fill="#6b7280">DeepSeek-R1: ε=10 (suave) · PPO: ε=0.1</text>
+
+  <rect x="370" y="372" width="310" height="170" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="525" y="396" text-anchor="middle" font-size="12.5" fill="#b91c1c" font-weight="700">Lo que colapsa: el término KL (medido)</text>
+  <text x="390" y="420" font-size="11.5" fill="#374151">1 · sube a 40 % en 50 pasos ✓</text>
+  <text x="390" y="440" font-size="11.5" fill="#374151">2 · ~paso 200: las rewards caen a 0</text>
+  <text x="390" y="460" font-size="11.5" fill="#374151">3 · el KL queda como único gradiente y solo</text>
+  <text x="390" y="477" font-size="11.5" fill="#374151">puede BAJAR probabilidades → entropía explota</text>
+  <text x="390" y="497" font-size="11.5" fill="#374151">4 · texto aleatorio, accuracy 0 %</text>
+  <text x="390" y="524" font-size="11" fill="#9a3412" font-weight="600">En matemática: omitirlo (Dr. GRPO, Olmo 3, V3.2)</text>
+</svg>
