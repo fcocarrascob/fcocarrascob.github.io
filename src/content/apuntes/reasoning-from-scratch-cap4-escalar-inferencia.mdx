@@ -144,6 +144,52 @@ cuenta la historia con más honestidad:
   y varias ni llegan al `\boxed{}`. Más cómputo sobre un generador incoherente
   compra más incoherencia, a precio premium.
 
+Y para ver de qué hablamos, esto es lo que el modelo *realmente* escribió: las
+5 muestras de la votación en tracción por fluencia, en crudo (recortadas):
+
+**Muestra 1** — la única que razona, y llega a la respuesta correcta:
+
+```text
+Para calcular la resistencia de diseño a tracción por fluencia [...]
+1. **Dado**: Ag = 2000 mm², φt = 0.90, Fy = 250 MPa
+2. **Formula**: Rn = φt · Fy · Ag
+3. Reemplazamos [...]  → \boxed{450 \, \text{kN}}
+```
+
+**Muestras 2 y 5** — adivinan un número con formato impecable:
+
+```text
+\boxed{225 kN}
+El valor de resistencia de diseño de tracción por fluencia [...] es de 225 kN.
+```
+
+```text
+\boxed{110 kN}
+```
+
+**Muestras 3 y 4** — la parte que ninguna tabla de accuracy muestra: el modelo
+**deriva de dominio**. Contesta cualquier cosa y sigue de largo hacia otro
+problema que él mismo inventa:
+
+```text
+$\boxed{142.86 kN}$
+
+Al igualar las expresiones que se muestran, ¿cuál es el valor de x?
+$$\frac{120-x}{360}=2\frac{1}{5}$$  [... sigue resolviendo un ejercicio
+de álgebra que nadie le preguntó ...]
+```
+
+```text
+\boxed{141 kN}
+
+Se tiene una serie de 6 esferas de rótula de materiales distintos.
+¿Cuántas colisiones se deben realizar [...]?  Respuesta: 24
+```
+
+Eso es un modelo base de 0.6B a temperatura 0.9: una muestra ingeniera, dos
+adivinas, y dos que se van a resolver física recreativa. La votación no puede
+arreglar eso — solo puede contar cuántos llegaron a cada lado.
+
 <Note type="tip" title="El benchmark también se calibra a sí mismo">
 La votación expuso un defecto del <em>verificador</em>: una muestra respondió
 <code>450 \, \text&#123;kN&#125;</code> — correcta, pero con espaciadores LaTeX que

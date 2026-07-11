@@ -115,6 +115,66 @@ que quedan son de cálculo (×10, fórmulas), ya no de disciplina. El modo de
 falla que diagnosticamos en el capítulo 5 está, para este modelo y este
 benchmark, resuelto.
 
+## 4. Ver al modelo pensar: tres respuestas reales del 62 %
+
+Los números no muestran el *nivel* del razonamiento. Estas son respuestas
+completas del modelo final, del registro JSONL, sin editar.
+
+**La viga de hormigón (correcta)** — tres pasos encadenados, cada uno con su
+reemplazo numérico:
+
+```text
+\boxed{1.500 mm}
+
+a = (1500 · 420) / (0.85 · 25 · 300) = 630000 / 6375 ≈ 99.23 mm
+
+Mn = 1500 · 420 · (500 − 99.23/2) = 630000 · 450.385 ≈ 283.56 kN·m
+
+φMn = 0.90 · 283.56 ≈ 255.20 kN·m
+
+\boxed{255.20 kN·m}
+```
+
+De nuevo el patrón "adivina primero, desarrolla después" que apareció en el
+[capítulo 6](/apuntes/reasoning-from-scratch-cap6-el-verificador-profesor):
+abre con un `\boxed{1.500 mm}` sin sentido, y la memoria de cálculo que sigue
+lo corrige. El verificador toma el último box — la memoria manda.
+
+**El corte de alma (incorrecta, y de la manera más humana posible)**:
+
+```text
+Resistencia = φv · 0.6 · Fy · Aw · Cv1
+            = 1.0 · 0.6 · 250 · 3000 · 1.0
+            = 450000 MPa·mm²          ← el producto está BIEN (son 450 000 N)
+            = 450000 · 10³ N·mm²      ← y aquí se pierde: inventa un 10³...
+            = 4500 kN                 ← ...y aterriza con un error ×10
+
+\boxed{4500 kN}
+```
+
+La fórmula es la correcta, los factores son los correctos, la multiplicación
+está bien hecha — y la conversión de unidades la destruye. Cualquier profesor
+de hormigón o acero reconoce este examen.
+
+**El periodo fundamental (incorrecta, nivel matemático al desnudo)**:
+
+```text
+Ta = 0.0466 · 30^0.9 = 0.0466 · 1.12 ≈ 0.0532    ← 30^0.9 ≈ 21.35, no 1.12
+
+Periodo fundamental = 1/Ta = 1/0.0532 ≈ 18.83 s   ← y la "corrección" es inventar
+                                                     una inversión que no existe
+\boxed{18.83 s}
+```
+
+Un 0.6B no sabe elevar 30 a la 0.9 — y cuando el resultado le huele mal
+(0.05 s para un edificio de 30 m), en vez de revisar la potencia inventa una
+operación nueva. Esto acota con precisión qué puede y qué no puede hacer este
+modelo: **aritmética de productos y divisiones sí; funciones no triviales,
+no**. Para el benchmark es una guía de diseño (los problemas con potencias
+fraccionarias o logaritmos necesitan otro enfoque — o herramientas, Fase 2); y
+para el usuario, la advertencia de siempre: la memoria de cálculo se audita,
+no se firma sola.
+
 <Note type="tip" title="La ironía que define el siguiente paso">
 Nuestro modelo RL (62 %) es hoy <strong>mejor profesor que el razonador
 oficial</strong> que intentamos destilar (12 % de trazas válidas). El camino

@@ -115,6 +115,32 @@ segundos. Y la anatomía del cambio es lo que más importa:
   unidad, rechazado. El entrenado responde **`225 \, \text{kN·m}`** — valor y
   unidad. Lo que ni el "explica paso a paso" ni el revisor crítico habían
   logrado, 4 actualizaciones de gradiente lo movieron.
+
+  El antes y el después, en crudo, es el mejor resumen del capítulo. **Antes**
+  (base, respuesta completa):
+
+  ```text
+  \boxed{225000}
+  ```
+
+  **Después** (mismo problema, mismo prompt, 30 pasos de GRPO):
+
+  ```text
+  \boxed{112.5}
+
+  Mn = Fy · Zx = 250 MPa · 1000 cm³ = [...] = 250 kN·m
+
+  φbMn = Mn · φb = 250 kN·m · 0.90 = 225 kN·m
+
+  φbMn = \boxed{225 \, \text{kN·m}}
+  ```
+
+  Fijate en el detalle extraño y revelador: el modelo entrenado **adivina
+  primero** (`\boxed{112.5}`, mal) **y desarrolla después** — y el desarrollo
+  corrige la adivinanza. Como el extractor del capítulo 3 toma el *último*
+  `\boxed{}`, gana el resultado calculado. El RL no le quitó el impulso de
+  adivinar; le enseñó que después de la adivinanza viene la memoria de
+  cálculo, y que la memoria manda.
 - En tracción-rotura, de `300` a secas a `300 \text{ kN}`: el valor sigue
   errado (son 360), pero el error **subió de categoría** — ya no falla por
   formato sino por cálculo. Ese ascenso en la escala de errores es progreso

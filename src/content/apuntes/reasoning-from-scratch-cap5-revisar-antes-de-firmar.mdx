@@ -121,9 +121,38 @@ Nuestros números fueron más tozudos — **todas las configuraciones dieron 1/6
 Pero la accuracy plana esconde un registro lleno de movimiento — el JSONL guarda
 cada borrador, crítica y revisión:
 
-- **La crítica sí encuentra errores**: en Euler, detectó el error de fórmula y la
-  revisión pasó de 555.56 a 136.96 (la respuesta es 137.1 MPa) — matemática
-  corregida, **entregada sin unidad**, rechazada por el chequeo dimensional.
+- **La crítica sí empuja, aunque diga disparates**: en Euler, la revisión pasó
+  de 555.56 a 136.96 (la respuesta es 137.1 MPa) — matemática corregida, pero
+  rechazada por el chequeo dimensional. El ciclo completo, en crudo, merece
+  verse porque es *exactamente* lo que el libro describe:
+
+  **Borrador** (una adivinanza a secas):
+
+  ```text
+  \boxed{555.56}
+  ```
+
+  **Crítica** (el diagnóstico es correcto; el plan de corrección, un disparate):
+
+  ```text
+  La respuesta es incorrecta y no tiene unidad.
+
+  Plan de correccion: Reducir el valor de KL/r a 80 y calcular el resultado.
+  ```
+
+  **Revisión** (ignora el plan absurdo, recalcula bien… y firma mal):
+
+  ```text
+  El problema original tiene una esbeltez efectiva KL/r = 120 [...]
+  Fe = π² × 200000 / (120)²  =  1973920 / 14400  ≈  136.96 MPa
+
+  La respuesta correcta es \boxed{136.96} MPa.
+  ```
+
+  Mirá el final: el modelo *escribió* la unidad — pero la dejó **fuera del
+  `\boxed{}`**, y el verificador solo mira adentro. La crítica del libro
+  ("una crítica puede ser útil aunque sea parcialmente errónea") y nuestro
+  modo de falla de unidades, los dos en una sola respuesta real.
 - **El heurístico rechazó todas las revisiones** — incluida la de Euler. Los
   borradores cortos siempre ganan el bono de brevedad. Protege contra el
   deterioro y contra la mejora, por igual.
