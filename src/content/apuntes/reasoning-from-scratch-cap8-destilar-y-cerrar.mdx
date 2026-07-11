@@ -1,0 +1,151 @@
+---
+title: "Destilar, y el cierre: de 5% a 62% en una GPU de escritorio"
+description: "Último capítulo del libro y cierre de la serie. La destilación — un estudiante chico imitando las trazas de un profesor grande — es la técnica más simple del arco: puro SFT sobre datos sintéticos. La probamos con el verificador como curador de trazas y aprendimos su lección al revés: el profesor lo es todo, y el nuestro reprobó. Pero el experimento grande de este cierre fue otro: ampliar el dataset a 21 problemas destrabó al RL — 62% con todas las respuestas firmadas con unidad — y dejó al proyecto con un modelo que ya es mejor profesor que el razonador oficial."
+pubDate: 2026-07-10
+tags: ["reasoning", "llm", "distillation", "sft", "datos sintéticos", "grpo", "benchmark estructural", "cierre de serie"]
+subsection: "reasoning-from-scratch"
+chapter: "Cap. 8 — Destilar modelos de razonamiento (y cierre de la serie)"
+source: "Sebastian Raschka, Build a Reasoning Model (From Scratch), Manning 2026, Cap. 8 (pp. 267–304)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Los mejores razonadores del mundo no se usan directamente — se **destilan**.
+DeepSeek-R1 tiene 671 mil millones de parámetros; sus variantes chicas, las que
+corren en hardware normal, nacieron de un proceso más viejo que los LLMs:
+un *profesor* grande genera soluciones desarrolladas, y un *estudiante* chico
+aprende a imitarlas. El capítulo 8 cierra el libro con esta técnica, que
+resulta ser la más simple de todas: **supervised fine-tuning sobre datos
+sintéticos**. Y nosotros cerramos la serie con dos experimentos — la
+destilación estructural, que fracasó de la manera más instructiva posible, y
+la ampliación del dataset, que produjo el mejor resultado del proyecto.
+
+## 1. La mecánica: imitar tokens
+
+Dos variantes: la **soft** entrena al estudiante contra la distribución
+completa de probabilidades del profesor (más información, pero exige logits —
+que las APIs no exponen — y tokenizers idénticos); la **hard**, que domina en
+la práctica, entrena contra los *tokens* del texto generado. Es SFT puro: la
+pérdida es cross-entropy sobre los tokens de la respuesta del profesor — que
+el capítulo conecta elegantemente con lo ya construido: **es exactamente el
+negativo del logprob promedio del capítulo 5**. El hilo de los logprobs
+atraviesa todo el libro: scorer (cap. 5), gradiente de política (cap. 6),
+pérdida de imitación (cap. 8).
+
+La receta del libro: DeepSeek-R1 genera soluciones para los 12 000 problemas
+MATH (~$50 de API, una sola vez, 90.6 % correctas), se formatea
+`<think>traza</think>` + respuesta, se filtra por largo (≤2048 tokens — lo que
+hace viable el hardware chico) y se entrena con un loop SFT estándar. Los
+resultados (tabla 8.1) esconden la lección más útil del capítulo: el destilado
+de R1 logra 33.6 % en MATH-500, pero el destilado de **Qwen3-235B — la misma
+familia que el estudiante — logra 45.0 %**: tokenizer, convenciones y estilo
+alineados enseñan mejor que un profesor ajeno igual de capaz. Ese 45 % roza al
+razonador oficial (48.2 %) y empata prácticamente con el RLVR del capítulo 6
+(47.4 %): para un 0.6B en matemática, destilar del hermano mayor y entrenar
+con RL llegan al mismo lugar por caminos opuestos.
+
+## 2. Nuestra versión: el verificador como curador
+
+Para el benchmark estructural, el profesor disponible era el razonador oficial
+de 0.6B (misma familia — el caso bueno del libro). Pero sabíamos del capítulo 3
+que es débil en este dominio, así que el diseño incluyó un control de calidad:
+**el verificador filtra las trazas** — solo se destila lo que llega a la
+respuesta correcta con su unidad. Es el tercer rol del mismo componente:
+métrica (cap. 3), recompensa (cap. 6), y ahora curador de datos (cap. 8).
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/destilacion.svg"
+  alt="Pipeline de destilación estructural: el profesor (razonador oficial 0.6B, misma familia que el estudiante) genera varias trazas por problema sobre los 21 del benchmark; el verificador — en su tercer rol tras métrica y recompensa — deja pasar solo las trazas con valor y unidad correctos; las incorrectas se descartan por rejection sampling y las verificadas forman el dataset sintético para el SFT del base con cross-entropy"
+  caption="La destilación estructural: el profesor propone, el verificador dispone. Solo las trazas que calculan bien y firman con unidad llegan al entrenamiento."
+  width={680}
+/>
+
+El resultado fue un fracaso limpio y medible: de 60 intentos del profesor,
+**solo 7 pasaron el filtro (12 %)** — y todos de los 4 tipos más triviales
+(utilización, carga lineal, esbeltez). El SFT sobre esas 7 trazas produjo un
+modelo de **1/21 (5 %)**: idéntico al base. La mecánica funciona (la pérdida
+baja, el pipeline corre de punta a punta en minutos), pero no había nada que
+imitar. Es la tabla 8.1 leída al revés: **la destilación vale exactamente lo
+que valen los datos del profesor** — R1 aportó 6695 trazas al 90.6 % de
+calidad; el nuestro, 7 al 12 %.
+
+## 3. El experimento que sí movió todo: alimentar al RL
+
+La verdadera tarea de este cierre venía dictada por los capítulos 6 y 7, que
+midieron por tres vías que el dataset de 6 problemas estaba agotado. Lo
+ampliamos a **21 problemas** — acero AISC 360, hormigón ACI 318, combinaciones
+de carga ASCE 7, sísmica — con la propiedad que el muestreo de GRPO necesita:
+**dificultad escalonada**, incluyendo problemas de 1–2 pasos donde el modelo
+acierta a veces (sin aciertos ocasionales no hay contraste; sin contraste no
+hay gradiente).
+
+Primero, los baselines sorprendieron: el base crudo saca **1/21 (5 %)** — el
+dataset grande expone su debilidad real. Pero el checkpoint del capítulo 7,
+**entrenado solo con los 6 problemas originales, sacó 9/21 (43 %)**:
+resolvió combinaciones de carga, esbeltez, corte de alma, la longitud Lp y el
+corte basal — **tipos de problema que jamás vio en entrenamiento**. El RL no
+memorizó seis respuestas; instaló un hábito transferible: desarrollar el
+cálculo y entregar `\boxed{}` con unidad.
+
+Después, 37 pasos más de GRPO sobre los 21:
+
+<Figure
+  src="/apuntes/reasoning-from-scratch/curvas-grpo-v3.png"
+  alt="Dos gráficos del entrenamiento GRPO v3 sobre el dataset ampliado: a la izquierda el reward medio por grupo con puntos azules (grupos con gradiente, rewards mixtos entre 0.25 y 0.75 durante toda la corrida), grises (saltados con todo cero) y verdes (dominados con todo uno); a la derecha la curva acumulada de grupos dominados subiendo en escalera hasta 13, con la anotación el modelo va cerrando problemas del dataset"
+  caption="GRPO v3 sobre los 21 problemas: señal fresca constante (azul) — el desierto del capítulo 6 desapareció — y 13 grupos 'dominados' en acumulado: el modelo fue cerrando problemas durante la corrida."
+  width={720}
+/>
+
+El resultado final del arco completo, todo medido con el mismo verificador,
+mismo template, greedy:
+
+| Modelo | 21 problemas | Qué lo produjo |
+|---|---|---|
+| base | 1/21 = 5 % | — |
+| destilado (7 trazas del oficial) | 1/21 = 5 % | cap. 8: profesor débil |
+| GRPO entrenado con 6 problemas | 9/21 = 43 % | caps. 6–7: RL + generalización |
+| **GRPO entrenado con 21 problemas** | **13/21 = 62 %** | dataset ampliado + clip + DAPO |
+
+Y la anatomía del 62 % importa tanto como el número: cayó la tracción por
+rotura (`360 kN` — el error de conversión que arrastrábamos desde el capítulo
+3), cayó el perno a corte (`86.91 kN`), cayó la viga de hormigón de varios
+pasos (`255.20 kN·m`). **Todas las respuestas llevan unidad**: los errores
+que quedan son de cálculo (×10, fórmulas), ya no de disciplina. El modo de
+falla que diagnosticamos en el capítulo 5 está, para este modelo y este
+benchmark, resuelto.
+
+<Note type="tip" title="La ironía que define el siguiente paso">
+Nuestro modelo RL (62 %) es hoy <strong>mejor profesor que el razonador
+oficial</strong> que intentamos destilar (12 % de trazas válidas). El camino
+anotado para la próxima iteración es la <em>autodestilación</em> estilo STaR:
+generar trazas con el propio modelo entrenado, filtrarlas con el verificador,
+y destilarlas de vuelta — exactamente la combinación destilar→RLVR→repetir
+que recomienda el cierre del libro.
+</Note>
+
+## El cierre de la serie
+
+Ocho capítulos, ocho posts, y una idea que sobrevivió a todos los
+experimentos: **el cálculo estructural es un dominio verificable**, y esa sola
+propiedad habilita todo el arsenal de los modelos de razonamiento. El mismo
+verificador de ~200 líneas fue métrica (cap. 3), recompensa (caps. 6–7) y
+curador de datos (cap. 8). Con él, una RTX 4060 de escritorio llevó un modelo
+de 0.6B de adivinar (5 %) a resolver 13 de 21 problemas de ingeniería con
+unidades correctas (62 %) — sin APIs, sin datos anotados a mano, con problemas
+que cualquier calculista puede redactar y auditar.
+
+Lo que sigue ya no está en el libro: crecer el dataset hacia la sísmica
+chilena y los problemas multi-estado-límite, probar la autodestilación, y la
+Fase 2 del proyecto — un modelo con manejo de herramientas aprendiendo la API
+de SAP2000, donde el "razonamiento" deja de ser aritmética mental y pasa a ser
+lo que siempre fue en la oficina: armar el modelo, correrlo, leer resultados y
+escribir la memoria de cálculo. El libro termina; el proyecto recién empieza.
+
+---
+
+*Apunte del Capítulo 8 — y cierre de la serie sobre
+[Build a Reasoning Model (From Scratch)](https://github.com/rasbt/reasoning-from-scratch)
+de Sebastian Raschka (Manning, 2026). Los resultados de MATH-500 son de la
+tabla 8.1 del libro; todo lo demás son mediciones propias en una RTX 4060,
+versionadas en el repo del proyecto (`bench_estructural/`).*
