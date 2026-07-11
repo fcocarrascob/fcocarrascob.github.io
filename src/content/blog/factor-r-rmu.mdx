@@ -1,0 +1,225 @@
+---
+title: "El factor R (2): Rμ en el laboratorio, o ver emerger la regla de Newmark de un tiempo-historia real"
+description: "Un banco de 63 osciladores elastoplásticos en SAP2000 —9 períodos × 6 niveles de recorte— bajo El Centro 1940, validado contra un integrador propio: la regla de igual desplazamiento emerge sola en T ≥ 0.5 s (μ ≈ R), se quiebra en períodos cortos peor que lo que promete igual energía (μ = 126 donde la regla dice 32), y en el camino cae una trampa silenciosa de SAP2000: más allá del último punto, la función TH no vale cero."
+pubDate: 2026-07-11
+tags: ["factor R", "ductilidad", "tiempo-historia", "FNA", "SAP2000", "experimento", "NCh2369", "sísmica"]
+norm: "NCh2369"
+section: "Sísmica"
+series: "El factor R"
+seriesPart: 2
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+La [nota anterior](/blog/factor-r-anatomia) dejó la mitad "material" de $R = R_\mu \cdot \Omega_0$
+apoyada en una promesa: la **regla de igual desplazamiento** de Newmark. Recortar la
+resistencia de un oscilador no cambia cuánto viaja —$\delta_u \approx \delta_e$—, así que
+cada unidad de reducción se paga una a una con ductilidad ($\mu = R_\mu$), y la
+deformación real se recupera multiplicando la del análisis reducido por $C_d = R$: la
+hipótesis que NCh2369 adopta. Y para períodos cortos, la promesa cambia de moneda: se
+conserva la energía, no el desplazamiento, y el tipo de cambio empeora a
+
+<Equation label="Ec. 1">
+$$R_\mu = \sqrt{2\mu - 1} \quad\Longleftrightarrow\quad \mu = \frac{R_\mu^2 + 1}{2}$$
+</Equation>
+
+Nadie ve funcionar estas reglas en un proyecto, porque el análisis de diseño es lineal:
+la incursión inelástica que las reglas describen ocurre fuera del software. La pregunta
+de esta nota es directa: **si uno arma el oscilador elastoplástico de verdad y lo somete
+a un registro real, ¿emergen las reglas del análisis? ¿Dónde se quiebran, y cuánto
+cuesta el quiebre?**
+
+---
+
+## El laboratorio: 63 osciladores, una corrida
+
+El experimento es la definición de $R_\mu$ convertida en modelo. Un oscilador de un
+grado de libertad: masa $m$ con solo UX libre, y un link a la base cuya ley
+fuerza-deformación es **elastoplástica perfecta** (MultiLinear Plastic cinemático de
+SAP2000, con meseta de pendiente exactamente cero — SAP la acepta sin protestar). La
+rigidez fija el período, $k = m\,(2\pi/T)^2$, y la fluencia fija el recorte:
+$F_y = V_e/R$.
+
+<Figure
+  src="/factor-r/fig-modelo-rmu.svg"
+  alt="Esquema del experimento: a la izquierda un oscilador de masa m con resorte k y deslizador de fricción Fy en serie (ley elastoplástica perfecta bilineal), excitado en la base por El Centro 1940; a la derecha el banco de 63 osciladores en grilla de 9 períodos por 7 filas (una elástica azul y seis plásticas rojas con R de 1.5 a 8), todos bajo el mismo registro en un solo caso FNA"
+  caption="El oscilador (a) y el banco completo (b). Los 63 osciladores son independientes —cada uno con su propia base— así que caben en un solo .sdb y un solo caso FNA: el barrido completo cuesta una corrida de segundos."
+/>
+
+Tres decisiones de diseño hacen el experimento limpio:
+
+1. **El banco completo vive en un solo modelo.** Los osciladores no interactúan (cada
+   uno tiene su propia base empotrada), así que los 63 —9 períodos de 0.1 a 2.0 s ×
+   (1 elástico + 6 niveles de R)— corren juntos bajo la misma `Accel UX` en un único
+   caso FNA. Las dos fases completas toman 14 segundos.
+2. **R queda definido exacto por construcción.** La fase A corre solo la fila elástica y
+   mide $V_e(T) = k\,\delta_e$; la fase B recorta cada fluencia a $F_y = V_e/R$ con esos
+   valores medidos —no con un espectro suavizado— y vuelve a correr. La razón $V_e/F_y$
+   es exactamente el R nominal de cada oscilador.
+3. **El registro es el de Newmark.** El Centro 1940 N-S (la fase fuerte de 12.1 s, PGA
+   0.32 g), tomado del sample que instala el propio SAP2000 — reproducible por cualquier
+   lector sin descargar nada. Que sea el registro sobre el que Newmark construyó las
+   reglas es el bonus narrativo. Amortiguamiento modal constante $\xi = 5\,\%$, el de la
+   literatura clásica de $R_\mu$.
+
+Como en la [serie de P-Delta](/blog/pdelta-cuando-confiar-amplificador), el experimento
+tiene un árbitro externo: un **integrador propio de Newmark-β** (aceleración promedio,
+elastoplástico con retorno radial, dt ≤ T/200) que resuelve exactamente el mismo
+problema sin pasar por SAP2000. No valida la física —es la misma— pero valida la
+*maquinaria*: si SAP y el integrador no calzan, algo está mal configurado en alguno de
+los dos. Spoiler: no calzaron a la primera, y esa discrepancia fue el mejor momento del
+experimento.
+
+---
+
+## El control de sanidad — y la trampa que lo justificó
+
+Con el modelo correcto, el acuerdo es total: en los 63 osciladores el error de SAP
+contra el integrador queda **bajo 0.35 %** (el peor caso, $-1.5\,\%$, es el oscilador
+más rígido con el recorte más suave, midiendo picos de 2 mm). El elástico de $T = 1$ s
+calza a $-0.02\,\%$ y su gemelo EPP con $R = 4$ a $+0.01\,\%$. La maquinaria —función,
+FNA, link multilineal, extracción— queda validada de una pasada.
+
+Pero la primera corrida no se veía así. Los elásticos largos daban hasta $+70\,\%$ sobre
+la referencia, y varios plásticos reportaban derivas de *metros* ($\mu \approx 500$).
+El diagnóstico por ventanas de tiempo acorraló al culpable: SAP y la referencia eran
+idénticos —a cuatro cifras— durante los 12.1 s del registro, y divergían exactamente
+después.
+
+<Note type="warning" title="Más allá del último punto, la función TH no vale cero">
+SAP2000 **sostiene el último valor de una función tiempo-historia** más allá de su fin —
+no asume cero. El sample de El Centro termina en una aceleración distinta de cero, así
+que la supuesta cola de vibración libre era en realidad una **aceleración basal constante
+de 12 segundos**: para un oscilador elástico largo, una carga escalón que infla el pico
+($+70\,\%$ en $T = 2$ s); para uno elastoplástico, una fuerza media sostenida que lo hace
+*trinquetear* —acumular deformación plástica ciclo tras ciclo— sin límite. La hipótesis
+se confirmó simulando ese "hold" en el integrador: reprodujo los números de SAP a cuatro
+decimales. El arreglo es trivial —cerrar el registro con un punto $(t_{fin}+\varepsilon,\ 0)$
+explícito— pero la lección no: **una trampa silenciosa de este porte solo se caza
+teniendo una referencia independiente contra la cual comparar.** Sin el integrador, esos
+$\mu \approx 500$ habrían sido "el resultado".
+</Note>
+
+---
+
+## Resultado 1: la regla emerge
+
+Lo primero es *ver* la regla en el dominio del tiempo. El oscilador de $T = 1$ s,
+elástico y con la fluencia recortada cuatro veces, bajo el mismo registro:
+
+<Figure
+  src="/factor-r/trazas_T1.png"
+  alt="Historias de desplazamiento del oscilador de T=1.0 s: la traza elástica en azul y la elastoplástica con Fy=Ve/4 en roja son idénticas hasta la primera fluencia y alcanzan picos casi iguales, 0.120 contra 0.124 metros, con las líneas punteadas de más menos delta y marcando la estrecha banda elástica del EPP"
+  caption="El mismo registro, la fuerza recortada 4 veces. Las trazas son idénticas hasta la primera fluencia (t ≈ 1.9 s); después el EPP oscila desplazado por sus excursiones plásticas — pero viaja hasta casi el mismo pico: δu = 0.124 m contra δe = 0.120 m (+3.6 %). Las líneas punteadas son ±δy: todo lo que ocurre fuera de esa banda es incursión inelástica."
+/>
+
+El sistema con un cuarto de la resistencia hizo prácticamente el mismo viaje. Eso —que
+no es un supuesto sino un resultado del análisis— es la regla de igual desplazamiento.
+¿Es general? El mapa completo:
+
+<Figure
+  src="/factor-r/du_over_de.png"
+  alt="Razón entre desplazamiento inelástico y elástico contra el período, una curva por cada R de 1.5 a 8: para períodos sobre 0.5 s todas las curvas oscilan alrededor de 1 sin orden, y bajo 0.3 s se abren en abanico ordenado por R hasta llegar a 16 veces en T=0.1 s con R=8"
+  caption="δu/δe para los 54 osciladores plásticos. A la derecha de T ≈ 0.5 s, las seis curvas de R se enredan alrededor de 1 (mediana 1.01): recortar la fuerza —da igual cuánto— no cambia el viaje. A la izquierda, el abanico se ordena por R y se dispara: en T = 0.1 s el oscilador con R = 8 viaja 16 veces más que su gemelo elástico."
+/>
+
+Dos lecturas:
+
+1. **En T ≥ 0.5 s la regla emerge con mediana 1.01** — y con dispersión honesta: punto a
+   punto, $\delta_u/\delta_e$ va de 0.54 a 1.84, sin tendencia con R. Ese ruido no es un
+   defecto del experimento: es **una realización** de una regla que Newmark formuló como
+   promedio estadístico sobre muchos registros. La regla no promete que *este* oscilador
+   bajo *este* registro clave 1.00; promete que no hay sesgo — y eso es exactamente lo
+   que se ve.
+2. **Bajo T ≈ 0.3 s la regla no se degrada: se rompe.** Y se rompe *ordenadamente* — a
+   mayor R, peor — que es la firma de un fenómeno físico y no de ruido numérico: el
+   oscilador rígido no puede "aislarse" de la demanda fluyendo, porque su deformación la
+   manda el suelo, no su resistencia.
+
+La consecuencia de diseño de la lectura 1 es la Ec. 6 del Post 1 en acción: las
+deformaciones del análisis reducido, multiplicadas por $R$, estiman las reales sin sesgo
+en la meseta. La consecuencia de la lectura 2 se mide en la moneda que importa —
+ductilidad:
+
+---
+
+## Resultado 2: cuánta ductilidad compra cada R
+
+<Figure
+  src="/factor-r/mu_vs_R.png"
+  alt="Demanda de ductilidad contra R en dos paneles con las curvas teóricas de igual desplazamiento (mu igual a R) e igual energía (mu igual a R cuadrado más uno sobre dos): en el panel de períodos largos los puntos medidos siguen la recta mu igual R; en el de períodos cortos los puntos superan incluso la curva de igual energía, llegando a mu 126 en T=0.1 s con R=8"
+  caption="La demanda de ductilidad medida contra las dos reglas. Izquierda (T = 0.75–2.0 s): los puntos abrazan μ = R — cada unidad de reducción cuesta una de ductilidad. Derecha (T = 0.1–0.3 s): los puntos cruzan la curva de igual energía y siguen subiendo; en la esquina, R = 8 exige μ = 126 donde igual energía prometía 32.5 e igual desplazamiento 8."
+/>
+
+El panel izquierdo es el contrato de NCh2369 funcionando: en los períodos donde vive la
+mayoría de las estructuras, $\mu \approx R$. Diseñar con $R = 4$ es firmar que los
+fusibles sostendrán ductilidades del orden de 4 — ni gratis ni catastrófico, un precio
+conocido.
+
+El panel derecho es la letra chica. En $T = 0.2$ s, $R = 8$ ya exige $\mu = 15$ (el
+doble de la promesa de igual desplazamiento); en $T = 0.1$ s exige $\mu = 126$ — **cuatro
+veces peor que la regla de igual energía**, que se supone era la cota pesimista. La
+histéresis muestra las dos situaciones con la misma ley constitutiva:
+
+<Figure
+  src="/factor-r/histeresis.png"
+  alt="Dos lazos de histéresis fuerza-deformación normalizados: a la izquierda T=1.0 s con R=4 muestra paralelogramos amplios y estables hasta u de 4 veces delta y; a la derecha T=0.1 s con R=8 muestra excursiones que marchan hasta 120 veces delta y del mismo lado"
+  caption="F/Fy contra u/δy — la misma ley EPP, dos demandas. Izquierda: el oscilador de T = 1 s con R = 4 dibuja lazos estables y acotados (μ = 4.1). Derecha: el de T = 0.1 s con R = 8 marcha hasta 120 δy hacia un lado (μ = 126): ninguna diagonal, rótula ni conexión real sostiene eso. El eje x del panel derecho es 30 veces más largo."
+/>
+
+Y el subproducto que casi nadie mira: al terminar el sismo, el oscilador elastoplástico
+no vuelve a cero. La deformación residual crece con R —de ~0.3 δy en $R = 1.5$ a ~5 δy
+en $R = 8$ en mediana— y es errática entre casos vecinos, porque depende de en qué
+excursión plástica lo sorprendió el final del registro:
+
+<Figure
+  src="/factor-r/residual.png"
+  alt="Deriva residual normalizada por delta y contra R: nube de puntos por período con gran dispersión y la mediana sobre los nueve períodos subiendo de 0.3 a 5 veces delta y entre R 1.5 y 8"
+  caption="Deriva residual al final de la vibración libre, en múltiplos de δy. La mediana (línea negra) sube con R; la dispersión es enorme y no es ruido: el residual depende de la última excursión plástica, una lotería del registro. Es el costo de R que no aparece en ninguna verificación: la estructura queda torcida."
+/>
+
+<Note type="info" title="Lo que este experimento NO dice">
+Un registro es **una realización**: las reglas de Newmark son estadísticas, y los números
+finos de aquí (el 1.84 de dispersión, el μ = 126 de la esquina) cambiarían con otro
+registro. Lo que no cambiaría es la estructura del resultado: meseta sin sesgo en T
+moderados/largos, quiebre ordenado por R en T cortos, residual creciente y errático.
+Además el oscilador es EPP puro con ξ = 5 % modal: sin degradación de rigidez ni de
+resistencia — un fusible real (una diagonal que pandea, una rótula que se fractura) es
+más frágil que este modelo, no menos. Los números de aquí son la versión *optimista*.
+</Note>
+
+---
+
+## Lo que esto significa al elegir R
+
+Traducido a decisiones, con el experimento en la mano:
+
+- **$C_d = R$ es una hipótesis razonable y sin sesgo** para estructuras de período
+  moderado o largo — la mediana medida fue 1.01. Su dispersión (±50 % en una
+  realización) es la de cualquier estimación puntual de respuesta sísmica, no un defecto
+  particular de la regla.
+- **Elegir R es elegir la demanda de ductilidad de los fusibles**, casi uno a uno en la
+  meseta. El detallamiento que el Post 1 llamó "la letra chica" no es opcional: es la
+  otra mitad del contrato que el análisis reducido no verifica.
+- **En estructuras rígidas (T ≲ 0.3 s), R alto es una mala compra.** La misma reducción
+  que en T = 1 s cuesta μ = 8, en T = 0.1 s cuesta μ = 126 — y ni siquiera la regla de
+  igual energía alcanza a describirlo. Es la zona donde las normas industriales limitan
+  R para equipos y estructuras rígidas, y el experimento muestra por qué.
+- **El residual es el costo silencioso**: crece con R y decide si la estructura es
+  reparable. Un R alto puede dejar la estructura en pie pero torcida más allá de toda
+  compostura — otro precio que el análisis lineal no muestra.
+
+Queda la otra mitad de la ecuación: $\Omega_0$, la distancia entre lo que se pidió y lo
+que el sistema realmente desarrolla. Esa no vive en un oscilador — vive en el inventario
+de perfiles, en qué verificación mandó en cada barra, en la redundancia. La próxima nota
+diseña un marco arriostrado chevron con el espectro NCh2369 reducido, lo empuja con un
+pushover hasta dibujar la curva completa, y mide sobre ella el $\Omega_0$ real — la
+Figura 7.5 del libro, pero con datos.
+
+El código del experimento (banco de osciladores, integrador de referencia, runner
+idempotente y el dataset completo) vive en el repositorio del experimento; esta nota es
+su bitácora.
