@@ -1,0 +1,174 @@
+---
+title: "El factor R (4): fusibles y capacidad esperada, o por qué la conexión no se diseña con la fuerza del análisis"
+description: "Cierre de la serie: el fusible del marco chevron hizo su trabajo y alguien tiene que recibir lo que entrega. El equilibrio plástico a mano contra el pushover (M = P·L/4 al 0.00 %), la viga puntal a la que el análisis le pide cero y el mecanismo 2.2 veces su plastificación, la conexión donde el atajo 0.7R queda 38–74 % corto, y el recap de la serie con todos los números medidos."
+pubDate: 2026-07-12
+tags: ["factor R", "diseño por capacidad", "capacidad esperada", "fusibles", "marcos arriostrados", "NCh2369", "AISC 341", "sísmica"]
+norm: "NCh2369 / AISC 341"
+section: "Sísmica"
+series: "El factor R"
+seriesPart: 4
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## El fusible hizo su trabajo. ¿Quién paga?
+
+El [Post 3](/blog/factor-r-omega0) dejó un número esperando: cuando el marco chevron
+desarrolla su mecanismo —la diagonal comprimida pandeada en su residual, la traccionada
+fluyendo en su capacidad esperada— la viga puntal recibe un **desbalance vertical de
+869 kN**. El dato incómodo es de dónde *no* salió ese número: del análisis. En el modelo
+elástico con que se diseñó el marco, las dos diagonales trabajan con fuerzas iguales y
+opuestas, sus componentes verticales se cancelan, y el desbalance sobre la viga es
+**exactamente cero**. El análisis no está equivocado — está describiendo una estructura
+que dejó de existir en el momento en que la diagonal pandeó.
+
+Este es el problema que el diseño por capacidad resuelve, y esta nota final lo recorre
+con las fuerzas medidas del experimento: qué entrega el fusible, quién lo recibe, cuánto
+recibe cada uno, y qué pasa si en vez de calcularlo se usa el atajo $\Omega_0 = 0{,}7R$.
+
+## Lo que el fusible entrega: las capacidades esperadas
+
+La jerarquía del diseño por capacidad es un contrato de tres cláusulas: el **fusible**
+(aquí, las diagonales) plastifica de manera predecible; los **no fusibles** (conexión,
+viga puntal, columnas, anclajes) resisten lo que el fusible entrega; y lo que el fusible
+entrega no es la fuerza del análisis sino su **capacidad esperada** — la resistencia
+máxima probable, con el material real (más fuerte que el nominal) y sin factores de
+seguridad. Para diagonales de acero, las del libro:
+
+| Capacidad esperada | Fórmula | En nuestro HSS5×5×1/4 |
+|---|---|---|
+| Tracción | $T_{ye} = R_y F_y A_g$ | 1244 kN |
+| Compresión (pandeo) | $P_{ne} = 1{,}14\,F_{cre}A_g$ | 526 kN |
+| Compresión residual (post-pandeo) | $P_{re} = 0{,}3\,P_{ne}$ | 158 kN |
+
+El $R_y$ (aquí 1.3) reconoce que el acero que llega a obra fluye por encima del $F_y$
+de catálogo; el 1.14 lleva la curva de pandeo a su valor esperado; el 0.3 es lo que
+queda de una diagonal pandeada que sigue conectada. Los tres números aparecieron ya en
+esta serie — son los que calibraron los links del pushover del Post 3, y el pushover
+los devolvió exactos: la traccionada se detuvo en 1244 kN, la comprimida pico en 526 y
+residual en 158.
+
+## El mecanismo, con equilibrio a mano
+
+Con esas tres fuerzas, el flujo completo del mecanismo se resuelve con estática de
+primer año — y el pushover del Post 3 permite auditar cada línea:
+
+<Figure
+  src="/factor-r/fig-mecanismo-desbalance.svg"
+  alt="Diagrama del mecanismo del chevron: la diagonal traccionada en su capacidad esperada de 1244 kN, la comprimida pandeada en su residual de 158, el desbalance vertical de 869 kN sobre el punto medio de la viga, el diagrama de momento triangular con 1304 kNm al centro, 435 kN bajando por cada columna y el arrancamiento de 995 kN en la base de la diagonal traccionada"
+  caption="El mecanismo con los números medidos. Cada flecha sale del equilibrio plástico a mano; el pushover del Post 3 reproduce todas: el momento en la viga a 0.00 %, los axiales de columna exactos, el desbalance exacto. Y ninguna existe en el análisis elástico."
+/>
+
+| Quién recibe | Equilibrio a mano | Pushover (SAP) |
+|---|---|---|
+| Viga puntal (desbalance) | $(T_{ye} - 0{,}3P_{ne})\sin\theta$ = 869.2 kN | 869.2 kN |
+| Viga puntal (momento en E) | $P \cdot L/4$ = 1303.8 kNm | 1303.8 kNm (+0.00 %) |
+| Cada columna (axial) | $P/2$ = 434.6 kN | 434.6 kN |
+| Anclaje de la traccionada | $T_{ye}\sin\theta$ = 995 kN | 995 kN |
+
+La tabla es el mensaje metodológico de la serie en miniatura: **el equilibrio plástico
+del mecanismo es calculable a mano, y el software solo lo confirma.** Quien sabe qué
+mecanismo espera, no necesita el pushover para dimensionar los no fusibles — lo necesita
+para verificar que el mecanismo es el que esperaba.
+
+## La viga puntal: el caso donde el atajo es ciego
+
+La viga de nuestro marco es una W16×57 que el Post 3 "declaró fuerte". El mecanismo
+opina distinto:
+
+<Figure
+  src="/factor-r/viga_puntal.png"
+  alt="Momento flector en la viga puntal contra el desplazamiento lateral del pushover: cero hasta el pandeo, creciendo hasta 1304 kilonewton metro en el mecanismo completo, cruzando el momento plástico de la viga W16x57 en el camino; la línea del análisis elástico permanece en cero y la curva medida calza con el equilibrio a mano"
+  caption="El momento en la viga puntal durante el pushover: cero mientras las diagonales están ambas activas, y creciendo con el desbalance desde el pandeo. Cruza el Mp de la W16×57 a mitad de camino (el modelo la mantiene elástica a propósito — un modelo con la viga real habría cambiado de mecanismo ahí). El análisis elástico, abajo: cero para siempre."
+/>
+
+Tres lecturas, de menor a mayor incomodidad:
+
+1. **El análisis le pide cero.** Y aquí el atajo $\Omega_0 = 0{,}7R$ no es "menos
+   conservador": es **ciego**. El atajo amplifica fuerzas del análisis, y $2{,}1 \times
+   0 = 0$. Para la viga chevron no hay amplificación que sirva — solo el equilibrio
+   plástico la dimensiona. Es la razón de que las normas de marcos arriostrados traigan
+   la exigencia del desbalance $(T_{esperada} - 0{,}3P_{ne})$ escrita explícitamente.
+2. **El mecanismo le pide 2.2 veces su plastificación.** Los 1304 kNm contra los 594 de
+   la W16×57. Dimensionarla por capacidad exige $Z \geq 4200$ cm³: una **W27×94** — un
+   65 % más de acero por metro que la viga que cualquier diseño gravitacional habría
+   puesto. Ese salto de perfil *es* el precio del chevron como tipología, y es un costo
+   que no aparece en ninguna partida hasta que alguien hace este equilibrio.
+3. **El modelo del Post 3 fue honesto por declaración, no por accidente.** La viga se
+   mantuvo elástica *a propósito* para medir Ω₀ del sistema de diagonales puro. Con la
+   W16×57 real y su rótula, el mecanismo habría cambiado — plastificación de la viga en
+   vez de fluencia de la traccionada — y la curva del Post 3 sería otra. En un chevron
+   con viga débil, el fusible ya no es el que uno eligió.
+
+## La conexión: tres números por diagonal
+
+Para la conexión de la diagonal el análisis sí entrega una fuerza — y la comparación de
+los tres criterios, en los dos marcos gemelos del Post 3, es el resumen más compacto de
+por qué el diseño por capacidad existe:
+
+<Figure
+  src="/factor-r/conexion.png"
+  alt="Barras comparando para ambos casos gemelos la fuerza del análisis reducido, el atajo 0.7R y la capacidad esperada del fusible: 365 contra 766 contra 1244 kilonewtons cuando manda la resistencia, y 151 contra 318 contra 1244 cuando manda la esbeltez"
+  caption="La fuerza para diseñar la conexión de la diagonal, según tres criterios. La capacidad esperada no depende de la demanda: es una propiedad del fusible instalado (1244 kN en ambos gemelos). El atajo 0.7R·Nu queda 38 % corto cuando mandó la resistencia — y 74 % corto cuando mandó la esbeltez, porque amplifica una demanda que no guarda relación con el perfil que quedó puesto."
+/>
+
+La lógica de la figura cabe en una frase: **la conexión no resiste demandas, resiste al
+fusible** — y el fusible es el mismo HSS en ambos gemelos (1244 kN), aunque las demandas
+difieran ×2.4. El atajo 0.7R falla precisamente porque amplifica la demanda: en el
+gemelo "esbeltez", donde el reglamento obligó a poner un perfil al 38 % de uso, la
+conexión dimensionada con $0{,}7R \cdot N_u$ = 318 kN enfrentaría 1244 kN el día que el
+fusible trabaje — cuatro veces su diseño. La falla sería en la conexión, frágil, antes
+de que el fusible alcance a disipar nada: exactamente el orden de falla que toda la
+jerarquía intenta impedir.
+
+<Note type="info" title="Cuándo el atajo sí se defiende">
+El libro es explícito: la amplificación por Ω₀ = 0.7R es una **estimación prudente para
+elementos cuyo equilibrio plástico no es trazable** — sistemas industriales complejos
+donde nadie puede escribir el mecanismo a mano — o donde asumir capacidades esperadas en
+todos los traccionados da cargas absurdamente conservadoras. Lo que el experimento
+agrega es la letra chica: el atajo hereda los defectos del Ω₀ real que el Post 3 midió
+(1.44 a 2.90 según qué mandó el diseño), y es ciego a las fuerzas que el análisis
+elástico no ve — el desbalance del chevron es el ejemplo canónico. Donde el mecanismo se
+puede escribir, escribirlo cuesta una tarde y no apuesta nada.
+</Note>
+
+El mismo contraste alcanza a los **anclajes**: la base de la diagonal traccionada recibe
+995 kN de arrancamiento en el mecanismo — el análisis pedía 292. Pernos, silla y
+fundación dimensionados "por análisis" quedarían a un tercio de lo que el fusible
+entrega, y el arrancamiento de un anclaje es de las fallas menos dúctiles que existen.
+No es casualidad que NCh2369 dedique a los pernos de anclaje sus exigencias de
+ductilidad más específicas.
+
+## La serie, cerrada: R = Rμ · Ω₀ con números
+
+Cuatro notas atrás, [el Post 1](/blog/factor-r-anatomia) llamó al espectro dividido "un
+pagaré": la promesa de que alguien, más adelante, pondría la ductilidad. Las cuentas del
+pagaré, auditadas:
+
+- **$R_\mu$** ([Post 2](/blog/factor-r-rmu)): la regla de igual desplazamiento emerge de
+  un tiempo-historia real — μ ≈ R en períodos moderados y largos (μ = 4.1 para R = 4 en
+  T = 1 s), y se quiebra brutalmente en períodos cortos (μ = 126 donde igual energía
+  prometía 32).
+- **$\Omega_0$** ([Post 3](/blog/factor-r-omega0)): 1.44 o 2.90 para el mismo marco según
+  qué verificación mandó el diseño — el 0.7R = 2.1 de la norma, flanqueado. Y la
+  identidad del Post 1 cuadrando sobre la curva medida: $\Omega_0 \times R_\mu$ =
+  1.44 × 2.09 = 3.0 = R\*.
+- **El detallamiento** (esta nota): el fusible entrega sus capacidades esperadas — no
+  las fuerzas del análisis — y el equilibrio plástico a mano coincide con el pushover
+  en cada línea de la cadena: conexión (1244 kN), viga puntal (1304 kNm = 2.2·Mp),
+  columnas (435 kN), anclajes (995 kN).
+
+La moraleja operativa de toda la serie cabe en tres frases. Dividir el espectro por R es
+firmar que la estructura entrará al rango no lineal: eso compra fuerzas chicas, no
+deformaciones chicas ni daño chico. La mitad $R_\mu$ del pacto la paga el fusible en
+ductilidad, casi uno a uno, y la mitad $\Omega_0$ no es una propiedad de la tipología
+sino la huella de qué mandó el diseño. Y el pacto completo solo se sostiene si los no
+fusibles se dimensionan para lo que el fusible entrega — que es un cálculo de estática
+de primer año, con las capacidades esperadas en la mano, y que ningún análisis elástico
+va a hacer por uno.
+
+Los tres experimentos de la serie (el banco de osciladores, el marco gemelo y sus
+pushover, y las extracciones de esta nota) viven en sus repositorios; las notas son sus
+bitácoras.
