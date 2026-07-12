@@ -240,16 +240,18 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   reverse-engineering — no están en la doc del MCP. Post
   `section-cut-muros-losas-sap2000.mdx`, 4 SVG limpios en
   `public/section-cut-muros-losas-sap2000/`, modelos `sc_wall.sdb` + `sc_slab2.sdb`.
-- [ ] **D8. Resortes de solo compresión: estabilidad y despegue de una zapata (SAP vs
-  cerrado)** — UNA zapata rígida bajo carga excéntrica sobre lecho de resortes de
-  **solo compresión** (no toman tracción → despegue parcial). Comparar el mapa de
-  presión y la extensión del despegue contra la **solución cerrada de contacto
-  parcial** (kern L/6; ancho de contacto 3(L/2−e); q_max = 2N/(B·c)) y el factor de
-  seguridad al vuelco con la reacción efectiva. Enseña la técnica: resortes de
-  compresión (o gap links) + caso **no lineal estático**, y el pitfall de resortes
-  lineales que "traccionan" el suelo. **Cierre teórico-SAP de la serie de Fundaciones**
-  en formato D (un modelo), reusando la teoría cerrada de `presiones-contacto-winkler`
-  y `prediseno-fundaciones-aisladas`. (Idea del usuario, 2026-07-09.)
+- [x] **D8. Resortes de solo compresión: estabilidad y despegue de una zapata (SAP vs
+  cerrado)** (idea del usuario 2026-07-09; hecho 2026-07-12, post
+  `zapata-solo-compresion-sap2000.mdx`, figuras en `public/zapata-solo-compresion/`) —
+  experimento en `APP_sap2000\d8_solo_compresion\`: zapata rígida 3×2 (grilla 25×17,
+  constraint Body) sobre 425 **links Gap de un nudo** (gap = 0, k tributaria), 5 casos
+  NL por excentricidad + gemelo lineal. Verificación: qmax a −0.2…−1.5 % de la cerrada
+  (c = 3(L/2−e), qmax = 2N/(Bc)), c a ≤ medio espaciamiento, ΣR y resultante EXACTOS.
+  **Pitfall cuantificado**: el lineal es exacto hasta el kern y desde ahí subestima
+  qmax −6/−16/−49 % (e/L = 0.25/0.30/0.40) con tracción ficticia de hasta −116 kPa y
+  equilibrio perfecto (cero alarmas). Firmas API verificadas: SetGap, link 1-nudo
+  (AddByPoint mismo nudo, local 1 = +Z), SetBody/SetConstraint, LinkForce("ALL",
+  GroupElm). **Cierre teórico-SAP de la serie de Fundaciones.**
 - [ ] **D9. Pandeo lineal (Linear Buckling) vs Euler y el factor K** — análisis de
   pandeo lineal en SAP de una columna/pórtico → factor de carga crítica y modo de
   pandeo, validado contra Euler P_cr = π²EI/(KL)² en casos de K conocido (biarticulada

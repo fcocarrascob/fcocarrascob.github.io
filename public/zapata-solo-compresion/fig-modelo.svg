@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ma8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="mb8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El modelo: zapata rígida (constraint Body) sobre un lecho de links Gap de solo compresión</text>
+
+  <!-- ═══ panel (a): elevación ═══ -->
+  <text x="270" y="62" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(a) elevación — despegue con e &gt; L/6</text>
+
+  <!-- load N at eccentricity -->
+  <line x1="360" y1="90" x2="360" y2="148" stroke="#b02a1a" stroke-width="3" marker-end="url(#ma8)"/>
+  <text x="370" y="104" font-size="12.5" fill="#b02a1a" font-weight="bold">N = 500 kN</text>
+  <!-- eccentricity dim -->
+  <line x1="270" y1="120" x2="360" y2="120" stroke="#999" stroke-width="1" marker-start="url(#ma8)" marker-end="url(#ma8)"/>
+  <text x="315" y="114" font-size="11" fill="#555" text-anchor="middle">e</text>
+  <line x1="270" y1="100" x2="270" y2="165" stroke="#ccc" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- footing (rigid bar) -->
+  <rect x="120" y="150" width="300" height="18" fill="#e8eef6" stroke="#1a63a8" stroke-width="2"/>
+  <text x="118" y="144" font-size="11.5" fill="#1a63a8" font-weight="bold">grilla de nudos + Body (rígida)</text>
+
+  <!-- gap springs: left side detached (uplift), right side compressed -->
+  <!-- detached: spring top BELOW footing bottom (daylight) -->
+  <g stroke="#b02a1a" stroke-width="1.6" fill="none">
+    <polyline points="140,182 133,189 147,196 133,203 147,210 140,216"/>
+    <polyline points="180,182 173,189 187,196 173,203 187,210 180,216"/>
+    <polyline points="220,180 213,187 227,194 213,201 227,208 220,214"/>
+  </g>
+  <g stroke="#2f7d32" stroke-width="1.8" fill="none">
+    <polyline points="260,170 253,177 267,184 253,191 267,198 260,205"/>
+    <polyline points="300,170 293,178 307,186 293,194 307,202 300,209"/>
+    <polyline points="340,170 333,178 307,186" opacity="0"/>
+    <polyline points="340,170 333,178 347,186 333,194 347,202 340,210"/>
+    <polyline points="380,170 373,179 387,188 373,197 387,206 380,214"/>
+  </g>
+  <line x1="120" y1="216" x2="420" y2="216" stroke="#333" stroke-width="1.5"/>
+  <g stroke="#999" stroke-width="1.2">
+    <line x1="125" y1="216" x2="118" y2="226"/><line x1="145" y1="216" x2="138" y2="226"/>
+    <line x1="165" y1="216" x2="158" y2="226"/><line x1="185" y1="216" x2="178" y2="226"/>
+    <line x1="205" y1="216" x2="198" y2="226"/><line x1="225" y1="216" x2="218" y2="226"/>
+    <line x1="245" y1="216" x2="238" y2="226"/><line x1="265" y1="216" x2="258" y2="226"/>
+    <line x1="285" y1="216" x2="278" y2="226"/><line x1="305" y1="216" x2="298" y2="226"/>
+    <line x1="325" y1="216" x2="318" y2="226"/><line x1="345" y1="216" x2="338" y2="226"/>
+    <line x1="365" y1="216" x2="358" y2="226"/><line x1="385" y1="216" x2="378" y2="226"/>
+    <line x1="405" y1="216" x2="398" y2="226"/>
+  </g>
+
+  <!-- uplift daylight annotation -->
+  <line x1="180" y1="171" x2="180" y2="179" stroke="#b02a1a" stroke-width="1"/>
+  <text x="128" y="250" font-size="11.5" fill="#b02a1a">gaps ABIERTOS (P = 0):</text>
+  <text x="128" y="265" font-size="11.5" fill="#b02a1a">la zapata despegó</text>
+  <text x="330" y="250" font-size="11.5" fill="#2f7d32">gaps CERRADOS: toman</text>
+  <text x="330" y="265" font-size="11.5" fill="#2f7d32">compresión k·Δ</text>
+
+  <!-- pressure triangle -->
+  <path d="M255,290 L420,290 L420,335 Z" fill="#e67e22" fill-opacity="0.25" stroke="#e67e22" stroke-width="1.3"/>
+  <text x="345" y="316" font-size="11.5" fill="#b35c0e">q(x): triángulo de contacto</text>
+  <text x="426" y="332" font-size="11.5" fill="#b35c0e" font-weight="bold">q_max</text>
+  <line x1="255" y1="282" x2="255" y2="296" stroke="#b35c0e" stroke-width="1" stroke-dasharray="3 2"/>
+  <line x1="255" y1="345" x2="420" y2="345" stroke="#999" stroke-width="1" marker-start="url(#ma8)" marker-end="url(#ma8)"/>
+  <text x="337" y="360" font-size="11.5" fill="#555" text-anchor="middle">c = 3·(L/2 − e)</text>
+
+  <!-- geometry note -->
+  <text x="270" y="395" font-size="11.5" fill="#555" text-anchor="middle">L = 3 m × B = 2 m · grilla de 25×17 nudos (0.125 m) · k_i = kv·A_trib (½ en bordes, ¼ en esquinas)</text>
+
+  <!-- ═══ panel (b): la ley del link ═══ -->
+  <text x="720" y="62" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(b) la ley del apoyo: Gap vs lineal</text>
+
+  <line x1="560" y1="230" x2="900" y2="230" stroke="#333" stroke-width="1.3" marker-end="url(#ma8)"/>
+  <line x1="730" y1="380" x2="730" y2="90" stroke="#333" stroke-width="1.3" marker-end="url(#ma8)"/>
+  <text x="896" y="246" font-size="11" fill="#333" text-anchor="end">acortamiento Δ (compresión →)</text>
+  <text x="722" y="88" font-size="11" fill="#333" text-anchor="end">P compresión</text>
+
+  <!-- gap law: zero for tension (left), slope k for compression (right) -->
+  <polyline points="570,230 730,230 880,110" fill="none" stroke="#2f7d32" stroke-width="3"/>
+  <text x="806" y="140" font-size="12" fill="#2f7d32" font-weight="bold" text-anchor="end">Gap (gap = 0): solo</text>
+  <text x="806" y="156" font-size="12" fill="#2f7d32" font-weight="bold" text-anchor="end">compresión, rigidez k</text>
+  <text x="640" y="222" font-size="11.5" fill="#2f7d32">separación: P = 0</text>
+
+  <!-- linear law: through origin both ways -->
+  <line x1="580" y1="380" x2="880" y2="110" stroke="#b02a1a" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="596" y="352" font-size="12" fill="#b02a1a" font-weight="bold">lineal: «tracciona»</text>
+  <text x="596" y="368" font-size="12" fill="#b02a1a" font-weight="bold">el suelo (el pitfall)</text>
+
+  <!-- takeaway -->
+  <text x="470" y="428" font-size="12.5" text-anchor="middle" fill="#333" font-weight="bold">La única diferencia entre el modelo honesto y el que miente es esta ley — y solo se nota cuando e supera el kern.</text>
+</svg>

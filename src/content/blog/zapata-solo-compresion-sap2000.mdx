@@ -1,0 +1,161 @@
+---
+title: "Resortes de solo compresión en SAP2000: el despegue de una zapata, verificado contra la solución cerrada"
+description: "La técnica para modelar el suelo que no toma tracción — links Gap de un nudo, zapata rígida por constraint Body, casos no lineales estáticos — verificada contra la solución cerrada del contacto parcial (qmax a menos del 1.5 %, equilibrio exacto). Y el pitfall cuantificado: los resortes lineales de siempre son exactos hasta el kern y desde ahí mienten sin ningún aviso — qmax subestimado hasta 49 % con el equilibrio perfectamente cuadrado."
+pubDate: 2026-07-12
+tags: ["SAP2000", "links", "Gap", "fundaciones", "despegue", "Winkler", "no lineal", "zapatas"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La técnica y el pitfall
+
+El suelo no toma tracción. El modelo con que todo el mundo lo representa — resortes
+lineales bajo la zapata — sí. Mientras la resultante viva dentro del kern esa mentira no
+tiene consecuencias, porque toda la zapata comprime y un resorte que nunca tracciona se
+comporta igual que uno que podría. Pero apenas la excentricidad cruza L/6 los dos
+modelos se separan: el real despega y concentra presión en un borde; el lineal reparte
+la carga "colgándose" del suelo traccionado del otro lado. **Y ningún síntoma lo
+delata**: el modelo lineal converge, el equilibrio cuadra exacto, y el único aviso es
+un puñado de reacciones negativas que nadie revisa.
+
+Esta nota enseña la técnica que lo resuelve —**links Gap de solo compresión** con un
+caso no lineal estático— y la verifica contra la solución cerrada del contacto parcial
+que este blog ya publicó en la serie de Fundaciones. De paso, cuantifica exactamente
+cuánto miente el modelo lineal, para que la decisión de cuándo molestarse con los gaps
+sea un número y no una corazonada.
+
+## La referencia: dos fórmulas de primer año
+
+Para una zapata **rígida** L×B con carga N a excentricidad e uniaxial, la
+[teoría del contacto parcial](/blog/prediseno-fundaciones-aisladas) es cerrada y exacta.
+Dentro del kern (e ≤ L/6), presión lineal con contacto pleno. Fuera, el contacto se
+reduce a un triángulo de ancho
+
+<Equation label="Ec. 1">
+$$c = 3\left(\frac{L}{2} - e\right)$$
+</Equation>
+
+cuyo centroide queda bajo la carga, con presión máxima
+
+<Equation label="Ec. 2">
+$$q_{max} = \frac{2N}{B \cdot c} = \frac{2N}{3B\left(\frac{L}{2} - e\right)}$$
+</Equation>
+
+La palabra clave es *rígida*: si la zapata se flecta, la distribución cambia con la
+rigidez relativa — ese es el eje $K_r$ que la
+[serie de Fundaciones](/blog/experimento-fundaciones-sap2000) barrió completo. Aquí la
+zapata se hace rígida *a propósito* (un constraint, no una losa gruesa), para que la
+cerrada sea exacta y cualquier desviación sea de la técnica, no de la física.
+
+## El modelo: 425 gaps y un constraint
+
+<Figure
+  src="/zapata-solo-compresion/fig-modelo.svg"
+  alt="Esquema del modelo: a la izquierda la elevación de la zapata rígida con carga excéntrica, los gaps del lado traccionado abiertos con fuerza cero y los del lado comprimido cerrados, con el triángulo de contacto de ancho c; a la derecha la ley fuerza-deformación del link Gap (solo compresión con rigidez k, fuerza cero en separación) contra la del resorte lineal que tracciona"
+  caption="El modelo (a) y la única diferencia entre el modelo honesto y el que miente (b): la ley del apoyo. El Gap con gap = 0 toma compresión con rigidez k y se abre gratis; el resorte lineal «sujeta» la zapata cuando esta intenta despegar."
+/>
+
+Tres decisiones lo hacen limpio, cada una con su llamada de API verificada:
+
+1. **El lecho: links Gap de un nudo, gap = 0.** Una grilla de 25×17 nudos (cada
+   0.125 m) y en cada uno un link de apoyo con `PropLink.SetGap` — apertura nula y
+   rigidez tributaria $k_i = k_v \cdot A_{trib,i}$, con los factores ½ en bordes y ¼ en
+   esquinas (olvidarlos sesga la presión justo en el borde donde se mide). Para el link
+   de un nudo el eje local 1 es +Z global, así que la ley vive directamente en el apoyo
+   vertical. Solo se necesitan tres propiedades (interior/borde/esquina):
+   `SetGap(nombre, DOF, Fixed, NonLinear, Ke, Ce, k(6), gap(6), dj2, dj3)`, y el link se
+   crea con `LinkObj.AddByPoint(nudo, nudo, "", True, prop, nombre)` — mismo nudo dos
+   veces, `IsSingleJoint = True`.
+2. **La zapata: un constraint Body, no una losa.** `ConstraintDef.SetBody` + un
+   `PointObj.SetConstraint` por nudo hacen la zapata *perfectamente* rígida — cero
+   discusión sobre espesores equivalentes. La carga (N y el momento N·e) va al nudo
+   central, restringido en lo que no es UZ/RY; para el Body cualquier nudo del cuerpo
+   da lo mismo.
+3. **Los casos: no lineales estáticos, todos en un archivo.** Cinco niveles de
+   excentricidad (e/L = 0, 1/6, 0.25, 0.30, 0.40) como cinco casos `Static Nonlinear`
+   independientes. El modelo gemelo del pitfall es idéntico salvo la propiedad del link
+   (`SetLinear` con la misma k) — y sus casos también son no lineales, para que la única
+   diferencia sea la ley del apoyo, no el solver.
+
+<Note type="tip" title="La extracción, en una llamada">
+Las 425 reacciones por caso no se leen link por link:
+`Results.LinkForce("ALL", GroupElm)` devuelve todos los links del modelo en una sola
+llamada COM (el grupo `ALL` existe siempre), y la presión de contacto de cada nudo es
+su fuerza axial dividida por su área tributaria. Los 10 casos de los dos modelos —
+construcción incluida — toman 10 segundos por modelo.
+</Note>
+
+## La verificación: los gaps clavan la cerrada
+
+<Figure
+  src="/zapata-solo-compresion/qx_casos.png"
+  alt="Presión de contacto a lo largo de la zapata para cinco excentricidades crecientes: distribución uniforme, trapecio, y triángulos cada vez más empinados y cortos; los puntos de SAP2000 caen exactamente sobre las rectas de la solución cerrada y el kern marca la frontera del contacto pleno"
+  caption="q(x) en la fila central para las cinco excentricidades: puntos = SAP2000 (gaps), líneas = solución cerrada. De la presión uniforme al triángulo de 0.9 m con 556 kPa de punta, los puntos se sientan sobre las rectas — incluido el quiebre exacto donde el contacto termina."
+/>
+
+Los números del acuerdo, caso a caso: $q_{max}$ a **−0.2 % / −0.3 % / −0.4 % / −1.5 %**
+de la Ec. 2 (el −1.5 % es el triángulo de 0.9 m descrito por solo 7 filas de grilla);
+el ancho de contacto clavado o a medio espaciamiento (2.25 / 1.75 / 0.875 m contra
+2.25 / 1.80 / 0.90); y el equilibrio **exacto en todos los casos**: ΣR = 500.00 kN a
++0.000 % y la resultante de las reacciones a la excentricidad teórica con cuatro
+decimales. Un detalle que vale subrayar: en los dos casos de contacto pleno (e = 0 y
+e = L/6) los gaps reproducen el modelo lineal *exactamente* — un gap que nunca abre
+**es** un resorte lineal, así que la técnica no cuesta nada en los casos donde no hace
+falta.
+
+## El pitfall: la mentira crece sin avisar
+
+El modelo gemelo con resortes lineales — el que todo el mundo tiene — cuenta otra
+historia en cuanto e cruza el kern:
+
+<Figure
+  src="/zapata-solo-compresion/pitfall_lineal.png"
+  alt="Comparación para excentricidad 0.3 y 0.4 veces L: la solución cerrada y los gaps coinciden mientras el modelo lineal reparte presión en toda la base, subestima el máximo en 16 y 49 por ciento y muestra una zona sombreada de tracción ficticia de hasta menos 116 kilopascales en el borde opuesto"
+  caption="Gap contra lineal para e/L = 0.30 y 0.40. El lineal «se cuelga» del suelo traccionado (zona sombreada: hasta −116 kPa que el suelo no puede dar) y con esa ayuda reparte la compresión: qmax queda −16 % y −49 % bajo el real. Todo con el equilibrio global perfectamente cuadrado."
+/>
+
+¿Por qué miente hacia el lado inseguro? Porque la tracción ficticia es **ayuda
+ficticia**: el borde que despega "sujeta" la zapata, el brazo de palanca interno crece,
+y la compresión del otro borde baja. El error es la razón entre la Ec. 2 y el
+$q_{max} = \frac{N}{BL}(1 + 6e/L)$ del modelo lineal — una forma cerrada que el
+experimento reproduce punto a punto:
+
+<Figure
+  src="/zapata-solo-compresion/error_vs_e.png"
+  alt="Error del qmax del modelo lineal contra la excentricidad normalizada: cero exacto hasta el kern en un sexto, y desde ahí cayendo de forma cerrada hasta menos 49 por ciento en 0.4 veces L, con los puntos medidos en SAP sobre la curva"
+  caption="El error del modelo lineal en función de e/L: forma cerrada (línea) y lo medido en SAP (puntos). Cero exacto hasta el kern; −6 % en e/L = 0.25; −16 % en 0.30; −49 % en 0.40 — y cayendo. La curva no tiene ningún escalón que avise: el modelo pasa de exacto a inservible de forma perfectamente suave."
+/>
+
+<Note type="warning" title="El único síntoma es un signo que nadie mira">
+El modelo lineal con despegue **no falla, no avisa, no converge mal**: entrega un
+resultado prolijo con ΣR exacto. La única evidencia del problema son las reacciones
+negativas en los resortes del borde traccionado — un signo dentro de una tabla de 425
+filas. De ahí la regla operativa: en cualquier modelo con resortes de suelo, **revisar
+el signo de las reacciones es parte de leer el resultado**. Si hay tracciones y la
+excentricidad importa (vuelco sísmico, estanques, fundaciones de equipos), el modelo se
+pasa a gaps — que, como muestra el caso e ≤ L/6, no cuestan nada cuando no hacen falta.
+</Note>
+
+## Cuándo basta el lineal, cuándo no
+
+- **e ≤ L/6 (contacto pleno)**: el lineal es exacto. Es el régimen de la mayoría de las
+  verificaciones de servicio, y por eso el pitfall sobrevive tantos años sin morder.
+- **e > L/6 con e/L ≤ ~0.2**: el error es de un dígito (−6 % en e/L = 0.25) — dentro
+  del ruido de $k_v$, aunque la tracción ficticia ya existe y el mapa de presiones ya
+  no es el real.
+- **e/L ≥ 0.3** (combinaciones sísmicas con vuelco, equipos esbeltos anclados a
+  zapatas): el lineal subestima la presión de punta 16–49 % y **el que decide es el
+  modelo equivocado**. Gaps, sin discusión.
+- Si además la zapata no es rígida (la mayoría no lo es tanto como se cree), al efecto
+  del despegue se suma el de la flexibilidad — ese mapa completo, con su herramienta,
+  es la [serie de Fundaciones](/blog/cuando-confiar-formula-rigida); el
+  [despegue biaxial](/blog/surrogate-biaxial-despegue) tiene la suya.
+
+Con esto la serie de Fundaciones cierra su círculo por el lado de SAP2000: la teoría
+cerrada (los posts de prediseño y Winkler), el experimento paramétrico y su herramienta,
+y ahora la técnica de modelación directa verificada contra la misma referencia. El
+modelo, el runner y los datasets viven en el repositorio del experimento; esta nota es
+su bitácora.
