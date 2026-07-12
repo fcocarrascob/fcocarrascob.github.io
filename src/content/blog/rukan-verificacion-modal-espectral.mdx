@@ -1,6 +1,6 @@
 ---
 title: "Rukan (3): el salto a SAP2000 — modal espectral NCh2369 con CQC y SRSS a mano"
-description: "Tercer peldaño de verificación de Rukan y el decisivo: el punto donde el cálculo a mano deja de alcanzar y el patrón de referencia pasa a ser SAP2000. Se arma un pórtico plano de momento de dos pisos en ambos motores, con las mismas secciones —definidas en SAP con área de corte nula para igualar el Euler-Bernoulli de OpenSees— y el mismo espectro NCh2369 alimentado como una única tabla (T, Sa/g). Rukan corre el análisis modal, aplica el espectro modo a modo y combina las respuestas con CQC y SRSS implementados a mano, porque OpenSees no hace la respuesta espectral de un botón. El resultado: períodos, masas modales efectivas, corte basal combinado y desplazamiento de techo que reproducen SAP2000 con error inferior al 0,01%. Se explican además las dos trampas que hay que clavar para que la comparación sea legítima: el área de corte y el factor de escala g."
+description: "El punto donde el cálculo a mano deja de alcanzar y el patrón de referencia pasa a ser SAP2000: un pórtico de momento de dos pisos con espectro NCh2369, CQC y SRSS implementados a mano. Períodos, corte basal y desplazamiento de techo reproducen SAP2000 con error inferior al 0,01 %, con las dos trampas que hay que clavar: el área de corte y el factor de escala g."
 pubDate: 2026-07-09
 tags: ["OpenSees", "OpenSeesPy", "Rukan", "análisis modal espectral", "NCh2369", "CQC", "SRSS", "SAP2000", "verificación", "sísmica"]
 section: "Rukan"
