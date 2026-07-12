@@ -80,6 +80,27 @@ Tres decisiones lo hacen limpio, cada una con su llamada de API verificada:
    (`SetLinear` con la misma k) — y sus casos también son no lineales, para que la única
    diferencia sea la ley del apoyo, no el solver.
 
+Así se ven las tres decisiones en la GUI — quien prefiera el mouse a la API define
+exactamente esto:
+
+<Figure
+  src="/zapata-solo-compresion/dialogo-gap-u1.png"
+  alt="Diálogo Link/Support Directional Properties de SAP2000 para una propiedad Gap: dirección U1 con NonLinear marcado, rigidez efectiva Ke, rigidez no lineal k igual a la tributaria del nudo y Open (la holgura) igual a cero"
+  caption="La decisión 1 en pantalla: propiedad Gap, dirección U1, NonLinear activo, Open = 0 y la rigidez k tributaria del nudo. Para el link de un nudo, U1 es el apoyo vertical."
+/>
+
+<Figure
+  src="/zapata-solo-compresion/dialogo-constraint-body.png"
+  alt="Diálogo Body Constraint de SAP2000 con los seis grados de libertad marcados, que vuelve la zapata perfectamente rígida al ligar todos sus nudos"
+  caption="La decisión 2: un constraint Body con los 6 GDL ligados. La zapata queda perfectamente rígida sin discutir espesores equivalentes."
+/>
+
+<Figure
+  src="/zapata-solo-compresion/dialogo-caso-nolineal.png"
+  alt="Diálogo Load Case Data de SAP2000 para un caso Static Nonlinear: parte de condiciones iniciales cero, aplica el patrón de carga del nivel de excentricidad y usa parámetros no lineales por defecto"
+  caption="La decisión 3: cada excentricidad es su propio caso Static Nonlinear partiendo de cero. Sin P-Delta ni grandes desplazamientos — la única no linealidad es la ley del Gap."
+/>
+
 <Note type="tip" title="La extracción, en una llamada">
 Las 425 reacciones por caso no se leen link por link:
 `Results.LinkForce("ALL", GroupElm)` devuelve todos los links del modelo en una sola

@@ -66,6 +66,12 @@ Tres decisiones de diseño hacen el experimento limpio:
    reglas es el bonus narrativo. Amortiguamiento modal constante $\xi = 5\,\%$, el de la
    literatura clásica de $R_\mu$.
 
+<Figure
+  src="/factor-r/dialogo-multilinear-plastic.png"
+  alt="Diálogo Link/Support Directional Properties de SAP2000 para un MultiLinear Plastic: la tabla de puntos fuerza-deformación de la ley elastoplástica perfecta con meseta de pendiente cero, histéresis Kinematic, en la dirección U1"
+  caption="La ley EPP en el diálogo del MultiLinear Plastic (histéresis *Kinematic*): rama elástica hasta ±Fy y meseta con pendiente exactamente cero. SAP la acepta sin protestar — no hace falta la pendiente ficticia del 1 % que recomienda el folclor."
+/>
+
 Como en la [serie de P-Delta](/blog/pdelta-cuando-confiar-amplificador), el experimento
 tiene un árbitro externo: un **integrador propio de Newmark-β** (aceleración promedio,
 elastoplástico con retorno radial, dt ≤ T/200) que resuelve exactamente el mismo
@@ -103,6 +109,12 @@ explícito— pero la lección no: **una trampa silenciosa de este porte solo se
 teniendo una referencia independiente contra la cual comparar.** Sin el integrador, esos
 $\mu \approx 500$ habrían sido "el resultado".
 </Note>
+
+<Figure
+  src="/factor-r/dialogo-funcion-th.png"
+  alt="Diálogo Time History Function Definition de SAP2000 mostrando el final del registro de El Centro: el último punto del sample termina en aceleración distinta de cero y se agrega a mano un punto final con ordenada cero para cerrar el registro"
+  caption="El arreglo, en el diálogo de la función: el sample de El Centro termina en un valor ≠ 0 (izquierda del zoom) y el registro se cierra con un punto explícito en cero. Sin ese punto, todo lo que SAP integre después del registro ocurre bajo una aceleración basal constante."
+/>
 
 ---
 

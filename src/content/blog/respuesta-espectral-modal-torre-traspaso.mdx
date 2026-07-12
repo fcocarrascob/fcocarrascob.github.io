@@ -137,6 +137,12 @@ herramienta del sitio, y el ejercicio de verificación de esta nota queda cerrad
 ya existe, no sobre una caja negra distinta.
 </Note>
 
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/dialogo-funcion-espectro.png"
+  alt="Diálogo Response Spectrum Function Definition de SAP2000 con función tipo User: la tabla de pares período-aceleración del espectro NCh2369 y la curva dibujada con su meseta y su caída, en valores de Sa entre 0 y 0.5 g"
+  caption="La función User con los 131 pares (T, Sa/g) del espectro NCh2369 reducido. Ojo con lo que muestra el gráfico: son valores adimensionales en g — la conversión a aceleración ocurre recién en el caso de carga."
+/>
+
 El resultado, evaluado en los cuatro períodos de la tabla anterior:
 
 | Modo | T (s) | $S_a(T)$ [g] | $S_a(T)$ [m/s²] |
@@ -155,6 +161,12 @@ escala todo el resultado por 39.4× — o, si el espectro ya viene en g, deja la
 unidad incorrecta. Es el error silencioso más común en un modelo espectral: no da error, solo da
 un corte basal absurdo.
 </Note>
+
+<Figure
+  src="/respuesta-espectral-modal-torre-traspaso/dialogo-caso-rs.png"
+  alt="Diálogo Load Case Data - Response Spectrum de SAP2000: carga U1 con la función NCh2369 y Scale Factor 9.80665, combinación modal CQC y el caso modal de referencia"
+  caption="El caso Response Spectrum con el número que hay que mirar dos veces: Scale Factor = 9.80665 (g en m/s², para un modelo en metros), no el 386.089 que SAP sugiere por defecto en unidades imperiales."
+/>
 
 ---
 
