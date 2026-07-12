@@ -1,0 +1,130 @@
+---
+title: "El factor R (5): cierre — lo que quedó verificado, y las lecciones del método"
+description: "Recapitulación de la serie: qué prometía la ecuación R = Rμ·Ω₀ y qué dijeron los experimentos — la regla de igual desplazamiento emergiendo (mediana 1.01), su quiebre en períodos cortos (μ = 126 donde la teoría decía 32), el 0.7R flanqueado por los gemelos (1.44 / 2.90), y el equilibrio plástico a mano calzando el pushover al 0.00 %. Más las lecciones transversales: la referencia independiente como cazadora de trampas silenciosas y el control de sanidad antes de medir."
+pubDate: 2026-07-12
+tags: ["factor R", "resumen", "verificación", "SAP2000", "NCh2369", "sísmica", "metodología"]
+section: "Sísmica"
+series: "El factor R"
+seriesPart: 5
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La idea que ordenó todo
+
+La serie nació de una figura de libro —la curva pushover del capítulo 7 de *Proyectar en
+Acero: práctica chilena*, con sus tres niveles de corte $V_e$, $V_y$, $V_d$— y de una
+apuesta editorial: que la descomposición $R = R_\mu \cdot \Omega_0$ no se explicara,
+sino que se **midiera**. Cada factor vive en un lugar físico distinto — $R_\mu$ en el
+comportamiento histerético del material, $\Omega_0$ en el sistema completo — así que
+cada uno tuvo su experimento propio. La estructura de la serie *es* la ecuación:
+
+<Figure
+  src="/factor-r/fig-mapa-serie.svg"
+  alt="Diagrama de la serie: la ecuación R igual Rμ por Ω₀ con una flecha hacia el experimento del oscilador de un grado de libertad (Post 2) y otra hacia el pushover del marco diseñado (Post 3), con el Post 4 usando ambos"
+  caption="El mapa que abrió la serie en el Post 1 — cumplido: cada mitad de R se midió en el experimento donde vive."
+/>
+
+En total: cuatro notas, dos experimentos (~70 corridas de SAP2000 entre osciladores,
+diseños y pushover), y cada número del libro auditado contra un modelo donde todo se
+puede ver.
+
+## Lo que quedó verificado
+
+**$R_\mu$ — la reducción por ductilidad** ([Post 2](/blog/factor-r-rmu): 63 osciladores
+elastoplásticos bajo El Centro, validados contra un integrador propio):
+
+- **La regla de igual desplazamiento emerge sola del análisis.** Para $T \geq 0{,}5$ s,
+  $\delta_u/\delta_e$ con mediana 1.01 y sin tendencia con R. Recortar la fuerza 4 veces
+  cambió el pico solo +3.6 % en $T = 1$ s. La hipótesis $C_d = R$ de NCh2369 no es un
+  decreto: es física observable.
+- **$\mu \approx R$ en la meseta** ($\mu$ = 1.4 / 1.6 / 2.8 / 4.1 / 6.8 / 8.8 para
+  R = 1.5…8): elegir R es elegir la demanda de ductilidad de los fusibles, casi uno a
+  uno.
+- **En períodos cortos la regla no se degrada — se rompe**, y peor que la cota
+  "pesimista": en $T = 0{,}1$ s con R = 8, $\mu = 126$ donde igual energía prometía
+  32.5. La esquina "no reduzca ahí" existe y es brutal.
+- Bonus: la **deriva residual** crece con R (de 0.3 a 5 veces $\delta_y$ en mediana) —
+  el costo que ninguna verificación mira y que decide si la estructura es reparable.
+
+**$\Omega_0$ — la sobrerresistencia** ([Post 3](/blog/factor-r-omega0): un chevron
+diseñado con NCh2369/R = 3 y empujado hasta su mecanismo):
+
+- **$\Omega_0$ no es una propiedad de la tipología: es la huella de qué verificación
+  mandó el diseño.** El mismo marco y el mismo perfil dieron $\Omega_0 = 1{,}44$ cuando
+  mandó la resistencia (utilización 0.90) y $2{,}90$ cuando mandó la esbeltez
+  (utilización 0.38). **La apuesta 0.7R = 2.1 de la norma quedó exactamente
+  flanqueada.**
+- **La contabilidad multiplicativa cierra exacta**: catálogo × 1/φ × material esperado ×
+  sistema = $\Omega_0$ del pushover, a tres decimales. La sobrerresistencia no es
+  misteriosa — es auditable, fuente por fuente.
+- La identidad del Post 1 cuadró sobre la curva medida: $\Omega_0 \times R_\mu =
+  1{,}44 \times 2{,}09 = 3{,}0 = R^*$.
+- El **R\*** de NCh2369 se activó solo en el gemelo rígido ($T = 0{,}16$ s → R\* = 2.90):
+  la norma limita R en períodos cortos porque *ya sabía* lo que el Post 2 midió — ahí la
+  ductilidad compra menos reducción.
+
+**El detallamiento** ([Post 4](/blog/factor-r-capacidad-esperada): lo que reciben los
+no fusibles):
+
+- **El equilibrio plástico a mano = el pushover, en toda la cadena**: momento en la viga
+  puntal $P \cdot L/4$ al 0.00 %, columnas = desbalance/2 exacto, arrancamiento del
+  anclaje 995 kN. El software confirma; la estática de primer año dimensiona.
+- El hallazgo más incómodo de la serie: **el análisis elástico le pide cero a la viga
+  puntal** (el desbalance elástico se cancela) y el mecanismo le pide $2{,}2\,M_p$ — y
+  ahí el atajo $0{,}7R$ es *ciego*, porque $2{,}1 \times 0 = 0$. La viga dimensionada
+  por capacidad pesa un 65 % más.
+- **La conexión no resiste demandas: resiste al fusible.** $T_{ye}$ = 1244 kN en ambos
+  gemelos aunque las demandas del análisis difieran ×2.4; el atajo 0.7R quedó entre
+  38 % y 74 % corto.
+
+## Las lecciones del método
+
+Más allá del factor R, la serie dejó cuatro lecciones que valen para cualquier
+verificación teoría-contra-software:
+
+1. **La referencia independiente es lo que caza las trampas silenciosas.** Las dos
+   mejores piezas de la serie no estaban planificadas: SAP2000 **sostiene el último
+   valor de una función tiempo-historia** (no asume cero — derivas de metros por
+   trinquete hasta que el registro se cierra con un 0 explícito), y **corrige el
+   espectro si el amortiguamiento del caso difiere del de la función** (−10.2 %, sin
+   avisar). Ambas se detectaron solo porque había un integrador propio y formas cerradas
+   contra las cuales comparar. Sin árbitro, esos errores habrían sido "el resultado".
+2. **Control de sanidad antes de barrer.** Cada experimento validó su maquinaria contra
+   soluciones exactas —el oscilador elástico a −0.02 %, la curva del link al 0.00 %, la
+   rigidez del marco al +0.5 %— antes de medir nada. Cuando después algo no cuadró, ya
+   se sabía que no era la maquinaria.
+3. **Las hipótesis se anotan antes de correr.** Eso obliga a honestidad: la hipótesis
+   del rango de $\Omega_0$ quedó refutada por abajo (el piso real, 1.44, fue peor que lo
+   anticipado) — y esa refutación terminó siendo el titular del Post 3 en vez de un
+   bochorno escondido.
+4. **El experimento mínimo enseña más que el realista.** Un oscilador; un marco de un
+   piso y un vano. Cada fuente de sobrerresistencia se pudo apagar una a una porque no
+   había nada más en el modelo que la tapara.
+
+<Note type="tip" title="La moraleja operativa, en tres frases">
+Dividir el espectro por R compra **fuerzas chicas — no deformaciones chicas ni daño
+chico**: la deformación se la queda la estructura, casi íntegra. La mitad $R_\mu$ del
+pacto la paga el fusible en ductilidad (uno a uno en la meseta, mucho peor en períodos
+cortos), y la mitad $\Omega_0$ no es de la tipología sino del diseño concreto que quedó
+puesto. Y el pacto completo solo se sostiene si los no fusibles se dimensionan para lo
+que el fusible **entrega** —las capacidades esperadas— un cálculo a mano que ningún
+análisis elástico hará por uno, porque describe una estructura que el análisis elástico
+ya no ve.
+</Note>
+
+## Lo que quedó anotado para después
+
+Las densificaciones naturales, registradas en los EXPERIMENTO.md de cada repo: un
+registro chileno como segunda realización estadística del banco de osciladores; el
+chevron con su viga real (la W16×57 con rótula cambia el mecanismo — ¿cuánto Ω₀ queda?);
+la degradación cíclica del fusible (el EPP puro es la versión optimista); y el barrido
+de amortiguamiento. Ninguna cambia la estructura de lo medido; todas afinarían sus
+números.
+
+La serie completa: [la anatomía](/blog/factor-r-anatomia) (los conceptos sobre una
+curva), [$R_\mu$ en el laboratorio](/blog/factor-r-rmu) (la regla de Newmark emergiendo),
+[$\Omega_0$ medido](/blog/factor-r-omega0) (la Figura 7.5 con datos) y
+[fusibles y capacidad esperada](/blog/factor-r-capacidad-esperada) (quién paga lo que el
+fusible entrega).
