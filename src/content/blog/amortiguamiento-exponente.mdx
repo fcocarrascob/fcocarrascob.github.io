@@ -1,0 +1,167 @@
+---
+title: "El exponente 0.4: ¿de dónde sale la corrección por amortiguamiento del espectro?"
+description: "NCh2369 corrige el espectro por amortiguamiento con (0.05/ξ)^0.4 — un solo número para todos los períodos. Un barrido de 480 osciladores (integrador propio) validado contra SAP2000 (72 puntos, error mediano 0.009 %) mide la corrección real: los extremos van a 1 (el PGA no sabe de amortiguamiento), Eurocode 8 abraza el dato en la meseta donde el ^0.4 sobrecorrige, y en el rincón de equipos rígidos con ξ alto la fórmula entrega hasta 37 % menos espectro que lo real."
+pubDate: 2026-07-12
+tags: ["amortiguamiento", "espectro", "NCh2369", "Eurocode 8", "SAP2000", "experimento", "sísmica", "FNA"]
+norm: "NCh2369"
+section: "Sísmica"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+Cuando una estructura no amortigua el 5 % de referencia, las normas corrigen el espectro
+con una fórmula cerrada. NCh2369 usa
+
+<Equation label="Ec. 1">
+$$f_\xi = \left(\frac{0{,}05}{\xi}\right)^{0.4}$$
+</Equation>
+
+Eurocode 8 usa $\eta = \sqrt{10/(5+\xi_\%)}$, y las tablas clásicas de Newmark-Hall otra
+expresión más. Las tres discrepan fuerte donde más se usan — para el ξ = 2–3 % del acero
+industrial chileno, la Ec. 1 amplifica un 22–44 % mientras EC8 dice 12–20 %:
+
+| ξ | NCh2369 $(0.05/\xi)^{0.4}$ | EC8 $\sqrt{10/(5+\xi_\%)}$ |
+|---|---|---|
+| 2 % | 1.443 | 1.195 |
+| 3 % | 1.227 | 1.118 |
+| 10 % | 0.758 | 0.816 |
+| 20 % | 0.574 | 0.632 |
+
+Y las tres comparten un rasgo más sospechoso que cualquier discrepancia: son **planas en
+el período**. La física dice que no pueden serlo. En $T \to 0$ el oscilador es rígido y
+su aceleración es la del suelo — el PGA no sabe de amortiguamiento, así que la
+corrección real debe morir hacia 1. Lo mismo en $T$ muy largo (el desplazamiento tiende
+al del suelo). La corrección solo puede ser plena en la zona sensible a la velocidad,
+entre medio. Una fórmula plana *tiene* que equivocarse en los extremos — la pregunta de
+esta nota es **dónde, cuánto, y hacia qué lado**.
+
+## El experimento
+
+Es la definición de la corrección convertida en barrido: el cociente
+$S_a(\xi, T)/S_a(5\,\%, T)$ medido en osciladores reales bajo un registro real. La
+maquinaria es íntegramente la del [banco de osciladores del factor R](/blog/factor-r-rmu)
+— mismo registro (El Centro 1940, el sample que instala SAP2000, cerrado con un cero
+explícito), mismo integrador Newmark-β como árbitro, mismos gotchas ya cazados:
+
+- **Mapa denso** (integrador propio): 60 períodos de 0.02 a 5 s × 8 amortiguamientos de
+  1 a 20 % = 480 integraciones, dos minutos de cómputo.
+- **Validación SAP2000**: el banco elástico de 9 períodos en un solo `.sdb`, con **un
+  caso FNA por ξ** — el amortiguamiento modal del FNA se define por caso
+  (`SetDampConstant`), no por oscilador, así que 8 casos sobre el mismo banco entregan
+  los 72 puntos de control en 13 segundos.
+
+El acuerdo entre ambos: **error mediano 0.009 %, máximo 0.183 %**. Pero ese máximo tiene
+una historia que vale una nota al margen, porque la primera corrida dio 2.5 %:
+
+<Note type="warning" title="El dt de salida también muestrea los picos">
+Con salida cada 0.01 s, un oscilador de T = 0.1 s queda descrito por **10 puntos por
+ciclo** — y el máximo de una senoidal muestreada cada 36° puede caer hasta 2.5 % bajo el
+pico verdadero. La primera validación mostraba exactamente eso: errores solo en los
+períodos cortos, todos negativos, crecientes con ξ (pico único más agudo). No es física
+ni es SAP: es muestreo. Con dt = 0.002 s (50 puntos por ciclo del T más corto) el
+"error" colapsó de 2.5 % a 0.18 %. Regla práctica: **el paso de salida de un
+tiempo-historia debe resolver el período más corto que se va a leer**, no solo el
+registro de entrada.
+</Note>
+
+## Resultado 1: los extremos van a 1
+
+<Figure
+  src="/amortiguamiento/ratio_vs_T.png"
+  alt="Corrección real Sa(xi)/Sa(5%) contra el período para amortiguamientos de 2, 3, 10 y 20 por ciento: todas las curvas parten de 1 en período corto y solo se acercan a las líneas planas de la fórmula en la zona de 0.2 a 2 segundos, con los puntos de validación de SAP2000 sobre las curvas del integrador"
+  caption="La corrección real (líneas: mapa denso del integrador; círculos: SAP2000) contra la fórmula plana de NCh2369 (segmentos). En T = 0.02 s todos los ratios valen ≈ 1 — donde la fórmula dice 1.44 (ξ = 2 %) o 0.57 (ξ = 20 %). La corrección plena solo existe en la meseta de velocidad."
+/>
+
+La hipótesis física se ve entera: en $T = 0{,}02$ s los ratios medidos van de 1.03 a
+0.95 — prácticamente 1 para cualquier ξ — mientras las fórmulas planas prometen desde
+1.44 hasta 0.57. Toda corrección por amortiguamiento es una **propiedad de la resonancia**,
+y donde no hay amplificación resonante que amortiguar, no hay corrección que hacer. Las
+curvas convergen a su valor pleno recién pasando $T \approx 0{,}2$ s, y en el extremo
+largo vuelven a acercarse a 1.
+
+## Resultado 2: el duelo de fórmulas en la meseta
+
+En la banda donde la corrección sí es plena (0.3–2 s para este registro), se puede
+enfrentar la mediana medida contra las tres fórmulas:
+
+<Figure
+  src="/amortiguamiento/formulas_meseta.png"
+  alt="Corrección medida en la meseta de velocidad contra el amortiguamiento, mediana y banda intercuartil, comparada con las tres fórmulas: la de Eurocode 8 sigue los puntos medidos de cerca, la de NCh2369 sobrecorrige en amortiguamiento bajo llegando a 1.9 donde lo medido es 1.42, y la de Newmark-Hall se aleja en amortiguamiento alto"
+  caption="La meseta (T = 0.3–2 s): mediana medida y banda P25–P75 contra las tres fórmulas. EC8 abraza el dato en todo el rango de ξ (−9 a +4 %); el ^0.4 de NCh2369 sobrecorrige fuerte en ξ bajo (+34 % en ξ = 1 %, +14 % en 2 %, +6.6 % en el ξ = 3 % industrial) y subestima ~6 % en ξ alto; Newmark-Hall se va de largo en los dos extremos."
+/>
+
+El veredicto, para este registro, es incómodo para la Ec. 1: **la forma funcional de
+Eurocode 8 sigue al dato en todo el rango** (entre −9 % y +4 %), mientras el ^0.4
+sobrecorrige justo donde más se usa — para el ξ = 3 % con que se analiza casi toda
+estructura industrial soldada, la fórmula entrega un 6.6 % más de espectro que la
+corrección real mediana, y para ξ = 2 % un 14 %. Es conservador, y no es casualidad:
+la potencia 0.4 es más agresiva que la raíz de EC8 precisamente en la cola de ξ bajo,
+donde la respuesta es más sensible al registro y una norma prefiere sobrar. Pero
+conviene saber que ese margen existe y de dónde viene — es parte del "conservadurismo
+contable" que después aparece como sobrerresistencia inexplicada.
+
+## Resultado 3: el mapa completo y el rincón inseguro
+
+Cruzando las dos cosas — la T-dependencia y el nivel de ξ — el error de la fórmula plana
+se dibuja entero:
+
+<Figure
+  src="/amortiguamiento/error_mapa.png"
+  alt="Mapa del error de la fórmula de NCh2369 contra lo medido en el plano período-amortiguamiento: zona azul conservadora en amortiguamientos bajos especialmente en período corto, y zona roja insegura en amortiguamientos altos con período corto donde la fórmula entrega hasta 37 por ciento menos espectro"
+  caption="El error de (0.05/ξ)^0.4 contra la corrección medida, en el plano (T, ξ). Azul: la fórmula da más espectro que lo real (conservador — ξ bajo, y extremo en T corto). Rojo: da menos (inseguro) — y el rincón oscuro es T ≤ 0.1 s con ξ = 15–20 %: la fórmula reduce el espectro un 43 % donde la respuesta real solo baja un 5–25 %."
+/>
+
+Los dos rincones del mapa son las dos morales de la nota:
+
+1. **ξ bajo + T corto: doblemente conservador.** Una estructura rígida con ξ = 2–3 %
+   analizada con la Ec. 1 lleva +19 a +38 % de espectro sobre la corrección real. Se
+   suma al conservadurismo de la meseta — y recuerda al R\* de NCh2369: en períodos
+   cortos las correcciones espectrales, todas, se comprimen hacia 1.
+2. **ξ alto + T corto: el lado inseguro.** Un equipo rígido con amortiguamiento alto
+   (aislado con neopreno, con disipación friccional, un estanque con ξ efectivo de
+   10–15 %) diseñado con espectro reducido por la Ec. 1 recibe **31–37 % más demanda
+   que la que su espectro declara** en T ≤ 0.1 s. La reducción por amortiguamiento, como
+   la reducción por R del [Post 2 del factor R](/blog/factor-r-rmu), es una promesa de
+   la resonancia — y los períodos cortos no resuenan lo suficiente para cumplirla.
+
+<Note type="info" title="Una realización, no una estadística">
+Todo lo anterior es El Centro — **una realización**. Las fórmulas de norma son ajustes
+estadísticos sobre familias de registros, y los números finos de aquí (el +6.6 % del
+ξ = 3 %, el −37 % del rincón) se moverían con otro registro. Lo que no se mueve es la
+estructura del resultado: los extremos → 1 son física del oscilador, no del registro; la
+T-dependencia que ninguna fórmula plana captura existe siempre; y el ordenamiento de las
+fórmulas en la meseta (EC8 más fiel, ^0.4 más conservador en ξ bajo) es consistente con
+la literatura que las comparó sobre cientos de registros. Densificación anotada: repetir
+con registros chilenos.
+</Note>
+
+## Reglas prácticas
+
+- **En la meseta de velocidad la Ec. 1 es una corrección razonable y algo conservadora**
+  para ξ < 5 % (+7 a +14 % en el rango industrial) y levemente insegura (−6 %) para ξ
+  alto. Ningún drama — pero es margen que existe y conviene contabilizar.
+- **En estructuras o equipos rígidos (T ≲ 0.15 s), desconfíe de cualquier corrección por
+  amortiguamiento** — en ambos sentidos. Si ξ < 5 %, está pagando espectro de más; si
+  ξ > 5 %, la reducción que la fórmula promete **no existe físicamente completa**, y el
+  déficit llega al 37 %. Para un equipo rígido amortiguado, usar el espectro al 5 % sin
+  reducir es una decisión defendible.
+- **El dt de salida de un tiempo-historia debe resolver el T más corto a leer** (≥ 50
+  puntos por ciclo) — o los picos extraídos llevan un sesgo negativo silencioso.
+- La corrección por amortiguamiento y la reducción por ductilidad comparten la misma
+  letra chica: **ambas son promesas de la resonancia, y los períodos cortos no las
+  cumplen**. NCh2369 lo sabe para R (el R\* interpola hacia 1.5 bajo 0.16·R·T′) — pero
+  su corrección por ξ no trae el equivalente.
+
+## Qué queda fuera
+
+Un solo registro (la densificación obvia); osciladores elásticos (la interacción
+amortiguamiento-ductilidad es otra pregunta); amortiguamiento **modal constante** — el
+Rayleigh de un análisis de integración directa, con su α y β calibrados en dos
+frecuencias, agrega su propia distorsión sobre esta (esa es la nota D3 pendiente del
+roadmap); y el espectro vertical. El código del experimento (barrido, validación SAP,
+figuras y los dos datasets) vive en el repositorio del experimento; esta nota es su
+bitácora.

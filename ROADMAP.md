@@ -96,6 +96,67 @@ Ordenados de menor a mayor esfuerzo:
   conecta con el generador de espectros del script builder. Cierre de serie:
   surrogate de campo (POD, mismo truco que u_z en fundaciones) que predice el perfil
   de deriva completo desde parámetros adimensionales → herramienta en el navegador.
+- [x] **C5. El exponente 0.4: ¿de dónde sale el (0.05/ξ)^0.4 del amortiguamiento?**
+  (hecho 2026-07-12, **post único** `amortiguamiento-exponente.mdx`, figuras en
+  `public/amortiguamiento/`) — experimento en `APP_sap2000\amortiguamiento_04\`
+  reusando completa la maquinaria de E2: mapa denso 60 T × 8 ξ (480 integraciones) +
+  validación SAP (banco elástico, un caso FNA por ξ, 72 puntos a 0.009 % mediana).
+  Hallazgos: los extremos van a 1 (la corrección plana es ficción en T corto); en la
+  meseta **EC8 abraza el dato** (−9…+4 %) y el ^0.4 sobrecorrige en ξ bajo (+6.6 % en
+  el ξ = 3 % industrial, +34 % en 1 %); **rincón inseguro**: ξ = 15–20 % en T ≤ 0.1 s
+  → la fórmula entrega 31–37 % menos espectro que lo real (equipos rígidos
+  amortiguados). Gotcha nuevo: el dt de salida del TH debe resolver el T más corto
+  (≥ 50 ptos/ciclo). Densificación anotada: registros chilenos; gancho a D3 (Rayleigh).
+- [ ] **C6. Torsión accidental: ¿cuándo el 5 % de excentricidad cubre?** (decidido
+  2026-07-12; **post único autocontenido**) — el sistema de 1 piso torsionalmente
+  acoplado tiene solución cerrada exacta (Chopra cap. 13) en dos adimensionales:
+  e/r y Ω_θ = ω_torsional/ω_lateral. Barrido de plantas (técnica de tuning con MMI
+  de D6, memoria `sap2000-espectral-gotchas`) midiendo amplificación de desplazamiento
+  de borde vs planta simétrica + 5 % accidental. Entregable: mapa (e/r, Ω_θ) con la
+  frontera "el 5 % ya no cubre". **Sinergia**: el barrido genera gratis los pares de
+  modos cercanos que C3 (SRSS vs CQC) necesita — correr ambos como una campaña, dos
+  posts independientes.
+
+## E. Serie "El factor R" (hecha 2026-07-09 → 2026-07-12)
+
+Serie de 5 posts (sección Sísmica, `series: "El factor R"`) que mide la descomposición
+R = Rμ·Ω₀ del cap. 7 de *Proyectar en Acero: práctica chilena*, con dos experimentos
+SAP2000 propios. **OJO numeración**: las carpetas de los experimentos se llaman
+internamente C3 (`factor_r_rmu`) y C4 (`factor_r_omega0`) en sus EXPERIMENTO.md — NO
+confundir con los C3/C4 de la sección C de este roadmap (SRSS-CQC y estático-modal,
+aún pendientes).
+
+- [x] **E1. Post 1 — anatomía** (`factor-r-anatomia.mdx`, 2026-07-09): conceptual, la
+  curva pushover con Ve/Vy/Vd, Ec. 1–8, Newmark Cd = R e igual energía, la letra chica
+  del detallamiento. 3 SVG a mano en `public/factor-r/` (carpeta compartida de la serie).
+- [x] **E2. Post 2 — Rμ medido** (`factor-r-rmu.mdx`, 2026-07-11): experimento
+  `APP_sap2000\factor_r_rmu\` — banco de 63 SDOF elastoplásticos (9 T × elástico + 6 R)
+  en un solo .sdb/caso FNA bajo El Centro, validado contra integrador Newmark-β propio
+  (<0.35 % en 62/63). Igual desplazamiento emerge en T ≥ 0.5 s (mediana δu/δe = 1.01,
+  μ ≈ R); quiebre en T cortos peor que igual energía (μ = 126 vs 32.5 en T=0.1/R=8);
+  residual 0.3→5 δy. **Gotcha estrella**: SAP sostiene el último valor de la función TH
+  (no cero) → cerrar el registro con un 0 explícito.
+- [x] **E3. Post 3 — Ω₀ medido** (`factor-r-omega0.mdx`, 2026-07-12): experimento
+  `APP_sap2000\factor_r_omega0\` — chevron 3-4-5 diseñado dos veces (M = 100/50 t →
+  manda resistencia/esbeltez, mismo HSS5×5×1/4) con espectro NCh2369 R = 3, pushover con
+  links MultiLinearPlastic calibrados (acepta rama degradante). **Ω₀ dentro de
+  δu = R\*·δd: 1.44 vs 2.90 — el 0.7R = 2.1 flanqueado**; contabilidad multiplicativa
+  cierra a 3 decimales; Ω₀×Rμ = R\* exacto sobre la curva; la viga puntal ralentiza la
+  redistribución (48EI/L³ verificado). Gotcha: el caso RS corrige el espectro si su
+  amortiguamiento difiere del de la función (−10.2 % silencioso).
+- [x] **E4. Post 4 — capacidad esperada** (`factor-r-capacidad-esperada.mdx`,
+  2026-07-12): equilibrio plástico a mano = pushover en toda la cadena (M viga =
+  P·L/4 al 0.00 %, columnas −P/2, anclaje 995 kN); la W16×57 "fuerte" quedaría a 2.2·Mp
+  (por capacidad → W27×94, +65 % acero/m) mientras el análisis le pide 0 (0.7R ciego:
+  2.1×0 = 0); conexión: Nu 365/151 → 0.7R 766/318 → Tye 1244 (atajo 38/74 % corto).
+- [x] **E5. Post 5 — cierre** (`factor-r-cierre.mdx`, 2026-07-12): recap de
+  verificaciones + lecciones de método (referencia independiente caza trampas
+  silenciosas; sanidad antes de barrer; hipótesis anotadas antes de correr; el
+  experimento mínimo enseña más).
+- [ ] **E6. Densificaciones anotadas** (opcionales, en los EXPERIMENTO.md): registro
+  chileno como 2ª realización del banco Rμ; chevron con la viga real (W16×57 con rótula
+  — cambia el mecanismo, ¿cuánto Ω₀ queda?); degradación cíclica del fusible; barrido
+  de amortiguamiento.
 
 ## D. Técnicas de modelación SAP2000 (posts de verificación)
 
@@ -205,11 +266,12 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   arriostramiento **tension-only** (X-bracing donde solo trabaja la diagonal
   traccionada), gancho directo a los Links de D0.
 
-## Recomendación de orden (actualizada 2026-07-09)
+## Recomendación de orden (actualizada 2026-07-12)
 
 Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;
-**C1 y C2 completos** (2 posts de la serie Sísmica); **serie D técnica** con Gap/Hook
-(D0), Respuesta espectral (D6) y Section Cut (D7). Lo que sigue:
+**C1 y C2 completos** (serie Sísmica partes 1–3 con el estimador de T₁); **serie D
+técnica** con Gap/Hook (D0), Respuesta espectral (D6) y Section Cut (D7); **serie "El
+factor R" completa** (E1–E5: 5 posts + 2 experimentos, jul 2026). Lo que sigue:
 
 1. **D8 (resortes de solo compresión)** — cierre teórico-SAP de la serie de Fundaciones:
    un solo modelo, reusa toda la teoría cerrada ya publicada, alto valor didáctico y
@@ -221,4 +283,5 @@ Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A
 3. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
    de un modelo entre experimentos; **A4** (sub-tool SAP Scripts) cuando convenga algo
    mecánico y acotado.
-4. **Densificación de C1** (fase 5 opcional) solo si C3/C4 la piden; si no, se deja caer.
+4. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
+   experimento las pide; si no, se dejan caer.
