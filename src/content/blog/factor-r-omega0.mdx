@@ -1,0 +1,216 @@
+---
+title: "El factor R (3): Ω₀ medido, o cuánta sobrerresistencia tiene de verdad un marco diseñado a norma"
+description: "Un marco chevron diseñado dos veces con el espectro NCh2369 reducido por R = 3 —una vez mandando la resistencia, otra la esbeltez— y empujado hasta dibujar la curva completa: la Figura 7.5 del libro con datos. El Ω₀ medido flanquea el 0.7R de la norma (1.44 vs 2.90), la contabilidad multiplicativa de sus fuentes cierra exacta, y la viga puntal resulta ser el freno de la redistribución."
+pubDate: 2026-07-12
+tags: ["factor R", "sobrerresistencia", "pushover", "NCh2369", "marcos arriostrados", "SAP2000", "experimento", "sísmica"]
+norm: "NCh2369"
+section: "Sísmica"
+series: "El factor R"
+seriesPart: 3
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+El [Post 2](/blog/factor-r-rmu) midió la mitad "material" de $R = R_\mu \cdot \Omega_0$
+en el laboratorio más chico posible: un oscilador. La otra mitad no cabe ahí. La
+**sobrerresistencia** $\Omega_0 = V_y/V_d$ vive en el sistema completo: en el salto
+discreto del catálogo de perfiles, en qué verificación mandó cada barra, en el $\phi$
+del método de diseño, en el material que llega más fuerte que lo especificado, y en la
+redistribución de esfuerzos cuando algo plastifica. La norma la estima con la apuesta
+$\Omega_0 = 0{,}7R$; el libro que guía esta serie le asigna un rango de 2.0 a 3.5 en
+condiciones convencionales.
+
+La pregunta de esta nota: **si uno diseña un marco arriostrado *como en la oficina* —
+espectro NCh2369 reducido por R = 3, catálogo real, verificaciones reales— y después lo
+empuja hasta dibujar su curva completa, ¿cuánto Ω₀ desarrolla, de dónde sale cada
+porción, y qué tan buena resulta la apuesta 0.7R = 2.1?**
+
+---
+
+## El marco, diseñado dos veces
+
+El espécimen es el chevron mínimo que muestra todo: un piso, un vano, geometría 3-4-5
+(diagonales de 5 m, $\cos\theta = 0{,}6$), todo rotulado — la resistencia lateral pasa
+100 % por las diagonales, y la viga puntal y las columnas se declaran fuertes y
+elásticas (protegerlas es la historia del Post 4, no de este).
+
+<Figure
+  src="/factor-r/fig-modelo-omega0.svg"
+  alt="Esquema del experimento: a la izquierda el marco chevron de un piso y un vano con geometría 3-4-5, bases y conexiones rotuladas, masa M en el punto medio de la viga; a la derecha la ley fuerza-alargamiento asimétrica de cada diagonal: elástica hasta Tye en tracción, pico en menos Pne y degradación a la residual 0.3 Pne en compresión"
+  caption="El marco (a) y la ley calibrada de cada diagonal (b), con las capacidades esperadas del libro: tracción Tye = Ry·Fy·Ag, pandeo esperado Pne = 1.14·Fcre·Ag, residual 0.3·Pne. En la fase de diseño las diagonales son elásticas y el análisis es espectral; en la de capacidad, la misma geometría con esta ley se empuja en control de desplazamiento."
+/>
+
+El diseño sigue la rutina de oficina, automatizada: análisis modal espectral con el
+espectro NCh2369 (la misma fórmula ya publicada en el
+[post espectral de la serie Rukan](/blog/rukan-verificacion-modal-espectral), zona 2,
+suelo C, ξ = 3 %, **R = 3**), y con la demanda axial $N_u$ de la diagonal se recorre el
+catálogo de HSS cuadrados —propiedades leídas de la base de secciones de SAP2000, no
+tipeadas— hasta el primer perfil que cumple **las dos** verificaciones: resistencia
+($\phi_c P_n \geq N_u$) y esbeltez de diagonal sísmica ($KL/r \leq 1{,}5\pi\sqrt{E/F_y}
+\approx 113$).
+
+Y aquí está el truco del experimento: **se diseña el mismo marco dos veces, con dos
+masas sísmicas distintas**. La masa no cambia la tipología ni el espectro — cambia *qué
+verificación manda*:
+
+| | manda **resistencia** (M = 100 t) | manda **esbeltez** (M = 50 t) |
+|---|---|---|
+| Perfil elegido | HSS5×5×1/4 | HSS5×5×1/4 (¡el mismo!) |
+| ¿Por qué ese? | el más liviano con $\phi_c P_n \geq N_u$ | 3 perfiles más livianos cumplen resistencia pero caen por $KL/r > 113$ |
+| Utilización $N_u/\phi_c P_n$ | **0.90** | **0.38** |
+| Período T | 0.223 s | 0.159 s |
+| R\* efectivo | 3.00 | **2.90** |
+| $V_d$ (SAP) | 437.5 kN | 185.3 kN |
+
+Dos detalles de la tabla que pagan el precio de la entrada:
+
+1. **El mismo perfil, dos utilizaciones.** El marco liviano no puede usar la diagonal
+   que la resistencia le permitiría: la esbeltez se lo prohíbe. Queda con un perfil al
+   38 % de uso — y ese 62 % de holgura es sobrerresistencia estructural que nadie
+   calculó explícitamente. Es la fuente de Ω₀ que el libro llama "verificaciones que no
+   son de resistencia".
+2. **El R\* apareció solo.** Con T = 0.159 s, el marco liviano cae bajo el límite
+   $0{,}16\,R\,T'$ de NCh2369 y la norma ya no le permite el R = 3 completo: reduce con
+   R\* = 2.90. Es exactamente el fenómeno que el Post 2 midió en el oscilador — en
+   períodos cortos la ductilidad compra menos reducción, y **la norma ya lo sabía**. Por
+   lo mismo, en todo lo que sigue $V_e = R^* \cdot V_d$, no $R \cdot V_d$.
+
+<Note type="warning" title="La trampa silenciosa de esta entrega">
+La maquinaria se validó contra formas cerradas antes de medir (rigidez del marco, T,
+$V_d$ y $N_u$ a menos del 2 %; la curva del link contra su teórica a 0.00 %), y el
+control volvió a pagar: la primera corrida espectral dio **−10.2 % parejo** en todo. La
+causa: la función del espectro se declaró con ξ = 3 %, pero el caso Response Spectrum de
+SAP2000 usa por defecto un amortiguamiento modal del 5 % — y cuando difieren, **SAP
+corrige el espectro por la diferencia, sin avisar**. Como la curva NCh2369 ya trae su
+corrección $(0{,}05/\xi)^{0{,}4}$, la enmienda de SAP era doble contabilidad. El arreglo
+es igualar el amortiguamiento del caso al de la función. Segunda trampa silenciosa de la
+serie cazada por la misma vía: una referencia independiente.
+</Note>
+
+---
+
+## La curva: la Figura 7.5, con datos
+
+El pushover del caso "manda resistencia", en control de desplazamiento, con los tres
+niveles del [Post 1](/blog/factor-r-anatomia) marcados sobre datos reales:
+
+<Figure
+  src="/factor-r/curva_resistencia.png"
+  alt="Curva de pushover del caso resistencia: corte basal contra desplazamiento lateral, con la recta elástica subiendo hasta la demanda elástica Ve, la curva real alcanzando su máximo Vy en el pandeo de la diagonal comprimida dentro de la zona admisible sombreada, cayendo a la residual y recuperándose hasta V2 a 108 milímetros, con las cotas Omega cero igual 1.44 y R mu igual 2.09"
+  caption="La curva de respuesta del marco diseñado (caso «manda resistencia»). El primer evento —el pandeo de la comprimida en V = 2·Pne·cosθ— es también el máximo alcanzable dentro de la deformación admisible δu = R*·δd (franja azul): Ω₀ = 1.44. La recuperación V₂ por redistribución a la traccionada existe, pero a 2.7 % de deriva. Y la aritmética cierra: Ω₀ × Rμ = 1.44 × 2.09 = 3.0 = R*."
+/>
+
+Tres lecturas:
+
+1. **El primer evento manda.** El pandeo de la diagonal comprimida ocurre en
+   $V = 2P_{ne}\cos\theta$ = 629 kN — el valor teórico, que el pushover reproduce a
+   −0.4 %. Dentro de la deformación que el diseño admite ($\delta_u = R^*\delta_d$, la
+   franja azul), ese pico **es** $V_y$: $\Omega_0 = 629/437.5 = 1.44$.
+2. **La redistribución completa existe, pero vive lejos.** Pasado el pandeo, la
+   traccionada sigue cargando hasta su fluencia esperada y la curva se recupera hasta
+   $V_2 = (T_{ye} + 0.3P_{ne})\cos\theta$ = 841 kN — de nuevo el valor teórico exacto.
+   Pero eso ocurre a 108 mm de desplazamiento: **2.7 % de deriva**, siete veces la
+   deformación última admitida. Contarla como sobrerresistencia disponible sería
+   contarse un cuento.
+3. **La descomposición del Post 1 se cierra sola.** $\Omega_0 \times R_\mu = 1.44 \times
+   2.09 = 3.0 = R^*$: las definiciones son consistentes por construcción, y verlas
+   cuadrar sobre una curva medida es la mejor auditoría de que $V_d$, $V_y$ y $V_e$
+   están bien puestos.
+
+¿Y por qué la recuperación tarda tanto? El experimento entrega al culpable con nombre:
+
+<Figure
+  src="/factor-r/fuerzas_diagonales.png"
+  alt="Fuerzas axiales en las dos diagonales contra el desplazamiento lateral: la comprimida alcanza su pico de pandeo menos Pne a 8 milímetros y degrada a la residual, mientras la traccionada sube, se frena tras el pandeo por la flexión de la viga puntal, y solo alcanza su fluencia esperada Tye a 108 milímetros"
+  caption="Las dos diagonales durante el pushover (caso resistencia). Al pandear la comprimida, el desbalance vertical carga la viga puntal, que se flecta — y esa flexión le roba alargamiento a la traccionada: su pendiente de carga cae a la mitad. La fluencia en Tye recién llega a 108 mm. La deflexión medida de la viga calza con 48EI/L³ del desbalance."
+/>
+
+Al pandear la comprimida, las verticales dejan de cancelarse y el desbalance carga la
+viga puntal, que se flecta hacia abajo. Cada milímetro de flecha es un milímetro que la
+diagonal traccionada *no* se alarga: su carga se frena (la pendiente cae a la mitad,
+gobernada por la serie diagonal–viga). En el mecanismo completo, el desbalance vertical
+en el nudo central llega a $(T_{ye} - 0.3P_{ne})\sin\theta$ = **869 kN** — el pushover lo
+reproduce exacto, y ese número es la entrada del Post 4: es la fuerza para la cual el
+diseño por capacidad dimensiona la viga puntal.
+
+---
+
+## Los gemelos: Ω₀ no es una propiedad de la tipología
+
+La misma curva, medida en el marco liviano, cuenta otra historia. Normalizando ambas por
+su propio $V_d$:
+
+<Figure
+  src="/factor-r/gemelos.png"
+  alt="Curvas de pushover de ambos casos normalizadas por su corte de diseño: el caso resistencia alcanza 1.44 dentro de su deformación admisible y el caso esbeltez 2.90, con la línea de la apuesta de la norma 0.7R igual 2.1 pasando entre ambas"
+  caption="El mismo marco físico, normalizado por el Vd de cada diseño. Manda resistencia: Ω₀ = 1.44, un 31 % bajo la apuesta 0.7R = 2.1. Manda esbeltez: Ω₀ = 2.90, un 38 % sobre ella. En el caso esbeltez el sistema ni siquiera alcanza a pandear dentro de su deformación admisible: dentro de δu sigue elástico."
+/>
+
+El resultado central del experimento: **Ω₀ = 1.44 cuando mandó la resistencia, Ω₀ = 2.90
+cuando mandó la esbeltez — y el 0.7R = 2.1 de la norma queda exactamente flanqueado.**
+La sobrerresistencia no es una propiedad de la tipología "marco arriostrado": es la
+huella de qué verificación gobernó el diseño. El detalle fino del caso esbeltez lo
+subraya: dentro de su deformación admisible el marco liviano **ni siquiera pandea** —
+toda su respuesta admisible es elástica, con la primera incursión no lineal a
+$3.4\,V_d$.
+
+¿Y de dónde sale cada porción? Las variantes del pushover —repetirlo con capacidades
+nominales en vez de esperadas, con un perfil hipotético ajustado exacto a la demanda—
+permiten apagar las fuentes una a una, y la contabilidad multiplicativa cierra contra el
+Ω₀ medido a tres decimales:
+
+<Figure
+  src="/factor-r/cascada.png"
+  alt="Cascada multiplicativa de la sobrerresistencia para ambos casos: partiendo de 1, los factores catálogo, phi, material esperado y redistribución del sistema acumulan hasta el Omega cero global de 1.92 y 4.54, con líneas horizontales marcando el valor alcanzable dentro de la deformación admisible en 1.44 y 2.90"
+  caption="La contabilidad de Ω₀, fuente por fuente (producto = pushover, a 3 decimales). En el caso resistencia todas las fuentes son modestas (catálogo ×1.12, φ ×1.11, material esperado ×1.28, sistema ×1.21). En el caso esbeltez, una domina: el catálogo aporta ×2.66 porque el perfil quedó al 38 % de uso. La línea de segmentos es el techo alcanzable dentro de δu."
+/>
+
+En el caso resistencia ninguna fuente individual es grande: el 1.92 global es el
+producto de cuatro factores modestos — y de él, solo 1.44 es alcanzable dentro de
+$\delta_u$. En el caso esbeltez el catálogo lo domina todo (×2.66): el perfil
+sobredimensionado *por reglamento* es la sobrerresistencia.
+
+---
+
+## Lo que esto significa al usar 0.7R
+
+- **0.7R es una apuesta sobre qué mandó el diseño.** En sistemas apretados por
+  resistencia (utilizaciones altas, cargas grandes), el Ω₀ real puede quedar muy por
+  debajo de 2.1 — aquí, 1.44. En sistemas gobernados por esbeltez, derivas o mínimos,
+  queda por encima — aquí, 2.90. El rango 2.0–3.5 del libro describe estructuras
+  industriales reales, que suelen vivir en el segundo régimen; el experimento muestra
+  el *mecanismo* que lo produce.
+- **Para proteger elementos no fusibles, el lado inseguro de la apuesta es el segundo.**
+  Si la estructura desarrolla 2.90·$V_d$ y la conexión se dimensionó para 2.1·$V_d$, la
+  conexión falla antes que el fusible — que es exactamente el orden de falla que el
+  diseño por capacidad quiere impedir. Por eso el enfoque de capacidad esperada
+  ($T_{ye}$, $P_{ne}$) es superior al atajo 0.7R cuando el equilibrio plástico es
+  trazable: no apuesta, calcula. Es el tema del Post 4.
+- **La deformación admisible recorta la sobrerresistencia contable.** El $V_2$ de la
+  redistribución completa es real, pero vive a derivas que ni la norma ni el equipo
+  aguantan. Al declarar Ω₀ conviene decir *dentro de qué deformación*: aquí la
+  diferencia es 1.92 contra 1.44 — un 33 %.
+- **El R\* corto de NCh2369 y el Rμ del Post 2 son la misma física** vista desde la
+  norma y desde el laboratorio: en períodos cortos la ductilidad compra menos, así que
+  la norma reduce menos. El marco liviano lo activó sin que se lo pidiéramos.
+
+## Qué queda fuera
+
+Un piso, un vano, sin carga gravitacional concurrente (la masa es sísmica, el peso
+propio está apagado a propósito), columnas y viga declaradas elásticas, ley de diagonal
+monotónica sin degradación cíclica, P-Delta apagado (esa mecánica ya tiene
+[su propia nota](/blog/pdelta-cuando-confiar-amplificador)), y un solo espectro. Todo
+eso empuja en la misma dirección: este es el Ω₀ del *sistema resistente puro*; una
+estructura real, con sus combinaciones gravitacionales, sus mínimos constructivos y su
+redundancia 3D, tiene fuentes adicionales que aquí están deliberadamente apagadas.
+
+Queda un número esperando: los **869 kN** de desbalance que la viga puntal recibió
+cuando el fusible hizo su trabajo. La serie cierra con él: fusibles, capacidades
+esperadas ($T_{ye} = R_yF_yA_g$ y compañía) y cuándo conviene calcular en vez de
+apostar. El código del experimento (diseñador de catálogo, espectro, runner de pushover
+y variantes, dataset completo) vive en el repositorio del experimento; esta nota es su
+bitácora.
