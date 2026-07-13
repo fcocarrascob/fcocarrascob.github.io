@@ -68,8 +68,14 @@ Tres decisiones de diseño hacen el experimento limpio:
 
 <Figure
   src="/factor-r/dialogo-multilinear-plastic.png"
-  alt="Diálogo Link/Support Directional Properties de SAP2000 para un MultiLinear Plastic: la tabla de puntos fuerza-deformación de la ley elastoplástica perfecta con meseta de pendiente cero, histéresis Kinematic, en la dirección U1"
-  caption="La ley EPP en el diálogo del MultiLinear Plastic (histéresis *Kinematic*): rama elástica hasta ±Fy y meseta con pendiente exactamente cero. SAP la acepta sin protestar — no hace falta la pendiente ficticia del 1 % que recomienda el folclor."
+  alt="Diálogo Link/Support Directional Properties de SAP2000 para un MultiLinear Plastic: la tabla de puntos fuerza-deformación de la ley elastoplástica perfecta con meseta de pendiente cero, histéresis Kinematic, en la dirección U2 (el eje que para un link vertical coincide con X global)"
+  caption="La ley EPP del oscilador T = 1 s, R = 4 (propiedad LP_T100_R40, en N y m): rama elástica de pendiente k = 39 478 N/m hasta ±Fy = 1182.6 N, y meseta con pendiente exactamente cero — la fuerza no cambia entre d = 0.03 y d = 5.99. SAP la acepta sin protestar; no hace falta la pendiente ficticia del 1 % que recomienda el folclor. La ley vive en U2 porque para un link vertical ese eje local es el X global."
+/>
+
+<Figure
+  src="/factor-r/dialogo-caso-fna.png"
+  alt="Diálogo Load Case Data - Nonlinear Modal History (FNA) de SAP2000: caso TH_ELCENTRO con carga Accel U1 por la función ELCENTRO_SAMPLE y Scale Factor 9.8066, modos del caso MODAL_RITZ, amortiguamiento modal constante 0.05 y 2400 pasos de salida de 0.01 segundos"
+  caption="El único caso FNA que corre el banco entero: Accel U1 × ELCENTRO_SAMPLE × 9.80665 (la función está en g; el factor la convierte a m/s²), modos Ritz, ξ = 5 % constante. Los 2400 pasos de 0.01 s piden 24 s de respuesta — el doble del registro: esa cola de «vibración libre» es exactamente donde la trampa de la siguiente sección estaba esperando."
 />
 
 Como en la [serie de P-Delta](/blog/pdelta-cuando-confiar-amplificador), el experimento
@@ -112,8 +118,8 @@ $\mu \approx 500$ habrían sido "el resultado".
 
 <Figure
   src="/factor-r/dialogo-funcion-th.png"
-  alt="Diálogo Time History Function Definition de SAP2000 mostrando el final del registro de El Centro: el último punto del sample termina en aceleración distinta de cero y se agrega a mano un punto final con ordenada cero para cerrar el registro"
-  caption="El arreglo, en el diálogo de la función: el sample de El Centro termina en un valor ≠ 0 (izquierda del zoom) y el registro se cierra con un punto explícito en cero. Sin ese punto, todo lo que SAP integre después del registro ocurre bajo una aceleración basal constante."
+  alt="Diálogo Time History Function Definition de SAP2000 con la función ELCENTRO_SAMPLE: la tabla de pares tiempo-valor muestra que el sample termina en 12.113 segundos con aceleración 0.0865 g y se agrega una última fila en 12.114 segundos con valor exactamente cero para cerrar el registro"
+  caption="El arreglo, en la tabla de la función: el sample de El Centro termina en t = 12.113 s con a = 0.0865 g ≠ 0, y la última fila — (12.114, 0) — es el punto agregado que cierra el registro. Sin esa fila, todo lo que SAP integre después ocurre bajo una aceleración basal constante de 0.0865 g."
 />
 
 ---
