@@ -1,0 +1,266 @@
+---
+title: "Mecanismos de atención: cómo un LLM decide qué mirar"
+description: "El corazón del transformer, construido de cero en cuatro pasos: self-attention simplificada (scores, softmax y context vectors), la versión con pesos entrenables (query, key, value y por qué se escala por √dₖ), causal attention para no espiar el futuro con el truco del −∞, dropout, y multi-head attention. Apuntes del Cap. 3 de Raschka."
+pubDate: 2026-07-13
+tags: ["llm", "gpt", "attention", "self-attention", "transformer", "multi-head", "causal attention"]
+subsection: "llm-from-scratch"
+chapter: "Cap. 3 — Mecanismos de atención"
+source: "Sebastian Raschka, Build a Large Language Model (From Scratch), Manning 2024, Cap. 3 (pp. 50–88)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En el [capítulo anterior](/apuntes/llm-from-scratch-cap2-de-texto-a-vectores)
+convertimos texto en **input embeddings**: cada token quedó como un vector que
+codifica su identidad y su posición. Pero esos vectores todavía viven aislados.
+El embedding de *"banco"* es el mismo en "me senté en el banco" que en "fui al
+banco a sacar plata" — nada le dice, todavía, cuál de los dos sentidos toca.
+
+Falta el paso que lee cada palabra **en su contexto**. Ese paso es la
+**self-attention**, y es literalmente el corazón de todo LLM basado en la
+arquitectura transformer. Raschka lo construye desde cero en cuatro versiones que
+se apilan una sobre la otra, y al final tenemos exactamente el módulo que se
+enchufa en el GPT del próximo capítulo. Este apunte recorre las cuatro.
+
+## 0. De dónde viene la idea: el cuello de botella del RNN
+
+Antes de los transformers, traducir se hacía con **RNN encoder-decoder**: una
+red leía la frase entera y la comprimía en un único vector de estado —su
+"memoria"—, y otra red generaba la traducción a partir de ese vector. El
+problema es de diseño: durante la generación, el decoder **no puede volver a
+mirar** la entrada; depende de ese estado único que debía cargar con todo. En
+frases largas, con dependencias distantes, la memoria se desborda.
+
+La solución llegó en 2014 con el **mecanismo de atención de Bahdanau**: dejar
+que el decoder acceda *selectivamente* a distintas partes de la entrada en cada
+paso, pesando cuáles importan. Tres años después, el paper *Attention is All You
+Need* mostró algo más radical: no hacían falta los RNN. Bastaba la atención
+—aplicada de la entrada **sobre sí misma**, de ahí *self*-attention— para
+construir toda la red.
+
+## 1. Self-attention simplificada: la idea sin una sola pesa
+
+Antes de meter parámetros entrenables, conviene ver el esqueleto. Partimos de
+una frase ya embebida —*"Your journey starts with one step"*, seis tokens— y el
+objetivo es, para cada uno, calcular un **context vector**: un embedding nuevo y
+enriquecido que mezcla información de todos los demás según su relevancia.
+
+Son tres pasos, y todos se apoyan en una operación humilde: el **producto
+punto**.
+
+```python
+import torch
+inputs = torch.tensor(
+  [[0.43, 0.15, 0.89],  # Your    (x^1)
+   [0.55, 0.87, 0.66],  # journey (x^2)
+   [0.57, 0.85, 0.64],  # starts  (x^3)
+   [0.22, 0.58, 0.33],  # with    (x^4)
+   [0.77, 0.25, 0.10],  # one     (x^5)
+   [0.05, 0.80, 0.55]]  # step    (x^6)
+)
+```
+
+**Paso 1 — attention scores.** El producto punto entre dos vectores mide qué tan
+*alineados* están: cuanto mayor, más se parecen. Tomamos un token como *query*
+(digamos `journey`) y calculamos su producto punto contra todos los demás. Eso
+nos dice cuánto "atiende" `journey` a cada palabra.
+
+**Paso 2 — attention weights.** Los scores crudos se normalizan con **softmax**,
+de modo que sumen 1. Podríamos dividir por la suma, pero la softmax es mejor:
+maneja los valores extremos con gracia, garantiza pesos positivos —interpretables
+como probabilidades— y da gradientes más sanos al entrenar.
+
+**Paso 3 — context vector.** Es la suma de todos los vectores de entrada,
+**ponderada** por esos pesos. Los tokens a los que se atiende más contribuyen
+más al resultado.
+
+Y lo bonito: los tres pasos, para *toda* la secuencia a la vez, son tres líneas
+de álgebra de matrices.
+
+```python
+attn_scores = inputs @ inputs.T          # todos los productos punto
+attn_weights = torch.softmax(attn_scores, dim=-1)
+context_vecs = attn_weights @ inputs     # sumas ponderadas
+```
+
+<Note type="info" title="Un context vector es un embedding con contexto">
+Fíjate en el cambio de estatus. El *input embedding* de `journey` era el mismo
+sin importar la frase. Su *context vector* ya no: se construyó mezclando a sus
+vecinas según cuánto se relacionan con ella. Es la primera vez en todo el
+pipeline que un token "sabe" quién lo rodea.
+</Note>
+
+## 2. Añadir pesos entrenables: query, key, value
+
+La versión de arriba no tiene nada que aprender —usa los embeddings crudos—. La
+versión real introduce **tres matrices de pesos entrenables** que proyectan cada
+entrada en tres vectores distintos, cada uno con un papel:
+
+- **query** (`q = x · Wq`) — el token que *pregunta*: "¿a quién me parezco?"
+- **key** (`k = x · Wk`) — la *etiqueta* con la que cada token se deja encontrar.
+- **value** (`v = x · Wv`) — el *contenido* que se recupera si hay match.
+
+<Note type="tip" title="La analogía de la base de datos">
+Los nombres vienen de los sistemas de búsqueda. Un **query** es como la consulta
+que escribes en un buscador; las **keys** son los índices contra los que se
+compara; los **values** son el contenido que devuelve la fila que mejor calza.
+La atención hace exactamente eso, pero de forma suave: en vez de elegir *una*
+fila, mezcla todos los values pesando cada uno por cuánto su key calza con el
+query.
+</Note>
+
+<Figure
+  src="/apuntes/llm-from-scratch/self-attention.svg"
+  alt="Diagrama del scaled dot-product attention. A la izquierda la matriz de input embeddings X con los seis tokens de la frase. Tres flechas etiquetadas por Wq, Wk y Wv la proyectan en las matrices Q, K y V. Q y K se combinan en un bloque de scores Q por K traspuesta; ese bloque pasa por otro que divide por raíz de d_k y aplica softmax, produciendo la matriz de attention weights. Finalmente, esos pesos multiplican a V para dar los context vectors Z."
+  caption="Scaled dot-product attention de un vistazo: cada entrada se proyecta en query, key y value; Q·Kᵀ mide afinidad; tras escalar por √dₖ y softmax, los pesos ponderan los values para dar el context vector."
+  width={720}
+/>
+
+El cálculo repite los tres pasos del esqueleto, con dos cambios: los scores se
+computan entre **queries y keys** (no entre las entradas crudas), y el context
+vector es una suma ponderada de los **values**:
+
+```python
+queries = inputs @ W_query
+keys    = inputs @ W_key
+values  = inputs @ W_value
+
+attn_scores  = queries @ keys.T
+attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1)
+context_vec  = attn_weights @ values
+```
+
+Ese `/ keys.shape[-1]**0.5` es la parte que le da nombre al mecanismo —*scaled*
+dot-product attention— y no es un detalle cosmético:
+
+<Equation label="scaled dot-product">
+$$
+\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{Q\,K^{\top}}{\sqrt{d_k}}\right) V
+$$
+</Equation>
+
+<Note type="warning" title="Por qué se divide por √dₖ">
+Con dimensiones grandes —en GPT las keys viven en más de 1000 dimensiones— los
+productos punto crecen mucho. Y cuando le entran valores grandes, la softmax se
+aplana hacia una función escalón: casi todo el peso se va a un solo token y sus
+**gradientes tienden a cero**. Un modelo con gradientes nulos no aprende.
+Dividir por la raíz de la dimensión mantiene los scores en un rango donde la
+softmax sigue siendo "blanda" y el gradiente, vivo.
+</Note>
+
+Todo esto se encapsula en una clase `nn.Module`. Raschka muestra dos: una con
+`nn.Parameter` y otra con `nn.Linear` —esta última se prefiere porque trae un
+esquema de inicialización de pesos mejor, y entrena de forma más estable.
+
+<Note type="info" title="Dos cosas distintas que se llaman 'weight'">
+Cuidado con el vocabulario. Los **weight parameters** son los valores aprendidos
+de las matrices `Wq`, `Wk`, `Wv` —fijos una vez entrenado el modelo—. Los
+**attention weights** (los α) son dinámicos: cambian con cada frase, porque
+dependen de qué tokens hay y cómo se relacionan. Los primeros son la maquinaria;
+los segundos, lo que la maquinaria produce en cada pasada.
+</Note>
+
+## 3. Causal attention: prohibido espiar el futuro
+
+Un LLM se entrena prediciendo el siguiente token. Eso impone una regla: al
+procesar la palabra en la posición *i*, el modelo **solo puede mirar las
+posiciones anteriores y la actual**, nunca las futuras —si pudiera verlas, hacer
+la predicción sería trampa—. La self-attention tal como está mira toda la
+secuencia; hay que ponerle una venda. Esa venda es la **causal attention** (o
+*masked attention*).
+
+La idea es anular los attention weights **por encima de la diagonal** de la
+matriz. Se puede hacer de forma ingenua —multiplicar por una máscara triangular
+y renormalizar las filas para que vuelvan a sumar 1—, pero hay un truco más
+elegante que lo hace en un solo paso.
+
+<Figure
+  src="/apuntes/llm-from-scratch/causal-mask.svg"
+  alt="Tres matrices 6x6 en secuencia. La primera son los attention scores completos. Una flecha etiquetada 'mask −∞ sobre diagonal' lleva a la segunda, donde todas las posiciones por encima de la diagonal se reemplazaron por menos infinito, dejando una matriz triangular inferior de valores reales. Una flecha 'softmax' lleva a la tercera, una matriz triangular inferior de pesos normalizados donde cada fila suma 1."
+  caption="El truco eficiente: poner −∞ en los scores por encima de la diagonal antes de la softmax. Como e^(−∞)→0, la softmax los anula y renormaliza de un golpe."
+  width={720}
+/>
+
+El truco explota una propiedad de la softmax: un `-∞` en la entrada se convierte
+en un `0` en la salida (porque *e*<sup>−∞</sup> = 0). Así que en vez de
+enmascarar *después*, enmascaramos los scores *antes*:
+
+```python
+mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
+masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
+attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=-1)
+```
+
+<Note type="tip" title="¿No se filtra información del futuro?">
+Es la duda natural: los tokens futuros entraron en la matriz de scores, ¿no
+"contaminan" el resultado? No. Cuando renormalizamos tras enmascarar, la softmax
+se recalcula **solo sobre las posiciones que quedan**. Matemáticamente, el
+resultado es idéntico a como si los tokens futuros nunca hubieran estado ahí. No
+hay *information leakage*.
+</Note>
+
+### El toque final: dropout
+
+Para reducir el overfitting, durante el entrenamiento se aplica **dropout** sobre
+los attention weights: se anula al azar una fracción de ellos (0.1–0.2 en la
+práctica), y los que sobreviven se **reescalan** por 1/(1−*p*) para mantener la
+magnitud media. Así el modelo no se vuelve dependiente de un patrón de atención
+concreto. El dropout solo actúa al entrenar; en inferencia se apaga.
+
+Máscara causal + dropout + soporte para *batches* se juntan en una clase
+`CausalAttention`, que registra la máscara con `register_buffer` —un detalle
+cómodo: el tensor viaja solo a la GPU junto con el modelo—.
+
+## 4. Multi-head attention: varios puntos de vista a la vez
+
+Una sola atención aprende *un* tipo de relación entre tokens. Pero el lenguaje
+tiene muchas capas simultáneas —concordancia gramatical, correferencia,
+semántica—. La **multi-head attention** corre varias atenciones en paralelo,
+cada "cabeza" con sus propias matrices `Wq`, `Wk`, `Wv`, de modo que cada una
+puede especializarse en un **subespacio de representación** distinto.
+
+<Figure
+  src="/apuntes/llm-from-scratch/multi-head.svg"
+  alt="Diagrama de flujo. La matriz de entrada X se ramifica en dos cabezas paralelas. La cabeza 1 (en azul) tiene sus matrices Wq1, Wk1, Wv1 y produce context vectors Z1; la cabeza 2 (en violeta) tiene Wq2, Wk2, Wv2 y produce Z2. Ambos resultados se concatenan en un bloque que aplica además una proyección de salida out_proj, dando el context vector final Z."
+  caption="Cada cabeza tiene sus propias proyecciones y mira un aspecto distinto de la relación entre tokens. Sus context vectors se concatenan y se combinan con una proyección de salida."
+  width={720}
+/>
+
+Raschka lo implementa de dos maneras. La intuitiva, `MultiHeadAttentionWrapper`,
+simplemente **apila** varias `CausalAttention` y concatena sus salidas —claro,
+pero procesa las cabezas una tras otra—. La eficiente, `MultiHeadAttention`, usa
+una sola matriz de pesos grande y una única multiplicación, y luego **parte** el
+resultado en cabezas reordenando el tensor con `.view` y `.transpose`:
+
+```python
+# (b, num_tokens, d_out) -> (b, num_tokens, num_heads, head_dim) -> (b, num_heads, num_tokens, head_dim)
+keys = keys.view(b, num_tokens, self.num_heads, self.head_dim).transpose(1, 2)
+```
+
+En vez de un bucle sobre cabezas, una sola multiplicación matricial por lotes las
+computa todas juntas. El único requisito es que `d_out` sea divisible por
+`num_heads` (cada cabeza se lleva `head_dim = d_out / num_heads` dimensiones).
+Este es, palabra por palabra, el módulo que el capítulo 4 enchufará en el GPT.
+
+## El resultado
+
+Hemos recorrido las cuatro variantes: de la self-attention sin pesos, que
+introdujo *scores → weights → context vector*; a la versión entrenable con
+*query, key y value* escalada por √dₖ; a la causal, que venda los ojos al
+futuro con el truco del −∞; hasta la multi-head, que mira desde varios ángulos a
+la vez.
+
+Lo que empezó como "una red no puede leer texto" tiene ahora una respuesta
+completa: el texto se volvió vectores (capítulo 2) y los vectores aprenden a
+mirarse entre sí (capítulo 3). Falta ensamblar la carcasa —las capas
+feed-forward, las normalizaciones, las conexiones residuales— alrededor de este
+módulo de atención para tener un GPT entero. Ese es el capítulo 4, y el próximo
+apunte de la serie.
+
+---
+
+*Apunte del Capítulo 3 de [Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
+de Sebastian Raschka (Manning, 2024). Los valores numéricos y ejemplos de código siguen
+los del libro.*

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="sa-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="820" height="430" fill="#ffffff"/>
+
+  <!-- Inputs X -->
+  <text x="70" y="46" text-anchor="middle" font-size="13" fill="#6b7280">Input embeddings X</text>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11" fill="#374151" text-anchor="middle">
+    <rect x="30" y="60" width="80" height="20" rx="3" fill="#f3f4f6" stroke="#d1d5db"/><text x="70" y="74">Your</text>
+    <rect x="30" y="84" width="80" height="20" rx="3" fill="#dbeafe" stroke="#60a5fa"/><text x="70" y="98" fill="#1e3a8a">journey</text>
+    <rect x="30" y="108" width="80" height="20" rx="3" fill="#f3f4f6" stroke="#d1d5db"/><text x="70" y="122">starts</text>
+    <rect x="30" y="132" width="80" height="20" rx="3" fill="#f3f4f6" stroke="#d1d5db"/><text x="70" y="146">with</text>
+    <rect x="30" y="156" width="80" height="20" rx="3" fill="#f3f4f6" stroke="#d1d5db"/><text x="70" y="170">one</text>
+    <rect x="30" y="180" width="80" height="20" rx="3" fill="#f3f4f6" stroke="#d1d5db"/><text x="70" y="194">step</text>
+  </g>
+
+  <!-- projection arrows -->
+  <g stroke="#2563eb" stroke-width="1.6" fill="none">
+    <path d="M112,100 C150,100 160,80 200,80" marker-end="url(#sa-ar)"/>
+    <path d="M112,120 C150,120 160,150 200,150" marker-end="url(#sa-ar)"/>
+    <path d="M112,140 C150,140 160,220 200,220" marker-end="url(#sa-ar)"/>
+  </g>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" fill="#2563eb" text-anchor="middle">
+    <text x="158" y="72">× Wq</text>
+    <text x="158" y="163">× Wk</text>
+    <text x="158" y="233">× Wv</text>
+  </g>
+
+  <!-- Q, K, V -->
+  <g text-anchor="middle">
+    <rect x="200" y="62" width="70" height="36" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="235" y="79" font-size="15" fill="#1e3a8a" font-weight="600">Q</text>
+    <text x="235" y="93" font-size="10" fill="#6b7280">queries</text>
+
+    <rect x="200" y="132" width="70" height="36" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="235" y="149" font-size="15" fill="#1e3a8a" font-weight="600">K</text>
+    <text x="235" y="163" font-size="10" fill="#6b7280">keys</text>
+
+    <rect x="200" y="202" width="70" height="36" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="235" y="219" font-size="15" fill="#1e3a8a" font-weight="600">V</text>
+    <text x="235" y="233" font-size="10" fill="#6b7280">values</text>
+  </g>
+
+  <!-- Q·Kt scores -->
+  <g stroke="#9ca3af" stroke-width="1.5" fill="none">
+    <path d="M270,80 C300,80 310,115 340,115" marker-end="url(#sa-ar)"/>
+    <path d="M270,150 C300,150 310,125 340,125" marker-end="url(#sa-ar)"/>
+  </g>
+  <rect x="340" y="95" width="120" height="60" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="400" y="120" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">scores</text>
+  <text x="400" y="140" text-anchor="middle" font-size="13" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">Q · Kᵀ</text>
+
+  <!-- scale + softmax -->
+  <path d="M460,125 L500,125" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#sa-ar)"/>
+  <rect x="500" y="95" width="150" height="60" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="575" y="119" text-anchor="middle" font-size="13" fill="#9a3412" font-family="'JetBrains Mono', ui-monospace, monospace">÷ √dₖ</text>
+  <text x="575" y="140" text-anchor="middle" font-size="13" fill="#9a3412" font-weight="600">softmax</text>
+
+  <!-- attention weights grid -->
+  <text x="710" y="46" text-anchor="middle" font-size="13" fill="#6b7280">attention weights α</text>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" text-anchor="middle">
+    <rect x="655" y="60" width="110" height="72" rx="4" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="710" y="76" fill="#1e3a8a">0.21 0.20 0.20 0.12 0.12 0.15</text>
+    <text x="710" y="88" fill="#1e3a8a">0.14 0.24 0.23 0.12 0.11 0.16</text>
+    <text x="710" y="100" fill="#1e3a8a">0.14 0.24 0.23 0.12 0.11 0.16</text>
+    <text x="710" y="112" fill="#1e3a8a">0.14 0.21 0.20 0.15 0.13 0.17</text>
+    <text x="710" y="124" fill="#1e3a8a">0.15 0.20 0.20 0.14 0.19 0.13</text>
+  </g>
+  <path d="M650,125 C645,180 620,200 300,225" stroke="#2563eb" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#sa-ar)"/>
+
+  <!-- context vectors -->
+  <path d="M270,220 C300,240 320,270 355,270" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#sa-ar)"/>
+  <rect x="355" y="248" width="180" height="46" rx="6" fill="#dcfce7" stroke="#86efac"/>
+  <text x="445" y="270" text-anchor="middle" font-size="13" fill="#166534" font-weight="600">Context vectors Z</text>
+  <text x="445" y="287" text-anchor="middle" font-size="12" fill="#166534" font-family="'JetBrains Mono', ui-monospace, monospace">Z = α · V</text>
+
+  <!-- caption -->
+  <line x1="40" y1="330" x2="780" y2="330" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="410" y="360" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Scaled dot-product attention, de un vistazo.</text>
+  <text x="410" y="382" text-anchor="middle" font-size="12.5" fill="#6b7280">Cada entrada se proyecta en query, key y value. El producto Q·Kᵀ mide afinidad;</text>
+  <text x="410" y="400" text-anchor="middle" font-size="12.5" fill="#6b7280">tras escalar por √dₖ y aplicar softmax, los pesos ponderan los values para dar el context vector.</text>
+</svg>
