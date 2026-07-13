@@ -1,0 +1,210 @@
+---
+title: "Rótulas plásticas en pushover: por qué la rótula M3 miente en las columnas"
+description: "La técnica de rótulas plásticas concentradas (auto hinges ASCE 41/FEMA 356) en un Static Nonlinear de SAP2000, validada contra el análisis plástico incremental cerrado de un pórtico de acero: la secuencia de rótulas y la capacidad coinciden. Y el pitfall estrella: dejar la rótula M3 por defecto en las columnas con axial sobre-predice la capacidad un 16 % e invierte la secuencia de daño —hace creer en un mecanismo viga-primero cuando la base de columna es la que rotula primero—. Con el reverse-engineering de lo que la rótula FEMA realmente usa (resistencia esperada y pandeo, no Fy ni Py)."
+pubDate: 2026-07-13
+tags: ["SAP2000", "pushover", "rótulas plásticas", "ASCE 41", "FEMA 356", "P-M", "no lineal", "acero", "capacity design"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La técnica y el pitfall
+
+El pushover convierte un modelo elástico en una máquina de análisis plástico
+incremental: se le cuelgan **rótulas plásticas concentradas** en los puntos donde
+esperamos fluencia, se empuja monotónicamente, y SAP2000 va formando rótulas una a una
+hasta armar el mecanismo. La curva resultante —corte basal contra desplazamiento de
+techo— es la *curva de capacidad*, y su meseta es la carga de colapso.
+
+La rótula más común es la de **momento M3**: fluye a Mp y rota plásticamente. Para una
+viga está perfecta: la viga casi no lleva axial, y su plastificación es puro momento.
+Pero en una **columna con axial** la rótula M3 miente, porque la capacidad a momento de
+una columna **baja con la carga axial** —la interacción P-M— y la rótula M3 la ignora
+por completo: plastifica a Mp pleno como si el axial no existiera.
+
+Esta nota enseña la técnica —rótulas auto ASCE 41/FEMA 356 en un Static Nonlinear con
+control de desplazamiento— y la valida contra el análisis plástico incremental cerrado
+de un pórtico de acero: **la secuencia de rótulas y la carga de colapso coinciden**. Y
+cuantifica el pitfall: dejar la rótula M3 por defecto en las columnas **sobre-predice la
+capacidad un 16 % e invierte la secuencia de daño**. De paso, hace reverse-engineering de
+lo que la rótula FEMA realmente usa —que no es Fy ni Py, sino resistencia esperada y
+capacidad de pandeo—.
+
+## La referencia: análisis plástico incremental cerrado
+
+Antes de tocar SAP conviene tener la respuesta. Para un pórtico de acero de un vano y un
+piso con bases empotradas, el colapso plástico es cerrado: los teoremas límite dan la
+carga de mecanismo, y un análisis **rótula a rótula** (event-to-event) da la curva
+poligonal completa —rigidez elástica, cada quiebre, y la meseta—.
+
+El mecanismo de este pórtico es de **desplazamiento lateral** (*sway*): rótulas en las
+dos bases de columna y en los dos extremos de viga. Su carga de colapso es
+
+<Equation label="Ec. 1">
+$$H_u = \frac{M_{p,A} + M_{p,B} + 2\,M_{p,\text{viga}}}{h}$$
+</Equation>
+
+donde $M_{p,A}$ y $M_{p,B}$ son los momentos plásticos de las **bases de columna**. Aquí
+está todo el asunto: si la rótula es **M3**, $M_{p,A} = M_{p,B} = M_p$ (pleno, ignora el
+axial); si es **P-M**, cada base plastifica a un momento **reducido** por su axial —y como
+el vuelco descarga la columna de barlovento y comprime la de sotavento, las dos se
+reducen distinto—. Escribí un pequeño solver de marco 2D que resuelve el pórtico
+elásticamente, inserta la rótula que primero alcanza su capacidad, recalcula, y repite
+hasta el mecanismo. Ese es el patrón de referencia contra el que se mide SAP.
+
+## El modelo
+
+<Figure
+  src="/rotulas-pushover-sap2000/fig-modelo.svg"
+  alt="A la izquierda, el pórtico de acero de un vano y un piso: columnas W8×31 y viga W8×18 (más débil), bases empotradas, gravedad P0 = 465 kN en los nudos superiores C y D, empuje lateral H. Las rótulas de columna (en las bases) son P-M y las de viga (en los extremos) son M3. A la derecha, el backbone momento-rotación ASCE 41/FEMA 356 con los puntos A-B-C-D-E, los niveles de aceptación IO/LS/CP, y la nota de que el axial baja el nivel de fluencia B según 1.18(1−P/PCL)."
+  caption="El modelo (a) y el backbone de la rótula (b). Columnas W8×31, viga W8×18 deliberadamente débil (Mp,viga ≈ 0.56·Mp,col) para separar los eventos. La gravedad entra como carga puntual en los nudos superiores (axial puro, sin momento). La rótula fluye en B; en una columna, el nivel de B baja con el axial."
+/>
+
+Es un pórtico de un vano ($L = 4$ m) y un piso ($h = 4$ m), cuadrado a propósito para que
+el brazo de vuelco sea máximo. Columnas **W8×31**, viga **W8×18** —elegida débil para
+que las rótulas de viga y de columna no aparezcan todas juntas—. La gravedad entra como
+**carga puntual $P_0 = 465$ kN** en los dos nudos superiores (representa el peso de los
+pisos de arriba): baja directo por las columnas como axial, sin flectar la viga. Se
+empuja lateral en control de desplazamiento, sin P-Delta (para casar la teoría
+rígido-plástica de meseta plana).
+
+Se corren **dos modelos idénticos salvo la rótula de columna**: uno con rótula que
+interactúa P-M, otro con rótula M3 pura. Todo lo demás —geometría, cargas, rótulas de
+viga— es igual, así que la diferencia entre las dos curvas es *solo* la interacción P-M.
+
+<Note type="warning" title="El OAPI no tiene SetHingeAssigns">
+Las rótulas de frame son de las cosas que el OAPI de SAP2000 **no** deja asignar
+directamente: `FrameObj` solo tiene *getters* (`GetHingeAssigns`), no un `SetHingeAssigns`,
+y no existe un objeto `PropHinge`. La ruta es la **base de datos interactiva**: escribir
+las tablas `Frame Hinge Assigns 06/07 - Auto FEMA 356 - Steel Beam/Column` con
+`DatabaseTables.SetTableForEditingArray` + `ApplyEditedTables`, y leer los estados con la
+tabla de salida `Frame Hinge States`. Un detalle útil: la tabla de columna tiene un campo
+`DOF` —asignando `P-M3` la rótula interactúa; `M3` la vuelve momento puro— así que el
+pitfall se aísla cambiando **un solo campo**.
+</Note>
+
+## La curva de capacidad
+
+<Figure
+  src="/rotulas-pushover-sap2000/capacity_curve.png"
+  alt="Curva corte basal contra desplazamiento de techo. Dos curvas de SAP (líneas llenas): la M3 en rojo llega a una meseta de 160 kN, la P-M en azul a 139 kN. Encima, en guiones, las poligonales del análisis plástico incremental ideal, ligeramente por debajo de las de SAP. Una flecha marca el gap: M3 sobre-predice 16 %."
+  caption="Curva de capacidad. Línea llena = SAP (rótula FEMA); guión = análisis plástico incremental ideal (rótula a nudo, elastoplástico). Ambas ramas elásticas coinciden; la M3 (rojo) mesetea 16 % por encima de la P-M (azul). El pequeño desfase absoluto entre SAP y el ideal está explicado más abajo."
+/>
+
+Las dos curvas de SAP salen limpias: rama elástica común, quiebres a medida que fluyen
+las rótulas, y meseta. La **M3 mesetea en 160 kN, la P-M en 139 kN**: la rótula M3
+sobre-predice la capacidad un **16 %**. El análisis incremental cerrado da 147 y 127 kN
+—el mismo gap, **15.8 % contra el 15.6 % de SAP**, coincidencia a dos décimas—.
+
+Hay un desfase absoluto: las curvas de SAP quedan ~9 % por encima de la poligonal ideal
+(en las dos por igual, por eso el gap relativo calza perfecto). No es un error: es la
+rótula real siendo más honesta que mi idealización. Se descompone en dos efectos
+documentados: la rótula tiene **longitud finita** —SAP la ubica a 0.0375·L del extremo,
+no en el nudo, lo que alarga el brazo de palanca (+3.9 %)— y el backbone FEMA tiene un
+**3 % de endurecimiento** (el punto C está a 1.03·Mp). Multiplicando el ideal por
+$1/(1-0.0375)\times 1.03$ se recupera SAP con **±2 %** de residual. La lección: la meseta
+del pushover se sienta *encima* de la línea rígido-plástica ideal, y sabemos exactamente
+cuánto y por qué.
+
+## El pitfall: la rótula M3 no solo sobre-predice, invierte la secuencia
+
+El 16 % es la mitad de la historia. La otra mitad es **dónde** se concentra el daño.
+
+<Figure
+  src="/rotulas-pushover-sap2000/hinge_sequence.png"
+  alt="Dos esquemas del pórtico con las rótulas numeradas en orden de aparición. Con rótula M3 (izquierda, rojo): primero las dos rótulas de viga (1 y 2 arriba), después las bases de columna (3 y 4). Con rótula P-M (derecha, azul): primero la base de sotavento (1, abajo a la derecha), después la base de barlovento (2, abajo a la izquierda), y recién al final los extremos de viga (3 y 4)."
+  caption="La secuencia de rótulas, y su inversión. Con la rótula M3 el daño empieza en las vigas (parece un mecanismo viga-primero, el ideal del capacity design). Con la interacción P-M real, la primera rótula es la base de la columna de sotavento —la más comprimida— y las columnas van antes que las vigas."
+/>
+
+Con la rótula **M3** la secuencia es viga → columna: rotulan primero los dos extremos de
+viga, después las bases. Es exactamente lo que un ingeniero *quiere* ver —columna fuerte,
+viga débil, el mecanismo dúctil del capacity design—. El problema es que **es mentira**.
+
+Con la interacción **P-M** real, la primera rótula es la **base de la columna de
+sotavento** —la que el vuelco comprime, con su momento reducido por el axial— y aparece a
+104 kN, un 24 % *antes* de que el modelo M3 muestre fluencia alguna (a 137 kN). Le sigue
+la base de barlovento, y recién al final las vigas. La secuencia se **invierte**: el daño real
+arranca en las columnas, no en las vigas. Confiando en la rótula M3 uno cree tener un
+mecanismo benigno cuando en realidad las columnas —menos dúctiles, cargadas
+axialmente— son las primeras en ceder. SAP reproduce las dos secuencias exactamente.
+
+### Know your hinge: la rótula FEMA no reduce por Py, reduce por pandeo
+
+Al leer la superficie de fluencia que SAP genera para la rótula P-M aparece la letra
+chica, y vale la pena conocerla.
+
+<Figure
+  src="/rotulas-pushover-sap2000/pitfall_pm.png"
+  alt="La superficie de fluencia de la columna: momento de fluencia contra axial de compresión. La rótula M3 es una recta horizontal a Mp = 189 kN·m (ignora el axial). La rótula P-M es una recta descendente que arranca en 189 a axial cero y llega a cero en PCL = 1367 kN (la capacidad de pandeo). Dos puntos de operación marcados: barlovento a 338 kN (momento 167) y sotavento a 592 kN (momento 126)."
+  caption="La superficie de fluencia. La rótula M3 es la recta horizontal en Mp: el momento de fluencia no depende del axial. La rótula P-M baja con el axial siguiendo 1.18(1−P/PCL) —y se normaliza por PCL, la capacidad de PANDEO, no por Py de aplastamiento—."
+/>
+
+La superficie generada es exactamente $M/M_p = 1.18\,(1 - P/P_{CL})$ —la interacción
+plástica clásica del acero— pero con dos sorpresas:
+
+- El $M_p$ que usa es con **resistencia esperada** $F_{ye} = R_y F_y$ (para A992, $R_y =
+  1.1$): $M_p = 189$ kN·m, no los 172 de $F_y Z_x$ nominal.
+- La normaliza por $P_{CL}$, la **capacidad de pandeo a compresión** (AISC E3, con la
+  longitud del miembro), no por $P_y$ de aplastamiento. Aquí $P_{CL} = 1367$ kN contra
+  $P_y = 1970$: la reducción es **más severa** que la interacción de libro, y **depende de
+  la esbeltez de la columna** —una columna más esbelta tiene $P_{CL}$ más bajo y una
+  rótula más débil al mismo axial—. En la base de sotavento eso hace la rótula un 26 % más
+  débil que si redujera por $P_y$.
+
+Ninguna de las dos cosas es obvia desde la GUI. La rótula que uno cree que usa $F_y Z_x$
+con interacción por aplastamiento en realidad usa resistencia esperada e incorpora el
+pandeo. No cambia la tesis —M3 ignora todo esto— pero sí los números, y conviene saber
+qué está firmando.
+
+<Note type="tip" title="Control de desplazamiento, no de fuerza">
+El backbone FEMA cae de C a D (a 0.2·Mp residual): la curva de capacidad **baja** después
+de la meseta. Con **control de fuerza** el análisis no puede cruzar esa meseta —al pedirle
+una carga sobre $H_u$ el desplazamiento se dispara y el caso no converge (lo verifiqué:
+apuntando a 180 kN sobre una capacidad de 139, el nudo se fue a 3.2 m y el caso quedó
+incompleto)—. El **control de desplazamiento** recorre la curva entera, meseta y
+descenso incluidos. Es la razón por la que todo pushover se corre en desplazamiento.
+</Note>
+
+## Gancho: el mismo pitfall en una columna de hormigón
+
+En acero el axial siempre *reduce* el momento. En hormigón armado la historia tiene un
+giro, y es un buen cierre porque conecta con la [serie de hormigón](/hormigon) y su
+diagrama de interacción.
+
+<Figure
+  src="/rotulas-pushover-sap2000/gancho_hormigon.png"
+  alt="Diagrama de interacción P-M de una columna de hormigón 400x400 según ACI 318: axial contra momento, con la curva característica que sube hasta un punto balanceado (alrededor de 1580 kN, momento 355) y después baja. Una recta vertical roja marca lo que usaría una rótula M3: el momento a axial cero, 246 kN·m. En el punto de operación a 1000 kN, la capacidad P-M real es 327 kN·m contra los 246 de la M3."
+  caption="Diagrama de interacción P-M de una columna de hormigón (ACI 318), calculado por compatibilidad de deformaciones. La rótula M3 usaría el momento a axial cero (246 kN·m, la recta roja). El P-M real sigue la curva: bajo el punto balanceado el axial AUMENTA la capacidad a momento, sobre él la reduce."
+/>
+
+El diagrama de interacción del hormigón sube hasta el **punto balanceado** y después baja.
+Una rótula M3 usaría el momento a axial cero —la altura de la recta roja, 246 kN·m—, pero
+el momento real a un axial de servicio de 1000 kN es **327 kN·m**: la M3 es un 25 %
+*conservadora* aquí. Y por encima del balanceado se invierte: la M3 quedaría *insegura*.
+En hormigón, ignorar la interacción P-M puede errar en **cualquiera de los dos sentidos**,
+según de qué lado del balanceado esté la columna.
+
+La rótula P-M de hormigón (o una rótula de fibras) integra exactamente este diagrama —tal
+como la rótula de acero integraba su superficie 1.18(1−P/PCL)—. La técnica es la misma; lo
+que cambia es la forma de la superficie, y la M3 la aplana a una recta vertical.
+
+## Cierre
+
+Un pórtico, dos corridas que difieren en un solo campo, y el resultado se sostiene contra
+el análisis plástico cerrado a dos décimas de porcentaje en el gap y con la secuencia
+exacta. Lo que queda:
+
+- **La rótula M3 en columnas con axial sobre-predice la capacidad** —16 % en este pórtico—
+  **e invierte la secuencia de daño**: hace creer en un mecanismo viga-primero cuando la
+  base de columna es la primera en rotular. En columnas, la rótula tiene que ser P-M.
+- **Conocé lo que tu rótula realmente usa.** La auto FEMA 356 de acero reduce con
+  resistencia esperada ($R_y F_y$) y por la capacidad de **pandeo** $P_{CL}$, no por $P_y$
+  —más severo que la interacción de libro, y sensible a la esbeltez—.
+- **La curva de SAP se sienta encima del ideal rígido-plástico** por la longitud finita de
+  la rótula y el 3 % de endurecimiento del backbone; se predice a ±2 %.
+- **Pushover se corre en control de desplazamiento**, porque el backbone que cae de C a D
+  hace que el control de fuerza no cruce la meseta.
+- Y como las rótulas de frame no se asignan por el OAPI, la vía es la **base de datos
+  interactiva** (`DatabaseTables`), tanto para asignarlas como para leer sus estados.

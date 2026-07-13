@@ -175,11 +175,21 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   simple con nudo de ancho finito; comparar centerline puro, offset sin zona rígida y
   offset con zona rígida calibrada contra la rigidez teórica de luz neta. Pitfall:
   dejar el factor en su default y sub/sobreestimar la rigidez.
-- [ ] **D2. Rótulas plásticas en pushover (Static Nonlinear, hinges ASCE 41/FEMA 356)**
-  — pórtico o columna en voladizo con mecanismo de colapso calculable a mano (My,
-  secuencia de fluencia, carga de mecanismo); validar que la curva de capacidad y el
-  orden de aparición de rótulas coinciden. Gancho a la serie de hormigón (ACI 318) con
-  interacción P-M real en vez de M3 puro.
+- [x] **D2. Rótulas plásticas en pushover (Static Nonlinear, hinges ASCE 41/FEMA 356)**
+  (hecho 2026-07-13, post `rotulas-pushover-sap2000.mdx`, figuras en
+  `public/rotulas-pushover-sap2000/`) — experimento en `APP_sap2000\d2_rotulas_pushover\`:
+  pórtico de acero 1 vano/1 piso (W8×31 col / W8×18 viga), rótulas auto FEMA 356 asignadas
+  por **DatabaseTables** (el OAPI no tiene `SetHingeAssigns`). Validado contra análisis
+  plástico incremental cerrado propio (solver 2D event-to-event): **secuencia de rótulas
+  idéntica** y **gap M3-vs-P-M: SAP 15.6 % vs cerrado 15.8 %** (0.2 %). Hallazgos: la
+  rótula M3 en columnas con axial **sobre-predice la capacidad 16 % e INVIERTE la secuencia
+  de daño** (M3: viga→columna, parece capacity design; P-M real: columna de sotavento
+  primero). Reverse-engineering de la rótula FEMA: usa resistencia esperada Fye=Ry·Fy y
+  reduce por **PCL de pandeo (no Py)** → más severo que la interacción de libro (memoria
+  `sap2000-rotulas-frame-oapi`). Offset absoluto +9 % SAP sobre el ideal = longitud finita
+  de rótula (RelDist 0.0375) + 3 % hardening FEMA (residual ±2 %). Control de desplazamiento
+  obligatorio (fuerza no cruza la meseta, verificado). Gancho hormigón: diagrama P-M de ACI
+  318 (columna RC) — en hormigón la M3 puede errar en ambos sentidos según el balanceado.
 - [ ] **D3. Amortiguamiento de Rayleigh en Time History (α, β vs. decaimiento libre)**
   — impulso en un modelo simple (Direct Integration), medir el decremento logarítmico
   de la vibración libre y compararlo contra el ξ objetivo. Pitfall: calibrar α, β en

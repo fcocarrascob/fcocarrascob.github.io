@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f8f4e"/>
+    </marker>
+    <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="940" height="460" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El modelo: pórtico de acero con rótulas plásticas concentradas y su backbone momento–rotación</text>
+
+  <!-- ═══ panel (a): el pórtico ═══ -->
+  <text x="250" y="60" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(a) pórtico 1 vano × 1 piso — empuje monotónico</text>
+
+  <!-- columnas y viga -->
+  <line x1="130" y1="380" x2="130" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="370" y1="380" x2="370" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="130" y1="150" x2="370" y2="150" stroke="#555" stroke-width="5"/>
+
+  <!-- empotramientos -->
+  <g stroke="#222" stroke-width="2">
+    <line x1="105" y1="380" x2="155" y2="380"/>
+    <line x1="345" y1="380" x2="395" y2="380"/>
+  </g>
+  <g stroke="#999" stroke-width="1">
+    <line x1="108" y1="380" x2="100" y2="390"/><line x1="120" y1="380" x2="112" y2="390"/>
+    <line x1="132" y1="380" x2="124" y2="390"/><line x1="144" y1="380" x2="136" y2="390"/>
+    <line x1="348" y1="380" x2="340" y2="390"/><line x1="360" y1="380" x2="352" y2="390"/>
+    <line x1="372" y1="380" x2="364" y2="390"/><line x1="384" y1="380" x2="376" y2="390"/>
+  </g>
+
+  <!-- empuje lateral H -->
+  <line x1="60" y1="150" x2="122" y2="150" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#ar)"/>
+  <text x="70" y="140" font-size="14" fill="#b02a1a" font-weight="bold">H →</text>
+
+  <!-- gravedad P0 en C y D -->
+  <line x1="130" y1="108" x2="130" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <line x1="370" y1="108" x2="370" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <text x="250" y="102" font-size="12.5" fill="#2f8f4e" text-anchor="middle" font-weight="bold">P₀ = 465 kN (en C y D)</text>
+
+  <!-- rótulas: base = P-M (azul), extremos de viga = M3 (rojo) -->
+  <circle cx="130" cy="360" r="9" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.5"/>
+  <circle cx="370" cy="360" r="9" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.5"/>
+  <circle cx="158" cy="150" r="9" fill="#e34948" stroke="#8a1f1f" stroke-width="1.5"/>
+  <circle cx="342" cy="150" r="9" fill="#e34948" stroke="#8a1f1f" stroke-width="1.5"/>
+
+  <!-- etiquetas nudos y miembros -->
+  <text x="118" y="145" font-size="11" fill="#555" text-anchor="end">C</text>
+  <text x="382" y="145" font-size="11" fill="#555">D</text>
+  <text x="118" y="398" font-size="11" fill="#555" text-anchor="end">A</text>
+  <text x="382" y="398" font-size="11" fill="#555">B</text>
+  <text x="95" y="270" font-size="11.5" fill="#333" transform="rotate(-90 95 270)" text-anchor="middle">columna W8×31 — h = 4 m</text>
+  <text x="250" y="172" font-size="11.5" fill="#333" text-anchor="middle">viga W8×18 (débil) — L = 4 m</text>
+
+  <!-- leyenda de rótulas -->
+  <circle cx="145" cy="425" r="7" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.3"/>
+  <text x="158" y="429" font-size="11.5" fill="#333">rótula de columna: <tspan font-weight="bold">P-M</tspan> (interactúa con el axial)</text>
+  <circle cx="145" cy="445" r="7" fill="#e34948" stroke="#8a1f1f" stroke-width="1.3"/>
+  <text x="158" y="449" font-size="11.5" fill="#333">rótula de viga: <tspan font-weight="bold">M3</tspan> (momento puro)</text>
+
+  <!-- ═══ panel (b): backbone ═══ -->
+  <text x="700" y="60" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(b) backbone momento–rotación (ASCE 41 / FEMA 356)</text>
+
+  <!-- ejes -->
+  <line x1="540" y1="380" x2="900" y2="380" stroke="#888" stroke-width="1.2" marker-end="url(#ak)"/>
+  <line x1="540" y1="380" x2="540" y2="110" stroke="#888" stroke-width="1.2" marker-end="url(#ak)"/>
+  <text x="905" y="384" font-size="11.5" fill="#555">θ (rotación)</text>
+  <text x="540" y="102" font-size="11.5" fill="#555" text-anchor="middle">M</text>
+
+  <!-- curva A-B-C-D-E -->
+  <polyline points="540,380 600,200 760,182 780,320 890,320" fill="none" stroke="#2a78d6" stroke-width="2.6"/>
+  <!-- nivel Mp (guion) -->
+  <line x1="540" y1="200" x2="600" y2="200" stroke="#999" stroke-width="0.9" stroke-dasharray="4 3"/>
+
+  <!-- puntos rotulados -->
+  <g font-size="11" fill="#222">
+    <circle cx="600" cy="200" r="4" fill="#2a78d6"/><text x="602" y="194">B</text>
+    <circle cx="760" cy="182" r="4" fill="#2a78d6"/><text x="758" y="176">C</text>
+    <circle cx="780" cy="320" r="4" fill="#2a78d6"/><text x="784" y="316">D</text>
+    <circle cx="890" cy="320" r="4" fill="#2a78d6"/><text x="878" y="314">E</text>
+    <text x="524" y="384" text-anchor="end">A</text>
+  </g>
+
+  <!-- niveles de aceptación IO / LS / CP en la rama plástica -->
+  <g stroke="#eda100" stroke-width="1.6">
+    <line x1="648" y1="190" x2="648" y2="205"/>
+    <line x1="696" y1="186" x2="696" y2="201"/>
+    <line x1="736" y1="183" x2="736" y2="198"/>
+  </g>
+  <g font-size="9.5" fill="#a06f00" text-anchor="middle">
+    <text x="648" y="223">IO</text><text x="696" y="223">LS</text><text x="736" y="223">CP</text>
+  </g>
+
+  <!-- anotaciones -->
+  <text x="612" y="196" font-size="10.5" fill="#0f3d78">B: fluencia a Mp,esp = Fye·Z</text>
+  <text x="612" y="238" font-size="10.5" fill="#b02a1a">↑ el axial baja el nivel de B</text>
+  <text x="612" y="252" font-size="10.5" fill="#b02a1a">   según 1.18(1 − P/PCL)</text>
+  <text x="700" y="352" font-size="10.5" fill="#555" text-anchor="middle">C→D: cae a 0.2·M (residual)</text>
+</svg>
