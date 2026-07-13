@@ -134,6 +134,12 @@ Dos decisiones de modelación hacen comparable todo el barrido:
    puro, independiente de la magnitud de $V$. Y el caso de pandeo entrega gratis el
    $\lambda_{cr}$ del modo de sway — la tercera referencia, $1/(1-1/\lambda_{cr})$.
 
+<Figure
+  src="/pdelta/dialogo-casos-encadenados.png"
+  alt="Dos diálogos Load Case Data de SAP2000 lado a lado: el caso GRAV_25 Static Nonlinear con Geometric Nonlinearity en P-Delta cargando solo el patrón GRAV, y el caso LAT2_25 Static lineal cuyas condiciones iniciales usan la rigidez al final del caso GRAV_25"
+  caption="La pareja de casos que mide la amplificación, en pantalla: GRAV_25 (no lineal, Geometric Nonlinearity = P-Delta, solo gravedad) deja la rigidez degradada, y LAT2_25 (lineal) aplica el patrón lateral usando la rigidez al final de GRAV_25 — el selector de Initial Conditions del caso lineal es donde vive la técnica."
+/>
+
 En total: **294 geometrías, ~5000 casos, 17 136 mediciones piso a piso, cero errores**,
 en poco más de una hora de SAP2000.
 
