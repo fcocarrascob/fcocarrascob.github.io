@@ -1,0 +1,232 @@
+---
+title: "Armar el GPT: todo lo que rodea a la atención"
+description: "Con la atención ya construida, el capítulo 4 de Raschka codifica el resto del transformer y ensambla un GPT-2 de 124 millones de parámetros funcional: layer normalization para estabilizar, feed-forward con GELU, conexiones residuales contra el gradiente que se desvanece, y el transformer block que junta todo con Pre-LayerNorm. Se apila 12 veces, se cuenta el weight tying (163M→124M), y se genera texto autorregresivo… que sin entrenar es puro galimatías. Apuntes del Cap. 4."
+pubDate: 2026-07-13
+tags: ["llm", "gpt", "transformer", "layer normalization", "gelu", "residual connections", "raschka"]
+subsection: "llm-from-scratch"
+chapter: "Cap. 4 — Implementar un modelo GPT desde cero"
+source: "Sebastian Raschka, Build a Large Language Model (From Scratch), Manning 2024, Cap. 4 (pp. 90–127)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En el [capítulo 3](/apuntes/llm-from-scratch-cap3-mecanismos-de-atencion)
+construimos la pieza difícil: el mecanismo de **atención**, ese que deja a cada
+token mirar a los demás. Pero la atención sola no es un LLM. Le falta la
+carcasa: las capas que la estabilizan, la alimentan y la apilan hasta formar una
+red profunda de verdad.
+
+El capítulo 4 codifica esa carcasa y ensambla un **GPT-2 de 124 millones de
+parámetros** entero y funcional. Y trae una sorpresa tranquilizadora: la
+arquitectura de un LLM es **menos complicada de lo que parece**, porque casi
+todo son bloques repetidos. Vamos a construir cuatro componentes nuevos, juntarlos
+en un *transformer block*, y repetir ese bloque doce veces.
+
+<Figure
+  src="/apuntes/llm-from-scratch/gpt-architecture.svg"
+  alt="Diagrama vertical de la arquitectura GPT. Desde arriba: el texto tokenizado entra, se convierte en token embeddings y positional embeddings que se suman, pasan por un dropout, luego por una pila de 12 transformer blocks (cada uno con LayerNorm más atención multi-cabeza enmascarada, conexión residual y dropout, después LayerNorm más feed forward con GELU, otra residual y dropout), después una LayerNorm final, una capa lineal de salida que produce 50257 logits por token, y finalmente un argmax que elige el siguiente token."
+  caption="El GPT es un sándwich: embeddings abajo, cabeza lineal arriba, y en medio el mismo transformer block repetido 12 veces."
+  width={520}
+/>
+
+## 1. Layer normalization: mantener los números a raya
+
+Las redes muy profundas sufren de gradientes que **se desvanecen o explotan**:
+las activaciones crecen o se encogen capa a capa hasta que el entrenamiento se
+vuelve inestable. La **layer normalization** ataca esto reescalando las
+activaciones de cada capa para que tengan **media 0 y varianza 1**.
+
+```python
+class LayerNorm(nn.Module):
+    def __init__(self, emb_dim):
+        super().__init__()
+        self.eps = 1e-5
+        self.scale = nn.Parameter(torch.ones(emb_dim))
+        self.shift = nn.Parameter(torch.zeros(emb_dim))
+    def forward(self, x):
+        mean = x.mean(dim=-1, keepdim=True)
+        var = x.var(dim=-1, keepdim=True, unbiased=False)
+        norm_x = (x - mean) / torch.sqrt(var + self.eps)
+        return self.scale * norm_x + self.shift
+```
+
+Dos detalles: `scale` y `shift` son **entrenables** —el modelo puede
+deshacer parte de la normalización si le conviene—, y `eps` evita dividir por
+cero.
+
+<Note type="info" title="Layer norm, no batch norm">
+Si vienes de visión por computador quizá conozcas la *batch* normalization, que
+normaliza a lo largo del batch. La *layer* norm normaliza sobre la **dimensión
+de features** de cada token, **independiente del tamaño de batch**. Eso la hace
+más estable cuando el batch varía —justo el escenario de los LLMs, donde la
+memoria dicta cuántas secuencias caben a la vez—.
+</Note>
+
+## 2. Feed-forward con GELU: pensar en cada posición
+
+La atención mezcla información *entre* tokens. Falta una parte que procese cada
+posición **por su cuenta**: la **feed forward network**, un MLP diminuto que
+**expande a un espacio cuatro veces más grande y vuelve a contraer**.
+
+```python
+nn.Sequential(
+    nn.Linear(emb_dim, 4 * emb_dim),   # 768 → 3072
+    GELU(),
+    nn.Linear(4 * emb_dim, emb_dim),   # 3072 → 768
+)
+```
+
+Entra en 768 dimensiones, se estira a 3072, la no-linealidad hace su trabajo, y
+se comprime de vuelta a 768. Esa uniformidad de entrada y salida es la que
+permite apilar bloques sin andar ajustando tamaños.
+
+La no-linealidad es **GELU** (*Gaussian Error Linear Unit*), y no es un ReLU
+cualquiera:
+
+<Figure
+  src="/apuntes/llm-from-scratch/gelu-vs-relu.svg"
+  alt="Gráfico comparando GELU y ReLU. El eje horizontal es x de -3 a 3, el vertical es f(x). ReLU (línea gris punteada) es cero para x negativo y luego sube en línea recta. GELU (línea azul continua) es una curva suave que sigue de cerca a ReLU para x positivo, pasa suavemente por el origen y, para valores negativos, en lugar de ser cero tiene una pequeña depresión bajo el eje: deja pasar un gradiente distinto de cero para los negativos."
+  caption="ReLU corta en seco los negativos a 0; GELU es suave y deja pasar un gradiente pequeño para los negativos, lo que mejora la optimización en redes profundas."
+  width={560}
+/>
+
+<Note type="tip" title="Por qué suave gana a anguloso">
+ReLU tiene un codo en cero y aplasta todos los negativos a 0: una neurona que
+recibe entradas negativas deja de aportar al aprendizaje. GELU es suave y da un
+gradiente pequeño incluso para negativos, así que esas neuronas siguen ajustando
+—con menos fuerza, pero siguen—. En redes muy profundas, esos matices se notan.
+</Note>
+
+## 3. Conexiones residuales: un atajo para el gradiente
+
+Aun con la normalización, un problema persiste en redes profundas: el
+**gradiente que se desvanece**. Al propagarse hacia atrás, se encoge capa tras
+capa, y las primeras capas apenas aprenden. La solución es de una elegancia casi
+tramposa: **sumar la entrada de una capa a su salida**.
+
+<Equation label="residual">
+$$
+\mathbf{x} \;\leftarrow\; \mathbf{x} + f(\mathbf{x})
+$$
+</Equation>
+
+Ese `+ x` crea un **atajo** por el que el gradiente fluye directo, saltándose la
+capa. El libro lo demuestra con una red de cinco capas, midiendo el gradiente
+medio en cada una:
+
+<Figure
+  src="/apuntes/llm-from-scratch/residual-gradients.svg"
+  alt="Comparación de dos redes de cinco capas. A la izquierda, sin conexiones residuales: los gradientes medios por capa se desvanecen hacia las capas tempranas, de 0.0050 en la capa 5 a 0.0002 en la capa 1, marcados en rojo cada vez más intenso. A la derecha, con conexiones residuales: los gradientes se mantienen grandes en todas las capas, alrededor de 0.22 en la capa 1, marcados en verde, gracias a las flechas de atajo que saltan capas."
+  caption="Sin atajos, el gradiente llega casi extinto a las capas tempranas (0.0002). Sumar la entrada a la salida le da un camino corto y el gradiente sobrevive (~0.22)."
+  width={640}
+/>
+
+La diferencia es de tres órdenes de magnitud. Las conexiones residuales no son un
+adorno: son lo que hace *entrenable* a un modelo profundo.
+
+## 4. El transformer block: juntar las piezas
+
+Ahora ensamblamos. Un **transformer block** tiene dos subcapas —la atención y el
+feed-forward—, y cada una viene envuelta en el mismo patrón: normalizar,
+procesar, dropout, y sumar el atajo.
+
+```python
+def forward(self, x):
+    shortcut = x
+    x = self.norm1(x); x = self.att(x); x = self.drop_shortcut(x)
+    x = x + shortcut               # residual de la atención
+    shortcut = x
+    x = self.norm2(x); x = self.ff(x); x = self.drop_shortcut(x)
+    x = x + shortcut               # residual del feed-forward
+    return x
+```
+
+<Note type="info" title="Pre-LayerNorm: normalizar antes, no después">
+Fíjate en el orden: la `LayerNorm` va **antes** de cada submódulo. Es el esquema
+*Pre-LayerNorm*. El transformer original de 2017 la ponía después
+(*Post-LayerNorm*), pero se descubrió que normalizar antes entrena de forma más
+estable. Es el estándar en los GPT modernos.
+</Note>
+
+Lo elegante: el bloque **preserva la forma**. Entra un tensor `[2, 4, 768]` y
+sale otro `[2, 4, 768]`. Las dimensiones no cambian, pero el *contenido* de cada
+vector se re-codifica incorporando el contexto de toda la secuencia. Por eso se
+pueden apilar tantos como uno quiera.
+
+## 5. El GPT completo (y el misterio de los 163 millones)
+
+Con el bloque listo, el modelo entero es sorprendentemente corto: embeddings de
+token y posición → dropout → **12 transformer blocks** → LayerNorm final → una
+cabeza lineal que proyecta a los **50 257 logits** del vocabulario (un puntaje
+por cada palabra posible como siguiente token).
+
+Al contar los parámetros aparece una sorpresa: **163 millones**, no los 124 del
+nombre. ¿De dónde sale la diferencia?
+
+<Note type="warning" title="Weight tying: la matriz que se usa dos veces">
+GPT-2 usa <em>weight tying</em>: reutiliza la matriz de embedding de token —de
+forma <code>[50257, 768]</code>— también como capa de salida. Son los dos
+tensores más grandes del modelo y son el mismo. Contándolo una sola vez, los
+163M bajan a los <strong>124M</strong> canónicos. (Raschka usa capas separadas
+porque entrena algo mejor, pero lo deja anotado para cuando carguemos los pesos
+de OpenAI en el capítulo 6.)
+</Note>
+
+En `float32`, esos 163M de parámetros ocupan **621.83 MB**. Y las variantes más
+grandes de GPT-2 (345M, 762M, 1542M) salen de la *misma clase* cambiando solo la
+config: más dimensiones, más cabezas, más bloques.
+
+## 6. Generar texto: un token a la vez
+
+Con el modelo armado, generar es un bucle **autorregresivo**: predecir el
+siguiente token, anexarlo, y repetir con el contexto crecido.
+
+```python
+for _ in range(max_new_tokens):
+    idx_cond = idx[:, -context_size:]          # recorta al contexto máximo
+    with torch.no_grad():
+        logits = model(idx_cond)
+    logits = logits[:, -1, :]                  # solo el último token importa
+    probas = torch.softmax(logits, dim=-1)
+    idx_next = torch.argmax(probas, dim=-1, keepdim=True)  # el más probable
+    idx = torch.cat((idx, idx_next), dim=1)    # anexar y repetir
+```
+
+De la salida se toma el vector del **último** token, se pasa por softmax y se
+elige el índice de mayor valor —el token más probable—. Esto es *greedy
+decoding*. (El softmax es hasta redundante aquí: como es monótono, `argmax`
+sobre los logits crudos da el mismo resultado.)
+
+<Note type="warning" title="Y el resultado es… galimatías">
+Le damos el contexto <code>"Hello, I am"</code> y pedimos seis tokens. La
+respuesta:
+
+<div style="font-family: monospace; font-size: 0.9em; margin-top: 0.4em;">
+Hello, I am Featureiman Byeswickattribute argue
+</div>
+
+Basura. Pero no es un error: la arquitectura está completa y correcta. Lo que
+falta es el <strong>entrenamiento</strong>. El modelo tiene pesos aleatorios;
+nunca vio una sola frase. Es un cerebro perfectamente formado y absolutamente
+vacío.
+</Note>
+
+## Lo que sigue
+
+En dos capítulos armamos el LLM entero: el 3 le dio el mecanismo para mirar, el 4
+le construyó el cuerpo —normalización, feed-forward, residuales, y la pila de
+transformer blocks— y lo puso a generar. Pero generar con pesos al azar produce
+ruido. Toda la maquinaria está inerte hasta que aprenda de datos.
+
+Ese es el trabajo del capítulo 5: el **pretraining**. Definir una función de
+pérdida, medir qué tan mal predice, y ajustar esos 124 millones de parámetros
+hasta que el galimatías se vuelva lenguaje. Es donde el cerebro vacío empieza a
+llenarse, y el próximo apunte de la serie.
+
+---
+
+*Apunte del Capítulo 4 de [Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
+de Sebastian Raschka (Manning, 2024). Los valores numéricos y ejemplos de código siguen
+los del libro.*

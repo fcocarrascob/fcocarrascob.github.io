@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="rg-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="720" height="420" fill="#ffffff"/>
+
+  <text x="180" y="38" text-anchor="middle" font-size="14" fill="#b91c1c" font-weight="600">Sin shortcut connections</text>
+  <text x="540" y="38" text-anchor="middle" font-size="14" fill="#15803d" font-weight="600">Con shortcut connections</text>
+
+  <!-- LEFT: without -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" text-anchor="middle">
+    <!-- layers from 1 (top) to 5, gradient shrinking downward means toward layer 1 -->
+    <rect x="90" y="60" width="180" height="30" rx="5" fill="#fef2f2" stroke="#fca5a5"/><text x="180" y="80" fill="#7f1d1d">Capa 5   grad 0.0050</text>
+    <rect x="90" y="112" width="180" height="30" rx="5" fill="#fef2f2" stroke="#fca5a5"/><text x="180" y="132" fill="#7f1d1d">Capa 4   grad 0.0014</text>
+    <rect x="90" y="164" width="180" height="30" rx="5" fill="#fee2e2" stroke="#fca5a5"/><text x="180" y="184" fill="#7f1d1d">Capa 3   grad 0.0007</text>
+    <rect x="90" y="216" width="180" height="30" rx="5" fill="#fecaca" stroke="#f87171"/><text x="180" y="236" fill="#7f1d1d">Capa 2   grad 0.0001</text>
+    <rect x="90" y="268" width="180" height="30" rx="5" fill="#fca5a5" stroke="#ef4444"/><text x="180" y="288" fill="#450a0a">Capa 1   grad 0.0002</text>
+  </g>
+  <path d="M300,80 C310,180 310,200 300,283" stroke="#6b7280" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#rg-ar)"/>
+  <text x="332" y="185" font-size="10.5" fill="#6b7280" transform="rotate(90 332 185)">backprop</text>
+
+  <!-- RIGHT: with -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" text-anchor="middle">
+    <rect x="450" y="60" width="180" height="30" rx="5" fill="#f0fdf4" stroke="#86efac"/><text x="540" y="80" fill="#14532d">Capa 5   grad 1.33</text>
+    <rect x="450" y="112" width="180" height="30" rx="5" fill="#f0fdf4" stroke="#86efac"/><text x="540" y="132" fill="#14532d">Capa 4   grad 0.27</text>
+    <rect x="450" y="164" width="180" height="30" rx="5" fill="#dcfce7" stroke="#86efac"/><text x="540" y="184" fill="#14532d">Capa 3   grad 0.33</text>
+    <rect x="450" y="216" width="180" height="30" rx="5" fill="#dcfce7" stroke="#4ade80"/><text x="540" y="236" fill="#14532d">Capa 2   grad 0.21</text>
+    <rect x="450" y="268" width="180" height="30" rx="5" fill="#bbf7d0" stroke="#22c55e"/><text x="540" y="288" fill="#052e16">Capa 1   grad 0.22</text>
+  </g>
+  <!-- skip arrows -->
+  <g stroke="#22c55e" stroke-width="1.5" fill="none">
+    <path d="M642,75 C672,120 672,150 642,127" marker-end="url(#rg-ar)"/>
+    <path d="M642,179 C672,224 672,254 642,231" marker-end="url(#rg-ar)"/>
+  </g>
+  <text x="678" y="175" font-size="10.5" fill="#16a34a" transform="rotate(90 678 175)">skip</text>
+
+  <!-- caption -->
+  <line x1="40" y1="330" x2="680" y2="330" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="358" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Por qué importan las conexiones residuales.</text>
+  <text x="360" y="382" text-anchor="middle" font-size="12.5" fill="#6b7280">Sin atajos, el gradiente se desvanece camino a las capas tempranas (0.0002, casi no aprenden).</text>
+  <text x="360" y="400" text-anchor="middle" font-size="12.5" fill="#6b7280">Sumar la entrada a la salida (x = x + f(x)) le da un camino corto: el gradiente sobrevive (~0.22).</text>
+</svg>

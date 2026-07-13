@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ga-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="560" height="560" fill="#ffffff"/>
+
+  <!-- vertical flow -->
+  <g text-anchor="middle" font-size="12.5">
+    <!-- tokenized text -->
+    <rect x="180" y="30" width="200" height="34" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="280" y="51" fill="#374151">"Every effort moves you"</text>
+
+    <!-- token + pos embeddings -->
+    <rect x="150" y="86" width="120" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="210" y="103" fill="#1e3a8a" font-size="11.5">Token</text>
+    <text x="210" y="118" fill="#1e3a8a" font-size="11.5">embeddings</text>
+    <rect x="290" y="86" width="120" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="350" y="103" fill="#1e3a8a" font-size="11.5">Positional</text>
+    <text x="350" y="118" fill="#1e3a8a" font-size="11.5">embeddings</text>
+    <text x="280" y="150" fill="#2563eb" font-size="16" font-weight="600">＋</text>
+
+    <!-- dropout -->
+    <rect x="205" y="160" width="150" height="26" rx="5" fill="#fafafa" stroke="#e5e7eb"/>
+    <text x="280" y="177" fill="#6b7280" font-size="11.5">Dropout</text>
+  </g>
+
+  <!-- transformer blocks stack -->
+  <g>
+    <rect x="150" y="204" width="260" height="150" rx="10" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="280" y="226" text-anchor="middle" font-size="13" fill="#5b21b6" font-weight="700">Transformer block  × 12</text>
+    <g text-anchor="middle" font-size="11" fill="#4c1d95">
+      <rect x="172" y="238" width="216" height="24" rx="4" fill="#ede9fe" stroke="#c4b5fd"/><text x="280" y="254">LayerNorm → Masked multi-head attention</text>
+      <rect x="172" y="266" width="216" height="20" rx="4" fill="#faf5ff" stroke="#e9d5ff"/><text x="280" y="280">＋ shortcut · dropout</text>
+      <rect x="172" y="292" width="216" height="24" rx="4" fill="#ede9fe" stroke="#c4b5fd"/><text x="280" y="308">LayerNorm → Feed forward (GELU)</text>
+      <rect x="172" y="320" width="216" height="20" rx="4" fill="#faf5ff" stroke="#e9d5ff"/><text x="280" y="334">＋ shortcut · dropout</text>
+    </g>
+  </g>
+
+  <!-- final norm + head -->
+  <g text-anchor="middle" font-size="12.5">
+    <rect x="195" y="374" width="170" height="28" rx="5" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="280" y="392" fill="#1e3a8a">Final LayerNorm</text>
+    <rect x="165" y="416" width="230" height="34" rx="6" fill="#dcfce7" stroke="#86efac"/>
+    <text x="280" y="432" fill="#166534">Linear out head</text>
+    <text x="280" y="446" fill="#166534" font-size="10.5">→ 50 257 logits por token</text>
+    <rect x="180" y="466" width="200" height="30" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="280" y="486" fill="#9a3412" font-size="11.5">argmax → siguiente token</text>
+  </g>
+
+  <!-- connecting arrows -->
+  <g stroke="#2563eb" stroke-width="1.6" fill="none">
+    <path d="M280,64 L280,84" marker-end="url(#ga-ar)"/>
+    <path d="M280,186 L280,202" marker-end="url(#ga-ar)"/>
+    <path d="M280,354 L280,372" marker-end="url(#ga-ar)"/>
+    <path d="M280,402 L280,414" marker-end="url(#ga-ar)"/>
+    <path d="M280,450 L280,464" marker-end="url(#ga-ar)"/>
+  </g>
+
+  <!-- caption -->
+  <line x1="40" y1="516" x2="520" y2="516" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="280" y="540" text-anchor="middle" font-size="13" fill="#6b7280">El GPT es un sándwich: embeddings abajo, cabeza lineal arriba, y en medio</text>
+  <text x="280" y="556" text-anchor="middle" font-size="13" fill="#6b7280">el mismo transformer block repetido 12 veces. Casi todo es repetición.</text>
+</svg>
