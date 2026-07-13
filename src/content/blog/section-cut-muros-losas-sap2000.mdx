@@ -101,8 +101,8 @@ $$V = P = 10\ \text{tonf} \qquad M = P \cdot (3 - 2) = 10\ \text{tonf·m}$$
 
 <Figure
   src="/section-cut-muros-losas-sap2000/dialogo-section-cut-group.png"
-  alt="Diálogo Section Cut Data de SAP2000: tipo Group con el grupo MURO_SOBRE_BASE, Result Type Analysis, y el bloque Result Location con Program Determined desmarcado y las coordenadas del punto de momento escritas a mano en la base del muro"
-  caption="El Section Cut By Group definido. El bloque que importa es *Result Location*: aquí ya está desmarcado «Program Determined» y fijado en la base — la primera trampa de esta nota vive en ese checkbox."
+  alt="Diálogo Section Cut Data de SAP2000: tipo Group con el grupo MURO_SOBRE_BASE, Result Type Analysis, y el bloque Results Reported at this Location en User Defined con las coordenadas del punto de momento en la base del muro (3, 0, 0)"
+  caption="El Section Cut By Group definido. El bloque que importa es *Results Reported at this Location*: aquí ya está en «User Defined» con el punto en la base (3; 0; 0) — la primera trampa de esta nota vive en ese selector, que por defecto queda en «Default»."
 />
 
 ### Resultado y la primera trampa: dónde se reporta el momento
@@ -120,14 +120,15 @@ $z = 2$ es $10 \cdot 1 = 10$ — exactamente lo que devuelve.
 
 <Figure
   src="/section-cut-muros-losas-sap2000/tabla-section-cut-forces.png"
-  alt="Tabla Section Cut Forces - Analysis de SAP2000 mostrando el corte del muro: F1 igual a 10 tonf y M2 igual a 30 tonf metro con la Result Location fijada en la base"
-  caption="La tabla *Section Cut Forces – Analysis* con la Result Location en la base: F1 = 10, M2 = 30. Con la ubicación por defecto la misma tabla muestra M2 = 10 — el número está bien, el punto de referencia no es el que uno cree."
+  alt="Tabla Section Cut Forces - Analysis de SAP2000 con dos filas: el corte SC_BASE2 con F1 igual a 10 tonf y M2 igual a 30 tonf metro (ubicación en la base), y el corte SC_MID3 con F1 igual a 10 y M2 igual a 10 (corte a media altura)"
+  caption="La tabla *Section Cut Forces – Analysis* con los dos cortes del muro: en la base (con la ubicación fijada ahí) M2 = 30 = P·H, y a media altura M2 = 10 = P·1. El mismo F1 = 10 en ambos — el cortante no depende del nivel, el momento sí."
 />
 
 <Note type="tip" title="Fija la Result Location a mano">
-Para leer el volcamiento respecto a la **base**, entra a la definición del Section Cut y fija la
-*Result Location* en $z = 0$ (desmarca "Program Determined" y escribe las coordenadas del punto de
-momento). Recién ahí `M2 = 30 = P·H`. Este es el origen más común del "el momento me da cualquier
+Para leer el volcamiento respecto a la **base**, entra a la definición del Section Cut y en
+*Results Reported at this Location* cambia «Default» por **«User Defined»**, con las coordenadas
+del punto de momento en $z = 0$ (en las tablas y la API el mismo ajuste se llama *Program
+Determined* / `SetResultLocation`). Recién ahí `M2 = 30 = P·H`. Este es el origen más común del "el momento me da cualquier
 cosa": el número está bien, pero está tomado respecto a un punto que no es el que uno quiere.
 </Note>
 
@@ -176,7 +177,7 @@ neutro.
 <Figure
   src="/section-cut-muros-losas-sap2000/dialogo-section-cut-quad.png"
   alt="Diálogo Section Cut Data de SAP2000 tipo Quadrilateral: la tabla de cuatro puntos con las coordenadas del plano vertical en x igual 3 que cruza el espesor de la losa, y la Result Location fijada en el plano medio"
-  caption="El corte By Quadrilateral en x = 3: los cuatro puntos definen el plano vertical que cruza el espesor completo de la losa. Si el plano no cubre todo el espesor, SAP suma solo una parte de las fuerzas internas."
+  caption="El corte By Quadrilateral en x = 3: los cuatro puntos definen el plano vertical que cruza el espesor completo de la losa (z = ±0,3). El grupo (aquí ALLSLAB) delimita qué elementos pueden entrar al corte. Si el plano no cubre todo el espesor, SAP suma solo una parte de las fuerzas internas."
 />
 
 ### Resultado: el momento cuadra con la teoría de viga
