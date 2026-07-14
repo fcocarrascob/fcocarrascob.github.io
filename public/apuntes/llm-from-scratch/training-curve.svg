@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="720" height="420" fill="#ffffff"/>
+  <text x="360" y="30" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">10 épocas sobre "The Verdict": aprende… y luego memoriza</text>
+
+  <!-- plot frame: x epochs 0..10 -> 70..430 ; y loss 0..10 -> 250..60 -->
+  <line x1="70" y1="60" x2="70" y2="250" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="70" y1="250" x2="440" y2="250" stroke="#9ca3af" stroke-width="1"/>
+  <text x="48" y="66" font-size="10" fill="#9ca3af" text-anchor="end">10</text>
+  <text x="48" y="158" font-size="10" fill="#9ca3af" text-anchor="end">5</text>
+  <text x="48" y="252" font-size="10" fill="#9ca3af" text-anchor="end">0</text>
+  <text x="34" y="160" font-size="11" fill="#6b7280" text-anchor="middle" transform="rotate(-90 34 160)">Loss</text>
+  <g font-size="10" fill="#9ca3af" text-anchor="middle">
+    <text x="70" y="266">0</text><text x="180" y="266">3</text><text x="290" y="266">6</text><text x="400" y="266">9</text>
+  </g>
+  <text x="255" y="284" font-size="11" fill="#6b7280" text-anchor="middle">Épocas</text>
+
+  <!-- train loss: 9.78 -> 0.39 ; y = 250 - loss*19 ; x = 70 + ep*37 -->
+  <polyline points="70,64 107,131 144,177 181,205 218,222 255,232 292,239 329,244 366,247 403,249 440,243"
+            fill="none" stroke="#2563eb" stroke-width="2.6"/>
+  <!-- val loss: 9.93 -> ~6.45, stagnates -->
+  <polyline points="70,61 107,128 144,132 181,128 218,126 255,125 292,124 329,124 366,123 403,123 440,127"
+            fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="6 4"/>
+
+  <!-- legend -->
+  <line x1="300" y1="80" x2="325" y2="80" stroke="#2563eb" stroke-width="2.6"/>
+  <text x="330" y="84" font-size="11" fill="#374151">Training loss</text>
+  <line x1="300" y1="98" x2="325" y2="98" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="330" y="102" font-size="11" fill="#374151">Validation loss</text>
+
+  <!-- overfitting gap annotation -->
+  <text x="430" y="185" font-size="10.5" fill="#b91c1c" text-anchor="middle">brecha =</text>
+  <text x="430" y="199" font-size="10.5" fill="#b91c1c" text-anchor="middle">overfitting</text>
+
+  <!-- RIGHT: text evolution -->
+  <text x="470" y="60" font-size="12" fill="#6b7280">La generación, época a época:</text>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="10">
+    <rect x="470" y="72" width="230" height="40" rx="5" fill="#fef2f2" stroke="#fca5a5"/>
+    <text x="480" y="88" fill="#7f1d1d">Ep 1:</text>
+    <text x="480" y="104" fill="#374151">…moves you,,,,,,,,,,,,</text>
+
+    <rect x="470" y="120" width="230" height="40" rx="5" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="480" y="136" fill="#9a3412">Ep 2:</text>
+    <text x="480" y="152" fill="#374151">…you, and, and, and…</text>
+
+    <rect x="470" y="168" width="230" height="54" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="480" y="184" fill="#14532d">Ep 10:</text>
+    <text x="480" y="200" fill="#374151">…you know," was one of</text>
+    <text x="480" y="214" fill="#374151">the axioms he laid down…</text>
+  </g>
+
+  <!-- caption -->
+  <line x1="40" y1="316" x2="680" y2="316" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="344" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">El cerebro vacío se llena… y se sobreajusta.</text>
+  <text x="360" y="367" text-anchor="middle" font-size="12.5" fill="#6b7280">La train loss cae de 9.78 a 0.39 y el texto se vuelve gramatical. Pero la val loss se estanca en ~6.45:</text>
+  <text x="360" y="385" text-anchor="middle" font-size="12.5" fill="#6b7280">con un dataset de 5145 tokens, el modelo memoriza el cuento en vez de aprender a generalizar.</text>
+</svg>

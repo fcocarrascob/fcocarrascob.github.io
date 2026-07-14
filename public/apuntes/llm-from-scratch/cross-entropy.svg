@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ce-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="760" height="340" fill="#ffffff"/>
+
+  <!-- pipeline boxes -->
+  <g text-anchor="middle">
+    <rect x="30" y="70" width="96" height="46" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="78" y="90" font-size="12.5" fill="#374151">Logits</text>
+    <text x="78" y="107" font-size="10" fill="#9ca3af">del modelo</text>
+
+    <rect x="162" y="70" width="110" height="46" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="217" y="90" font-size="12.5" fill="#1e3a8a">softmax</text>
+    <text x="217" y="107" font-size="10" fill="#6b7280">→ probabilidades</text>
+
+    <rect x="308" y="70" width="130" height="46" rx="6" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="373" y="88" font-size="11.5" fill="#1e3a8a">prob. del token</text>
+    <text x="373" y="105" font-size="11.5" fill="#1e3a8a">objetivo (target)</text>
+
+    <rect x="474" y="70" width="90" height="46" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="519" y="90" font-size="12.5" fill="#9a3412">log</text>
+    <text x="519" y="107" font-size="10" fill="#9a3412">promedio</text>
+
+    <rect x="600" y="70" width="130" height="46" rx="6" fill="#dcfce7" stroke="#86efac"/>
+    <text x="665" y="88" font-size="12" fill="#166534" font-weight="600">× −1 =</text>
+    <text x="665" y="105" font-size="11.5" fill="#166534">cross entropy</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#2563eb" stroke-width="1.6" fill="none">
+    <path d="M126,93 L160,93" marker-end="url(#ce-ar)"/>
+    <path d="M272,93 L306,93" marker-end="url(#ce-ar)"/>
+    <path d="M438,93 L472,93" marker-end="url(#ce-ar)"/>
+    <path d="M564,93 L598,93" marker-end="url(#ce-ar)"/>
+  </g>
+
+  <!-- numeric trace -->
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11" text-anchor="middle" fill="#6b7280">
+    <text x="217" y="150">[0.00002, …]</text>
+    <text x="373" y="150">7.45e-05</text>
+    <text x="519" y="150">−9.50</text>
+    <text x="665" y="150">10.79</text>
+  </g>
+
+  <!-- perplexity -->
+  <rect x="565" y="180" width="165" height="46" rx="6" fill="#faf5ff" stroke="#c4b5fd"/>
+  <text x="647" y="199" text-anchor="middle" font-size="12" fill="#5b21b6" font-weight="600">perplexity</text>
+  <text x="647" y="216" text-anchor="middle" font-size="11" fill="#6d28d9" font-family="'JetBrains Mono', ui-monospace, monospace">= exp(loss)</text>
+  <path d="M665,116 L660,178" stroke="#7c3aed" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#ce-ar)"/>
+
+  <!-- caption -->
+  <line x1="30" y1="256" x2="730" y2="256" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="380" y="284" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Cómo se mide qué tan mal escribe el modelo.</text>
+  <text x="380" y="307" text-anchor="middle" font-size="12.5" fill="#6b7280">La cross entropy castiga darle poca probabilidad al token correcto. Sin entrenar vale ~10.98 (≈ ln 50257):</text>
+  <text x="380" y="325" text-anchor="middle" font-size="12.5" fill="#6b7280">la perplexity de exp(10.98) ≈ 48 700 dice que el modelo duda entre ~48 700 tokens en cada paso.</text>
+</svg>

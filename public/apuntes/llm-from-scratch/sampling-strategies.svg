@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="720" height="400" fill="#ffffff"/>
+  <text x="360" y="30" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Temperature y top-k: dos perillas para la creatividad</text>
+
+  <!-- three mini bar charts: T=0.1 (sharp), T=1, T=5 (flat). tokens on x, prob bars -->
+  <!-- helper: baseline y=210, bars go up -->
+  <!-- Panel 1: T=0.1 sharp -->
+  <text x="140" y="60" text-anchor="middle" font-size="12" fill="#374151">Temperature 0.1 (conservador)</text>
+  <line x1="60" y1="210" x2="220" y2="210" stroke="#d1d5db" stroke-width="1"/>
+  <g fill="#93c5fd">
+    <rect x="70" y="200" width="16" height="10"/>
+    <rect x="95" y="205" width="16" height="5"/>
+    <rect x="120" y="80" width="16" height="130"/>
+    <rect x="145" y="207" width="16" height="3"/>
+    <rect x="170" y="130" width="16" height="80"/>
+    <rect x="195" y="208" width="16" height="2"/>
+  </g>
+  <text x="128" y="74" text-anchor="middle" font-size="9" fill="#1e3a8a">forward</text>
+
+  <!-- Panel 2: T=1 original -->
+  <text x="360" y="60" text-anchor="middle" font-size="12" fill="#374151">Temperature 1 (original)</text>
+  <line x1="280" y1="210" x2="440" y2="210" stroke="#d1d5db" stroke-width="1"/>
+  <g fill="#60a5fa">
+    <rect x="290" y="185" width="16" height="25"/>
+    <rect x="315" y="195" width="16" height="15"/>
+    <rect x="340" y="120" width="16" height="90"/>
+    <rect x="365" y="198" width="16" height="12"/>
+    <rect x="390" y="150" width="16" height="60"/>
+    <rect x="415" y="200" width="16" height="10"/>
+  </g>
+  <text x="348" y="114" text-anchor="middle" font-size="9" fill="#1e3a8a">forward</text>
+
+  <!-- Panel 3: T=5 flat -->
+  <text x="580" y="60" text-anchor="middle" font-size="12" fill="#374151">Temperature 5 (creativo)</text>
+  <line x1="500" y1="210" x2="660" y2="210" stroke="#d1d5db" stroke-width="1"/>
+  <g fill="#c4b5fd">
+    <rect x="510" y="170" width="16" height="40"/>
+    <rect x="535" y="178" width="16" height="32"/>
+    <rect x="560" y="150" width="16" height="60"/>
+    <rect x="585" y="180" width="16" height="30"/>
+    <rect x="610" y="162" width="16" height="48"/>
+    <rect x="635" y="182" width="16" height="28"/>
+  </g>
+  <text x="568" y="144" text-anchor="middle" font-size="9" fill="#5b21b6">forward</text>
+  <text x="593" y="228" text-anchor="middle" font-size="8.5" fill="#9333ea">…pizza 🍕</text>
+
+  <!-- top-k note -->
+  <rect x="200" y="250" width="320" height="52" rx="8" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="360" y="272" text-anchor="middle" font-size="12" fill="#9a3412" font-weight="600">top-k = 3</text>
+  <text x="360" y="290" text-anchor="middle" font-size="11" fill="#9a3412">solo los 3 mejores logits sobreviven; el resto → −∞ → prob 0</text>
+
+  <!-- caption -->
+  <line x1="40" y1="322" x2="680" y2="322" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="348" text-anchor="middle" font-size="12.5" fill="#6b7280"><tspan font-weight="600">Temperature</tspan> reescala la distribución: baja = afilada y predecible, alta = plana y diversa (a veces disparatada).</text>
+  <text x="360" y="366" text-anchor="middle" font-size="12.5" fill="#6b7280"><tspan font-weight="600">Top-k</tspan> recorta la cola: restringe el muestreo a los k tokens más probables. Se combinan para dar variedad sin caos.</text>
+  <text x="360" y="388" text-anchor="middle" font-size="11" fill="#9ca3af">Reemplazar argmax por muestreo multinomial es lo que hace que el modelo deje de recitar lo memorizado.</text>
+</svg>

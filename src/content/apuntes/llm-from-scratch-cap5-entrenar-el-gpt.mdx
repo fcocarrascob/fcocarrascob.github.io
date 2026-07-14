@@ -1,0 +1,155 @@
+---
+title: "Pretraining: el cerebro vacío aprende a escribir"
+description: "El capítulo 5 de Raschka entrena el GPT que armamos en el 4. Una brújula —la cross entropy loss y su prima interpretable, la perplexity— mide qué tan mal escribe; un bucle estándar de PyTorch con AdamW baja la pérdida de 9.78 a 0.39 en diez épocas y el texto pasa de comas sueltas a prosa; pero con un dataset de 5145 tokens el modelo memoriza (overfitting). Se cierra con las perillas del azar (temperature y top-k) y el atajo que evita gastar cientos de miles de dólares: cargar los pesos de GPT-2 de OpenAI. Apuntes del Cap. 5."
+pubDate: 2026-07-13
+tags: ["llm", "gpt", "pretraining", "cross entropy", "perplexity", "sampling", "raschka"]
+subsection: "llm-from-scratch"
+chapter: "Cap. 5 — Preentrenar con datos sin etiquetar"
+source: "Sebastian Raschka, Build a Large Language Model (From Scratch), Manning 2024, Cap. 5 (pp. 128–168)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 4](/apuntes/llm-from-scratch-cap4-armar-el-gpt) terminó con una
+imagen incómoda: un GPT completo, con sus 124 millones de parámetros, generando
+puro galimatías. *"Hello, I am Featureiman Byeswickattribute argue."* La
+arquitectura estaba entera pero vacía —pesos al azar, cero conocimiento del
+lenguaje—. Un cerebro perfectamente formado y absolutamente en blanco.
+
+El capítulo 5 lo llena. Y la sorpresa es que el mecanismo es sencillo: un bucle
+de entrenamiento **estándar** de PyTorch, con una tarea de una simpleza casi
+tonta —**adivinar el siguiente token**— repetida sobre montones de ejemplos
+hasta que los pesos absorban los patrones del idioma. Todo el capítulo gira en
+torno a una pregunta: *¿cómo sabemos si está aprendiendo?*
+
+## 1. La brújula: cross entropy y perplexity
+
+No se puede optimizar lo que no se mide. Antes del entrenamiento hace falta un
+número que diga **qué tan mal** predice el modelo. Ese número es la **cross
+entropy loss**, y se construye en unos pocos pasos: de los logits salen
+probabilidades (softmax), se mira la probabilidad que el modelo le dio al **token
+correcto**, se le toma el logaritmo, se promedia y se niega.
+
+<Figure
+  src="/apuntes/llm-from-scratch/cross-entropy.svg"
+  alt="Diagrama de tubería de la cross entropy loss. De izquierda a derecha: los logits del modelo pasan por softmax y dan probabilidades; se extrae la probabilidad del token objetivo (7.45e-05); se le aplica logaritmo (−9.50); se promedia; se multiplica por −1 y se obtiene la cross entropy loss (10.79). Una rama hacia abajo muestra que la perplexity es exp(loss)."
+  caption="La cross entropy castiga darle poca probabilidad al token correcto. Sin entrenar vale ~10.98 (≈ ln 50257); su exponencial, la perplexity (~48 700), dice cuántos tokens 'baraja' el modelo en cada paso."
+  width={720}
+/>
+
+<Note type="tip" title="Perplexity: la pérdida, pero legible">
+La cross entropy es útil para optimizar, pero poco intuitiva. La
+<strong>perplexity</strong> —simplemente <code>exp(loss)</code>— la traduce a algo
+que se entiende: el "número efectivo de tokens sobre los que el modelo está
+dudando". Una perplexity de 48 700 significa que, en cada paso, el modelo está
+tan perdido como si eligiera al azar entre 48 700 palabras. Entrenar consiste en
+bajar ese número.
+</Note>
+
+PyTorch calcula todo esto de una línea con
+`torch.nn.functional.cross_entropy(logits, targets)`. Para tener con qué
+entrenar y validar, Raschka usa un dataset minúsculo a propósito: el cuento
+*"The Verdict"* (5145 tokens), con un split 90/10.
+
+## 2. El bucle: diez épocas, y el texto cobra forma
+
+El entrenamiento es el patrón canónico de PyTorch, sin misterio:
+
+```python
+for epoch in range(num_epochs):
+    for input_batch, target_batch in train_loader:
+        optimizer.zero_grad()                              # 1. limpiar gradientes
+        loss = calc_loss_batch(input_batch, target_batch, model, device)
+        loss.backward()                                    # 2. calcular gradientes
+        optimizer.step()                                   # 3. actualizar pesos
+```
+
+El optimizador es **AdamW** (`lr=4e-4, weight_decay=0.1`), una variante de Adam
+que regulariza penalizando los pesos grandes. Diez épocas —unos cinco minutos en
+un laptop— y algo casi conmovedor ocurre: la pérdida cae de **9.78 a 0.39**, y
+el texto que el modelo genera va madurando ante nuestros ojos.
+
+<Figure
+  src="/apuntes/llm-from-scratch/training-curve.svg"
+  alt="A la izquierda, un gráfico de la pérdida contra las épocas: la training loss (azul) cae de casi 10 a 0.39, mientras la validation loss (roja punteada) baja al principio pero se estanca alrededor de 6.45, dejando una brecha creciente etiquetada como overfitting. A la derecha, la evolución del texto generado: en la época 1 solo comas repetidas, en la época 2 'and, and, and', en la época 10 una frase gramaticalmente correcta sobre axiomas."
+  caption="La train loss cae de 9.78 a 0.39 y el texto se vuelve gramatical. Pero la val loss se estanca en ~6.45: con 5145 tokens, el modelo memoriza el cuento en vez de generalizar."
+  width={680}
+/>
+
+<Note type="warning" title="Aprender no es lo mismo que memorizar">
+Fíjate en la brecha del gráfico. La training loss sigue cayendo, pero la
+validation loss se planta en ~6.45 después de la segunda época. Ese despegue es
+la firma del <strong>overfitting</strong>: el modelo no está aprendiendo el
+lenguaje, está <em>memorizando</em> el cuento palabra por palabra —de hecho, se
+puede buscar el texto generado y encontrarlo literal en "The Verdict"—. Es lo
+esperable con un dataset tan chico entrenado tantas épocas; lo normal es
+entrenar sobre un corpus enorme una sola pasada.
+</Note>
+
+## 3. Controlar el azar: temperature y top-k
+
+El modelo entrenado tiene un vicio: con *greedy decoding* (elegir siempre el
+token más probable) es **determinista** y tiende a recitar los pasajes que
+memorizó. Para que genere texto más original, se cambia el `argmax` por un
+**muestreo** —`torch.multinomial`, que elige proporcional a la probabilidad— y se
+le añaden dos perillas.
+
+<Figure
+  src="/apuntes/llm-from-scratch/sampling-strategies.svg"
+  alt="Tres mini gráficos de barras de la distribución de probabilidad sobre el vocabulario. Con temperature 0.1, la distribución es muy afilada: casi toda la probabilidad va a 'forward'. Con temperature 1, la distribución original, con 'forward' dominante pero con competencia. Con temperature 5, la distribución es casi plana y hasta 'pizza' recibe probabilidad. Abajo, una nota sobre top-k=3: solo los tres mejores logits sobreviven y el resto se pone a menos infinito."
+  caption="Temperature reescala la distribución (baja = afilada y predecible; alta = plana y diversa). Top-k recorta la cola dejando solo los k tokens más probables. Se combinan para dar variedad sin caer en disparates."
+  width={680}
+/>
+
+- **Temperature scaling** divide los logits por un número antes del softmax.
+  `T<1` afila la distribución (más conservador, tiende al greedy); `T>1` la
+  aplana (más creativo). Pasarse tiene consecuencias: a `T=5` el modelo llega a
+  escribir *"every effort moves you pizza"*.
+- **Top-k sampling** restringe la elección a los **k tokens más probables**,
+  enmascarando el resto con **−∞** —el mismísimo truco de la causal attention del
+  [capítulo 3](/apuntes/llm-from-scratch-cap3-mecanismos-de-atencion)— para que
+  su probabilidad tras el softmax sea cero. Así se poda la cola de tokens
+  absurdos.
+
+La función `generate` final combina ambas, más un token de fin de secuencia para
+cortar a tiempo.
+
+## 4. Guardar el trabajo — y no pagarlo dos veces
+
+Pretrainear es caro, así que el modelo hay que persistirlo. Se guarda el
+`state_dict` (el mapa de capa→parámetros) con `torch.save`, y para poder
+**continuar** entrenando conviene guardar también el estado del optimizador
+—AdamW arrastra medias históricas por cada peso, y sin ellas el entrenamiento
+tropieza al reanudar—.
+
+<Note type="info" title="El atajo de los 690.000 dólares">
+El libro pone la escala en perspectiva: entrenar un Llama 2 de 7B costó unas
+184 320 horas de GPU A100 —del orden de <strong>690 000 dólares</strong>—. Por eso
+el capítulo cierra cargando los pesos que OpenAI liberó de GPT-2: se descargan,
+se copian tensor a tensor a nuestra propia implementación (ajustando el contexto
+a 1024 y activando el bias de Q/K/V que GPT-2 sí usaba), y el modelo pasa a
+generar texto coherente —<em>"Every effort moves you toward finding an ideal new
+way to practice something!"</em>— sin haber pagado un centavo de entrenamiento.
+Que funcione es, además, la prueba de que la arquitectura de los capítulos 3 y 4
+era correcta: un solo tensor mal colocado y el resultado volvería a ser ruido.
+</Note>
+
+## Lo que sigue
+
+Con esto, el arco "from scratch" está completo: construimos la atención (cap. 3),
+el cuerpo del GPT (cap. 4), y ahora le enseñamos a escribir y le cargamos los
+pesos de un modelo de verdad (cap. 5). Tenemos un *foundation model* funcional.
+
+Lo que viene ya no es construir, sino **especializar**. El capítulo 6 toma este
+GPT preentrenado y lo afina para una tarea concreta —clasificar mensajes como
+spam o no spam—, el primero de los dos sabores de *fine-tuning*. El cerebro ya
+sabe leer y escribir; ahora aprende a hacer un trabajo. Y ese es el próximo
+apunte de la serie.
+
+---
+
+*Apunte del Capítulo 5 de [Build a Large Language Model (From Scratch)](https://github.com/rasbt/LLMs-from-scratch)
+de Sebastian Raschka (Manning, 2024). Los valores numéricos y ejemplos de código siguen
+los del libro.*
