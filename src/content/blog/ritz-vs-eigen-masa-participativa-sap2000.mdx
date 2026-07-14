@@ -75,12 +75,13 @@ la física.
 
 Es el caso industrial que muerde de verdad, muy NCh2369: un marco plano de 8 pisos con un
 sistema lateral rígido y **pisos flexibles con equipo pesado**. Cuatro decisiones lo hacen
-limpio y controlable, cada una con su llamada de API:
+limpio y controlable, cada una con su equivalente en la GUI y su llamada de API:
 
-1. **Plano XZ por grados de libertad activos, no restringiendo nudos.**
-   `Analyze.SetActiveDOF([UX, UY, UZ, RX, RY, RZ])` con solo `UX, UZ, RY` activos aísla el
-   plano de una vez, sin modos fuera de plano espurios y —clave— **sin acoplamiento
-   horizontal-vertical**, de modo que un Ritz arrancado desde `UX` queda puramente lateral.
+1. **Plano XZ por grados de libertad activos, no restringiendo nudos.** En
+   `Analyze ▸ Set Analysis Options`, el botón **«Plane Frame»** activa de una vez `UX, UZ, RY`
+   (por API, `Analyze.SetActiveDOF`). Aísla el plano sin modos fuera de plano espurios y
+   —clave— **sin acoplamiento horizontal-vertical**, de modo que un Ritz arrancado desde
+   `UX` queda puramente lateral.
 2. **Sistema lateral como *shear building*.** Diafragma rígido por piso
    (`ConstraintDef.SetDiaphragm`, iguala UX) y `RY` restringido en los nudos de columna
    (doble curvatura) → período lateral corto con columnas realistas de 0.5 m, e independiente
@@ -92,6 +93,12 @@ limpio y controlable, cada una con su llamada de API:
 4. **Toda la masa concentrada.** Densidad de material en cero
    (`PropMaterial.SetWeightAndMass`) y `PointObj.SetMass` en los nudos → $M_\text{total}$
    exacta y verificable, sin masa propia difusa que ensucie el balance.
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/gui-dof-plano.png"
+  alt="Diálogo Analysis Options de SAP2000. Arriba, «Available DOFs» con UX, UZ y RY marcados y UY, RX, RZ desmarcados (fila resaltada en rojo). Abajo, «Fast DOFs» con cuatro botones —Space Frame, Plane Frame, Plane Grid, Space Truss—; el botón «Plane Frame» (etiqueta «XZ Plane») está resaltado en rojo."
+  caption="Decisión 1 en la GUI: el botón «Plane Frame» del diálogo Analysis Options fija los grados de libertad activos a UX-UZ-RY (el plano XZ) de un clic, más limpio que restringir UY/RX/RZ nudo por nudo."
+/>
 
 <Note type="info">
 El acoplamiento horizontal-vertical no es un detalle cosmético. Con **diagonales** (un marco
@@ -119,6 +126,14 @@ uno—. El primer modo lateral, que por sí solo carga el **85.6 %** de la masa,
 en el **modo 9**. Y el patrón se repite hacia arriba: entre un modo lateral y el siguiente,
 Eigen intercala un racimo de ocho armónicos verticales que tampoco participan. Resultado:
 **90 % de masa UX a los 18 modos, 99 % a los 29.**
+
+Esto no es una abstracción del gráfico: es exactamente lo que muestra la tabla de SAP2000.
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/gui-tabla-masa.png"
+  alt="Tabla Modal Participating Mass Ratios de SAP2000 para el caso MODAL (Eigen), 18 primeras filas. Columnas Period, UX, UY, UZ, SumUX, SumUY, SumUZ. La columna SumUX (resaltada en rojo) vale prácticamente cero (valores del orden de 1e-19) en los modos 1 a 8 —todos con período ≈ 0.90 s y masa UZ— y salta a 0.856332 en el modo 9 (período 0.529 s), y a 0.947 en el modo 18."
+  caption="La misma historia en la tabla real (Display ▸ Show Tables ▸ Modal Participating Mass Ratios). La columna SumUX —la que la norma te pide vigilar— se queda en cero (los 10⁻¹⁹ son ruido numérico) durante los 8 modos verticales de T ≈ 0.90 s y recién salta a 0.856 en el modo 9. El contador de modos no te avisa de nada; esta columna sí."
+/>
 
 Ritz arrancado desde `Accel UX` hace exactamente lo contrario. La figura del censo muestra
 por qué:
@@ -205,40 +220,49 @@ el resultado. Ritz mal alimentado miente tan callado como Eigen truncado.
 
 ## Cómo se arma en SAP2000
 
-El caso Ritz es un tipo de caso de carga modal propio, gemelo del Eigen:
+El caso Ritz no es una opción escondida: es un **tipo de caso modal propio**, gemelo del
+Eigen. En `Define ▸ Load Cases ▸ Modify/Show Load Case`, un caso modal trae arriba el
+interruptor **Type of Modes: Eigen / Ritz Vectors**, y ahí está toda la diferencia — al
+elegir Ritz aparece la tabla **Loads Applied**, donde le declaras desde qué carga construir
+la base.
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/gui-caso-ritz.png"
+  alt="Diálogo Load Case Data - Modal de SAP2000. El nombre del caso es RITZUX, el tipo de caso es Modal. A la derecha, el grupo «Type of Modes» con la opción «Ritz Vectors» seleccionada (resaltada en rojo). Abajo, «Number of Modes: Maximum = 8». En la parte inferior la tabla «Loads Applied» (resaltada en rojo) con una fila: Load Type = Accel, Load Name = UX, Maximum Cycles = 0, Target Dynamic Participation Ratios = 0."
+  caption="El caso modal en modo Ritz. El interruptor «Type of Modes ▸ Ritz Vectors» (arriba a la derecha) lo distingue del Eigen por defecto; la tabla «Loads Applied» es la clave: aquí un único vector de arranque, Load Type = Accel, Load Name = UX. Para capturar también lo vertical se agrega una segunda fila Accel UZ."
+/>
+
+El caso espectral luego **apunta** a esa base con un solo dropdown —el mismo caso Response
+Spectrum puede colgar de Eigen o de Ritz sin tocar nada más—:
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/gui-caso-rs.png"
+  alt="Diálogo Load Case Data - Response Spectrum de SAP2000. Combinación modal CQC seleccionada. En el grupo «Modal Load Case», el dropdown «Use Modes from this Modal Load Case» muestra RITZUX (resaltado en rojo). Abajo, la tabla Loads Applied con Load Type = Accel, Load Name = U1, Function = NCH2369, Scale Factor = 9.8066."
+  caption="El caso Response Spectrum. El dropdown «Modal Load Case» es el interruptor del experimento: apunta a MODAL (Eigen) o a RITZUX (Ritz). Abajo, la carga U1 con la función NCh2369 y el factor de escala 9.8066 = g en metros — no el default 386, que es g en pulgadas."
+/>
+
+<Note type="info">
+**Para quien scriptea (OAPI).** Lo mismo por API, con las firmas verificadas:
 
 ```python
-# caso Eigen (por defecto)
-SapModel.LoadCases.ModalEigen.SetCase("MODAL")
-SapModel.LoadCases.ModalEigen.SetNumberModes("MODAL", 40, 1)
-
 # caso Ritz — arranque desde los vectores de aceleración de base
 SapModel.LoadCases.ModalRitz.SetCase("RITZUX")
 SapModel.LoadCases.ModalRitz.SetNumberModes("RITZUX", 8, 1)
 # SetLoads(nombre, nCargas, LoadType[], LoadName[], RitzMaxCycles[], TargetPar[])
-SapModel.LoadCases.ModalRitz.SetLoads(
-    "RITZUX", 1, ["Accel"], ["UX"], [0], [0.0])
-# para capturar también lo vertical: dos vectores de arranque
+SapModel.LoadCases.ModalRitz.SetLoads("RITZUX", 1, ["Accel"], ["UX"], [0], [0.0])
+# también lo vertical: dos vectores de arranque
 SapModel.LoadCases.ModalRitz.SetLoads(
     "RITZUXZ", 2, ["Accel", "Accel"], ["UX", "UZ"], [0, 0], [0.0, 0.0])
+SapModel.LoadCases.ResponseSpectrum.SetModalCase("RSX", "RITZUX")  # el switch
 ```
 
-El espectro luego **apunta** a la base que quieras
-(`ResponseSpectrum.SetModalCase("RSX", "RITZUX")`) — es el interruptor del experimento: un
-mismo caso RS puede colgar de Eigen o de Ritz. Tres trampas de API que costaron sangre y que
-no están en la documentación del *bridge*:
-
-- **`ModalRitz.SetLoads`** toma arrays paralelos por vector de arranque: tipo (`"Accel"`,
-  `"Load"`, `"Link"`), nombre (`"UX"/"UZ"` para aceleraciones, o el patrón de carga),
-  `RitzMaxCycles` (0 = sin límite) y `TargetPar` (participación objetivo, 0 = por defecto).
-- **`Analyze.GetCaseStatus()` no toma nombre de caso**: es la versión que devuelve *todos*
-  los casos `(N, nombres[], estados[])`. Pasarle un string revienta con un opaco
-  `'str' object cannot be interpreted as an integer`.
-- **`Results.Setup.SetCaseSelectedForOutput` no filtra los resultados modales**:
-  `ModalParticipatingMassRatios` devuelve *todos* los casos seleccionados concatenados, así
-  que hay que **particionar por el array `LoadCase`** que viene en los resultados. Si no, lees
-  los modos de un caso creyendo que son de otro (a mí me dio dos bloques idénticos hasta que
-  me di cuenta).
+Tres trampas que no están en la documentación: **`Analyze.GetCaseStatus()` no toma nombre de
+caso** (devuelve todos; pasarle un string revienta con un opaco `'str' object cannot be
+interpreted as an integer`); **`Results.Setup.SetCaseSelectedForOutput` no filtra los
+resultados modales** —`ModalParticipatingMassRatios` devuelve todos los casos seleccionados
+concatenados, hay que **particionar por el array `LoadCase`**—; y el **factor de escala del
+RS es g = 9.80665 en metros**, no el default 386.
+</Note>
 
 ## Cuándo importa
 
