@@ -1,0 +1,195 @@
+---
+title: "Los bloques matemáticos: tensores, gradiente y backpropagation"
+description: "El capítulo 2 de Chollet enseña la matemática del deep learning sin una sola ecuación con notación griega — su lema es que 'la descripción más precisa de una operación matemática es su código'. Arranca con una red Keras que clasifica dígitos MNIST en 15 líneas y luego destripa lo que pasó por debajo: los datos son tensores; una capa es una transformación afín seguida de una no linealidad (y sin esa no linealidad, una red profunda colapsa a un modelo lineal); aprender es descenso de gradiente; y backpropagation no es más que la regla de la cadena recorriendo el grafo de cómputo hacia atrás. Cierra reimplementando MNIST desde cero para probar que no hay magia. Apuntes del Cap. 2."
+pubDate: 2026-07-13
+tags: ["deep learning", "chollet", "keras", "tensores", "gradient descent", "backpropagation", "mnist"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 2 — Los bloques matemáticos de las redes neuronales"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 2 (PDF 39–82)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 1](/apuntes/deep-learning-with-python-cap1-que-es-deep-learning)
+dibujó el mapa; el 2 baja al motor. Y lo hace con una decisión pedagógica que
+agradezco: **cero notación matemática**. La tesis de Chollet es explícita —*"la
+descripción más precisa y sin ambigüedad de una operación matemática es su código
+ejecutable"*— así que todo se muestra como snippets de NumPy. La estructura del
+capítulo también es deliberada: **primero un ejemplo que funciona**, después la
+explicación de por qué funciona.
+
+## 1. El "hola mundo": MNIST en 15 líneas
+
+El ejemplo es clasificar imágenes de 28×28 en escala de grises en diez clases
+(los dígitos 0–9), con 60 000 imágenes de entrenamiento y 10 000 de prueba.
+
+```python
+from keras.datasets import mnist
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+
+import keras
+from keras import layers
+model = keras.Sequential([
+    layers.Dense(512, activation="relu"),
+    layers.Dense(10, activation="softmax"),
+])
+model.compile(optimizer="adam",
+              loss="sparse_categorical_crossentropy",
+              metrics=["accuracy"])
+
+train_images = train_images.reshape((60000, 28 * 28)).astype("float32") / 255
+model.fit(train_images, train_labels, epochs=5, batch_size=128)
+```
+
+El bloque de construcción es la **capa** (`layer`): un filtro que recibe datos y
+los devuelve en una forma más útil. En la **compilación** se eligen tres cosas —
+la **pérdida** (qué minimizar), el **optimizador** (cómo descender) y las
+**métricas** (qué reportar)—. Tras cinco épocas, la accuracy de entrenamiento
+llega a ~98.9 %, pero en test baja a ~97.8 %. Esa brecha ya es un anticipo del
+**overfitting**, tema central del capítulo 5. Todo lo demás del capítulo es
+responder *¿qué pasó por debajo?*.
+
+## 2. Los datos son tensores
+
+Un **tensor** es un contenedor de números que generaliza las matrices a un número
+arbitrario de ejes. Todo lo que una red toca —imágenes, texto, sonido, video— es
+un tensor de `float32`.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tensores.svg"
+  alt="Escalera de tensores por rank. Escalar (rank 0): un número, 12, shape (). Vector (rank 1): cuatro celdas [12,3,6,14], shape (4,). Matriz (rank 2): una grilla 3×3, shape (3,3). Rank-3: un cubo, shape (3,3,5). Abajo, la nota: tres atributos definen un tensor — rank, shape y dtype; el eje 0 es el de muestras y el entrenamiento lo recorre en batches."
+  caption="Escalar → vector → matriz → cubo. Un tensor queda definido por tres atributos: rank (nº de ejes), shape (tamaño por eje) y dtype."
+  width={760}
+/>
+
+Para MNIST: `ndim == 3`, `shape == (60000, 28, 28)`, `dtype == uint8` — un arreglo
+de 60 000 matrices de 28×28. El **eje 0 es el eje de muestras**; como el
+entrenamiento nunca procesa todo de golpe sino en **batches** (`train_images[:128]`),
+ese eje pasa a llamarse **batch axis**. El resto son moldes que se repiten: datos
+vectoriales `(samples, features)`, series de tiempo `(samples, timesteps, features)`,
+imágenes `(samples, height, width, channels)` y video con un eje más.
+
+## 3. Una capa es una transformación geométrica
+
+Una capa `Dense` computa, en el fondo, una sola línea:
+
+```python
+output = relu(matmul(input, W) + b)   # W y b son los pesos de la capa
+```
+
+Chollet insiste en leer esto **geométricamente**. Como los números de un tensor
+son coordenadas de puntos, cada operación es una transformación del espacio:
+`matmul(W, x)` rota y escala; `+ b` traslada; juntos forman una **transformación
+afín** —exactamente lo que hace una capa `Dense`—. La `relu` (que es solo
+`max(x, 0)`) le agrega el doblez no lineal.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/capa-geometrica.svg"
+  alt="Cadena de cuatro cajas. Del 'Espacio de entrada', matmul(W,x) (mapa lineal) lleva a 'Rotado / escalado'; + b (traslación) lleva a 'Resultado afín'; relu (no linealidad) lleva a la 'Salida de la capa' en azul sólido. Abajo, la advertencia de que sin la relu, apilar capas afines colapsa a una sola: W2·(W1·x+b1)+b2 = (W2·W1)·x + (W2·b1+b2)."
+  caption="Dense = transformación afín + activación. La no linealidad no es un adorno: sin ella, toda la red se derrumba a una única capa lineal."
+  width={760}
+/>
+
+<Note type="warning" title="Por qué las activaciones no son opcionales">
+Componer dos transformaciones afines da <em>otra</em> transformación afín. Así
+que una pila de capas <code>Dense</code> <strong>sin</strong> activación es
+matemáticamente idéntica a <strong>una sola</strong> capa: una red "profunda" que
+en realidad es un modelo lineal disfrazado. La <code>relu</code> entre capas es lo
+que le da a la red su capacidad de representar funciones complejas.
+</Note>
+
+De ahí sale la metáfora más memorable del capítulo: dos hojas de papel (dos
+clases) apretadas juntas en una bola arrugada. Lo que hace una red es aprender
+una **secuencia de movimientos simples que des-arruga** esa bola hasta que las dos
+clases quedan limpiamente separables. Cada capa desenreda un poco; la profundidad
+vuelve tratable un desenredo que de una sola vez sería imposible.
+
+## 4. Aprender es descenso de gradiente
+
+Los pesos empiezan **aleatorios**. Ajustarlos gradualmente, guiados por la
+pérdida, *es* el entrenamiento. El bucle:
+
+1. Tomar un batch de muestras `x` y objetivos `y_true`.
+2. **Forward pass**: correr el modelo → `y_pred`.
+3. Calcular la **pérdida** (desajuste entre `y_pred` y `y_true`).
+4. Actualizar los pesos para bajar un poco esa pérdida.
+
+El paso 4 es el difícil. Probar coeficiente por coeficiente es inviable con
+millones de parámetros. La salida es el **gradiente**: la generalización de la
+derivada a funciones de muchas variables. Para `loss = f(W)`, el gradiente
+`grad(loss, W)` es un tensor **del mismo tamaño que `W`** donde cada entrada dice
+cuánto cambia la pérdida si muevo ese peso. Para bajar la pérdida, se da un paso
+**en contra** del gradiente:
+
+```python
+W = W - learning_rate * grad(loss, W)
+```
+
+<Note type="tip" title="El learning rate, ni tan chico ni tan grande">
+El <strong>learning rate</strong> gradúa el tamaño del paso. Muy chico: el
+descenso tarda una eternidad y puede quedar atrapado en un mínimo local. Muy
+grande: los saltos te mandan a ubicaciones aleatorias de la curva. El
+<strong>momentum</strong> —imaginar una bolita que rueda y acumula
+velocidad— ayuda a no atascarse en valles poco profundos y a converger más
+rápido. Es la idea detrás de optimizadores como Adam.
+</Note>
+
+Como se usan batches aleatorios (*stochastic*), esto se llama **mini-batch SGD**:
+el compromiso práctico entre calcular el gradiente con una sola muestra (ruidoso)
+o con todo el dataset (carísimo).
+
+## 5. Backpropagation es solo la regla de la cadena
+
+Queda una pregunta: ¿cómo se calcula el gradiente de una expresión con millones
+de operaciones encadenadas? Con la **regla de la cadena** del cálculo. Para
+`y = f(g(x))`, la derivada es el **producto** de las derivadas locales. La idea de
+Chollet es representar el forward pass como un **grafo de cómputo** (un DAG de
+operaciones) y recorrerlo **al revés**, multiplicando la derivada de cada arista.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/backprop.svg"
+  alt="Grafo de cómputo con nodos w=2 y b=1 que alimentan x1 = x·w = 6, luego x2 = x1+b = 7, luego loss_val = 3. Las flechas azules son el forward pass; las rojas punteadas, el backward pass, anotadas con grad=2, grad=1 y grad=1 sobre cada arista. Abajo: multiplicar las derivadas del camino da grad(loss, w) = 1·1·2 = 2."
+  caption="Backpropagation = recorrer el grafo hacia atrás multiplicando derivadas locales. El nombre viene de que se 'propaga hacia atrás' la contribución de cada nodo a la pérdida."
+  width={700}
+/>
+
+Ese es todo el secreto. Y la buena noticia es que **nunca** lo implementarás a
+mano: la **diferenciación automática** de TensorFlow, JAX o PyTorch construye ese
+grafo por ti. Escribes solo el forward pass y el framework te devuelve los
+gradientes gratis:
+
+```python
+import tensorflow as tf
+with tf.GradientTape() as tape:              # "graba" las operaciones
+    predictions = model(images_batch)
+    loss = ops.mean(ops.sparse_categorical_crossentropy(labels_batch, predictions))
+gradients = tape.gradient(loss, model.weights)   # ∂loss/∂pesos, automático
+```
+
+## 6. MNIST desde cero: probar que no hay magia
+
+El capítulo cierra reconstruyendo el ejemplo con operaciones de bajo nivel: un
+`NaiveDense` (guarda `W` y `b`, computa `activation(matmul(input, W) + b)`), un
+`NaiveSequential` que encadena capas, un generador de batches, y un
+`one_training_step` que hace forward → pérdida → `GradientTape` → actualización de
+pesos. El mismo resultado que Keras, pero con cada paso a la vista. El objetivo no
+es reemplazar a `fit()`, sino **quedarse con un modelo mental de bajo nivel** de
+lo que ocurre cuando lo llamas.
+
+## Para recordar
+
+- **Tensores:** todo dato es un tensor definido por *rank*, *shape* y *dtype*; el
+  eje 0 son las muestras y se procesa en batches.
+- **Capa = afín + activación:** `relu(matmul(W, x) + b)`. Sin la no linealidad,
+  una red profunda es un modelo lineal disfrazado.
+- **Geometría:** entrenar es aprender a des-arrugar el manifold de los datos con
+  pasos simples encadenados.
+- **Aprender = descenso de gradiente:** paso en contra del gradiente, con el
+  learning rate graduando el tamaño y el momentum dando inercia.
+- **Backpropagation = regla de la cadena** sobre el grafo de cómputo; la autodiff
+  la hace por ti a partir del forward pass.
+
+Con los tensores y el gradiente en su sitio, el **capítulo 3** —aún por
+procesar— presentará los frameworks (TensorFlow, PyTorch, JAX) y la API de Keras 3
+que orquesta todo esto.

@@ -22,6 +22,12 @@ export const SUBSECTIONS = {
     description:
       'Apuntes didácticos del libro de Aurélien Géron (3.ª ed.): los fundamentos del machine learning con Scikit-Learn, Keras y TensorFlow, concepto a concepto.',
   },
+  'deep-learning-with-python': {
+    label: 'Deep Learning with Python',
+    author: 'François Chollet & Matthew Watson',
+    description:
+      'Apuntes didácticos del libro de François Chollet y Matthew Watson (3.ª ed.): deep learning con Keras 3 sobre TensorFlow, PyTorch y JAX — de qué es el campo y sus bloques matemáticos hasta convnets, Transformers y modelos generativos.',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;

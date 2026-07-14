@@ -1,0 +1,64 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import PostCard from '../../../components/ui/PostCard.astro';
+import { getApuntesBySubsection, SUBSECTIONS } from '../../../lib/apuntes';
+
+const sub = SUBSECTIONS['deep-learning-with-python'];
+const posts = await getApuntesBySubsection('deep-learning-with-python');
+
+// Los capítulos se ordenan por el número que abre `chapter` (p. ej. "Cap. 2 — …").
+const capNum = (chapter?: string) => {
+  const n = chapter?.match(/\d+/)?.[0];
+  return n ? parseInt(n, 10) : 999;
+};
+const sorted = [...posts].sort((a, b) => {
+  const cmp = capNum(a.data.chapter) - capNum(b.data.chapter);
+  return cmp !== 0 ? cmp : a.data.title.localeCompare(b.data.title);
+});
+---
+<PageLayout title={sub.label} description={sub.description}>
+  <div class="mb-10">
+    <a href="/apuntes" class="text-sm text-muted hover:text-ink transition-colors">
+      &larr; Apuntes
+    </a>
+    <div class="mt-4">
+      <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-2">
+        {sub.author}
+      </p>
+      <h1 class="text-2xl font-semibold text-ink mb-3">{sub.label}</h1>
+      <p class="text-muted leading-relaxed">{sub.description}</p>
+    </div>
+    {sorted.length > 0 && (
+      <div class="flex flex-wrap gap-2 mt-5">
+        {sorted.map((post) => (
+          <a
+            href={`/apuntes/${post.id}`}
+            title={post.data.chapter}
+            class="text-xs px-3 py-1.5 rounded border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors"
+          >
+            {post.data.chapter ? post.data.chapter.split('—')[0].trim() : post.data.title}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+
+  {sorted.length > 0 && (
+    <section>
+      {sorted.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          href={`/apuntes/${post.id}`}
+          tags={post.data.tags}
+          section={post.data.chapter}
+        />
+      ))}
+    </section>
+  )}
+
+  {posts.length === 0 && (
+    <p class="text-muted">No hay notas publicadas todavía.</p>
+  )}
+</PageLayout>

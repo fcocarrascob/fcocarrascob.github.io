@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace">
+
+    <!-- Scalar -->
+    <text x="80" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" font-family="'Segoe UI', system-ui, Arial, sans-serif">Escalar</text>
+    <text x="80" y="58" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Segoe UI', system-ui, Arial, sans-serif">rank 0</text>
+    <rect x="60" y="120" width="40" height="40" rx="4" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="80" y="145" text-anchor="middle" font-size="13" fill="#1e3a8a">12</text>
+    <text x="80" y="200" text-anchor="middle" font-size="12" fill="#374151" font-family="'Segoe UI', system-ui, Arial, sans-serif">shape ()</text>
+
+    <!-- Vector -->
+    <text x="230" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" font-family="'Segoe UI', system-ui, Arial, sans-serif">Vector</text>
+    <text x="230" y="58" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Segoe UI', system-ui, Arial, sans-serif">rank 1</text>
+    <g fill="#dbeafe" stroke="#60a5fa">
+      <rect x="170" y="120" width="30" height="40" rx="3"/>
+      <rect x="200" y="120" width="30" height="40" rx="3"/>
+      <rect x="230" y="120" width="30" height="40" rx="3"/>
+      <rect x="260" y="120" width="30" height="40" rx="3"/>
+    </g>
+    <g fill="#1e3a8a" text-anchor="middle" font-size="12">
+      <text x="185" y="145">12</text><text x="215" y="145">3</text><text x="245" y="145">6</text><text x="275" y="145">14</text>
+    </g>
+    <text x="230" y="200" text-anchor="middle" font-size="12" fill="#374151" font-family="'Segoe UI', system-ui, Arial, sans-serif">shape (4,)</text>
+
+    <!-- Matrix -->
+    <text x="430" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" font-family="'Segoe UI', system-ui, Arial, sans-serif">Matriz</text>
+    <text x="430" y="58" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Segoe UI', system-ui, Arial, sans-serif">rank 2</text>
+    <g fill="#dbeafe" stroke="#60a5fa">
+      <rect x="370" y="90" width="120" height="30" rx="3"/>
+      <rect x="370" y="120" width="120" height="30" rx="3"/>
+      <rect x="370" y="150" width="120" height="30" rx="3"/>
+    </g>
+    <line x1="410" y1="90" x2="410" y2="180" stroke="#93c5fd"/>
+    <line x1="450" y1="90" x2="450" y2="180" stroke="#93c5fd"/>
+    <text x="430" y="200" text-anchor="middle" font-size="12" fill="#374151" font-family="'Segoe UI', system-ui, Arial, sans-serif">shape (3, 3)</text>
+
+    <!-- Rank-3 -->
+    <text x="640" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" font-family="'Segoe UI', system-ui, Arial, sans-serif">Rank-3</text>
+    <text x="640" y="58" text-anchor="middle" font-size="11" fill="#6b7280" font-family="'Segoe UI', system-ui, Arial, sans-serif">"cubo"</text>
+    <g fill="#dbeafe" stroke="#60a5fa">
+      <rect x="600" y="100" width="70" height="70" rx="3"/>
+    </g>
+    <polygon points="600,100 620,80 690,80 670,100" fill="#bfdbfe" stroke="#60a5fa"/>
+    <polygon points="670,100 690,80 690,150 670,170" fill="#93c5fd" stroke="#60a5fa"/>
+    <text x="640" y="200" text-anchor="middle" font-size="12" fill="#374151" font-family="'Segoe UI', system-ui, Arial, sans-serif">shape (3, 3, 5)</text>
+  </g>
+
+  <!-- footnote -->
+  <text x="380" y="255" text-anchor="middle" font-size="12.5" fill="#374151">Tres atributos definen un tensor: <tspan font-weight="700" fill="#1e3a8a">rank</tspan> (nº de ejes) · <tspan font-weight="700" fill="#1e3a8a">shape</tspan> (tamaño por eje) · <tspan font-weight="700" fill="#1e3a8a">dtype</tspan></text>
+  <text x="380" y="278" text-anchor="middle" font-size="11.5" fill="#6b7280">El eje 0 es el eje de muestras; el entrenamiento lo recorre en batches</text>
+</svg>

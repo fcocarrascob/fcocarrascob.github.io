@@ -1,0 +1,191 @@
+---
+title: "¿Qué es deep learning? Ubicar el campo antes de tocar el código"
+description: "El primer capítulo de Chollet no tiene una línea de código: dibuja tres círculos concéntricos (IA ⊃ machine learning ⊃ deep learning), le da la vuelta a la programación clásica —en vez de escribir reglas, la máquina las descubre a partir de datos y respuestas— y explica el aprendizaje en tres figuras: pesos, función de pérdida y optimizador. Y cierra con lo más valioso para un ingeniero: un escepticismo calibrado. Chollet separa la 'automatización cognitiva' (lo que la IA de hoy realmente hace) de la 'inteligencia' (adaptarse a lo desconocido), recuerda los dos inviernos de la IA y advierte que la burbuja 2023–2025 tendrá que desinflarse. Apuntes del Cap. 1."
+pubDate: 2026-07-13
+tags: ["deep learning", "chollet", "keras", "fundamentos", "ia", "machine learning", "hype"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 1 — ¿Qué es deep learning?"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 1 (PDF 24–38)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Hay libros técnicos que arrancan con el `import` de la primera línea. *Deep
+Learning with Python* no: su primer capítulo no tiene **una sola línea de
+código**. Es, deliberadamente, un capítulo de vocabulario y de actitud. Antes de
+que François Chollet —el creador de Keras— nos deje tocar un tensor, quiere que
+sepamos exactamente **de qué hablamos** cuando decimos "IA", y quiere vacunarnos
+contra el ruido. Para alguien que llega desde la ingeniería estructural, esa
+segunda parte es tan útil como la primera: aprender a *distinguir la señal del
+hype* es una habilidad de ingeniero.
+
+## 1. Tres círculos concéntricos
+
+La primera imagen del libro ordena un campo que la prensa mezcla a diario:
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tres-circulos.svg"
+  alt="Tres rectángulos redondeados anidados. El exterior, 'Inteligencia Artificial: automatizar tareas intelectuales humanas', incluye la IA simbólica de reglas escritas a mano. Dentro, 'Machine Learning: aprende las reglas a partir de datos + respuestas'. En el centro, en azul sólido, 'Deep Learning: capas sucesivas de representaciones cada vez más útiles', con la nota 'deep = nº de capas, no entendimiento'."
+  caption="La IA contiene al machine learning, que contiene al deep learning. Cada capa es un caso particular más específico de la anterior."
+  width={620}
+/>
+
+La **inteligencia artificial** es el círculo más amplio: *el esfuerzo por
+automatizar tareas intelectuales normalmente realizadas por humanos*. Nótese que
+la definición **no menciona el aprendizaje**: hasta los años 80, la IA era sobre
+todo **simbólica** —reglas explícitas escritas a mano, los famosos "sistemas
+expertos"—. Funcionó para problemas lógicos y bien definidos (el ajedrez), pero
+fue intratable para los difusos: reconocer una cara, transcribir voz, traducir.
+
+El **machine learning** nace de darle la vuelta al problema.
+
+## 2. El giro de paradigma
+
+Aquí está, para mí, la idea más limpia del capítulo. En la programación clásica,
+un humano escribe las **reglas** y la máquina las aplica a los **datos** para
+producir **respuestas**. El machine learning invierte los papeles: le damos los
+**datos** y las **respuestas**, y la máquina descubre las **reglas**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/paradigma.svg"
+  alt="Dos diagramas lado a lado. Izquierda, 'Programación clásica': Reglas y Datos entran a un Programa que produce Respuestas. Derecha, 'Machine learning': Datos y Respuestas entran a un Entrenamiento que produce Reglas (aprendidas), destacadas en azul."
+  caption="La programación clásica recibe reglas + datos → respuestas. El ML recibe datos + respuestas → reglas."
+  width={720}
+/>
+
+Un sistema de ML **se entrena, no se programa**: se le muestran muchos ejemplos y
+encuentra la estructura estadística que le permite automatizar la tarea. Y aquí
+Chollet introduce la palabra que sostiene todo el libro: **representación**. Una
+representación es una forma distinta de codificar los datos. La misma imagen
+puede estar en RGB o en HSV; "seleccionar los píxeles rojos" es trivial en una y
+engorroso en la otra. 
+
+Su ejemplo de juguete: puntos blancos y negros mezclados en el plano. Con un
+simple **cambio de coordenadas**, el problema —imposible de separar con una
+línea— se vuelve trivial: "los negros son los que tienen x > 0". Aprender es,
+entonces, **buscar automáticamente** esa transformación útil, guiado por una
+señal que mide qué tan bien vamos, dentro de un conjunto acotado de operaciones
+posibles (el *espacio de hipótesis*). Los algoritmos de ML no son creativos:
+buscan dentro de una caja predefinida.
+
+<Note type="tip" title="Lo 'deep' no es 'profundo' en el sentido que crees">
+El "deep" de deep learning **no** alude a un entendimiento más profundo. Se
+refiere a la <strong>cantidad de capas</strong> de representación (la
+"profundidad" del modelo). Un nombre más honesto habría sido <em>aprendizaje de
+representaciones en capas</em>. Los métodos con una o dos capas se llaman, por
+contraste, <em>shallow learning</em>.
+</Note>
+
+Chollet es tajante con otra confusión habitual: las redes neuronales **no son
+modelos del cerebro**. El nombre es un guiño histórico a la neurobiología, pero
+no hay evidencia de que el cerebro haga nada parecido. Es, simplemente, *un marco
+matemático para aprender representaciones a partir de datos*. Conviene olvidar
+toda la mística de "funciona como nuestra mente".
+
+## 3. Cómo aprende, en tres figuras
+
+¿Cómo ocurre el aprendizaje, concretamente? El capítulo lo reduce a tres piezas
+que reaparecerán en cada modelo del libro:
+
+<Figure
+  src="/apuntes/deep-learning-with-python/bucle-aprendizaje.svg"
+  alt="Diagrama del bucle de aprendizaje. El Input X pasa por dos Capas (cada una con sus pesos W, b) hasta producir una Predicción Y'. La predicción y el Objetivo Y entran a la Función de pérdida, que produce un Puntaje de pérdida. El Optimizador (backpropagation) toma ese puntaje y, con una flecha punteada de vuelta, 'ajusta los pesos' de las capas."
+  caption="Las tres figuras de Chollet: los pesos parametrizan las capas; la pérdida mide el error; el optimizador usa ese puntaje para ajustar los pesos en la dirección correcta."
+  width={700}
+/>
+
+1. **Los pesos.** Lo que una capa le hace a su entrada está guardado en sus
+   **pesos** (weights): un montón de números. *Aprender* es encontrar los valores
+   de los pesos de todas las capas que mapean bien las entradas a los objetivos.
+   Una red puede tener decenas de millones de ellos.
+2. **La función de pérdida.** Para controlar la salida hay que medirla. La
+   *loss* toma la predicción y el objetivo real y calcula un **puntaje de
+   distancia**: qué tan mal lo hizo en este ejemplo.
+3. **El optimizador.** El truco fundamental: usar ese puntaje como señal para
+   **ajustar los pesos un poco** en la dirección que baja la pérdida. Lo hace el
+   optimizador, vía **backpropagation** (el algoritmo que el
+   [capítulo 2](/apuntes/deep-learning-with-python-cap2-bloques-matematicos)
+   desarma pieza por pieza).
+
+Al principio los pesos son aleatorios y la pérdida es enorme; con cada ejemplo se
+corrigen un poquito y el puntaje baja. Ese ciclo, repetido lo suficiente, es el
+**bucle de entrenamiento**, y su resultado es una red entrenada. Chollet lo
+resume con una frase que vale la pena guardar: *"un mecanismo simple que, una vez
+escalado, termina pareciendo magia"*.
+
+## 4. Qué lo hace diferente
+
+¿Por qué el deep learning se comió el mundo y no otra técnica? Tres propiedades:
+
+- **Simplicidad.** Automatiza el paso más caro del ML clásico: el *feature
+  engineering* (diseñar a mano buenas representaciones). El DL aprende **todas**
+  las features de una vez, reemplazando pipelines multi-etapa por un solo modelo
+  *end-to-end*.
+- **Escalabilidad.** Se paraleliza en GPUs y se entrena por **batches**, así que
+  tolera datasets de tamaño arbitrario.
+- **Reutilización.** Un modelo entrenado se puede seguir entrenando y
+  **reaprovechar**: es la idea detrás de los **foundation models**.
+
+Esa última propiedad conecta con la actualidad. La IA generativa (ChatGPT,
+Gemini, Claude, Midjourney) se apoya en foundation models enormes entrenados con
+**self-supervised learning**: el objetivo sale del propio dato (predecir la
+siguiente palabra, reconstruir una imagen ruidosa). Al eliminar la anotación
+manual, se desbloqueó una escala inédita —cientos de miles de millones de
+parámetros, más de un petabyte de datos, decenas de millones de dólares por
+entrenamiento—. Estos modelos funcionan como una **"base de datos difusa" del
+conocimiento humano** que se consulta por *prompting*.
+
+## 5. El antídoto contra el hype
+
+La segunda mitad del capítulo es la que más me interesó como ingeniero, porque no
+vende: **desinfla**. Chollet traza una línea que conviene tener siempre a mano:
+
+<Note type="warning" title="Automatización cognitiva ≠ inteligencia">
+<strong>Automatización cognitiva</strong>: codificar y operacionalizar
+habilidades y conocimiento humano. Es lo que la IA de hoy hace, y es
+enormemente útil; brilla en problemas de requisitos estrechos o con muchos
+ejemplos precisos. <strong>Inteligencia (autonomía cognitiva)</strong>: la
+capacidad de <em>enfrentar lo desconocido, adaptarse y aprender de ello</em>. Son
+criaturas distintas.
+</Note>
+
+Su metáfora es afilada: la IA de hoy es como un **personaje de dibujos
+animados** —por realista que esté dibujado, solo puede actuar las escenas para
+las que fue creado—; la inteligencia es un **ser vivo**, que se adapta a lo
+inesperado. La diferencia clave es la **adaptabilidad**. Un modelo, por elocuente
+que suene, solo maneja situaciones para las que fue entrenado.
+
+Y viene con memoria histórica: la IA ya vivió **dos inviernos** (fin de los 70,
+tras el fracaso de la IA simbólica; principios de los 90, tras los sistemas
+expertos), ambos precedidos por promesas infladas. Su lectura para 2025: es
+improbable un retroceso total —la IA ya demostró valor real— pero **algo de aire
+tendrá que salir de la burbuja**. El dato que lo resume: la inversión anual
+superaba los US$200 mil millones mientras los ingresos rondaban los US$30 mil
+millones. Algo tiene que ceder.
+
+<Note type="info" title="Por qué esto importa para el cálculo estructural">
+El marco de Chollet es exactamente el que uso para pensar la IA en ingeniería:
+un modelo que verifica una fórmula o redacta una memoria es <em>automatización
+cognitiva</em> —potentísima y bienvenida—, pero la <em>responsabilidad de
+adaptarse a lo que la norma no previó</em> sigue siendo del ingeniero que firma.
+No creer el hype de corto plazo, sí creer en la visión de largo plazo.
+</Note>
+
+## Para recordar
+
+- **IA ⊃ ML ⊃ DL.** La IA incluye enfoques sin aprendizaje (la IA simbólica); el
+  ML aprende reglas de datos + respuestas; el DL aprende representaciones en
+  **capas sucesivas**.
+- **El giro:** programación clásica = reglas + datos → respuestas; ML = datos +
+  respuestas → reglas.
+- **Tres figuras:** pesos (qué hace cada capa), pérdida (cuánto se equivoca),
+  optimizador (cómo corrige, vía backpropagation).
+- **Diferenciadores:** automatiza el feature engineering, escala en GPUs, y los
+  modelos se reutilizan (foundation models).
+- **Escepticismo calibrado:** distingue automatización cognitiva de inteligencia,
+  recuerda los inviernos de la IA y espera un ajuste de la burbuja.
+
+El próximo capítulo baja del discurso a los engranajes: tensores, gradiente y
+backpropagation, esta vez con código. → [Los bloques matemáticos de las redes
+neuronales](/apuntes/deep-learning-with-python-cap2-bloques-matematicos).

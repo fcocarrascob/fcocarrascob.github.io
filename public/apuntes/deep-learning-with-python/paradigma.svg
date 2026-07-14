@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="pr-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="720" height="320" fill="#ffffff"/>
+
+  <!-- Classical programming -->
+  <text x="180" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Programación clásica</text>
+  <rect x="40" y="60" width="110" height="42" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="95" y="86" text-anchor="middle" font-size="13" fill="#374151">Reglas</text>
+  <rect x="40" y="150" width="110" height="42" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="95" y="176" text-anchor="middle" font-size="13" fill="#374151">Datos</text>
+  <rect x="210" y="105" width="120" height="42" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="270" y="131" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">Programa</text>
+  <line x1="150" y1="81" x2="208" y2="118" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+  <line x1="150" y1="171" x2="208" y2="134" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+  <rect x="210" y="205" width="120" height="42" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="270" y="231" text-anchor="middle" font-size="13" fill="#374151">Respuestas</text>
+  <line x1="270" y1="147" x2="270" y2="203" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+
+  <!-- divider -->
+  <line x1="380" y1="40" x2="380" y2="280" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- Machine learning -->
+  <text x="560" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Machine learning</text>
+  <rect x="420" y="60" width="110" height="42" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="475" y="86" text-anchor="middle" font-size="13" fill="#374151">Datos</text>
+  <rect x="420" y="150" width="110" height="42" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="475" y="176" text-anchor="middle" font-size="13" fill="#374151">Respuestas</text>
+  <rect x="590" y="105" width="120" height="42" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="650" y="126" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">Entrena-</text>
+  <text x="650" y="141" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">miento</text>
+  <line x1="530" y1="81" x2="588" y2="118" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+  <line x1="530" y1="171" x2="588" y2="134" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+  <rect x="590" y="205" width="120" height="42" rx="6" fill="#2563eb"/>
+  <text x="650" y="231" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">Reglas</text>
+  <line x1="650" y1="147" x2="650" y2="203" stroke="#2563eb" stroke-width="2" marker-end="url(#pr-ar)"/>
+</svg>
