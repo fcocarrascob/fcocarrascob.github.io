@@ -277,23 +277,66 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   Conecta con el acoplamiento torsional de D6 y con los muros. *Alternativa candidata:*
   arriostramiento **tension-only** (X-bracing donde solo trabaja la diagonal
   traccionada), gancho directo a los Links de D0.
+- [x] **D11. Vectores Ritz (LDR) vs Eigen: la masa que no capturas** (hecho 2026-07-14,
+  post `ritz-vs-eigen-masa-participativa-sap2000.mdx`, figuras en
+  `public/ritz-vs-eigen-masa-participativa-sap2000/`) — experimento en
+  `APP_sap2000\d11_ritz_eigen\`: marco plano 8 pisos (shear building: diafragma + RY
+  restringido en columnas) con pisos flexibles simplemente apoyados cargando equipos
+  pesados → modos de rebote vertical (T≈0.90 s) más bajos que los laterales. **Hallazgos**:
+  Eigen entierra el 1.er modo lateral (85.6 % UX) en el **modo 9** tras 8 verticales de
+  0 % UX; 90 % UX a los **18 modos**, 99 % a los 29. **Ritz (Accel UX)**: 90 % en **2**
+  vectores, 100 % en **8** (reproduce exacto los 8 laterales, salta los 32 verticales,
+  SumUz=0). **Corte basal NCh2369**: Eigen-8 = **0 tonf** (todo vertical), Eigen-40 =
+  Ritz-8 = 130.06 tonf idénticos. **Gotcha de Ritz**: solo-UX da 0 % UZ; UX+UZ (16 vec)
+  da 100%UX+97%UZ vs Eigen-40 68%UZ. Sanity T₁ shear-building c/deformación por corte =
+  0.5293 s = SAP (0.0 %). Firmas verificadas: `ModalRitz.SetLoads`, `FuncRS.SetUser`,
+  `ResponseSpectrum.SetLoads`; gotchas `Analyze.GetCaseStatus()` sin nombre y
+  `ModalParticipatingMassRatios` no filtra por caso (particionar por `LoadCase`). Idea de
+  Francisco 2026-07-14 (con el aporte de usar `SetActiveDOF` plano XZ, no restringir nudos).
+  Original:
+  frecuencia parásitos (candidato: la torre de traspaso de D6 con un apéndice rígido, o
+  una losa/marco con un tramo muy rígido). **Pitfall**: con Eigen (default) se gastan
+  vectores en modos locales inútiles y no se alcanza el 90 % de masa participativa
+  (NCh433/NCh2369) ni con 20–30 modos; con **vectores Ritz dependientes de la carga**
+  (LDR, arrancados desde el patrón de aceleración) se captura ~99 % de masa con una
+  fracción de los vectores — y son los que además exige la FNA (E2/C5). **Validación
+  cerrada**: corrección de masa faltante (*missing mass / residual rigid response*) — la
+  masa no capturada responde estáticamente con la aceleración de piso rígido (ZPA), así
+  que el corte basal exacto = M_tot·Sa(rígido) al sumar modos + residual; se compara base
+  shear Eigen (incompleto) vs Ritz vs el estático cerrado. **API**: caso modal Eigen vs
+  Ritz (`SetCase`/`SetLoads` del modal Ritz), `SetNumberModes`, lectura de *Modal
+  Participating Mass Ratios*. Reutiliza la maquinaria modal de D6. Ganchos: C2 (períodos),
+  D6 (espectral modo a modo), C3 (SRSS/CQC).
+- [ ] **D12. No linealidad geométrica: cables y catenaria** (idea del usuario
+  2026-07-14) — cable simple bajo peso propio entre dos apoyos (o mástil guyado con 3
+  tirantes pretensados); relevante a estructuras industriales/mineras (arriostres de
+  mástiles guyados, galerías de correa colgadas, tirantes). **Pitfall doble**: (1) el
+  análisis **lineal de un cable es singular** — sin rigidez transversal hasta estar
+  tensado; hay que activar **P-Delta + grandes desplazamientos** y una pretensión /
+  target-force para arrancar; (2) modelar el cable como *frame* con releases en vez de
+  elemento **Cable** subestima el sag y la tensión (converge a algo equivocado, error
+  silencioso). **Validación cerrada**: catenaria exacta — flecha, tensión horizontal H y
+  máxima $T = H\cosh(wx/H)$, con la transición parábola↔catenaria según sag/luz. **API**:
+  objeto Cable, caso NonLinear con geometric nonlinearity (large displacement), carga
+  inicial de tensión (target-force). Ganchos: D0 (links no lineales), C1 (P-Delta →
+  grandes desplazamientos). *Showpiece avanzado — ejecutar después de D11.*
 
-## Recomendación de orden (actualizada 2026-07-12)
+## Recomendación de orden (actualizada 2026-07-14)
 
 Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;
 **C1 y C2 completos** (serie Sísmica partes 1–3 con el estimador de T₁); **serie D
-técnica** con Gap/Hook (D0), Respuesta espectral (D6) y Section Cut (D7); **serie "El
-factor R" completa** (E1–E5: 5 posts + 2 experimentos, jul 2026). Lo que sigue:
+técnica** con Gap/Hook (D0), Rótulas pushover (D2), Respuesta espectral (D6), Section Cut
+(D7) y Solo-compresión (D8); **serie "El factor R" completa** (E1–E5: 5 posts + 2
+experimentos, jul 2026). Lo que sigue:
 
-1. **D8 (resortes de solo compresión)** — cierre teórico-SAP de la serie de Fundaciones:
-   un solo modelo, reusa toda la teoría cerrada ya publicada, alto valor didáctico y
-   bajo esfuerzo. Buen próximo paso (idea del usuario).
-2. **C3 → C4** como cierre del arco sísmico: C3 ya tiene su teaser cuantitativo desde D6
+1. ~~**D11 (Ritz vs Eigen)**~~ — ✅ hecho 2026-07-14 (post publicado).
+2. **D12 (cables / no linealidad geométrica)** — showpiece avanzado, **próximo paso activo**.
+3. **C3 → C4** como cierre del arco sísmico: C3 ya tiene su teaser cuantitativo desde D6
    (ρ=0.72, gap SRSS-CQC ~12 %); C4 reutiliza el modal de C2 (piso blando ×1.6–1.9) y el
    espectral de C3, conecta con el generador de espectros y termina en el surrogate de
    campo (POD del perfil de deriva).
-3. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
+4. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
    de un modelo entre experimentos; **A4** (sub-tool SAP Scripts) cuando convenga algo
    mecánico y acotado.
-4. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
+5. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
    experimento las pide; si no, se dejan caer.

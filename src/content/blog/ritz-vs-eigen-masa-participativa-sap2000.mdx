@@ -1,0 +1,260 @@
+---
+title: "Vectores Ritz vs Eigen en SAP2000: la masa participativa que no capturas"
+description: "El análisis modal por defecto (Eigen) gasta sus modos en orden de frecuencia, y en una estructura con equipos pesados sobre pisos flexibles eso significa decenas de modos verticales inútiles antes de ver un gramo de masa lateral. La técnica que lo arregla —vectores Ritz dependientes de la carga— captura el 90 % de masa UX en 2 vectores donde Eigen necesita 18, verificada contra el teorema de completitud modal y el corte basal de un espectro NCh2369. Con el pitfall que nadie ve: 8 modos Eigen te dan corte basal cero, sin un solo warning."
+pubDate: 2026-07-14
+tags: ["SAP2000", "modal", "Ritz", "Eigen", "masa participativa", "response spectrum", "NCh2369", "sísmica"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La técnica y el pitfall
+
+Todo análisis espectral o de tiempo-historia modal descansa en una base de modos, y la
+norma te pone una vara: acumular al menos el **90 % de la masa participativa** en cada
+dirección (NCh433 §6.3.3, NCh2369 §5.4, ASCE 7 §12.9.1). El análisis modal por defecto de
+SAP2000 —**vectores propios, Eigen**— extrae los modos en orden estricto de frecuencia
+creciente. Es exacto y no depende de la carga. Y ahí está la trampa: en una estructura con
+muchos modos locales de baja frecuencia —equipos pesados sobre vigas de piso flexibles, un
+apéndice blando, una losa de gran luz— esos modos son los **primeros** que Eigen calcula, y
+**ninguno participa** en la dirección sísmica. Corres 8, 12, 20 modos y sigues bajo el 90 %,
+o —peor— corres "los que siempre corro" y el corte basal del espectro te sale corto **sin un
+solo aviso**.
+
+La técnica que lo resuelve son los **vectores Ritz dependientes de la carga** (LDR, *Load-
+Dependent Ritz*): en vez de resolver el problema de valores propios completo, SAP construye
+una base *a la medida del vector de carga* que le des (la aceleración de base `Accel UX`).
+Esa base ignora por completo lo que no responde a esa carga y captura la masa participativa
+con una fracción de los vectores. Este post arma el caso donde el contraste es brutal, lo
+verifica contra un teorema exacto y un período cerrado, y cuantifica lo que el pitfall
+cuesta en toneladas de corte basal. Con su propia letra chica al final: Ritz es tan bueno
+como los vectores de arranque que le des.
+
+## La referencia: un teorema y un período
+
+Formato de estas notas: un modelo, bien elegido, validado contra teoría —sin barrido
+paramétrico. Aquí hay dos anclas.
+
+La primera es exacta. La suma de la **masa modal efectiva** sobre *todos* los modos es la
+masa total de la estructura en esa dirección:
+
+<Equation label="Ec. 1">
+$$\sum_{i} m_i^*(\text{dir}) = M_\text{total}(\text{dir})$$
+</Equation>
+
+$M_\text{total}$ es dato —uno la asigna—. El objetivo del 90 % es, entonces, el 90 % de un
+número conocido, y el "hueco" que deja una base truncada es **masa que falta**, no una
+sutileza. En este modelo $M_\text{total} = 73.42\ \text{tonf·s}^2/\text{m}$ (peso
+$W = 720$ tonf) en cada dirección; los dos métodos deben converger a ella.
+
+La segunda es un chequeo de sanidad para cazar trampas silenciosas, la misma disciplina de
+la [serie de períodos](/blog/periodos-fundamentales-exponente): el sistema lateral es un
+*shear building* de 8 pisos, cuyo período fundamental tiene forma cerrada. Con las columnas
+en doble curvatura y masa por piso $m_f$, la rigidez de piso es $k = 2\cdot 12EI/h^3$ y
+
+<Equation label="Ec. 2">
+$$T_1 = \frac{2\pi}{\omega_1}, \qquad \omega_1 = 2\sqrt{\tfrac{k}{m_f}}\,\sin\!\frac{\pi}{2(2N+1)}$$
+</Equation>
+
+que da $T_1 = 0.517$ s con flexión pura. SAP entrega $0.5293$ s, un +2.4 %… hasta que se
+agrega la **deformación por corte** de las columnas (rectangulares, $A_s = \tfrac{5}{6}A$):
+la fórmula sube a $0.5293$ s y el gap se cierra a **0.0 %**. Los modos laterales
+$T_2,T_3,T_4 = 0.178 / 0.110 / 0.081$ s calzan a cuatro decimales. El sistema lateral está
+donde tiene que estar; cualquier desviación de aquí en adelante es del método modal, no de
+la física.
+
+## El modelo: un marco rígido con pisos que rebotan
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/fig-modelo.svg"
+  alt="Elevación de un marco de acero de 8 pisos con dos columnas rígidas y, en cada piso, una viga flexible con cinco bloques de equipo pesado; una flecha horizontal en la base indica el sismo UX. A la derecha, dos familias de modos: arriba una viga simplemente apoyada que se flecta con el equipo (modo vertical, 0 % de masa lateral, los 8 más bajos de la estructura), abajo el marco inclinándose lateralmente (modo lateral, con el 85.6 % de la masa UX en el primero, que es el modo 9 de Eigen)."
+  caption="El marco de soporte de equipos. El sistema lateral es rígido (T₁ = 0.53 s); las vigas de piso son largas, flexibles y cargan equipos pesados, así que su modo de «rebote» vertical (T ≈ 0.90 s) es más blando —y por tanto de más baja frecuencia— que cualquier modo lateral. Eigen, que ordena por frecuencia, tiene que calcular los ocho rebotes antes de llegar al primer modo que participa."
+/>
+
+Es el caso industrial que muerde de verdad, muy NCh2369: un marco plano de 8 pisos con un
+sistema lateral rígido y **pisos flexibles con equipo pesado**. Cuatro decisiones lo hacen
+limpio y controlable, cada una con su llamada de API:
+
+1. **Plano XZ por grados de libertad activos, no restringiendo nudos.**
+   `Analyze.SetActiveDOF([UX, UY, UZ, RX, RY, RZ])` con solo `UX, UZ, RY` activos aísla el
+   plano de una vez, sin modos fuera de plano espurios y —clave— **sin acoplamiento
+   horizontal-vertical**, de modo que un Ritz arrancado desde `UX` queda puramente lateral.
+2. **Sistema lateral como *shear building*.** Diafragma rígido por piso
+   (`ConstraintDef.SetDiaphragm`, iguala UX) y `RY` restringido en los nudos de columna
+   (doble curvatura) → período lateral corto con columnas realistas de 0.5 m, e independiente
+   de la flexibilidad de las vigas.
+3. **Pisos flexibles = los modos parásitos.** Una viga larga por nivel, subdividida y
+   **simplemente apoyada** (momento liberado en las conexiones a columna con
+   `FrameObj.SetReleases`), con cinco masas de equipo de 12 tonf en los nudos interiores. Es
+   lo que baja los modos verticales a $T \approx 0.90$ s: los más blandos de la estructura.
+4. **Toda la masa concentrada.** Densidad de material en cero
+   (`PropMaterial.SetWeightAndMass`) y `PointObj.SetMass` en los nudos → $M_\text{total}$
+   exacta y verificable, sin masa propia difusa que ensucie el balance.
+
+<Note type="info">
+El acoplamiento horizontal-vertical no es un detalle cosmético. Con **diagonales** (un marco
+arriostrado real), el corte lateral mete axial en la diagonal, cuya componente vertical
+sacude las vigas: un Ritz arrancado solo desde `UX` termina capturando masa vertical que no
+pediste. El diafragma —que iguala UX sin tocar UZ— mantiene los dos subsistemas ortogonales
+y deja ver la técnica sin ese ruido. Si tu modelo real está arriostrado, espera algo de
+contaminación cruzada; no invalida nada de lo que sigue.
+</Note>
+
+## El bosque de modos que Eigen tiene que talar
+
+Corramos los dos métodos sobre el mismo modelo: Eigen con 40 modos, y Ritz con vectores de
+arranque `Accel UX`. La curva de masa participativa acumulada cuenta toda la historia.
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/masa_acumulada.png"
+  alt="Masa participativa UX acumulada contra número de modos. La curva de Eigen (azul) se queda pegada en 0 % durante los primeros 8 modos, salta a 85.6 % en el modo 9, se estanca hasta el modo 18 donde cruza el 90 %, y sigue subiendo a saltos hasta 100 % en el modo 40. La curva de Ritz (roja) sube casi vertical: 85.6 % en el primer vector, cruza el 90 % en el segundo y llega a 100 % en el octavo. Una línea horizontal marca el mínimo del 90 %."
+  caption="Eigen (azul) pasa 8 modos en cero —todos verticales— antes de que el primer modo lateral (85.6 % UX) aparezca en el modo 9; cruza el 90 % recién en el modo 18 y necesita 29 para el 99 %. Ritz desde Accel UX (rojo) cruza el 90 % en 2 vectores, el 99 % en 5 y cierra el 100 % en 8."
+/>
+
+Eigen se queda **8 modos en cero**. No es que participen poco: participan *nada* —son los
+ocho modos de rebote vertical del equipo, a $T \approx 0.90$ s, con 0.0 % de masa UX cada
+uno—. El primer modo lateral, que por sí solo carga el **85.6 %** de la masa, aparece recién
+en el **modo 9**. Y el patrón se repite hacia arriba: entre un modo lateral y el siguiente,
+Eigen intercala un racimo de ocho armónicos verticales que tampoco participan. Resultado:
+**90 % de masa UX a los 18 modos, 99 % a los 29.**
+
+Ritz arrancado desde `Accel UX` hace exactamente lo contrario. La figura del censo muestra
+por qué:
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/espectro_modos.png"
+  alt="Dos paneles. Arriba (Eigen): los 40 modos ubicados por período; en T≈0.90, 0.23, 0.10 y 0.06 s se apilan columnas de 8 puntos grises (modos verticales, el «bosque»), y sueltos, sobre el eje, unos pocos puntos azules son los modos laterales, el mayor en T=0.53 s. Abajo (Ritz): solo 8 puntos rojos, uno en cada período lateral, sin ninguna columna vertical."
+  caption="El censo de modos. Eigen (arriba) apila 32 de sus 40 modos en el «bosque» vertical (columnas grises), y los pocos laterales que importan (azul) quedan diluidos entre ellos. Ritz (abajo) coloca un vector exactamente en cada modo lateral —y en ninguna otra parte."
+/>
+
+Los ocho vectores de Ritz reproducen **exactamente** los ocho modos laterales de Eigen (los
+períodos coinciden a cinco decimales: 0.529, 0.178, 0.110, 0.081, 0.066, 0.057, 0.052,
+0.050 s) y **saltan los 32 verticales**. No hay magia ni aproximación grosera: Ritz genera
+su base iterando $K^{-1}M$ desde la carga `UX`, y esa recurrencia vive por completo en el
+subespacio lateral. Los rebotes verticales, que no responden a una aceleración horizontal,
+nunca entran.
+
+<Note type="tip">
+Ambas curvas convergen al 100 % de la misma $M_\text{total}$ conocida (Ec. 1): Eigen a 40
+modos, Ritz a 8. El teorema de completitud no se viola —Eigen *llegaría* al 90 %—, pero te
+cobra el triple de vectores por el camino, y con el número de modos que uno suele poner por
+costumbre, no llega.
+</Note>
+
+## Traducido a fuerza: el corte basal que se va a cero
+
+El "porcentaje de masa" suena abstracto hasta que se convierte en el corte basal que
+dimensiona la estructura. Montamos un espectro **NCh2369** (zona 2, suelo C, $I=1$, $R=5$),
+apoyado sobre la base modal, y leemos la reacción horizontal combinada (CQC) según cuántos
+modos usemos —la misma máquina espectral de la
+[torre de traspaso](/blog/respuesta-espectral-modal-torre-traspaso).
+
+<Figure
+  src="/ritz-vs-eigen-masa-participativa-sap2000/corte_basal.png"
+  alt="Corte basal del espectro contra número de modos usados. Los puntos de Eigen valen 0 tonf con 4 y con 8 modos, saltan a 128.7 tonf con 12 modos y se acercan asintóticamente a la línea de convergencia en 130.1 tonf. Una estrella roja marca Ritz con 8 vectores, exactamente sobre la línea de 130.1 tonf, justo encima del punto de Eigen-8 que vale cero."
+  caption="Corte basal RS vs. tamaño de la base modal. Con 4 u 8 modos Eigen el corte basal en X es cero —todos los modos capturados son verticales—. Recién al pasar el modo 9 salta al 98.9 %. Los 8 vectores de Ritz (estrella) dan el 100 % —el mismo valor que 40 modos Eigen— parados sobre el mismo eje donde Eigen-8 vale nada."
+/>
+
+| Base modal | Masa UX | Corte basal Fx | % del convergido |
+|---|---|---|---|
+| Eigen, 4 modos | 0 % | **0.0 tonf** | 0 % |
+| Eigen, 8 modos | 0 % | **0.0 tonf** | 0 % |
+| Eigen, 12 modos | 85.6 % | 128.7 tonf | 98.9 % |
+| Eigen, 18 modos | 94.7 % | 129.9 tonf | 99.8 % |
+| Eigen, 40 modos | 100 % | 130.06 tonf | 100 % |
+| **Ritz, 8 vectores** | **100 %** | **130.06 tonf** | **100 %** |
+
+Dos lecturas. La primera, tranquilizadora para Ritz: **8 vectores Ritz dan idéntico corte
+basal que 40 modos Eigen**, 130.06 tonf al segundo decimal. La segunda, el pitfall en su
+forma más cruda: quien corre **8 modos** —una cantidad que a nadie le suena poca en un marco
+plano— obtiene **corte basal cero** en X, porque los ocho son verticales. Y no hay síntoma:
+el análisis converge, el modelo no tira ningún warning, el espectro se aplicó. El salto de
+0 a 98.9 % no es una acumulación suave que uno pueda "ver venir": es un **acantilado** en el
+modo 9, el primero que toca masa lateral. Fijarse en el número de modos sin mirar la masa
+participativa acumulada es exactamente la forma de caerse por él.
+
+## La letra chica de Ritz: es tan bueno como sus vectores de arranque
+
+Ritz no es gratis, y su costo es honesto: **depende de la carga**. La misma virtud que lo
+hace eficiente —construir la base a la medida del vector de arranque— es su límite. Nuestro
+`RITZUX` capturó el 100 % de la masa UX… y **0.0 % de la vertical**. Si además necesitas la
+respuesta sísmica vertical —y estos equipos vibran en vertical, es *su* demanda— arrancar
+solo desde `UX` te deja ciego.
+
+| Base modal | Vectores | Masa UX | Masa UZ |
+|---|---|---|---|
+| Ritz — solo `Accel UX` | 8 | 100 % | **0 %** |
+| Ritz — `Accel UX` + `Accel UZ` | 16 | 100 % | **96.9 %** |
+| Eigen | 40 | 100 % | 67.8 % |
+
+La cura es una línea: agregar `Accel UZ` como segundo vector de arranque. Y fíjate en el
+premio —una vez que le das los vectores correctos, **Ritz gana en las dos direcciones**: 16
+vectores le bastan para 100 % UX y 96.9 % UZ, mientras que 40 modos Eigen se quedan en 67.8
+% de masa vertical (el bosque de rebotes es tan denso que ni con 40 modos lo peina). Eigen
+no tiene este problema —es independiente de la carga—, pero lo paga con el conteo. Ese es el
+verdadero *trade-off*, y no el que suele contarse.
+
+<Note type="warning">
+La moraleja no es "Ritz siempre". Es: **arranca Ritz desde todas las direcciones y patrones
+que tu análisis vaya a necesitar** —`UX`, `UY`, `UZ`, y cualquier patrón de carga que uses
+en una FNA— y **verifica la masa participativa acumulada** en cada una antes de confiar en
+el resultado. Ritz mal alimentado miente tan callado como Eigen truncado.
+</Note>
+
+## Cómo se arma en SAP2000
+
+El caso Ritz es un tipo de caso de carga modal propio, gemelo del Eigen:
+
+```python
+# caso Eigen (por defecto)
+SapModel.LoadCases.ModalEigen.SetCase("MODAL")
+SapModel.LoadCases.ModalEigen.SetNumberModes("MODAL", 40, 1)
+
+# caso Ritz — arranque desde los vectores de aceleración de base
+SapModel.LoadCases.ModalRitz.SetCase("RITZUX")
+SapModel.LoadCases.ModalRitz.SetNumberModes("RITZUX", 8, 1)
+# SetLoads(nombre, nCargas, LoadType[], LoadName[], RitzMaxCycles[], TargetPar[])
+SapModel.LoadCases.ModalRitz.SetLoads(
+    "RITZUX", 1, ["Accel"], ["UX"], [0], [0.0])
+# para capturar también lo vertical: dos vectores de arranque
+SapModel.LoadCases.ModalRitz.SetLoads(
+    "RITZUXZ", 2, ["Accel", "Accel"], ["UX", "UZ"], [0, 0], [0.0, 0.0])
+```
+
+El espectro luego **apunta** a la base que quieras
+(`ResponseSpectrum.SetModalCase("RSX", "RITZUX")`) — es el interruptor del experimento: un
+mismo caso RS puede colgar de Eigen o de Ritz. Tres trampas de API que costaron sangre y que
+no están en la documentación del *bridge*:
+
+- **`ModalRitz.SetLoads`** toma arrays paralelos por vector de arranque: tipo (`"Accel"`,
+  `"Load"`, `"Link"`), nombre (`"UX"/"UZ"` para aceleraciones, o el patrón de carga),
+  `RitzMaxCycles` (0 = sin límite) y `TargetPar` (participación objetivo, 0 = por defecto).
+- **`Analyze.GetCaseStatus()` no toma nombre de caso**: es la versión que devuelve *todos*
+  los casos `(N, nombres[], estados[])`. Pasarle un string revienta con un opaco
+  `'str' object cannot be interpreted as an integer`.
+- **`Results.Setup.SetCaseSelectedForOutput` no filtra los resultados modales**:
+  `ModalParticipatingMassRatios` devuelve *todos* los casos seleccionados concatenados, así
+  que hay que **particionar por el array `LoadCase`** que viene en los resultados. Si no, lees
+  los modos de un caso creyendo que son de otro (a mí me dio dos bloques idénticos hasta que
+  me di cuenta).
+
+## Cuándo importa
+
+Para cualquier análisis espectral o de tiempo-historia modal, **los vectores Ritz son la
+opción por defecto correcta**, no la exótica: capturan la masa con menos vectores, incluyen
+la corrección de masa faltante y son los que exige la FNA de todos modos. Eigen se justifica
+cuando lo que buscas son los **modos y frecuencias reales** de la estructura —una
+caracterización dinámica, una calibración contra un ensayo, un estudio de sintonía— porque
+Ritz da períodos aproximados (ligeramente altos) y una base que ni siquiera contiene los
+modos que no responden a tu carga.
+
+Pero la lección que se lleva a la oficina es más chica y más útil que "Eigen vs Ritz": **el
+número de modos no es la medida; la masa participativa acumulada sí**. La norma no te pide
+"corre 12 modos", te pide 90 % de masa, y este marco muestra por qué la distinción no es
+burocrática —hay estructuras enteras donde 8 modos son cero y 18 apenas alcanzan—. Míralo
+siempre, en cada dirección, antes de creerle al corte basal. El día que un modelo te dé un
+espectro sospechosamente barato, la primera casilla que revisar es esa tabla de masa
+participativa: lo más probable es que estés admirando un bosque de modos verticales mientras
+la masa lateral te espera, sin capturar, veinte modos más arriba.
