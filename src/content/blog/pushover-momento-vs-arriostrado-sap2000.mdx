@@ -1,0 +1,324 @@
+---
+title: "Pushover en SAP2000: pórtico a momento vs. arriostrado"
+description: "Recorrido didáctico del análisis estático no lineal (pushover) en SAP2000 —rótulas plásticas concentradas auto ASCE 41/FEMA 356, caso Static Nonlinear en control de desplazamiento, y la lectura de la curva de capacidad— usado para contrastar dos sistemas de acero cuya física de rótula es opuesta. El mismo marco (1 vano, 1 piso, W10×49/W8×18) resuelto como pórtico a momento y como arriostrado concéntrico en chevron: el MF plastifica por flexión y da una meseta dúctil de 320 kN sostenida hasta 250 mm; el CBF plastifica por pandeo de la diagonal comprimida y hace pico-y-caída —942 kN a 14 mm, luego −60 %—. Con las ecuaciones para calcular las propiedades de cada rótula, la validación contra teoría cerrada (Pcr por AISC E3 = SAP exacto; el desbalance vertical de la viga chevron = (T−C)·sinθ·L/4 exacto), el guion de capturas de la GUI para reproducirlo, y las firmas OAPI verificadas —incluida la rótula axial de diagonal que no está documentada—."
+pubDate: 2026-07-14
+tags: ["SAP2000", "pushover", "rótulas plásticas", "ASCE 41", "FEMA 356", "arriostrado", "chevron", "pandeo", "no lineal", "acero", "tutorial"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La técnica y el contraste
+
+El **pushover** —análisis estático no lineal— empuja una estructura con un patrón de
+fuerzas laterales que crece monotónicamente y registra el **corte basal contra el
+desplazamiento de techo**: la *curva de capacidad*. Es la herramienta con la que se lee la
+**reserva no lineal** de un edificio: cuánto pasa la fluencia antes de colapsar, con qué
+mecanismo, y cuánta ductilidad tiene. Este post es un tutorial de punta a punta —cómo se
+monta en SAP2000, con qué ecuaciones se calculan las propiedades de las rótulas, y cómo se
+interpreta el resultado— y lo usa para responder una pregunta con dos respuestas opuestas:
+
+> **Toma el mismo marco de acero y resuélvelo dos veces: como pórtico a momento (MF) y como
+> pórtico arriostrado concéntrico (CBF). ¿Qué forma tiene cada curva de capacidad, y por
+> qué?**
+
+La respuesta corta, que este experimento cuantifica: el MF plastifica por **flexión** y
+entrega una **meseta dúctil larga y plana**; el CBF plastifica por **comportamiento axial**
+—la diagonal comprimida **pandea**— y hace un **pico agudo seguido de una caída**. Misma
+geometría, misma demanda de gravedad, física de rótula opuesta. La diferencia no está en el
+software: está en la forma del *backbone* de la rótula, y eso es lo que hay que entender
+antes de tocar SAP.
+
+## El fenómeno: rótulas plásticas concentradas
+
+El pushover convierte un modelo elástico en una máquina de **análisis plástico
+incremental**. En los puntos donde se espera fluencia se cuelgan **rótulas plásticas
+concentradas**: resortes no lineales de longitud casi nula, con una ley fuerza–deformación
+(el *backbone*) que es elástica hasta la fluencia y luego plastifica. Al empujar, SAP2000
+va activando rótulas una a una hasta armar un mecanismo, y la curva de capacidad es el
+registro de ese proceso.
+
+Dos reglas gobiernan todo pushover, y valen para los dos sistemas de este post:
+
+1. **Control de desplazamiento, no de fuerza.** El backbone de una rótula puede *caer*
+   después del pico (la rama C→D). Con control de fuerza el análisis no puede cruzar un
+   máximo —al pedir más carga de la que la estructura resiste, el desplazamiento diverge y
+   el caso no converge—. El control de desplazamiento recorre la curva entera, meseta y
+   descenso incluidos. (Lo verifiqué en detalle en la [nota de rótulas
+   M3 vs P-M](/blog/rotulas-pushover-sap2000).)
+2. **La gravedad va primero, y no lineal.** El pushover arranca *desde* el estado
+   deformado y tensionado bajo carga vertical: un caso Static Nonlinear de gravedad, y el
+   caso de empuje continúa desde él (`InitialCase`). Así el axial de gravedad ya está en las
+   columnas y en las diagonales cuando empieza el empuje.
+
+## Las dos físicas de rótula (con ecuaciones)
+
+Aquí está el corazón del contraste. Las dos rótulas que usaremos —flexión y axial— tienen
+backbones de forma radicalmente distinta.
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/fig-backbones.svg"
+  alt="Dos backbones. (a) Rótula de flexión momento-rotación: sube de A hasta B (fluencia a Mp), sigue con una meseta larga y casi plana B-C (dúctil), y solo al final cae C-D-E. Simétrica. (b) Rótula axial de diagonal, fuerza-deformación, marcadamente asimétrica: la rama de tracción sube alto hasta Ty = Fye·A y sostiene (dúctil); la rama de compresión pandea a un −Pcr mucho más bajo y CAE a ~0.3·Pcr (degrada). Una llave marca que Pcr es mucho menor que Ty: el pico lo fija la compresión, y cae."
+  caption="El porqué del contraste. (a) La rótula de flexión fluye a Mp y SOSTIENE el momento en una meseta larga → da la meseta del MF. (b) La rótula axial es asimétrica: la tracción fluye alto y dúctil (Ty), pero la compresión pandea a un Pcr mucho más bajo y luego cae a la resistencia residual → da el pico-y-caída del CBF."
+/>
+
+### Rótula de flexión (viga y columna)
+
+La rótula de momento fluye cuando el momento alcanza el **momento plástico**, y luego
+—clave— **sostiene** ese momento a lo largo de una rotación plástica grande (la meseta B→C
+del backbone ASCE 41/FEMA 356):
+
+<Equation label="Ec. 1">
+$$M_p = F_{ye}\,Z, \qquad F_{ye} = R_y\,F_y$$
+</Equation>
+
+donde $Z$ es el módulo plástico y $F_{ye}$ la **resistencia esperada** —para acero A992,
+$R_y = 1.1$, así que la rótula fluye un 10 % por encima del $F_y$ nominal—. En una **columna
+con axial**, el nivel de fluencia baja por la interacción P–M (una rótula P-M3), pero la
+forma no cambia: fluye y sostiene. Es una rótula **dúctil**: la energía se disipa en la
+meseta.
+
+### Rótula axial de diagonal (el pandeo)
+
+La diagonal de un CBF es un miembro que solo trabaja **axial**, y su rótula es
+profundamente **asimétrica** porque el acero responde distinto a tracción y a compresión:
+
+<Equation label="Ec. 2">
+$$T_y = F_{ye}\,A_g \qquad\text{(tracción: fluye alto y dúctil)}$$
+</Equation>
+
+<Equation label="Ec. 3">
+$$P_{cr} = F_{cr}\,A_g,\qquad F_{cr} = 0.658^{\,F_{ye}/F_e}\,F_{ye},\qquad F_e = \frac{\pi^2 E}{(KL/r)^2}$$
+</Equation>
+
+La tracción fluye a $T_y$ y es dúctil. La compresión, en cambio, **pandea** a $P_{cr}$ —la
+capacidad de columna de AISC E3, que depende de la **esbeltez** $KL/r$ de la diagonal— y
+después del pandeo **cae** a una resistencia residual (~$0.3\,P_{cr}$ en el backbone de
+ASCE 41). Como una diagonal esbelta tiene $P_{cr} \ll T_y$, la compresión es el eslabón
+débil: es la que fija el pico de la curva, y es la que hace que caiga.
+
+<Note type="info" title="La rótula auto la genera SAP —tú no calculas el backbone a mano">
+Las tres rótulas (flexión de viga, P-M de columna, axial de diagonal) son **auto** ASCE 41/
+FEMA 356: SAP genera el backbone completo —Mp, Ty, Pcr, los puntos A-B-C-D-E, los niveles
+de aceptación IO/LS/CP— a partir de la sección de acero, el material (con su Fy) y, para la
+diagonal, la **longitud del miembro** (para $P_{cr}$). Las ecuaciones de arriba son para
+que *entiendas y verifiques* lo que la rótula usa, no para introducirlas: más abajo
+confirmamos que el $P_{cr}$ que genera SAP calza al kN con la Ec. 3.
+</Note>
+
+## Los dos modelos
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/fig-modelos.svg"
+  alt="Dos pórticos de 1 vano (6 m) y 1 piso (3.5 m) con las mismas columnas W10×49 y viga W8×18. (a) MF: conexiones rígidas (nudos cuadrados), bases empotradas, rótulas de flexión rojas en los extremos de viga y azules en las bases de columna. (b) CBF: dos diagonales HSS en chevron (V invertida) desde las bases al ápice central de la viga, conexiones simples (círculos abiertos), bases rotuladas (triángulos), y una rótula axial verde en cada diagonal. Ambos con empuje lateral δ y gravedad P0 = 200 kN en los nudos superiores."
+  caption="El mismo marco, dos sistemas. Idénticos en geometría (6 × 3.5 m), secciones (W10×49 col, W8×18 viga) y gravedad (200 kN por nudo superior). Lo único que cambia es el sistema lateral: (a) conexiones a momento → 4 rótulas de flexión; (b) chevron de diagonales HSS con conexiones simples → una rótula axial por diagonal."
+/>
+
+Un vano de $L = 6$ m y un piso de $h = 3.5$ m, en acero **A992** ($F_y = 345$ MPa). Las
+columnas son **W10×49** y la viga **W8×18** (deliberadamente débil, para que en el MF las
+rótulas de viga aparezcan antes que las de columna: columna fuerte / viga débil). La
+gravedad entra como **carga puntual $P_0 = 200$ kN** en los dos nudos superiores (axial en
+las columnas). El empuje es en control de desplazamiento monitoreando el nudo de techo.
+
+- **MF**: conexiones a momento, bases empotradas. Rótulas de **flexión** —M3 en la viga,
+  P-M3 en las columnas—.
+- **CBF**: se le agregan dos **diagonales HSS5×5×⅜** en chevron (V invertida) que llegan al
+  centro de la viga; las conexiones son **simples** (rotuladas) y las bases también, de modo
+  que **todo el sistema lateral son las diagonales**. La diagonal se modela como biela
+  (momentos liberados en los extremos) con una **rótula axial**. Columnas y viga quedan
+  elásticas: la única no linealidad son las diagonales, así que la curva refleja
+  comportamiento puro de arriostre.
+
+El ángulo de la diagonal es $\theta = \arctan(h/(L/2)) = \arctan(3.5/3) = 49.4°$
+($\cos\theta = 0.651$, $\sin\theta = 0.759$); su longitud es $L_b = 4.61$ m y su esbeltez
+$KL/r = 96.9$.
+
+## Cómo se arma en SAP2000
+
+El flujo es idéntico para los dos modelos —solo cambia el tipo de rótula— y se resume en tres
+movimientos: **asignar las rótulas auto → definir el pushover en control de desplazamiento →
+correr y leer la curva**.
+
+**Las rótulas.** Con los miembros seleccionados, `Assign ▸ Frame ▸ Hinges ▸ Add` → rótula
+**Auto**, tipo **From Tables In ASCE 41-17** (o FEMA 356), y la **tabla según el miembro**:
+*Steel Beam* (flexión M3) para la viga, *Steel Column* (interacción P-M3) para las columnas,
+y **Table 9-8 (Steel Braces – Axial)** para las diagonales —axial, sin flexión—. Un detalle
+que importa: la opción **«Drops Load After Point E»** es la que hace que, agotada la rótula,
+la carga **caiga** —es el origen de la rama descendente—. El menú `Define Frame Hinge
+Properties` lista, ya asignadas, las rótulas de cada modelo: ahí está la tesis en una tabla
+del propio SAP.
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/gui-rotulas-tipos.png"
+  alt="Dos tablas Define Frame Hinge Properties de SAP2000 lado a lado. Izquierda (MF): seis rótulas —C1H1, C1H2, C2H1, C2H2 de tipo 'Interacting P-M3' y VIGAH1, VIGAH2 de tipo 'Moment M3'—, todas Deformation Controlled, generadas Auto. Derecha (CBF): cuatro rótulas —D1H1, D1H2, D2H1, D2H2— todas de tipo 'Axial P', Deformation Controlled, Auto."
+  caption="Las rótulas de cada modelo, del propio SAP. MF (izq.): flexión —columnas «Interacting P-M3», viga «Moment M3»—. CBF (der.): «Axial P» en las diagonales. Flexión vs axial: la tesis del post, en la lista de rótulas generadas."
+/>
+
+**El caso pushover.** `Define ▸ Load Cases`, dos casos **Static Nonlinear**: **GRAV**
+(gravedad, `Full Load`) y **PUSH**, que continúa desde el estado final de GRAV
+(`Initial Conditions ▸ Continue from … GRAV`) y aplica el empuje lateral en **control de
+desplazamiento** (`Load Application ▸ Displacement Control`), monitoreando el DOF U1 del nudo
+de techo hasta un objetivo —la regla que ya vimos, la que permite recorrer la meseta y la
+caída—. Un último ajuste: `Results Saved ▸ Multiple States`, para que SAP guarde todos los
+pasos (si no, solo el final, y no hay curva).
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/gui-control-desplazamiento.png"
+  alt="Diálogo Load Case Data (Nonlinear Static) y Load Application Control de SAP2000: el caso PUSH continúa desde GRAV, y en Load Application está seleccionado Displacement Control, con el DOF U1 monitoreado en el nudo 3 y un desplazamiento objetivo."
+  caption="El único ajuste que no se puede olvidar: Load Application ▸ Displacement Control, monitoreando U1 del nudo de techo hasta un objetivo —no control de fuerza—. El caso PUSH continúa desde el de gravedad (GRAV)."
+/>
+
+Corriendo, `Display ▸ Show Static Pushover Curve` dibuja la curva de capacidad, y
+`Display ▸ Show Deformed Shape` —con las rótulas coloreadas por estado— muestra el mecanismo,
+que vemos como evidencia en las secciones de resultados.
+
+<Note type="warning" title="El OAPI no asigna rótulas — se va por DatabaseTables">
+`FrameObj` solo tiene *getters* (`GetHingeAssigns`): no existe `SetHingeAssigns` ni un objeto
+`PropHinge`. La vía por script es la base de datos interactiva (`DatabaseTables`), escribiendo
+las tablas `Frame Hinge Assigns … - Steel Beam / Column / Brace` y leyendo los estados de
+`Frame Hinge States`. La de la diagonal (**Steel Brace**) es axial y computa $P_{cr}$ y $T_y$
+sola, a partir de la sección, el material y la **longitud** del miembro.
+</Note>
+
+## Resultados: las dos curvas
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/curvas_capacidad.png"
+  alt="Curvas de capacidad superpuestas, corte basal contra desplazamiento de techo. La curva del CBF (roja) sube casi vertical, hace un pico agudo de 942 kN a 14 mm (marcado «pandeo de la diagonal comprimida») y luego cae en línea recta a 380 kN a 100 mm (−60 %, «frágil»). La curva del MF (azul) sube con pendiente mucho menor, tiene un quiebre de fluencia a 290 kN / 66 mm («1.as rótulas de flexión») y luego una meseta casi plana que llega a 320 kN a 183 mm y se mantiene hasta 250 mm («meseta dúctil»)."
+  caption="Las dos curvas, en los mismos ejes. El CBF (rojo) es ×20 más rígido y ×3 más fuerte —942 kN— pero pandea a 14 mm y CAE 60 %. El MF (azul) es flexible y débil —320 kN— pero fluye a 66 mm y SOSTIENE la carga en una meseta hasta 250 mm. Dúctil vs frágil, en una imagen."
+/>
+
+La misma imagen cuenta la tesis. En números:
+
+| | MF (pórtico a momento) | CBF (chevron) |
+|---|---|---|
+| Rigidez inicial $K_0$ | 4 457 kN/m | **88 930 kN/m (×20)** |
+| Corte máximo | 320 kN @ 183 mm | **942 kN @ 13.7 mm (×2.9)** |
+| Forma de la curva | meseta larga y plana | **pico → caída −60 %** |
+| No linealidad | flexión (M–θ) | axial (pandeo) |
+| Fusible | 4 rótulas (mecanismo) | **1 diagonal comprimida** |
+| Comportamiento | **dúctil** | **frágil** |
+
+El CBF es **20 veces más rígido** y **3 veces más resistente** —lo que uno esperaría de un
+arriostre—, pero paga esa rigidez con **fragilidad**: alcanza su máximo a apenas 14 mm de
+techo (0.4 % de deriva) y a partir de ahí **degrada**. El MF es lo contrario: flexible y
+con un tercio de la resistencia, pero fluye a 66 mm y **sostiene** el corte en una meseta
+hasta 250 mm (7 % de deriva) sin caer. Uno disipa energía en una meseta larga; el otro llega
+a un pico y se descarga.
+
+## MF: el mecanismo dúctil (validado)
+
+La curva azul es de manual. La rama elástica tiene pendiente 4 457 kN/m —igual a la rigidez
+lateral del portal—. A **290 kN / 66 mm** fluyen casi a la vez las primeras rótulas: el
+extremo de la viga y la base de columna del lado de barlovento; un paso después, las del
+lado de sotavento. Se arma el **mecanismo de desplazamiento lateral (sway)** de **4
+rótulas** —los dos extremos de viga y las dos bases de columna—. Los **topes de columna
+nunca fluyen** ($M \approx 96 < M_p$): columna fuerte / viga débil, el mecanismo dúctil que
+busca el diseño por capacidad.
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/gui-deformada-mf.png"
+  alt="Deformada del MF en el paso de colapso con las rótulas coloreadas por estado. El pórtico se desplaza lateralmente (sway); las dos bases de columna tienen rótula en color cian (estado C-D, avanzado) y los dos extremos de viga en verde (estado B-C); los topes de columna no tienen rótula (elásticos). Ejes X-Z."
+  caption="El mecanismo sway del MF, del modelo. Rótulas en los 2 extremos de viga (verde, B-C) y las 2 bases de columna (cian, C-D), con los topes de columna intactos (elásticos): columna fuerte / viga débil. Exactamente la secuencia que da la tabla de estados."
+/>
+
+La carga de colapso del mecanismo sway tiene forma cerrada:
+
+<Equation label="Ec. 4">
+$$H_u = \frac{2\,M_{p,\text{col}} + 2\,M_{p,\text{viga}}}{h}$$
+</Equation>
+
+Con los momentos que las rótulas efectivamente alcanzan (punto C del backbone, con
+endurecimiento): $M_{p,\text{col}} \approx 420$ y $M_{p,\text{viga}} \approx 114$ kN·m, da
+$H_u = (2\cdot 420 + 2\cdot 114)/3.5 = 305$ kN, contra el pico de SAP de **320 kN** (+5 %,
+el residual es la longitud finita de la rótula —el mismo offset que
+[medí en la nota de D2](/blog/rotulas-pushover-sap2000)—). El mecanismo está donde la teoría
+lo pone.
+
+## CBF: el pandeo frágil y el desbalance chevron
+
+La curva roja es otra historia, y sus tres números se validan exactamente.
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/cbf_diagonales.png"
+  alt="Dos paneles con el desplazamiento de techo en el eje horizontal. Panel superior: fuerza axial de las dos diagonales. La comprimida (D2, azul) baja hasta −711 kN (marcado «pandea», con la línea −Pcr = −711 kN de AISC E3) y luego se recupera degradando hacia −232 kN. La traccionada (D1, naranja) sube a 725 kN y nunca alcanza la línea Ty = 1513 kN (fluencia en tracción, nunca alcanzada). Panel inferior: el momento en el ápice de la viga chevron es ≈ 0 mientras las diagonales son simétricas (antes de pandear) y luego crece linealmente hasta 137 kN·m."
+  caption="Por qué cae el CBF, en detalle. Arriba: la diagonal comprimida (azul) pandea exactamente en −Pcr = −711 kN (AISC E3) y degrada; la traccionada (naranja) llega a 725 y NUNCA alcanza Ty = 1513 → el pico lo gobierna 100 % el pandeo. Abajo: la viga chevron tiene momento nulo mientras las diagonales son simétricas, y luego carga el desbalance vertical hasta 137 kN·m."
+/>
+
+**El pico es puro pandeo en compresión.** La diagonal comprimida pandea cuando alcanza
+$P_{cr}$. Calculándolo con la Ec. 3 y la resistencia esperada $F_{ye}$: con $KL/r = 96.9$,
+$F_e = \pi^2 E/(KL/r)^2 = 210\,600$ kPa, y $F_{cr} = 0.658^{\,379.5/210.6}\cdot 379.5 =
+178.4$ MPa, así que $P_{cr} = F_{cr}\,A_g = 178.4 \times 3\,987 = \mathbf{711}$ **kN**. SAP
+pandea la diagonal a **−711.3 kN**: coincidencia **exacta** —la rótula auto de brace (ASCE 41
+/ FEMA 356) usa AISC E3 con resistencia esperada—. El corte basal en ese instante es
+
+<Equation label="Ec. 5">
+$$V_{\text{pico}} = 2\,P_{cr}\cos\theta = 2 \times 711 \times 0.651 = 925\ \text{kN}$$
+</Equation>
+
+contra los 925.4 kN de SAP (las dos diagonales están elásticas y con fuerza igual al momento
+de pandear). La diagonal **traccionada llega a 725 kN y nunca alcanza** su fluencia $T_y =
+F_{ye}A_g = 1\,513$ kN: **el pico del CBF lo fija enteramente la compresión**. Después del
+pandeo, la comprimida se descarga hacia su residual y el corte cae.
+
+**El desbalance de la viga chevron.** Mientras las dos diagonales son simétricas (antes de
+pandear), sus componentes verticales en el ápice se cancelan y la viga no siente nada. Pero
+cuando la comprimida pandea y se descarga, aparece una **fuerza vertical neta** en el centro
+de la viga:
+
+<Equation label="Ec. 6">
+$$F_v = (T - C)\sin\theta,\qquad M_\text{viga} = \frac{F_v\,L}{4}$$
+</Equation>
+
+Al final del empuje $T = 352$ y $C = 232$ kN, así que $F_v = (352-232)\cdot 0.759 = 91$ kN
+hacia abajo, y la viga simplemente apoyada de 6 m carga $M = 91\cdot 6/4 = 137$ kN·m. SAP
+reporta **136.8 kN·m**: exacto. Es el **desbalance vertical de la viga chevron** que exige
+AISC 341 §F2.3 —hay que diseñar la viga para esta carga que solo existe *después* del
+pandeo—, y acá se ve nacer en vivo.
+
+<Figure
+  src="/pushover-momento-vs-arriostrado-sap2000/gui-deformada-cbf.png"
+  alt="Deformada del CBF en el paso de colapso con las rótulas coloreadas por estado. El marco arriostrado se desplaza lateralmente; la diagonal comprimida tiene sus rótulas en color cian (estado C-D, pandeada) mientras la diagonal traccionada no tiene rótula (elástica); la viga chevron se flecta hacia abajo en el ápice por el desbalance vertical. Bases rotuladas (apoyos triangulares). Ejes X-Z."
+  caption="El colapso del CBF, del modelo. La diagonal comprimida pandeada (rótulas cian, C-D) y la traccionada intacta (elástica, nunca fluye); la viga se flecta hacia abajo en el ápice —el desbalance vertical de la Ec. 6 hecho deformada—."
+/>
+
+<Note type="tip" title="Bases rotuladas = arriostre puro">
+En este CBF las columnas están **rotuladas en la base** (momento cero, bielas puras), así
+que no aportan respaldo de marco: la caída de la curva es limpia y refleja solo las
+diagonales. Si las bases fueran empotradas, las columnas darían un respaldo elástico que
+suaviza la caída (la curva bajaría a ~690 en vez de a 380) —un CBF real suele tener algo de
+ese respaldo, pero enturbia la lectura del fusible—.
+</Note>
+
+## Conclusiones
+
+Un marco, dos sistemas, y una tesis que se sostiene contra la teoría cerrada al kN:
+
+- **La forma de la curva de capacidad la dicta la física de la rótula, no el software.**
+  Flexión (M–θ) → fluye y sostiene → **meseta dúctil**. Axial con pandeo (P–δ asimétrico) →
+  la compresión pandea y cae → **pico-y-caída frágil**. Es la Ec. 1 contra las Ec. 2–3.
+- **El CBF compra rigidez y resistencia con fragilidad.** ×20 más rígido y ×3 más fuerte
+  que el MF, pero su capacidad máxima ocurre a 0.4 % de deriva y degrada 60 % enseguida.
+  El MF, con un tercio de la resistencia, tolera 7 % de deriva sosteniendo la carga. Por eso
+  las normas le dan al MF un factor de reducción $R$ mucho mayor: **paga la baja resistencia
+  con ductilidad**, y la ductilidad es la que se descuenta en $R$ (gancho directo a la
+  [serie del factor R](/blog/factor-r-anatomia)).
+- **En el CBF el pico lo fija una sola diagonal en compresión** —la traccionada ni siquiera
+  fluye—, y su capacidad depende de la **esbeltez** $KL/r$: una diagonal más esbelta pandea
+  antes y cae más. El fusible del sistema es un miembro que pandea; el del MF es un
+  mecanismo distribuido de rótulas dúctiles.
+- **El desbalance de la viga chevron es real y hay que diseñarlo.** Nace *después* del
+  pandeo, vale $(T-C)\sin\theta$, y el pushover lo muestra creciendo de cero a 137 kN·m. Es
+  la razón física del requisito de AISC 341 §F2.3.
+- **Para reproducirlo**: rótulas auto ASCE 41/FEMA 356 (por `DatabaseTables` —el OAPI no
+  las asigna—, incluida la tabla **08 - Steel Brace** para la diagonal), gravedad no lineal
+  primero, pushover en **control de desplazamiento**, y `Multiple States` para tener la
+  curva. La rótula la genera SAP; las ecuaciones de este post son para *entender y
+  verificar* lo que hace —y, como se vio, hace exactamente lo que dice la teoría—.
+
+Cuál de los dos «tolera mejor el rango no lineal» no tiene una respuesta única: el CBF
+protege lo demás manteniéndose rígido hasta que su fusible pandea; el MF absorbe el sismo
+deformándose mucho sin perder capacidad. El pushover no elige por ti —te muestra, con la
+forma de la curva, qué estás comprando con cada sistema—.

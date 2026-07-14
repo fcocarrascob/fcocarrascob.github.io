@@ -320,6 +320,28 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   objeto Cable, caso NonLinear con geometric nonlinearity (large displacement), carga
   inicial de tensión (target-force). Ganchos: D0 (links no lineales), C1 (P-Delta →
   grandes desplazamientos). *Showpiece avanzado — ejecutar después de D11.*
+- [x] **D13. Pushover paso a paso: pórtico a momento vs. arriostrado concéntrico
+  (chevron)** (hecho 2026-07-14; **post autocontenido formato D en clave tutorial**; build
+  verde 83 págs, render verificado; 7 capturas GUI de Francisco integradas —incluye montaje
+  MF-vs-CBF de rótulas Interacting-P-M3/Moment-M3 vs Axial-P— y post adaptado al estándar
+  real de las capturas ASCE 41-17 Table 9-8; detalle en EXPERIMENTO.md §10) —
+  experimento en `APP_sap2000\d13_pushover_mf_cbf\`, post
+  `pushover-momento-vs-arriostrado-sap2000.mdx`. **Validado**: MF mecanismo sway H_u=305 vs
+  SAP 320 (+5%); CBF pandeo AISC E3 Pcr=711=SAP exacto, V_buckle=2·Pcr·cosθ=925 exacto,
+  diagonal traccionada nunca fluye, viga chevron M=137=(T−C)·sinθ·L/4 exacto (AISC 341 F2.3).
+  Firma nueva: rótula axial de diagonal = tabla `08 - Auto FEMA 356 - Steel Brace`
+  (CompType="Steel Brace", sin DOF). A diferencia de D2
+  (que caza el pitfall de la rótula M3), este enseña el **flujo completo del pushover de
+  punta a punta** y lo usa para **contrastar dos sistemas de acero de física de rótula
+  opuesta**: MF (flexión → meseta dúctil) vs. CBF chevron (axial con pandeo → pico-y-caída).
+  Misma geometría (1 vano 6 m / 1 piso 3.5 m, W10×49 col / W8×18 viga, A992), dos sistemas
+  laterales; diagonales HSS esbeltas (P_cr ≪ T_y). **Referencia cerrada doble**: MF →
+  mecanismo sway H_u=(2Mp_col+2Mp_viga)/h; CBF → V_peak=2·P_cr·cosθ (P_cr por AISC E3) +
+  desbalance vertical chevron (T_y−0.3P_cr)·sinθ (AISC 341 F2.3). Reusa las rótulas auto
+  ASCE 41/FEMA 356 por **DatabaseTables** de D2 (el OAPI no tiene `SetHingeAssigns`),
+  extendiéndolas a la **rótula axial de diagonal** (nueva). Entregable extra pedido por
+  Francisco: **guion de capturas de la GUI** para que el lector reproduzca el flujo.
+  Ganchos: D2 (rótulas/pitfall M3), E3 (chevron/Ω₀), factor R (dúctil vs frágil).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
@@ -330,13 +352,15 @@ técnica** con Gap/Hook (D0), Rótulas pushover (D2), Respuesta espectral (D6), 
 experimentos, jul 2026). Lo que sigue:
 
 1. ~~**D11 (Ritz vs Eigen)**~~ — ✅ hecho 2026-07-14 (post publicado).
-2. **D12 (cables / no linealidad geométrica)** — showpiece avanzado, **próximo paso activo**.
-3. **C3 → C4** como cierre del arco sísmico: C3 ya tiene su teaser cuantitativo desde D6
+2. ~~**D13 (pushover MF vs CBF chevron)**~~ — ✅ hecho 2026-07-14 (tutorial, post + 7 capturas
+   GUI integradas).
+3. **D12 (cables / no linealidad geométrica)** — showpiece avanzado, **próximo paso activo**.
+4. **C3 → C4** como cierre del arco sísmico: C3 ya tiene su teaser cuantitativo desde D6
    (ρ=0.72, gap SRSS-CQC ~12 %); C4 reutiliza el modal de C2 (piso blando ×1.6–1.9) y el
    espectral de C3, conecta con el generador de espectros y termina en el surrogate de
    campo (POD del perfil de deriva).
-4. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
+5. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
    de un modelo entre experimentos; **A4** (sub-tool SAP Scripts) cuando convenga algo
    mecánico y acotado.
-5. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
+6. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
    experimento las pide; si no, se dejan caer.

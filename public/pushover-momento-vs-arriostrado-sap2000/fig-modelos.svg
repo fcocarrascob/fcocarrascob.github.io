@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f8f4e"/>
+    </marker>
+  </defs>
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="27" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El mismo marco, dos sistemas laterales — misma geometría (6 m × 3.5 m), W10×49 col / W8×18 viga, A992</text>
+
+  <!-- ═══════════ panel (a): MF pórtico a momento ═══════════ -->
+  <text x="240" y="58" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(a) pórtico a momento (MF) — conexiones rígidas</text>
+
+  <!-- columnas y viga -->
+  <line x1="130" y1="380" x2="130" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="350" y1="380" x2="350" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="130" y1="150" x2="350" y2="150" stroke="#555" stroke-width="5"/>
+  <!-- nudos rígidos (cuadraditos) -->
+  <rect x="123" y="143" width="14" height="14" fill="#555"/>
+  <rect x="343" y="143" width="14" height="14" fill="#555"/>
+
+  <!-- empotramientos -->
+  <g stroke="#222" stroke-width="2">
+    <line x1="105" y1="380" x2="155" y2="380"/>
+    <line x1="325" y1="380" x2="375" y2="380"/>
+  </g>
+  <g stroke="#999" stroke-width="1">
+    <line x1="108" y1="380" x2="100" y2="390"/><line x1="120" y1="380" x2="112" y2="390"/>
+    <line x1="132" y1="380" x2="124" y2="390"/><line x1="144" y1="380" x2="136" y2="390"/>
+    <line x1="328" y1="380" x2="320" y2="390"/><line x1="340" y1="380" x2="332" y2="390"/>
+    <line x1="352" y1="380" x2="344" y2="390"/><line x1="364" y1="380" x2="356" y2="390"/>
+  </g>
+
+  <!-- empuje lateral -->
+  <line x1="62" y1="150" x2="122" y2="150" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#ar)"/>
+  <text x="70" y="140" font-size="14" fill="#b02a1a" font-weight="bold">δ →</text>
+  <!-- gravedad -->
+  <line x1="130" y1="110" x2="130" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <line x1="350" y1="110" x2="350" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <text x="240" y="104" font-size="12" fill="#2f8f4e" text-anchor="middle" font-weight="bold">P₀ = 200 kN</text>
+
+  <!-- rótulas de flexión: viga (rojo) + base columna (azul) -->
+  <circle cx="158" cy="150" r="8.5" fill="#e34948" stroke="#8a1f1f" stroke-width="1.4"/>
+  <circle cx="322" cy="150" r="8.5" fill="#e34948" stroke="#8a1f1f" stroke-width="1.4"/>
+  <circle cx="130" cy="358" r="8.5" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.4"/>
+  <circle cx="350" cy="358" r="8.5" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.4"/>
+
+  <text x="98" y="270" font-size="11" fill="#333" transform="rotate(-90 98 270)" text-anchor="middle">columna W10×49</text>
+  <text x="240" y="172" font-size="11" fill="#333" text-anchor="middle">viga W8×18 (débil)</text>
+  <text x="240" y="418" font-size="11.5" fill="#0f3d78" text-anchor="middle">4 rótulas de <tspan font-weight="bold">flexión</tspan> → mecanismo dúctil</text>
+
+  <!-- ═══════════ panel (b): CBF chevron ═══════════ -->
+  <text x="700" y="58" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">(b) arriostrado concéntrico (CBF) — chevron, conexiones simples</text>
+
+  <!-- columnas y viga (partida en el ápice) -->
+  <line x1="590" y1="380" x2="590" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="810" y1="380" x2="810" y2="150" stroke="#555" stroke-width="6"/>
+  <line x1="590" y1="150" x2="810" y2="150" stroke="#555" stroke-width="5"/>
+  <!-- diagonales chevron -->
+  <line x1="590" y1="380" x2="700" y2="150" stroke="#c77d1a" stroke-width="5"/>
+  <line x1="810" y1="380" x2="700" y2="150" stroke="#c77d1a" stroke-width="5"/>
+
+  <!-- bases rotuladas (triángulos) -->
+  <g fill="#fff" stroke="#222" stroke-width="1.8">
+    <path d="M590,380 L580,398 L600,398 Z"/>
+    <path d="M810,380 L800,398 L820,398 Z"/>
+  </g>
+  <g stroke="#999" stroke-width="1">
+    <line x1="578" y1="398" x2="570" y2="408"/><line x1="590" y1="398" x2="582" y2="408"/>
+    <line x1="602" y1="398" x2="594" y2="408"/>
+    <line x1="798" y1="398" x2="790" y2="408"/><line x1="810" y1="398" x2="802" y2="408"/>
+    <line x1="822" y1="398" x2="814" y2="408"/>
+  </g>
+
+  <!-- conexiones simples (circulitos abiertos) -->
+  <g fill="#fff" stroke="#555" stroke-width="1.6">
+    <circle cx="590" cy="150" r="5"/><circle cx="810" cy="150" r="5"/><circle cx="700" cy="150" r="5"/>
+  </g>
+
+  <!-- empuje + gravedad -->
+  <line x1="522" y1="150" x2="582" y2="150" stroke="#b02a1a" stroke-width="3.5" marker-end="url(#ar)"/>
+  <text x="530" y="140" font-size="14" fill="#b02a1a" font-weight="bold">δ →</text>
+  <line x1="590" y1="110" x2="590" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <line x1="810" y1="110" x2="810" y2="144" stroke="#2f8f4e" stroke-width="3" marker-end="url(#ag)"/>
+  <text x="700" y="104" font-size="12" fill="#2f8f4e" text-anchor="middle" font-weight="bold">P₀ = 200 kN</text>
+
+  <!-- rótulas axiales de diagonal (verde) -->
+  <rect x="638" y="257" width="15" height="15" rx="2" fill="#2f8f4e" stroke="#1c5c32" stroke-width="1.4" transform="rotate(-25 645 264)"/>
+  <rect x="747" y="257" width="15" height="15" rx="2" fill="#2f8f4e" stroke="#1c5c32" stroke-width="1.4" transform="rotate(25 754 264)"/>
+
+  <text x="640" y="330" font-size="11" fill="#333" text-anchor="middle" transform="rotate(64 640 330)">HSS5×5×⅜</text>
+  <text x="700" y="418" font-size="11.5" fill="#1c5c32" text-anchor="middle">1 rótula <tspan font-weight="bold">axial</tspan> por diagonal → la comprimida pandea</text>
+
+  <!-- ═══ leyenda ═══ -->
+  <g transform="translate(0,438)">
+    <circle cx="150" cy="10" r="6.5" fill="#e34948" stroke="#8a1f1f" stroke-width="1.2"/>
+    <text x="162" y="14" font-size="11" fill="#333">rótula flexión viga M3</text>
+    <circle cx="315" cy="10" r="6.5" fill="#2a78d6" stroke="#0f3d78" stroke-width="1.2"/>
+    <text x="327" y="14" font-size="11" fill="#333">rótula flexión columna P-M</text>
+    <rect x="520" y="4" width="13" height="13" rx="2" fill="#2f8f4e" stroke="#1c5c32" stroke-width="1.2"/>
+    <text x="539" y="14" font-size="11" fill="#333">rótula axial diagonal (pandeo/fluencia)</text>
+    <path d="M760,10 l10,-9 l10,9 z" fill="#fff" stroke="#222" stroke-width="1.5"/>
+    <text x="785" y="14" font-size="11" fill="#333">base rotulada</text>
+  </g>
+</svg>
