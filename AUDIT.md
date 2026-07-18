@@ -1,0 +1,501 @@
+# AUDIT — registro de auditorías de posts
+
+Registro vivo de las auditorías hechas a los posts de struct/pad. Existe por una
+razón concreta: este blog vive de que los números sean verificables. Un `P_cr` que
+no cuadra con la ecuación que lo precede, o un `Ω₀` que vale 1.44 en la tabla y 1.4
+en las conclusiones, cuesta más credibilidad que lo que aporta el post entero.
+
+## Cómo se audita
+
+La auditoría la hace el subagente **`auditor`** (`.claude/agents/auditor.md`), que es
+**read-only**: recalcula, verifica contra el filesystem, y devuelve un reporte. No
+edita posts. Los fixes los decide y aplica un humano (o Claude en una pasada
+posterior), y quedan marcados en la fila del hallazgo.
+
+Para correrla:
+
+```
+/auditar                        # el post que estás editando (working tree)
+/auditar factor-r-omega0        # un post por slug
+/auditar nuevos                 # todo lo que aún no aparece en Cobertura
+```
+
+El criterio completo —las siete categorías, qué se recalcula y cómo— vive en
+`.claude/agents/auditor.md`. Es la fuente de verdad; este archivo es el registro.
+
+### Categorías
+
+| Cód. | Categoría | Qué revisa |
+|------|-----------|------------|
+| **N** | Números y cálculo | Cada resultado recalculado; el mismo valor idéntico en ecuación, prosa, tabla, caption, alt y conclusiones; porcentajes con su base; conversiones; redondeo |
+| **U** | Unidades y notación | Símbolos y espaciado, punto decimal, `×` vs `x`, separador de miles, LaTeX bien formado |
+| **L** | Léxico | Un término = un concepto, dentro del post y entre posts; español de Chile; anglicismos en cursiva; nombres de norma exactos |
+| **F** | Formato | Frontmatter vs schema Zod, labels de `Equation` correlativos, `alt`/`caption` de `Figure`, imports, jerarquía de encabezados |
+| **E** | Enlaces y activos | Enlaces internos que resuelven a posts no-draft, imágenes que existen en `public/` |
+| **C** | Coherencia de tesis | El intro pregunta lo que las conclusiones responden; `description` fiel |
+| **R** | Reproducibilidad | Modelo, secciones, cargas y versión de norma suficientes para rehacerlo |
+
+### Severidad y estado
+
+🔴 bloqueante · 🟠 importante · 🟡 menor · 🔵 nota o no verificable
+
+Estado de cada hallazgo: ⬜ abierto · ✅ aplicado en `<sha>` · 🚫 descartado (razón)
+
+Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
+
+---
+
+## Registro de auditorías
+
+_Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
+historial es el punto._
+
+### 2026-07-15 · `blog/pdelta-cuando-confiar-amplificador` · ⚠️ 4 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | N | L.157 vs L.187 | Para el **mismo caso** (viga rígida, gravedad en el pórtico, θ = 0.25) el control de sanidad dice que el clásico «pierde −6.8 %» mientras Resultado 1 reporta «+7.3 %» y afirma que es «idéntico de 1 a 20 pisos». El límite cerrado (viga rígida sway, 1/(1−P/Pcr) vs 1/(1−θ)) da **7.2 %**, que respalda el 7.3 % — el 6.8 % es el que discrepa. Ambos son cifras SAP, no reconciliables sin el dataset | Unificar el valor o aclarar por qué el control de sanidad difiere de la mediana sobre n; no puede ser «idéntico de 1 a 20» y a la vez 6.8 y 7.3 | ⬜ |
+| 2 | 🟡 | U | L.35, 37, 69, 203, 207 vs L.140, 172, 231-234 | Separador decimal inconsistente: coma en math (`$0{,}10$`, `$0{,}25$`, `$1{,}8\,\%$`) y punto en prosa/captions (`θ ≤ 0.10`, `1211.98`). El mismo valor 0.10/0.25 aparece con ambos | Elegir una convención (la rúbrica pide punto en el cuerpo) y aplicarla en math y prosa por igual | ⬜ |
+| 3 | 🟡 | U | L.256; captions L.198/199/226 | Variables fuera de math mode: `C_t·H^0.75` en el cierre (debería ser `$C_t\,H^{0{,}75}$`) y `B₂` escrito de tres formas: `$B_2$` (prosa), `B₂` (captions) y `B2` (`alt` L.198) | `$C_t\,H^{0{,}75}$` en prosa; unificar B₂ en captions/alt | ⬜ |
+| 4 | 🟡 | L | L.35, 94 | Nombres de norma sin edición: «ASCE 7» y «AISC 360 (Ap. 8)». La referencia al Ap. 8 y a θ ≤ 0.10 / θmax ≈ 0.25 (§12.8.7) es correcta, pero falta el año | Fijar edición (`ASCE 7-22`, `AISC 360-22`) si el barrido se validó contra una | ⬜ |
+
+**Verificado y correcto:** **Límites cerrados (Ec. 3 vs Ec. 2)** con (exact−classic)/exact: P/Pcr = 0.10 → θ ≈ 0.08, error **1.81 %**; 0.30 → θ ≈ 0.25, **6.69 %**; 0.50 → θ ≈ 0.41, **14.49 %** — coinciden con los 1.8 / 6.7 / 14.5 % del texto. Amplificador de pandeo 1/(1−P/Pcr) vs α exacto: error 0.13 / 0.41 / 0.69 % → «menos del 1 % en todo el rango» ✓. Relación θ = (π²/12)(P/Pcr) para el voladizo ✓; kh = (π/2)√(P/Pcr) ✓. **R_M**: 1−0.15·P_mf/P_story con ratio 1 → 0.85; 1/0.85 = **1.176 ≈ 1.18**; 6/5 = 1.2; 12/π² = 1.216 — coherentes con el «factor 6/5» ✓. B₂ con R_M = 0.85, θ = 0.25 → 1.4167 (subestima 1.4 % vs límite exacto 1.437; el texto reporta ~1.0 % de mediana SAP) ✓. «ignorar P-Delta en θ = 0.10 regala ~11 %»: 1/(1−0.10) = 1.111 ✓. **294** y **17 136** idénticos en prosa, cierre y description; «17 mil» en frontmatter coherente. Serie `seriesPart:1` correcto; partes 2/3/4 confirmadas por Grep; el cierre remite a «los períodos fundamentales» (parte 2) sin contradicción. `/blog/experimento-fundaciones-sap2000` existe, no draft. Las 6 imágenes existen bajo `public/pdelta/`. Sin H1; imports los tres usados; `Note type` válidos; labels Ec. 1-4 correlativos y referenciados; tesis del intro respondida por el mapa de validez.
+
+**No verificable:** Errores del control de sanidad (−0.02 / −0.83 / −0.004 %). Todos los porcentajes de mediana del barrido (+8.4, +7.3, +6.0→+10.8, +24, +1.0 %, ranking 3.4/2.1/1.7 %) — el límite cerrado los hace plausibles, pero su valor exacto sale del dataset de 17 136 filas. El −6.8 % del hallazgo #1 requiere el dataset para reconciliarlo con el +7.3 %. Conteos «~5000 casos» y el Scale Factor 1211.98 de la captura.
+
+---
+
+### 2026-07-15 · `blog/periodos-fundamentales-exponente` · ⚠️ 6 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.131 vs tabla L.128-129 | La prosa dice «cambiar la estructura —ρ, taper, piso blando— mueve el exponente en **±0.05**», pero la fila «con irregularidad vertical» da 0.80-1.03 para c∝1/T: **+0.14** sobre la banda regular (0.85-0.89), muy por encima de ±0.05. El ±0.05 sí calza para el régimen c constante, no para el alto de c∝1/T | Acotar la afirmación al régimen c constante, o «±0.05 salvo el peor combo irregular, que llega a 1.03» | ⬜ |
+| 2 | 🟡 | F L | L.5 (tag) | El tag `NCh433` no tiene respaldo en el cuerpo: el post solo cita ASCE 7 (L.27); NCh433 no aparece ni en prosa ni en `description` | Quitar el tag o añadir la referencia a su método empírico de período | ⬜ |
+| 3 | 🟡 | L | L.100, 103, 74/108/183 | Anglicismos sin cursiva en 1.ª aparición: *shear building* (caption fig.1), *power-law* (L.103), *taper* (L.74) | Cursiva en la primera ocurrencia de cada uno | ⬜ |
+| 4 | 🔵 | L | tabla L.83 / caption L.100 | Un mismo concepto lleva tres nombres: «Corte», «viga rígida» y *shear building*. La tabla los equipara, así que no confunde, pero conviene fijar uno | Unificar a «viga rígida» (o *shear building*) tras la 1.ª equivalencia | ⬜ |
+| 5 | 🔵 | N C | L.66 vs fig.2 L.120-121 | El texto deriva por álgebra T ∝ H^0.5 (c cte) y T ∝ H^1.0 (c∝1/T), pero las pendientes medidas son **0.44 y 0.88** (~12 % por debajo del par teórico). El gap teoría↔medición no se reconcilia. La tesis se sostiene: 0.44 < 0.75 < 0.88 y el midpoint teórico (0.5, 1.0) es exactamente 0.75 | Una línea que note el offset teoría/medición (p. ej. H ≠ n·h exacto) | ⬜ |
+| 6 | 🔵 | E | L.202-206 | Anuncia «la próxima nota / el estimador de T₁» pero no enlaza a `/blog/estimador-t1` (existe, seriesPart 3, y esa nota sí enlaza de vuelta) | Añadir el enlace forward a `/blog/estimador-t1` | ⬜ |
+
+**Verificado y correcto:** Ec. 1 — exponentes ASCE 7: x = 0.75 «otros sistemas», 0.8 marcos de acero, 0.9 marcos de hormigón (Tabla 12.8-2) ✓. Ec. 3 — álgebra del punto fijo: T ∝ √(γH/(cg)); c constante → H^0.5; c∝1/T → H^1.0 ✓. **Fórmula cerrada del *shear building*** ωⱼ = 2√(k/m)·sin((2j−1)π/(2(2n+1))): **coincide dígito a dígito** con los autovalores del edificio de corte n-DOF para n = 1, 2, 3, 5. Conteo del barrido: 840 = 10×7×12; 70 regulares = 10×7 — consistente con `estimador-t1` («840 análisis modales», ρ 0.1-∞, 1-30 pisos). «exactamente el doble»: 0.44 × 2 = 0.88; midpoint (0.5, 1.0) = 0.75. Piso blando 2.85× = 1.5 × 1.9 ✓. 61 % de masa participativa del voladizo continuo (valor estándar) ✓. Las 4 imágenes existen bajo `public/periodos/`; `/blog/pdelta-cuando-confiar-amplificador` resuelve (no draft); `estimador-t1` y `ritz-vs-eigen` enlazan de vuelta. Sin H1; imports los tres usados; labels Ec. 1-3 correlativos; `Note type` válidos. (Nota: la convención del repo es coma-en-math/punto-en-prosa, 161 ocurrencias — este post la sigue, no hay flag de decimales.)
+
+**No verificable (salen del dataset del experimento C2):** Aumento de período 4.4× al aflojar viga a ρ = 0.1 en 30 pisos. Errores de Rayleigh 0.06 / 0.66 / 1.6 %. Masa modal del modo 1: 76-85 % regulares, ~73 % mínimo. Corrimientos por irregularidad (taper +10-18 %, piso blando +6 %, masa arriba −20 %). Exponentes ajustados medidos 0.43-0.45 / 0.85-0.89 (regulares), 0.40-0.51 / 0.80-1.03 (irregulares). Anclas de control (0.02 %, 0.05 %, RMS de formas ≤ 1e-4; deriva axial ~1 % en 20 pisos).
+
+---
+
+### 2026-07-15 · `blog/respuesta-espectral-modal-torre-traspaso` · ⚠️ 3 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | N | L.340-341 (tabla) + L.346 | Las brechas SRSS-CQC de la torre de modos cercanos (−6.7 / −12.7 / −11.9 %) están con base = SRSS: (CQC−SRSS)/SRSS = +6.8/+12.7/+11.9 %. Pero L.346 las describe como «12 % **por debajo** de lo que CQC exige», que implica base = CQC y da 10.6 % (Fz), no 11.9 %. La base no se declara y la prosa la contradice | Hacer explícita la base («CQC supera a SRSS en X %») o recalcular L.346 con base CQC (6.3/11.3/10.6 %) | ⬜ |
+| 2 | 🟡 | F | L.92 vs L.96-101 | El encabezado «### Los tres modos relevantes» precede a una tabla de **cuatro** modos, y el modo 4 sí se usa después (V₄ = 9.38 tonf en Ec. 4). El «tres» se refiere solo al 85 %/81 % de masa (modos 1-3) | Titular «Los modos relevantes» o aclarar que el 4 se incluye para el corte basal | ⬜ |
+| 3 | 🟡 | N | L.232 (Ec. 4, modo 2) | V₂: 0.0003·24.39·3.1065 = 0.0227 → redondea a **0.02**, la tabla dice **0.03**. Consistente solo si Ux real ≈ 0.0004 (mostrado 0.0003); ruido de redondeo sobre un término despreciable | Poner 0.02, o mostrar Ux con más cifras | ⬜ |
+
+**Verificado y correcto:** ω = 2π/T (modos 1-4); conversiones Sₐ g→m/s² ×9.80665 (las cuatro, ≤ 0.02 %); Γ = Lᵢ/Mᵢ (los 4 exactos); Amplitud Ec. 1 = Γ·Sₐ/ω² vs `U1Amp` (0.16-0.34 %, coherente con el 0.2 % declarado); Vᵢ = Uₓ·M_tot·Sₐ (Ec. 4, modos 1,3,4); **SRSS de 4 modos = 38.525 ≈ Base Reactions SAP 38.506**; ρᵢⱼ de Der Kiureghian (Ec. 5, los 4 pares, ≤ 0.5 %); brecha CQC/SRSS = 0.57 %; recon vs SAP = 0.49 %; par 2-3 r = 0.741, ρ = 3.8 %; gemelo 77.36/77.20 = 0.21 % y 77/38.5 = 2.0×; período X 0.859→0.440 s; modos 3-4 T₄/T₃ ≈ 0.964, ρ₃₄ ≈ 0.73 (post: 0.72, dentro del redondeo); masa 85 % X / 81 % Y (modos 1-3); **gotcha factor de escala 9.80665 vs 386.089 y ×39.4 correctos**; patrón de signos firmado A0/B0/C0/D0 consistente entre L.369, tabla y caption. Las 7 imágenes existen; `/herramientas/sap-scripts` resuelve; **cruces entrantes verificados**: `ritz-vs-eigen` (L.167) y `factor-r-anatomia` (L.118) enlazan aquí, ambos no-draft y con contexto coherente. Frontmatter válido; imports los tres usados; labels Ec. 1-6 correlativos; sin H1; tesis del intro (3 promesas) cerrada.
+
+**No verificable:** Valores Sₐ/g del espectro (0.1770/0.3167/0.4160/0.4527 y el peak 0.476 g @ T = 0.27 s) — salen de `nch2369-spectrum.ts`, solo se recalcularon las conversiones a m/s². Masa total 24.39 tonf·s²/m (`Assembled Joint Masses`); Lᵢ, Mᵢ (`ModalMass`), `U1Amp` y `Base Reactions` (dato SAP); contribución de modos 5-12 (el término dominante de 4 modos ya reproduce SAP a 0.05 %); datos del gemelo y de la torre de 2 caras; reacciones de esquina firmadas (60.96/67.49/94.67/94.49) y que el modo 3 triplica el Fz de esquina — requieren el modelo.
+
+---
+
+### 2026-07-15 · `blog/section-cut-muros-losas-sap2000` · ⚠️ 5 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.118-119 | «SAP reporta el momento respecto al centroide de los nudos del grupo, que está a $z=2$ m **(el centro del muro)**». El centro geométrico de un muro de 3 m es **1.5 m**, no 2. El z = 2 sale de excluir los nudos de apoyo de la base (nudos en z = 1,2,3 → centroide 2); el paréntesis «el centro del muro» es incorrecto. El número M = 10 = P·(3−2) es autoconsistente con z = 2, así que el error es el descriptor, no la aritmética | «(el centroide de los nudos agrupados, con la base excluida — no el centro geométrico, que sería 1.5 m)» | ⬜ |
+| 2 | 🟡 | N | L.187-189 | La columna Δ no se reproduce desde los valores mostrados. x = 1.5: 13.6/13.5 − 1 = 0.74 % → 0.7 %, el post dice **0.9 %**. x = 3.0: 18.1/18.0 − 1 = 0.56 % → 0.6 %, dice **0.7 %**. Solo x = 0.75 (1.6 %) reproduce. Probablemente Δ se calculó con el valor SAP sin redondear | Recalcular Δ desde los valores mostrados, o declarar que Δ usa la salida SAP a plena precisión | ⬜ |
+| 3 | 🟡 | U | todo el cuerpo (L.68, 143, 157, 187…) | Coma decimal en prosa y en las tablas de cálculo a mano (`0,20 m`, `13,6`, `1,6 %`), mientras el resto del blog y las ecuaciones de este mismo post usan punto. La coma es defendible como salida GUI es-CL, pero aquí se aplica también a **inputs y cálculos a mano** | Usar punto en prosa y cálculos a mano; reservar la coma para las capturas y decirlo | ⬜ |
+| 4 | 🟡 | F | L.89 / L.116-125 | `Ec. 2` queda etiquetada pero no se referencia por su rótulo (solo se alude a los valores en el caption). Ec. 1 y Ec. 3 sí se citan | Referenciar `Ec. 2` donde se discute el corte a media altura, o dejarla sin label | ⬜ |
+| 5 | 🔵 | L | L.130-131 | La `Note` dice cambiar «Default» por «User Defined» y luego «en las tablas y la API el mismo ajuste se llama *Program Determined* / `SetResultLocation`». En SAP2000 «Program Determined» suele ser el equivalente del *default*, no del *User Defined*; la equivalencia parece contradictoria. No verificable sin la doc/OAPI | Verificar contra la doc de SAP2000 / OAPI el nombre exacto del control de Result Location y su mapeo | ⬜ |
+
+**Verificado y correcto:** Ec. 1 (V_base = P = 10; M_vuelco = P·H = 30); Ec. 2 (V = 10; M = P·1 = 10); M_centro = qL²B/8 = 1·36·4/8 = **18**; V_max = qLB/2 = 1·6·4/2 = **12**; Ec. 3 a mano (x = 0.75 → 7.875; x = 1.5 → 13.5; x = 3.0 → 18.0); reacción By Group = qLB/2 = 12; Δ de x = 0.75 (1.6 %); coherencia del signo ±18.1 con el corte central; coherencia dimensional de Ec. 3. Los 7 activos existen bajo `public/section-cut-muros-losas-sap2000/`. Frontmatter válido; sin H1; jerarquía sin saltos. **Semántica By Group (suma reacciones + cargas nodales) vs By Quadrilateral (suma fuerzas internas del plano) consistente en intro, tabla comparativa, ambos casos, sección de signos, tabla de errores comunes y resumen** — no hay cruce ni contradicción. Result location = centroide por defecto: consistente. Signo por orden de puntos (Quad) / lado agrupado (Group): consistente. Tesis del intro (tres trampas: método, ubicación del momento, signo) cerrada.
+
+**No verificable:** Todos los valores marcados como salida de SAP2000 (F1 = 10.00; M2 = 30.0 y 10.0 en el muro; M2 By Group = 36; F3 = 12; M2 del Quad 8.0/13.6/18.1; ±18.1 con orden invertido). El centroide en z = 2 depende de la malla y del set de nudos agrupados; consistente con M = 10 pero no reproducible sin el modelo. El nombre exacto del control de Result Location en la GUI/OAPI (#5). Requiere el `.sdb` del muro y de la losa.
+
+---
+
+### 2026-07-15 · `blog/placa-base-ejemplo-trabajado` · ⚠️ 2 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (contra la herramienta del sitio)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | N | §5, L.208-210 | «subir $h_{ef}$ de 40 a 45 cm **no cambia nada**». Con $A_{Nc}$ fijado por el pedestal 80×80, φN_cbg pasa de 10.21 a **9.48 tonf** (−7 %): no queda igual, empeora. El propio paréntesis lo dice ($\propto A_{Nc}\,h_{ef}^{-0.5}$, exponente negativo ⇒ decrece), así que «crece con» y «no cambia nada» se contradicen | «no ayuda — de hecho baja un ~7 %, porque la capacidad escala con $A_{Nc}\,h_{ef}^{-0.5}$» | ⬜ |
+| 2 | 🔵 | N | Ec. 1 (L.48) y Ec. 8 (L.192) | Los factores mostrados redondeados no reproducen el resultado mostrado (que sí es correcto). Ec. 1: 0.65·0.85·250·**1.78** = 245.9, no 245.6 (el 245.6 sale del exacto 80/45 = 1.7778). Ec. 8: 0.70·**0.44·0.81·40.4** = 10.08, no 10.2. Un lector que reintroduzca los factores impresos obtiene otro número | Mostrar un dígito más en los factores (1.778; 0.444·0.812·40.4) o anotar «(valores redondeados)» | ⬜ |
+
+**Verificado y correcto (recalculado con Python contra `placaBaseAnchorage.ts`/`placaBase.ts` y contra teoría cerrada):** **DG1 a mano** — e = 30 cm, N/6 = 7.5; Ec. 1 f_p,máx = 245.56; q_máx = 11 050; Ec. 2 e_crit = 20.69; Ec. 3 disc. = 343.9, Y = 4.558; Ec. 4 T_u = 10 370 ⇒ 5.19 tonf/perno; m = 8.25, Ec. 5 M_pl = 6 683; Ec. 6 t_req = 3.426; lado traccionado x = 3.25, t = 1.15; pernos A_b = 5.067, φF_nt·A_b = 11.62 tonf, ratio 0.45. **Equilibrio y brazos** — Ec. 7 P_u(e+f) = 19.0 tonf·m; DG1 brazo 37.72 ⇒ R 50.4, T_u 10.4; elástico brazo 34.2 ⇒ R 55.6, T_u 15.6. Porcentajes: **+51 %** por perno (7.82/5.19), **+28 %** espesor (3.43/2.67), +50 % tracción total. Fracción de contacto 17.5/45 = 39 %. **Anclaje (Cap. 17)** — Ec. 8 A_Nc/A_Nco = 0.444, ψ_ed = 0.812, N_b = 40 400, φN_cbg = 10.21 tonf; ratio breakout 15.63/10.21 = **1.53**; con DG1 optimista 10.4/10.21 = 1.02 ⇒ 1.02 + 0.42 = 1.44. Pullout φN_p = 10.51. Interacción 1.53 + 0.42 = 1.95, ratio 1.63. Flexión: cap. 25 mm, ratio 1.14, t_req tool 2.67. Cierre 110×110: c_a = 37.5, breakout 0.84, interacción 0.90, aplastamiento 0.51. **Reproducción exacta contra la herramienta**: breakout (0.44/0.81/40400/10.21), pullout (10.51), pryout (φ = 20.42), breakout de corte (c_a1 = 22.5, φV = 4.71) e interacción — todos coinciden con la tabla del §2. Defaults confirmados. **Formato/enlaces:** schema OK (series/seriesPart:2); part 1 (`placas-base-sap2000`, seriesPart 1) existe, no draft; ancla `#51-cono-de-arrancamiento-breakout-1762` coincide con su H3; `/placa-base-ejemplo/fig-dg1-vs-elastico.svg` existe; `/herramientas/placa-base` existe; imports los tres usados; labels Ec. 1-8 correlativos; sin H1. (Es post de `blog`: los cruces a otro post son deseables — la regla de no-cross-ref es solo para `hormigon`.)
+
+**No verificable:** Los valores del solver elástico (Newton) del tool: σ_máx = 141.0 kgf/cm², fracción de contacto 39 %, T = 7.82 tonf/perno (15.63 total), el caso M = 8 con T = 3.1, y el breakout de corte 0.24 con pedestal 110×110. No corrí el solver TS, pero quedan **corroborados indirectamente**: la tracción 15.63 es la que hace cerrar el equilibrio con brazo 34.2 y la que alimenta breakout/pullout/interacción que sí recalculé. Para cerrarlos haría falta ejecutar `solveBearing()` con los inputs del caso.
+
+---
+
+### 2026-07-15 · `blog/rotulas-pushover-sap2000` · ⚠️ 22 hallazgos (los 2 🔴 corregidos)
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+> **Actualización 2026-07-18** (working tree): los dos 🔴 y tres 🟠 numéricos corregidos
+> **verificando contra el dataset y el modelo SAP2000** (`APP_sap2000/d2_rotulas_pushover`).
+> Se encontró la causa raíz en la propia referencia cerrada `cerrada.py`: usaba
+> `ΔP = H·h/L` (válido solo para bases articuladas) en vez del reparto real del pórtico
+> con bases empotradas `ΔP = (M_C+M_D)/L`. Corregido el script (`cerrada.py` extrae el
+> axial del solve elástico), regenerado `results.json` (bloque cerrado) y las figuras
+> `pitfall_pm.png`/`capacity_curve.png`. H_u (127) y el gap (15.9 %) son invariantes al
+> bug → la tesis siempre se sostuvo. Valores confirmados: SAP mide barlovento 415 kN
+> (M 156) / sotavento 511 kN (M 139); 1.ª rótula P-M cerrada a 114 kN (SAP 119.8).
+> El post ya **no está bloqueado**.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.140-141 (`alt` + `caption` de `pitfall_pm.png`) | **Los puntos de operación 338 / 592 kN son estáticamente inadmisibles.** Implican ΔP = ±127 kN → corte de viga de 127 kN → momentos de extremo 127·4/2 = **254 kN·m > Mp,viga = 105.6**. Equilibrio de vuelco: 126.4·4 = **505.4** vs 294.17 + 127·4 = **802.2** (sobra +59 %). Correcto: ΔP = (505.4 − 294.17)/4 = **52.8** → **412 / 518 kN**, con momentos **156 / 138** (no 167 / 126). **Causa raíz** (compartida con #5): se usó ΔP = H·h/L = 126.4 → 465 ∓ 126.4 = 339/591 ≈ 338/592, ignorando que los momentos de base resisten parte del vuelco. **La tesis NO se cae**: como 1.18(1−P/P_CL) es lineal en P y P_A + P_B = 930 es invariante, M_A + M_B = 294.17 y Hu = 126.4 kN son idénticos con el reparto correcto | Regenerar el PNG y el `alt`/`caption` con 412 / 518 kN y 156 / 138 kN·m. El Hu = 127 kN y el 16 % no cambian | ✅ aplicado (working tree): bug hallado en `cerrada.py` (ΔP=H·h/L); figura regenerada con SAP medido (415/511, 156/139), `alt` actualizado |
+| 2 | 🔴 | N | L.153-154 | «la rótula un **26 %** más débil que si redujera por $P_y$» no reproduce. Con P = 592: M(P_CL = 1367) = **126.4**; M(P_y = 1970, el propio valor del post) = **155.9** → **−19.0 %**. Con P_y = F_y·A_g = 2031 → −20.0 %; con F_ye·A_g = 2234 → −22.9 %. Ninguna base da 26 % (el factor 1.18 y M_p se cancelan, así que no depende de ellos) | Corregir a **19 %** (con el P_y del post) o **20 %** (con F_y·A_g), y declarar cuál P_y | ✅ aplicado (working tree): al axial correcto (sotavento 511 kN) → «139 kN·m, un 16 % por debajo de los 165 que daría $P_y$» (explícito, sin ambigüedad de base) |
+| 3 | 🟠 | N | L.98-99, 3, 30-31, 113, 199 | La cadena **160 / 139 → 15.6 % → 16 %** no cierra: 160/139 − 1 = **15.11 %** → redondea a **15 %**, no a 16 %. Para 15.6 % harían falta ~160.7 / 139.0. Y «el mismo gap, 15.8 % contra el 15.6 % de SAP, coincidencia a dos décimas» pasa a ser 15.8 vs 15.1 = **0.7 pp** | Publicar los valores de SAP sin redondear (160.7 / 138.9) o rebajar la afirmación de precisión | ✅ aplicado (working tree): «160.4 / 138.8 kN» (reproduce 15.6 %) y «147.3 / 127.1 → 15.9 % vs 15.6 %», reproducibles |
+| 4 | 🟠 | N | L.99 | «Coincidencia a dos décimas» no es sostenible a 3 cifras: con los valores sin redondear, 147.28/126.36 − 1 = **16.56 %**, no 15.75 %. Redondear 126.36 → 127 mueve el gap **0.8 pp**, ~4× la coincidencia reclamada. El 15.8 % solo sale de dividir los ya-redondeados 147/127 | Reportar el gap cerrado desde los valores sin redondear (16.6 %); o «coinciden dentro de ~1 pp» | ✅ aplicado (working tree): eliminada la frase «coincidencia a dos décimas» |
+| 5 | 🟠 | N | L.126-127 | La 1.ª rótula P-M «aparece a **104 kN**» no reproduce: **113.5 kN**. Análisis elástico independiente (W8×31 I = 110 in⁴, W8×18 I = 61.9 in⁴, E = 29 000 ksi, h = L = 4 m, bases empotradas) → M_base = 1.2327·H, ΔP = 0.3852·H; fluencia en H = **113.5**, P = 509. **El marco está validado**: el mismo modelo da la 1.ª fluencia M3 en **136.9** contra los **137** del post (0.1 kN). Con ΔP = H·h/L (el error de #1) sale **105.4 ≈ 104** → misma causa raíz. La rótula finita empujaría **hacia arriba**, no a 104. Arrastra el «24 % antes» → **17.1 %** | Recalcular con el ΔP de equilibrio (~113-114 kN) y actualizar 24 % → ~17 % | ✅ aplicado (working tree): cerrada corregida da 1.ª rótula P-M (base_B) a **114 kN**; post → «114 kN, un 17 % antes» |
+| 6 | 🟠 | N | L.153 | $P_y$ = 1970 kN no reproduce para W8×31 ($A_g$ = 9.13 in² = 5890 mm²): F_y·A_g = **2031 kN**; F_ye·A_g = **2234 kN**. Para 1970 haría falta A_g = 8.86 in². Y si P_CL usa F_ye (verificado), el P_y comparable es 2234 | Usar **2031** (F_y·A_g) o **2234** (F_ye·A_g) y decir cuál | ⬜ |
+| 7 | 🟡 | N | L.104-107, 206 | El factor de corrección da **+7.01 %** (1.0390 × 1.03), contra offsets medidos de **+8.84 %** y **+9.45 %** → residuales **+1.71 %** y **+2.28 %**. El de P-M **excede el «±2 %»** declarado, y los dos efectos explican 7 de ~9 pp (78 %), no la totalidad que sugiere «se descompone en dos efectos» | «±2.5 %», o declarar los residuales y que queda ~2 pp sin explicar | ⬜ |
+| 8 | 🟡 | N | L.101-102 | «~9 % por encima… **en las dos por igual**, por eso el gap relativo calza perfecto» — son **+8.84 %** y **+9.45 %**, no iguales; y es esa desigualdad la que hace que los gaps difieran (15.75 × 1.0884/1.0945 = 15.11 %) | «~9 % en las dos (8.8 % y 9.5 %)» y borrar el «por igual» | ⬜ |
+| 9 | 🟡 | N | L.127, 184-185 | Base de porcentaje no explícita: «un 24 % antes» = (137−104)/137; sobre 104 sería 31.7 %. Igual en el gancho: «25 % conservadora» = 24.8 % sobre 327; sobre 246 sería 32.9 % | Explicitar la base: «un 24 % por debajo de los 137 kN del modelo M3» | ⬜ |
+| 10 | 🟡 | L | L.202 | «**Conocé** lo que tu rótula realmente usa» — voseo rioplatense, no es-CL. Única forma vosea del post | «Conoce», o «Hay que saber lo que tu rótula realmente usa» | ⬜ |
+| 11 | 🟡 | L | L.118 (`caption`), 123 | «capacity design» en inglés sin cursiva. Los otros 5 posts que tocan el concepto (incl. `pushover-momento-vs-arriostrado-sap2000` L.219) usan **«diseño por capacidad»** | Unificar a «diseño por capacidad» (el tag puede quedar) | ⬜ |
+| 12 | 🟡 | L | L.62, 105, 162, 206, 207 | «backbone» **nunca** en cursiva; `pushover-momento-vs-arriostrado-sap2000` sí lo marca en 1.ª aparición. Inconsistente con *sway* y *curva de capacidad*, que aquí sí van en cursiva | Cursiva en la 1.ª aparición y redonda después | ⬜ |
+| 13 | 🟡 | L | L.133 | H3 «**Know your hinge**: la rótula FEMA no reduce por Py…» — frase inglesa sin cursiva ni traducción | «Conoce tu rótula: …» o *Know your hinge* en cursiva | ⬜ |
+| 14 | 🟡 | U L | L.178 (`alt`) | «columna de hormigón **400x400** según **ACI 318**»: `x` en vez de `×` (el post usa `×` en W8×31), y norma sin año — el repo usa **ACI 318-25** | «400×400 según ACI 318-25» | ⬜ |
+| 15 | 🟡 | F | L.45-47 | `Ec. 1` es la única etiquetada y **nunca se referencia** en prosa | Referenciarla (ayudaría en L.98 y L.199) o quitar el `label` | ⬜ |
+| 16 | 🟡 | U | L.148, 153 | Valores sin unidad: «no los **172** de $F_y Z_x$ nominal» (kN·m) y «$P_{CL} = 1367$ kN contra $P_y = 1970$» (kN) | Añadir unidades en ambos | ⬜ |
+| 17 | 🟡 | U | L.61, 141, 190 | `PCL` y `Mp,viga`/`Mp,col` sueltos fuera de math mode, incl. en prosa (L.190: «su superficie 1.18(1−P/PCL)»), mientras el cuerpo usa $P_{CL}$, $M_p$ | L.190 → `$1.18\,(1 - P/P_{CL})$`. En `alt`/`caption` unificar a «P_CL» | ⬜ |
+| 18 | 🟡 | F | L.128 | Línea de 94 col (el resto respeta ~90) | Reflow | ⬜ |
+| 19 | 🟡 | C | cross-post: `pushover-momento-vs-arriostrado-sap2000` L.235-237 | D13 dice «+5 %… **el mismo offset que medí en la nota de D2**». **D2 no reporta un 5 %**: reporta ~9 % total = **+3.9 % longitud finita** + 3 % endurecimiento. D13 ya mete el endurecimiento en sus M_p (420/114, «punto C»), así que su +5 % es comparable al **+3.9 %** — parecido, no «el mismo» | En D13: «el mismo efecto (longitud finita) que en D2 vale +3.9 %» | ⬜ |
+| 20 | 🔵 | R | L.176-187 | El gancho de hormigón no da $f'_c$, armadura, $f_y$ ni recubrimiento → no reproducible. Reconstruido: **400×400, f'c = 30 MPa, 8Ø25 (ρ = 2.45 %), f_y = 420, rec. ~40 mm** da M(P=0) = **245.6** (post: 246 ✓), M(P=1000) = **329.8** (post: 327 ✓), balanceado (1638, 361) vs (1580, 355). Plausible y coherente; falta declarar la sección | Añadir f'c, armadura, f_y y recubrimiento (una línea) | ⬜ |
+| 21 | 🔵 | N R | L.104-106 | El **0.0375·L** es un default de SAP no verificable sin el modelo. Además aplicar 1/(1−0.0375) a **todo** $H_u$ es una simplificación: en el mecanismo *sway* solo las rótulas de columna ven el brazo acortado → (294.17/(4−0.15) + 211.28/4)/126.36 = **+2.25 %**, no +3.9 % | Declarar de dónde sale el 0.0375 y si el factor aplica a todas las rótulas | ⬜ |
+| 22 | 🔵 | F | L.1-7 | `norm` ausente en un post cuyo eje es ASCE 41/FEMA 356 | `norm: "ASCE 41-17 / FEMA 356"` | ⬜ |
+
+**Verificado y correcto:** **Toda la ingeniería de la rótula FEMA — la tesis del reverse-engineering — cuadra.** $M_p$ con resistencia esperada: 55 ksi × 30.4 in³ = **188.9 kN·m** ≈ 189 ✓; nominal 50 × 30.4 = **171.7** ≈ 172 ✓. **$P_{CL}$ por AISC E3 con $F_{ye}$**: KL/r = **78.0**, F_e = **324.7 MPa**, F_cr = **232.6 MPa**, P_CL = **1370 kN** vs los **1367** del post (0.2 %) — y con F_y nominal daría 1302, así que **queda confirmado que la rótula usa F_ye y pandeo**, exactamente lo que el post afirma. Ec. 1 caso M3: (188.91 + 188.91 + 2×105.64)/4 = **147.28** ≈ 147 ✓. Ec. 1 caso P-M: **126.36** ≈ 127 ✓ — **robusto al error #1** (la interacción es lineal en P y P_A + P_B = 930 invariante). M_p,viga/M_p,col = **0.559** ≈ 0.56 ✓. **1.ª fluencia M3 = 136.9 ≈ 137 ✓** reproducida con análisis de marco independiente, y con la **viga** como primera rótula ✓. **Las dos secuencias reproducidas de forma independiente**: M3 → viga (136.9) antes que base (153.2); P-M → base sotavento (113.5) < barlovento (125.7) < viga (136.9). **La inversión de secuencia, que es la tesis del post, se sostiene.** M(338) = **167.8** ≈ 167 ✓ y M(592) = **126.4** ≈ 126 ✓ (consistentes entre sí, aunque los P sean los equivocados). Gap ideal 147/127 − 1 = **15.75 %** ≈ 15.8 ✓. Brazo 1/(1−0.0375) = **+3.9 %** ✓. Gancho (327−246)/327 = **24.8 %** ≈ 25 % ✓. Los 5 activos existen ✓. `/hormigon` resuelve ✓. Frontmatter válido; 3 imports usados; `Note type` válidos; sin H1; punto decimal ✓. **Coherencia de tesis:** las 4 promesas del intro se entregan y reaparecen en el cierre ✓.
+
+**No verificable:** Los valores de la curva de SAP: **160 / 139 kN** de meseta y **104 kN** de 1.ª rótula P-M (el 104 sí lo cuestiono en #5, pero mediante un cálculo cerrado calibrado contra el propio 137 kN del post, no contra el modelo). Cerrarlo requiere el `.sdb` o el CSV de `Pushover Curve`. El **0.0375·L** y el **3 % de endurecimiento** (punto C a 1.03·M_p) requieren `Frame Hinge Assigns 06/07`. La secuencia tal como SAP la reporta (`Frame Hinge States`) — la reproduje teóricamente, no contra la salida. El post no nombra los `.sdb` ni la versión de SAP2000 ni el objetivo de desplazamiento del control.
+
+---
+
+### 2026-07-15 · `blog/pushover-momento-vs-arriostrado-sap2000` · ⚠️ 14 hallazgos (1 🔴)
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.198 (tabla), L.189-190 vs L.257-261 (Ec. 5) | **Dos «picos» distintos del CBF sin reconciliar.** La tabla dice «Corte máximo **942 kN @ 13.7 mm**» y el caption «pandea a 14 mm… 942 kN»; la Ec. 5 declara `$V_{pico}$ = 2·711·cosθ = 925 kN` «contra los 925.4 de SAP». Con `K0 = 88 930 kN/m`, el pandeo cae en 925.4/88930 = **10.4 mm**, no 13.7-14 → son dos eventos: pandeo (925.4 @ ~10.4 mm) y máximo de la curva (942 @ 13.7 mm), *posterior*. El `alt` agrava: marca el pico de 942 como «pandeo de la diagonal comprimida». Tal como está, «$V_{pico}$ = 925» es falso frente a la propia tabla | Renombrar Ec. 5 a `$V_{pandeo}$` y decir: la diagonal pandea a 925.4 kN / ~10.4 mm y el corte **máximo** llega a 942 / 13.7 mm unos pasos después, mientras la traccionada sigue cargando. Corregir el `alt` | ✅ aplicado (working tree): Ec. 5 → $V_{pandeo}$ = 925.4 y prosa aclarada. **Dataset `CBF_pushover.json` confirma**: buckling V=925.4 @ step 7, V_peak=941.87 @ 13.74 mm → son dos eventos, como ahora dice el post. Queda opcional afinar el marcador de `curvas_capacidad.png` (menor) |
+| 2 | 🟠 | N | L.198 vs L.262-263, L.246 | **942 kN es inalcanzable con los máximos que declara el propio post.** El post valida `V = (T+C)·cosθ` al final del empuje: (352+232)·cos49.4° = **380.1** vs 380 ✓ (0.03 %). Aplicada al máximo, 942 exige `T+C = 1447.5`; como `C ≤ Pcr = 711.3`, haría falta `T ≥ 736.2`, pero prosa y `alt` fijan `T_max = 725`. Techo real: (725+711.3)·0.6508 = **934.7 < 942**. Uno de {942, 725, 88930} no cuadra | Releer T y C en el paso del máximo y publicar la terna coherente; si `T_max = 736`, corregir los 725 en prosa y `alt` | 🚫 no es error (dataset): `CBF_pushover.json` da V_peak=941.87 (corte basal medido, ground truth) y tension_brace max ~725; **no se multiplican en el mismo instante** — 942 es el máximo de la curva, 725 el máximo de la traccionada sobre toda la corrida. La reconstrucción (T+C)cosθ queda 0.8 % corta porque T y 725 no son concurrentes. Resuelto por el fix de #1 (Ec. 5 = pandeo, no pico) |
+| 3 | 🟡 | N U | L.252 | `$F_e = \pi^2 E/(KL/r)^2 = 210\,600$` **kPa**: (a) unidad mal — el resto del bloque va en MPa y la línea siguiente divide 379.5 (MPa) por **210.6**; (b) valor: π²·200 000/96.9² = **210.22 MPa**, no 210 600 (eso pide E = 200 358 MPa) | `$F_e = 210.2$ MPa` | ⬜ |
+| 4 | 🟡 | N | L.252-253 | `$F_{cr} = 0.658^{379.5/210.6}\cdot 379.5 = 178.4$ MPa`: la aritmética impresa da **178.51**; con el $F_e$ correcto (210.22) da **178.27**. 178.4 no sale de ninguna. El resultado final es robusto: 178.27·3987 = **710.7 ≈ 711 ✓** | Publicar `F_cr = 178.3 MPa`, encadenado con F_e = 210.2 | ⬜ |
+| 5 | 🟡 | N | L.258 (Ec. 5) | `2 × 711 × 0.651 = 925`: la aritmética impresa da **925.72** → 926. El 925.4 «exacto» sale de usar cosθ sin redondear | Escribir `= 925.4` con `\cos\theta = 0.6508`, o declarar el redondeo | ⬜ |
+| 6 | 🟡 | N | L.276 | `M = 91·6/4 = 137 kN·m`: 91·6/4 = **136.5**. Con Fv sin redondear (91.08) da 136.67 → 137 ✓ y SAP 136.8 ✓ | Encadenar sin redondeo intermedio (`136.7`) o declarar el redondeo | ⬜ |
+| 7 | 🟡 | R | L.119, 134-136, 251-253 | **Faltan los datos para rehacer la Ec. 3**: no se declara `E` (hay que inferir 200 GPa), ni `K` (se asume 1.0), ni `r` (47.5 mm). `KL/r = 96.9` y `A_g = 3 987 mm²` aparecen sin origen | Una línea: «A992: E = 200 GPa, Fy = 345, Ry = 1.1. HSS5×5×⅜: A_g = 3 987 mm² (6.18 in²), r = 47.5 mm; K = 1.0 → KL/r = 4 610/47.5 = 97» | ⬜ |
+| 8 | 🟡 | U | L.218 | `$M \approx 96 < M_p$` sin unidades | `$M \approx 96$ kN·m $< M_p$` | ⬜ |
+| 9 | 🟡 | C | L.236-237 | «+5 %… **el mismo offset** que medí en la nota de D2». En D2 el offset total es ~9 % = **3.9 % longitud finita** + 3 % endurecimiento; aquí el endurecimiento ya está en los momentos de punto C, así que solo aplica el 3.9 % → 305·1.039 = 316.9, no 320 | «…la longitud finita de la rótula (el efecto que en D2 valía +3.9 %; acá el endurecimiento ya está en los momentos de punto C)» | ⬜ |
+| 10 | 🔵 | C R | L.233-238 | La validación del MF **no es independiente**: los `Mp,col ≈ 420` y `Mp,viga ≈ 114` que alimentan la Ec. 4 se leen del punto C de SAP. Con Mp nominal (Fye·Z: 375.6 y 105.7) la Ec. 4 da **275 kN**, no 305. El post lo declara, pero «El mecanismo está donde la teoría lo pone» suena a cierre cerrado | Matizar: la Ec. 4 valida la **forma del mecanismo**, no la magnitud a ciegas; los Mp entran medidos | ⬜ |
+| 11 | 🔵 | N C | L.213 | «pendiente 4 457 kN/m —**igual a la rigidez lateral del portal**—». El portal cerrado (k = 0.133, K = 24EIc/h³·(12k+1)/(12k+4)) da **5 876 kN/m**, +32 %. No lo marco error: puede ser deformación por corte, offsets rígidos o zonas de panel — pero la afirmación queda sin respaldo | Mostrar el cálculo del portal, o bajar a «pendiente 4 457 kN/m» sin la equivalencia | ⬜ |
+| 12 | 🔵 | R | todo el post | No se nombra el modelo/script (`.sdb`, carpeta). Sin eso y sin E/K/r (#7) el lector no puede rehacer las curvas | Nombrar los dos `.sdb` (MF y CBF) y la ruta del experimento | ⬜ |
+| 13 | 🔵 | N | L.291 (Note tip) | «la curva bajaría a ~690 en vez de a 380» con bases empotradas: no verificable sin el modelo alternativo | Declarar que es una corrida aparte, o marcarlo como estimación | ⬜ |
+| 14 | 🔵 | F E | figuras | El post tiene **8 `<Figure>`** = 4 capturas GUI + 2 gráficos + 2 SVG. Tres capturas que el registro del experimento menciona (`gui-asignar-rotula`, `gui-backbone-diagonal`, `gui-multiple-states`) **nunca se commitearon** (verificado con `git log --all --name-only`), y la prosa sí describe esos pasos (L.144-151, L.164). No rompe nada: las 8 rutas resuelven | Decidir si faltan capturas por subir o corregir el registro del experimento a «4 capturas GUI» | ⬜ |
+
+**Verificado y correcto:** **Geometría**: θ = arctan(3.5/3) = **49.3987°** → 49.4 ✓; cos = 0.65079 ✓; sin = 0.75926 ✓; L_b = **4.6098** → 4.61 m ✓; KL/r = **97.05** → 96.9 ✓ (±0.2 %). **Ec. 3 / AISC E3**: F_ye = **379.5 MPa** ✓; F_e = 210.22, F_cr = 178.27, **P_cr = 710.7 → 711 ✓ exacto contra SAP −711.3** (0.08 %) — el resultado sobrevive a los errores intermedios #3 y #4. **Ec. 2**: T_y = **1513.1** → 1513 ✓; y 725 < 1513 → la traccionada nunca fluye ✓. **A_g** = 3987 mm² = **6.18 in²** = HSS5×5×⅜ (AISC) ✓. **Ec. 4**: (2·420 + 2·114)/3.5 = **305.14** → 305 ✓; gap 320/305 − 1 = **+4.92 %** → +5 % ✓, signo y sentido bien descritos; forma correcta para el mecanismo sway de 4 rótulas. **Ec. 6**: F_v = **91.08** → 91 ✓; M = 136.67 ≈ 137 vs SAP 136.8 (0.1 %) ✓. **Identidad V = (T+C)cosθ**: **380.1** vs 380 ✓ (es la que sostiene #2). Ratios: 88930/4457 = **19.95** → ×20 ✓; 942/320 = **2.94** → ×2.9 ✓; caída **−59.7 %** → −60 % ✓. Derivas: 13.7/3500 = **0.39 %** → 0.4 ✓; 250/3500 = **7.14 %** → 7 % ✓. Fluencia MF: 290/0.066 = **4394** ≈ K0 = 4457 ✓. Las 8 rutas existen ✓. `/blog/rotulas-pushover-sap2000` y `/blog/factor-r-anatomia` existen, no draft ✓. Frontmatter válido; `section: "SAP2000"` coherente con los otros 6 ✓. 3 imports usados; labels Ec. 1…6 correlativos; `Note type` los tres válidos; sin H1 ✓. `×` en todos los perfiles ✓; punto decimal ✓; miles con `\,` en LaTeX y espacio fino en prosa ✓. MF/CBF definidos en el intro y sostenidos ✓; *backbone* en cursiva la 1.ª vez ✓; `AISC 341 §F2.3` coherente con el tema ✓. **Tesis:** la pregunta del intro es exactamente la que cierran las conclusiones ✓.
+
+**No verificable:** `Mp,col ≈ 420` y `Mp,viga ≈ 114` (punto C con endurecimiento) — los nominales cierran (375.6 y 105.7; ratios 1.12 y 1.08, plausibles para ASCE 41 punto C, aunque el 1.12 de la columna no refleja la reducción por axial P/Py = 0.057). Requiere `Frame Hinge States`. `K0 = 88 930 kN/m`: la cota superior solo-diagonales es 2·(EA/L_b)cos²θ = **146 525**; 88 930 es el 61 %, plausible con la flexibilidad de viga y columnas. `T = 352`, `C = 232`, `T_max = 725`, `942 @ 13.7 mm`, `290 kN @ 66 mm`, `−711.3` y `136.8`: requieren los dos `.sdb` para cerrar #1, #2 y #11. `ASCE 41-17 Table 9-8`: sin la norma para confirmar la numeración. El residual «~690 kN con bases empotradas»: corrida no publicada.
+
+---
+
+### 2026-07-15 · `blog/ritz-vs-eigen-masa-participativa-sap2000` · ⚠️ 16 hallazgos (1 🔴)
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.274 | «Ritz da períodos aproximados (**ligeramente altos**)» — **sentido invertido**. Por Courant-Fischer los autovalores de un subespacio de Ritz son **cotas superiores**: λ_Ritz ≥ λ_exact ⇒ ω_Ritz ≥ ω_exact ⇒ **T_Ritz ≤ T_exact**. Los períodos de Ritz salen *cortos*. Además contradice L.147-148 del propio post («los períodos coinciden a cinco decimales») | «ligeramente **bajos** — sus frecuencias son cota superior», y aclarar que aquí coinciden porque la base de arranque `UX` genera exactamente el subespacio lateral | ✅ aplicado (working tree): «ligeramente bajos: sus frecuencias son cota superior de las reales» |
+| 2 | 🟠 | N | L.157 (Note tip) | «Eigen a 40 modos, Ritz a 8 … pero te cobra **el triple** de vectores». Ningún cociente del post da 3: 40/8 = **5.0**, 18/2 = **9.0**, 29/5 = **5.8** | «te cobra **cinco veces** los vectores» (si la base es 40 vs 8) o «**nueve veces**» (si es el 90 %: 18 vs 2) | ⬜ |
+| 3 | 🟠 | F | L.26-27 | `(LDR, *Load-` ⏎ `Dependent Ritz*)` — Markdown colapsa el salto en espacio y renderiza «*Load- Dependent Ritz*» | Reflowear para que `Load-Dependent` no cruce el salto de línea | ⬜ |
+| 4 | 🟠 | R | L.49-50 vs L.91 | El balance de masa no cierra con los datos del post: 5 masas × 12 tonf × 8 pisos = **480 tonf**, pero se declara *W* = **720 tonf**. Faltan **240 tonf** (30/piso) sin declarar — y la decisión 4 promete «M_total exacta y **verificable**». Retro-calculado: m_f = 90 tonf/piso (confirmado porque la teoría cerrada reproduce el 0.856332 de SAP a 6 decimales) | Declarar la masa restante («30 tonf/piso en los nudos de columna») para que 8 × (5×12 + 30) = 720 cierre a la vista | ⬜ |
+| 5 | 🟠 | R | L.54-64 (Ec. 2) | Ec. 2 se presenta como «forma cerrada» / ancla verificable pero **no es evaluable con los datos del post**: faltan *h*, *E*, *ν* y la sección completa («columnas realistas de 0.5 m» no dice si es lado, canto o luz). Retro-calculados: **0.5 × 0.5 m, h = 4.0 m, E = 200 GPa, ν = 0.3**, m_f = 90 tonf/g reproducen T₁ = 0.5168 s (flexión pura) y 0.5293 s (con corte) | Añadir una línea con E, ν, h y sección | ⬜ |
+| 6 | 🟡 | N | L.179-180 (tabla) | La columna «% del convergido» no reproduce desde los Fx impresos: 128.7/130.06 = **98.95 %** (tabla: 98.9) y 129.9/130.06 = **99.88 %** (tabla: 99.8). Ambos truncados hacia abajo en vez de redondeados | Publicar Fx con 2 decimales (128.66 / 129.85 son los únicos que concilian ambas columnas) o redondear a 99.0 / 99.9 | ⬜ |
+| 7 | 🟡 | N | L.241 vs L.263-264 | Dos valores para la misma constante: caption «factor de escala **9.8066**» y Note OAPI «g = **9.80665**». La captura `gui-caso-rs.png` efectivamente muestra `9,8066` | «9.8066 en la captura = g truncado; el valor correcto es 9.80665» o unificar el modelo | ⬜ |
+| 8 | 🟡 | N | L.64, 148 | «calzan a **cuatro** decimales» / «coinciden a **cinco** decimales», pero los períodos se imprimen con **3** y no se muestra el par comparado. (Verificado que sí calzan: T₂ teoría 0.178468 vs SAP 0.178467) | Imprimir ambos con los decimales que la afirmación reclama, o bajarla a «tres decimales» | ⬜ |
+| 9 | 🟡 | L | L.17 | «ASCE 7 §12.9.1» sin edición. El **90 %** es la redacción de **ASCE 7-10 §12.9.1**; en 7-16/22 la cláusula es **§12.9.1.1** y pide **100 %** (o 90 % + corrección de masa faltante). NCh433/NCh2369 sí piden 90 % | «ASCE 7-10 §12.9.1 (en 7-16, §12.9.1.1 sube la vara al 100 %)» | ⬜ |
+| 10 | 🟡 | C | L.126-127 | «entre un modo lateral y el siguiente, Eigen intercala **un racimo de ocho** armónicos verticales» — no se cumple siempre. El censo de la propia figura deja el lateral 2 (modo 18) y el lateral 3 (**modo 19**) **contiguos** | «el patrón se repite hacia arriba: Eigen sigue intercalando racimos de ocho verticales» (sin el «entre cada par») | ⬜ |
+| 11 | 🟡 | F | L.57-59 | `Ec. 2` etiquetada pero **nunca referenciada** por su label (Ec. 1 sí, en L.155) | Referenciarla o quitarle el label | ⬜ |
+| 12 | 🟡 | U | L.134 vs L.135 | Misma figura, dos notaciones: `alt` «1e-19», `caption` «10⁻¹⁹» | Unificar en «10⁻¹⁹» | ⬜ |
+| 13 | 🔵 | R | L.256 vs `gui-caso-rs.png` | El snippet OAPI nombra el caso `"RSX"`; la captura muestra **`RSX_R`** | Unificar el nombre o decir que la captura es de la variante Ritz | ⬜ |
+| 14 | 🔵 | R | Figura L.238-242 | La captura muestra `Modal Damping = Constant at 0,05`, pero el post no declara ξ — y el espectro NCh2369 depende de ξ vía (0.05/ξ)^0.4. Zona 2, suelo C, I=1, R=5 no bastan para rehacer el espectro | Declarar ξ = 0.05 junto a zona/suelo/I/R | ⬜ |
+| 15 | 🔵 | F | L.3 | `description` de **542 caracteres** — la 2.ª más larga del blog (mediana ≈ 320) | Recortar a ~300, conservando «90 % en 2 vectores vs 18» y «8 modos = corte basal cero» | ⬜ |
+| 16 | 🔵 | U | L.73 vs L.61/L.148 | Tres redondeos del mismo T₁: **0.5293** (cuerpo), **0.529** (L.148), **0.53** (caption) | Aceptable si es deliberado; si no, unificar cuerpo y caption en 0.529 s | ⬜ |
+
+**Verificado y correcto:** **Cadena completa de masa participativa, contra teoría cerrada Y contra la captura GUI.** Para un *shear building* uniforme de N = 8 (φ_ji = sin[(2i−1)jπ/17], m*/M = (Σφ)²/(N·Σφ²)): lateral 1 = **0.856332** y acumulado lateral 2 = **0.947161** — coinciden a **seis decimales** con `gui-tabla-masa.png` y con el 85.6 %/94.7 % de la tabla. **Orden de los 40 modos Eigen reconstruido** (laterales 0.5293/0.1785/0.1096/0.0810/0.0661/0.0574/0.0524/0.0497 + 4 racimos verticales de 8): modo 4 → 0 %, modo 8 → 0 %, modo 9 → 85.63 %, modo 18 → **94.72 %** (cruza el 90 %), modo 29 → **99.58 %**, modo 40 → 100 % — **todas** las cifras de la tabla, la prosa y los captions cierran; 40 − 8 = **32 verticales** ✓. **T₁ y su gap**: Ec. 2 da **0.5168 s** (post: 0.517 ✓); con A_s = ⅚A da **0.5293** (SAP GUI: 0.529322 ✓). Gap flexión pura vs SAP = **+2.42 %** (post: +2.4 ✓); con corte = **+0.011 %** (post: 0.0 ✓). T₂/T₁ teoría = **0.33716** = SAP **0.33716** ✓. A_s = ⅚A correcto para sección rectangular ✓. M_total = 720/9.80665 = **73.4196** → 73.42 ✓. Corte basal 130.06 → «130.1 tonf» ✓. Los **8** activos existen ✓. `/blog/periodos-fundamentales-exponente` y `/blog/respuesta-espectral-modal-torre-traspaso` existen, no draft ✓. **Capturas vs texto**: `gui-caso-ritz.png` confirma RITZUX, Max = 8/Min = 1, Loads Applied Accel/UX ✓; `gui-caso-rs.png` confirma CQC, Modal Load Case = RITZUX, NCH2369 ✓; `gui-tabla-masa.png` confirma T ≈ 0.90 s en modos 1-8 y SumUX ≈ 10⁻¹⁸ ✓. Frontmatter válido; sin H1; 3 imports usados; `Note type` los tres válidos; labels correlativos; punto decimal en el cuerpo y coma solo en las capturas ✓. **Tesis:** las cuatro promesas del intro se cumplen ✓; «Ritz incluye la corrección de masa faltante» y «la FNA exige Ritz» son correctos para SAP2000 ✓.
+
+**No verificable:** Corte basal 128.7 / 129.9 / **130.06 tonf** y los 0.0 de Eigen-4/Eigen-8: dependen del `.sdb` y de la función NCh2369 (falta ξ, ver #14). La *forma* del resultado es consistente (con SumUX ≈ 10⁻¹⁸, Fx = 0 en X es exactamente lo esperado). **Masa UZ**: Ritz UX+UZ = 96.9 % y Eigen-40 = 67.8 % — la captura confirma SumUZ = 0.621134 a los 18 modos, y 5×12×8/720 = **66.7 %** de masa sobre vigas flexibles explica el techo de Eigen; plausibles pero requieren el modelo. Los períodos de los racimos verticales T ≈ 0.23/0.10/0.06 s (solo dos aparecen en la captura). La ubicación exacta del 90 % en **NCh433 §6.3.3** y **NCh2369 §5.4** — requiere copia oficial.
+
+---
+
+### 2026-07-15 · `blog/zapata-solo-compresion-sap2000` · ⚠️ 13 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | E C | L.33 | `[teoría del contacto parcial](/blog/prediseno-fundaciones-aisladas)` **misatribuye la fuente**: ese post no publica el contacto parcial — dice lo contrario («fuera del kern… el análisis requiere métodos no lineales», L.214-217). Solo cubre kern (Ec. 8) y biaxial con contacto pleno (Ec. 9). Quien sí publica $q_{max}=2N/(3b(d/2-e))$ es `surrogate-biaxial-despegue` L.32; el ancho $3(d/2-e)$ está en `experimento-fundaciones-sap2000` L.246 y `cuando-confiar-formula-rigida` L.128 | Apuntar a `/blog/surrogate-biaxial-despegue`, o citar prediseño solo para el kern y surrogate para el triángulo | ⬜ |
+| 2 | 🟠 | F C | L.4-6 vs L.178 | El cierre afirma «Con esto **la serie de Fundaciones cierra su círculo**», pero el frontmatter **no tiene `series`/`seriesPart`** y usa `section: "SAP2000"`. Los 5 hermanos tienen `section: "Fundaciones"` + `series: "Fundaciones aisladas"` + `seriesPart` 1-5. `getSeriesNav` (`src/lib/posts.ts:90`: `if (!post?.data.series) return null`) → **el post que dice cerrar la serie es el único sin navegación de serie**, y no aparece en el grupo del índice | Añadir `series: "Fundaciones aisladas"` + `seriesPart: 6`; decidir si `section` pasa a `"Fundaciones"` o si la prosa se atenúa a «complementa la serie» | ⬜ |
+| 3 | 🟠 | L U | L.18, 32-44, 78, 165-172 (todo el post) | **Colisión de símbolos con la serie que dice cerrar**: en `experimento-fundaciones-sap2000` y `cuando-confiar-formula-rigida` la razón de excentricidad es **`e/B`** (B = dimensión en la dirección de la excentricidad; `L/B` = relación de forma). Aquí es **`e/L`** con L en la dirección de la excentricidad y B como ancho transversal — **B y L intercambiados**. El lector que viene de «el kern cae exacto en $e/B = 1/6$» se encuentra con «e ≤ L/6» | Adoptar la convención de la serie (`e/B`, kern en `B/6`, `q_max = 2N/(3L(B/2−e))`), o declarar explícitamente en «La referencia» que aquí L es la dirección de la excentricidad y por qué difiere | ⬜ |
+| 4 | 🟠 | N C | L.167-169 | El bullet acota el régimen a «**e > L/6 con e/L ≤ ~0.2**» pero lo ilustra con «−6 % en e/L = **0.25**» — el ejemplo cae **fuera** del rango que el propio bullet declara. Y queda un hueco: los bullets van hasta ~0.2 y retoman en ≥0.3; 0.25 (el único caso medido de la banda) no pertenece a ninguno | Cambiar la cota a `e/L ≤ ~0.25` (donde está el dato) y que el bullet siguiente arranque en `> 0.25` | ⬜ |
+| 5 | 🟠 | R | todo el post | **Ningún parámetro del modelo se declara**: L (3.0 m), B (2.0 m), N (500 kN) y $k_v$ (50 MN/m³) no aparecen. Solo se deducen indirectamente — L de un caption, N de «ΣR = 500.00 kN», $k_v$ de despejar `781 250 = kv·0.125²`, y **B de ningún lado** salvo reconstruyendo `17 nudos × 0.125`. Los modelos (`d8_gap.sdb`/`d8_lineal.sdb`) y el patrón `NL_E###` tampoco se nombran, pese a que «El modelo, el runner y los datasets viven en el repositorio del experimento» promete trazabilidad. Un post de verificación no es rehacible así | Tabla de 4 filas en «El modelo»: L×B = 3.0×2.0 m, N = 500 kN, $k_v$ = 50 MN/m³ (→ 781 250 N/m interior), grilla 25×17 @ 0.125 m; nombrar los `.sdb` y la convención `NL_E###` (cm) | ⬜ |
+| 6 | 🟡 | N | L.143-144 | «El error es **la razón entre la Ec. 2 y el $q_{max}$ del modelo lineal**» está **invertido**: Ec. 2/lineal = 555.56/283.33 = **1.9608 → +96 %**, mientras lo reportado (−49 %) es lineal/Ec. 2 − 1 = **−0.490** | «la razón entre el $q_{max}$ del modelo lineal y la Ec. 2, menos uno» | ⬜ |
+| 7 | 🟡 | N | L.137, 138 | «hasta −116 kPa» es **truncamiento**: $q_{min}$ = 83.333(1−2.4) = **−116.67** → −117. Aparece igual en `alt` y `caption` | Unificar en −117 kPa (o −116.7) en alt y caption | ⬜ |
+| 8 | 🟡 | N | L.120-121 | «el triángulo de 0.9 m descrito por solo **7 filas** de grilla» no cuadra con el ancho medido: nudos a ≤ 0.875 m con paso 0.125 → x = 0, 0.125 … 0.875 = **8 filas** (7 espaciamientos). Si fueran 7 filas cargadas, el ancho medido sería 0.75, no el 0.875 declarado dos líneas más abajo | «8 filas», o explicitar que se cuentan los 7 espaciamientos | ⬜ |
+| 9 | 🟡 | N F | L.120 | «Los números del acuerdo, **caso a caso**: −0.2 / −0.3 / −0.4 / −1.5 %» — 4 valores para los 5 casos declarados en L.78. Se infiere que son e/L = 1/6, 0.25, 0.30, 0.40 (la Ec. 2 no aplica en e = 0: da c = 4.5 m > L), pero el lector debe adivinarlo | Nombrar los casos: «(e/L = 1/6, 0.25, 0.30, 0.40; en e = 0 la Ec. 2 no aplica)» | ⬜ |
+| 10 | 🟡 | F | L.37-39 | `Ec. 1` etiquetada pero **nunca referenciada** por su label (a `Ec. 2` se la cita 2×) | Citarla al comparar los anchos de contacto en L.122 | ⬜ |
+| 11 | 🟡 | U | L.89 | «781 250 N/m» usa **espacio normal** (0x20, verificado byte a byte) como separador de miles, no espacio fino | Espacio fino (U+202F) o `781\,250` en math mode | ⬜ |
+| 12 | 🟡 | U | L.34, 44 vs L.18, 78, 120-127, 165-172 | Convención mixta: el post usa `$K_r$`, `$k_v$`, `$q_{max}$` correctamente pero deja sueltas en prosa las variables centrales — `e`, `L`, `B`, `N`, `c`, `ΣR`, «e ≤ L/6», «e/L = 0.25». Son las mismas que sí van en math dentro de las ecuaciones | Uniformar: `$e \leq L/6$`, `$e/L$`, `$\Sigma R$` | ⬜ |
+| 13 | 🔵 | N | L.3 (`description`) | «$q_{max}$ a **menos del** 1.5 %» cuando el peor caso es exactamente −1.5 % (L.120). Al límite, no por debajo | «a 1.5 % o menos» / «hasta 1.5 %» | ⬜ |
+
+**Verificado y correcto:** El núcleo numérico es **exacto, sin una sola desviación**. Geometría: 25×17 = **425** gaps ✓; grilla @ 0.125 → L = **3.0 m** y B = **2.0 m**, coherentes con «e = 0.5 m = L/6» ✓. Rigidez: 781 250 ÷ 0.125² = **50 MN/m³**, y el esquema tributario cierra *exacto*: 345 interiores × 0.015625 + 76 bordes × 0.0078125 + 4 esquinas × 0.00390625 = **6.000 m² = L·B** ✓ (los factores ½ y ¼ bien puestos). **Ec. 1** c = 3(L/2−e) → 2.25/1.80/0.90 m ✓, y los anchos medidos 2.25/1.75/0.875 desvían 0/0.050/0.025 m, todos < medio espaciamiento (0.0625) ✓ — «clavado o a medio espaciamiento» se sostiene. **Ec. 2** q_max = 2N/(3B(L/2−e)): en e/L = 0.40 → **555.56 kPa** → «556 de punta» ✓. **Modelo lineal** N/(BL)(1+6e/L) con 83.333 kPa → 208.33/233.33/283.33; errores contra Ec. 2: **−6.25 % / −16.00 % / −49.00 %** → los «−6/−16/−49 %» del caption, `alt`, bullet «16-49 %» y description cuadran los cuatro ✓. **Error cero exacto hasta el kern**: en e/L = 1/6, Ec. 2 → c = 3.0 = L y q_max = 166.67 = lineal ✓ — «un gap que nunca abre **es** un resorte lineal» es consistente. Tracción ficticia −66.67 y −116.67 ✓ (ver #7). Cadena de consistencia rastreada para −6/−16/−49 %, 556, −116, 0.9 m, 425, 500 kN, L/6 y 2.25/1.80/0.90 en prosa, ecuación, captions, alts, bullets y description: **sin discrepancias** salvo las listadas. Los **7** activos existen ✓. Los 4 enlaces resuelven, ninguno draft ✓ (aunque ver #1). Frontmatter válido; 3 imports usados; `type` válidos; 6 × H2 sin H1 ni saltos ✓. **Punto decimal en todo el cuerpo ✓** (nota: los hermanos de la serie usan coma — la deuda es de los otros). `×` correcto ✓. 5 casos × 2 modelos = «10 casos» ✓; «425 reacciones por caso» ✓. **Tesis:** la promesa del intro («cuantifica exactamente cuánto miente el lineal… un número y no una corazonada») la cierra «Cuándo basta el lineal, cuándo no» ✓.
+
+**No verificable:** Los valores **medidos en SAP2000** — anchos de contacto 2.25/1.75/0.875 m, gaps de q_max −0.2/−0.3/−0.4/−1.5 %, «ΣR = 500.00 kN a +0.000 %» y «la resultante a la excentricidad teórica con cuatro decimales». Todos *plausibles y consistentes* con la cerrada recalculada, pero cerrarlos exige `d8_gap.sdb`/`d8_lineal.sdb`. Las **firmas OAPI** citadas (`PropLink.SetGap`, `LinkObj.AddByPoint` con `IsSingleJoint = True`, `ConstraintDef.SetBody`, `Results.LinkForce`) requieren la doc OAPI o una corrida. Que el **eje local 1 del link de un nudo sea +Z global**. Que las 3 capturas correspondan a `d8_gap.sdb` / caso `NL_E050` (los PNG existen, pero el post no nombra el modelo — ver #5). «10 segundos por modelo» (hardware). Las iteraciones/convergencia del caso no lineal.
+
+---
+
+### 2026-07-15 · `blog/amortiguamiento-exponente` · ⚠️ 10 hallazgos (2 🔴)
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.134-135 | **Base invertida, y subestima la tesis a la mitad.** El post define error = f/real−1 (caption L.123) y usa −37 % con esa base en 3 lugares. Pero la moral 2 reusa los mismos números con la base **recíproca**: «recibe **31-37 % más demanda que la que su espectro declara**». Si f/real−1 = −31 %, entonces real/f−1 = 1/0.69−1 = **+44.9 %**; si −37 %, = **+58.7 %**. La frase **subestima a la mitad el margen inseguro**, que es la tesis del post | «recibe **45-59 % más demanda** que la que su espectro declara», o mantener la base del mapa: «su espectro declara 31-37 % menos que la demanda real» | ✅ aplicado (working tree): → «45-59 % más demanda» |
+| 2 | 🔴 | N | L.70-71 | «el máximo de una senoidal muestreada **cada 36°** puede caer **hasta 2.5 %** bajo el pico verdadero». La cota de 10 pts/ciclo es 1−cos(18°) = **4.89 %**, no 2.5 %. El 2.5 % es el error *observado* (una realización dentro de [0, 4.89 %]), no la cota. La propia regla lo confirma en el otro extremo: 50 pts/ciclo → 1−cos(3.6°) = 0.197 %, y el post observa 0.183 % | «puede caer hasta 4.9 % bajo el pico; aquí cayó 2.5 %» — separa cota de observación y refuerza la moral | ✅ aplicado (working tree): «hasta 4.9 % ($1-\cos 18°$)… en esta corrida cayó 2.5 %» |
+| 3 | 🟠 | R | L.25, 96-97, 101-102 | Newmark-Hall se anuncia como la tercera fórmula («las tres fórmulas», «se va de largo en los dos extremos»), pero **la expresión nunca se da** y la tabla L.29-34 solo tiene 2 columnas. La curva NH de `formulas_meseta.png` no es reproducible ni chequeable | Dar la expresión de NH usada (y su fuente/edición) y agregarle columna, o degradar NH a mención cualitativa | ⬜ |
+| 4 | 🟠 | N | L.123 (`caption` de `error_mapa`) | «el rincón oscuro es T ≤ 0.1 s con **ξ = 15-20 %**: la fórmula **reduce el espectro un 43 %**». El 43 % solo vale en ξ = 20 %: f(20 %) = 0.5743 → −42.6 %; f(15 %) = 0.6444 → **−35.6 %**. El rango declarado no corresponde al número único | «reduce el espectro 36-43 % (ξ = 15-20 %)» | ⬜ |
+| 5 | 🟡 | L | L.132-134 vs L.123 | La moral 2 ilustra el rincón con equipos de «ξ efectivo de **10-15 %**», pero el rincón está definido como **ξ = 15-20 %**. Solo ξ = 15 % solapa; el ejemplo de 10 % queda fuera del rincón que ilustra | Alinear los ejemplos al rango del mapa, o ampliar el rincón declarado y recalcular sus errores | ⬜ |
+| 6 | 🟡 | N | L.152-153 | «algo conservadora para ξ < 5 % (**+7 a +14 %**)». El post usa **+6.6 %** para ξ = 3 % tres veces (L.102, 108, 142). El +7 es un redondeo que contradice al mismo valor sin redondear | «+6.6 a +14 %» | ⬜ |
+| 7 | 🟡 | U | L.22 vs L.29 | El mismo 0.05 en math con dos separadores: Ec. 1 `\frac{0{,}05}{\xi}` (coma) y encabezado de tabla `(0.05/\xi)^{0.4}` (punto). El cuerpo usa punto salvo `$T = 0{,}02$` y `$T \approx 0{,}2$`. No se aplica de forma consistente ni dentro del post | Unificar: si la casa es `{,}` en math, `(0{,}05/\xi)^{0{,}4}` en la tabla; si es punto, quitar los `{,}` de L.22/87/91 | ⬜ |
+| 8 | 🟡 | R | L.173-175, 54-57 | «El código del experimento vive en **el repositorio del experimento**» — sin nombre ni enlace. El `.sdb` del banco tampoco se nombra, ni se declara la **edición de NCh2369** (2003 vs 2023 — relevante: el `(0.05/ξ)^0.4` y el tratamiento de R difieren) | Nombrar repo/`.sdb` y declarar la edición de NCh2369 citada | ⬜ |
+| 9 | 🔵 | F | L.26-34 | «las **tres** discrepan fuerte donde más se usan» seguido de una tabla con **dos** columnas de fórmula. Se lee como columna faltante | Ligar a #3: tercera columna, o «las dos que aquí se tabulan» | ⬜ |
+| 10 | 🔵 | L | L.130-131, 164 | Se atribuye el **R\*** a NCh2369 («el R\* de NCh2369»). El R\* interpolado es clásicamente de **NCh433 §6.2.3.2** (R\* = 1 + T\*/(0.10·T₀ + T\*/R₀)). No puedo cerrar si la edición de NCh2369 usada define un R\* propio con la forma «0.16·R·T′» | Verificar contra el texto de la norma (edición y §) y citarlo; si es NCh433, corregir la atribución | ⬜ |
+
+**Verificado y correcto:** **Tabla L.29-34, ambas fórmulas, los 8 valores exactos**: NCh `(0.05/ξ)^0.4` → 1.4427/1.2267/0.7579/0.5743 (post: 1.443/1.227/0.758/0.574 ✓); EC8 `√(10/(5+ξ%))` → 1.1952/1.1180/0.8165/0.6325 (post: 1.195/1.118/0.816/0.632 ✓). Ambas dan exactamente 1.000 en ξ = 5 % (normalización correcta) ✓. L.27 «la Ec. 1 amplifica 22-44 % mientras EC8 dice 12-20 %»: NCh → +44.3 %/+22.7 % ✓; EC8 → +19.5 %/+11.8 % ✓. **Cadena interna de la meseta, completa y autoconsistente**: despejando la mediana medida desde cada error declarado, ξ=1 % → **1.4206** (el alt dice «1.9 donde lo medido es 1.42» ✓ y 1.9037/1.42−1 = +34.1 % ✓); ξ=2 % → 1.2655; ξ=3 % → 1.1508; ξ=20 % → 0.6110. **Contrastando EC8 contra esas medianas**: −9.1 %, −5.6 %, −2.8 %, +3.5 % → rango **[−9.1 %, +3.5 %]** vs el declarado «entre −9 % y +4 %» ✓. **La tesis «EC8 abraza el dato» está sostenida por los propios números del post.** Caption L.84 ✓ (1.4427, 0.5743). Conteos: 60 × 8 = **480** ✓; 9 × 8 = **72** ✓; error mediano 0.009 % / máx 0.183 % consistente en 3 lugares ✓. Muestreo, lado bueno: T = 0.1 con dt = 0.01 → 10 pts/ciclo ✓; dt = 0.002 → 50 ✓; 20 000 × 0.002 = 40 s ✓. **Tesis:** la pregunta del intro la responden los tres Resultados y las Reglas prácticas, en ese orden; el `Note` «Una realización, no una estadística» acota honestamente el alcance ✓. Las 4 imágenes existen ✓. `/blog/factor-r-rmu` existe, no draft, y es efectivamente `seriesPart: 2` → «Post 2 del factor R» es exacto ✓. Frontmatter válido; `series: "Experimentos sísmicos"`/`seriesPart: 4` no colisiona (1 = pdelta, 2 = periodos, 3 = estimador-t1) ✓. 3 imports usados; sin H1; `Note type` válidos; `Ec. 1` única y referenciada 6× ✓.
+
+**No verificable:** **El −10.2 % de `factor-r-omega0` sigue abierto.** Este post **no lo aclara ni lo contradice** — no es hallazgo. Trabaja con casos **FNA** de amortiguamiento modal explícito (`SetDampConstant`), un mecanismo distinto del ajuste interno que SAP2000 aplica a una **función** de espectro cuando su ξ declarado difiere del ξ modal del caso Response Spectrum (que es lo que produce el −10.2 % allá). Para cerrarlo: 1/NCh(3 %) = 0.815 → −18.5 % (**no** explica el dato); 1/EC8(3 %) = 0.894 → −10.6 % (cerca del −10.2 %, pero **es especulación**). Haría falta el `.sdb` de ese post y la doc de la corrección por amortiguamiento del RS Function de SAP2000, o un barrido controlado ξ_función vs ξ_caso. Los **valores medidos** (mediana y banda P25-P75 del integrador, los 72 puntos SAP, el mapa): verificados **por consistencia interna** (toda la cadena de la meseta cierra sola), no contra la fuente. El «+19 a +38 %» del rincón conservador implica medianas reales de ≈1.031 y ≈1.046; el 1.046 queda levemente sobre el techo de 1.03 que declara L.87 para T = 0.02 s, pero L.128 habla de «T corto» (banda, no punto) — **plausible, no lo marco error**. El registro (El Centro 1940, sample de SAP2000) y los 40 s implícitos.
+
+---
+
+### 2026-07-15 · `blog/factor-r-anatomia` · ⚠️ 9 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | L/C | L.64, L.150-151 vs L.176-184 | `$\delta_u$` carga **dos significados incompatibles**: capacidad («degrada hasta la deformación última») en unas secciones y demanda («$\delta_u \approx \delta_e$») en la regla de igual desplazamiento. La Ec. 5 ($\delta_u = \delta_d C_d$) solo tiene sentido si es demanda. Ligado: la Ec. 7 define μ como «capacidad de deformación inelástica» pero L.203 la usa como demanda, y el Post 2 la mide como demanda | Separar símbolos ($\delta_u$ capacidad / $\delta_m$ demanda máxima) o declarar que aquí δu es la deformación máxima esperada y el pacto es «demanda ≤ capacidad». Reescribir la glosa de la Ec. 7 | ⬜ |
+| 2 | 🟠 | F/C | L.55 (`alt`) + `public/factor-r/fig-curva-respuesta.svg` vs L.66-73 | **La figura contradice a la prosa sobre el punto B.** El SVG dibuja la curva roja separándose exactamente en B (`M110,470 L255,365`, y (255,365) cae sobre la recta elástica); el `alt` lo confirma. La prosa dice lo contrario: «en la práctica nunca es así». El Post 3 lo midió: primer evento a 1.44·Vd y 3.4·Vd | Dibujar la separación por encima de B (un $V_1$ intermedio) y ajustar el `alt`; o declarar en el `caption` que es la idealización del libro | ⬜ |
+| 3 | 🟠 | C | L.257-258 | Promesa refutada por la propia serie: «en períodos cortos debe romperse **exactamente como la Ec. 8 anticipa**». El Post 2 midió μ = 126 en T = 0.1 s / R = 8 donde la Ec. 8 promete 32.5 — 3.9× peor | «…debe romperse — y la Ec. 8 marca el piso de ese quiebre», que sobreviva al resultado | ⬜ |
+| 4 | 🟡 | U | L.36 vs L.233, L.263, L.269 | Mismo valor, dos separadores decimales en el mismo post: `Ω₀ = 0.7R` (punto, texto plano) vs `$0{,}7R$` (coma, math). La serie está dividida: `factor-r-rmu` usa 0 comas, `factor-r-cierre` usa 11 | Unificar en punto (y llevar L.36 a math mode) | ⬜ |
+| 5 | 🟡 | C | L.41-43 | El post anuncia una serie de **4 notas**, pero son **5** (`factor-r-cierre`, `seriesPart: 5`, no draft). El Post 5 arrastra el mismo error: «En total: cuatro notas» | Añadir el cierre al mapa de la serie, o alinear ambos posts | ⬜ |
+| 6 | 🟡 | F | L.75, 83, 94, 155, 182 | 5 de 8 ecuaciones etiquetadas nunca se referencian por su label (Ec. 1, 2, 4, 5, 7) | Quitar el `label` de las que solo se leen en línea, o citarlas donde corresponda | ⬜ |
+| 7 | 🟡 | N | `public/factor-r/fig-newmark.svg` L.46-50 | La figura anota **«E₁ = E₂»** pero las áreas no son iguales: E₁ = 0.5×134×140 = **9 380 px²**, E₂ = 120×90 = **10 800 px²** → +15.1 %. El μ dibujado (340/86 = 3.95) no es el que exige la Ec. 8 para el Rμ dibujado (230/90 = 2.556 → μ = 3.77): δu debería estar en x ≈ 864 px, está en 880. El panel izquierdo sí está a escala (0.4 %) | Mover δu de x = 880 a x ≈ 864 px | ⬜ |
+| 8 | 🔵 | E | L.99-103, 131, 229, 253-269 | «(Post 2)», «(Post 3)», «(Post 4)» como texto plano sin enlace — razonable al publicarse (2026-07-09, antes que los otros), pero ya existen y los Posts 2-5 sí enlazan hacia atrás | Enlazar a `/blog/factor-r-rmu`, `/blog/factor-r-omega0`, `/blog/factor-r-capacidad-esperada` | ⬜ |
+| 9 | 🔵 | L/C | L.159-164 | «$C_d = R$» se atribuye a NCh2369 sin citar cláusula (aquí y en Posts 2 y 5). Además el post nunca menciona que NCh2369 ya limita R en períodos cortos (el $0{,}16\,R\,T'$ → R\* que el Post 3 activó), justo el fenómeno de la Ec. 8 | Citar el § de NCh2369; considerar una frase sobre R\* como anticipo del Post 3 | ⬜ |
+
+**Verificado y correcto:** Ec. 8 en ambos sentidos: μ = (4²+1)/2 = **8.5** ✓ y √(2·8.5−1) = **4.0** ✓ — idéntica a la Ec. 1 del Post 2 y coherente con el 32.5 de los Posts 2, 4 y 5. Cadena definicional R = Rμ·Ω₀: (Ve/Vy)·(Vy/Vd) = Ve/Vd ✓ — Ecs. 1-4 cierran algebraicamente. **`fig-curva-respuesta.svg` está dibujada a escala** y es internamente consistente: R = 340/105 = **3.238**, Rμ = 1.518, Ω₀ = 2.133, Rμ·Ω₀ = **3.238** = R ✓; δe/δd = 3.241 ≈ R verifica gráficamente L.187-188. `fig-newmark.svg` panel izquierdo: Rμ = 2.556 vs μ = 2.545 → 0.4 % ✓. Consistencia con la serie: rango «2.0 a 3.5» para Ω₀ = 0.7R idéntico al Post 3 ✓; $T_{ye} = R_y F_y A_g$ ✓ Post 4; el reparto Rμ = oscilador / Ω₀ = sistema completo es exactamente lo que hacen los Posts 2 y 3 ✓. Los 3 activos existen bajo `public/factor-r/` ✓. Los 2 enlaces internos resuelven, ninguno draft ✓. Frontmatter válido contra el schema Zod ✓. 3 imports, los 3 usados; sin H1; jerarquía sin saltos; `Note type` válidos; labels Ec. 1…8 correlativos ✓.
+
+**No verificable:** La atribución de $C_d = R$ y $\Omega_0 = 0{,}7R$ a NCh2369 (haría falta el articulado). El rango «2.0 a 3.5» y la Figura 7.5 atribuidos a *Proyectar en Acero: práctica chilena* cap. 7 — sin acceso al libro; coincide entre Posts 1, 3 y 5, lo que confirma consistencia interna. La vigencia empírica de la observación de Newmark (su aritmética sí está verificada).
+
+---
+
+### 2026-07-15 · `blog/factor-r-rmu` · ⚠️ 16 hallazgos (1 🔴)
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.93-94 | **Contradicción interna en la validación del banco**: «el error de SAP contra el integrador queda **bajo 0.35 %** (el peor caso, $-1.5\,\%$…)». Si el peor caso es −1.5 %, la cota no es 0.35 %. Es la frase que sostiene toda la credibilidad del banco | Decidir el dato: o «bajo 0.35 % salvo un caso (−1.5 %, el más rígido con el recorte más suave, midiendo picos de 2 mm)», o corregir la cota al valor real del dataset | ⬜ |
+| 2 | 🟠 | N F | L.3 (`description`) | «**63 osciladores elastoplásticos** —**9 períodos × 6 niveles de recorte**—»: 9 × 6 = **54**, no 63. Los 63 son 9 × 7 (1 elástico + 6 niveles de R) y solo 54 son elastoplásticos — el propio post lo dice en L.145 | «63 osciladores en SAP2000 —9 períodos × (1 elástico + 6 niveles de recorte)—» | ⬜ |
+| 3 | 🟠 | N | L.220-221 vs L.151 | La dispersión se declara dos veces con dos magnitudes: «$\delta_u/\delta_e$ va de **0.54 a 1.84**» (−46 %/+84 %) vs «su dispersión (**±50 %**)». El ±50 % no cubre el 1.84 que el propio post destaca | Unificar en «−46 %/+84 %», o declarar que el ±50 % es otra estadística y nombrarla | ⬜ |
+| 4 | 🟡 | N | L.135 (`caption`) | «$\delta_u$ = 0.124 m contra $\delta_e$ = 0.120 m (**+3.6 %**)»: con los valores publicados, 0.124/0.120 − 1 = **+3.3 %**. El +3.6 % solo sale sin redondear. Se repite en `factor-r-cierre` L.40 | Publicar +3.5 % (coherente con δe sin redondear) o dar una cifra más en δe; alinear el cierre | ⬜ |
+| 5 | 🟡 | N | L.227 | «La misma reducción que en T = 1 s cuesta **μ = 8**»: es el μ *nominal*, no el medido. `factor-r-cierre` reporta **μ = 8.8** para R = 8 | Usar el medido, o aclarar que 8 es el nominal | ⬜ |
+| 6 | 🟡 | N | cross-post: `factor-r-capacidad-esperada` L.152 | «μ = 126 donde igual energía prometía **32**». El exacto es (8²+1)/2 = **32.5**, que es lo que dicen este post y el cierre. El Post 4 es el único que redondea | Corregir el Post 4 a 32.5 | ⬜ |
+| 7 | 🟡 | N | L.182-183 | «μ = 126 — **cuatro veces peor**»: 126/32.5 = **3.88×**. Redondeo al alza en la frase-titular | «casi cuatro veces peor» o «3.9 veces peor» | ⬜ |
+| 8 | 🟡 | N U | L.77 (`alt`) vs L.78 (`caption`) | Factor de escala con dos cifras: `alt` «Scale Factor **9.8066**», `caption` «× **9.80665**» | Unificar al valor que muestra la captura | ⬜ |
+| 9 | 🟡 | L | L.181 vs L.224 | «La letra chica» nombra dos cosas distintas en el mismo post: el quiebre en T cortos (L.181) y el detallamiento del Post 1 (L.224) | Reservarla para el detallamiento del Post 1 y usar otra imagen en L.181 | ⬜ |
+| 10 | 🔵 | C | L.145 vs L.150/L.156 | La frontera del quiebre se declara con tres valores sin conectar: «T ≈ 0.5 s» (caption), «T ≥ 0.5 s» (lectura 1), «bajo T ≈ 0.3 s» (lectura 2). La banda 0.3–0.5 s queda sin asignar | Nombrar la banda 0.3–0.5 s como transición, o unificar la frontera | ⬜ |
+| 11 | 🔵 | N | L.189 (`caption`) | «marcha hasta **120 δy** hacia un lado (**μ = 126**)»: si μ = δu/δy = 126, el pico es 126 δy | Aclarar la distinción (excursión de un lado vs pico total) o usar 126 δy | ⬜ |
+| 12 | 🔵 | L | L.64, 86, 107, 237 | Anglicismos sin cursiva de primera aparición («sample», «spoiler»); «pushover» en plano donde el resto del blog lo introduce en negrita | *sample*, *spoiler*; alinear el tratamiento de *pushover* | ⬜ |
+| 13 | 🔵 | E | L.236-239 | «La próxima nota diseña un marco arriostrado chevron…» sin enlace, aunque `/blog/factor-r-omega0` existe y no es draft | Enlazar a `/blog/factor-r-omega0` | ⬜ |
+| 14 | 🔵 | L E | L.81 | «Como en la **serie** de P-Delta» apunta a un post único; `factor-r-anatomia` lo llama «la **nota** de P-Delta» | «Como en la nota de P-Delta» | ⬜ |
+| 15 | 🔵 | F | L.26-28 | La Ec. 1 está etiquetada pero nunca se referencia como «Ec. 1» en la prosa | Referenciarla en L.173/L.182, o quitar el `label` | ⬜ |
+| 16 | 🔵 | R F | L.242, L.18/L.113 | (a) «vive en **el repositorio del experimento**» sin nombre ni enlace — el lector no puede rehacerlo. (b) L.18 (98 col) y L.113 (93 col) exceden el ~90 col | (a) Nombrar el repo/carpeta como hacen otros posts; (b) reflow | ⬜ |
+
+**Verificado y correcto:** **La cadena numérica del oscilador T = 1 s / R = 4 cierra sola**: m = 1000 kg, $k = m(2\pi/T)^2$ = 39 478.4 N/m (caption: 39 478 ✓); $\delta_y = F_y/k$ = 0.02996 m → meseta en d = 0.03 ✓; $V_e = R F_y$ = 4730.4 N → $\delta_e$ = **0.11982 → 0.120 m ✓**; $\mu$ = 0.124/0.02996 = **4.14 → 4.1 ✓**. La cadena μ ↔ δu/δe también cuadra: como $\delta_e = R\delta_y$, 126/8 = **15.75 → «viaja 16 veces más» ✓**; 15/8 = 1.88 → «el doble de la promesa» ✓. Ec. 1: (64+1)/2 = **32.5 ✓**. Eje x de la histéresis: 126/4.1 = 30.7 → «30 veces más largo» ✓. Caso FNA: 2400 × 0.01 = **24 s** = 1.98 × 12.113 s → «el doble del registro» ✓; cola 11.887 → «12 segundos» ✓. El Centro 1940 N-S, PGA 0.32 g ✓. U2 = X global para un link vertical ✓. Residual 0.3 → 5 δy consistente en 4 lugares ✓. Referencias cruzadas: «la Ec. 6 del Post 1» ✓; μ = 4.1 y mediana 1.01 concuerdan con Posts 4 y 5 ✓. Frontmatter válido ✓. **Los 9 activos existen** bajo `public/factor-r/` ✓. Los 2 enlaces resuelven, ninguno draft ✓. 3 imports usados; `Note type` válidos; sin H1; jerarquía sin saltos ✓. **Separador decimal: punto en todo el cuerpo ✓** (Posts 1 y 5 usan coma en math — inconsistencia de serie, no de este post).
+
+**No verificable:** Todo lo que sale del dataset del banco y del integrador propio, sin el `.sdb` ni el repo: el error SAP-vs-integrador (0.35 %/−1.5 %/−0.02 %/+0.01 %) — que es justo el hallazgo #1, así que **el #1 se cierra leyendo el dataset, no recalculando**; la mediana 1.01 y el rango 0.54–1.84; los μ punto a punto (4.1, 15, 126) y los residuales; el +70 % en T = 2 s y los μ ≈ 500 de la corrida con la trampa; los 14 s de las dos fases; y $F_y$ = 1182.6 N (verificado solo por consistencia interna con k, δy y δe, que sí cierra).
+
+---
+
+### 2026-07-15 · `blog/factor-r-omega0` · ⚠️ 14 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.67 (tabla) ↔ `factor-r-capacidad-esperada` L.113-114 | Cruce que no cierra en el gemelo esbeltez: $V_d$ = 185.3 kN ⇒ $N_u = V_d/(2\cos\theta)$ = **154.4 kN**, pero el Post 4 reporta **151 kN** (y su `0.7R·Nu` = 318 ⇒ 151.4). El gemelo resistencia sí cierra exacto: 437.5/1.2 = 364.58 → 365 ✓. Desvío −2.2 % solo en un gemelo | Rastrear cuál es el medido y unificar; si el desvío es real (combinación CQC), decirlo | 🔵 **resuelto (dataset), decisión narrativa pendiente**: `resumen.json` distingue `design.nu`=**151.3** (demanda de diseño, de V_d,diseño=181.6) y `nu_sap`=**154.4** (medido, de V_d,sap=185.3). Ambos correctos: son diseño vs medido. La tabla del Post 3 muestra V_d,sap=185.3 → N_u consistente ahí es **154**; el Post 4 cita el de **diseño 151**. Fix sugerido: unificar (usar 154 en Post 4 para casar con la tabla medida del Post 3) o etiquetar «151 de diseño / 154 en el modelo». No aplicado: cruza dos posts, es tu llamada |
+| 2 | 🟡 | C | L.66 (tabla) ↔ L.159-165 | $\Omega_0$ = 2.90 del gemelo esbeltez **es idénticamente** R\* = 2.90, no una medición independiente: dentro de $\delta_u$ el marco sigue elástico ⇒ $V_y \equiv V_e = R^*V_d$ ⇒ $\Omega_0 \equiv R^*$. Ese flanco del «0.7R flanqueado» es tautológico (0.7R < R\* siempre) | Explicitar la identidad: «en el caso esbeltez Ω₀ **es** R\* por construcción — el techo elástico». El hallazgo fuerte sigue siendo 1.44 | ⬜ |
+| 3 | 🟡 | C | L.218 | «La serie cierra con él [Post 4]» — pero existe `factor-r-cierre` con `seriesPart: 5` | «El Post 4 sigue con él» | ⬜ |
+| 4 | 🟡 | E | L.39, 144, 198, 218 | «Post 4» citado 4× sin enlace, mientras Posts 1 y 2 sí van enlazados y el Post 4 enlaza de vuelta | `[Post 4](/blog/factor-r-capacidad-esperada)` al menos en la primera mención | ⬜ |
+| 5 | 🟡 | R | L.3, 24, 44, 74, 96, 190 | **El libro nunca se nombra**, siendo la fuente de la Figura 7.5, del rango 2.0–3.5 y de la taxonomía de Ω₀. Solo el Post 5 lo identifica | Nombrarlo en la primera mención — el post debe sostenerse si se llega directo | ⬜ |
+| 6 | 🟡 | F | L.13 | `import Equation` sin uso: 0 ocurrencias de `<Equation>` | Borrar el import (mismo caso en `factor-r-capacidad-esperada`) | ⬜ |
+| 7 | 🟡 | N | L.116-117 | «629 kN — a **−0.4 %** … de 631 kN»: 629/631 − 1 = **−0.317 %** → −0.3 % | Poner −0.3 %, o citar los valores sin redondear que dan −0.4 % | ⬜ |
+| 8 | 🟡 | U | L.118, 121, 142, 165 vs L.24, 37, 53, 77, 89 | Separador decimal inconsistente **dentro de math mode**: coma en `0{,}7R`, `0{,}6`, `0{,}16`; punto en `1.44`, `0.3P_{ne}`, `3.4\,V_d`. El Post 4 escribe la misma fórmula con coma | Unificar; la convención dominante del blog es coma en `$…$` y punto en prosa | ⬜ |
+| 9 | 🟡 | U | L.193-194 | `2.90·$V_d$` y `2.1·$V_d$`: coeficiente y `·` fuera de math mode | `$2{,}90\,V_d$` / `$2{,}1\,V_d$` | ⬜ |
+| 10 | 🔵 | N | L.175 (caption cascada) | 1.12 × 1.11 × 1.28 × 1.21 = **1.9255** → 1.93, y el texto declara 1.92. El caption promete «producto = pushover, a 3 decimales» pero los factores a 2 decimales no lo reproducen | Mostrar los factores a 3 decimales, o decir «factores redondeados; el producto exacto da 1.92» | ⬜ |
+| 11 | 🔵 | N | L.64 ↔ L.175 | El caption ata catálogo a utilización («×2.66 porque el perfil quedó al 38 %»), pero 1/0.90 = **1.111** → 1.11, no el 1.12 declarado. Se explica por redondeo (utiliz. reales ≈ 0.376 y ≈ 0.895); no es error | Declarar utilizaciones a 3 decimales si el caption va a apoyarse en ellas | ⬜ |
+| 12 | 🔵 | N | L.123 | «siete veces la deformación última admitida»: con el pandeo a 8 mm, K = 78.6 kN/mm, δ_d = 5.57 mm, δ_u = 3.0·δ_d = **16.7 mm**, 108/16.7 = **6.5×**. Sensible al 8 mm redondeado (rango 6.1–6.9×) | «seis veces y media», o dar δ_u explícito en mm | ⬜ |
+| 13 | 🔵 | N | L.76-79 | R\* = 2.90 y el umbral `0{,}16\,R\,T'`: no verificable sin NCh2369. Bajo la forma tipo NCh433, el T′ que da R\* = 2.90 arroja umbral 0.147 s < T = 0.159 s → *no* caería bajo el límite; y el T′ mínimo que sí lo haría da R\* = 2.85 ≠ 2.90. Puede ser que NCh2369 use otra forma | Cerrar con la cláusula y el T′ del espectro (zona 2, suelo C) citados explícitamente | ⬜ |
+| 14 | 🔵 | N | L.85-90 (Note) | El −10.2 % de la corrida espectral es no verificable. Contexto: la corrección NCh2369 $(0{,}05/\xi)^{0{,}4}$ con ξ = 3 % daría **−18.5 %** en doble conteo puro; el −10.2 % se parece más a η = √(10/(5+ξ)) (−10.6 %). El post no afirma que SAP use la fórmula de la norma, pero el lector puede inferirlo | Aclarar que SAP corrige con *su* fórmula | ⬜ |
+
+**Verificado y correcto:** La cadena troncal es notablemente sólida y cierra sola. $\Omega_0$ = 629/437.5 = **1.4377** → 1.44 ✓. $R_\mu$ = 3.0·437.5/629 = **2.0866** → 2.09 ✓, y $\Omega_0 \times R_\mu$ = **3.0096** → 3.0 = R\* ✓. De la prosa se despejan $P_{ne}$ = **525.83 kN** y $T_{ye}$ = **1243.92 kN**, que calzan con el Post 4 (526, 1244, residual 158) ✓; el desbalance (1243.92 − 157.75)·0.8 = **868.93** → 869 kN ✓. Los dos Ω₀ de la cascada son exactamente $V_2/V_d$: 841/437.5 = **1.9223** ✓ y 841/185.3 = **4.5386** ✓; la primera incursión del gemelo esbeltez, 631/185.3 = **3.4053** → 3.4·$V_d$ ✓. Porcentajes: 1.44 vs 2.1 = **−31.4 %** ✓; 2.90 vs 2.1 = **+38.1 %** ✓; 1.92 vs 1.44 = **+33.3 %** ✓ (base correcta); 0.7·3 = 2.1 ✓. Geometría 3-4-5 coherente: cosθ = 0.6, sinθ = 0.8, 108/4000 = **2.7 %** de deriva ✓. Límite de esbeltez $1{,}5\pi\sqrt{E/F_y}$ con 345 MPa = **113.5** → ≈113 ✓ (⇒ el acero es A500 Gr. C, consistente con el $T_{ye}$ del Post 4). Cruces: T = 0.159 → «0.16 s» del Post 5 ✓; 437.5/185.3 = 2.361 → «×2.4» del Post 4 ✓. Frontmatter válido; `series`/`seriesPart` 1..5 únicos sin colisión ✓. Los 4 enlaces internos resuelven, ninguno draft ✓. Las 6 imágenes existen ✓. Sin H1; `Note type` válido; `alt` autosuficientes ✓.
+
+**No verificable:** (a) Valores del modelo SAP2000 no recalculables desde el post: $V_d$ = 437.5/185.3 kN, T = 0.223/0.159 s, utilizaciones 0.90/0.38, el pico 629 kN, los 108 mm, y 3 de los 4 factores de la cascada del gemelo esbeltez. (b) R\* = 2.90 y el umbral (ver #13). (c) El −10.2 % y la fórmula de amortiguamiento de SAP (ver #14). (d) $P_{ne} = 1{,}14 F_{cre}A_g$: con HSS5×5×1/4 nominal obtengo ≈512 kN contra los 525.8 que implica el post (−2.6 %); plausible por las propiedades exactas de la base de secciones de SAP2000 y por K/L reales, **no lo marco como error**; se cerraría publicando $A_g$, r y $F_{cre}$ tal como los leyó el script.
+
+---
+
+### 2026-07-15 · `blog/factor-r-capacidad-esperada` · ⚠️ 12 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | L.3, 27, 144, 163-170 | El post se presenta como el **cierre de la serie** (`description` abre con «Cierre de la serie:», L.27 «esta nota final», §«La serie, cerrada» recapitula todo) pero es la **parte 4 de 5**: `factor-r-cierre` hace ese trabajo. `BlogPost.astro` + `getSeriesNav()` renderizan «Parte 4 de 5» sobre el título y un link «Parte 5 ›» justo bajo «La serie, cerrada»: la prosa contradice el chrome de la página. Además L.163-170 duplica casi verbatim el `<Note>` del Post 5 | Reencuadrar `description` («Cuarta nota:…») y §L.144 como handoff al Post 5; dejar la moraleja en una sola de las dos notas | ⬜ |
+| 2 | 🟠 | N | L.153 | «μ = 126 donde igual energía prometía **32**». El exacto es **32.5**, y así lo dicen los Posts 2 y 5 | Cambiar 32 → 32.5 | ⬜ |
+| 3 | 🟠 | N | L.113, 114, 118-122 | $N_u$ del gemelo esbeltez = **151 kN** no reconcilia con el Post 3 por dos rutas independientes, ambas → ~154: (a) $V_d/(2\cos\theta)$ = 154.4 — y la misma ruta da el 365 exacto en el otro gemelo; (b) vía utilización: 0.38 × 405.6 = 154.1; e inversamente 151/405.6 = 0.372 → redondearía a 0.37, no al 0.38 del Post 3. Cascada: 318 = 151 × 2.1 (con 154.4 → 324.2) | Confirmar contra el dataset del Post 3. Si es 154.4: actualizar 151→154 y 318→324 en `alt`, `caption` y prosa. Los titulares sobreviven (74 %→73.9 %; ×2.4→×2.36) | 🔵 **resuelto (dataset)**: 151 = `design.nu` (demanda de diseño), 154.4 = `nu_sap` (medido). El 151 es correcto como demanda de diseño; el desajuste con la tabla del Post 3 (que muestra el V_d medido 185.3) es diseño-vs-medido. Ver la nota en `factor-r-omega0` #1 — decisión narrativa, no aplicado |
+| 4 | 🟡 | F | L.13 | `import Equation` sin usar — 0 ocurrencias de `<Equation` (único post de la serie sin ecuación numerada) | Borrar el import | ⬜ |
+| 5 | 🟡 | U | L.60, 67, 94, 160 | «kNm» (5 ocurrencias) contra la convención del repo: `kN·m` aparece 17 veces en `blog` y «kNm» 0 veces fuera de este post | `1303.8 kN·m`, `1304 kN·m` | ⬜ |
+| 6 | 🟡 | U | L.93, 84, 160 | `$(T_{esperada} - 0{,}3P_{ne})$`: «esperada» renderiza como producto de variables en itálica; el post usa `$T_{ye}$` en todas las demás apariciones. `Mp` suelto en prosa donde el Post 5 escribe `$M_p$` | `$(T_{ye} - 0{,}3P_{ne})$`; `$M_p$` | ⬜ |
+| 7 | 🟡 | C | L.172-174 | «Los **tres** experimentos de la serie» contradice al Post 5 («cuatro notas, **dos** experimentos») y al mapa del Post 1 — las extracciones no son un tercer experimento en ninguna otra nota | «Los dos experimentos de la serie…» | ⬜ |
+| 8 | 🟡 | C | L.95-97 | «un 65 % más de acero que la viga que **cualquier diseño gravitacional habría puesto**». La aritmética cuadra (64.9 %) pero la premisa no está sostenida: el Post 3 declara el marco **sin carga gravitacional** («el peso propio está apagado a propósito») y dice que la viga «se declara fuerte» — cosa que el propio L.78 repite. La W16×57 no salió de un diseño gravitacional | «…más que la W16×57 que el marco traía», o respaldar de dónde saldría la viga gravitacional | ⬜ |
+| 9 | 🟡 | N | L.48-51 | «el pushover los devolvió **exactos**: … la comprimida pico en 526». El Post 3 reporta el pandeo a −0.4 % de 631 kN, lo que implica un pico ≈ 524.2. Además el propio L.49 dice que esos números «calibraron los links», así que devolverlos no es verificación independiente sino el input del modelo | Suavizar a «los reprodujo dentro de 0.4 %» y explicitar que la verificación real es la cadena de equilibrio, no el link | ⬜ |
+| 10 | 🟡 | N | L.121-122 | «enfrentaría 1244 kN — **cuatro veces** su diseño»: 1244/318 = **3.91** (y 3.84 si $N_u$ fuera 154.4, ver #3) | «casi cuatro veces» | ⬜ |
+| 11 | 🔵 | N | L.96 | «una **W27×94**» cumple ($Z$ = 4556 cm³ ≥ 4200 ✓) pero **no es la más liviana**: la W30×90 tiene $Z$ = 4638 cm³ y pesa 90 lb/ft → el salto sería **+58 %**, no +65 %. El texto dice «una», no «la más liviana», así que no es falso; pero el 65 % es el titular del párrafo | Declarar la restricción que descarta la W30 (altura del vano), o usar W30×90 y +58 % | ⬜ |
+| 12 | 🔵 | R | frontmatter L.6, L.92-93 | `norm: "NCh2369 / AISC 341"` pero el cuerpo nunca cita una cláusula de AISC 341; el desbalance que L.92-93 atribuye a «las normas de marcos arriostrados» es AISC 341 §F2.3 | Citar §F2.3 donde se enuncia el desbalance | ⬜ |
+
+**Verificado y correcto:** **$T_{ye} = R_yF_yA_g$ = 1244 kN** recalculado desde cero: HSS5×5×1/4 A500 Gr. C, $A_g$ = 2774 mm², $F_y$ = 345 MPa, $R_y$ = 1.3 → **1244.2 kN** ✓ ($R_y$ = 1.3 correcto para HSS A500 Gr. C, AISC 341 Tabla A3.1, y coherente con el límite de esbeltez del Post 3). $P_{re}$ = 0.3 × 526 = **158** ✓. Desbalance (1244 − 158) × 0.8 = **869.0** ✓ (tabla 869.2, consistente con los valores sin redondear del Post 3). $M = PL/4$ = 869.2 × 6/4 = **1303.8** ✓ exacto. Columna $P/2$ = **434.6** → 435 ✓. Anclaje $T_{ye}\sin\theta$ = **995.2** → 995 ✓; demanda 365 × 0.8 = **292** ✓; 292/995 = 0.29 → «a un tercio» ✓. $M_p$ W16×57 = 345 × 105 in³ = **593.6 kN·m** ≈ 594 ✓; 2.2·$M_p$ = 1303.8/594 = **2.195** ✓. $Z \geq$ 1303.8e6/(0.9 × 345) = **4199 cm³** ✓ (φ = 0.9 implícito, correcto). 94/57 − 1 = **64.9 %** ✓. Conexión: 365 × 2.1 = **766.5** ✓. Gaps (1244 − 766)/1244 = **38.4 %** y (1244 − 318)/1244 = **74.4 %** ✓ — base explícita y sentido bien descrito. Cruzados: 1.44 × 2.09 = **3.01** ≈ R\* ✓ idéntico a Posts 3 y 5; los 869 kN entregados por el Post 3 ✓; 1244, «2.2 Mp», «65 %», «38–74 %» idénticos al recap del Post 5 ✓; la cita del «pagaré» literal del Post 1 ✓. Los 3 enlaces resuelven, ninguno draft ✓. Las 3 imágenes existen ✓; `alt` autosuficientes y numéricamente consistentes ✓. Frontmatter válido; `seriesPart: 4` coherente con el «(4)» del título ✓. `Note type` válido; solo H2, sin H1 ✓. Convención de decimales de la casa respetada ✓; `×` correcto ✓.
+
+**No verificable:** **$P_{ne}$ = 526 kN** (y con él 158, 869, 1304, 435). Con las propiedades AISC publicadas ($A_g$ = 4.30 in², r = 1.90 in, KL/r = 103.6, $F_e$ = 183.9 MPa; $R_yF_y/F_e$ = 2.44 > 2.25 → pandeo elástico, $F_{cre} = 0{,}877F_e$) da **510 kN**, −3 % respecto del post. El mismo offset (~+3 %) aparece en el $\phi_cP_n$ implícito. El Post 3 declara que las propiedades se leyeron de la base de secciones de SAP2000, así que la diferencia es plausible y **no la marco como error**; se cerraría con el $A_g$/r que SAP2000 reporta para `HSS5X5X1/4` y el K usado. $N_u$ = 365/151 y $\phi_cP_n$ salen del modal espectral del Post 3: el 365 sí cierra, el 151 no (ver #3). Los 869.2/434.6/995 de la columna «Pushover (SAP)» requieren el dataset. Los 629 vs 631 kN del Post 3 que tensionan el «devolvió exactos» (#9) dependen del paso de la corrida.
+
+---
+
+### 2026-07-15 · `blog/factor-r-cierre` · ⚠️ 12 hallazgos
+
+**Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.29 | «dos experimentos (**~70 corridas de SAP2000**…)» contradice al Post 2, cuya decisión de diseño central es que el banco entero es **una** corrida: «caben en un solo .sdb y un solo caso FNA» / «Las dos fases completas toman 14 segundos»; su H2 se titula «63 osciladores, **una corrida**». Sumando lo documentado: ≈10 corridas, no 70. El 70 solo sale si cada oscilador cuenta como corrida — justo lo que el Post 2 presume de no hacer | «~70 **modelos/osciladores analizados**» (63 + 2 diseños + pushover y variantes), o declarar el número real de corridas | ⬜ |
+| 2 | 🟠 | C | L.29 + `factor-r-capacidad-esperada` L.3, L.144 | **Dos posts cierran la serie.** El Post 4 se autodescribe «Cierre de la serie… con todos los números medidos» y termina en «La serie, cerrada», con su propio recap. Este post repite ese recap casi valor por valor. Un lector que llega al Post 4 ya fue despedido | Decidir el rol: retitular el Post 4 como «detallamiento» (quitar «Cierre de la serie» y la sección «La serie, cerrada»), o justificar aquí qué agrega el Post 5 (las lecciones de método, que sí son nuevas) | ⬜ |
+| 3 | 🟠 | L | L.29 | «**dos** experimentos» contra el Post 4: «Los **tres** experimentos de la serie». Los dos cierres se contradicen en el conteo | Unificar (2 es defendible si las extracciones del Post 4 son post-proceso del pushover del Post 3 — entonces corregir el Post 4) | ⬜ |
+| 4 | 🟡 | C | L.29 vs frontmatter L.8 | «En total: **cuatro** notas» en un post con `seriesPart: 5`. El listado «La serie completa» enlaza cuatro porque este es el quinto | «En total: cinco notas» o «las cuatro notas que preceden a esta» | ⬜ |
+| 5 | 🟡 | N | L.35 | «**63 osciladores elastoplásticos**»: **54 son elastoplásticos y 9 elásticos** — el propio Post 2 lo dice. Desliz heredado de la `description` del Post 2 | «63 osciladores (54 elastoplásticos + 9 elásticos de referencia)»; corregir también el Post 2 | ⬜ |
+| 6 | 🟡 | N | L.76-77 | «La viga dimensionada por capacidad pesa un **65 % más**» — base implícita; la W16×57 recién aparece 45 líneas después | «…pesa un 65 % más que la W16×57 que pondría el diseño gravitacional (W27×94)» | ⬜ |
+| 7 | 🟡 | F | frontmatter | Falta `norm`. Los cuatro posts previos lo traen. Zod lo tiene opcional (no rompe el build), pero el badge de norma no se renderiza solo en el cierre | Agregar `norm: "NCh2369"` (o `"NCh2369 / AISC 341"`) | ⬜ |
+| 8 | 🟡 | U | L.57, 76, 79 | El mismo símbolo en dos registros dentro del post: `0.7R` en prosa vs `$0{,}7R$` en math; igual con 1.44 y 2.90 | Fijar un registro por expresión. Lo que chirría es el mismo valor en ambos a pocas líneas | ⬜ |
+| 9 | 🔵 | N | L.42-43 | «μ = 1.4/1.6/2.8/**4.1**/6.8/8.8 para R = 1.5…8»: de los seis, **solo 4.1 aparece en el Post 2**, y ahí es un punto específico (T = 1 s, R = 4). Los otros cinco no están en ninguna nota. Falta la base de agregación: ¿mediana sobre T ≥ 0.5 s, o la fila T = 1 s? | Declarar la base («mediana sobre la meseta T ≥ 0.5 s») y, si son valores nuevos, publicarlos en el Post 2 en vez de estrenarlos en el cierre | ⬜ |
+| 10 | 🔵 | N | L.96 | «la rigidez del marco al **+0.5 %**»: el Post 3 solo declara «menos del 2 %». Sin contradicción, pero el valor fino no es trazable | Citar el «< 2 %» del Post 3, o agregar el +0.5 % allá | ⬜ |
+| 11 | 🔵 | N | L.64 | «$T = 0{,}16$ s» redondea el 0.159 s del Post 3. Correcto, pero el Post 3 usa el límite $0{,}16\,R\,T'$ dos líneas después: escribir T = 0.16 s junto a R\* invita a confundir el período con el coeficiente de la norma | Usar T = 0.159 s, como la tabla del Post 3 | ⬜ |
+| 12 | 🔵 | F | L.3 | `description` de 509 caracteres — la 3.ª más larga del blog. El commit inmediatamente anterior fue «D13: acortar la descripción del post» | Recortar a ~350-400, en línea con la serie (Post 3: 413, Post 4: 404) | ⬜ |
+
+**Verificado y correcto:** Identidad del Post 1: 1.44 × 2.09 = **3.0096 ≈ 3.0 = R\*** ✓. 0.7R flanqueado: 1.44 < 2.1 < 2.90 ✓ (−31.4 %/+38.1 %). Igual energía: (64+1)/2 = **32.5** ✓ — el cierre es el más preciso de la serie. Meseta: mediana 1.01 en T ≥ 0.5 s ✓ Post 2; «+3.6 % en T = 1 s» consistente con la fuente sin redondear. Residual 0.3 → 5 δy ✓; μ = 126 en T = 0.1 s/R = 8 ✓. Gemelos: utilizaciones 0.90/0.38, R\* = 2.90 ✓. Cascada: 1.12 × 1.11 × 1.28 × 1.21 = **1.926 ≈ 1.92** ✓. Cadena del Post 4: 869.2 × 6/4 = **1303.8 kNm** ✓; 434.6 → 435 ✓; 1244 × 0.8 = **995.2** ✓; 1304/594 = **2.195** ✓; 365/151 = **2.417** ✓; 38.4 % y 74.4 % ✓; 64.9 % ✓. Trampas: hold del último valor TH y μ ≈ 500 por trinquete ✓ Post 2; −10.2 % ✓ Post 3; sanidad −0.02 % y 0.00 % ✓. Refutación por abajo: rango 2.0–3.5 del libro contra el piso medido 1.44 ✓. `/factor-r/fig-mapa-serie.svg` existe y su `alt` **calza con el texto real del SVG** ✓. Los 4 enlaces resuelven, ninguno draft ✓. Frontmatter válido; `Note`/`Figure` importados y usados; `type="tip"` válido; sin H1 ✓. `×` correcto; unidades bien espaciadas ✓.
+
+**No verificable:** Los cinco valores de μ sin corroborar en el Post 2 (1.4/1.6/2.8/6.8/8.8) — requieren el dataset del banco. El «+0.5 %» de rigidez — requiere el repo del Post 3 (la nota solo declara «< 2 %»). El conteo real de corridas (hallazgo 1) — requiere los runners de ambos repos; lo verificable es que **contradice** lo declarado en el Post 2. Que las hipótesis se anotaran antes de correr y el contenido de los `EXPERIMENTO.md`.
+
+---
+
+## Cobertura
+
+Estado de auditoría por post. `—` = nunca auditado.
+
+### `blog` — blog (29)
+
+| Post | Última auditoría | Veredicto | Abiertos |
+|------|------------------|-----------|----------|
+| `amortiguamiento-exponente` | 2026-07-15 | ⚠️ | 10 (2🔴 2🟠) |
+| `cuando-confiar-formula-rigida` | — | — | — |
+| `estimador-t1` | — | — | — |
+| `experimento-fundaciones-sap2000` | — | — | — |
+| `factor-r-anatomia` | 2026-07-15 | ⚠️ | 9 (0🔴 3🟠) |
+| `factor-r-capacidad-esperada` | 2026-07-15 | ⚠️ | 12 (0🔴 3🟠) |
+| `factor-r-cierre` | 2026-07-15 | ⚠️ | 12 (0🔴 3🟠) |
+| `factor-r-omega0` | 2026-07-15 | ⚠️ | 14 (0🔴 1🟠) |
+| `factor-r-rmu` | 2026-07-15 | ⚠️ | 16 (1🔴 2🟠) |
+| `gap-hook-sap2000-puntal-cumbre` | — | — | — |
+| `pdelta-cuando-confiar-amplificador` | 2026-07-15 | ⚠️ | 4 (0🔴 0🟠) |
+| `periodos-fundamentales-exponente` | 2026-07-15 | ⚠️ | 6 (0🔴 1🟠) |
+| `placa-base-ejemplo-trabajado` | 2026-07-15 | ⚠️ | 2 (0🔴 0🟠) |
+| `placas-base-sap2000` | — | — | — |
+| `prediseno-fundaciones-aisladas` | — | — | — |
+| `presiones-contacto-winkler` | — | — | — |
+| `pushover-momento-vs-arriostrado-sap2000` | 2026-07-15 | ⚠️ | 14 (1🔴 1🟠) |
+| `respuesta-espectral-modal-torre-traspaso` | 2026-07-15 | ⚠️ | 3 (0🔴 0🟠) |
+| `ritz-vs-eigen-masa-participativa-sap2000` | 2026-07-15 | ⚠️ | 16 (1🔴 4🟠) |
+| `rotulas-pushover-sap2000` | 2026-07-15 | ⚠️ | 22 (2🔴✅ 3🟠✅ · resto 🟡/🔵) |
+| `rukan-verificacion-arriostramiento-releases` | — | — | — |
+| `rukan-verificacion-estatica-reticulado` | — | — | — |
+| `rukan-verificacion-galpon-3d` | — | — | — |
+| `rukan-verificacion-modal-espectral` | — | — | — |
+| `rukan-verificacion-modal-opensees` | — | — | — |
+| `rukan-verificacion-peso-propio-combinaciones` | — | — | — |
+| `section-cut-muros-losas-sap2000` | 2026-07-15 | ⚠️ | 5 (0🔴 1🟠) |
+| `surrogate-biaxial-despegue` | — | — | — |
+| `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
+
+### `hormigon` — hormigon (ACI 318-25) (10)
+
+| Post | Última auditoría | Veredicto | Abiertos |
+|------|------------------|-----------|----------|
+| `aci318-25-alcance-y-definiciones` | — | — | — |
+| `aci318-25-cap10-columnas` | — | — | — |
+| `aci318-25-cap11-muros` | — | — | — |
+| `aci318-25-cap13-fundaciones` | — | — | — |
+| `aci318-25-cap17-anclajes` | — | — | — |
+| `aci318-25-cap23-puntal-tensor` | — | — | — |
+| `aci318-25-cap25-desarrollo-empalmes` | — | — | — |
+| `aci318-25-cap7-losas-unidireccionales` | — | — | — |
+| `aci318-25-cap8-losas-bidireccionales` | — | — | — |
+| `aci318-25-cap9-vigas` | — | — | — |
+
+### `acero` — acero (AISC 360-22) (7)
+
+| Post | Última auditoría | Veredicto | Abiertos |
+|------|------------------|-----------|----------|
+| `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
+| `aisc360-22-capD-traccion` | — | — | — |
+| `aisc360-22-capE-compresion` | — | — | — |
+| `aisc360-22-capF-flexion` | — | — | — |
+| `aisc360-22-capG-corte` | — | — | — |
+| `aisc360-22-capH-fuerzas-combinadas` | — | — | — |
+| `aisc360-22-capJ-conexiones` | — | — | — |
+
+### `apuntes` — apuntes (15)
+
+| Post | Última auditoría | Veredicto | Abiertos |
+|------|------------------|-----------|----------|
+| `deep-learning-with-python-cap1-que-es-deep-learning` | — | — | — |
+| `deep-learning-with-python-cap2-bloques-matematicos` | — | — | — |
+| `hands-on-ml-cap4-gradient-descent` | — | — | — |
+| `llm-from-scratch-cap2-de-texto-a-vectores` | — | — | — |
+| `llm-from-scratch-cap3-mecanismos-de-atencion` | — | — | — |
+| `llm-from-scratch-cap4-armar-el-gpt` | — | — | — |
+| `llm-from-scratch-cap5-entrenar-el-gpt` | — | — | — |
+| `reasoning-from-scratch-cap1-que-significa-razonar` | — | — | — |
+| `reasoning-from-scratch-cap2-generar-texto` | — | — | — |
+| `reasoning-from-scratch-cap3-verificar-respuestas` | — | — | — |
+| `reasoning-from-scratch-cap4-escalar-inferencia` | — | — | — |
+| `reasoning-from-scratch-cap5-revisar-antes-de-firmar` | — | — | — |
+| `reasoning-from-scratch-cap6-el-verificador-profesor` | — | — | — |
+| `reasoning-from-scratch-cap7-domar-el-entrenamiento` | — | — | — |
+| `reasoning-from-scratch-cap8-destilar-y-cerrar` | — | — | — |
+

@@ -67,9 +67,10 @@ una historia que vale una nota al margen, porque la primera corrida dio 2.5 %:
 
 <Note type="warning" title="El dt de salida también muestrea los picos">
 Con salida cada 0.01 s, un oscilador de T = 0.1 s queda descrito por **10 puntos por
-ciclo** — y el máximo de una senoidal muestreada cada 36° puede caer hasta 2.5 % bajo el
-pico verdadero. La primera validación mostraba exactamente eso: errores solo en los
-períodos cortos, todos negativos, crecientes con ξ (pico único más agudo). No es física
+ciclo** — y el máximo de una senoidal muestreada cada 36° puede caer hasta **4.9 %**
+($1 - \cos 18° $) bajo el pico verdadero; en esta corrida cayó 2.5 %. La primera
+validación mostraba exactamente eso: errores solo en los períodos cortos, todos
+negativos, crecientes con ξ (pico único más agudo). No es física
 ni es SAP: es muestreo. Con dt = 0.002 s (50 puntos por ciclo del T más corto) el
 "error" colapsó de 2.5 % a 0.18 %. Regla práctica: **el paso de salida de un
 tiempo-historia debe resolver el período más corto que se va a leer**, no solo el
@@ -131,7 +132,7 @@ Los dos rincones del mapa son las dos morales de la nota:
    cortos las correcciones espectrales, todas, se comprimen hacia 1.
 2. **ξ alto + T corto: el lado inseguro.** Un equipo rígido con amortiguamiento alto
    (aislado con neopreno, con disipación friccional, un estanque con ξ efectivo de
-   10–15 %) diseñado con espectro reducido por la Ec. 1 recibe **31–37 % más demanda
+   10–15 %) diseñado con espectro reducido por la Ec. 1 recibe **45–59 % más demanda
    que la que su espectro declara** en T ≤ 0.1 s. La reducción por amortiguamiento, como
    la reducción por R del [Post 2 del factor R](/blog/factor-r-rmu), es una promesa de
    la resonancia — y los períodos cortos no resuenan lo suficiente para cumplirla.

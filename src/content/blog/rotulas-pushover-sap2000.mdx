@@ -94,9 +94,9 @@ pitfall se aísla cambiando **un solo campo**.
 />
 
 Las dos curvas de SAP salen limpias: rama elástica común, quiebres a medida que fluyen
-las rótulas, y meseta. La **M3 mesetea en 160 kN, la P-M en 139 kN**: la rótula M3
-sobre-predice la capacidad un **16 %**. El análisis incremental cerrado da 147 y 127 kN
-—el mismo gap, **15.8 % contra el 15.6 % de SAP**, coincidencia a dos décimas—.
+las rótulas, y meseta. La **M3 mesetea en 160.4 kN, la P-M en 138.8 kN**: la rótula M3
+sobre-predice la capacidad un **16 %**. El análisis incremental cerrado da 147.3 y 127.1 kN
+—el mismo pitfall, **15.9 % contra el 15.6 % de SAP**—.
 
 Hay un desfase absoluto: las curvas de SAP quedan ~9 % por encima de la poligonal ideal
 (en las dos por igual, por eso el gap relativo calza perfecto). No es un error: es la
@@ -124,7 +124,7 @@ viga débil, el mecanismo dúctil del capacity design—. El problema es que **e
 
 Con la interacción **P-M** real, la primera rótula es la **base de la columna de
 sotavento** —la que el vuelco comprime, con su momento reducido por el axial— y aparece a
-104 kN, un 24 % *antes* de que el modelo M3 muestre fluencia alguna (a 137 kN). Le sigue
+114 kN, un 17 % *antes* de que el modelo M3 muestre fluencia alguna (a 137 kN). Le sigue
 la base de barlovento, y recién al final las vigas. La secuencia se **invierte**: el daño real
 arranca en las columnas, no en las vigas. Confiando en la rótula M3 uno cree tener un
 mecanismo benigno cuando en realidad las columnas —menos dúctiles, cargadas
@@ -137,7 +137,7 @@ chica, y vale la pena conocerla.
 
 <Figure
   src="/rotulas-pushover-sap2000/pitfall_pm.png"
-  alt="La superficie de fluencia de la columna: momento de fluencia contra axial de compresión. La rótula M3 es una recta horizontal a Mp = 189 kN·m (ignora el axial). La rótula P-M es una recta descendente que arranca en 189 a axial cero y llega a cero en PCL = 1367 kN (la capacidad de pandeo). Dos puntos de operación marcados: barlovento a 338 kN (momento 167) y sotavento a 592 kN (momento 126)."
+  alt="La superficie de fluencia de la columna: momento de fluencia contra axial de compresión. La rótula M3 es una recta horizontal a Mp = 189 kN·m (ignora el axial). La rótula P-M es una recta descendente que arranca en 189 a axial cero y llega a cero en PCL = 1367 kN (la capacidad de pandeo). Dos puntos de operación marcados: barlovento a 415 kN (momento 156) y sotavento a 511 kN (momento 139)."
   caption="La superficie de fluencia. La rótula M3 es la recta horizontal en Mp: el momento de fluencia no depende del axial. La rótula P-M baja con el axial siguiendo 1.18(1−P/PCL) —y se normaliza por PCL, la capacidad de PANDEO, no por Py de aplastamiento—."
 />
 
@@ -150,8 +150,8 @@ plástica clásica del acero— pero con dos sorpresas:
   longitud del miembro), no por $P_y$ de aplastamiento. Aquí $P_{CL} = 1367$ kN contra
   $P_y = 1970$: la reducción es **más severa** que la interacción de libro, y **depende de
   la esbeltez de la columna** —una columna más esbelta tiene $P_{CL}$ más bajo y una
-  rótula más débil al mismo axial—. En la base de sotavento eso hace la rótula un 26 % más
-  débil que si redujera por $P_y$.
+  rótula más débil al mismo axial—. En la base de sotavento (a 511 kN) eso deja la rótula en
+  **139 kN·m, un 16 % por debajo de los 165** que daría la interacción por $P_y$.
 
 Ninguna de las dos cosas es obvia desde la GUI. La rótula que uno cree que usa $F_y Z_x$
 con interacción por aplastamiento en realidad usa resistencia esperada e incorpora el
