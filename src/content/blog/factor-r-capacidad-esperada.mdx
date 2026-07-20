@@ -30,12 +30,12 @@ recibe cada uno, y qué pasa si en vez de calcularlo se usa el atajo $\Omega_0 =
 
 ## Lo que el fusible entrega: las capacidades esperadas
 
-La jerarquía del diseño por capacidad es un contrato de tres cláusulas: el **fusible**
+La jerarquía del diseño por capacidad[^capacidad] es un contrato de tres cláusulas: el **fusible**
 (aquí, las diagonales) plastifica de manera predecible; los **no fusibles** (conexión,
 viga puntal, columnas, anclajes) resisten lo que el fusible entrega; y lo que el fusible
 entrega no es la fuerza del análisis sino su **capacidad esperada** — la resistencia
 máxima probable, con el material real (más fuerte que el nominal) y sin factores de
-seguridad. Para diagonales de acero, las del libro:
+seguridad. Para diagonales de acero, las del libro[^libro]:
 
 | Capacidad esperada | Fórmula | En nuestro HSS5×5×1/4 |
 |---|---|---|
@@ -90,7 +90,7 @@ Tres lecturas, de menor a mayor incomodidad:
    conservador": es **ciego**. El atajo amplifica fuerzas del análisis, y $2{,}1 \times
    0 = 0$. Para la viga chevron no hay amplificación que sirva — solo el equilibrio
    plástico la dimensiona. Es la razón de que las normas de marcos arriostrados traigan
-   la exigencia del desbalance $(T_{esperada} - 0{,}3P_{ne})$ escrita explícitamente.
+   la exigencia del desbalance $(T_{esperada} - 0{,}3P_{ne})$[^aisc341] escrita explícitamente.
 2. **El mecanismo le pide 2.2 veces su plastificación.** Los 1304 kNm contra los 594 de
    la W16×57. Dimensionarla por capacidad exige $Z \geq 4200$ cm³: una **W27×94** — un
    65 % más de acero por metro que la viga que cualquier diseño gravitacional habría
@@ -139,7 +139,7 @@ El mismo contraste alcanza a los **anclajes**: la base de la diagonal traccionad
 fundación dimensionados "por análisis" quedarían a un tercio de lo que el fusible
 entrega, y el arrancamiento de un anclaje es de las fallas menos dúctiles que existen.
 No es casualidad que NCh2369 dedique a los pernos de anclaje sus exigencias de
-ductilidad más específicas.
+ductilidad más específicas[^nch2369].
 
 ## La serie, cerrada: R = Rμ · Ω₀ con números
 
@@ -172,3 +172,11 @@ va a hacer por uno.
 Los tres experimentos de la serie (el banco de osciladores, el marco gemelo y sus
 pushover, y las extracciones de esta nota) viven en sus repositorios; las notas son sus
 bitácoras.
+
+[^capacidad]: Paulay, T., & Priestley, M. J. N. (1992). *Seismic Design of Reinforced Concrete and Masonry Buildings*. John Wiley & Sons, Nueva York.
+
+[^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§F2.3, marcos arriostrados concéntricos especiales).
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.

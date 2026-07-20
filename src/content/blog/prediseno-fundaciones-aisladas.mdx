@@ -131,7 +131,7 @@ $$
 
 ## Verificación 1 — Capacidad de soporte
 
-La presión máxima de contacto no debe superar la presión admisible del suelo $q_a$.
+La presión máxima de contacto no debe superar la presión admisible del suelo $q_a$.[^bowles]
 
 Para cargas excéntricas, se utiliza el método de **Meyerhof** que define un área efectiva
 reducida por las excentricidades:
@@ -167,7 +167,7 @@ $$
 />
 
 <Note type="tip" title="Referencia">
-El concepto de área efectiva fue propuesto por Meyerhof (1953) y es el método estándar para
+El concepto de área efectiva fue propuesto por Meyerhof (1953)[^meyerhof] y es el método estándar para
 evaluar la capacidad de soporte bajo cargas excéntricas. Si $L'_x \leq 0$ o $L'_y \leq 0$,
 la excentricidad excede los límites geométricos y la verificación falla automáticamente.
 </Note>
@@ -421,3 +421,7 @@ $q_a$ localmente, dado que el método de Meyerhof (Ec. 6) evalúa una presión
 **promedio** sobre el área efectiva. Esta discrepancia es esperada y se resuelve en el
 diseño definitivo mediante un modelo no lineal con resortes compression-only.
 </Note>
+
+[^bowles]: Bowles, J. E. (1996). *Foundation Analysis and Design*, 5.ª ed. McGraw-Hill, Nueva York.
+
+[^meyerhof]: Meyerhof, G. G. (1953). «The bearing capacity of foundations under eccentric and inclined loads». *Proc. 3rd Int. Conf. on Soil Mechanics and Foundation Engineering*, Zúrich, vol. 1, 440–445.

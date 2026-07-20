@@ -14,7 +14,7 @@ import Figure from '../../components/content/Figure.astro';
 
 Todo análisis espectral o de tiempo-historia modal descansa en una base de modos, y la
 norma te pone una vara: acumular al menos el **90 % de la masa participativa** en cada
-dirección (NCh433 §6.3.3, NCh2369 §5.4, ASCE 7 §12.9.1). El análisis modal por defecto de
+dirección (NCh433 §6.3.3, NCh2369 §5.4, ASCE 7 §12.9.1).[^normas] El análisis modal por defecto de
 SAP2000 —**vectores propios, Eigen**— extrae los modos en orden estricto de frecuencia
 creciente. Es exacto y no depende de la carga. Y ahí está la trampa: en una estructura con
 muchos modos locales de baja frecuencia —equipos pesados sobre vigas de piso flexibles, un
@@ -24,7 +24,7 @@ o —peor— corres "los que siempre corro" y el corte basal del espectro te sal
 solo aviso**.
 
 La técnica que lo resuelve son los **vectores Ritz dependientes de la carga** (LDR, *Load-
-Dependent Ritz*): en vez de resolver el problema de valores propios completo, SAP construye
+Dependent Ritz*)[^ritz]: en vez de resolver el problema de valores propios completo, SAP construye
 una base *a la medida del vector de carga* que le des (la aceleración de base `Accel UX`).
 Esa base ignora por completo lo que no responde a esa carga y captura la masa participativa
 con una fracción de los vectores. Este post arma el caso donde el contraste es brutal, lo
@@ -37,7 +37,7 @@ como los vectores de arranque que le des.
 Formato de estas notas: un modelo, bien elegido, validado contra teoría —sin barrido
 paramétrico. Aquí hay dos anclas.
 
-La primera es exacta. La suma de la **masa modal efectiva** sobre *todos* los modos es la
+La primera es exacta. La suma de la **masa modal efectiva**[^completitud] sobre *todos* los modos es la
 masa total de la estructura en esa dirección:
 
 <Equation label="Ec. 1">
@@ -51,7 +51,7 @@ $W = 720$ tonf) en cada dirección; los dos métodos deben converger a ella.
 
 La segunda es un chequeo de sanidad para cazar trampas silenciosas, la misma disciplina de
 la [serie de períodos](/blog/periodos-fundamentales-exponente): el sistema lateral es un
-*shear building* de 8 pisos, cuyo período fundamental tiene forma cerrada. Con las columnas
+*shear building* de 8 pisos, cuyo período fundamental tiene forma cerrada.[^shear] Con las columnas
 en doble curvatura y masa por piso $m_f$, la rigidez de piso es $k = 2\cdot 12EI/h^3$ y
 
 <Equation label="Ec. 2">
@@ -59,7 +59,7 @@ $$T_1 = \frac{2\pi}{\omega_1}, \qquad \omega_1 = 2\sqrt{\tfrac{k}{m_f}}\,\sin\!\
 </Equation>
 
 que da $T_1 = 0.517$ s con flexión pura. SAP entrega $0.5293$ s, un +2.4 %… hasta que se
-agrega la **deformación por corte** de las columnas (rectangulares, $A_s = \tfrac{5}{6}A$):
+agrega la **deformación por corte** de las columnas (rectangulares, $A_s = \tfrac{5}{6}A$)[^cortante]:
 la fórmula sube a $0.5293$ s y el gap se cierra a **0.0 %**. Los modos laterales
 $T_2,T_3,T_4 = 0.178 / 0.110 / 0.081$ s calzan a cuatro decimales. El sistema lateral está
 donde tiene que estar; cualquier desviación de aquí en adelante es del método modal, no de
@@ -162,7 +162,7 @@ costumbre, no llega.
 
 El "porcentaje de masa" suena abstracto hasta que se convierte en el corte basal que
 dimensiona la estructura. Montamos un espectro **NCh2369** (zona 2, suelo C, $I=1$, $R=5$),
-apoyado sobre la base modal, y leemos la reacción horizontal combinada (CQC) según cuántos
+apoyado sobre la base modal, y leemos la reacción horizontal combinada (CQC)[^cqc] según cuántos
 modos usemos —la misma máquina espectral de la
 [torre de traspaso](/blog/respuesta-espectral-modal-torre-traspaso).
 
@@ -272,7 +272,7 @@ la corrección de masa faltante y son los que exige la FNA de todos modos. Eigen
 cuando lo que buscas son los **modos y frecuencias reales** de la estructura —una
 caracterización dinámica, una calibración contra un ensayo, un estudio de sintonía— porque
 Ritz da períodos aproximados (ligeramente bajos: sus frecuencias son cota superior de las
-reales) y una base que ni siquiera contiene los modos que no responden a tu carga.
+reales)[^rayleigh] y una base que ni siquiera contiene los modos que no responden a tu carga.
 
 Pero la lección que se lleva a la oficina es más chica y más útil que "Eigen vs Ritz": **el
 número de modos no es la medida; la masa participativa acumulada sí**. La norma no te pide
@@ -282,3 +282,17 @@ siempre, en cada dirección, antes de creerle al corte basal. El día que un mod
 espectro sospechosamente barato, la primera casilla que revisar es esa tabla de masa
 participativa: lo más probable es que estés admirando un bosque de modos verticales mientras
 la masa lateral te espera, sin capturar, veinte modos más arriba.
+
+[^normas]: NCh433.Of1996 Mod.2012, *Diseño sísmico de edificios* (INN), §6.3.3; NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales* (INN), §5.4; ASCE/SEI 7-22, *Minimum Design Loads and Associated Criteria for Buildings and Other Structures*, §12.9.1.
+
+[^ritz]: Wilson, E. L., Yuan, M.-W., & Dickens, J. M. (1982). «Dynamic analysis by direct superposition of Ritz vectors». *Earthquake Engineering & Structural Dynamics*, 10(6), 813–821.
+
+[^completitud]: Chopra, A. K. (2017). *Dynamics of Structures: Theory and Applications to Earthquake Engineering*, 5.ª ed., cap. 13. Pearson.
+
+[^shear]: Chopra, A. K. (2017). *Dynamics of Structures*, 5.ª ed., cap. 12. Pearson.
+
+[^cortante]: Cowper, G. R. (1966). «The shear coefficient in Timoshenko's beam theory». *Journal of Applied Mechanics*, 33(2), 335–340.
+
+[^cqc]: Wilson, E. L., Der Kiureghian, A., & Bayo, E. P. (1981). «A replacement for the SRSS method in seismic analysis». *Earthquake Engineering & Structural Dynamics*, 9(2), 187–192.
+
+[^rayleigh]: Bathe, K.-J. (2014). *Finite Element Procedures*, 2.ª ed., cap. 10–11. Prentice Hall.

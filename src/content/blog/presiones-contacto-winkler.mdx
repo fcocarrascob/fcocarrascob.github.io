@@ -46,7 +46,7 @@ resortes de Winkler, lo que demanda elementos finitos de placa.
 </Note>
 
 <Note type="tip" title="Coeficiente de balasto $k_s$">
-El parámetro $k_s$ (kgf/cm³) caracteriza la rigidez vertical del suelo. Valores
+El parámetro $k_s$ (kgf/cm³) caracteriza la rigidez vertical del suelo[^balasto]. Valores
 orientativos:
 
 | Tipo de suelo | $k_s$ (kgf/cm³) |
@@ -275,7 +275,7 @@ $$
 
 <Note type="tip" title="Relación con el método de Meyerhof">
 Cuando hay despegue, la presión máxima del modelo de Winkler tiende a ser más alta que
-la presión promedio sobre el área efectiva de Meyerhof ($q_m = N/A_e$), porque Meyerhof
+la presión promedio sobre el área efectiva de Meyerhof[^meyerhof] ($q_m = N/A_e$), porque Meyerhof
 asume distribución uniforme sobre el área reducida. El modelo de Winkler es más
 conservador y físicamente más representativo.
 </Note>
@@ -329,3 +329,7 @@ El modelo de Winkler es la base para el análisis estructural de la zapata: la d
 $q(x,y)$ se usa como carga de reacción para dimensionar la armadura (cálculo de momentos
 flectores y cortantes en la placa de fundación).
 </Note>
+
+[^balasto]: Terzaghi, K. (1955). «Evaluation of coefficients of subgrade reaction». *Géotechnique*, 5(4), 297–326.
+
+[^meyerhof]: Meyerhof, G. G. (1953). «The bearing capacity of foundations under eccentric and inclined loads». *Proc. 3rd Int. Conf. on Soil Mechanics and Foundation Engineering*, Zúrich, vol. 1, 440–445.

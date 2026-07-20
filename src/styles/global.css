@@ -23,3 +23,35 @@ body {
 .katex {
   font-size: 1em;
 }
+
+/* Bibliografía — sección auto-generada por los footnotes GFM ([^n]).
+   El heading llega con .sr-only (oculto); lo mostramos y lo estilamos
+   como una sección más del post. Label en astro.config.mjs. */
+.prose [data-footnotes] {
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+.prose [data-footnotes] > h2#footnote-label {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0 0 1rem;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  border: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.prose [data-footnotes] li {
+  margin-block: 0.35rem;
+}
+.prose [data-footnotes] a[data-footnote-backref] {
+  text-decoration: none;
+}

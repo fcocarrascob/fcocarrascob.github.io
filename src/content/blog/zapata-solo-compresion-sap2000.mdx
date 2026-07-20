@@ -30,7 +30,7 @@ sea un número y no una corazonada.
 ## La referencia: dos fórmulas de primer año
 
 Para una zapata **rígida** L×B con carga N a excentricidad e uniaxial, la
-[teoría del contacto parcial](/blog/prediseno-fundaciones-aisladas) es cerrada y exacta.
+[teoría del contacto parcial](/blog/prediseno-fundaciones-aisladas) es cerrada y exacta.[^bowles]
 Dentro del kern (e ≤ L/6), presión lineal con contacto pleno. Fuera, el contacto se
 reduce a un triángulo de ancho
 
@@ -62,7 +62,7 @@ Tres decisiones lo hacen limpio, cada una con su llamada de API verificada:
 
 1. **El lecho: links Gap de un nudo, gap = 0.** Una grilla de 25×17 nudos (cada
    0.125 m) y en cada uno un link de apoyo con `PropLink.SetGap` — apertura nula y
-   rigidez tributaria $k_i = k_v \cdot A_{trib,i}$, con los factores ½ en bordes y ¼ en
+   rigidez tributaria $k_i = k_v \cdot A_{trib,i}$[^balasto], con los factores ½ en bordes y ¼ en
    esquinas (olvidarlos sesga la presión justo en el borde donde se mide). Para el link
    de un nudo el eje local 1 es +Z global, así que la ley vive directamente en el apoyo
    vertical. Solo se necesitan tres propiedades (interior/borde/esquina):
@@ -180,3 +180,7 @@ cerrada (los posts de prediseño y Winkler), el experimento paramétrico y su he
 y ahora la técnica de modelación directa verificada contra la misma referencia. El
 modelo, el runner y los datasets viven en el repositorio del experimento; esta nota es
 su bitácora.
+
+[^bowles]: Bowles, J. E. (1996). *Foundation Analysis and Design*, 5.ª ed. McGraw-Hill, Nueva York.
+
+[^balasto]: Terzaghi, K. (1955). «Evaluation of coefficients of subgrade reaction». *Géotechnique*, 5(4), 297–326.

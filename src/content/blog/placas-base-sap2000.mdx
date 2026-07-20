@@ -23,7 +23,7 @@ Capítulo 17 de ACI 318-25 (anclaje al hormigón en tracción y corte). Todo lo 
 la herramienta calcula está descrito aquí: este documento es la fuente de cada fórmula,
 factor y supuesto, para que los resultados puedan auditarse y reproducirse a mano.
 
-El método clásico de la Design Guide 1 (bloque rectangular de presión uniforme, momento en
+El método clásico de la Design Guide 1[^dg1] (bloque rectangular de presión uniforme, momento en
 un solo eje) es suficiente para el caso de compresión dominante con excentricidad moderada.
 Pero deja fuera preguntas frecuentes en la práctica: ¿qué pasa con **momento biaxial**?
 ¿Con **levantamiento neto** (tracción axial)? ¿Cuánta tracción toma *cada* perno cuando el
@@ -164,7 +164,7 @@ fracción de área en contacto y la tracción $T_i$ de cada perno.
 ## 2. Aplastamiento del hormigón — AISC 360 J8
 
 La presión máxima de contacto se compara con la resistencia de aplastamiento de la
-Sección J8, que incorpora el confinamiento del pedestal a través de la razón de áreas:
+Sección J8[^aisc360], que incorpora el confinamiento del pedestal a través de la razón de áreas:
 
 <Equation label="Ec. 6">
 $$
@@ -246,7 +246,7 @@ concentración de presión en el borde sin aproximaciones.
 ### 3.2 Fluencia entre alas: λn′
 
 Para placas donde el volado es pequeño pero la zona entre alas es grande, gobierna el
-mecanismo de fluencia interior de Thornton, con longitud característica
+mecanismo de fluencia interior de Thornton[^thornton], con longitud característica
 
 <Equation label="Ec. 11">
 $$
@@ -294,7 +294,7 @@ aplica.
 
 ## 4. Pernos de anclaje — AISC 360 J3
 
-Los pernos se verifican como barras roscadas F1554 según la Tabla J3.2, sobre el **área
+Los pernos se verifican como barras roscadas F1554 según la Tabla J3.2[^aisc360], sobre el **área
 bruta** $A_b = \pi d^2/4$ (los coeficientes 0.75 y 0.45 ya descuentan el efecto de la
 rosca):
 
@@ -341,7 +341,7 @@ El acero del perno (§4) es solo la mitad del problema: la tracción también ti
 poder **entrar al hormigón del pedestal**. Aquí es donde el solver del §1 paga dividendos:
 entrega la tracción $T_i$ de *cada* perno, así que la demanda del grupo traccionado — con
 su excentricidad real — está disponible directamente para las verificaciones del
-Capítulo 17.
+Capítulo 17.[^aci318]
 
 Los supuestos, comunes a todas las verificaciones del capítulo: perno **embebido con
 tuerca/cabeza** (*cast-in headed*), hormigón **fisurado** ($\psi_c = 1.0$, conservador),
@@ -650,3 +650,11 @@ describe. Lo que **no** verifica:
   mayor el espesor; para placas muy delgadas con volados grandes, la presión real se
   concentra bajo la columna y el modelo rígido sobreestima el brazo del bloque de presiones.
 - Solo **LRFD**: las cargas de entrada deben ser combinaciones mayoradas.
+
+[^dg1]: Fisher, J. M., & Kloiber, L. A. (2006). *Base Plate and Anchor Rod Design*, Steel Design Guide 1, 2.ª ed. American Institute of Steel Construction, Chicago.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§J3, J8).
+
+[^thornton]: Thornton, W. A. (1990). «Design of small base plates for wide flange columns». *AISC Engineering Journal*, 27(3), 108–110.
+
+[^aci318]: ACI 318-25, *Building Code Requirements for Structural Concrete and Commentary*, cap. 17. American Concrete Institute, Farmington Hills (MI).

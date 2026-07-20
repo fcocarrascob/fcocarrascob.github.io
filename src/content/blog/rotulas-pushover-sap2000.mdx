@@ -24,7 +24,7 @@ Pero en una **columna con axial** la rótula M3 miente, porque la capacidad a mo
 una columna **baja con la carga axial** —la interacción P-M— y la rótula M3 la ignora
 por completo: plastifica a Mp pleno como si el axial no existiera.
 
-Esta nota enseña la técnica —rótulas auto ASCE 41/FEMA 356 en un Static Nonlinear con
+Esta nota enseña la técnica —rótulas auto ASCE 41/FEMA 356[^fema356] en un Static Nonlinear con
 control de desplazamiento— y la valida contra el análisis plástico incremental cerrado
 de un pórtico de acero: **la secuencia de rótulas y la carga de colapso coinciden**. Y
 cuantifica el pitfall: dejar la rótula M3 por defecto en las columnas **sobre-predice la
@@ -35,7 +35,7 @@ capacidad de pandeo—.
 ## La referencia: análisis plástico incremental cerrado
 
 Antes de tocar SAP conviene tener la respuesta. Para un pórtico de acero de un vano y un
-piso con bases empotradas, el colapso plástico es cerrado: los teoremas límite dan la
+piso con bases empotradas, el colapso plástico es cerrado: los teoremas límite[^neal] dan la
 carga de mecanismo, y un análisis **rótula a rótula** (event-to-event) da la curva
 poligonal completa —rigidez elástica, cada quiebre, y la meseta—.
 
@@ -147,7 +147,7 @@ plástica clásica del acero— pero con dos sorpresas:
 - El $M_p$ que usa es con **resistencia esperada** $F_{ye} = R_y F_y$ (para A992, $R_y =
   1.1$): $M_p = 189$ kN·m, no los 172 de $F_y Z_x$ nominal.
 - La normaliza por $P_{CL}$, la **capacidad de pandeo a compresión** (AISC E3, con la
-  longitud del miembro), no por $P_y$ de aplastamiento. Aquí $P_{CL} = 1367$ kN contra
+  longitud del miembro)[^aisc360], no por $P_y$ de aplastamiento. Aquí $P_{CL} = 1367$ kN contra
   $P_y = 1970$: la reducción es **más severa** que la interacción de libro, y **depende de
   la esbeltez de la columna** —una columna más esbelta tiene $P_{CL}$ más bajo y una
   rótula más débil al mismo axial—. En la base de sotavento (a 511 kN) eso deja la rótula en
@@ -179,7 +179,7 @@ diagrama de interacción.
   caption="Diagrama de interacción P-M de una columna de hormigón (ACI 318), calculado por compatibilidad de deformaciones. La rótula M3 usaría el momento a axial cero (246 kN·m, la recta roja). El P-M real sigue la curva: bajo el punto balanceado el axial AUMENTA la capacidad a momento, sobre él la reduce."
 />
 
-El diagrama de interacción del hormigón sube hasta el **punto balanceado** y después baja.
+El diagrama de interacción del hormigón[^aci318] sube hasta el **punto balanceado** y después baja.
 Una rótula M3 usaría el momento a axial cero —la altura de la recta roja, 246 kN·m—, pero
 el momento real a un axial de servicio de 1000 kN es **327 kN·m**: la M3 es un 25 %
 *conservadora* aquí. Y por encima del balanceado se invierte: la M3 quedaría *insegura*.
@@ -208,3 +208,11 @@ exacta. Lo que queda:
   hace que el control de fuerza no cruce la meseta.
 - Y como las rótulas de frame no se asignan por el OAPI, la vía es la **base de datos
   interactiva** (`DatabaseTables`), tanto para asignarlas como para leer sus estados.
+
+[^fema356]: ASCE/SEI 41-17, *Seismic Evaluation and Retrofit of Existing Buildings* (curvas de rótula derivadas de FEMA 356, 2000). American Society of Civil Engineers, Reston (VA).
+
+[^neal]: Neal, B. G. (1977). *The Plastic Methods of Structural Analysis*, 3.ª ed. Chapman & Hall, Londres.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (cap. E).
+
+[^aci318]: ACI 318-25, *Building Code Requirements for Structural Concrete and Commentary*. American Concrete Institute, Farmington Hills (MI).

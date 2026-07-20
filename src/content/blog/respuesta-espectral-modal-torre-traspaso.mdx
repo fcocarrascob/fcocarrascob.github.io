@@ -22,7 +22,7 @@ tres cosas, en este orden:
 3. **Recombina** las respuestas modales en una sola envolvente (SRSS o CQC).
 
 Toda esta nota abre esa caja. Primero se verifica a mano que la **amplitud modal** que publica
-SAP2000 (columna `U1Amp`) es exactamente la respuesta de un oscilador de 1 GDL. Después se
+SAP2000 (columna `U1Amp`) es exactamente la respuesta de un oscilador de 1 GDL.[^chopra] Después se
 reconstruye el **corte basal** modo a modo —y se comparan SRSS y CQC— sobre **tres torres** que
 solo se diferencian en su arriostramiento, para ver de primera mano cuándo la recombinación
 importa y cuándo no. Y al cierre se ataca un problema que la recombinación deja abierto: **el
@@ -121,7 +121,7 @@ Entre los tres, capturan 85 % de la masa en X y 81 % en Y — suficiente para el
 El espectro de diseño se generó con `computeNchSpectrum` de
 `src/lib/sap-scripts/nch2369-spectrum.ts` — el mismo módulo que alimenta el generador de espectros
 del [SAP Script Builder](/herramientas/sap-scripts) — para Zona 3, Suelo B, categoría C (I=1.0),
-R=4 (arriostramientos concéntricos) y ξ=3 % (típico de acero industrial NCh2369):
+R=4 (arriostramientos concéntricos) y ξ=3 % (típico de acero industrial NCh2369)[^nch2369]:
 
 <Equation label="Ec. 2">
 $$
@@ -235,7 +235,7 @@ $$
 | 5–12 | — | — | — | 6.23 (suma simple, solo referencia de escala) |
 
 Combinando los 12 modos por **SRSS** y por **CQC** —con el coeficiente de correlación de Der
-Kiureghian, $\xi=3\%$—:
+Kiureghian[^derkiureghian], $\xi=3\%$—:
 
 <Equation label="Ec. 5">
 $$
@@ -427,3 +427,9 @@ modos cercanos, vista desde el otro lado: cuando dos modos comparten una respues
 5. **El espectro borra el signo**: para diseñar fundaciones hay que recuperarlo con el patrón del
    modo dominante de esa respuesta, obteniendo reacciones firmadas y concurrentes en vez de cuatro
    magnitudes positivas que no pueden ocurrir a la vez.
+
+[^chopra]: Chopra, A. K. (2017). *Dynamics of Structures: Theory and Applications to Earthquake Engineering*, 5.ª ed. Pearson.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+
+[^derkiureghian]: Der Kiureghian, A. (1981). «A response spectrum method for random vibration analysis of MDF systems». *Earthquake Engineering & Structural Dynamics*, 9(5), 419–435.

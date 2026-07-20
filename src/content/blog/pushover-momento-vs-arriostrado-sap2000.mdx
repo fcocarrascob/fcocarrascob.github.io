@@ -68,7 +68,7 @@ backbones de forma radicalmente distinta.
 
 La rótula de momento fluye cuando el momento alcanza el **momento plástico**, y luego
 —clave— **sostiene** ese momento a lo largo de una rotación plástica grande (la meseta B→C
-del backbone ASCE 41/FEMA 356):
+del backbone ASCE 41/FEMA 356)[^fema356]:
 
 <Equation label="Ec. 1">
 $$M_p = F_{ye}\,Z, \qquad F_{ye} = R_y\,F_y$$
@@ -94,7 +94,7 @@ $$P_{cr} = F_{cr}\,A_g,\qquad F_{cr} = 0.658^{\,F_{ye}/F_e}\,F_{ye},\qquad F_e =
 </Equation>
 
 La tracción fluye a $T_y$ y es dúctil. La compresión, en cambio, **pandea** a $P_{cr}$ —la
-capacidad de columna de AISC E3, que depende de la **esbeltez** $KL/r$ de la diagonal— y
+capacidad de columna de AISC E3[^aisc360], que depende de la **esbeltez** $KL/r$ de la diagonal— y
 después del pandeo **cae** a una resistencia residual (~$0.3\,P_{cr}$ en el backbone de
 ASCE 41). Como una diagonal esbelta tiene $P_{cr} \ll T_y$, la compresión es el eslabón
 débil: es la que fija el pico de la curva, y es la que hace que caiga.
@@ -224,7 +224,7 @@ busca el diseño por capacidad.
   caption="El mecanismo sway del MF, del modelo. Rótulas en los 2 extremos de viga (verde, B-C) y las 2 bases de columna (cian, C-D), con los topes de columna intactos (elásticos): columna fuerte / viga débil. Exactamente la secuencia que da la tabla de estados."
 />
 
-La carga de colapso del mecanismo sway tiene forma cerrada:
+La carga de colapso del mecanismo sway tiene forma cerrada[^neal]:
 
 <Equation label="Ec. 4">
 $$H_u = \frac{2\,M_{p,\text{col}} + 2\,M_{p,\text{viga}}}{h}$$
@@ -276,7 +276,7 @@ $$F_v = (T - C)\sin\theta,\qquad M_\text{viga} = \frac{F_v\,L}{4}$$
 Al final del empuje $T = 352$ y $C = 232$ kN, así que $F_v = (352-232)\cdot 0.759 = 91$ kN
 hacia abajo, y la viga simplemente apoyada de 6 m carga $M = 91\cdot 6/4 = 137$ kN·m. SAP
 reporta **136.8 kN·m**: exacto. Es el **desbalance vertical de la viga chevron** que exige
-AISC 341 §F2.3 —hay que diseñar la viga para esta carga que solo existe *después* del
+AISC 341 §F2.3[^aisc341] —hay que diseñar la viga para esta carga que solo existe *después* del
 pandeo—, y acá se ve nacer en vivo.
 
 <Figure
@@ -323,3 +323,11 @@ Cuál de los dos «tolera mejor el rango no lineal» no tiene una respuesta úni
 protege lo demás manteniéndose rígido hasta que su fusible pandea; el MF absorbe el sismo
 deformándose mucho sin perder capacidad. El pushover no elige por ti —te muestra, con la
 forma de la curva, qué estás comprando con cada sistema—.
+
+[^fema356]: ASCE/SEI 41-17, *Seismic Evaluation and Retrofit of Existing Buildings* (curvas de rótula derivadas de FEMA 356, 2000). American Society of Civil Engineers, Reston (VA).
+
+[^neal]: Neal, B. G. (1977). *The Plastic Methods of Structural Analysis*, 3.ª ed. Chapman & Hall, Londres.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (cap. E).
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§F2.3).

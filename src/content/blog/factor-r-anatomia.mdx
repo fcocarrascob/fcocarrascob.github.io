@@ -38,7 +38,7 @@ cualquiera reconoce:
 
 Esta serie desarma esas confusiones al modo de la casa: teoría contra SAP2000. Esta
 primera nota pone los conceptos sobre una sola figura, siguiendo la presentación del
-capítulo 7 de *Proyectar en Acero: práctica chilena*; las dos siguientes miden cada
+capítulo 7 de *Proyectar en Acero: práctica chilena*[^libro]; las dos siguientes miden cada
 mitad de $R$ con un experimento numérico; la última convierte lo medido en decisiones
 de diseño.
 
@@ -127,7 +127,7 @@ Las dos consecuencias prácticas:
    donde la estructura *pueda* desarrollarlos — hasta $V_y = \Omega_0 V_d$, no hasta
    $V_d$. Para dimensionar los elementos dúctiles eso está bien (para eso es el nivel de
    diseño); para dimensionar lo que **no** debe fallar antes que ellos —conexiones,
-   columnas, anclajes— está peligrosamente mal, y de ahí nace el diseño por capacidad
+   columnas, anclajes— está peligrosamente mal, y de ahí nace el diseño por capacidad[^capacidad]
    (Post 4).
 2. **Los desplazamientos del análisis son ficticiamente chicos.** Salen de un análisis
    lineal con fuerzas divididas por $R$, así que son $\approx \delta_e/R$. La estructura
@@ -156,7 +156,7 @@ deformación** $C_d$:
 $$\delta_u = \delta_d \cdot C_d$$
 </Equation>
 
-y la respuesta específica de la norma industrial chilena es la **hipótesis de Newmark**:
+y la respuesta específica de la norma industrial chilena es la **hipótesis de Newmark**[^newmark]:
 $C_d = R$, es decir
 
 <Equation label="Ec. 6">
@@ -225,12 +225,12 @@ que va a sostener ciclos estables de plastificación necesita compacidad local, 
 global acotada y materialidad controlada; y el resto de la estructura —conexiones,
 columnas, vigas puntales— debe resistir **lo que el fusible es capaz de entregar**, que
 no es la fuerza del análisis sino su *capacidad esperada* (en tracción,
-$T_{ye} = R_y F_y A_g$; los valores para compresión, flexión y capacidad residual quedan
+$T_{ye} = R_y F_y A_g$[^aisc341]; los valores para compresión, flexión y capacidad residual quedan
 para el Post 4).
 
 Cuando estimar ese equilibrio plástico elemento a elemento es impracticable, la norma
 ofrece el atajo que cierra el círculo de esta nota: amplificar las fuerzas sísmicas de
-diseño por $\Omega_0 = 0{,}7R$ — una estimación de la sobrerresistencia característica,
+diseño por $\Omega_0 = 0{,}7R$[^nch2369] — una estimación de la sobrerresistencia característica,
 que en condiciones convencionales ronda entre $2{,}0$ y $3{,}5$. No es un número mágico:
 es una apuesta sobre dónde queda $V_y$ respecto de $V_d$ en la figura del comienzo. Y
 las apuestas se pueden auditar.
@@ -270,3 +270,13 @@ atajo $0{,}7R$ — con el $\Omega_0$ medido en la mano para juzgarlo.
 
 El espectro dividido es un pagaré: promete que alguien, más adelante, va a poner la
 ductilidad. La serie es sobre verificar que las cuentas del pagaré cuadran.
+
+[^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.
+
+[^newmark]: Newmark, N. M., & Hall, W. J. (1982). *Earthquake Spectra and Design*. Earthquake Engineering Research Institute (EERI), Berkeley.
+
+[^capacidad]: Paulay, T., & Priestley, M. J. N. (1992). *Seismic Design of Reinforced Concrete and Masonry Buildings*. John Wiley & Sons, Nueva York.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. American Institute of Steel Construction, Chicago.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.

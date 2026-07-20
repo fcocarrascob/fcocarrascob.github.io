@@ -16,11 +16,11 @@ import Figure from '../../components/content/Figure.astro';
 ## La pregunta
 
 La [nota anterior](/blog/factor-r-anatomia) dejó la mitad "material" de $R = R_\mu \cdot \Omega_0$
-apoyada en una promesa: la **regla de igual desplazamiento** de Newmark. Recortar la
+apoyada en una promesa: la **regla de igual desplazamiento** de Newmark[^newmark]. Recortar la
 resistencia de un oscilador no cambia cuánto viaja —$\delta_u \approx \delta_e$—, así que
 cada unidad de reducción se paga una a una con ductilidad ($\mu = R_\mu$), y la
 deformación real se recupera multiplicando la del análisis reducido por $C_d = R$: la
-hipótesis que NCh2369 adopta. Y para períodos cortos, la promesa cambia de moneda: se
+hipótesis que NCh2369 adopta[^nch2369]. Y para períodos cortos, la promesa cambia de moneda: se
 conserva la energía, no el desplazamiento, y el tipo de cambio empeora a
 
 <Equation label="Ec. 1">
@@ -79,7 +79,7 @@ Tres decisiones de diseño hacen el experimento limpio:
 />
 
 Como en la [serie de P-Delta](/blog/pdelta-cuando-confiar-amplificador), el experimento
-tiene un árbitro externo: un **integrador propio de Newmark-β** (aceleración promedio,
+tiene un árbitro externo: un **integrador propio de Newmark-β**[^newmarkbeta] (aceleración promedio,
 elastoplástico con retorno radial, dt ≤ T/200) que resuelve exactamente el mismo
 problema sin pasar por SAP2000. No valida la física —es la misma— pero valida la
 *maquinaria*: si SAP y el integrador no calzan, algo está mal configurado en alguno de
@@ -237,8 +237,16 @@ que el sistema realmente desarrolla. Esa no vive en un oscilador — vive en el 
 de perfiles, en qué verificación mandó en cada barra, en la redundancia. La próxima nota
 diseña un marco arriostrado chevron con el espectro NCh2369 reducido, lo empuja con un
 pushover hasta dibujar la curva completa, y mide sobre ella el $\Omega_0$ real — la
-Figura 7.5 del libro, pero con datos.
+Figura 7.5 del libro[^libro], pero con datos.
 
 El código del experimento (banco de osciladores, integrador de referencia, runner
 idempotente y el dataset completo) vive en el repositorio del experimento; esta nota es
 su bitácora.
+
+[^newmark]: Newmark, N. M., & Hall, W. J. (1982). *Earthquake Spectra and Design*. Earthquake Engineering Research Institute (EERI), Berkeley.
+
+[^newmarkbeta]: Newmark, N. M. (1959). «A method of computation for structural dynamics». *Journal of the Engineering Mechanics Division, ASCE*, 85(EM3), 67–94.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+
+[^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.

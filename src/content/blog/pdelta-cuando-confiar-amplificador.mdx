@@ -34,7 +34,7 @@ $$
 
 ASCE 7 permite ignorar P-Delta si $\theta \leq 0{,}10$, acepta el amplificador como
 alternativa al análisis explícito, y corta en un $\theta_{max}$ que típicamente ronda
-$0{,}25$. La pregunta de esta nota es la que el atajo deja abierta: **¿hasta qué θ, y
+$0{,}25$.[^asce7] La pregunta de esta nota es la que el atajo deja abierta: **¿hasta qué θ, y
 para qué tipos de pórtico, la Ec. 2 reproduce lo que entrega un análisis P-Delta real?**
 
 Es la fórmula que funcionó en la [serie de fundaciones](/blog/experimento-fundaciones-sap2000):
@@ -54,7 +54,7 @@ la Ec. 2 **es exacta** si el piso se deforma como resorte de corte puro y la ún
 desestabilización es el término $-P/h$ del piso.
 
 Pero una columna real también se curva *entre* pisos —el efecto **P-δ**— y ahí la Ec. 2
-no tiene cómo verlo. El caso extremo tiene solución exacta de teoría de viga-columna: un
+no tiene cómo verlo. El caso extremo tiene solución exacta de teoría de viga-columna[^timoshenko]: un
 voladizo con carga axial y lateral en la punta amplifica su deflexión
 
 <Equation label="Ec. 3">
@@ -91,7 +91,7 @@ $\approx 6/5$. El límite de corte puro solo se alcanza cuando la gravedad **no 
 las columnas del pórtico** — cuando la cargan columnas gravitacionales.
 </Note>
 
-Y aquí aparece el tercer personaje. AISC 360 (Ap. 8) no usa la Ec. 2 sino
+Y aquí aparece el tercer personaje. AISC 360 (Ap. 8)[^aisc360] no usa la Ec. 2 sino
 
 <Equation label="Ec. 4">
 $$
@@ -255,3 +255,9 @@ El código (constructor de pórticos, runner idempotente, referencias analítica
 dataset completo de 17 136 filas) vive en el repositorio del experimento; esta nota es su
 bitácora. La serie sísmica sigue con los períodos fundamentales: T ≈ C_t·H^0.75 contra
 el modal de SAP, con la misma receta.
+
+[^asce7]: ASCE/SEI 7-22, *Minimum Design Loads and Associated Criteria for Buildings and Other Structures*. American Society of Civil Engineers, Reston (VA), §12.8.7.
+
+[^timoshenko]: Timoshenko, S. P., & Gere, J. M. (1961). *Theory of Elastic Stability*, 2.ª ed. McGraw-Hill, Nueva York.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (Apéndice 8).

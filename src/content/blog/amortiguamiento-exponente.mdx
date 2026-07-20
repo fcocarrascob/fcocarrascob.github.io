@@ -16,13 +16,13 @@ import Figure from '../../components/content/Figure.astro';
 ## La pregunta
 
 Cuando una estructura no amortigua el 5 % de referencia, las normas corrigen el espectro
-con una fórmula cerrada. NCh2369 usa
+con una fórmula cerrada. NCh2369 usa[^nch2369]
 
 <Equation label="Ec. 1">
 $$f_\xi = \left(\frac{0{,}05}{\xi}\right)^{0.4}$$
 </Equation>
 
-Eurocode 8 usa $\eta = \sqrt{10/(5+\xi_\%)}$, y las tablas clásicas de Newmark-Hall otra
+Eurocode 8 usa $\eta = \sqrt{10/(5+\xi_\%)}$[^ec8], y las tablas clásicas de Newmark-Hall[^newmark] otra
 expresión más. Las tres discrepan fuerte donde más se usan — para el ξ = 2–3 % del acero
 industrial chileno, la Ec. 1 amplifica un 22–44 % mientras EC8 dice 12–20 %:
 
@@ -47,7 +47,7 @@ Es la definición de la corrección convertida en barrido: el cociente
 $S_a(\xi, T)/S_a(5\,\%, T)$ medido en osciladores reales bajo un registro real. La
 maquinaria es íntegramente la del [banco de osciladores del factor R](/blog/factor-r-rmu)
 — mismo registro (El Centro 1940, el sample que instala SAP2000, cerrado con un cero
-explícito), mismo integrador Newmark-β como árbitro, mismos gotchas ya cazados:
+explícito), mismo integrador Newmark-β[^newmarkbeta] como árbitro, mismos gotchas ya cazados:
 
 - **Mapa denso** (integrador propio): 60 períodos de 0.02 a 5 s × 8 amortiguamientos de
   1 a 20 % = 480 integraciones, dos minutos de cómputo.
@@ -174,3 +174,11 @@ frecuencias, agrega su propia distorsión sobre esta (esa es la nota D3 pendient
 roadmap); y el espectro vertical. El código del experimento (barrido, validación SAP,
 figuras y los dos datasets) vive en el repositorio del experimento; esta nota es su
 bitácora.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+
+[^ec8]: EN 1998-1:2004, *Eurocode 8: Design of structures for earthquake resistance — Part 1: General rules, seismic actions and rules for buildings*. CEN, Bruselas.
+
+[^newmark]: Newmark, N. M., & Hall, W. J. (1982). *Earthquake Spectra and Design*. Earthquake Engineering Research Institute (EERI), Berkeley.
+
+[^newmarkbeta]: Newmark, N. M. (1959). «A method of computation for structural dynamics». *Journal of the Engineering Mechanics Division, ASCE*, 85(EM3), 67–94.

@@ -25,6 +25,9 @@ export default defineConfig({
     processor: unified({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],
+      // Renombra el heading auto-generado de los footnotes GFM ([^n]) que usamos
+      // como bibliografía. Ver estilos en src/styles/global.css ([data-footnotes]).
+      remarkRehype: { footnoteLabel: 'Bibliografía', footnoteBackContent: '↩' },
     }),
     shikiConfig: {
       theme: 'github-light',

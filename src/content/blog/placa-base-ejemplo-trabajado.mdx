@@ -15,7 +15,7 @@ import Equation from '../../components/content/Equation.astro';
 
 En la [nota teórica de placas base](/blog/placas-base-sap2000) está cada fórmula que usa la
 [herramienta](/herramientas/placa-base); acá cerramos el triángulo con la **práctica**: un mismo
-caso resuelto dos veces — a mano, con el método clásico de la AISC *Design Guide 1* (bloque
+caso resuelto dos veces — a mano, con el método clásico de la AISC *Design Guide 1*[^dg1] (bloque
 rectangular de presiones, excentricidad grande), y con el modelo elástico de la herramienta.
 El objetivo no es que los números coincidan (no lo hacen, y eso es lo interesante), sino
 entender **por qué difieren, en qué dirección se equivoca cada uno**, y qué verificación
@@ -99,7 +99,7 @@ $M_{pl,T} = T_u \cdot x / B \approx 750$ kgf·cm/cm, que pide apenas $t = 1.15$ 
 
 ### 1.5 Pernos
 
-Para 1″ F1554 gr. 36: $A_b = 5.07$ cm² y $\phi F_{nt} A_b = 0.75 \cdot (0.75 \cdot 58 \ \text{ksi}) \cdot A_b = 11.6$ tonf.
+Para 1″ F1554 gr. 36[^aisc360]: $A_b = 5.07$ cm² y $\phi F_{nt} A_b = 0.75 \cdot (0.75 \cdot 58 \ \text{ksi}) \cdot A_b = 11.6$ tonf.
 Con $5.19$ tonf por perno, el ratio es **0.45** ✓. El corte es despreciable
 ($0.5$ tonf/perno contra $7.0$ tonf de capacidad).
 
@@ -184,7 +184,7 @@ clásico sugiere — relevante si esos pernos, además, anclan un cono de hormig
 ## 4. La verificación que la DG1 nunca pregunta
 
 El método clásico termina en el perno de acero. Pero el perno está embebido en hormigón, y
-el Capítulo 17 de ACI 318 pregunta si el **cono de arrancamiento** del grupo traccionado
+el Capítulo 17 de ACI 318[^aci318] pregunta si el **cono de arrancamiento** del grupo traccionado
 resiste ([§5.1 de la nota teórica](/blog/placas-base-sap2000#51-cono-de-arrancamiento-breakout-1762)).
 Para la fila de 2 pernos con $h_{ef} = 40$ cm en el pedestal de 80×80:
 
@@ -231,3 +231,9 @@ inferior que cambian el modo de falla.
   [nota teórica](/blog/placas-base-sap2000) sección por sección, y la
   [herramienta](/herramientas/placa-base) enlaza cada fila de su tabla de verificaciones
   con la sección (§n) correspondiente.
+
+[^dg1]: Fisher, J. M., & Kloiber, L. A. (2006). *Base Plate and Anchor Rod Design*, Steel Design Guide 1, 2.ª ed. American Institute of Steel Construction, Chicago.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§J3, J8).
+
+[^aci318]: ACI 318-25, *Building Code Requirements for Structural Concrete and Commentary*, cap. 17. American Concrete Institute, Farmington Hills (MI).

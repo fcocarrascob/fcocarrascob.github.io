@@ -21,7 +21,7 @@ en el laboratorio más chico posible: un oscilador. La otra mitad no cabe ahí. 
 discreto del catálogo de perfiles, en qué verificación mandó cada barra, en el $\phi$
 del método de diseño, en el material que llega más fuerte que lo especificado, y en la
 redistribución de esfuerzos cuando algo plastifica. La norma la estima con la apuesta
-$\Omega_0 = 0{,}7R$; el libro que guía esta serie le asigna un rango de 2.0 a 3.5 en
+$\Omega_0 = 0{,}7R$; el libro que guía esta serie[^libro] le asigna un rango de 2.0 a 3.5 en
 condiciones convencionales.
 
 La pregunta de esta nota: **si uno diseña un marco arriostrado *como en la oficina* —
@@ -47,11 +47,11 @@ elásticas (protegerlas es la historia del Post 4, no de este).
 El diseño sigue la rutina de oficina, automatizada: análisis modal espectral con el
 espectro NCh2369 (la misma fórmula ya publicada en el
 [post espectral de la serie Rukan](/blog/rukan-verificacion-modal-espectral), zona 2,
-suelo C, ξ = 3 %, **R = 3**), y con la demanda axial $N_u$ de la diagonal se recorre el
+suelo C, ξ = 3 %, **R = 3**)[^nch2369], y con la demanda axial $N_u$ de la diagonal se recorre el
 catálogo de HSS cuadrados —propiedades leídas de la base de secciones de SAP2000, no
 tipeadas— hasta el primer perfil que cumple **las dos** verificaciones: resistencia
 ($\phi_c P_n \geq N_u$) y esbeltez de diagonal sísmica ($KL/r \leq 1{,}5\pi\sqrt{E/F_y}
-\approx 113$).
+\approx 113$)[^aisc341].
 
 Y aquí está el truco del experimento: **se diseña el mismo marco dos veces, con dos
 masas sísmicas distintas**. La masa no cambia la tipología ni el espectro — cambia *qué
@@ -220,3 +220,9 @@ esperadas ($T_{ye} = R_yF_yA_g$ y compañía) y cuándo conviene calcular en vez
 apostar. El código del experimento (diseñador de catálogo, espectro, runner de pushover
 y variantes, dataset completo) vive en el repositorio del experimento; esta nota es su
 bitácora.
+
+[^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. American Institute of Steel Construction, Chicago.

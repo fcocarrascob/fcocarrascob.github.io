@@ -54,7 +54,7 @@ Cada simulación es una zapata aislada construida en SAP2000 con la misma físic
 
 - **Zapata flexible:** losa de elementos *shell* de dimensiones $B \times L$ y espesor $T$, que
   se deforma según su propia rigidez a flexión.
-- **Suelo:** resortes de área de **solo compresión** (módulo de balasto $k_s$). Donde la losa
+- **Suelo:** resortes de área de **solo compresión** (módulo de balasto $k_s$)[^balasto]. Donde la losa
   sube, el resorte se desactiva ($q = 0$): es el despegue.
 - **Columna:** un pedestal rígido transmite la carga al centroide de la losa.
 - **Un único caso no lineal** que aplica la carga vertical, el momento y el peso del relleno en
@@ -69,7 +69,7 @@ lineal. Es el error sutil más común al modelar este tipo de fundación.
 
 La diferencia con la nota de Winkler es esencial: allí la base era un plano rígido con 3 grados
 de libertad; aquí la losa tiene **miles** de grados de libertad y su forma deformada —el
-*dishing*, el ahuecamiento bajo la carga— es justamente lo que las ecuaciones rígidas no ven.
+*dishing*, el ahuecamiento bajo la carga—[^hetenyi] es justamente lo que las ecuaciones rígidas no ven.
 
 <Figure
   src="/fundaciones/fig-dishing.svg"
@@ -300,3 +300,7 @@ Esta nota fija el objetivo y el modelo. La hoja de ruta de la serie:
 
 El código del experimento (muestreo, simulación, extracción y las ecuaciones de referencia) vive
 en un repositorio aparte; estas notas son el cuaderno de bitácora que lo acompaña.
+
+[^balasto]: Terzaghi, K. (1955). «Evaluation of coefficients of subgrade reaction». *Géotechnique*, 5(4), 297–326.
+
+[^hetenyi]: Hetényi, M. (1946). *Beams on Elastic Foundation*. University of Michigan Press, Ann Arbor.

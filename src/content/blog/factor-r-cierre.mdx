@@ -14,7 +14,7 @@ import Figure from '../../components/content/Figure.astro';
 ## La idea que ordenó todo
 
 La serie nació de una figura de libro —la curva pushover del capítulo 7 de *Proyectar en
-Acero: práctica chilena*, con sus tres niveles de corte $V_e$, $V_y$, $V_d$— y de una
+Acero: práctica chilena*[^libro], con sus tres niveles de corte $V_e$, $V_y$, $V_d$— y de una
 apuesta editorial: que la descomposición $R = R_\mu \cdot \Omega_0$ no se explicara,
 sino que se **midiera**. Cada factor vive en un lugar físico distinto — $R_\mu$ en el
 comportamiento histerético del material, $\Omega_0$ en el sistema completo — así que
@@ -37,7 +37,7 @@ elastoplásticos bajo El Centro, validados contra un integrador propio):
 
 - **La regla de igual desplazamiento emerge sola del análisis.** Para $T \geq 0{,}5$ s,
   $\delta_u/\delta_e$ con mediana 1.01 y sin tendencia con R. Recortar la fuerza 4 veces
-  cambió el pico solo +3.6 % en $T = 1$ s. La hipótesis $C_d = R$ de NCh2369 no es un
+  cambió el pico solo +3.6 % en $T = 1$ s.[^newmark] La hipótesis $C_d = R$ de NCh2369[^nch2369] no es un
   decreto: es física observable.
 - **$\mu \approx R$ en la meseta** ($\mu$ = 1.4 / 1.6 / 2.8 / 4.1 / 6.8 / 8.8 para
   R = 1.5…8): elegir R es elegir la demanda de ductilidad de los fusibles, casi uno a
@@ -128,3 +128,9 @@ curva), [$R_\mu$ en el laboratorio](/blog/factor-r-rmu) (la regla de Newmark eme
 [$\Omega_0$ medido](/blog/factor-r-omega0) (la Figura 7.5 con datos) y
 [fusibles y capacidad esperada](/blog/factor-r-capacidad-esperada) (quién paga lo que el
 fusible entrega).
+
+[^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.
+
+[^newmark]: Newmark, N. M., & Hall, W. J. (1982). *Earthquake Spectra and Design*. Earthquake Engineering Research Institute (EERI), Berkeley.
+
+[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
