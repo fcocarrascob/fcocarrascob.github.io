@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="push" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="suck" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2d6b9c"/>
+    </marker>
+  </defs>
+  <rect width="900" height="440" fill="#ffffff"/>
+  <text x="450" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Las presiones sobre el edificio: presión externa (C_p) combinada con la interna (GC_pi)</text>
+
+  <!-- ground -->
+  <line x1="60" y1="360" x2="840" y2="360" stroke="#8a857c" stroke-width="1.5"/>
+
+  <!-- building box -->
+  <rect x="330" y="150" width="240" height="210" fill="#efece6" stroke="#8a857c" stroke-width="1.5"/>
+  <!-- roof line (flat) -->
+  <line x1="330" y1="150" x2="570" y2="150" stroke="#8a857c" stroke-width="2"/>
+  <text x="450" y="270" font-size="12" text-anchor="middle" fill="#999">interior</text>
+
+  <!-- Wind incoming -->
+  <text x="150" y="120" font-size="13" fill="#333" font-weight="bold">viento →</text>
+  <line x1="90" y1="140" x2="150" y2="140" stroke="#333" stroke-width="2" marker-end="url(#push)"/>
+  <line x1="90" y1="175" x2="150" y2="175" stroke="#333" stroke-width="2" marker-end="url(#push)"/>
+  <line x1="90" y1="210" x2="150" y2="210" stroke="#333" stroke-width="2" marker-end="url(#push)"/>
+
+  <!-- ===== Windward wall: pressure INTO wall, grows with height (q_z) ===== -->
+  <text x="250" y="150" font-size="12.5" fill="#b02a1a" font-weight="bold" text-anchor="middle">Barlovento</text>
+  <text x="250" y="167" font-size="11" fill="#b02a1a" text-anchor="middle">+C_p ≈ +0,8 · q_z</text>
+  <!-- pressure diagram (triangle-ish growing upward) to the left of wall -->
+  <path d="M 330,360 L 330,150 L 292,150 L 315,360 Z" fill="#b02a1a" fill-opacity="0.14" stroke="#b02a1a" stroke-opacity="0.5"/>
+  <line x1="300" y1="185" x2="330" y2="185" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#push)"/>
+  <line x1="308" y1="240" x2="330" y2="240" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#push)"/>
+  <line x1="316" y1="300" x2="330" y2="300" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#push)"/>
+  <text x="270" y="345" font-size="10" fill="#b02a1a" text-anchor="middle">usa q_z (varía con z)</text>
+
+  <!-- ===== Leeward wall: suction OUT, constant q_h ===== -->
+  <text x="650" y="150" font-size="12.5" fill="#2d6b9c" font-weight="bold" text-anchor="middle">Sotavento</text>
+  <text x="650" y="167" font-size="11" fill="#2d6b9c" text-anchor="middle">−C_p ≈ −0,5 · q_h</text>
+  <rect x="570" y="150" width="34" height="210" fill="#2d6b9c" fill-opacity="0.12" stroke="#2d6b9c" stroke-opacity="0.5"/>
+  <line x1="570" y1="200" x2="612" y2="200" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <line x1="570" y1="260" x2="612" y2="260" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <line x1="570" y1="320" x2="612" y2="320" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <text x="640" y="345" font-size="10" fill="#2d6b9c" text-anchor="middle">usa q_h (constante)</text>
+
+  <!-- ===== Roof suction (up) ===== -->
+  <text x="450" y="112" font-size="12.5" fill="#2d6b9c" font-weight="bold" text-anchor="middle">Techo — succión</text>
+  <text x="450" y="129" font-size="11" fill="#2d6b9c" text-anchor="middle">−C_p · q_h</text>
+  <line x1="365" y1="150" x2="365" y2="132" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <line x1="420" y1="150" x2="420" y2="132" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <line x1="480" y1="150" x2="480" y2="132" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+  <line x1="535" y1="150" x2="535" y2="132" stroke="#2d6b9c" stroke-width="1.8" marker-end="url(#suck)"/>
+
+  <!-- ===== Internal pressure ===== -->
+  <g>
+    <circle cx="450" cy="255" r="30" fill="none" stroke="#b35c0e" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <text x="450" y="230" font-size="11" text-anchor="middle" fill="#b35c0e" font-weight="bold">±GC_pi</text>
+    <!-- outward arrows (both cases) -->
+    <line x1="450" y1="255" x2="420" y2="245" stroke="#b35c0e" stroke-width="1.4" marker-end="url(#suck)"/>
+    <line x1="450" y1="255" x2="480" y2="245" stroke="#b35c0e" stroke-width="1.4" marker-end="url(#suck)"/>
+    <line x1="450" y1="255" x2="435" y2="282" stroke="#b35c0e" stroke-width="1.4" marker-end="url(#suck)"/>
+    <line x1="450" y1="255" x2="465" y2="282" stroke="#b35c0e" stroke-width="1.4" marker-end="url(#suck)"/>
+  </g>
+
+  <!-- ===== Enclosure legend ===== -->
+  <rect x="60" y="384" width="780" height="44" rx="6" fill="#f7f4ee" stroke="#c9c3b6"/>
+  <text x="72" y="402" font-size="11.5" fill="#333" font-weight="bold">Presión interna según el cerramiento (Tabla 7):</text>
+  <text x="72" y="420" font-size="11" fill="#555">Cerrado <tspan fill="#b35c0e" font-weight="bold">±0,18</tspan>   ·   Parcialmente cerrado <tspan fill="#b35c0e" font-weight="bold">±0,55</tspan>   ·   Parcialmente abierto <tspan fill="#b35c0e" font-weight="bold">±0,18</tspan>   ·   Abierto <tspan fill="#b35c0e" font-weight="bold">0,00</tspan></text>
+  <text x="560" y="402" font-size="10.5" fill="#888">La presión interna se resta de la externa: infla o succiona el edificio desde adentro.</text>
+</svg>

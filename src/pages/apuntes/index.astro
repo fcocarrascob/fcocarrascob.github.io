@@ -1,49 +1,53 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import { getAllApuntes, SUBSECTIONS } from '../../lib/apuntes';
+import { getAllApuntes, GROUPS, getSubsectionsByGroup, subsectionHref } from '../../lib/apuntes';
+import type { GroupKey, SubsectionKey } from '../../lib/apuntes';
 
 const posts = await getAllApuntes();
 
 const subsectionCounts = Object.fromEntries(
-  Object.keys(SUBSECTIONS).map((key) => [
-    key,
-    posts.filter((p) => p.data.subsection === key).length,
-  ])
+  posts.reduce((acc, p) => {
+    acc.set(p.data.subsection, (acc.get(p.data.subsection) ?? 0) + 1);
+    return acc;
+  }, new Map<string, number>())
 );
 ---
-<PageLayout title="Apuntes" description="Apuntes didácticos de libros: teoría explicada paso a paso con esquemas">
+<PageLayout title="Apuntes" description="Apuntes didácticos de libros y normas: teoría explicada paso a paso con esquemas">
   <div class="mb-10">
     <p class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Sección</p>
     <h1 class="text-2xl font-semibold text-ink mb-3">Apuntes</h1>
     <p class="text-muted leading-relaxed">
-      Apuntes de libros: cada nota destila un capítulo en una clase visual — la intuición
-      primero, luego la definición formal, un ejemplo y esquemas dibujados a mano.
+      Apuntes de libros y normas: cada nota destila un capítulo — o una norma completa — en
+      una clase visual: la intuición primero, luego la definición formal, un ejemplo y
+      esquemas dibujados a mano.
     </p>
   </div>
 
-  <section class="mb-12">
-    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-4">Libros</h2>
-    <ul class="divide-y divide-border border-y border-border">
-      {Object.entries(SUBSECTIONS).map(([slug, sub]) => (
-        <li>
-          <a
-            href={`/apuntes/${slug}`}
-            class="flex items-center justify-between py-4 group"
-          >
-            <div>
-              <p class="font-medium text-ink group-hover:text-accent transition-colors">
-                {sub.label}
-              </p>
-              <p class="text-sm text-muted mt-0.5">{sub.author}</p>
-              <p class="text-sm text-muted mt-1">{sub.description}</p>
-            </div>
-            <span class="shrink-0 ml-6 text-sm text-muted">
-              {subsectionCounts[slug] ?? 0} nota{subsectionCounts[slug] !== 1 ? 's' : ''}
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
+  {(Object.entries(GROUPS) as [GroupKey, string][]).map(([groupKey, groupLabel]) => (
+    <section class="mb-12">
+      <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-4">{groupLabel}</h2>
+      <ul class="divide-y divide-border border-y border-border">
+        {getSubsectionsByGroup(groupKey).map(([slug, sub]) => (
+          <li>
+            <a
+              href={subsectionHref(slug as SubsectionKey)}
+              class="flex items-center justify-between py-4 group"
+            >
+              <div>
+                <p class="font-medium text-ink group-hover:text-accent transition-colors">
+                  {sub.label}
+                </p>
+                <p class="text-sm text-muted mt-0.5">{sub.author}</p>
+                <p class="text-sm text-muted mt-1">{sub.description}</p>
+              </div>
+              <span class="shrink-0 ml-6 text-sm text-muted">
+                {subsectionCounts[slug] ?? 0} nota{subsectionCounts[slug] !== 1 ? 's' : ''}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 
 </PageLayout>

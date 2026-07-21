@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { SUBSECTIONS } from '../../lib/apuntes';
+import { SUBSECTIONS, isSinglePost } from '../../lib/apuntes';
 import type { SubsectionKey } from '../../lib/apuntes';
 
 export async function getStaticPaths() {
@@ -17,6 +17,12 @@ const { Content } = await render(post);
 
 const subKey = post.data.subsection as SubsectionKey;
 const sub = SUBSECTIONS[subKey];
+
+// Nota única (norma corta): el breadcrumb vuelve a la sección Apuntes, porque no
+// existe una página-galería intermedia. Multi-nota: vuelve a su galería.
+const breadcrumb = isSinglePost(subKey)
+  ? { href: '/apuntes', label: 'Apuntes' }
+  : { href: `/apuntes/${subKey}`, label: sub?.label ?? subKey };
 ---
 <BlogPost
   frontmatter={{
@@ -28,7 +34,7 @@ const sub = SUBSECTIONS[subKey];
     norm: sub?.author,
     section: post.data.chapter ?? sub?.label,
   }}
-  breadcrumb={{ href: `/apuntes/${post.data.subsection}`, label: sub?.label ?? post.data.subsection }}
+  breadcrumb={breadcrumb}
 >
   <Content />
 </BlogPost>

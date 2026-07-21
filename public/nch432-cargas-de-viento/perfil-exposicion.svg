@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="pw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2d6b9c"/>
+    </marker>
+  </defs>
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Exposición: la rugosidad del terreno decide cuánto frena el viento cerca del suelo</text>
+  <text x="470" y="52" font-size="12" text-anchor="middle" fill="#777">El perfil de velocidad crece con la altura z; K_z traduce ese perfil en un multiplicador de q_z</text>
+
+  <!-- Common baseline -->
+  <!-- Panels at x = 40, 350, 660 ; width 240 ; ground y=360 -->
+
+  <!-- ============ Exposición B ============ -->
+  <g>
+    <text x="160" y="88" font-size="13" text-anchor="middle" fill="#8a7449" font-weight="bold">Exposición B — urbano / boscoso</text>
+    <line x1="60" y1="360" x2="280" y2="360" stroke="#8a857c" stroke-width="1.5"/>
+    <!-- city blocks -->
+    <rect x="70" y="330" width="24" height="30" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="102" y="318" width="24" height="42" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="134" y="336" width="24" height="24" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="166" y="322" width="24" height="38" fill="#dcd8d0" stroke="#8a857c"/>
+    <rect x="198" y="332" width="24" height="28" fill="#dcd8d0" stroke="#8a857c"/>
+    <!-- profile (short near ground) -->
+    <path d="M 75,360 C 78,300 90,230 118,110" fill="none" stroke="#2d6b9c" stroke-width="2"/>
+    <line x1="75" y1="340" x2="88" y2="340" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="75" y1="300" x2="102" y2="300" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="75" y1="250" x2="128" y2="250" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="75" y1="180" x2="163" y2="180" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <!-- Kz callout at z=10 -->
+    <line x1="60" y1="300" x2="280" y2="300" stroke="#b02a1a" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <text x="272" y="294" font-size="10.5" text-anchor="end" fill="#b02a1a">z = 10 m</text>
+    <rect x="196" y="308" width="80" height="26" rx="4" fill="#f7ecea" stroke="#b02a1a"/>
+    <text x="236" y="325" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">K_z = 0,71</text>
+  </g>
+
+  <!-- ============ Exposición C ============ -->
+  <g>
+    <text x="470" y="88" font-size="13" text-anchor="middle" fill="#8a7449" font-weight="bold">Exposición C — terreno abierto</text>
+    <line x1="370" y1="360" x2="590" y2="360" stroke="#8a857c" stroke-width="1.5"/>
+    <!-- sparse bushes -->
+    <path d="M 386,360 q 6,-14 12,0" fill="#cfd8c4" stroke="#8a857c"/>
+    <path d="M 452,360 q 7,-16 14,0" fill="#cfd8c4" stroke="#8a857c"/>
+    <path d="M 540,360 q 6,-13 12,0" fill="#cfd8c4" stroke="#8a857c"/>
+    <!-- profile (fuller) -->
+    <path d="M 385,360 C 395,290 415,210 452,110" fill="none" stroke="#2d6b9c" stroke-width="2"/>
+    <line x1="385" y1="340" x2="405" y2="340" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="385" y1="300" x2="423" y2="300" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="385" y1="250" x2="452" y2="250" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="385" y1="180" x2="492" y2="180" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="370" y1="300" x2="590" y2="300" stroke="#b02a1a" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <text x="582" y="294" font-size="10.5" text-anchor="end" fill="#b02a1a">z = 10 m</text>
+    <rect x="506" y="308" width="80" height="26" rx="4" fill="#f7ecea" stroke="#b02a1a"/>
+    <text x="546" y="325" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">K_z = 1,00</text>
+  </g>
+
+  <!-- ============ Exposición D ============ -->
+  <g>
+    <text x="780" y="88" font-size="13" text-anchor="middle" fill="#8a7449" font-weight="bold">Exposición D — agua / planicie lisa</text>
+    <line x1="680" y1="360" x2="900" y2="360" stroke="#8a857c" stroke-width="1.5"/>
+    <!-- water waves -->
+    <path d="M 686,358 q 10,-6 20,0 q 10,6 20,0 q 10,-6 20,0 q 10,6 20,0 q 10,-6 20,0 q 10,6 20,0 q 10,-6 20,0 q 10,6 20,0 q 10,-6 20,0" fill="none" stroke="#8fb3cc" stroke-width="1.4"/>
+    <!-- profile (fullest near ground) -->
+    <path d="M 695,360 C 712,280 740,200 782,110" fill="none" stroke="#2d6b9c" stroke-width="2"/>
+    <line x1="695" y1="340" x2="720" y2="340" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="695" y1="300" x2="742" y2="300" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="695" y1="250" x2="772" y2="250" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="695" y1="180" x2="812" y2="180" stroke="#2d6b9c" stroke-width="1.6" marker-end="url(#pw)"/>
+    <line x1="680" y1="300" x2="900" y2="300" stroke="#b02a1a" stroke-width="0.8" stroke-dasharray="4 3"/>
+    <text x="892" y="294" font-size="10.5" text-anchor="end" fill="#b02a1a">z = 10 m</text>
+    <rect x="816" y="308" width="80" height="26" rx="4" fill="#f7ecea" stroke="#b02a1a"/>
+    <text x="856" y="325" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">K_z = 1,19</text>
+  </g>
+
+  <text x="470" y="404" font-size="12" text-anchor="middle" fill="#444">A igual altura, el terreno más liso deja pasar más viento: <tspan fill="#b02a1a" font-weight="bold">K_z(D) &gt; K_z(C) &gt; K_z(B)</tspan>.</text>
+  <text x="470" y="424" font-size="11.5" text-anchor="middle" fill="#888">Cuando no aplica ni B ni D, se usa C (Tabla 5, con α y z_g de la Tabla 6).</text>
+</svg>
