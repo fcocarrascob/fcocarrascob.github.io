@@ -55,6 +55,15 @@ export const SUBSECTIONS = {
     // `src/pages/apuntes/nch432/index.astro`.
     post: 'nch432-cargas-de-viento',
   },
+  'puentes-grua': {
+    group: 'normativas',
+    label: 'Puentes grúa — cargas y viga carrilera',
+    author: 'AISC Design Guide 7 · ASCE 7 · CMAA',
+    description:
+      'Apunte didáctico del diseño de edificios con puente grúa a partir de las referencias de uso corriente (AISC Design Guide 7, ASCE 7 §4.9 y CMAA 70/74): la carga móvil de las ruedas, los tres efectos dinámicos, la clase de servicio, la viga carrilera y la fatiga.',
+    // Nota única (ver comentario en nch432).
+    post: 'puentes-grua-cargas-viga-carrilera',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;

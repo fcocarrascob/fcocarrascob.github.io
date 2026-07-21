@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="wl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="dim" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
+  </defs>
+  <rect width="900" height="420" fill="#ffffff"/>
+  <text x="450" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La carga de rueda es móvil: se maximiza con el carro pegado a un riel</text>
+
+  <!-- bridge span between rails A (left) and B (right) -->
+  <line x1="150" y1="150" x2="750" y2="150" stroke="#8a7449" stroke-width="6"/>
+  <!-- rails as triangles -->
+  <polygon points="150,150 138,182 162,182" fill="#8a7439" stroke="#6b5a38"/>
+  <polygon points="750,150 738,182 762,182" fill="#8a7439" stroke="#6b5a38"/>
+  <text x="150" y="200" font-size="12" text-anchor="middle" fill="#6b5a38" font-weight="bold">Riel A</text>
+  <text x="750" y="200" font-size="12" text-anchor="middle" fill="#6b5a38" font-weight="bold">Riel B</text>
+
+  <!-- trolley near rail A -->
+  <rect x="205" y="120" width="60" height="30" fill="#cdd6de" stroke="#2d6b9c"/>
+  <text x="235" y="139" font-size="11" text-anchor="middle" fill="#2d6b9c">carro</text>
+  <line x1="235" y1="150" x2="235" y2="235" stroke="#555" stroke-width="1.5"/>
+  <rect x="213" y="235" width="44" height="30" fill="#b7a877" stroke="#6b5a38"/>
+  <text x="235" y="254" font-size="10.5" text-anchor="middle" fill="#3d3520">W_L</text>
+  <text x="300" y="252" font-size="11" fill="#3d3520">carga izada + carro: W_L + W_carro</text>
+
+  <!-- dimension a (hook approach) -->
+  <line x1="150" y1="100" x2="235" y2="100" stroke="#888" stroke-width="0.8" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="192" y="93" font-size="11" text-anchor="middle" fill="#666">a (aproximación mínima)</text>
+  <!-- dimension S (span) -->
+  <line x1="150" y1="330" x2="750" y2="330" stroke="#888" stroke-width="0.8" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="450" y="323" font-size="12" text-anchor="middle" fill="#666">luz del puente, S</text>
+
+  <!-- reactions -->
+  <line x1="150" y1="150" x2="150" y2="118" stroke="#b02a1a" stroke-width="3" marker-end="url(#wl)"/>
+  <line x1="750" y1="150" x2="750" y2="128" stroke="#b02a1a" stroke-width="2" marker-end="url(#wl)"/>
+  <text x="150" y="112" font-size="11" text-anchor="middle" fill="#b02a1a" font-weight="bold">grande</text>
+  <text x="750" y="122" font-size="11" text-anchor="middle" fill="#b02a1a" font-weight="bold">chica</text>
+
+  <!-- formula box -->
+  <rect x="150" y="352" width="600" height="52" rx="6" fill="#f7ecea" stroke="#b02a1a"/>
+  <text x="450" y="374" font-size="13.5" text-anchor="middle" fill="#333">P_max (por rueda) = W_puente / 4 + (W_carro + W_L) · (S − a) / (2·S)</text>
+  <text x="450" y="394" font-size="10.5" text-anchor="middle" fill="#888">el peso propio del puente se reparte a las 4 ruedas; la carga+carro carga sobre todo el riel cercano</text>
+
+  <text x="450" y="300" font-size="11.5" text-anchor="middle" fill="#444">Con el carro pegado al riel A, casi toda la carga izada baja por sus dos ruedas: ese es el <tspan fill="#b02a1a" font-weight="bold">caso crítico</tspan>.</text>
+</svg>

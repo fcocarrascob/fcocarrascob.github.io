@@ -50,6 +50,18 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-21 · `apuntes/puentes-grua-cargas-viga-carrilera` · ⚠️ 3 hallazgos
+
+**Commit:** `7d4de11` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | L | L.23, 85, 98, 119, 153, 176 | Anglicismos técnicos sin cursiva consistente: *surge* se usa 20+ veces y nunca va en cursiva; *pendant* sí va en cursiva (L.98) pero no en L.85; *cap channel* y *slip-critical* van sin cursiva. La regla pide cursiva en la primera aparición y consistencia luego. | Poner en cursiva la 1.ª aparición de *surge* (L.23), *cap channel* (L.176) y *slip-critical* (L.154); mantener el resto sin cursiva | ✅ aplicado (pre-publicación) |
+| 2 | 🟡 | N | L.129 vs L.270–274 | La ecuación general del frenado es $H_l = 0{,}10\sum P_{\max}$ (sin acotar qué ruedas suma), pero el ejemplo lo aplica solo a las dos ruedas de un riel ($0{,}10\cdot 2\cdot 92 = 18{,}4$). El símbolo $\sum P_{\max}$ queda ambiguo (¿4 ruedas o 2?). | Definir $\sum P_{\max}$ como «las cargas de rueda de un riel» en L.129, o anotar el alcance en el texto que sigue a la Ec. | ✅ aplicado (pre-publicación) — símbolo cambiado a $\sum P_{\max,\text{riel}}$ + aclaración explícita |
+| 3 | 🔵 | R | L.8, L.41, descr. | Cita «AISC Design Guide 7 — *Industrial Building Design* (3.ª ed., 2019)». El auditor no pudo confirmar sin la fuente que el título/edición correspondan al catálogo AISC. | Confirmar título/edición/año contra el catálogo AISC | 🚫 descartado — verificado: aisc.org lista «Design Guide 7: Industrial Building Design (Third Ed.)», 3.ª ed. 2019; correcto |
+
+**Verificado y correcto:** carga de rueda ($30+61{,}75\approx92$ kN), vertical con impacto ($92\times1{,}25\approx115$ kN), surge ($26$ kN → 13/riel), frenado ($0{,}10\cdot2\cdot92\approx18$ kN); cadena 92/115/13 idéntica en ecuación, prosa y cierre; ASCE 7-22 §4.9 (25/10/0 %, surge 20 %, longitudinal 10 %); clases CMAA A–F; fatiga AISC 360-22 Ap. 3; frontmatter vs schema Zod, Notes/Equation/Figure, jerarquía de encabezados; las 4 SVG existen en `public/` con `alt` autosuficientes; coherencia de tesis (tres naturalezas → cierre).
+
 ### 2026-07-15 · `blog/pdelta-cuando-confiar-amplificador` · ⚠️ 4 hallazgos
 
 **Commit:** `df9f05d` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -479,10 +491,12 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aisc360-22-capH-fuerzas-combinadas` | — | — | — |
 | `aisc360-22-capJ-conexiones` | — | — | — |
 
-### `apuntes` — apuntes (15)
+### `apuntes` — apuntes (17)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `puentes-grua-cargas-viga-carrilera` | 2026-07-21 | ⚠️ | 1 (0🔴 0🟠 · 1🔵) |
+| `nch432-cargas-de-viento` | — | — | — |
 | `deep-learning-with-python-cap1-que-es-deep-learning` | — | — | — |
 | `deep-learning-with-python-cap2-bloques-matematicos` | — | — | — |
 | `hands-on-ml-cap4-gradient-descent` | — | — | — |
