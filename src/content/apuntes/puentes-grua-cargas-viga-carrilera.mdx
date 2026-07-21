@@ -1,6 +1,6 @@
 ---
 title: "Edificios con puente grúa: cargas y viga carrilera"
-description: "El diseño de una nave con puente grúa, contado desde lo que lo hace distinto de un edificio común: la carga es móvil, dinámica y cíclica. De dónde salen las cargas de grúa (ASCE 7 §4.9), la clase de servicio que decide si manda resistencia, deflexión o fatiga (CMAA), y el diseño de la viga carrilera con flexión biaxial y canal-tapa (AISC Design Guide 7). Con un ejemplo resuelto."
+description: "El diseño de una nave con puente grúa, contado desde lo que lo hace distinto de un edificio común: la carga es móvil, dinámica y cíclica. De dónde salen las cargas de grúa (ASCE 7 §4.9), la clase de servicio que decide si manda resistencia, deflexión o fatiga (CMAA), el diseño de la viga carrilera con flexión biaxial y canal-tapa (AISC Design Guide 7), y cómo se combinan las cargas para diseñar (NCh 3171 / ASCE 7 §2.3). Con un ejemplo resuelto."
 pubDate: 2026-07-21
 tags: ["puente grúa", "viga carrilera", "fatiga", "cargas de grúa", "AISC", "ASCE 7", "CMAA", "industrial"]
 subsection: "puentes-grua"
@@ -285,6 +285,87 @@ se calcula con los **92 kN estáticos**, no con los 115.
 
 ---
 
+## 8. Cómo combinar las cargas para diseñar
+
+Ya tenemos las fuerzas de la grúa por separado. El diseño **no las usa todas al máximo a la
+vez**: hay reglas sobre qué efectos son simultáneos, hasta dónde llega el impacto, cuántas
+grúas actúan juntas y cómo se mezcla la grúa con el resto de las cargas. Son justo el tipo de
+detalle que se equivoca con facilidad.
+
+<Figure
+  src="/puentes-grua-cargas-viga-carrilera/combinaciones-grua.svg"
+  alt="Dos reglas al combinar cargas de grúa. Izquierda: el impacto solo se aplica a la viga carrilera y su conexión; las columnas, ménsulas y fundaciones se diseñan sin impacto, porque el efecto dinámico se amortigua en la bajada. Derecha: el surge lateral (movimiento del carro) y el frenado longitudinal (movimiento del puente) son eventos independientes que se revisan por separado, no juntos; y para varias grúas, el vertical considera hasta 2 grúas por vía, pero el surge y el frenado solo 1"
+  caption="Las dos trampas: el impacto es un asunto local de la carrilera (no baja a columnas ni fundaciones), y el surge y el frenado no se combinan al máximo a la vez."
+/>
+
+### La carga de grúa es una sobrecarga
+
+En las combinaciones de **NCh 3171** (equivalentes a ASCE 7 §2.3 para LRFD) la grúa entra en
+la posición de la sobrecarga $L$: se mayora por **1,6** en las combinaciones gravitacionales y
+por **1,0** cuando acompaña a viento o sismo. Un matiz útil: como el **peso del puente y del
+carro se conocen bien**, se pueden tratar como carga muerta ($1{,}2$), y reservar el $1{,}6$
+para la **carga izada** (la incierta). La carga vertical de la grúa —puente + carro + izada—
+es la que recibe el incremento por impacto.
+
+### Regla 1 — el impacto solo llega a la carrilera
+
+El $+25\,\%$ / $+10\,\%$ se aplica a la vertical **para la viga carrilera y su conexión**, pero
+por práctica establecida (**AIST TR13 / AISC DG7**) **no** se lleva a las columnas, ménsulas ni
+fundaciones: el efecto dinámico se amortigua en la bajada. Tampoco afecta al surge, al frenado
+ni a la fatiga.
+
+### Regla 2 — surge y frenado no son simultáneos
+
+El surge nace del **movimiento del carro** (transversal) y el frenado, del **movimiento del
+puente** (longitudinal): son eventos independientes. Se verifica **vertical + surge** y
+**vertical + frenado** como casos separados, nunca los tres máximos a la vez.
+
+<Note type="warning" title="Los mismos números, dos combinaciones distintas">
+Con el ejemplo anterior: la **viga carrilera** se diseña con la vertical **con** impacto
+(115 kN) más el surge (13 kN); pero la **columna** que la sostiene toma la misma vertical
+**sin** impacto (92 kN). El mismo puente, dos cargas verticales distintas según qué elemento
+estés diseñando.
+</Note>
+
+### Regla 3 — varias grúas no cargan todas al máximo
+
+Cuando hay más de una grúa (misma vía o vías adyacentes), la práctica de **AIST TR13 / MBMA**
+acota cuántas se consideran juntas:
+
+| Efecto | Grúas simultáneas |
+|---|---|
+| Vertical | hasta **2** grúas por vía |
+| Surge lateral | **1** grúa |
+| Frenado longitudinal | **1** grúa |
+
+### Las combinaciones, en concreto
+
+Llamando $C_g$ al efecto de la grúa (vertical —con o sin impacto según el elemento— más
+*uno* de los dos horizontales), las combinaciones LRFD relevantes de NCh 3171 / ASCE 7 §2.3
+quedan:
+
+<Equation label="LRFD (NCh 3171 / ASCE 7 §2.3)">
+$$
+\begin{aligned}
+&1{,}2D + 1{,}6\,C_g + 0{,}5\,(L_r \text{ o } S) \\
+&1{,}2D + 1{,}6\,(L_r \text{ o } S) + (C_g \text{ o } 0{,}5W) \\
+&1{,}2D + 1{,}0W + C_g + 0{,}5\,(L_r \text{ o } S) \\
+&0{,}9D + 1{,}0W
+\end{aligned}
+$$
+</Equation>
+
+Para sismo, la grúa aporta **masa** (se la ubica estacionada en su posición más desfavorable),
+pero su surge —un evento operacional— **no se combina** con el sismo.
+
+### La fatiga va por un carril aparte
+
+La fatiga **no** usa estas combinaciones: se evalúa a **nivel de servicio** (cargas sin
+mayorar), con **una sola grúa**, **sin impacto** y sin viento ni sismo — es el rango de tensión
+de una pasada del puente, repetida según la clase CMAA (§5).
+
+---
+
 ## El hilo, en una frase
 
 Diseñar una nave con puente grúa es tomar una carga que **se mueve, se sacude y se repite** y
@@ -292,4 +373,6 @@ darle a cada una de esas tres naturalezas su tratamiento: la **posición crític
 móvil → líneas de influencia), los **factores dinámicos** de ASCE 7 §4.9 (impacto solo
 vertical, surge y frenado sin impacto) y la **fatiga** que gobierna según la clase CMAA — todo
 aterrizando en una viga carrilera con **canal-tapa** que resuelve, de una vez, la flexión
-biaxial y la deflexión exigente que impone el rodar suave del puente.
+biaxial y la deflexión exigente que impone el rodar suave del puente. Y al combinar, la misma
+disciplina: cada efecto en su casilla —el impacto solo hasta la carrilera, el surge y el
+frenado nunca juntos, la fatiga a nivel de servicio— dentro de las combinaciones de NCh 3171.

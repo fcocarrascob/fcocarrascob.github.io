@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="dn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect width="920" height="430" fill="#ffffff"/>
+  <text x="460" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Dos reglas que sorprenden al combinar cargas de grúa</text>
+
+  <!-- ================= LEFT: impact boundary ================= -->
+  <text x="230" y="58" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">¿Dónde llega el impacto?</text>
+
+  <!-- wheel -->
+  <circle cx="150" cy="82" r="10" fill="#cdd6de" stroke="#2d6b9c"/>
+  <text x="150" y="86" font-size="9" text-anchor="middle" fill="#2d6b9c">rueda</text>
+  <line x1="150" y1="92" x2="150" y2="108" stroke="#555" stroke-width="1.6" marker-end="url(#dn)"/>
+
+  <!-- runway girder: impact YES -->
+  <rect x="90" y="110" width="120" height="34" rx="4" fill="#eef6ef" stroke="#1c7c3c"/>
+  <text x="150" y="131" font-size="11.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Viga carrilera</text>
+  <text x="235" y="124" font-size="12" fill="#1c7c3c" font-weight="bold">+ impacto</text>
+  <text x="235" y="140" font-size="10" fill="#1c7c3c">(y su conexión)</text>
+  <line x1="150" y1="144" x2="150" y2="162" stroke="#555" stroke-width="1.6" marker-end="url(#dn)"/>
+
+  <!-- column: impact NO -->
+  <rect x="120" y="164" width="60" height="120" fill="#f2f0ec" stroke="#8a857c"/>
+  <text x="150" y="228" font-size="11.5" text-anchor="middle" fill="#555" transform="rotate(-90 150 228)" font-weight="bold">Ménsula / columna</text>
+  <text x="235" y="220" font-size="12" fill="#b02a1a" font-weight="bold">sin impacto</text>
+  <line x1="150" y1="284" x2="150" y2="302" stroke="#555" stroke-width="1.6" marker-end="url(#dn)"/>
+
+  <!-- foundation: impact NO -->
+  <polygon points="108,304 192,304 210,340 90,340" fill="#e7e2d8" stroke="#8a857c"/>
+  <text x="150" y="326" font-size="11" text-anchor="middle" fill="#555" font-weight="bold">Fundación</text>
+  <text x="235" y="326" font-size="12" fill="#b02a1a" font-weight="bold">sin impacto</text>
+
+  <text x="230" y="372" font-size="10.5" text-anchor="middle" fill="#888">El efecto dinámico se amortigua: el +25 %/+10 % es un</text>
+  <text x="230" y="388" font-size="10.5" text-anchor="middle" fill="#888">asunto local de la carrilera (práctica AIST TR13 / AISC DG7).</text>
+
+  <!-- divider -->
+  <line x1="470" y1="50" x2="470" y2="400" stroke="#e4e0d8" stroke-width="1.4"/>
+
+  <!-- ================= RIGHT: surge XOR longitudinal ================= -->
+  <text x="695" y="58" font-size="13" text-anchor="middle" fill="#333" font-weight="bold">¿Surge y frenado a la vez? No.</text>
+
+  <!-- Case 1: vertical + surge -->
+  <rect x="520" y="80" width="150" height="96" rx="6" fill="#eef3f7" stroke="#2d6b9c"/>
+  <text x="595" y="102" font-size="11.5" text-anchor="middle" fill="#2d6b9c" font-weight="bold">Caso 1</text>
+  <text x="595" y="124" font-size="11" text-anchor="middle" fill="#33506b">Vertical</text>
+  <text x="595" y="142" font-size="11" text-anchor="middle" fill="#33506b">+ Surge lateral</text>
+  <text x="595" y="163" font-size="9.5" text-anchor="middle" fill="#7a90a6">(movimiento del carro)</text>
+
+  <text x="695" y="132" font-size="20" text-anchor="middle" fill="#b35c0e" font-weight="bold">≠</text>
+  <text x="695" y="152" font-size="9.5" text-anchor="middle" fill="#b35c0e">no juntos</text>
+
+  <!-- Case 2: vertical + longitudinal -->
+  <rect x="720" y="80" width="150" height="96" rx="6" fill="#eef6ef" stroke="#1c7c3c"/>
+  <text x="795" y="102" font-size="11.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Caso 2</text>
+  <text x="795" y="124" font-size="11" text-anchor="middle" fill="#2f5a3c">Vertical</text>
+  <text x="795" y="142" font-size="11" text-anchor="middle" fill="#2f5a3c">+ Frenado longit.</text>
+  <text x="795" y="163" font-size="9.5" text-anchor="middle" fill="#6a8a76">(movimiento del puente)</text>
+
+  <text x="695" y="210" font-size="11" text-anchor="middle" fill="#444">Son eventos independientes: se revisa cada</text>
+  <text x="695" y="226" font-size="11" text-anchor="middle" fill="#444">caso por separado, no los tres máximos a la vez.</text>
+
+  <!-- multiple cranes mini-note -->
+  <rect x="500" y="256" width="390" height="130" rx="6" fill="#f7f4ee" stroke="#c9c3b6"/>
+  <text x="695" y="278" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Varias grúas (AIST TR13 / MBMA)</text>
+  <text x="518" y="304" font-size="11" fill="#555">Vertical:</text>
+  <text x="872" y="304" font-size="11" text-anchor="end" fill="#6b5a38" font-weight="bold">hasta 2 grúas por vía</text>
+  <text x="518" y="330" font-size="11" fill="#555">Surge lateral:</text>
+  <text x="872" y="330" font-size="11" text-anchor="end" fill="#6b5a38" font-weight="bold">1 grúa</text>
+  <text x="518" y="356" font-size="11" fill="#555">Frenado longitudinal:</text>
+  <text x="872" y="356" font-size="11" text-anchor="end" fill="#6b5a38" font-weight="bold">1 grúa</text>
+  <text x="695" y="378" font-size="9.5" text-anchor="middle" fill="#888">No todas cargan al máximo simultáneamente.</text>
+</svg>
