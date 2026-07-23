@@ -50,6 +50,20 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `hormigon/ejemplo-anclajes-pedestal` · ⚠️ 5 hallazgos
+
+**Commit:** `53a8521` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (port a Python del motor `placaBaseAnchorage.ts`)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | N | Eq. 17.6.3.2 (pullout) | Los operandos impresos no reproducen el intermedio: `0.70·8·7.50·250 = 10500`, pero se escribe `10506 kgf`. El 10506 sale del A_brg exacto del motor (hex `0.866·(1.5d)²−Ab = 7.504 cm²`), no del `1.16·d² = 7.48` que declara el texto. La tonf (10.5) es correcta. | Mostrar A_brg = 7.50 con más decimales / anotar «(7.504 sin redondear)», o poner `≈ 10 500 kgf` | ✅ aplicado (working tree) — `10 506 → 10 500` (literal con A_brg=7.50) |
+| 2 | 🟡 | N | Eq. 17.7.2.1 (breakout corte) | Igual patrón: `0.70·1.33·0.90·7392 = 6194`, pero se escribe `6209 kgf`. El 6209 usa `A_Vc/A_Vco = 4/3 = 1.3333` sin redondear (mostrado como 1.33). La tonf (6.2) es correcta. | Anotar que 1.33 es redondeo de 4/3, o poner `≈ 6200 kgf` | ✅ aplicado (working tree) — factor `1.33 → 4/3` en prosa y ecuación (6209 literal) |
+| 3 | 🟡 | L | Note «Si no diera» | «los usos del acero del perno (≈ 0.26)»: 0.26 = T_max/φN_sa = 4.0/15.4 (tracción), pero el uso de acero en **corte** sería V_u/φV_sa = 3.5/8.0 ≈ 0.44, no 0.26. El argumento (acero < hormigón) se sostiene, pero subrepresenta el corte. | Precisar «≈ 0.26 en tracción, ≈ 0.44 en corte» o «≤ 0.44» | ✅ aplicado (working tree) — «≈ 0.26 en tracción, ≈ 0.44 en corte» |
+| 4 | 🔵 | E | L.18, L.112, L.179 (3 enlaces a la nota Cap. 17) | La regla «notas de hormigón autocontenidas, sin referencias cruzadas» apunta a las notas didácticas (subsección `aci318-25`); este post es subsección `ejemplos`, cuyo propósito es bajar la teoría a números (teoría enlazada). Decisión humana: ¿la regla alcanza a `ejemplos`? | Confirmar alcance de la regla; si es intencional, sin acción | 🚫 descartado — intencional: la regla es para las notas didácticas; los `ejemplos` existen para enlazar teoría↔números (los enlaces se mantienen) |
+| 5 | 🔵 | F | SVG `anclajes-pedestal.svg` + labels Eq. | (a) El cono en sección (vértice 190,410 · base ±80 px sobre 110 px) forma ~54° con la horizontal, más empinado que el «≈35°» rotulado / la proyección 1.5·h_ef (35° ↔ 1.5·h_ef); la orientación base-arriba/vértice-abajo sí es correcta (recién corregida). (b) Labels de `Equation` no correlativos «Ec. N» (usan cláusula ACI); intencional para ejemplo referenciado a código. | (a) Ensanchar la base a ~1.5·h_ef o cambiar el rótulo de ángulo por «proyección 1.5·h_ef»; (b) sin acción | ✅ aplicado (working tree) — (a) cono ensanchado a base ±1.5·h_ef (~34° desde horizontal), recuadro a 340 px, rótulo «proyección 1.5·h_ef»; (b) sin acción (labels ACI intencionales) |
+
+**Verificado y correcto (recalculado con port a Python del motor):** Breakout tracc. N_b=40.4, A_Nc/A_Nco=8500/14400=0.590, ψ_ed=0.825, N_cbg=19.7, φN_cbg=13.8 (uso 0.58). Pullout A_brg=7.504, φN_pn=10.5 (0.38). Side-face: 0.4h_ef=16<c_a=25 → no aplica. Breakout corte ℓ_e=20.32, V_b=7392 (gobierna el tope 3.74; el término 1.92·(ℓ_e/d)^0.2·√d=4.64>3.74), A_Vc/A_Vco=4/3, φV_cbg=6.2 (0.56). Pryout N_cbg(4)=23.15, φV_cpg=32.4 (0.11). Interacción 0.58+0.56=1.14≤1.2 (0.95). **SVG:** escala 1.2 px/cm; A_Nc=100×85=8500 cm² recortada dentro del pedestal ✓; cono base en superficie / vértice en cabeza a h_ef ✓ (orientación correcta); punto (0.58,0.56) bajo la recta N+V=1.2 (en N=0.58 el límite es V=0.62>0.56) ✓; V hacia x+ ✓; cotas c_a=25/gauge=50/B₂=100 ✓. Cadena 0.58/0.38/0.56/0.11/1.14 y demandas 8.0/4.0/3.5 coinciden entre prosa, ecuaciones, resumen, `caption`, `alt` y `description`. Frontmatter válido vs Zod; enlaces `cap17-anclajes`, `placa-base-ejemplo-trabajado`, `/herramientas/placa-base` existen (no-draft). **No verificable:** modos de acero del perno (φN_sa=15.4, φV_sa=8.0 tonf) — el post no muestra su cálculo (A_se·f_uta); el uso 4.0/15.4=0.26 sí es aritméticamente consistente.
+
 ### 2026-07-23 · `hormigon/ejemplo-zapata-aislada` · ⚠️ 3 hallazgos
 
 **Commit:** `60f1e72` (working tree, post untracked) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -504,10 +518,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (12)
+### `hormigon` — hormigon (ACI 318-25) (13)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-anclajes-pedestal` | 2026-07-23 | ✅ | 0 (4 aplicados: 3🟡 1🔵 · 1🔵 descartado intencional) |
 | `ejemplo-zapata-aislada` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟠 1🟡 1🔵) |
 | `ejemplo-viga-flexion-corte` | 2026-07-22 | ⚠️ | 2🔵 (1🟠 2🟡 aplicados) |
 | `aci318-25-alcance-y-definiciones` | — | — | — |

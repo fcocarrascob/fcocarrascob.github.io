@@ -1,0 +1,202 @@
+---
+title: "Ejemplo — Grupo de anclajes de una placa base en pedestal (ACI 318-25)"
+description: "Verificación al hormigón de un grupo de 4 pernos de anclaje de una columna industrial sobre pedestal, según ACI 318-25 Cap. 17: cono de arrancamiento (breakout) y extracción (pullout) en tracción, breakout de corte y pryout, y la interacción tracción–corte. Cada modo con su referencia y φ = 0.70; el resultado es que los modos individuales holgan pero la interacción N–V gobierna."
+pubDate: 2026-07-23
+tags: ["ejemplo", "anclajes", "placas base", "pedestal", "breakout", "pryout", "aci318"]
+subsection: "ejemplos"
+chapter: "Cap. 17 — Anclajes"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El anclaje de una columna al hormigón es donde se juega la base industrial chilena: una
+columna de acero, una placa base, y un grupo de pernos embebidos en un pedestal. El acero de
+los pernos es dúctil, pero el hormigón que los rodea **falla frágil** —descorchando un cono—,
+y por eso el Cap. 17 obliga a verificar una batería de modos de falla del hormigón. La
+[nota del Cap. 17](/hormigon/aci318-25-cap17-anclajes) explica *por qué* cada uno existe y
+cuáles son frágiles; acá lo bajamos a números[^aci318] para un pedestal típico, con la
+referencia normativa de cada paso. El desenlace enseña la razón de ser de la última
+verificación: **cada modo individual holga, pero la interacción tracción–corte gobierna**.
+
+<Note type="info" title="De dónde salen las fuerzas del perno">
+Las tracciones y el corte por perno vienen del **análisis de la placa base** (equilibrio de la
+placa bajo $P_u$, $M_u$ y $V_u$), que es un problema aparte —resuelto a mano en el
+[ejemplo de placa base](/blog/placa-base-ejemplo-trabajado) y automatizado en la
+[herramienta de placa base](/herramientas/placa-base)—. Acá los tomamos como **dato** y nos
+concentramos en lo que el Cap. 17 agrega: la verificación del **hormigón** que rodea al perno.
+Los modos de **acero** del perno (17.6.1 y 17.7.1) se verifican por separado y aquí holgan
+($\phi N_{sa} = 15.4$, $\phi V_{sa} = 8.0$ tonf $\gg$ demanda).
+</Note>
+
+## El caso
+
+Base de una columna de un marco industrial sobre un pedestal de hormigón. Del análisis de la
+placa resultan, para la combinación que gobierna, **dos pernos traccionados** (el momento
+vuelca hacia un lado) y un corte horizontal en la base.
+
+| Dato | Valor |
+|---|---|
+| Pedestal | $B_2 = N_2 = 100$ cm, $f'_c = 250$ kgf/cm² |
+| Pernos | 4 × φ1″ ($d = 2.54$ cm), cast-in con tuerca hex. pesada, patrón $50 \times 50$ cm |
+| Distancia al borde | $c_a = 25$ cm (todas las caras) |
+| Embebido | $h_{ef} = 40$ cm |
+| Tracción (del análisis de placa) | $T = 4.0$ tonf en cada uno de los 2 pernos de barlovento ($T_{\text{grupo}} = 8.0$) |
+| Corte (del análisis de placa) | $V_u = 3.5$ tonf |
+
+<Figure
+  src="/ejemplos/anclajes-pedestal.svg"
+  alt="Panel izquierdo: planta de un pedestal de 100×100 cm con 4 pernos φ1″ en patrón 50×50 (distancia al borde 25 cm), la fila traccionada de barlovento marcada en rojo con T=4 tonf cada uno, el corte V=3.5 tonf hacia el borde x+, y una sección con el cono de arrancamiento a 35° y el embebido h_ef=40 cm. Panel derecho: diagrama de interacción tracción–corte con la región segura bajo la recta N/φN + V/φV = 1.2 y el punto de diseño (0.58, 0.56) cuya suma 1.14 queda dentro, más la lista de los seis modos verificados con sus usos: breakout tracción 0.58, pullout 0.38, side-face blowout no aplica, breakout de corte 0.56, pryout 0.11 e interacción 1.14 (gobierna)."
+  caption="Los modos del hormigón (φ = 0.70): en tracción gobierna el cono de arrancamiento; en corte, el breakout hacia el borde; y la combinación de ambos, la interacción N–V, es la que finalmente manda."
+/>
+
+## 1. Tracción: cono, extracción y desprendimiento
+
+### 1.1 Cono de arrancamiento — breakout (17.6.2)
+
+El modo frágil por excelencia: la tracción del grupo descorcha un cono de hormigón. La
+capacidad base de un perno aislado en hormigón masivo es (17.6.2.2):
+
+<Equation label="Ec. 17.6.2.2">
+$$
+N_b = 10.1\,\lambda_a\sqrt{f'_c}\,h_{ef}^{1.5}
+= 10.1\sqrt{250}\cdot 40^{1.5} = 40\,400 \ \text{kgf} = 40.4 \ \text{tonf}
+$$
+</Equation>
+
+Sobre esa base actúan las correcciones geométricas: la razón de áreas proyectadas
+$A_{Nc}/A_{Nco}$ (cuánto se recortan los conos por los bordes y cuánto se solapan entre pernos)
+y la reducción por borde $\psi_{ed}$. Con $A_{Nco} = 9\,h_{ef}^2 = 14\,400$ cm² y la proyección
+del grupo de los 2 pernos traccionados recortada por los bordes del pedestal, $A_{Nc} = 8\,500$
+cm²:
+
+<Equation label="Ec. 17.6.2.1">
+$$
+N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\,\psi_{ec}\,\psi_{ed}\,\psi_{c}\,N_b
+= 0.590 \cdot 1.0 \cdot 0.825 \cdot 1.0 \cdot 40.4 = 19.7 \ \text{tonf}
+$$
+</Equation>
+
+con $\psi_{ec} = 1.0$ (tracción simétrica sobre los 2 pernos), $\psi_{ed} = 0.7 + 0.3\,c_a/1.5h_{ef}
+= 0.825$ (borde a 25 < $1.5h_{ef} = 60$ cm) y $\psi_c = 1.0$ (hormigón fisurado). Con $\phi = 0.70$:
+
+<Equation label="Verificación">
+$$
+\phi N_{cbg} = 0.70 \cdot 19.7 = 13.8 \ \text{tonf} \;\ge\; T_{\text{grupo}} = 8.0 \ \text{tonf}
+$$
+</Equation>
+
+Uso **0.58**: es el modo que **gobierna la tracción**. Es también el que dimensiona el
+pedestal —su tamaño en planta lo pide el cono de anclaje, no la columna—.
+
+### 1.2 Extracción — pullout (17.6.3)
+
+Que la cabeza (o tuerca) del perno más traccionado aplaste el hormigón sobre el que apoya. Se
+verifica **perno a perno** con el más cargado (17.6.3.2), sobre el área de aplastamiento de la
+tuerca hexagonal pesada $A_{brg} \approx 1.16\,d^2 = 7.50$ cm²:
+
+<Equation label="Ec. 17.6.3.2">
+$$
+\phi N_{pn} = \phi\,(8\,A_{brg}\,f'_c) = 0.70 \cdot 8 \cdot 7.50 \cdot 250
+= 10\,500 \ \text{kgf} = 10.5 \ \text{tonf} \;\ge\; T_{\max} = 4.0 \ \text{tonf}
+$$
+</Equation>
+
+Uso 0.38: holgado.
+
+### 1.3 Desprendimiento lateral — side-face blowout (17.6.4)
+
+Sólo aplica a pernos con **cabeza profunda muy cerca de un borde** ($c_a < 0.4\,h_{ef}$). Acá
+$c_a = 25 > 0.4\,h_{ef} = 16$ cm, así que **no se activa**. (Si el pedestal fuera más angosto,
+este modo frágil podría bajar tanto como el breakout; ver la nota teórica.)
+
+## 2. Corte: breakout hacia el borde y pryout
+
+### 2.1 Breakout de corte (17.7.2)
+
+El corte empuja los pernos contra el borde y descorcha un semicono hacia la cara libre. De
+forma conservadora, la **fila delantera** (los 2 pernos hacia el borde $x+$) toma toda la
+componente. Con $c_{a1} = 25$ cm al borde y la longitud de apoyo $\ell_e = \min(h_{ef},\,8d) =
+20.3$ cm, la capacidad base es (17.7.2.2):
+
+<Equation label="Ec. 17.7.2.2">
+$$
+V_b = \min\!\left(1.92\left(\tfrac{\ell_e}{d}\right)^{0.2}\!\sqrt{d}\;,\; 3.74\right)\sqrt{f'_c}\,c_{a1}^{1.5}
+= 3.74\sqrt{250}\cdot 25^{1.5} = 7\,392 \ \text{kgf}
+$$
+</Equation>
+
+(gobierna el tope). Con $A_{Vc}/A_{Vco} = \tfrac{4}{3} \approx 1.33$ y $\psi_{ed,V} = 0.90$:
+
+<Equation label="Ec. 17.7.2.1">
+$$
+\phi V_{cbg} = \phi\,\frac{A_{Vc}}{A_{Vco}}\,\psi_{ed,V}\,V_b
+= 0.70 \cdot \tfrac{4}{3} \cdot 0.90 \cdot 7\,392 = 6\,209 \ \text{kgf} = 6.2 \ \text{tonf}
+$$
+</Equation>
+
+$\phi V_{cbg} = 6.2 \ge V_u = 3.5$ tonf, uso **0.56**: **gobierna el corte**.
+
+### 2.2 Pryout (17.7.3)
+
+En anclajes robustos y sin borde cercano por detrás, el corte hace palanca y salta el cono
+*hacia atrás*. Reutiliza el breakout de tracción del grupo completo, con $k_{cp} = 2$
+($h_{ef} \ge 6.35$ cm):
+
+<Equation label="Ec. 17.7.3.1">
+$$
+\phi V_{cpg} = \phi\,k_{cp}\,N_{cbg,\text{grupo}} = 0.70 \cdot 2 \cdot 23.1
+= 32.4 \ \text{tonf} \;\ge\; V_u = 3.5 \ \text{tonf}
+$$
+</Equation>
+
+Uso 0.11: lejísimos de gobernar (el pedestal es ancho, sin borde trasero cercano).
+
+## 3. Interacción tracción–corte (17.8.3)
+
+Acá está la moraleja. Ninguno de los modos individuales llega a 0.6, pero **tracción y corte
+solicitan el mismo hormigón a la vez**. Como ambos superan el 20 % de su capacidad, se exige
+(17.8.3):
+
+<Equation label="Ec. 17.8.3">
+$$
+\frac{N_u}{\phi N_n} + \frac{V_u}{\phi V_n} = 0.58 + 0.56 = 1.14 \;\le\; 1.2
+$$
+</Equation>
+
+Pasa, pero **con poco margen (uso 0.95 del límite 1.2)**: es la verificación que realmente
+manda el diseño. Si el momento o el corte subieran un poco, la interacción se pasaría de 1.2
+mucho antes que cualquier modo individual llegara a 1.0.
+
+<Note type="warning" title="Si no diera: armadura de anclaje">
+Los usos del hormigón (0.58, 0.56) son mayores que los del acero del perno (≈ 0.26 en
+tracción, ≈ 0.44 en corte): el grupo está **gobernado por modos frágiles**. Para una base sísmica (NCh2369) eso es indeseable —se
+prefiere que ceda el acero dúctil—. La salida, y el detalle habitual en pedestales
+industriales chilenos, es la **armadura de anclaje** (§17.5.2.1): estribos y barras verticales
+que cosen el cono, permiten **ignorar el breakout** y llevan la falla al acero. Con la
+demanda de este ejemplo el hormigón alcanza, pero apenas; un escalón más de carga obliga a
+esa armadura (ver §4 de la nota teórica).
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Demanda | Capacidad ($\phi = 0.70$) | Uso |
+|---|---|:---:|:---:|:---:|
+| Cono de arrancamiento (breakout) | Ec. 17.6.2 | $T_g = 8.0$ tonf | $\phi N_{cbg} = 13.8$ | 0.58 |
+| Extracción (pullout) | Ec. 17.6.3 | $T_{\max} = 4.0$ tonf | $\phi N_{pn} = 10.5$ | 0.38 |
+| Desprendimiento lateral | Ec. 17.6.4 | — | no aplica ($c_a > 0.4h_{ef}$) | — |
+| Breakout de corte | Ec. 17.7.2 | $V_u = 3.5$ tonf | $\phi V_{cbg} = 6.2$ | 0.56 |
+| Pryout | Ec. 17.7.3 | $V_u = 3.5$ tonf | $\phi V_{cpg} = 32.4$ | 0.11 |
+| **Interacción N–V** | Ec. 17.8.3 | $0.58 + 0.56$ | $\le 1.2$ | **0.95** |
+
+**Solución:** el grupo de 4 φ1″ con $h_{ef} = 40$ cm en el pedestal $100 \times 100$ verifica
+todos los modos del hormigón, con la **interacción tracción–corte** como verificación
+gobernante (1.14 de 1.2). El pedestal ancho es el que hace pasar el breakout y el pryout —lo
+dimensiona el anclaje, no la columna—; para una base sísmica con más demanda, el paso siguiente
+es la armadura de anclaje que lleva la falla del hormigón frágil al acero dúctil.
+
+[^aci318]: ACI Committee 318, *Building Code Requirements for Structural Concrete (ACI
+318-25) and Commentary*, American Concrete Institute, 2025. En Chile el diseño de anclajes al
+hormigón se rige por la NCh430 (que oficializa el ACI 318) junto con la NCh2369 para el diseño
+sísmico de estructuras industriales, que agrega requisitos propios a los pernos de anclaje.

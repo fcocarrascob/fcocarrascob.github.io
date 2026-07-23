@@ -368,7 +368,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-H3 | Columna: diagrama de interacción P–M + esbeltez | 10 | [ ] | ◻ (P–M pide programa) | — | — |
 | F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — | — |
 | F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | — sin auditar | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
-| F-H6 | Grupo de anclajes (breakout, pryout, corte, interacción) | 17 | [ ] | ◻ (existe base `perno-anclaje-traccion-corte`, solo acero) | — | engancha placa base |
+| F-H6 | **Grupo de anclajes en pedestal** (breakout, pullout, blowout, corte, pryout, interacción) | 17 | [x] | ◻ | — sin auditar | a mano (port del motor `placaBaseAnchorage.ts`) ✅ · pedestal industrial; tesis: modos individuales holgan pero la interacción N–V gobierna · engancha /herramientas/placa-base + ejemplo B1 |
 | F-H7 | Ménsula / corbel por puntal-tensor | 23 | [ ] | ◻ | — | modelo de bielas |
 | F-H8 | Cabezal de pilotes (pile cap) por puntal-tensor | 23 | [ ] | ◻ | — | |
 | F-H9 | Longitud de desarrollo y empalme | 25 | [ ] | ◻ | — | |
@@ -389,9 +389,10 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
 
-**Trío de mayor retorno (orden sugerido):** F-H1 ✅ → F-A1 ✅ (diagonal HSS a tracción) →
-F-H5 ✅ (zapata aislada) → **F-H6** (anclajes Cap. 17, engancha placa base) o **F-A2**
-(columna a compresión, gancho a D9).
+**Trío de mayor retorno:** F-H1 ✅ → F-A1 ✅ (diagonal HSS) → F-H5 ✅ (zapata aislada) →
+F-H6 ✅ (grupo de anclajes). **Trío completo.** Siguientes candidatos: **F-A2** (columna a
+compresión, gancho a D9), **F-H3** (columna P–M, pide programa) o **F-A4** (viga carrilera,
+cierra los posts de puente grúa).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
