@@ -384,7 +384,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
 | F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
 | F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | — | |
-| F-A7 | Conexión apernada a corte simple (corte, aplastamiento, desgarro, bloque) | J | [ ] | ◻ | — | engancha placa base |
+| F-A7 | **Conexión apernada a corte simple** (shear tab: corte de pernos, aplastamiento/desgarre, corte fluencia/rotura de la plancha, rotura en bloque, geometría) | J | [x] | ◻ | ✅ 2026-07-23 (2🟠 2🟡 aplicados) | a mano (Python) ✅ · 2 SVG (esquema+modos de falla y cadena en barras) · tesis: la conexión es una cadena y gobierna la plancha (rotura por corte área neta, uso 0.89), no los pernos (0.69); la palanca es el espesor/geometría de la plancha · engancha /herramientas/placa-base + F-H6 |
 
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
@@ -393,10 +393,11 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 F-H6 ✅ (grupo de anclajes) → F-A4 ✅ (viga carrilera) → **F-A2 ✅ (columna a compresión,
 gancho a D9)** → **F-H3 ✅ (columna P–M + esbeltez)** → **F-A3 ✅ (viga con LTB, 2026-07-23)**.
 Par "la columna en los dos materiales" completo; **trilogía de flexión en acero completa**
-(F-A3 pura LTB → F-A4 carrilera). Siguientes candidatos: **F-H2** (viga T), **F-A6** (viga-columna,
-H1-1, síntesis de E+F ya disponibles) o **F-A7** (conexión apernada, engancha placa base + F-H6).
-Pendiente opcional en F-H3: planilla del canvas con región `program` que reproduzca el diagrama
-P–M (◻).
+(F-A3 pura LTB → F-A4 carrilera); **F-A7 ✅ (conexión apernada, 2026-07-23)** cierra el arco de
+la conexión (placa base + anclajes F-H6 + shear tab). Siguientes candidatos: **F-A6**
+(viga-columna, H1-1, síntesis de E+F ya disponibles), **F-H2** (viga T) o **F-A5** (alma a corte +
+rigidizadores). Pendiente opcional en F-H3: planilla del canvas con región `program` que
+reproduzca el diagrama P–M (◻).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

@@ -50,6 +50,21 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `acero/ejemplo-conexion-apernada-corte` · ⚠️ 4 hallazgos
+
+**Commit:** `836d475` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | §1 (Ec.), §3, tabla resumen, SVG cadena + alt | El total de 4 pernos se mostraba como `4·10.8 = 43.3 tonf`, pero `4·10.810 = 43.24 → 43.2`. Uso sin cambio (`30/43.24 = 0.69`), pero es aritmética visible que no cierra. | Unificar a `43.2 tonf` en Ec., prosa, tabla, `alt` y SVG. | ✅ aplicado (working tree) — `43.3` → `43.2` en los 5 sitios |
+| 2 | 🟠 | E/L | Note §caso (enlace "placa base") | El ancla `[placa base]` apuntaba a la nota general del Cap. J (Conexiones), mislabelando el destino (que además ya se enlaza en el intro como "nota del Cap. J"). | Reapuntar a un recurso de placa base real. | ✅ aplicado (working tree) — reapuntado a `/herramientas/placa-base` (la herramienta existe) |
+| 3 | 🟡 | L | SVG (ambos), alt/caption, tabla tip, solución | Dos nombres para el mismo estado: "bloque de corte" vs "rotura en bloque"; el resto del blog (capD, capJ) usa "rotura en bloque". | Unificar a "rotura en bloque". | ✅ aplicado (working tree) — todas las etiquetas visibles → "rotura en bloque" (prosa, tabla, alt/caption, ambos SVG) |
+| 4 | 🟡 | L | Intro (`**shear tab**`) | El anglicismo *shear tab* aparecía por primera vez en negrita, no en cursiva (convención del blog: cursiva la 1.ª vez). | Cursiva la 1.ª aparición. | ✅ aplicado (working tree) — `**shear tab**` → `*shear tab*` |
+
+**Verificado y correcto (recalculado en Python):** corte de pernos `0.75·3793·3.80 = 10.8 tonf/perno` (uso 0.69); aplastamiento/desgarre `tearout borde 11 261`, `tope 2.4dtFu = 21 542`, `tearout interior 22 522 > tope → 21 542`, total `φRn = 0.75·(11 261 + 3·21 542) = 56.9` (0.53); plancha corte fluencia `1.00·0.60·2530·28 = 42.5` (0.71); plancha corte rotura `Anv = 1.0·(28 − 4·2.4) = 18.4`, `0.75·0.60·4080·18.4 = 33.8` (0.89, **gobierna**); rotura en bloque `Agv=24.5, Anv=16.1, Ant=2.8`, rotura `0.6·4080·16.1 = 39 413` vs tope fluencia `0.6·2530·24.5 = 37 191` (manda), `φRn = 0.75·(37 191 + 4080·2.8) = 36.5` (0.82); palanca `t=12mm` → rotura 40.5 y bloque 43.8. `Ab = π/4·2.2² = 3.80 cm²`, `dh = 24 mm`, `Fnv = 372 MPa = 3793 kgf/cm²`. Geometría `2⅔d = 58.7`, `3d = 66`, `12t = 120`. Ambos SVG (`conexion-apernada-esquema.svg`, `conexion-apernada-cadena.svg`) concuerdan (barras a escala 4 px/tonf, línea `V_u` en `x=370=250+30·4`, marca 50 tonf en `x=450`). Enlaces `capJ-conexiones`, `/herramientas/placa-base` y `hormigon/ejemplo-anclajes-pedestal` resuelven no-draft. Frontmatter válido vs Zod (`subsection: "ejemplos"`). Tesis (los pernos no gobiernan; manda la plancha) cerrada.
+
+**No verificable:** valores de tablas de norma (`Fnv = 372 MPa` Tabla J3.2; `dh = 24 mm` Tabla J3.3M; borde mínimo 28 mm para d=22 Tabla J3.4M) son entradas AISC estándar, no derivables aritméticamente.
+
 ### 2026-07-23 · `acero/ejemplo-viga-ltb` · ⚠️ 1 hallazgo
 
 **Commit:** `c6d5461` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -593,10 +608,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (11)
+### `acero` — acero (AISC 360-22) (12)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-conexion-apernada-corte` | 2026-07-23 | ✅ | 0 (4 aplicados: 2🟠 2🟡) |
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-07-23 | ⚠️ | 6 aplicados (working tree) |

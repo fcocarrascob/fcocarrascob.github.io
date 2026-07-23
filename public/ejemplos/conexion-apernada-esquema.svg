@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="fe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+  <rect width="840" height="440" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Conexión apernada a corte (shear tab): la plancha gobierna, no los pernos</text>
+
+  <!-- columna (ala) -->
+  <rect x="150" y="70" width="24" height="300" fill="#dfe5ec" stroke="#333" stroke-width="1.4"/>
+  <text x="162" y="386" font-size="10" text-anchor="middle" fill="#555">columna</text>
+  <!-- soldadura plancha-columna -->
+  <path d="M174,96 l6,-5 0,10 z M174,110 l6,-5 0,10 z M174,124 l6,-5 0,10 z M174,138 l6,-5 0,10 z M174,152 l6,-5 0,10 z M174,166 l6,-5 0,10 z M174,180 l6,-5 0,10 z M174,194 l6,-5 0,10 z M174,208 l6,-5 0,10 z M174,222 l6,-5 0,10 z M174,236 l6,-5 0,10 z M174,250 l6,-5 0,10 z M174,264 l6,-5 0,10 z M174,278 l6,-5 0,10 z M174,292 l6,-5 0,10 z M174,306 l6,-5 0,10 z M174,320 l6,-5 0,10 z M174,334 l6,-5 0,10 z" fill="#c07a00"/>
+
+  <!-- plancha (shear tab) -->
+  <rect x="180" y="95" width="170" height="224" fill="#eef2f7" stroke="#333" stroke-width="1.6"/>
+  <text x="230" y="342" font-size="10.5" fill="#333">plancha t = 10 mm (A36)</text>
+
+  <!-- bloque de corte sombreado (a la derecha de la linea de pernos) -->
+  <polygon points="318,123 350,123 350,319 318,319" fill="#fdf0e6" stroke="#c07a00" stroke-width="1.1" stroke-dasharray="4 2"/>
+  <!-- plano de corte de la plancha (rotura, linea de pernos, toda la profundidad) -->
+  <line x1="318" y1="95" x2="318" y2="319" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="6 3"/>
+
+  <!-- pernos: linea vertical x=318, Lev=35mm(28px), s=70mm(56px) -->
+  <g fill="#333">
+    <circle cx="318" cy="123" r="7"/><circle cx="318" cy="179" r="7"/>
+    <circle cx="318" cy="235" r="7"/><circle cx="318" cy="291" r="7"/>
+  </g>
+  <text x="318" y="88" font-size="10.5" text-anchor="middle" fill="#333" font-weight="bold">4 Ø22 A325-N</text>
+
+  <!-- viga (alma) detras, a la derecha, con Vu -->
+  <line x1="350" y1="207" x2="470" y2="207" stroke="#9bb0c6" stroke-width="10" stroke-linecap="butt"/>
+  <text x="430" y="200" font-size="10" fill="#7a8ba0">alma de la viga</text>
+  <line x1="440" y1="150" x2="440" y2="205" stroke="#c0392b" stroke-width="2.6" marker-end="url(#fe)"/>
+  <text x="440" y="142" font-size="12" text-anchor="middle" fill="#c0392b" font-weight="bold">V_u = 30 tonf</text>
+
+  <!-- cotas -->
+  <line x1="300" y1="123" x2="300" y2="179" stroke="#555" stroke-width="0.8" marker-start="url(#ae)" marker-end="url(#ae)"/>
+  <text x="288" y="155" font-size="10" text-anchor="end" fill="#555">s = 70</text>
+  <line x1="300" y1="95" x2="300" y2="123" stroke="#555" stroke-width="0.8" marker-start="url(#ae)" marker-end="url(#ae)"/>
+  <text x="288" y="112" font-size="9.5" text-anchor="end" fill="#555">L_ev = 35</text>
+  <line x1="318" y1="335" x2="350" y2="335" stroke="#555" stroke-width="0.8" marker-start="url(#ae)" marker-end="url(#ae)"/>
+  <text x="334" y="348" font-size="9.5" text-anchor="middle" fill="#555">L_eh = 40</text>
+
+  <!-- leyenda -->
+  <rect x="500" y="70" width="320" height="150" rx="6" fill="#f8fafc" stroke="#9bb0c6"/>
+  <text x="514" y="90" font-size="11" fill="#222" font-weight="bold">Dos modos de falla de la plancha</text>
+  <line x1="514" y1="108" x2="542" y2="108" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="6 3"/>
+  <text x="550" y="112" font-size="10" fill="#333">Rotura por corte de la plancha (área neta,</text>
+  <text x="550" y="125" font-size="10" fill="#333">plano vertical por los 4 agujeros) — gobierna</text>
+  <rect x="514" y="136" width="28" height="12" fill="#fdf0e6" stroke="#c07a00" stroke-dasharray="4 2"/>
+  <text x="550" y="146" font-size="10" fill="#333">Rotura en bloque (corte vertical en la línea</text>
+  <text x="550" y="159" font-size="10" fill="#333">de pernos + tracción hacia el borde L_eh)</text>
+  <text x="514" y="184" font-size="10" fill="#888">Los pernos, en cambio, tienen 31 % de holgura:</text>
+  <text x="514" y="198" font-size="10" fill="#888">el eslabón débil de la cadena es la plancha.</text>
+  <text x="514" y="212" font-size="9.5" fill="#888">(dimensiones en mm)</text>
+</svg>

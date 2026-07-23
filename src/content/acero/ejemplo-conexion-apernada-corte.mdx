@@ -1,0 +1,203 @@
+---
+title: "Ejemplo — Conexión apernada a corte (AISC 360-22)"
+description: "Verificación de una conexión de corte tipo shear tab (plancha simple apernada al alma de una viga) recorriendo su cadena de transferencia: corte de los pernos, aplastamiento y desgarre en la plancha, corte por fluencia y rotura de la plancha, y rotura en bloque. El resultado: los pernos no son el eslabón débil —tienen 31 % de holgura—; gobierna la plancha (rotura por corte en área neta), y la palanca de diseño es su espesor y geometría, no los pernos."
+pubDate: 2026-07-23
+tags: ["ejemplo", "acero", "conexiones", "pernos", "corte", "aplastamiento", "rotura en bloque", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. J — Conexiones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una conexión no es un punto: es una **cadena de transferencia**. La fuerza sale de la viga,
+entra a los pernos, pasa por el apoyo de esos pernos en la plancha, atraviesa la plancha y sale
+a la columna. La [nota del Cap. J](/acero/aisc360-22-capJ-conexiones) explica *por qué* cada
+tramo es un estado límite y la conexión resiste **lo que resiste su eslabón más débil**; acá lo
+bajamos a números —con la referencia normativa[^aisc360] de cada paso— para la conexión de corte
+más común: un *shear tab* (plancha simple apernada al alma de la viga y soldada a la columna).
+El desenlace es la lección de las conexiones: el eslabón que uno intuye como crítico —el corte
+de los pernos— **no gobierna**; lo hace la plancha, y reforzar los pernos no ayudaría.
+
+## El caso
+
+Reacción de corte de una viga que llega a la cara de una columna, transferida por una plancha
+simple con una línea vertical de pernos en **corte simple** (un solo plano de corte). Materiales
+y pernos de uso corriente.
+
+| Dato | Valor |
+|---|---|
+| Conexión | shear tab: plancha soldada a la columna, apernada al alma de la viga |
+| Pernos | 4 × Ø22 A325-N (rosca incluida), corte simple; $A_b = 3.80$ cm² |
+| Plancha | $t = 10$ mm, ASTM A36 ($F_y = 2530$, $F_u = 4080$ kgf/cm²) |
+| Geometría | separación $s = 70$ mm, distancias al borde $L_{ev} = 35$, $L_{eh} = 40$ mm |
+| Agujeros | estándar, $d_h = 24$ mm |
+| Corte de diseño (LRFD) | $V_u = 30$ tonf |
+
+<Figure
+  src="/ejemplos/conexion-apernada-esquema.svg"
+  alt="Elevación de una conexión shear tab: una plancha de 10 mm soldada al ala de una columna y apernada al alma de la viga con 4 pernos Ø22 en línea vertical, separación 70 mm y distancias al borde 35 mm (vertical) y 40 mm (horizontal), con la reacción V_u = 30 tonf hacia abajo. Se resaltan los dos modos de falla de la plancha: el plano vertical de rotura por corte que pasa por los cuatro agujeros (gobierna) y la rotura en bloque a la derecha de la línea de pernos (corte vertical más tracción hacia el borde). Una leyenda anota que los pernos tienen 31 % de holgura y que el eslabón débil es la plancha."
+  caption="El shear tab y los dos modos de falla de la plancha que dominan la cadena: la rotura por corte en el área neta (plano por los agujeros) y la rotura en bloque. Los pernos, en cambio, quedan holgados."
+/>
+
+<Note type="info" title="Corte simple y por qué este caso">
+En corte **simple** el perno tiene un único plano de corte (la plancha y el alma se solapan una
+sola vez), a diferencia del corte doble de un empalme con dos cubreplacas. Es la conexión de
+corte más frecuente, y su cadena de estados límite es la misma que sostiene una
+[placa base](/herramientas/placa-base) y complementa el
+[grupo de anclajes](/hormigon/ejemplo-anclajes-pedestal): el nudo entre pieza y pieza, donde la
+falla es frágil y hay que sobreprotegerla.
+</Note>
+
+## 1. Los pernos: corte simple (J3)
+
+La resistencia de un perno a corte es su tensión nominal por su área (Ec. J3-1). Para un A325-N
+(Grupo A, rosca incluida) la Tabla J3.2 da $F_{nv} = 372$ MPa $= 3793$ kgf/cm²:
+
+<Equation label="Ec. J3-1 (por perno)">
+$$
+\phi R_n = 0.75 \, F_{nv} A_b = 0.75 \cdot 3793 \cdot 3.80 = 10\,810 \ \text{kgf} = 10.8 \ \text{tonf}
+$$
+</Equation>
+
+Con 4 pernos en un plano de corte:
+
+<Equation label="Corte de los 4 pernos">
+$$
+\phi R_n = 4 \cdot 10.8 = 43.2 \ \text{tonf} \;\ge\; V_u = 30 \ \text{tonf}
+$$
+</Equation>
+
+Pasa con holgura (**uso 0.69**). Es el estado que la intuición señala primero —"¿aguantan los
+pernos?"— y el que más sobra. El problema está en la plancha.
+
+## 2. El apoyo en la plancha: aplastamiento y desgarre (J3.11)
+
+Aunque el perno resista, la plancha puede ceder donde el perno apoya, por **aplastamiento** (el
+agujero se ovala, tope $2.4\,dtF_u$) o **desgarre** hacia el borde (el perno arranca el material
+hasta el agujero o borde vecino, término $1.2\,l_c t F_u$), Ec. J3-6a. La distancia **libre**
+$l_c$ distingue ambos:
+
+<Equation label="Ec. J3-6a (perno de borde)">
+$$
+R_n = 1.2\,l_c\,t\,F_u = 1.2 \cdot 2.3 \cdot 1.0 \cdot 4080 = 11\,261 \ \text{kgf}
+\quad (l_c = L_{ev} - \tfrac{d_h}{2} = 2.3 \ \text{cm})
+$$
+</Equation>
+
+que gobierna sobre el tope de aplastamiento $2.4\,dtF_u = 21\,542$ kgf (el perno de borde falla
+por desgarre). Para los tres pernos interiores $l_c = s - d_h = 4.6$ cm da un desgarre de
+$22\,522$ kgf, mayor que el tope, así que **manda el aplastamiento** $21\,542$ kgf. Sumando el
+de borde más tres interiores y aplicando $\phi = 0.75$:
+
+<Equation label="Apoyo total">
+$$
+\phi R_n = 0.75\,(11\,261 + 3 \cdot 21\,542) = 56.9 \ \text{tonf} \;\ge\; V_u
+$$
+</Equation>
+
+Holgado (**uso 0.53**): con estas distancias al borde el apoyo en la plancha no es el problema.
+
+## 3. La plancha en corte: fluencia y rotura (J4)
+
+La plancha transfiere todo el corte a través de su sección vertical, y ahí aparece el par
+dúctil/frágil de siempre. Con la profundidad total $d_{pl} = 3s + 2L_{ev} = 280$ mm, la
+**fluencia** en el área bruta ($\phi = 1.00$):
+
+<Equation label="Fluencia en corte (J4.2)">
+$$
+\phi R_n = 1.00 \cdot 0.60\,F_y A_{gv} = 0.60 \cdot 2530 \cdot 28.0 = 42.5 \ \text{tonf}
+$$
+</Equation>
+
+Y la **rotura** en el área neta —descontando los cuatro agujeros, $A_{nv} = t\,(d_{pl} - 4d_h) =
+18.4$ cm²— con el factor frágil $\phi = 0.75$:
+
+<Equation label="Rotura en corte (J4.2)">
+$$
+\phi R_n = 0.75 \cdot 0.60\,F_u A_{nv} = 0.75 \cdot 0.60 \cdot 4080 \cdot 18.4 = 33.8 \ \text{tonf}
+\;\ge\; V_u = 30 \ \text{tonf}
+$$
+</Equation>
+
+Este es el estado que **gobierna** toda la conexión: **uso 0.89**. Fíjate en el contraste con
+los pernos —que dan 43.2 tonf y usan solo 0.69—: aunque el acero de la plancha es más blando y
+el $\phi$ más estricto, lo decisivo es que la línea de agujeros recorta el área justo en el
+plano por donde la plancha debe cortar.
+
+## 4. Rotura en bloque (J4.3)
+
+El último eslabón: que un bloque de la plancha se **arranque** combinando corte en el plano
+vertical de los pernos y tracción en el plano horizontal hacia el borde (Ec. J4-5, con
+$U_{bs} = 1$):
+
+<Equation label="Ec. J4-5">
+$$
+\phi R_n = 0.75\left(0.60\,F_u A_{nv} + F_u A_{nt}\right) \le 0.75\left(0.60\,F_y A_{gv} + F_u A_{nt}\right)
+$$
+</Equation>
+
+Con $A_{gv} = 24.5$, $A_{nv} = 16.1$ y $A_{nt} = 2.8$ cm², el término de corte por rotura
+($39\,413$ kgf) queda por encima del tope de fluencia ($37\,191$ kgf), así que este último
+manda:
+
+<Equation label="Bloque, con el tope de fluencia">
+$$
+\phi R_n = 0.75\,(37\,191 + 4080 \cdot 2.8) = 0.75 \cdot 48\,615 = 36.5 \ \text{tonf} \;\ge\; V_u
+$$
+</Equation>
+
+Pasa (**uso 0.82**): es el segundo eslabón más cargado, justo detrás de la rotura por corte.
+Ambos —los dos que gobiernan— son estados **de la plancha**, no de los pernos.
+
+<Note type="tip" title="La palanca está en la plancha, no en los pernos">
+La conexión gobierna por la plancha (usos 0.89 y 0.82), mientras el corte de los pernos sobra
+(0.69). Agregar un perno o subir a A490 **no ayudaría**: no es el eslabón débil. Lo que sube la
+capacidad de la conexión es reforzar la plancha —más espesor o más profundidad—:
+
+| Espesor de plancha | Rotura por corte | Rotura en bloque |
+|:---:|:---:|:---:|
+| $t = 10$ mm | 33.8 tonf | 36.5 tonf |
+| $t = 12$ mm | 40.5 tonf | 43.8 tonf |
+
+Pasar de 10 a 12 mm sube el eslabón que gobierna un 20 %, y desplaza el cuello de botella hacia
+los pernos. Es la filosofía del Cap. J hecha número: **la conexión debe ser más fuerte que el
+miembro, y se refuerza el eslabón que gobierna** —no el que la intuición señala.
+</Note>
+
+<Figure
+  src="/ejemplos/conexion-apernada-cadena.svg"
+  alt="Barras de φR_n de los cinco estados límite de la conexión contra V_u = 30 tonf: aplastamiento/desgarre 56.9 (uso 0.53), corte de los pernos 43.2 (0.69), corte por fluencia de la plancha 42.5 (0.71), rotura en bloque 36.5 (0.82) y rotura por corte de la plancha 33.8 (0.89, gobierna). Una caja resume que el eslabón débil es la plancha, no el perno, y que la palanca es el espesor: de 10 mm (33.8) a 12 mm (40.5)."
+  caption="La cadena de transferencia en barras. Gobierna el menor eslabón —la rotura por corte de la plancha (33.8 tonf)—, seguido de la rotura en bloque; el corte de los pernos, que la intuición pondría primero, es de los más holgados."
+/>
+
+## 5. Geometría: separaciones y distancias al borde (J3.3–J3.5)
+
+Los límites geométricos definen el $l_c$ del apoyo y deben cumplirse: la separación
+$s = 70 \ge 2\tfrac{2}{3}d = 58.7$ mm (preferible $3d = 66$ mm ✓), y las distancias al borde
+$L_{ev} = 35$, $L_{eh} = 40$ mm superan el mínimo de 28 mm para $d = 22$ (Tabla J3.4M) y quedan
+bajo el máximo de $12t = 120$ mm. La geometría es admisible.
+
+## Resumen: demanda vs. capacidad
+
+| Eslabón (verificación) | Referencia | Naturaleza | Capacidad $\phi R_n$ | Uso |
+|---|---|:---:|:---:|:---:|
+| Corte de los pernos | Ec. J3-1 ($\phi=0.75$) | frágil — fractura | $43.2$ tonf | 0.69 |
+| Aplastamiento / desgarre | Ec. J3-6a ($\phi=0.75$) | frágil | $56.9$ tonf | 0.53 |
+| Plancha — corte fluencia | J4.2 ($\phi=1.00$) | dúctil | $42.5$ tonf | 0.71 |
+| **Plancha — corte rotura** | J4.2 ($\phi=0.75$) | **frágil — gobierna** | $\mathbf{33.8}$ **tonf** | **0.89** |
+| Rotura en bloque | Ec. J4-5 ($\phi=0.75$) | frágil | $36.5$ tonf | 0.82 |
+| Geometría | J3.3–J3.5 | detallado / fija $l_c$ | — | ✓ |
+
+**Solución:** shear tab de **plancha 10 mm (A36) con 4 pernos Ø22 A325-N** en corte simple,
+resiste $V_u = 30$ tonf con uso máximo 0.89. Gobierna la **rotura por corte de la plancha**,
+seguida de la rotura en bloque —ambos estados de la plancha—, mientras el corte de los pernos sobra.
+Es el resultado típico de las conexiones apernadas: **el eslabón débil no es el que la intuición
+señala; hay que recorrer la cadena entera y reforzar el que de verdad gobierna.**
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
+industriales se apoya además en la NCh2369, que para conexiones sismorresistentes exige que su
+resistencia supere la capacidad esperada del miembro conectado (conexión más fuerte que el
+miembro) y limita el uso de conexiones que dependan solo de la fricción.
