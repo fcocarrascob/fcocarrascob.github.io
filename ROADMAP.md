@@ -380,7 +380,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 |----|---------|------|:----:|:--------:|:------:|--------|
 | F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 6, soldadura de filete, bloque de corte) | D | [x] | ◻ | — sin auditar | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) |
 | F-A2 | **Columna de galpón a compresión** (longitud efectiva por eje: cantilever K=2 en el plano vs. arriostrada K=1 fuera, esbeltez gobernante, pandeo local E7, curva de columna E3) | E | [x] | ◻ | ✅ 2026-07-23 (1🟡 1🔵 aplicados) | a mano (Python) ✅ · 2 SVG (elevación + curva de columna con los 2 ejes) · tesis: gobierna el eje fuerte pese a r_x>r_y porque la longitud efectiva pesa más; palanca = bajar L_c/r (arriostrar K=1 casi triplica), no subir F_y (elástico) · gancho a D9 (pandeo lineal SAP) |
-| F-A3 | Viga laminada con pandeo lateral-torsional (Lb, Lp, Lr, Cb) | F | [ ] | ◻ | — | |
+| F-A3 | **Viga laminada con pandeo lateral-torsional** (Lb, Lp, Lr, Cb; tres zonas; dos esquemas de arriostramiento) | F | [x] | ◻ | ✅ 2026-07-23 (1🟡 aplicado) | a mano (Python) ✅ · 2 SVG (esquema+barras y curva Mn–Lb con los 2 puntos) · tesis: la misma viga W460×74 falla arriostrada solo en apoyos (Lb=8m, elástico, φMn=19.1<Mu=20) y sobra con un arriostre a media luz (Lb=4m, inelástico, φMn=51.0); el LTB se compra con arriostramiento y Cb, no con perfil mayor (φMp=52.4 ya sobra) · cierra la trilogía de flexión en acero (F pura → LTB → carrilera) |
 | F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
 | F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
 | F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | — | |
@@ -391,11 +391,12 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 
 **Trío de mayor retorno:** F-H1 ✅ → F-A1 ✅ (diagonal HSS) → F-H5 ✅ (zapata aislada) →
 F-H6 ✅ (grupo de anclajes) → F-A4 ✅ (viga carrilera) → **F-A2 ✅ (columna a compresión,
-gancho a D9)** → **F-H3 ✅ (columna P–M + esbeltez, 2026-07-23)**. Par "la columna en los dos
-materiales" completo. Siguientes candidatos: **F-A3** (viga con LTB, cierra la trilogía de
-flexión en acero F pura → LTB → carrilera), **F-H2** (viga T) o **F-A6/F-A7** (viga-columna /
-conexión apernada). Pendiente opcional en F-H3: planilla del canvas con región `program` que
-reproduzca el diagrama P–M (◻).
+gancho a D9)** → **F-H3 ✅ (columna P–M + esbeltez)** → **F-A3 ✅ (viga con LTB, 2026-07-23)**.
+Par "la columna en los dos materiales" completo; **trilogía de flexión en acero completa**
+(F-A3 pura LTB → F-A4 carrilera). Siguientes candidatos: **F-H2** (viga T), **F-A6** (viga-columna,
+H1-1, síntesis de E+F ya disponibles) o **F-A7** (conexión apernada, engancha placa base + F-H6).
+Pendiente opcional en F-H3: planilla del canvas con región `program` que reproduzca el diagrama
+P–M (◻).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

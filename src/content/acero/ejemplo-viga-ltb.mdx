@@ -1,0 +1,198 @@
+---
+title: "Ejemplo — Viga laminada con pandeo lateral-torsional (AISC 360-22)"
+description: "Verificación a flexión de una viga W simplemente apoyada gobernada por el pandeo lateral-torsional (LTB): momento plástico y clasificación de la sección, las longitudes límite L_p y L_r, y las tres zonas de la longitud no arriostrada L_b. La misma viga falla arriostrada solo en los apoyos (L_b = 8 m, elástico) y pasa con holgura al agregar un arriostre a media luz (L_b = 4 m, inelástico): el LTB se compra con arriostramiento y con el crédito C_b, no con un perfil mayor."
+pubDate: 2026-07-23
+tags: ["ejemplo", "acero", "flexión", "vigas", "pandeo lateral-torsional", "Cb", "arriostramiento", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. F — Flexión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una viga de acero **quiere** llegar a su momento plástico $M_p = F_y Z_x$, la falla dúctil que
+avisa. Pero si no está bien arriostrada, el ala comprimida —que trabaja como una columna— se
+vuelca de costado y arrastra la sección en un giro antes de que fluya: es el **pandeo
+lateral-torsional (LTB)**, y es súbito. La [nota del Cap. F](/acero/aisc360-22-capF-flexion)
+cuenta *por qué* ocurre y sus tres zonas; acá lo bajamos a números —con la referencia
+normativa[^aisc360] de cada paso— para el caso donde el LTB manda solo, sin mezclarse con
+flexión biaxial ni pandeo local. El hilo conductor es que la resistencia de la **misma viga**
+depende de **cuánto la arriostres**: falla con un esquema de arriostramiento y sobra con otro,
+sin tocar el perfil ni el acero.
+
+## El caso
+
+Viga de piso simplemente apoyada, de 8 m de luz, con carga gravitacional distribuida. Perfil
+laminado doblemente simétrico, acero de uso corriente. Se estudian **dos esquemas de
+arriostramiento lateral** del ala comprimida: solo en los apoyos, y con un arriostre extra a
+media luz.
+
+| Dato | Valor |
+|---|---|
+| Perfil | W460×74 (laminado, doblemente simétrico) |
+| Propiedades (tabla) | $Z_x = 1655$ cm³, $S_x = 1457$ cm³, $r_y = 4.19$ cm, $r_{ts} = 5.03$ cm |
+| — | $J = 51.6$ cm⁴, $h_o = 44.2$ cm, $c = 1$; $b_f/2t_f = 6.57$, $h/t_w = 45.2$ |
+| Acero | ASTM A992: $F_y = 3520$ kgf/cm², $E = 2.04\times10^6$ kgf/cm² |
+| Luz | $L = 8.0$ m, simplemente apoyada |
+| Carga (factorada) | $w = 2.5$ tonf/m → $M_u = wL^2/8 = 20$ tonf·m |
+
+<Figure
+  src="/ejemplos/viga-ltb-esquema.svg"
+  alt="Arriba: dos esquemas de la viga W460×74 de 8 m simplemente apoyada con carga distribuida — el esquema A con arriostramiento lateral solo en los apoyos (L_b = 8 m > L_r = 5.16 m, elástico) y el esquema B con un arriostre adicional a media luz (dos tramos de L_b = 4 m, inelástico). Derecha: barras de φM_n contra M_u = 20 tonf·m — la meta φM_p = 52.4, el caso A con φM_n = 19.1 que falla (uso 1.05) y el caso B con φM_n = 51.0 que pasa (uso 0.39). Abajo: caja que resume que la palanca es el arriostramiento y el crédito C_b, no un perfil mayor, porque φM_p ya sobra."
+  caption="La misma viga, dos esquemas de arriostramiento. Con L_b = 8 m falla (φM_n = 19.1 < M_u = 20) aunque su φM_p = 52.4 sobra; un solo arriostre a media luz (L_b = 4 m) la lleva a φM_n = 51.0 y uso 0.39. Lo que gobierna es la distancia entre arriostres, no el perfil."
+/>
+
+<Note type="info" title="Por qué esta viga aísla el LTB">
+Es un perfil W compacto de acero A992: el alma y el ala no pandean localmente (lo verificamos
+abajo), así que la Sección F2 —fluencia contra LTB— es la única que compite. A diferencia de la
+[viga carrilera](/acero/ejemplo-viga-carrilera-puente-grua), donde el LTB se mezcla con flexión
+biaxial y fatiga, acá el LTB manda **solo**, y se ve limpio cómo el arriostramiento lo controla.
+</Note>
+
+## 1. La meta dúctil: $M_p$ y sección compacta
+
+El momento plástico es el techo que la viga persigue (Ec. F2-1):
+
+<Equation label="Ec. F2-1">
+$$
+M_p = F_y Z_x = 3520 \cdot 1655 = 5\,825\,600 \ \text{kgf·cm} = 58.3 \ \text{tonf·m}
+\quad(\phi_b M_p = 52.4 \ \text{tonf·m})
+$$
+</Equation>
+
+Ese techo solo está disponible si la sección es **compacta** (si no, el pandeo local lo recorta
+antes). Se comparan ala y alma con sus límites $\lambda_p$ de la Tabla B4.1b:
+
+<Equation label="Tabla B4.1b">
+$$
+\text{ala: } \frac{b_f}{2t_f} = 6.57 < 0.38\sqrt{E/F_y} = 9.15
+\qquad
+\text{alma: } \frac{h}{t_w} = 45.2 < 3.76\sqrt{E/F_y} = 90.5
+$$
+</Equation>
+
+Ambos compactos: la sección puede desarrollar $M_p$, y la única inestabilidad que puede robarlo
+es el LTB. Como es habitual en perfiles W laminados, el pandeo local no gobierna.
+
+## 2. Las dos longitudes límite
+
+El LTB depende de cuán larga sea la longitud no arriostrada $L_b$ frente a dos umbrales. $L_p$
+marca hasta dónde la viga alcanza $M_p$ (Ec. F2-5), y $L_r$ dónde deja de fluir del todo
+(Ec. F2-6):
+
+<Equation label="Ec. F2-5">
+$$
+L_p = 1.76\,r_y\sqrt{E/F_y} = 1.76 \cdot 4.19 \cdot \sqrt{\tfrac{2.04\times10^6}{3520}} = 177.5 \ \text{cm} = 1.78 \ \text{m}
+$$
+</Equation>
+
+<Equation label="Ec. F2-6">
+$$
+L_r = 1.95\,r_{ts}\,\frac{E}{0.7F_y}\sqrt{\frac{Jc}{S_x h_o} + \sqrt{\left(\frac{Jc}{S_x h_o}\right)^2 + 6.76\left(\frac{0.7F_y}{E}\right)^2}} = 516 \ \text{cm} = 5.16 \ \text{m}
+$$
+</Equation>
+
+Con $L_p = 1.78$ m y $L_r = 5.16$ m ya podemos ubicar cada esquema de arriostramiento en su zona.
+
+## 3. Caso A: arriostrada solo en los apoyos ($L_b = 8$ m)
+
+Sin arriostres intermedios, la longitud no arriostrada es toda la luz: $L_b = 8.0$ m. Como
+$L_b > L_r = 5.16$ m, la viga cae en la zona de **pandeo elástico**: se vuelca sin haber fluido.
+La resistencia sale de la tensión crítica (Ec. F2-3/F2-4), donde el $\pi^2 E/(L_b/r_{ts})^2$ es
+la fórmula de Euler del ala comprimida.
+
+Antes, el crédito por gradiente de momento $C_b$ (Ec. F1-1). Para una viga simplemente apoyada
+con carga uniforme, arriostrada en los extremos, el momento es parabólico y $C_b = 1.14$:
+
+<Equation label="Ec. F1-1 (caso A)">
+$$
+C_b = \frac{12.5\,M_{max}}{2.5 M_{max} + 3 M_A + 4 M_B + 3 M_C}
+= \frac{12.5}{2.5 + 3(0.75) + 4(1) + 3(0.75)} = 1.14
+$$
+</Equation>
+
+<Equation label="Ec. F2-4">
+$$
+F_{cr} = \frac{C_b\,\pi^2 E}{(L_b/r_{ts})^2}\sqrt{1 + 0.078\,\frac{Jc}{S_x h_o}\left(\frac{L_b}{r_{ts}}\right)^2}
+= 1.14 \cdot 1279 = 1458 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Ec. F2-3">
+$$
+\phi_b M_n = 0.90 \, F_{cr} S_x = 0.90 \cdot 1458 \cdot 1457 = 1\,912\,000 \ \text{kgf·cm} = 19.1 \ \text{tonf·m}
+\;<\; M_u = 20 \ \text{tonf·m}
+$$
+</Equation>
+
+**No pasa** (uso 1.05). Y fíjate en la magnitud del robo: la viga puede dar $\phi_b M_p = 52.4$
+tonf·m, pero volcada solo entrega 19.1 —el LTB se llevó el **64 %** de la capacidad—. El crédito
+$C_b$ ayuda pero no salva: con $C_b = 1.0$ serían $\phi_b M_n = 16.8$ tonf·m; el gradiente lo
+sube a 19.1, y aun así falta.
+
+<Figure
+  src="/ejemplos/viga-ltb-curva.svg"
+  alt="Curva de M_n contra L_b para la viga W460×74 con las tres zonas sombreadas: plástico hasta L_p = 1.78 m con M_n = M_p = 58.3, inelástico entre L_p y L_r = 5.16 m bajando en recta hasta 0.7·F_y·S_x = 35.9, y elástico pasado L_r. Sobre la curva base (C_b = 1) se marcan los dos casos: el punto B en L_b = 4 m que C_b = 1.30 sube a M_n = 56.7 (φM_n = 51.0), y el punto A en L_b = 8 m que C_b = 1.14 sube a M_n = 21.2 (φM_n = 19.1). Flechas verticales muestran el efecto de C_b sobre la curva base, con la nota de que nunca supera M_p."
+  caption="Las tres zonas de L_b para esta viga. El caso A (L_b = 8 m) cae en la rama elástica, muy abajo; el caso B (L_b = 4 m) en la inelástica, cerca de M_p. C_b sube cada punto por sobre la curva base, pero nunca por encima de M_p."
+/>
+
+## 4. Caso B: un arriostre a media luz ($L_b = 4$ m)
+
+La respuesta al LTB no es un perfil mayor —$M_p$ ya sobra— sino **acortar $L_b$**. Un solo
+arriostre lateral a media luz parte la viga en dos tramos de $L_b = 4.0$ m, que ahora caen en la
+zona $L_p < L_b \le L_r$: **pandeo inelástico**, la recta que baja entre $M_p$ y $0.7F_y S_x$.
+
+El tramo crítico va del apoyo ($M = 0$) al centro ($M = M_{max}$), un gradiente fuerte que
+premia con un $C_b$ mayor:
+
+<Equation label="Ec. F1-1 (caso B)">
+$$
+C_b = \frac{12.5}{2.5 + 3(0.44) + 4(0.75) + 3(0.94)} = 1.30
+$$
+</Equation>
+
+<Equation label="Ec. F2-2">
+$$
+\phi_b M_n = 0.90 \, C_b\left[M_p - (M_p - 0.7F_y S_x)\frac{L_b - L_p}{L_r - L_p}\right]
+= 0.90 \cdot 1.30\left[58.3 - 22.4\,\frac{4.0 - 1.78}{5.16 - 1.78}\right] = 51.0 \ \text{tonf·m}
+$$
+</Equation>
+
+(acotado a $\phi_b M_p = 52.4$, que no se alcanza). Ahora $\phi_b M_n = 51.0 \ge M_u = 20$
+tonf·m con **uso 0.39**. El mismo perfil, el mismo acero, la misma carga: solo cambió que el ala
+comprimida ya no puede volcarse sobre 8 m sino sobre 4.
+
+<Note type="tip" title="La palanca del LTB está en L_b, no en el perfil">
+Un LTB que no da tienta a subir de perfil, pero eso sube $M_p$ —que aquí ya sobraba por lejos
+(52.4 contra 20)—. Lo que gobierna es la **distancia entre arriostres**:
+
+| Esquema | $L_b$ | Zona | $C_b$ | $\phi_b M_n$ |
+|:---|:---:|:---:|:---:|:---:|
+| Solo apoyos | 8 m | elástico | 1.14 | 19.1 tonf·m |
+| + media luz | 4 m | inelástico | 1.30 | 51.0 tonf·m |
+
+Un arriostre —una diagonal, una costanera, una viga secundaria que llegue al ala comprimida—
+casi **triplica** $\phi_b M_n$. Y el crédito $C_b$, gratis, aporta antes de tocar nada: no tomarlo
+($C_b = 1.0$) deja capacidad sobre la mesa.
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad $\phi_b M_n$ | Uso |
+|---|---|:---:|:---:|:---:|
+| Momento plástico (meta) | Ec. F2-1 | dúctil — la meta | $52.4$ tonf·m | 0.38 |
+| Clasificación de placas | Tabla B4.1b | ala y alma compactas | — | — |
+| **LTB, caso A ($L_b = 8$ m)** | Ec. F2-3 (elástico) | **inestabilidad — no pasa** | $\mathbf{19.1}$ **tonf·m** | **1.05** |
+| LTB, caso B ($L_b = 4$ m) | Ec. F2-2 (inelástico) | inestabilidad — controlada | $51.0$ tonf·m | 0.39 |
+
+**Solución:** viga **W460×74** (A992) de 8 m, con un **arriostre lateral a media luz** que lleva
+$L_b$ a 4 m; resiste $M_u = 20$ tonf·m con uso 0.39. Arriostrada solo en los apoyos ($L_b = 8$ m)
+**no pasa**, pese a que su momento plástico sobra con creces. Es la lección del pandeo
+lateral-torsional: **el diseño se juega en cuánto se arriostra el ala comprimida, no en el
+tamaño del perfil.**
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
+industriales se apoya además en la NCh2369, que impone límites propios a la longitud no
+arriostrada de las vigas de marcos sismorresistentes para asegurar su comportamiento dúctil.

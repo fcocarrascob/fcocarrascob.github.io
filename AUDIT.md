@@ -50,6 +50,18 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `acero/ejemplo-viga-ltb` · ⚠️ 1 hallazgo
+
+**Commit:** `c6d5461` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | U | §3 ("el LTB se llevó el 64%") | `64%` sin espacio antes de `%`, contra la convención del repo y del post gemelo `ejemplo-viga-carrilera-puente-grua` (usa `10 %`, `13 %`… con espacio). | Escribir `64 %`. | ✅ aplicado (working tree) — `64%` → `64 %` |
+
+**Verificado y correcto (recalculado; W460×74 cruzado contra W18×50 por conversión de unidades):** `Mp=3520·1655=58.3 tonf·m`, `φMp=52.4`. Clasificación: ala `6.57<0.38√(E/Fy)=9.15`, alma `45.2<3.76√(E/Fy)=90.5` (compactas). `Lp=1.76·4.19·√(E/Fy)=177.5 cm=1.78 m`; `Lr` (F2-6 completa) `=516.3 cm=5.16 m`. Caso A (`Lb=8m>Lr`, elástico): `Cb=12.5/(2.5+3·0.75+4+3·0.75)=1.14`, `Fcr(Cb=1)=1279`, `×1.14=1458`, `φMn=0.9·1458·1457=19.1 tonf·m`; uso `20/19.1=1.05` (falla); robo `1−19.1/52.4=64 %`; con `Cb=1.0` → `φMn=16.8`. Caso B (`Lb=4m`, inelástico): `Cb=12.5/(2.5+3·0.44+4·0.75+3·0.94)=1.30`, F2-2 → `Mn=1.30·43.59=56.7<Mp`, `φMn=51.0 tonf·m` (`<φMp=52.4`, no se corta); uso `0.39`. Demanda `Mu=2.5·8²/8=20 tonf·m`. Ambos SVG (`viga-ltb-curva.svg`, `viga-ltb-esquema.svg`) concuerdan (Mp=58.3, 0.7FySx=35.9, Lp=1.78, Lr=5.16, A 21.2/19.1, B 56.7/51.0, Mu=20, usos 1.05✗/0.39✓). Enlaces `capF-flexion` y `ejemplo-viga-carrilera-puente-grua` existen no-draft; ambas imágenes existen. Frontmatter válido vs Zod (`subsection: "ejemplos"`). Tesis (misma viga: falla con un arriostramiento, sobra con otro) planteada y cerrada.
+
+**No verificable:** ninguno — cálculo cerrado a mano, sin modelo SAP2000.
+
 ### 2026-07-23 · `hormigon/ejemplo-columna-interaccion-esbeltez` · ⚠️ 3 hallazgos
 
 **Commit:** `5a70ce8` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (Python, diagrama P–M iterando el eje neutro)
@@ -581,10 +593,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (10)
+### `acero` — acero (AISC 360-22) (11)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-07-23 | ⚠️ | 6 aplicados (working tree) |
 | `ejemplo-diagonal-hss-traccion` | 2026-07-23 | ✅ | 0 (3 aplicados: 2🟠 1🟡) |
