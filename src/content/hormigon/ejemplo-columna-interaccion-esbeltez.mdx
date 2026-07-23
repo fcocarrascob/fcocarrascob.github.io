@@ -1,0 +1,195 @@
+---
+title: "Ejemplo — Columna de hormigón: diagrama de interacción P–M y esbeltez (ACI 318-25)"
+description: "Verificación a flexocompresión de una columna rectangular de hormigón armado: construcción del diagrama de interacción P–M barriendo el eje neutro, los tres puntos que lo anclan (compresión pura con su tope, punto balanceado y flexión pura), el chequeo de todas las combinaciones y la revisión de esbeltez. El resultado contraintuitivo: gobierna la combinación sísmica de axial mínimo (0.9D+E), no la de gravedad con axial máximo, porque en la rama baja perder compresión acerca el punto a la frontera."
+pubDate: 2026-07-23
+tags: ["ejemplo", "hormigón", "columnas", "flexocompresión", "diagrama de interacción", "esbeltez", "aci318"]
+subsection: "ejemplos"
+chapter: "Cap. 10 — Columnas"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una viga se verifica con un número: $\phi M_n \ge M_u$. Una columna **no puede**, porque su
+resistencia a flexión depende de cuánta carga axial la acompaña. Toda la
+[nota del Cap. 10](/hormigon/aci318-25-cap10-columnas) parte de ahí —la columna no tiene *una*
+resistencia sino una **frontera** en el plano $P$–$M$, y diseñar es que todas las combinaciones
+queden dentro—; acá lo bajamos a números —con la referencia normativa[^aci] de cada paso— para
+una **columna rectangular con estribos**, el caso más común de un edificio. El hilo conductor es
+el que la nota adelanta como el error clásico: verificar solo la combinación de axial máximo. El
+desenlace es que **gobierna la combinación sísmica de axial mínimo** ($0.9D+E$), con 3.7 veces
+menos carga axial que la de gravedad.
+
+## El caso
+
+Columna de un piso bajo de un edificio de muros: los muros toman el desplazamiento lateral, así
+que el pórtico queda **arriostrado** (sin desplazamiento). Sección cuadrada, materiales de uso
+corriente en Chile. Se verifica la flexión en un eje (uniaxial).
+
+| Dato | Valor |
+|---|---|
+| Sección | $50 \times 50$ cm (con estribos) |
+| Refuerzo longitudinal | 8Ø25 en 3–2–3 ($A_{st} = 39.27$ cm², $\rho_g = 1.57\%$) |
+| Recubrimiento a la barra | $d' = 6$ cm (capas a 6 / 25 / 44 cm) |
+| Hormigón | $f'_c = 250$ kgf/cm² ($\beta_1 = 0.85$) |
+| Acero | $f_y = 4200$ kgf/cm², $E_s = 2.1\times10^6$ kgf/cm² ($\varepsilon_{ty} = 0.002$) |
+| Altura libre | $\ell_u = 3.0$ m; pórtico arriostrado, $k = 1.0$ |
+| Combinación de gravedad | C1 ($1.2D + 1.6L$): $P_u = 260$ tonf, $M_u = 12$ tonf·m |
+| Combinación sísmica | C2 ($0.9D + 1.0E$): $P_u = 70$ tonf, $M_u = 28$ tonf·m |
+
+<Figure
+  src="/ejemplos/columna-hormigon-seccion.svg"
+  alt="Panel izquierdo: sección cuadrada de 50×50 cm con 8 barras Ø25 en disposición 3–2–3, recubrimiento 40 mm y barras a 6, 25 y 44 cm del borde comprimido. Panel derecho: triángulo de deformaciones con ε_cu = 0.003 en el borde comprimido, el eje neutro c, y ε_t = ε_ty = 0.002 en el acero extremo (condición balanceada), más los cinco pasos de equilibrio que dan P_n y M_n para cada posición del eje neutro."
+  caption="La sección y el método: fijado el eje neutro c, la compatibilidad de deformaciones (ε_cu = 0.003) da la tensión de cada capa de acero y el bloque de compresión; el equilibrio da un punto (M_n, P_n). Barrer c de ∞ a 0 traza toda la frontera."
+/>
+
+<Note type="info" title="Por qué la combinación de axial mínimo puede gobernar">
+En la rama baja del diagrama —debajo del punto balanceado— la capacidad a momento *crece* con
+la compresión: el axial cierra las fisuras y retrasa la fluencia. Por eso quitar carga axial
+—justo lo que hace $0.9D+E$, que descuenta parte del peso y suele venir con un momento sísmico
+grande— **acerca el punto a la frontera**. Verificar solo la combinación de $P_u$ máximo deja
+fuera el caso que de verdad manda.
+</Note>
+
+## 1. El diagrama es una frontera: cómo se construye
+
+Cada punto de la curva corresponde a una posición del eje neutro $c$. Fijado $c$, con
+$\varepsilon_{cu} = 0.003$ en la fibra extrema comprimida, la **compatibilidad** da la
+deformación de cada capa de acero, su tensión (acotada a $\pm f_y$) y el bloque de compresión
+del hormigón; el **equilibrio** da el par $(M_n, P_n)$:
+
+<Equation label="Compatibilidad y equilibrio">
+$$
+\varepsilon_{si} = 0.003\,\frac{c - d_i}{c}, \quad
+f_{si} = E_s\,\varepsilon_{si}\ (\le f_y), \quad
+a = \beta_1 c, \quad
+P_n = 0.85 f'_c\, a\, b + \sum_i f_{si} A_{si}
+$$
+</Equation>
+
+Es un cálculo iterativo —un punto por cada $c$—, y por eso el diagrama se arma con una planilla
+o un pequeño programa, no a mano. Lo que sí se calcula directo son los **extremos**. La
+compresión pura teórica (Ec. 22.4.2.2):
+
+<Equation label="Ec. 22.4.2.2">
+$$
+P_0 = 0.85 f'_c (A_g - A_{st}) + f_y A_{st}
+= 0.85 \cdot 250 \cdot (2500 - 39.27) + 4200 \cdot 39.27 = 687.8 \ \text{tonf}
+$$
+</Equation>
+
+Pero $P_0$ **nunca está disponible**: la compresión perfectamente centrada no existe. La norma
+recorta la punta del diagrama con el tope $P_{n,\max}$ (Sec. 22.4.2.1), y sobre él actúa el
+$\phi = 0.65$ de las columnas con estribos:
+
+<Equation label="Ec. 22.4.2.1 (estribos)">
+$$
+\phi P_{n,\max} = 0.65 \cdot 0.80\,P_0 = 0.65 \cdot 0.80 \cdot 687.8 = 357.7 \ \text{tonf}
+$$
+</Equation>
+
+Ese tope es la resistencia axial máxima utilizable: corta justo el tramo donde la falla sería la
+más frágil de todas.
+
+## 2. Los tres puntos que anclan la frontera
+
+<Figure
+  src="/ejemplos/columna-hormigon-interaccion.svg"
+  alt="Diagrama de interacción de diseño φP_n contra φM_n de la columna 50×50: la curva parte del tope φP_n,máx = 357.7 tonf (línea horizontal que corta la punta frágil), baja por la rama de compresión hasta el punto balanceado, se abulta hacia la derecha en la zona de transición donde φ sube de 0.65 a 0.90 y cierra en la flexión pura. Se marcan dos combinaciones: C1 de gravedad (M=12, P=260) muy adentro con uso 0.41, y C2 sísmica (M=28, P=70) cerca de la frontera con uso 0.68, que gobierna. Una caja explica que C1 lleva 3.7 veces más axial pero cae holgado, mientras C2 con poco axial y mucho momento se acerca a la frontera."
+  caption="La frontera de diseño φP_n–φM_n. El tope corta la punta; el punto balanceado es el momento nominal máximo y divide las dos ramas; en la transición φ sube de 0.65 a 0.90 y engorda la curva. C1 (gravedad) cae holgado pese a su axial enorme; C2 (sismo) gobierna con mucho menos carga."
+/>
+
+**Punto balanceado.** El hormigón alcanza $\varepsilon_{cu}$ y el acero extremo su fluencia
+$\varepsilon_{ty}$ *a la vez*. La profundidad del eje neutro sale de la compatibilidad, con
+$d = 44$ cm al acero extremo:
+
+<Equation label="Eje neutro balanceado">
+$$
+c_b = \frac{\varepsilon_{cu}}{\varepsilon_{cu} + \varepsilon_{ty}}\,d
+= \frac{0.003}{0.003 + 0.002} \cdot 44 = 26.4 \ \text{cm}
+\;\Rightarrow\; \phi P_n = 155.1 \ \text{tonf}, \quad \phi M_n = 36.3 \ \text{tonf·m}
+$$
+</Equation>
+
+Es el punto donde el **momento nominal** $M_n$ es máximo en toda la frontera, y la divisoria
+entre las dos ramas: por encima, más axial *quita* capacidad de momento; por debajo, la
+*agrega*. (En la curva de *diseño* el bulto máximo
+se corre un poco más abajo, porque al pasar el balanceado $\phi$ deja el 0.65 y sube hacia 0.90,
+engordando la curva —el "despegue" no uniforme del nominal.)
+
+**Flexión pura** ($P_n = 0$) — la columna trabajando como viga, con el acero extremo muy en
+tracción ($\phi = 0.90$):
+
+<Equation label="Flexión pura">
+$$
+P_n = 0 \;\Rightarrow\; \phi M_n = 29.8 \ \text{tonf·m}
+$$
+</Equation>
+
+Antes de seguir, los mínimos de armadura (Ec. 10.6.1.1): $\rho_g = 1.57\%$ está entre el $1\%$ y
+el $8\%$ (y bajo el $4\%$ práctico por los empalmes), y 8 barras superan el mínimo de 4 para
+estribos rectangulares. La sección es admisible por refuerzo.
+
+## 3. Las combinaciones, dentro de la frontera
+
+Un par $(M_u, P_u)$ es admisible si cae **dentro** de la curva $\phi P_n$–$\phi M_n$. Se leen
+las dos combinaciones sobre el diagrama, cada una contra la capacidad a momento disponible a su
+nivel de axial:
+
+| Combinación | $P_u$ | $M_u$ | $\phi M_n$ disponible | Uso |
+|---|:---:|:---:|:---:|:---:|
+| C1 — $1.2D + 1.6L$ (gravedad) | 260 tonf | 12 tonf·m | 29.2 tonf·m | 0.41 |
+| **C2 — $0.9D + 1.0E$ (sismo)** | **70 tonf** | **28 tonf·m** | 41.4 tonf·m | **0.68** |
+
+C1 lleva $P_u = 260$ tonf —**3.7 veces** el axial de C2— y sin embargo cae holgado: con tanta
+compresión el punto queda arriba, lejos de la frontera. C2, con apenas 70 tonf de axial pero
+28 tonf·m de momento, se acerca mucho más: es la que **gobierna** (uso 0.68). La columna pasa,
+pero la lección es de método —
+
+<Note type="tip" title="Hay que verificar todas las combinaciones, no la de P_u máximo">
+El instinto lleva a dimensionar la columna por la carga axial más grande. Pero en la rama baja
+del diagrama la capacidad a momento *depende* de la compresión que la acompañe, y la combinación
+sísmica con descarga axial ($0.9D+E$) suele ser la crítica justamente por eso. Una columna no se
+verifica en un punto: se verifica **toda la nube de combinaciones** contra la frontera. Aquí, de
+haber mirado solo C1 (uso 0.41), habríamos creído la columna el doble de holgada de lo que está.
+</Note>
+
+## 4. Esbeltez (Sec. 6.2.5)
+
+Falta comprobar que la columna es **corta** —que la flecha $P$–$\delta$ no amplifique el
+momento—. Con $r \approx 0.30h = 15$ cm, el pórtico arriostrado por los muros ($k = 1.0$) y
+suponiendo curvatura simple ($M_1/M_2 = 0.5$):
+
+<Equation label="Sec. 6.2.5 (arriostrado)">
+$$
+\frac{k\,\ell_u}{r} = \frac{1.0 \cdot 300}{15} = 20
+\;\le\; 34 - 12\,\frac{M_1}{M_2} = 34 - 12(0.5) = 28 \quad\checkmark
+$$
+</Equation>
+
+$20 \le 28$: la esbeltez es despreciable y los momentos entran al diagrama **sin amplificar**.
+De haberse superado el límite, el efecto de la esbeltez no reduce la frontera —**amplifica la
+demanda** $M_u$ (magnificación de momentos, Sec. 6.6.4)—, empujando cada punto hacia afuera.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Carga axial máxima | $\phi P_{n,\max} = 0.65\cdot0.80\,P_0$ | corta la punta frágil | $357.7$ tonf | 0.73 (C1) |
+| Flexocompresión C1 (gravedad) | frontera $\phi P_n$–$\phi M_n$ | dúctil/frágil según rama | $\phi M_n = 29.2$ tonf·m | 0.41 |
+| **Flexocompresión C2 (sismo)** | frontera $\phi P_n$–$\phi M_n$ | **rama baja — gobierna** | $\phi M_n = \mathbf{41.4}$ **tonf·m** | **0.68** |
+| Cuantía longitudinal | Ec. 10.6.1.1 ($0.01$–$0.08$) | flujo plástico / congestión | $\rho_g = 1.57\%$ | ✓ |
+| Esbeltez | Sec. 6.2.5 ($k\ell_u/r \le 28$) | amplifica demanda | $k\ell_u/r = 20$ | ✓ |
+
+**Solución:** columna **$50\times50$ con 8Ø25** (estribos), arriostrada por los muros, resiste
+todas las combinaciones con uso máximo 0.68. Gobierna la **combinación sísmica de axial mínimo**
+($0.9D+E$), no la de gravedad con 3.7 veces más carga axial. Es la lección de las
+columnas: no tienen una resistencia sino una **frontera**, y **el caso crítico no es el de más
+carga —es el que cae más cerca del borde.**
+
+[^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
+(ACI 318-25) and Commentary*, Farmington Hills, MI, 2025. En Chile el diseño en hormigón armado
+se rige por la NCh430 (que adopta el ACI 318 con modificaciones) junto con la NCh433 y el
+DS N°60 para las disposiciones sísmicas, que en columnas de marcos especiales agregan requisitos
+de confinamiento y de columna fuerte–viga débil no cubiertos por este ejemplo de flexocompresión.

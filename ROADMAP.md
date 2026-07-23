@@ -365,7 +365,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 |----|---------|------|:----:|:--------:|:------:|--------|
 | F-H1 | **Viga a flexión + corte** | 9 | [x] | ✅ `viga-flexion-corte` | ⚠️ 2🔵 abiertos (1🟠 2🟡 aplicados 2026-07-23; #4 pide ACI a mano, #5 política) | Playwright + arnés mathjs (canvas ≡ post) ✅ |
 | F-H2 | Viga T (ancho efectivo, eje neutro en ala/alma) | 9 / 8 | [ ] | ◻ | — | — |
-| F-H3 | Columna: diagrama de interacción P–M + esbeltez | 10 | [ ] | ◻ (P–M pide programa) | — | — |
+| F-H3 | **Columna: diagrama de interacción P–M + esbeltez** (barrido del eje neutro, P₀ y tope, balanceado, flexión pura, todas las combinaciones, esbeltez arriostrada) | 10 | [x] | ◻ (P–M pide programa) | ✅ 2026-07-23 (1🟡 2🔵 aplicados) | a mano (Python, iterando c) ✅ · 2 SVG (sección+compatibilidad y diagrama P–M) · tesis: gobierna la combinación sísmica de axial mínimo (0.9D+E), no la de gravedad con axial máximo, porque en la rama baja perder compresión acerca el punto a la frontera |
 | F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — | — |
 | F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | — sin auditar | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
 | F-H6 | **Grupo de anclajes en pedestal** (breakout, pullout, blowout, corte, pryout, interacción) | 17 | [x] | ◻ | — sin auditar | a mano (port del motor `placaBaseAnchorage.ts`) ✅ · pedestal industrial; tesis: modos individuales holgan pero la interacción N–V gobierna · engancha /herramientas/placa-base + ejemplo B1 |
@@ -391,9 +391,11 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 
 **Trío de mayor retorno:** F-H1 ✅ → F-A1 ✅ (diagonal HSS) → F-H5 ✅ (zapata aislada) →
 F-H6 ✅ (grupo de anclajes) → F-A4 ✅ (viga carrilera) → **F-A2 ✅ (columna a compresión,
-gancho a D9, 2026-07-23)**. Siguientes candidatos: **F-H3** (columna P–M + esbeltez, estrena
-la región `program` del canvas) o **F-A3** (viga con LTB, cierra la trilogía de flexión en
-acero F pura → LTB → carrilera).
+gancho a D9)** → **F-H3 ✅ (columna P–M + esbeltez, 2026-07-23)**. Par "la columna en los dos
+materiales" completo. Siguientes candidatos: **F-A3** (viga con LTB, cierra la trilogía de
+flexión en acero F pura → LTB → carrilera), **F-H2** (viga T) o **F-A6/F-A7** (viga-columna /
+conexión apernada). Pendiente opcional en F-H3: planilla del canvas con región `program` que
+reproduzca el diagrama P–M (◻).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

@@ -50,6 +50,20 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `hormigon/ejemplo-columna-interaccion-esbeltez` · ⚠️ 3 hallazgos
+
+**Commit:** `5a70ce8` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (Python, diagrama P–M iterando el eje neutro)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | R | Ec. Sec. 6.2.5 y tabla resumen | El límite `34−12(M1/M2)=28` usa `M1/M2=0.5`, pero ese cociente no estaba declarado en el caso (la tabla solo daba `M_u`). Sin él, el "28" no es reproducible. El "20" y el "28" son correctos dado 0.5. | Declarar `M1/M2=0.5` (curvatura simple supuesta). | ✅ aplicado (working tree) — añadido "suponiendo curvatura simple (M₁/M₂=0.5)" en §4 |
+| 2 | 🔵 | L | §2 (Eje neutro balanceado) | El valor mostrado junto al balanceado es `φM_n=36.3` (de diseño, φ=0.65), y la frase lo llamaba "el momento nominal máximo de toda la frontera". El `M_n` nominal en el balanceado es 55.8 tonf·m y el máximo de la curva de *diseño* está más abajo (bulto φM_n≈43 por recuperación de φ). El paréntesis siguiente ya lo aclara, pero yuxtaponer "nominal máximo" con un valor de diseño confunde. | Aclarar "máximo de la curva nominal M_n". | ✅ aplicado (working tree) — reformulado a "el punto donde el momento nominal M_n es máximo… y la divisoria" |
+| 3 | 🔵 | N | Intro y conclusión vs cuerpo/tabla/SVG | El mismo ratio `260/70=3.71` se decía "casi cuatro veces" en intro/conclusión y "3.7 veces" en cuerpo/tabla/SVG. Sin contradicción, pero dos redondeos del mismo número. | Unificar a "3.7 veces". | ✅ aplicado (working tree) — intro y conclusión → "3.7 veces" |
+
+**Verificado y correcto (recalculado en Python; sección 50×50, 8Ø25 en 6/25/44, descontando el hormigón desplazado por las barras comprimidas dentro del bloque):** `A_st=39.27` cm² → `ρ_g=1.57%`. `P0=0.85·250·(2500−39.27)+4200·39.27=687 839 kgf=687.8 tonf`. `φP_n,max=0.65·0.80·687.8=357.7 tonf`. Balanceado `c_b=0.6·44=26.4 cm` → `φP_n=155.1`, `φM_n=36.3` (φ=0.65). Flexión pura (`c=8.63`) `φM_n=29.8`, φ=0.90. C1 (`φP_n=260`): `φM_n=29.2`, uso `12/29.2=0.41`. C2 (`φP_n=70`): `φM_n=41.4`, uso `28/41.4=0.68` gobierna. Uso axial C1 `260/357.7=0.73`. Esbeltez `r=0.30·50=15`, `k·ℓ_u/r=300/15=20≤28`. `ε_ty=4200/2.1e6=0.002`. Refs ACI (22.4.2.2, 22.4.2.1, 10.6.1.1, 6.2.5, 6.6.4) correctas. Ambos SVG (`columna-hormigon-interaccion.svg` y `columna-hormigon-seccion.svg`) concuerdan con el texto (tope 357.7, balanceado 36.25/155.1, flexión pura 29.84, flecha C2 φM_n=41.4, usos 0.41/0.68, sección 50×50 8Ø25 3–2–3, ε_cu=0.003/ε_ty=0.002, eje neutro c=26.4). Ambas imágenes existen en `public/ejemplos/`. Enlace `capE`→`cap10-columnas` resuelve no-draft (cruce ejemplo→nota = convención establecida). Frontmatter válido vs Zod (`subsection: "ejemplos"`).
+
+**No verificable:** ninguno — teoría cerrada, sin modelo SAP2000; el único supuesto externo (`M1/M2=0.5`) quedó cubierto por el hallazgo #1.
+
 ### 2026-07-23 · `acero/ejemplo-columna-galpon-compresion` · ⚠️ 2 hallazgos
 
 **Commit:** `5ee3918` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -548,10 +562,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (13)
+### `hormigon` — hormigon (ACI 318-25) (14)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-columna-interaccion-esbeltez` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟡 2🔵) |
 | `ejemplo-anclajes-pedestal` | 2026-07-23 | ✅ | 0 (4 aplicados: 3🟡 1🔵 · 1🔵 descartado intencional) |
 | `ejemplo-zapata-aislada` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟠 1🟡 1🔵) |
 | `ejemplo-viga-flexion-corte` | 2026-07-22 | ⚠️ | 2🔵 (1🟠 2🟡 aplicados) |
