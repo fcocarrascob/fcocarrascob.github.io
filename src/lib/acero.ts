@@ -7,6 +7,12 @@ export const SUBSECTIONS = {
     description:
       'Notas y resúmenes de la norma AISC 360-22 (Specification for Structural Steel Buildings) para diseño de estructuras de acero.',
   },
+  ejemplos: {
+    label: 'Ejemplos de cálculo',
+    norm: 'AISC 360-22',
+    description:
+      'Ejemplos trabajados paso a paso: diseño de elementos de acero según AISC 360-22, con la referencia normativa de cada ecuación y la verificación completa demanda–capacidad.',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;

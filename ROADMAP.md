@@ -378,7 +378,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
-| F-A1 | **Diagonal a tracción** (fluencia bruta, rotura neta + shear lag, bloque de corte) | D | [ ] | ◻ | — | segundo del trío prioritario; muy chileno |
+| F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 6, soldadura de filete, bloque de corte) | D | [x] | ◻ | — sin auditar | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) |
 | F-A2 | Columna de galpón a compresión (pandeo flexural, KL, esbeltez) | E | [ ] | ◻ | — | gancho a D9 (pandeo lineal SAP) |
 | F-A3 | Viga laminada con pandeo lateral-torsional (Lb, Lp, Lr, Cb) | F | [ ] | ◻ | — | |
 | F-A4 | Viga carrilera de puente grúa (flexión biaxial + corte) | F/G/H | [ ] | ◻ | — | cierra posts de puente grúa |
@@ -386,12 +386,11 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | — | |
 | F-A7 | Conexión apernada a corte simple (corte, aplastamiento, desgarro, bloque) | J | [ ] | ◻ | — | engancha placa base |
 
-**Infraestructura pendiente para Acero:** falta la subsección en `src/lib/acero.ts`
-(key `ejemplos` en `SUBSECTIONS`) + `src/pages/acero/ejemplos/index.astro` (espejo de
-Hormigón, ya hecho). Hacer al arrancar F-A1.
+**Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
+`src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
 
-**Trío de mayor retorno (orden sugerido):** F-H1 ✅ → **F-A1 (diagonal tracción)** →
-F-H5 o F-H6 (cierran teoría↔ejemplo↔herramienta con los tools SAP existentes).
+**Trío de mayor retorno (orden sugerido):** F-H1 ✅ → F-A1 ✅ (diagonal HSS a tracción) →
+**F-H5 o F-H6** (cierran teoría↔ejemplo↔herramienta con los tools SAP existentes).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

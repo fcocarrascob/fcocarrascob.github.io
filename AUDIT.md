@@ -50,6 +50,18 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `acero/ejemplo-diagonal-hss-traccion` · ⚠️ 3 hallazgos
+
+**Commit:** `d151ee0` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | L | L.133-138 (label "Ec. J2-3 (por cm de cordón)") | La resistencia del filete $R_n=0.60F_{EXX}(0.707w)$ se cita como **J2-3**, pero en AISC 360-22 la resistencia nominal del filete es $R_n=F_{nw}A_{we}$ = **Ec. J2-4** (y el factor direccional $F_{nw}=0.60F_{EXX}(1+0.5\sin^{1.5}\theta)$ es J2-5). La propia nota del blog `acero/aisc360-22-capJ-conexiones` (L.120 y L.135) usa J2-4 y J2-5 correctamente, así que el ejemplo se contradice con su nota hermana. | Relabelar a **Ec. J2-4** (soldadura longitudinal, $\theta=0$) | ✅ aplicado (working tree) — prosa y label → J2-4, con "$\theta=0$" explícito |
+| 2 | 🟠 | N | L.106-112 (Ec. "U y área efectiva") | Se muestra $A_e = 19.46 \cdot 0.75 = 14.52$, pero $19.46\cdot0.75 = 14.595$. El 14.52 sale de usar $U$ **sin redondear** ($19.458\cdot0.746 = 14.52$), no el $0.75$ impreso. Un lector que reproduzca con $U=0.75$ obtiene $A_e=14.60$ y $\phi P_n=47.7$ tonf, no los 47.5 del post/tabla/figura. | Mostrar $U=0.746$ en la sustitución (y mantener 14.52 y 47.5), o bien escribir $14.60$ y propagar 47.7 | ✅ aplicado (working tree) — `U = 1-3.81/15 = 0.746 ≈ 0.75` y `A_e = 19.46·0.746 = 14.52` |
+| 3 | 🟡 | U | Ecs. D2-1 (L.63), D2-2 (L.116), J4-5 (L.183), "Capacidad de la soldadura" (L.155) | El producto mostrado queda en kgf pero se rotula "tonf" sin exhibir el ÷1000: p. ej. $0.90\cdot3520\cdot21.7 = 68\,745.6$ (kgf), no $68.7$; $0.75\cdot4360\cdot14.52 = 47\,466$; $4\cdot939\cdot15 = 56\,340$; block shear $= 69\,455$. Los valores finales son correctos; es una conversión elidida que rompe la aritmética literal (a diferencia de la Ec. J2-3/lmin, que se quedan en kgf y sí cierran). | Explicitar el $/1000$ o anotar "(kgf → tonf)" en esas líneas | ✅ aplicado (working tree) — intermedio en kgf explícito en las 4 ecuaciones (68 746, 47 480, 56 340, 69 455 kgf) |
+
+**Verificado y correcto:** recalculé toda la cadena en kgf/cm²–tonf y cierra: fluencia $0.90\cdot3520\cdot21.7=68.7$ tonf (uso 0.61); $A_n=21.7-2\cdot0.59\cdot1.9=19.46$ cm²; $\bar x=3B/8=3.81$ cm, $U=1-3.81/15=0.746\approx0.75$; rotura $0.75\cdot4360\cdot14.52=47.5$ tonf (uso 0.88, gobierna); filete $939$ kgf/cm, $l_{\min}=11.2$ cm, capacidad $56.4$ tonf (uso 0.75); corte de bloque $69.5$ tonf (uso 0.60, y la cota $0.60F_yA_{gv}=74.8>69.5$ → gobierna el término $F_u$); esbeltez $117\le300$; tabla $l=20\to U=0.81, \phi P_n=51.5$. Modelos técnicos juzgados sólidos: $A_n=A_g-2t\,w_{ranura}$ (deducción correcta y conservadora para HSS ranurado con gusset concéntrico) y corte de bloque $A_{nv}=4lt$ sin término de tracción (desgarro defendible en HSS soldado). Propiedades HSS 4×4×1/4 y materiales A500/E70 concuerdan con tablas AISC. Figura↔texto↔tabla consistentes (68.7/47.5/56.4/69.5, $P_u=42$, $\bar x=3.81$, $l$ 15→20). Frontmatter válido contra el schema Zod; imports y jerarquía OK; enlaces `/acero/aisc360-22-capD-traccion` y `/acero/aisc360-22-capE-compresion` resuelven (no-draft); `public/ejemplos/diagonal-hss-traccion.svg` existe. Tesis y `description` fieles. **No verificable:** ninguno (teoría cerrada AISC, sin dato SAP2000).
+
 ### 2026-07-22 · `hormigon/ejemplo-viga-flexion-corte` · ⚠️ 5 hallazgos
 
 **Commit:** `e902bd2` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -496,10 +508,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (7)
+### `acero` — acero (AISC 360-22) (8)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-diagonal-hss-traccion` | 2026-07-23 | ✅ | 0 (3 aplicados: 2🟠 1🟡) |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |
 | `aisc360-22-capE-compresion` | — | — | — |

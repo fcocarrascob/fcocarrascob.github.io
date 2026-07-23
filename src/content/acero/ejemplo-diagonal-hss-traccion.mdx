@@ -1,0 +1,227 @@
+---
+title: "Ejemplo — Diagonal HSS a tracción con conexión soldada (AISC 360-22)"
+description: "Diseño completo de una diagonal de arriostramiento de tubo estructural (HSS) ranurado a una plancha gusset concéntrica y soldado: fluencia en el área bruta, rotura por retraso de cortante (Caso 6 de la Tabla D3.1), diseño de los cordones de filete y corte de bloque. Cada paso con su referencia normativa y la tabla demanda–capacidad. La longitud de la soldadura resulta ser la palanca de todo el diseño."
+pubDate: 2026-07-23
+tags: ["ejemplo", "acero", "tracción", "arriostramiento", "HSS", "retraso de cortante", "soldadura", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. D — Tracción"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una diagonal de arriostramiento en tracción es de los miembros más simples que uno diseña —
+solo aguanta un tirón axial— y a la vez uno de los que más equivoca, porque la resistencia
+casi nunca la fija el cuerpo del tubo: la fija **la conexión**. La
+[nota del Cap. D](/acero/aisc360-22-capD-traccion) explica *por qué* conviven una falla
+dúctil (fluencia) y dos frágiles (rotura del área neta efectiva y corte de bloque); acá lo
+bajamos a números —con la referencia normativa[^aisc360] de cada paso— para el caso más común
+en la práctica chilena actual: un **tubo estructural HSS ranurado a una plancha gusset
+concéntrica y soldado**. El hilo conductor es el de siempre
+—**hacer fluir el material dúctil y sobreproteger lo frágil**—, y el desenlace es que gobierna
+la rotura por retraso de cortante, controlada por la **longitud de la soldadura**.
+
+## El caso
+
+Diagonal de un marco arriostrado industrial, solicitada en tracción por la combinación
+sísmica. El tubo se ranura en sus dos paredes y recibe una plancha gusset concéntrica, unida
+con cordones de filete longitudinales. Materiales de uso corriente en Chile: tubo ASTM A500
+Gr. C y electrodo E70.
+
+| Dato | Valor |
+|---|---|
+| Perfil | HSS 4×4×1/4 ($\approx$ □100×100×6) |
+| Propiedades (tabla, pared de diseño) | $A_g = 21.7$ cm², $t = 0.59$ cm, $r = 3.84$ cm, $B = H = 10.16$ cm |
+| Acero del tubo | ASTM A500 Gr. C: $F_y = 3520$ kgf/cm², $F_u = 4360$ kgf/cm² |
+| Plancha gusset | $t_p = 16$ mm (ranura $w = 19$ mm) |
+| Soldadura | 4 cordones de filete, pierna $w = 6$ mm, electrodo E70 ($F_{EXX} = 4920$ kgf/cm²) |
+| Longitud de la diagonal | $L = 4.5$ m |
+| Tracción de diseño (LRFD) | $P_u = 42$ tonf |
+
+<Figure
+  src="/ejemplos/diagonal-hss-traccion.svg"
+  alt="Panel izquierdo: detalle de la conexión de un tubo HSS 4×4×1/4 ranurado que recibe una plancha gusset de 16 mm, con cuatro cordones de filete de largo l = 15 cm, y un corte transversal A-A que muestra la excentricidad x̄ = 3.81 cm usada en el retraso de cortante (Caso 6). Panel derecho: barras de demanda contra capacidad de los cuatro estados límite —fluencia bruta 68.7, rotura por retraso de cortante 47.5 (gobierna, uso 0.88), soldadura de filete 56.4 y corte de bloque 69.5 tonf— con la línea de demanda P_u = 42 tonf, y una caja que muestra cómo alargar la soldadura de 15 a 20 cm sube U de 0.75 a 0.81 y la capacidad de 47.5 a 51.5 tonf."
+  caption="El caso completo: el detalle de la conexión soldada (izquierda) y los cuatro estados límite frente a la demanda (derecha). La rotura por retraso de cortante gobierna, y la longitud l de la soldadura es la palanca que la controla."
+/>
+
+<Note type="info" title="Por qué HSS soldado y no un ángulo apernado">
+El ejemplo clásico de tracción es un ángulo apernado por una sola ala. En la práctica chilena
+actual la diagonal de tubo soldada lo desplazó: el HSS es doblemente simétrico (no tiene la
+excentricidad de un ángulo), rinde igual a compresión —clave si la diagonal invierte bajo
+sismo— y la conexión ranurada-soldada es limpia de fabricar. La física del retraso de cortante
+es la misma; solo cambia de qué fila de la Tabla D3.1 sale $U$.
+</Note>
+
+## 1. Fluencia en el área bruta ($\phi = 0.90$)
+
+El estado dúctil: si el tubo fluye en toda su longitud, se estira de forma visible antes de
+romper. Usa el área **bruta** y el factor generoso (Ec. D2-1):
+
+<Equation label="Ec. D2-1">
+$$
+\phi_t P_n = 0.90 \, F_y A_g = 0.90 \cdot 3520 \cdot 21.7 = 68\,746 \ \text{kgf} = 68.7 \ \text{tonf}
+\;\ge\; P_u = 42 \ \text{tonf}
+$$
+</Equation>
+
+Con holgura (uso 0.61). Como siempre en tracción, la fluencia rara vez es el problema: el
+cuerpo del tubo sobra. El problema está en la conexión.
+
+## 2. Rotura por retraso de cortante ($\phi = 0.75$)
+
+En la conexión la carga entra por las dos paredes ranuradas y recién ahí se reparte al resto
+del tubo; sobre el largo corto de la soldadura no alcanza a hacerlo, y las paredes no
+conectadas "van atrás". Ese es el **retraso de cortante**, que castiga el área neta con el
+factor $U$ (Ec. D2-2 y D3-1):
+
+<Equation label="Ec. D2-2 / D3-1">
+$$
+\phi_t P_n = 0.75 \, F_u A_e, \qquad A_e = A_n \, U
+$$
+</Equation>
+
+**Área neta $A_n$.** La ranura corta las dos paredes opuestas del tubo por donde pasa la
+plancha; se descuentan esas dos franjas:
+
+<Equation label="Sec. B4.3 (ranura)">
+$$
+A_n = A_g - 2\,t\,w_{\text{ranura}} = 21.7 - 2 \cdot 0.59 \cdot 1.9 = 19.46 \ \text{cm}^2
+$$
+</Equation>
+
+**Factor de retraso de cortante $U$.** Un HSS rectangular con **una plancha concéntrica** y
+$l \ge H$ es el Caso 6 de la Tabla D3.1:
+
+<Equation label="Caso 6, Tabla D3.1">
+$$
+U = 1 - \frac{\bar{x}}{l}, \qquad
+\bar{x} = \frac{B^2 + 2BH}{4(B+H)} = \frac{10.16^2 + 2\cdot 10.16^2}{4\cdot(2\cdot 10.16)} = 3.81 \ \text{cm}
+$$
+</Equation>
+
+Con la longitud de conexión $l = 15$ cm (a definir en el paso 3, y $\ge H = 10.16$ cm como
+exige el Caso 6):
+
+<Equation label="U y área efectiva">
+$$
+U = 1 - \frac{3.81}{15} = 0.746 \approx 0.75
+\qquad
+A_e = 19.46 \cdot 0.746 = 14.52 \ \text{cm}^2
+$$
+</Equation>
+
+<Equation label="Ec. D2-2">
+$$
+\phi_t P_n = 0.75 \cdot 4360 \cdot 14.52 = 47\,480 \ \text{kgf} = 47.5 \ \text{tonf}
+\;\ge\; P_u = 42 \ \text{tonf}
+$$
+</Equation>
+
+Uso **0.88**: es el estado que **gobierna** el diseño. Y fíjate en lo contraintuitivo que
+adelanta la nota teórica: aunque $F_u = 4360 > F_y = 3520$, la rotura queda muy por debajo de
+la fluencia (47.5 contra 68.7 tonf). No porque el material sea más débil, sino porque este
+estado paga dos peajes —el área menor ($A_e$, con la ranura y el retraso de cortante) y el
+factor $\phi$ estricto (0.75 contra 0.90)— que pesan más que el mayor $F_u$.
+
+## 3. La soldadura: la longitud que fija todo ($\phi = 0.75$)
+
+Los cuatro cordones de filete (dos por pared ranurada) deben transferir $P_u$ del tubo a la
+plancha. La resistencia de un filete es su garganta efectiva $0.707\,w$ por el corte del metal
+de aporte (Ec. J2-4, con el cordón longitudinal $\theta = 0$):
+
+<Equation label="Ec. J2-4 (por cm de cordón)">
+$$
+\phi R_n = 0.75 \cdot 0.60 \, F_{EXX}\,(0.707\,w)
+= 0.75 \cdot 0.60 \cdot 4920 \cdot (0.707 \cdot 0.6) = 939 \ \text{kgf/cm}
+$$
+</Equation>
+
+Con cuatro cordones de largo $l$, la longitud **mínima por resistencia** sale de igualar a
+$P_u$:
+
+<Equation label="Longitud por resistencia">
+$$
+l_{\min} = \frac{P_u}{4 \cdot \phi R_n'} = \frac{42000}{4 \cdot 939} = 11.2 \ \text{cm}
+$$
+</Equation>
+
+Pero la resistencia no es el único criterio. El retraso de cortante del paso 2 **premia una
+conexión larga** ($U = 1 - \bar{x}/l$), así que conviene alargar los cordones más allá del
+mínimo. Adoptamos **$l = 15$ cm**, con lo que la soldadura queda:
+
+<Equation label="Capacidad de la soldadura">
+$$
+\phi R_n = 4 \cdot 939 \cdot 15 = 56\,340 \ \text{kgf} = 56.4 \ \text{tonf} \;\ge\; P_u = 42 \ \text{tonf}
+$$
+</Equation>
+
+<Note type="tip" title="La palanca de diseño está en l, no en el perfil">
+Esta es la lección del ejemplo, y la que la nota teórica resume como *"agrandar el perfil rara
+vez es la solución"*. Los dos estados frágiles viven en la conexión, y el mismo parámetro —la
+longitud $l$ de la soldadura— fija a la vez la **resistencia del cordón** y el **retraso de
+cortante**:
+
+| $l$ | $U = 1-\bar{x}/l$ | Rotura $\phi P_n$ |
+|:---:|:---:|:---:|
+| 15 cm | 0.75 | 47.5 tonf |
+| 20 cm | 0.81 | 51.5 tonf |
+
+Si la rotura no diera, la respuesta **no** es un tubo más grande (subiría $A_g$ y la fluencia,
+que ya sobra): es soldar más largo para subir $U$.
+</Note>
+
+## 4. Corte de bloque (Sec. J4.3)
+
+El tercer estado frágil: que se **desgarre** el material del tubo a lo largo de las soldaduras.
+Los cuatro planos de corte, cada uno de largo $l$ sobre el espesor $t$, dan un área de corte
+holgada, y al ser una unión soldada no hay agujeros que reduzcan el área neta:
+
+<Equation label="Ec. J4-5 (cota de corte)">
+$$
+\phi R_n = 0.75 \cdot 0.60 \, F_u A_{nv}
+= 0.75 \cdot 0.60 \cdot 4360 \cdot (4 \cdot 15 \cdot 0.59) = 69\,455 \ \text{kgf} = 69.5 \ \text{tonf}
+$$
+</Equation>
+
+Muy por encima de $P_u$ (uso 0.60): el corte de bloque **no gobierna** cuando la soldadura es
+larga —otra razón para no escatimar en $l$—. Este mismo plano de corte cubre además la rotura
+del **metal base** adyacente al cordón (Sec. J2.4), así que con él verificado la soldadura
+queda del lado seguro por ambos frentes.
+
+## 5. Esbeltez (Sec. D1)
+
+Un miembro traccionado no pandea, así que no hay límite obligatorio, pero AISC recomienda
+$L/r \le 300$ por vibración y montaje:
+
+<Equation label="Sec. D1 (recomendado)">
+$$
+\frac{L}{r} = \frac{450}{3.84} = 117 \;\le\; 300 \quad\checkmark
+$$
+</Equation>
+
+Cómodo (y como la diagonal es un tubo doblemente simétrico, si la carga se invierte a
+compresión la esbeltez para pandeo es la misma $r$ en ambos ejes —ventaja del HSS sobre el
+ángulo—, cálculo que corresponde al [Cap. E](/acero/aisc360-22-capE-compresion)).
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad $\phi P_n$ | Uso |
+|---|---|:---:|:---:|:---:|
+| Fluencia en área bruta | Ec. D2-1 ($\phi=0.90$) | dúctil | $68.7$ tonf | 0.61 |
+| **Rotura (retraso de cortante)** | Ec. D2-2 / Caso 6 ($\phi=0.75$) | **frágil — gobierna** | $\mathbf{47.5}$ **tonf** | **0.88** |
+| Soldadura de filete | Ec. J2-3 ($\phi=0.75$) | conexión | $56.4$ tonf | 0.75 |
+| Corte de bloque | Ec. J4-5 ($\phi=0.75$) | frágil | $69.5$ tonf | 0.60 |
+| Esbeltez | Sec. D1 (recomendado) | servicio | $L/r \le 300$ | ✓ |
+
+**Solución:** diagonal **HSS 4×4×1/4** (A500 Gr. C) ranurada a una plancha gusset de 16 mm,
+con **4 cordones de filete de 6 mm × 15 cm** (E70). Gobierna la rotura por retraso de cortante
+(uso 0.88); el cuerpo del tubo sobra y el detallado de la soldadura —su longitud— es lo que
+fija la capacidad. Es el resultado típico de las diagonales de tracción: **el diseño se juega
+en la conexión, no en el perfil.**
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
+industriales se apoya además en la NCh2369 (diseño sísmico de estructuras e instalaciones
+industriales), que introduce requisitos propios de detallamiento y de las diagonales de
+arriostramiento.

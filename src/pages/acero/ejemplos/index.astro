@@ -1,0 +1,39 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import PostCard from '../../../components/ui/PostCard.astro';
+import { getAceroPostsBySubsection, SUBSECTIONS } from '../../../lib/acero';
+
+const sub = SUBSECTIONS['ejemplos'];
+const posts = await getAceroPostsBySubsection('ejemplos');
+---
+<PageLayout title={sub.label} description={sub.description}>
+  <div class="mb-10">
+    <a href="/acero" class="text-sm text-muted hover:text-ink transition-colors">
+      &larr; Acero
+    </a>
+    <div class="mt-4">
+      <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-2">
+        {sub.norm}
+      </p>
+      <h1 class="text-2xl font-semibold text-ink mb-3">{sub.label}</h1>
+      <p class="text-muted leading-relaxed">{sub.description}</p>
+    </div>
+  </div>
+
+  {posts.length > 0 ? (
+    <section>
+      {posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          href={`/acero/${post.id}`}
+          tags={post.data.tags}
+          section={post.data.chapter}
+        />
+      ))}
+    </section>
+  ) : (
+    <p class="text-muted">No hay ejemplos publicados todavía.</p>
+  )}
+</PageLayout>
