@@ -50,6 +50,18 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `hormigon/ejemplo-zapata-aislada` · ⚠️ 3 hallazgos
+
+**Commit:** `60f1e72` (working tree, post untracked) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N/U | L.217-221 (Eq. "Tabla 25.4.2.3", desarrollo) | La ecuación mostrada mezcla sistemas de unidades: `4200/(2.1·√250)·1.8` evalúa a **227.7 cm**, no a los 73 cm que declara. El coeficiente `2.1` es la forma en **MPa** (con fy=420, √24.5), pero está alimentado con valores en **kgf/cm²** (fy=4200, √250). El resultado ℓ_d≈73 cm sí es correcto (forma MPa: 72.7 cm; forma kgf con coef. 6.7: 71.3 cm), pero un lector que reproduzca la aritmética obtiene 228 cm. Es el único paso del post cuya aritmética no cierra. | Usar el coeficiente en kgf/cm²: `ℓ_d = fy·ψt·ψe·λ/(6.7·√f'c)·d_b = 4200/(6.7·√250)·1.8 ≈ 71–73 cm` (6.7 ≈ 2.1·√10.197), o bien declarar explícitamente que la expresión está en MPa. | ✅ aplicado (working tree) — coef → `6.7` (kgf/cm²), `ℓ_d = 71 cm`, uso 0.86; nota del coef. añadida; resumen, `alt` y SVG propagados |
+| 2 | 🟡 | L/F | L.99-102, 158, 190 vs L.241-244 | Misma referencia citada como «**Tabla**» en prosa y como «**Ec.**» en el `label` del `Equation` y en la tabla resumen: «la fila de la **Tabla** 22.5.5.1» → label `Ec. 22.5.5.1`; «los tres términos de la **Tabla** 22.6.5.2» → label `Ec. 22.6.5.2`; «Sec. 24.4.3.2» → label `Ec. 24.4.3.2`. En ACI 318-25 esas tres son Tablas (no ecuaciones numeradas). Nota: `Tabla 25.4.2.3` sí está bien etiquetada, lo que hace la inconsistencia más visible. | Unificar el prefijo: usar `Tabla 22.5.5.1`, `Tabla 22.6.5.2`, `Tabla 24.4.3.2` en labels y resumen, como ya se hace con `Tabla 25.4.2.3`. | ✅ aplicado (working tree) — 3 labels y 2 celdas del resumen → `Tabla` |
+| 3 | 🔵 | N | SVG L.90 (`public/ejemplos/zapata-aislada.svg`) | La caja del SVG escribe la fórmula de corte con el coeficiente en MPa: `V_c = 0.66·λ_s·(ρ_w)^⅓·√f'c` (además omite λ y b·d), mientras el cuerpo del post trabaja con `2.11` en kgf/cm². No es error —el texto reconcilia explícitamente 2.11↔0.66 en L.137-138— pero conviene alinear la notación para no cruzar sistemas de unidades en una misma figura. | Opcional: usar `2.11` en el SVG, o anotar «(forma en MPa)» en la caja. | ✅ aplicado (working tree) — SVG → `2.11·λ_s·(ρ_w)^⅓·√f'c·b·d` |
+
+**Verificado y correcto (recalculado con Python):** Planta A_req=4.5, A=4.84, q_serv=18.6 (0.93), N_u=120, q_u=24.8. Corte 1-dir: volado 0.44, V_u=24.0, λ_s=0.839, ρ_w=0.00226, V_c=37.2, φV_c=27.9 (uso 0.86). Coeficiente 0.66·√10.197=2.11 ✓; código antiguo 0.53√f'c → φV_c=63.6 (0.38) ✓. Punzonamiento: b_o=344, V_u=101.7, v_c=14.1, φV_c=166.9 (0.61). Flexión: M_u=22.1, A_s,req=12.9, A_s,min=21.8 gobierna, 9φ18=22.9, a=2.06, φM_n=38.9 (0.57), ε_t=0.054 (φ=0.90 ✓). Desarrollo: ℓ_d≈73 ≤ 82.5 (0.88) — solo la *aritmética mostrada* falla (#1). Usos 0.93/0.61/0.86/0.57/0.88 y valores coinciden entre prosa, ecuaciones, resumen, `alt`, `caption` y SVG. Enlaces `cap13-fundaciones`, `ejemplo-viga-flexion-corte`, `/herramientas/zapata-biaxial` existen (no-draft). Frontmatter válido contra Zod; imports y tesis OK. **No verificable:** ninguno (forma cerrada, sin dato SAP2000; referencias de sección/tabla ACI juzgadas plausibles por tema, no contra el articulado).
+
 ### 2026-07-23 · `acero/ejemplo-diagonal-hss-traccion` · ⚠️ 3 hallazgos
 
 **Commit:** `d151ee0` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -492,10 +504,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (11)
+### `hormigon` — hormigon (ACI 318-25) (12)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-zapata-aislada` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟠 1🟡 1🔵) |
 | `ejemplo-viga-flexion-corte` | 2026-07-22 | ⚠️ | 2🔵 (1🟠 2🟡 aplicados) |
 | `aci318-25-alcance-y-definiciones` | — | — | — |
 | `aci318-25-cap10-columnas` | — | — | — |

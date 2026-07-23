@@ -1,0 +1,256 @@
+---
+title: "Ejemplo — Zapata aislada bajo columna (ACI 318-25)"
+description: "Diseño completo de una zapata aislada cuadrada de hormigón armado: dimensionamiento en planta por presión admisible, y las cuatro verificaciones estructurales —corte en una dirección con el efecto de tamaño de ACI 318-25, punzonamiento, flexión y desarrollo de la barra—. El resultado es contraintuitivo: con la nueva fórmula de corte, el canto lo fija el corte en una dirección, no el punzonamiento."
+pubDate: 2026-07-23
+tags: ["ejemplo", "fundaciones", "zapatas", "corte", "punzonamiento", "efecto de tamaño", "aci318"]
+subsection: "ejemplos"
+chapter: "Cap. 13 — Fundaciones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una zapata aislada es una losa invertida: el suelo empuja hacia arriba y la columna sostiene
+hacia abajo, y con esa presión mayorada se verifica flexión, corte y punzonamiento. La
+[nota del Cap. 13](/hormigon/aci318-25-cap13-fundaciones) explica *por qué* cada sección
+crítica está donde está; acá lo bajamos a números[^aci318], en el orden real de diseño y con
+la referencia normativa de cada paso. El desenlace tiene una sorpresa muy actual: bajo el
+**corte en una dirección con efecto de tamaño** que introdujo ACI 318-19 y mantiene ACI
+318-25, **el canto lo termina fijando el corte en una dirección, no el punzonamiento** —al
+revés de la intuición clásica.
+
+<Note type="tip" title="Cuando hay momento: la herramienta">
+Este ejemplo es de columna **concéntrica** (presión de suelo uniforme). Cuando la columna
+transmite momento, la presión deja de ser uniforme y hay que verificar el despegue y la
+$q_{\max}$ del borde: eso lo entrega la herramienta
+[zapata aislada biaxial](/herramientas/zapata-biaxial), con los mismos datos de columna y
+carga de este caso. Acá nos concentramos en el diseño del hormigón una vez conocida la
+presión.
+</Note>
+
+## El caso
+
+Zapata interior bajo una columna cuadrada, carga axial centrada. Materiales de uso corriente
+en Chile: hormigón G25 y acero A630-420H.
+
+| Dato | Valor |
+|---|---|
+| Columna | $40 \times 40$ cm, concéntrica |
+| Carga muerta (servicio) | $D = 60$ tonf |
+| Carga viva (servicio) | $L = 30$ tonf |
+| Presión admisible neta del suelo | $q_a = 2.0$ kgf/cm² $= 20$ tonf/m² |
+| Hormigón | $f'_c = 250$ kgf/cm² |
+| Acero | $f_y = 4200$ kgf/cm² |
+
+<Figure
+  src="/ejemplos/zapata-aislada.svg"
+  alt="Panel izquierdo: sección de una zapata de 2.20 m de ancho y 0.55 m de alto bajo una columna de 40×40, con la presión mayorada del suelo q_u = 24.8 tonf/m² empujando hacia arriba, la malla inferior de 9 φ18, y las tres secciones críticas marcadas: momento en la cara de la columna, punzonamiento a d/2, y corte en una dirección a d (resaltado en rojo como el que gobierna). Panel derecho: barras de uso demanda/capacidad —presión 0.93, punzonamiento 0.61, corte una dirección 0.86 (gobierna), flexión 0.57 y desarrollo 0.86— y una caja que compara el corte en una dirección con el código antiguo (φV_c = 63.6 tonf, uso 0.38) contra ACI 318-25 con efecto de tamaño (φV_c = 27.9 tonf, uso 0.86)."
+  caption="El caso completo: la presión mayorada y las tres secciones críticas (izquierda), y el uso de cada verificación (derecha). El efecto de tamaño de ACI 318-25 baja tanto la capacidad al corte en una dirección que ésta pasa a gobernar el canto."
+/>
+
+## 1. Dimensionamiento en planta (servicio)
+
+El tamaño en planta se fija con cargas **de servicio** contra la presión admisible **neta**
+(la que ya descuenta el peso de la zapata y el relleno):
+
+<Equation label="Área requerida">
+$$
+A_{\text{req}} = \frac{D + L}{q_a} = \frac{90 \ \text{tonf}}{20 \ \text{tonf/m}^2}
+= 4.5 \ \text{m}^2
+$$
+</Equation>
+
+Adoptamos **$B = L = 2.20$ m** ($A = 4.84$ m²). La presión de servicio queda
+$q = 90/4.84 = 18.6$ tonf/m² $\le q_a = 20$, con holgura (uso 0.93).
+
+## 2. Presión de diseño y canto de partida
+
+Para el diseño del hormigón se usa la presión **mayorada** que la columna induce sobre la
+base (el peso propio de la zapata no genera corte ni momento: lo equilibra el suelo justo
+debajo). Con la combinación gravitacional $1.2D + 1.6L$ (Sec. 5.3.1):
+
+<Equation label="Ec. 5.3.1b">
+$$
+N_u = 1.2 \cdot 60 + 1.6 \cdot 30 = 72 + 48 = 120 \ \text{tonf}
+\qquad
+q_u = \frac{N_u}{A} = \frac{120}{4.84} = 24.8 \ \text{tonf/m}^2
+$$
+</Equation>
+
+Probamos un canto **$h = 55$ cm**. Con recubrimiento libre de 7.5 cm (vaciado contra suelo,
+Tabla 20.5.1.3) y barras φ18 en dos capas ortogonales, la altura útil promedio es
+$d \approx 55 - 7.5 - 1.8 = 46$ cm.
+
+## 3. Corte en una dirección: el que gobierna ($\phi = 0.75$)
+
+La zapata trabaja como una viga ancha en voladizo desde la cara de la columna. La sección
+crítica está a una distancia $d$ de la cara (Sec. 7.4.3.2), de modo que el volado que la
+solicita mide $(B - c)/2 - d = 0.90 - 0.46 = 0.44$ m:
+
+<Equation label="Corte de diseño">
+$$
+V_u = q_u \, B \left(\frac{B-c}{2} - d\right) = 24.8 \cdot 2.20 \cdot 0.44 = 24.0 \ \text{tonf}
+$$
+</Equation>
+
+Acá está la novedad. Una zapata **no lleva estribos**, así que —a diferencia de la viga del
+[ejemplo de flexión y corte](/hormigon/ejemplo-viga-flexion-corte)— cae en la fila de la
+Tabla 22.5.5.1 que **exige el factor de efecto de tamaño $\lambda_s$** y hace explícita la
+cuantía $\rho_w$:
+
+<Equation label="Tabla 22.5.5.1 (sin armadura de corte)">
+$$
+V_c = 2.11\,\lambda_s\,\lambda\,(\rho_w)^{1/3}\sqrt{f'_c}\; b\, d,
+\qquad
+\lambda_s = \sqrt{\frac{2}{1 + d/250}} \le 1
+$$
+</Equation>
+
+Con la cuantía provista $\rho_w = A_s/(b\,d) = 22.9/(220 \cdot 46) = 0.00226$ (del paso 5) y
+$d = 460$ mm:
+
+<Equation label="λ_s y capacidad">
+$$
+\lambda_s = \sqrt{\frac{2}{1 + 460/250}} = 0.839
+\qquad
+V_c = 2.11 \cdot 0.839 \cdot (0.00226)^{1/3}\sqrt{250}\cdot 220 \cdot 46 = 37.2 \ \text{tonf}
+$$
+</Equation>
+
+<Equation label="Verificación">
+$$
+\phi V_c = 0.75 \cdot 37.2 = 27.9 \ \text{tonf} \;\ge\; V_u = 24.0 \ \text{tonf}
+$$
+</Equation>
+
+Uso **0.86**: es el estado que **gobierna** el canto.
+
+<Note type="warning" title="Por qué ya no gobierna el punzonamiento">
+La regla clásica —"el punzonamiento decide el canto de la zapata"— nació con el $V_c$ antiguo
+en una dirección, $V_c = 0.53\sqrt{f'_c}\,b\,d$, que para esta zapata daría $\phi V_c = 63.6$
+tonf (uso **0.38**): holgadísimo. El efecto de tamaño de ACI 318-25 castiga los elementos
+**gruesos y poco armados** —exactamente una zapata— y baja esa capacidad a 27.9 tonf. Así,
+lo que antes sobraba ahora **manda**. Es la razón por la que las zapatas diseñadas con el
+código nuevo salen más gruesas.
+
+Las constantes: el $2.11$ en kgf/cm² es el equivalente del $0.66$ en MPa del código (igual
+que $0.53 \leftrightarrow 0.17$); $\lambda_s$ usa $d$ en **mm**.
+</Note>
+
+## 4. Punzonamiento (corte en dos direcciones, $\phi = 0.75$)
+
+La columna intenta "perforar" la zapata en un tronco de pirámide; la sección crítica es un
+perímetro $b_o$ a $d/2$ de las caras (Sec. 22.6.4.1):
+
+<Equation label="Perímetro y demanda">
+$$
+b_o = 4\,(c + d) = 4\,(40 + 46) = 344 \ \text{cm}
+\qquad
+V_u = q_u\,(A - (c+d)^2) = 24.8\,(4.84 - 0.74) = 101.7 \ \text{tonf}
+$$
+</Equation>
+
+La resistencia es el menor de los tres términos de la Tabla 22.6.5.2 (para columna cuadrada,
+$\beta = 1$, e interior, $\alpha_s = 40$), **también con $\lambda_s$** —el efecto de tamaño se
+agregó igualmente a las dos direcciones—. Gobierna el primer término:
+
+<Equation label="Tabla 22.6.5.2">
+$$
+v_c = 1.06\,\lambda_s\sqrt{f'_c} = 1.06 \cdot 0.839 \cdot \sqrt{250} = 14.1 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Verificación">
+$$
+\phi V_c = 0.75 \cdot 14.1 \cdot 344 \cdot 46 = 166.9 \ \text{tonf} \;\ge\; V_u = 101.7 \ \text{tonf}
+$$
+</Equation>
+
+Uso **0.61**: cómodo. El perímetro grande a $d/2$ (que crece con el canto) le da al
+punzonamiento mucha más área que al corte en una dirección, y por eso —con el canto ya fijado
+por el corte 1-D— acá sobra.
+
+## 5. Flexión: armadura ($\phi = 0.90$)
+
+El momento se toma en la **cara de la columna** (Sec. 13.2.7.1), con el volado completo
+$(B-c)/2 = 0.90$ m como brazo:
+
+<Equation label="Momento de diseño">
+$$
+M_u = q_u\,B\,\frac{1}{2}\left(\frac{B-c}{2}\right)^2
+= 24.8 \cdot 2.20 \cdot \tfrac{1}{2}\cdot 0.90^2 = 22.1 \ \text{tonf}\cdot\text{m}
+$$
+</Equation>
+
+El acero que pide esa flexión es apenas $A_{s,\text{req}} \approx 12.9$ cm². Pero en una losa
+gruesa gobierna el **mínimo de retracción y temperatura** (Sec. 7.6.1.1 / 24.4.3.2), que se
+aplica al ancho completo:
+
+<Equation label="Tabla 24.4.3.2">
+$$
+A_{s,\min} = 0.0018\,b\,h = 0.0018 \cdot 220 \cdot 55 = 21.8 \ \text{cm}^2
+$$
+</Equation>
+
+Adoptamos **9 φ18** ($A_s = 22.9$ cm²) en cada dirección, repartidas de manera uniforme en el
+ancho (Sec. 13.3.3.3, zapata cuadrada), a $\approx 25$ cm. Con ese acero, la sección queda muy
+holgada y profundamente controlada por tracción:
+
+<Equation label="Capacidad">
+$$
+a = \frac{A_s f_y}{0.85 f'_c\, b} = 2.06 \ \text{cm}, \qquad
+\phi M_n = 0.90 \cdot 22.9 \cdot 4200 \cdot \left(46 - \tfrac{2.06}{2}\right) = 38.9 \ \text{tonf}\cdot\text{m}
+$$
+</Equation>
+
+$\phi M_n = 38.9 \ge M_u = 22.1$ tonf·m (uso 0.57); $\varepsilon_t = 0.054 \gg 0.005$, así que
+$\phi = 0.90$ es correcto. Como es habitual en zapatas, el acero lo fija el mínimo, no la
+resistencia.
+
+## 6. Desarrollo de la barra (Sec. 25.4.2)
+
+Las barras deben poder desarrollar $f_y$ desde la sección de momento máximo (la cara de la
+columna) hasta su extremo. Para φ18 (barra inferior, sin epóxico, con recubrimiento y
+separación que cumplen la condición de confinamiento):
+
+<Equation label="Tabla 25.4.2.3">
+$$
+\ell_d = \frac{f_y\,\psi_t\psi_e\lambda}{6.7\sqrt{f'_c}}\,d_b
+= \frac{4200}{6.7\sqrt{250}}\cdot 1.8 = 71 \ \text{cm}
+$$
+</Equation>
+
+(el $6.7$ en kgf/cm² es el equivalente del $2.1$ en MPa de la Tabla 25.4.2.3, misma
+conversión que $2.11 \leftrightarrow 0.66$ más arriba). La longitud disponible es el volado
+menos el recubrimiento de borde, $90 - 7.5 = 82.5 \ \text{cm} \ge \ell_d = 71$ cm (uso 0.86):
+las barras **rectas** desarrollan, sin necesidad de gancho.
+
+## Detallado
+
+- **Aplastamiento y espigas (Sec. 16.3):** la carga de la columna se transfiere por
+  aplastamiento del hormigón y, como mínimo, espigas de $0.005\,A_g$ de la columna
+  (Sec. 16.3.4.1) ancladas a ambos lados de la junta.
+- **Recubrimiento:** 7.5 cm libres a la malla inferior (vaciado contra suelo, Tabla 20.5.1.3).
+- **Canto sobre la armadura:** $\ge 15$ cm (Sec. 13.3.1.2), cumple con holgura.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Demanda | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Presión de contacto (servicio) | Sec. 13.3.1.1 | $q = 18.6$ tonf/m² | $q_a = 20$ | 0.93 |
+| **Corte en una dirección** | Tabla 22.5.5.1 ($\lambda_s$) | $V_u = 24.0$ tonf | $\phi V_c = 27.9$ | **0.86** |
+| Punzonamiento | Tabla 22.6.5.2 ($\lambda_s$) | $V_u = 101.7$ tonf | $\phi V_c = 166.9$ | 0.61 |
+| Flexión | Sec. 22.2 / 13.2 | $M_u = 22.1$ tonf·m | $\phi M_n = 38.9$ | 0.57 |
+| Refuerzo mínimo | Tabla 24.4.3.2 | $A_{s,\min} = 21.8$ cm² | $A_s = 22.9$ | ✓ |
+| Desarrollo | Tabla 25.4.2.3 | $\ell_d = 71$ cm | disp. $= 82.5$ | 0.86 |
+
+**Solución:** zapata **$2.20 \times 2.20 \times 0.55$ m**, malla de **9 φ18 @ 25 cm** en cada
+dirección (inferior), sobre columna $40 \times 40$, G25 / A630-420H. El canto lo gobierna el
+**corte en una dirección** (uso 0.86) por el efecto de tamaño de ACI 318-25 —no el
+punzonamiento, que con el código antiguo mandaba—; la flexión y el desarrollo acompañan con
+holgura.
+
+[^aci318]: ACI Committee 318, *Building Code Requirements for Structural Concrete (ACI
+318-25) and Commentary*, American Concrete Institute, 2025. En Chile el diseño de hormigón
+armado se rige por la NCh430, que oficializa el ACI 318 con disposiciones complementarias.

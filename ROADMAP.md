@@ -367,7 +367,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-H2 | Viga T (ancho efectivo, eje neutro en ala/alma) | 9 / 8 | [ ] | ◻ | — | — |
 | F-H3 | Columna: diagrama de interacción P–M + esbeltez | 10 | [ ] | ◻ (P–M pide programa) | — | — |
 | F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — | — |
-| F-H5 | Zapata aislada (punzonamiento, corte, flexión, desarrollo) | 13 | [ ] | ◻ | — | engancha tools SAP de zapata |
+| F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | — sin auditar | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
 | F-H6 | Grupo de anclajes (breakout, pryout, corte, interacción) | 17 | [ ] | ◻ (existe base `perno-anclaje-traccion-corte`, solo acero) | — | engancha placa base |
 | F-H7 | Ménsula / corbel por puntal-tensor | 23 | [ ] | ◻ | — | modelo de bielas |
 | F-H8 | Cabezal de pilotes (pile cap) por puntal-tensor | 23 | [ ] | ◻ | — | |
@@ -390,7 +390,8 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
 
 **Trío de mayor retorno (orden sugerido):** F-H1 ✅ → F-A1 ✅ (diagonal HSS a tracción) →
-**F-H5 o F-H6** (cierran teoría↔ejemplo↔herramienta con los tools SAP existentes).
+F-H5 ✅ (zapata aislada) → **F-H6** (anclajes Cap. 17, engancha placa base) o **F-A2**
+(columna a compresión, gancho a D9).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
