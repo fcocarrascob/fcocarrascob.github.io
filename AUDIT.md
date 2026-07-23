@@ -50,6 +50,19 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `acero/ejemplo-columna-galpon-compresion` · ⚠️ 2 hallazgos
+
+**Commit:** `5ee3918` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟡 | N | L.123 (Ec. E3-4) y L.139 (Ec. E3-1) | Las operaciones mostradas no reproducen su resultado con los operandos literales que exhiben: `π²·2.04e6/136² = 1088.6`, no `1083` (el `1083` sale de usar la esbeltez sin redondear, 136.36² → 1082.8). Igual en E3-1: `0.90·950·92.8 = 79\,344`, no `79\,310` (el `79 310` sale de F_cr sin redondear ≈ 949.6). El φ_cP_n final de **79.3 tonf es correcto** (cadena sin redondear da 79 309 kgf); solo los pasos intermedios mezclan valores redondeados y sin redondear. | Escribir la esbeltez sin redondear en la ecuación (p. ej. `(1500/11.0)²`) o anotar que se opera con precisión completa; o bien exhibir los productos literales (1089 → 955 → 79.8 tonf → uso 0.81) | ✅ aplicado (working tree) — E3-4 usa `(1500/11.0)²` (reproduce 1083); E3-1 exhibe `79\,344` (reproduce 79.3 tonf) |
+| 2 | 🔵 | L | L.36 vs. `ejemplo-viga-carrilera-puente-grua` L.39 | La designación chilena del grado mezcla convenciones entre ejemplos: este post usa `A992 / A345` (grado por f_y en MPa) y el de la viga carrilera usa `A36 / F24` (nomenclatura F-). Ambas son válidas, pero conviene una sola convención en la sección para el lector recurrente. | Unificar el shorthand del grado métrico en todos los ejemplos de Acero | ✅ aplicado (working tree) — unificado al nombre ASTM solo (como `A500 Gr. C` de la diagonal): columna → `ASTM A992`, viga carrilera → `ASTM A36`, y la comparación del Note/SVG `A36→A345` → `A36→A992` |
+
+**Verificado y correcto (recalculado con Python):** Esbelteces `1500/11.0=136.4→136`, `375/6.46=58.0→58`. Pandeo local E7: ala `0.56√(E/F_y)=13.48→13.5`, alma `1.49√(E/F_y)=35.87→35.9`; ambos > la esbeltez del elemento (8.94, ≈23) → no esbelto. Transición `4.71√(E/F_y)=113.4→113`; `F_y/F_e=3.25>2.25` → régimen elástico correcto. F_cr eje fuerte `0.877·1083=949.8→950`, `F_cr/F_y=0.27`. φ_cP_n eje fuerte 79.3 tonf, uso `65/79.3=0.82`. Eje débil (E3-2, λ=58): F_cr=2751, φ_cP_n=229.7, uso 0.28. Palanca K=1: `750/11.0=68.2→68`, inelástico, φ_cP_n=209. Flecha del SVG `2751/950=229.7/79.3=2.90≈2.9×`. Cadena 136/58/950/2751/79.3/229.7/209/0.82/0.28 idéntica en prosa, ecuaciones, tabla resumen, Note-tip, ambos SVG (`columna-galpon-compresion.svg` y `columna-galpon-curva.svg`), `alt`, `caption` y `description`. Enlace `capE-compresion` existe (no-draft); ambos SVG existen en `public/ejemplos/`. Frontmatter válido vs Zod (`subsection: "ejemplos"`). Propiedades W250×73 (A_g=92.8, r_x=11.0, r_y=6.46, b_f/2t_f=8.94, h/t_w≈23) coinciden con tablas AISC métricas. Refs (E2, E3-1/-2/-3/-4, E4, E5, E7, B4.1a) correctas. Tesis (gobierna eje fuerte; palanca = L_c/r, no F_y) sostenida y cerrada.
+
+**No verificable:** Pandeo torsional (E4) descartado cualitativamente (F_e torsional "muy por encima" del de flexión) sin cifra; correcto para W doblemente simétrica pero sin número que recalcular. Post de teoría cerrada, sin valores de modelo SAP2000.
+
 ### 2026-07-23 · `acero/ejemplo-viga-carrilera-puente-grua` · ⚠️ 6 hallazgos
 
 **Commit:** `6177844` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (Python)
@@ -553,10 +566,12 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (8)
+### `acero` — acero (AISC 360-22) (10)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
+| `ejemplo-viga-carrilera-puente-grua` | 2026-07-23 | ⚠️ | 6 aplicados (working tree) |
 | `ejemplo-diagonal-hss-traccion` | 2026-07-23 | ✅ | 0 (3 aplicados: 2🟠 1🟡) |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |

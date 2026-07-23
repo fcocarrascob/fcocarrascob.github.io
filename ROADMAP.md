@@ -379,7 +379,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
 | F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 6, soldadura de filete, bloque de corte) | D | [x] | ◻ | — sin auditar | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) |
-| F-A2 | Columna de galpón a compresión (pandeo flexural, KL, esbeltez) | E | [ ] | ◻ | — | gancho a D9 (pandeo lineal SAP) |
+| F-A2 | **Columna de galpón a compresión** (longitud efectiva por eje: cantilever K=2 en el plano vs. arriostrada K=1 fuera, esbeltez gobernante, pandeo local E7, curva de columna E3) | E | [x] | ◻ | ✅ 2026-07-23 (1🟡 1🔵 aplicados) | a mano (Python) ✅ · 2 SVG (elevación + curva de columna con los 2 ejes) · tesis: gobierna el eje fuerte pese a r_x>r_y porque la longitud efectiva pesa más; palanca = bajar L_c/r (arriostrar K=1 casi triplica), no subir F_y (elástico) · gancho a D9 (pandeo lineal SAP) |
 | F-A3 | Viga laminada con pandeo lateral-torsional (Lb, Lp, Lr, Cb) | F | [ ] | ◻ | — | |
 | F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
 | F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
@@ -390,9 +390,10 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
 
 **Trío de mayor retorno:** F-H1 ✅ → F-A1 ✅ (diagonal HSS) → F-H5 ✅ (zapata aislada) →
-F-H6 ✅ (grupo de anclajes). **Trío completo.** Siguientes candidatos: **F-A2** (columna a
-compresión, gancho a D9), **F-H3** (columna P–M, pide programa) o **F-A4** (viga carrilera,
-cierra los posts de puente grúa).
+F-H6 ✅ (grupo de anclajes) → F-A4 ✅ (viga carrilera) → **F-A2 ✅ (columna a compresión,
+gancho a D9, 2026-07-23)**. Siguientes candidatos: **F-H3** (columna P–M + esbeltez, estrena
+la región `program` del canvas) o **F-A3** (viga con LTB, cierra la trilogía de flexión en
+acero F pura → LTB → carrilera).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

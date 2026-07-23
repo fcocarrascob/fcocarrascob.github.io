@@ -1,0 +1,200 @@
+---
+title: "Ejemplo — Columna de galpón a compresión (AISC 360-22)"
+description: "Diseño a compresión de la columna de un galpón industrial con base empotrada y tope arriostrado solo fuera del plano: longitud efectiva distinta en cada eje (cantilever K=2 en el plano, arriostrada K=1 fuera), esbeltez gobernante, pandeo local (E7) y la curva de columna (E3). El resultado contraintuitivo: aunque r_x > r_y, gobierna el eje fuerte, porque su longitud efectiva pesa más que el radio de giro. La palanca de diseño es bajar L_c/r, no subir F_y."
+pubDate: 2026-07-23
+tags: ["ejemplo", "acero", "compresión", "columna", "pandeo", "longitud efectiva", "esbeltez", "galpón", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. E — Compresión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+A una columna casi nunca la vence la resistencia del material: **pandea antes**. Toda la
+[nota del Cap. E](/acero/aisc360-22-capE-compresion) gira sobre esa idea —medir cuánto del
+techo $F_y A_g$ le roba la inestabilidad, con la esbeltez $L_c/r$ como protagonista—; acá la
+bajamos a números —con la referencia normativa[^aisc360] de cada paso— para el caso más común
+en la práctica chilena: la **columna de un galpón industrial**. El detalle que hace didáctico
+el ejemplo es que la columna **no pandea igual en sus dos ejes**: en el plano del marco es un
+cantilever ($K=2$), y fuera del plano está arriostrada por las costaneras ($K=1$). El desenlace
+es contraintuitivo —gobierna el **eje fuerte**, no el débil— y la palanca de diseño no es el
+acero sino la **longitud efectiva**.
+
+## El caso
+
+Columna perimetral de un galpón de un agua. La estabilidad lateral transversal (en el plano
+del marco) la toma la propia columna en voladizo desde la fundación empotrada; fuera del plano,
+las costaneras de muro y el arriostramiento de fondo la sujetan a media altura. Perfil laminado
+doblemente simétrico, acero de uso corriente.
+
+| Dato | Valor |
+|---|---|
+| Perfil | W250×73 (laminado, doblemente simétrico) |
+| Propiedades (tabla) | $A_g = 92.8$ cm², $r_x = 11.0$ cm, $r_y = 6.46$ cm |
+| Elementos | ala $b_f/2t_f = 8.94$, alma $h/t_w \approx 23$ |
+| Acero | ASTM A992: $F_y = 3520$ kgf/cm², $E = 2.04\times10^6$ kgf/cm² |
+| Altura | $L = 7.5$ m |
+| En el plano (eje $x$) | cantilever: base empotrada, tope libre → $K_x = 2.0$ |
+| Fuera del plano (eje $y$) | arriostrada a media altura → $L_y = 3.75$ m, $K_y = 1.0$ |
+| Compresión de diseño (LRFD) | $P_u = 65$ tonf |
+
+<Figure
+  src="/ejemplos/columna-galpon-compresion.svg"
+  alt="Panel izquierdo: elevación de una columna W250×73 de galpón de 7.5 m, con base empotrada (achurado), la forma pandeada del cantilever de eje fuerte (K=2), un punto de arriostramiento lateral a media altura para el eje débil, y las dos esbelteces: eje fuerte L_cx/r_x = 136 (gobierna) contra eje débil L_cy/r_y = 58. Panel derecho: barras de demanda contra capacidad —eje débil 229.7 tonf (uso 0.28), eje fuerte 79.3 tonf (gobierna, uso 0.82) y pandeo local no esbelto— con la línea de demanda P_u = 65 tonf, y una caja que muestra que arriostrar el marco (K=1) sube la capacidad de 79.3 a 209 tonf sin cambiar el perfil ni el acero."
+  caption="El caso completo: la columna y sus dos esbelteces (izquierda) y los estados de pandeo frente a la demanda (derecha). Gobierna el eje fuerte pese a tener mayor radio de giro, porque su longitud efectiva —cantilever, K=2, altura completa— es mucho mayor."
+/>
+
+<Note type="info" title="Por qué el eje fuerte puede ser el débil">
+Es el reflejo de todo galpón: en el plano del marco la columna resiste el sismo/viento
+transversal como voladizo, así que pandea sobre su longitud efectiva $K_x L = 2 \cdot 7.5 = 15$
+m. Fuera del plano, en cambio, las costaneras la arriostran cada pocos metros, y esa longitud
+efectiva se desploma. La consecuencia es que el **radio de giro no decide solo**: aunque el
+perfil es más rígido en $x$ ($r_x > r_y$), es en $x$ donde la columna es más esbelta. Diseñar
+en compresión es, ante todo, controlar $L_c/r$ en el eje que gobierna.
+</Note>
+
+## 1. Longitud efectiva en los dos ejes (E2)
+
+Antes de la resistencia hay que fijar *cuánta* longitud pandea en cada eje. La longitud
+efectiva es $L_c = K L$ (Ec. E2):
+
+<Equation label="Ec. E2 (eje fuerte)">
+$$
+L_{cx} = K_x L = 2.0 \cdot 7.5 = 15.0 \ \text{m} = 1500 \ \text{cm}
+$$
+</Equation>
+
+<Equation label="Ec. E2 (eje débil)">
+$$
+L_{cy} = K_y L_y = 1.0 \cdot 3.75 = 3.75 \ \text{m} = 375 \ \text{cm}
+$$
+</Equation>
+
+El $K_x = 2.0$ del cantilever es el clásico extremo empotrado–libre; fuera del plano, con la
+columna sujeta a media altura y de extremos aproximadamente rotulados, $K_y = 1.0$ sobre el
+tramo arriostrado de 3.75 m.
+
+## 2. La esbeltez gobernante
+
+La columna pandea por donde es más esbelta, así que se compara $L_c/r$ en ambos ejes:
+
+<Equation label="Esbelteces">
+$$
+\frac{L_{cx}}{r_x} = \frac{1500}{11.0} = 136
+\qquad\qquad
+\frac{L_{cy}}{r_y} = \frac{375}{6.46} = 58
+$$
+</Equation>
+
+Gobierna el **eje fuerte** con $L_c/r = 136$: más del doble que el eje débil. Y ahí está la
+lección del ejemplo —el mayor radio de giro $r_x$ no basta para compensar una longitud efectiva
+casi cuádruple ($15$ contra $3.75$ m)—. De paso, $136 \le 200$, dentro del límite recomendado
+por AISC (Sec. E2).
+
+## 3. Pandeo local: ¿elementos esbeltos? (E7)
+
+Antes de entrar a la curva hay que ver si alguna placa se arruga localmente antes de tiempo, lo
+que obligaría a usar un área efectiva $A_e < A_g$ (Sec. E7). Se compara cada elemento con su
+$\lambda_r$ de la Tabla B4.1a:
+
+<Equation label="Ala (elemento no rigidizado)">
+$$
+\frac{b_f}{2t_f} = 8.94 \;<\; \lambda_r = 0.56\sqrt{E/F_y} = 0.56\sqrt{\tfrac{2.04\times10^6}{3520}} = 13.5 \quad\checkmark
+$$
+</Equation>
+
+<Equation label="Alma (elemento rigidizado)">
+$$
+\frac{h}{t_w} \approx 23 \;<\; \lambda_r = 1.49\sqrt{E/F_y} = 35.9 \quad\checkmark
+$$
+</Equation>
+
+Ambos elementos son **no esbeltos**, así que no hay reducción por pandeo local y se trabaja con
+la sección completa, $A_e = A_g = 92.8$ cm².
+
+## 4. Tensión crítica y resistencia (E3)
+
+Con la esbeltez gobernante $L_c/r = 136$ se entra a la curva de columna. Primero la tensión de
+Euler (Ec. E3-4):
+
+<Equation label="Ec. E3-4">
+$$
+F_e = \frac{\pi^2 E}{\left(L_c/r\right)^2} = \frac{\pi^2 \cdot 2.04\times10^6}{(1500/11.0)^2} = 1083 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+El quiebre entre pandeo inelástico y elástico está en $L_c/r = 4.71\sqrt{E/F_y} = 113$
+(equivalente a $F_y/F_e = 2.25$). Como $136 > 113$ —o bien $F_y/F_e = 3520/1083 = 3.25 > 2.25$—
+la columna pandea en régimen **elástico**, y se usa la Ec. E3-3:
+
+<Equation label="Ec. E3-3">
+$$
+F_{cr} = 0.877\,F_e = 0.877 \cdot 1083 = 950 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Ec. E3-1">
+$$
+\phi_c P_n = 0.90 \, F_{cr} A_g = 0.90 \cdot 950 \cdot 92.8 = 79\,344 \ \text{kgf} = 79.3 \ \text{tonf}
+\;\ge\; P_u = 65 \ \text{tonf}
+$$
+</Equation>
+
+Pasa, con uso **0.82**. La columna solo aprovecha $F_{cr}/F_y = 950/3520 = 0.27$ de su acero:
+la inestabilidad se llevó casi las tres cuartas partes del techo del material.
+
+<Figure
+  src="/ejemplos/columna-galpon-curva.svg"
+  alt="Curva de columna F_cr contra L_c/r para F_y = 3520 kgf/cm²: rama inelástica verde (Ec. E3-2) hasta el quiebre en L_c/r = 113, y rama elástica azul (0.877·F_e, Ec. E3-3) después. Se marcan dos puntos de operación: el eje débil en λ=58 con F_cr=2751 sobre la rama inelástica, y el eje fuerte en λ=136 con F_cr=950 sobre la rama elástica; una flecha entre ambos indica que es el mismo perfil con 2.9 veces menos capacidad, solo por la esbeltez."
+  caption="Los dos ejes sobre la curva de columna. El eje débil (λ=58) cae en la meseta inelástica, cerca del material; el eje fuerte (λ=136) se hunde en la rama elástica de Euler. Es el mismo perfil: la esbeltez es toda la diferencia."
+/>
+
+<Note type="tip" title="La palanca de diseño está en L_c/r, no en F_y">
+Si la columna no diera, la tentación es subir el grado del acero. Pero el eje que gobierna
+pandea **elástico**, y ahí $F_{cr} = 0.877\,F_e$ **no depende de $F_y$** —solo de $E$ y de la
+geometría—: pasar de A36 a A992 no movería la capacidad del eje fuerte ni un kilo. Lo que de
+verdad sube $P_n$ es **bajar $L_c/r$** rompiendo el cantilever: un puntal o una viga de amarre
+en el plano del marco que lleve $K_x$ de $2.0$ a $\approx 1.0$.
+
+| Intervención | $L_{cx}/r_x$ | Régimen | $\phi_c P_n$ |
+|:---|:---:|:---:|:---:|
+| Base empotrada, tope libre ($K_x = 2$) | 136 | elástico | 79.3 tonf |
+| Arriostrar el marco en el plano ($K_x = 1$) | 68 | inelástico | 209 tonf |
+
+Arriostrar el plano casi **triplica** la capacidad sin cambiar el perfil ni el acero. Esa es la
+tesis del Cap. E hecha número: *mover la columna hacia la izquierda de la curva, hacia el
+material.*
+</Note>
+
+## 5. Pandeo torsional (E4)
+
+Queda verificar que ningún modo torsional ceda antes que la flexión. En un perfil W
+**doblemente simétrico** el centro de corte coincide con el centroide, de modo que empujar por
+el centroide no induce giro y la torsión no se acopla con la flexión (Ec. E4-2). Con la longitud
+a torsión igual a la arriostrada ($L_{cz} = L_{cy} = 3.75$ m), $F_e$ del modo torsional resulta
+muy por encima del de flexión del eje fuerte, así que **no gobierna** —como es la regla en
+columnas W compactas y doblemente simétricas—. El modo flexo-torsional (E4-3) y E5 aplican a
+secciones de simetría simple (ángulos, tés, canales), no a este perfil.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad $\phi_c P_n$ | Uso |
+|---|---|:---:|:---:|:---:|
+| Longitud efectiva | Ec. E2 | fija la esbeltez | $L_{cx}=15$ m, $L_{cy}=3.75$ m | — |
+| Esbeltez gobernante | Sec. E2 ($\le 200$) | protagonista | $L_c/r = 136$ (eje $x$) | ✓ |
+| Pandeo local | Sec. E7 | inestabilidad local | no esbelto → $A_e = A_g$ | — |
+| Pandeo eje débil (Y) | Ec. E3-2 ($\phi=0.90$) | inestabilidad global | $229.7$ tonf | 0.28 |
+| **Pandeo eje fuerte (X)** | Ec. E3-3 ($\phi=0.90$) | **inestabilidad global — gobierna** | $\mathbf{79.3}$ **tonf** | **0.82** |
+| Pandeo torsional | Sec. E4 | inestabilidad global | no gobierna (doble simetría) | — |
+
+**Solución:** columna **W250×73** (A992), base empotrada y arriostrada a media altura fuera del
+plano, resiste $P_u = 65$ tonf con uso 0.82. Gobierna el **pandeo por flexión del eje fuerte**
+—el del cantilever—, no el eje débil ni el material. Es el resultado típico de las columnas de
+galpón: **el diseño se juega en la longitud efectiva, no en el perfil ni en el acero.**
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
+industriales se apoya además en la NCh2369 (diseño sísmico de estructuras e instalaciones
+industriales), que introduce requisitos propios de esbeltez y arriostramiento para las columnas
+de marcos y galpones.
