@@ -7,6 +7,12 @@ export const SUBSECTIONS = {
     description:
       'Notas y resúmenes de la norma ACI 318-25 para diseño de estructuras de hormigón armado.',
   },
+  ejemplos: {
+    label: 'Ejemplos de cálculo',
+    norm: 'ACI 318-25',
+    description:
+      'Ejemplos trabajados paso a paso: diseño de elementos de hormigón armado según ACI 318-25, con la referencia normativa de cada ecuación y la verificación completa demanda–capacidad.',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;

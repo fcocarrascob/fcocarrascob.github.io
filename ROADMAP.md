@@ -343,6 +343,55 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   Francisco: **guion de capturas de la GUI** para que el lector reproduzca el flujo.
   Ganchos: D2 (rótulas/pitfall M3), E3 (chevron/Ω₀), factor R (dúctil vs frágil).
 
+## F. Ejemplos de cálculo (Hormigón y Acero)
+
+Subsección **"Ejemplos de cálculo"** en `/hormigon` y `/acero` (elegida sobre mezclar con
+notas o blog): ejemplos trabajados paso a paso, con **teoría enlazada, referencia normativa
+en cada ecuación, tabla demanda–capacidad**, y —cuando el cálculo lo permite— una
+**planilla interactiva en el canvas matemático** (deep-link `?plantilla=<id>`) que reproduce
+exactamente los números del post y permite cambiar parámetros + **exportar a PDF** para
+memorias de cálculo. Ver memoria `ejemplos-calculo-workflow`.
+
+Convención de columnas: **Post** `[ ]`pend `[~]`curso `[x]`hecho · **Planilla** ✅hecha
+◻posible/planeada —n/a · **Verif.** = cómo se comprueba (arnés mathjs / Playwright / a mano).
+Funciones reutilizables del canvas (en `worksheet.ts`): `beta1(fc)`, `sqrtfc(fc)`,
+`phiFlexion(et,ety)` — ampliar con cada ejemplo nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas
+de barras).
+
+### F-H. Hormigón — ACI 318-25
+
+| ID | Ejemplo | Cap. | Post | Planilla | Verif. |
+|----|---------|------|:----:|:--------:|--------|
+| F-H1 | **Viga a flexión + corte** | 9 | [x] | ✅ `viga-flexion-corte` | Playwright + arnés mathjs (canvas ≡ post) ✅ |
+| F-H2 | Viga T (ancho efectivo, eje neutro en ala/alma) | 9 / 8 | [ ] | ◻ | — |
+| F-H3 | Columna: diagrama de interacción P–M + esbeltez | 10 | [ ] | ◻ (P–M pide programa) | — |
+| F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — |
+| F-H5 | Zapata aislada (punzonamiento, corte, flexión, desarrollo) | 13 | [ ] | ◻ | engancha tools SAP de zapata |
+| F-H6 | Grupo de anclajes (breakout, pryout, corte, interacción) | 17 | [ ] | ◻ (existe base `perno-anclaje-traccion-corte`, solo acero) | engancha placa base |
+| F-H7 | Ménsula / corbel por puntal-tensor | 23 | [ ] | ◻ | modelo de bielas |
+| F-H8 | Cabezal de pilotes (pile cap) por puntal-tensor | 23 | [ ] | ◻ | |
+| F-H9 | Longitud de desarrollo y empalme | 25 | [ ] | ◻ | |
+| F-H10 | Losa unidireccional continua (coeficientes ACI) | 7 | [ ] | ◻ | |
+
+### F-A. Acero — AISC 360-22
+
+| ID | Ejemplo | Cap. | Post | Planilla | Verif. |
+|----|---------|------|:----:|:--------:|--------|
+| F-A1 | **Diagonal a tracción** (fluencia bruta, rotura neta + shear lag, bloque de corte) | D | [ ] | ◻ | segundo del trío prioritario; muy chileno |
+| F-A2 | Columna de galpón a compresión (pandeo flexural, KL, esbeltez) | E | [ ] | ◻ | gancho a D9 (pandeo lineal SAP) |
+| F-A3 | Viga laminada con pandeo lateral-torsional (Lb, Lp, Lr, Cb) | F | [ ] | ◻ | |
+| F-A4 | Viga carrilera de puente grúa (flexión biaxial + corte) | F/G/H | [ ] | ◻ | cierra posts de puente grúa |
+| F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | |
+| F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | |
+| F-A7 | Conexión apernada a corte simple (corte, aplastamiento, desgarro, bloque) | J | [ ] | ◻ | engancha placa base |
+
+**Infraestructura pendiente para Acero:** falta la subsección en `src/lib/acero.ts`
+(key `ejemplos` en `SUBSECTIONS`) + `src/pages/acero/ejemplos/index.astro` (espejo de
+Hormigón, ya hecho). Hacer al arrancar F-A1.
+
+**Trío de mayor retorno (orden sugerido):** F-H1 ✅ → **F-A1 (diagonal tracción)** →
+F-H5 o F-H6 (cierran teoría↔ejemplo↔herramienta con los tools SAP existentes).
+
 ## Recomendación de orden (actualizada 2026-07-14)
 
 Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;

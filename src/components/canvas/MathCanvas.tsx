@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MathRegion, { GRID, snap } from './MathRegion';
 import SymbolPalette, { type SymbolEntry } from './SymbolPalette';
+import WorksheetPrint from './WorksheetPrint';
 import { evaluateSheet, type Region, type RegionKind } from '../../lib/worksheet';
 import { TEMPLATES, type Template } from '../../lib/worksheet-templates';
 
@@ -50,6 +51,28 @@ export default function MathCanvas() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const results = useMemo(() => evaluateSheet(regions), [regions]);
+
+  // Deep-link: /herramientas/canvas?plantilla=<id> abre esa plantilla al entrar.
+  // Si hay trabajo previo guardado, confirma antes de reemplazarlo.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('plantilla');
+    if (!id) return;
+    const tpl = TEMPLATES.find((t) => t.id === id);
+    if (!tpl) return;
+    let hasWork = false;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      hasWork = Array.isArray(data?.regions) && data.regions.some((r: Region) => r.src?.trim());
+    } catch {
+      hasWork = false;
+    }
+    if (hasWork && !confirm(`¿Abrir la plantilla «${tpl.titulo}» y reemplazar tu hoja actual?`)) return;
+    setRegions(tpl.regions.map((r) => ({ ...r })));
+    setSelected(new Set());
+    setActiveId(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Autoguardado con debounce.
   useEffect(() => {
@@ -186,7 +209,8 @@ export default function MathCanvas() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <>
+    <div className="app-screen flex h-full w-full flex-col">
       <div className="flex items-center gap-2 border-b border-border bg-surface/80 px-3 py-2">
         <button
           className={`${toolBtn} ${nextKind === 'text' ? '!border-accent !text-accent' : ''}`}
@@ -230,6 +254,13 @@ export default function MathCanvas() {
             </>
           )}
         </div>
+        <button
+          className={toolBtn}
+          onClick={() => window.print()}
+          title="Genera un documento limpio de la planilla para imprimir o guardar como PDF (memoria de cálculo)"
+        >
+          Imprimir / PDF
+        </button>
         <button className={toolBtn} onClick={exportJson}>
           Exportar
         </button>
@@ -319,5 +350,7 @@ export default function MathCanvas() {
         />
       </div>
     </div>
+    <WorksheetPrint regions={regions} results={results} />
+    </>
   );
 }

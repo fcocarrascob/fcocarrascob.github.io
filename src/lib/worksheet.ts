@@ -23,6 +23,39 @@ const math = create(all, {});
 // `max(2.5 tonf, 30 kN)` funciona sin envoltorios.
 math.createUnit('tonf', { definition: '1000 kgf', aliases: ['tf'] });
 
+// Funciones útiles de diseño, disponibles en cualquier hoja (como las unidades).
+// Se mantienen puras y unit-aware: reciben cantidades con unidades y devuelven un
+// número o una cantidad, para poder encadenarlas en las fórmulas empíricas de la
+// norma. Nombres únicos (no chocan con builtins de math.js), por eso override:false.
+math.import(
+  {
+    // β1 del bloque rectangular equivalente (ACI 318-25, Tabla 22.2.2.4.3).
+    // Acepta f'c con unidad de tensión, o un número plano interpretado como MPa.
+    beta1: function (fc: unknown) {
+      const fcm = typeof fc === 'number' ? fc : math.number(fc as never, 'MPa');
+      if (fcm <= 28) return 0.85;
+      if (fcm >= 56) return 0.65;
+      return 0.85 - (0.05 * (fcm - 28)) / 7;
+    },
+    // √f'c como una tensión en kgf/cm² (unidad de la práctica local): así los
+    // coeficientes empíricos chilenos (0.53, 0.8, 2.1, 14, …) quedan coherentes.
+    // Acepta f'c con unidad, o un número plano interpretado como kgf/cm².
+    sqrtfc: function (fc: unknown) {
+      const fck = typeof fc === 'number' ? fc : math.number(fc as never, 'kgf/cm^2');
+      return math.unit(Math.sqrt(fck), 'kgf/cm^2');
+    },
+    // Factor φ de flexión (ACI 318-25, Tabla 21.2.2), interpolado en la transición.
+    phiFlexion: function (et: unknown, ety: unknown) {
+      const e = math.number(et as never);
+      const ey = math.number(ety as never);
+      if (e >= ey + 0.003) return 0.9;
+      if (e <= ey) return 0.65;
+      return 0.65 + (0.25 * (e - ey)) / 0.003;
+    },
+  },
+  { override: false },
+);
+
 /** Tope de iteraciones por programa (anti-bucle-infinito; evita colgar la pestaña). */
 const MAX_ITERS = 100_000;
 
