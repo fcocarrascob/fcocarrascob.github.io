@@ -50,6 +50,22 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-22 · `hormigon/ejemplo-viga-flexion-corte` · ⚠️ 5 hallazgos
+
+**Commit:** `e902bd2` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N/U | L.208-210 (Ec. 3.3) | El post escribe `V_{s,req}=6.11 ≤ 0.33√f'c·b_w d = 26.4 tonf`, pero `0.33` es el coeficiente en **MPa**, no en kgf/cm² como el resto del post. En kgf/cm² esa expresión literal da `0.33·√250·30·54 = 8.45 tonf`, no 26.4. El valor 26.4 tonf es físicamente correcto (umbral real ≈27.0 tonf en unidades exactas), pero corresponde a `≈1.06√f'c` en kgf/cm². Rompe la convención que el post declara en la nota "Por qué 0.8 y 14…" (0.53, 0.8, 14, 2.1 en kgf/cm²). La conclusión (usar `s_max=min(d/2,60)`) no cambia: 6.11 ≪ ambos valores. | Escribir el coeficiente en kgf/cm² (`≈1.06√f'c·b_w d ≈ 27 tonf`) para que la ecuación evalúe a lo mostrado, o añadir el umbral a las conversiones de la nota | ✅ aplicado (working tree) — coef → `1.03√f'c` (= 26.4 tonf con la conversión 0.53↔0.17 del propio post, y alinea con el `smaxv` del canvas que ya usa 1.03) |
+| 2 | 🟡 | N | L.104 (Ec. Bloque y eje neutro) | `c = 9.70/0.85 = 11.42`; la división literal `9.70/0.85 = 11.41` (con `a` sin redondear, 11.414 → 11.41). No afecta `ε_t` (0.0112) ni `c/d_t` (0.21). | Corregir a `11.41` (o mostrar `a` con más cifras) | ✅ aplicado (working tree) — `c=11.41` en Ec. y en `ε_t` |
+| 3 | 🟡 | N | L.176 (Ec. 22.5.5.1) | `V_c = 0.53√250·30·54 = 13.57 tonf`; exacto `= 13.576 → 13.58` (truncamiento a la baja). Internamente consistente (13.57 en Ec., §3.2 y tabla); `φV_c=10.18` no cambia. | Unificar en 13.58 o declarar truncamiento | ✅ aplicado (working tree) — `V_c=13.58` unificado; cascada recalculada (`V_s,req 6.11→6.10`, `s_req 58.3→58.4`, tabla) |
+| 4 | 🔵 | L | L.124-125 (Ec. 9.3.2.1) y tabla L.250 ("Sec. 22.2 / 9.3.2") | `φM_n ≥ M_u` suele numerarse §9.5.1.1 en ACI 318-19/25, no 9.3.2.1 (límites de diseño). No verificable sin el texto de ACI 318-25. | Cotejar la sección exacta contra la norma | ⬜ |
+| 5 | 🔵 | E | L.15 y L.243 | Referencias cruzadas a otras notas de hormigón. La regla "autocontenidas" aplica a las **notas**; este es un `ejemplo` cuyo propósito es tender el puente a la teoría. Ambos destinos existen y no son `draft`. Decisión humana: ¿los `ejemplos` quedan exentos? | Confirmar exención de `ejemplos` o quitar los enlaces | ⬜ |
+
+**Verificado y correcto:** recalculada la cadena completa y cuadra: `w_u = 1.2·3.0+1.6·1.5 = 6.0 tonf/m`; `M_u = 6·36/8 = 27 tonf·m`; `V_u,apoyo = 18 tonf`; `h_min = 600/16 = 37.5 ≤ 60`; `d = 60−4−1−1.25 = 53.75 ≈ 54`; `A_s(3φ25) = 14.73 cm²`; `a = 14.73·4200/(0.85·250·30) = 9.70 cm`; `ε_t = 0.003·(54−11.42)/11.42 = 0.0112 ≥ 0.005`; `c/d_t = 0.21 ≤ 0.375`; `φM_n = 0.90·14.73·4200·(54−4.85) = 27.36 → 27.4 tonf·m ≥ 27`; `A_s,min = max(0.00301, 0.00333)·30·54 = 5.40 cm²` (gobierna 14/f_y); `V_u@d = 6.0·(3.0−0.54) = 14.76 tonf`; `V_c = 13.57`, `φV_c = 10.18`, `0.5φV_c = 5.09`; `V_s,req = 14.76/0.75−13.57 = 6.11 tonf`; tope biela `2.1√250·30·54 = 53.8 tonf`; `s_req = 1.571·4200·54/6110 = 58.3 cm`; `s_max = min(27, 60) = 27 cm`; mínimo de corte admite `s ≈ 63 cm`; `V_s@25 = 14.25 tonf`; `φV_n = 0.75·(13.57+14.25) = 20.9 tonf`. Usos de la tabla: flexión `0.99`, corte `0.71`, biela `0.11`, altura `0.63` — correctos. Conversiones kgf/cm² ↔ MPa (0.53↔0.17, 0.8↔0.25, 14↔1.4, 2.1↔0.66) bien explicadas en la nota. `ε_ty = 0.002`, `ε_ty+0.003 = 0.005`. Frontmatter válido vs schema Zod (`subsection: "ejemplos"` existe en `SUBSECTIONS`); Note/Equation/Figure los tres usados; `type` válidos; sin H1. Imagen `/ejemplos/viga-flexion-corte.svg` existe; `alt` autosuficiente y consistente con los números. Los dos enlaces internos resuelven a archivos no-draft. Tesis (hacer fluir el acero, sobreproteger lo frágil; flexión gobierna, corte lo fija el detallado) sostenida y cerrada. **Espejo canvas** (`viga-flexion-corte`) verificado en mathjs real reproduce estos números.
+
+**No verificable:** numeración exacta de secciones/ecuaciones ACI 318-25 (5.3.1b, 9.3.2.1, 21.2.2, 22.2.2, 22.5.1.2, 9.4.3.2, 9.6.3.4…) — requiere el texto de la norma; solo el rótulo `9.3.2.1` para `φM_n ≥ M_u` levanta sospecha (#4).
+
 ### 2026-07-21 · `apuntes/puentes-grua-cargas-viga-carrilera` · ⚠️ 3 hallazgos
 
 **Commit:** `7d4de11` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -464,10 +480,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (10)
+### `hormigon` — hormigon (ACI 318-25) (11)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-viga-flexion-corte` | 2026-07-22 | ⚠️ | 2🔵 (1🟠 2🟡 aplicados) |
 | `aci318-25-alcance-y-definiciones` | — | — | — |
 | `aci318-25-cap10-columnas` | — | — | — |
 | `aci318-25-cap11-muros` | — | — | — |
