@@ -1,0 +1,349 @@
+---
+title: "Ejemplo — Viga carrilera de puente grúa 20 t (AISC 360-22)"
+description: "Diseño completo de una viga carrilera para un puente grúa de 20 t: las cargas de la grúa (impacto vertical, empuje lateral, tracción longitudinal) según ASCE 7 §4.9, las solicitaciones por carga móvil, y las verificaciones de AISC 360-22 — pandeo lateral-torsional (Cap. F), flexión biaxial (Cap. H), corte (Cap. G), fuerzas concentradas en el alma (Sec. J10), deflexiones de servicio y fatiga (Apéndice 3). La resistencia a flexión nunca gobierna: mandan el LTB de los 8 m sin arriostrar y el empuje lateral, y el canal de refuerzo es la palanca."
+pubDate: 2026-07-23
+tags: ["ejemplo", "acero", "puente grúa", "viga carrilera", "pandeo lateral-torsional", "flexión biaxial", "fatiga", "carga móvil", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. F/G/H — Viga carrilera"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Una viga carrilera es una viga simplemente apoyada que aguanta una carga vertical que se
+pasea — no debería ser difícil. Y sin embargo es de los elementos que más subestima uno,
+porque casi ninguna de sus verificaciones es la que uno espera. La resistencia a flexión
+—el momento plástico $M_p$ que organiza todo el [Cap. F](/acero/aisc360-22-capF-flexion)—
+prácticamente **nunca gobierna**. Lo que fija el diseño son tres cosas que no son la flexión
+pura: el **pandeo lateral-torsional** de una viga que no se puede arriostrar en el vano, el
+**empuje lateral** de la grúa sobre el ala superior (flexión biaxial, [Cap. H](/acero/aisc360-22-capH-fuerzas-combinadas)),
+y —según el uso— la **fatiga**. El hilo conductor es que el cuerpo de la viga sobra, y el
+diseño se juega en dos palancas: **el canal de refuerzo** sobre el ala superior y **el detalle**
+de fatiga.
+
+## El caso
+
+Vía de rodadura de un puente grúa birriel de 20 t (galpón industrial), con la viga carrilera
+apoyada cada 8 m sobre las columnas. Las cargas de la grúa salen del plano del fabricante;
+la más importante ya viene dada: la **carga estática máxima por rueda**. Acero de uso
+corriente y riel de grúa estándar.
+
+| Dato | Valor |
+|---|---|
+| Puente grúa | 20 t, luz 18.8 m, birriel · **CMAA Clase C** (servicio moderado) |
+| Carga estática máx. por rueda (plano) | $P = 13.97$ tonf ($= 137$ kN) |
+| Ruedas por riel / *wheelbase* | 2 ruedas, separadas $a = 4.0$ m |
+| Luz de la viga carrilera | $L = 8.0$ m (simplemente apoyada) |
+| Perfil | **W610×155** ($\approx$ W24×104) + **canal C310×45** ($\approx$ C12×30) sobre el ala superior |
+| Acero | ASTM A36 / F24: $F_y = 2530$ kgf/cm², $F_u = 4080$ kgf/cm² |
+| Riel | A55 (altura $H_r = 6.5$ cm) |
+
+<Figure
+  src="/ejemplos/viga-carrilera.svg"
+  alt="Panel izquierdo: sección transversal de la viga carrilera —un perfil W610×155 con un canal C310×45 apoyado plano sobre el ala superior y un riel A55 encima— con la rueda aplicando carga vertical hacia abajo y el empuje lateral horizontal en la cabeza del riel; se marca el eje neutro combinado. Panel derecho: barras de demanda contra capacidad de las verificaciones —LTB uso 0.72, flexión biaxial 0.89 que gobierna, corte 0.40, fluencia local del alma 0.32, aplastamiento 0.24, flecha vertical 0.44, fatiga Clase C 0.48— con una caja mostrando cómo la fatiga trepa a 0.98 si la grúa fuera de servicio pesado (vida infinita)."
+  caption="La sección combinada viga + canal (izquierda) y las verificaciones frente a la demanda (derecha). Gobierna la flexión biaxial; la resistencia a flexión pura sobra. La fatiga no manda en Clase C, pero tomaría el control en servicio pesado."
+/>
+
+<Note type="info" title="Por qué el canal de refuerzo sobre el ala superior">
+La viga carrilera **no se puede arriostrar lateralmente en el vano** —la grúa ocupa ese
+espacio—, así que su longitud sin soporte lateral es la luz completa, $L_b = 8$ m. A esa
+esbeltez el LTB ya le recorta momento, pero el perfil por sí solo **todavía pasa** en flexión
+vertical. El problema real es el **empuje lateral** de la grúa sobre el ala superior: sin
+refuerzo, la capacidad de flexión lateral es tan baja que la interacción biaxial se pasa de
+1.0. El **canal apoyado plano sobre el ala superior** lo resuelve subiendo la inercia lateral
+$I_y$ —y con ella $S_y$ (flexión lateral), además de reducir la merma por LTB—. Es la palanca
+de este diseño, igual que la longitud de la soldadura lo era en la
+[diagonal a tracción](/acero/ejemplo-diagonal-hss-traccion).
+</Note>
+
+## 1. Las cargas de la grúa (ASCE 7 §4.9)
+
+De la carga estática de rueda salen las tres acciones que la grúa mete a la viga[^asce]. Cada
+una tiene su factor y su razón física:
+
+| Acción | Factor | Valor | Referencia |
+|---|:---:|:---:|---|
+| **Vertical + impacto** | $\times 1.25$ | $P_v = 17.46$ tonf/rueda | ASCE 7 §4.9.3 (operación remota/radio) |
+| **Empuje lateral** | $20\%\,(Q + \text{carro})$ | $H = 1.12$ tonf/rueda | ASCE 7 §4.9.4 |
+| **Tracción longitudinal** | $10\%\,P$ | $F_l = 1.40$ tonf/rueda | ASCE 7 §4.9.5 |
+
+<Equation label="ASCE 7 §4.9.3 (impacto vertical)">
+$$
+P_v = 1.25 \, P = 1.25 \cdot 13.97 = 17.46 \ \text{tonf/rueda}
+$$
+</Equation>
+
+El **25 %** de impacto es por el izaje y el rodar de la grúa; solo se aplica para la
+resistencia —**no** en fatiga ni en las combinaciones sísmicas—. El **empuje lateral** nace
+del acelerar/frenar del carro y del desalineado de las ruedas; se aplica horizontal, en la
+**cabeza del riel**, lo que le da un brazo respecto al centro de corte de la viga → **torsión
+y flexión lateral**. La **longitudinal** (frenado del puente) va casi entera al arriostramiento
+longitudinal de la vía, no a la flexión de esta viga.
+
+## 2. Solicitaciones por carga móvil
+
+Las dos ruedas de un testero ($a = 4$ m) se pasean sobre la viga de $L = 8$ m. El **momento
+máximo absoluto** no ocurre con una rueda al centro, sino con las dos ruedas ubicadas de modo
+que la línea media del vano biseca la distancia entre la resultante y la rueda más cercana
+(teorema de la carga móvil). Para dos cargas iguales $P$ separadas $a$:
+
+<Equation label="Momento máx. (carga móvil)">
+$$
+M_{\max} = \frac{2P}{L}\left(\frac{L}{2} - \frac{a}{4}\right)^2
+= \frac{2P}{8}\left(4 - 1\right)^2 = 2.25 \, P
+$$
+</Equation>
+
+<Equation label="Cortante / reacción máx.">
+$$
+V_{\max} = P\,\frac{2L - a}{L} = P\,\frac{16 - 4}{8} = 1.5 \, P
+$$
+</Equation>
+
+Con las cargas ya factorizadas ($P_v = 17.46$ tonf) y sumando el peso propio ($w \approx 0.204$
+tonf/m):
+
+| Solicitación | Con impacto | Servicio (fatiga/flecha) |
+|---|:---:|:---:|
+| $M_x$ (flexión vertical) | $2.25 \cdot 17.46 = 39.3$ tonf·m | $2.25 \cdot 13.97 = 31.4$ tonf·m |
+| $V$ (corte/reacción) | $1.5 \cdot 17.46 = 26.2$ tonf | — |
+| $M_y$ (lateral, ala sup.) | $2.25 \cdot 1.12 = 2.52$ tonf·m | — |
+
+<Equation label="Solicitaciones últimas (LRFD)">
+$$
+M_u = 1.2\,M_{pp} + 1.6\,M_x = 1.2 \cdot 1.63 + 1.6 \cdot 39.3 = 64.8 \ \text{tonf·m}
+\qquad V_u = 42.9 \ \text{tonf}
+$$
+</Equation>
+
+<Note type="tip" title="Las dos ruedas gobiernan, no una al centro">
+Con una sola rueda al centro, $M = P_v L/4 = 17.46 \cdot 8/4 = 34.9$ tonf·m. Con las dos ruedas
+en su posición crítica, $M = 2.25\,P_v = 39.3$ tonf·m — **13 % más**. Siempre conviene barrer la
+posición del tren de ruedas (líneas de influencia), no confiar en la intuición del "carro al
+medio".
+</Note>
+
+## 3. Flexión + pandeo lateral-torsional (Cap. F)
+
+Primero las propiedades de la **sección combinada** (viga + canal). El canal apoyado plano
+sube el eje neutro y, sobre todo, casi duplica la inercia lateral:
+
+| Propiedad | Solo viga | Viga + canal |
+|---|:---:|:---:|
+| $I_x$ | 129 000 cm⁴ | **169 300 cm⁴** |
+| $S_{x,\text{inf}}$ | 4228 cm³ | **4540 cm³** |
+| $I_y$ | 10 780 cm⁴ | **17 520 cm⁴** |
+| $r_y$ | 7.4 cm | **8.30 cm** |
+
+El momento plástico (Ec. F2-1) y las longitudes límite de LTB (Ec. F2-5, F2-6):
+
+<Equation label="Ec. F2-1 / F2-5">
+$$
+M_p = F_y Z_x = 2530 \cdot 4736 = 119.8 \ \text{tonf·m}
+\qquad
+L_p = 1.76\,r_y\sqrt{\tfrac{E}{F_y}} = 4.15 \ \text{m}
+$$
+</Equation>
+
+<Equation label="Ec. F2-6">
+$$
+L_r = 1.95\,r_{ts}\,\frac{E}{0.7 F_y}\sqrt{\frac{Jc}{S_x h_o} + \sqrt{\left(\frac{Jc}{S_x h_o}\right)^2 + 6.76\left(\frac{0.7F_y}{E}\right)^2}} = 12.74 \ \text{m}
+$$
+</Equation>
+
+Como $L_p = 4.15 < L_b = 8.0 < L_r = 12.74$ m, la viga está en la **zona inelástica** de LTB:
+el momento se interpola linealmente entre $M_p$ y $0.7F_yS_x$ (Ec. F2-2, con $C_b = 1.0$
+conservador):
+
+<Equation label="Ec. F2-2">
+$$
+M_n = C_b\left[M_p - (M_p - 0.7F_yS_x)\frac{L_b - L_p}{L_r - L_p}\right]
+= 119.8 - (119.8 - 74.9)\frac{8.0 - 4.15}{12.74 - 4.15} = 99.7 \ \text{tonf·m}
+$$
+</Equation>
+
+<Equation label="Verificación (φ = 0.90)">
+$$
+\phi_b M_n = 0.90 \cdot 99.7 = 89.7 \ \text{tonf·m} \;\ge\; M_u = 64.8 \ \text{tonf·m}
+\qquad \text{uso } 0.72
+$$
+</Equation>
+
+Fíjate lo que hace el canal: aun con la merma del LTB ($99.7$ contra $M_p = 119.8$, ~17 %), la
+viga pasa con uso 0.72. Y acá viene lo contraintuitivo. El perfil **desnudo**, sin canal,
+*también* pasaría el LTB: a $L_b = 8$ m su $L_r = 10.9$ m sigue por encima de la luz, y da
+$\phi_b M_n = 83.8$ tonf·m (uso 0.77). Lo que el canal realmente rescata **no es el LTB, sino
+la flexión lateral**: sin él la capacidad lateral cae de $24.6$ a $15.2$ tonf·m y la
+interacción biaxial se pasa de 1.0 ($H1 = 1.04$; lo vemos en el paso 4). El canal sube $I_y$
+—y con ella $S_y$—; esa es su verdadera función acá.
+
+<Note type="warning" title="La sección es monosimétrica">
+Al agregar el canal solo arriba, la sección deja de ser simétrica respecto al eje horizontal.
+El método F2 (pensado para secciones doblemente simétricas) se usa aquí con $r_{ts}$
+conservador —radio de giro del ala comprimida + canal + 1/6 del alma— y da un resultado del
+lado seguro. Para cerrar, **conviene confirmar el LTB con un análisis de pandeo (autovalores)
+en SAP2000**: el factor crítico debe superar el factor de carga.
+</Note>
+
+## 4. Flexión biaxial (Cap. H)
+
+El empuje lateral flexiona el ala superior en el plano horizontal ($M_y = 2.52$ tonf·m). La
+capacidad lateral la da el módulo del conjunto ala + canal:
+
+<Equation label="Módulo y capacidad lateral">
+$$
+\phi_b M_{ny} = 0.90 \, F_y S_{y,\text{top}} = 0.90 \cdot 2530 \cdot 1081 = 24.6 \ \text{tonf·m}
+$$
+</Equation>
+
+Vertical y lateral actúan **a la vez** (la grúa frena mientras iza), así que se combinan con
+la interacción de la Sec. H1 (con $P_r = 0$, se reduce a la suma de usos de flexión):
+
+<Equation label="Ec. H1-1b (con Pr = 0)">
+$$
+\frac{M_{ux}}{\phi_b M_{nx}} + \frac{M_{uy}}{\phi_b M_{ny}}
+= \frac{64.8}{89.7} + \frac{1.6 \cdot 2.52}{24.6}
+= 0.722 + 0.164 = 0.89 \;\le\; 1.0
+$$
+</Equation>
+
+Este es el estado que **gobierna** (uso 0.89). Y es puro empuje lateral: los $0.16$ que aporta
+$M_y$ son los que separan un uso cómodo (0.72) de uno ajustado. Otra vez, el canal —que sube
+$S_{y,\text{top}}$— es lo que lo mantiene bajo 1.0.
+
+## 5. Corte (Cap. G)
+
+El alma toma el corte. Para un alma robusta como esta, $C_{v1} = 1.0$ (Ec. G2-1):
+
+<Equation label="Ec. G2-1 (φ = 0.90)">
+$$
+\phi_v V_n = 0.90 \cdot 0.6 \, F_y (d\,t_w) \, C_{v1}
+= 0.90 \cdot 0.6 \cdot 2530 \cdot (61.1 \cdot 1.27) = 106.0 \ \text{tonf} \;\ge\; V_u = 42.9 \ \text{tonf}
+$$
+</Equation>
+
+Uso 0.40 — el corte casi nunca es problema en vigas carrileras de vano corto; lo anoto por
+completitud.
+
+## 6. Fuerzas concentradas en el alma (Sec. J10)
+
+La rueda descarga una fuerza puntual que el riel reparte sobre una longitud de apoyo
+$N \approx 2 H_r = 13$ cm (con $k \approx 1.5\,t_f = 2.87$ cm, estimación conservadora). Hay que
+verificar que el alma no fluya localmente ni se abolle:
+
+<Equation label="Ec. J10-2 (fluencia local del alma, φ = 1.0)">
+$$
+\phi R_n = F_y t_w\,(N + 5k) = 2530 \cdot 1.27 \cdot (13 + 5\cdot 2.87) = 87.9 \ \text{tonf}
+\quad\ge\quad 1.6\,P_v = 27.9 \ \text{tonf}
+$$
+</Equation>
+
+<Equation label="Ec. J10-4 (aplastamiento del alma, φ = 0.75)">
+$$
+\phi R_n = 0.75 \cdot 0.80\, t_w^2\left[1 + 3\frac{N}{d}\left(\frac{t_w}{t_f}\right)^{1.5}\right]\sqrt{\frac{EF_y t_f}{t_w}} = 114.8 \ \text{tonf} \quad\ge\quad 27.9 \ \text{tonf}
+$$
+</Equation>
+
+Usos 0.32 y 0.24. Holgado, pero **es el chequeo que definiría si se necesitan rigidizadores
+de carga** bajo el riel si el alma fuera más delgada o el riel más bajo (menor $N$).
+
+## 7. Servicio: deflexiones (AIST TR13)
+
+Los límites de flecha de una viga carrilera son más estrictos que los de una viga común, para
+que la grúa ruede sin trepidar[^aist]. Se calculan con la carga **de servicio, sin impacto**:
+
+<Equation label="Flecha vertical — límite L/600">
+$$
+\delta_v = 0.59 \ \text{cm} \;\le\; \frac{L}{600} = \frac{800}{600} = 1.33 \ \text{cm}
+\qquad \text{uso } 0.44
+$$
+</Equation>
+
+<Equation label="Flecha lateral — límite L/400">
+$$
+\delta_h = 0.46 \ \text{cm} \;\le\; \frac{L}{400} = 2.0 \ \text{cm} \qquad \text{uso } 0.23
+$$
+</Equation>
+
+## 8. Fatiga (Apéndice 3)
+
+La grúa pasa miles de veces: cada paso es un ciclo de tensión. El rango de tensiones se calcula
+con la carga **sin impacto**, y se compara con el admisible que depende de **dos** cosas: el
+**número de ciclos** (la Clase CMAA) y la **categoría del detalle** soldado[^cmaa].
+
+<Equation label="Rango de tensiones">
+$$
+\Delta\sigma = \frac{M_{x,\text{serv}}}{S_{x,\text{inf}}} = \frac{31.4 \times 10^5}{4540} = 692 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+Para la **Clase C** (servicio moderado, $\approx 5\times10^5$ ciclos) y un detalle Categoría C
+(soldadura del canal, extremos de rigidizadores), el admisible de la Ec. A-3-1 es:
+
+<Equation label="Ec. A-3-1 (Categoría C, N = 5·10⁵)">
+$$
+F_{SR} = \left(\frac{C_f}{n_{SR}}\right)^{0.333} = \left(\frac{44\times10^8}{5\times10^5}\right)^{1/3} = 20.6 \ \text{ksi} = 1450 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Verificación (Clase C)">
+$$
+\Delta\sigma = 692 \;\le\; F_{SR} = 1450 \ \text{kgf/cm}^2 \qquad \text{uso } 0.48
+$$
+</Equation>
+
+Para esta grúa, **la fatiga no gobierna**. Pero acá está la lección más fina del ejemplo:
+
+<Note type="warning" title="La fatiga depende de la Clase — y puede darse vuelta el diseño">
+El mismo $\Delta\sigma = 692$ kgf/cm² se verifica contra un admisible que **cae con los ciclos**:
+
+| Servicio de la grúa | $n_{SR}$ | $F_{SR}$ (Cat. C) | Uso |
+|---|:---:|:---:|:---:|
+| Clase C (moderado) | $5\times10^5$ | 1450 kgf/cm² | **0.48** |
+| Clase D (pesado) | $2\times10^6$ | 914 kgf/cm² | 0.76 |
+| Vida infinita (umbral CAFL) | $>4\times10^6$ | 703 kgf/cm² | **0.98** |
+
+Es el error clásico: tomar el **umbral de vida infinita** (703 kgf/cm² $= 69$ MPa para Cat. C)
+cuando la grúa es de servicio moderado y admite el tramo inclinado de la curva S-N. Con la
+Clase correcta, la fatiga holga; con una grúa de servicio pesado, **la fatiga toma el control**
+y la palanca se traslada del canal **al detalle**: cuidar la categoría (evitar soldaduras
+transversales en el ala traccionada, transiciones suaves en los extremos de rigidizadores)
+importa más que agrandar el perfil.
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Uso |
+|---|---|:---:|:---:|
+| Fluencia por flexión ($M_p$) | Ec. F2-1 ($\phi=0.90$) | dúctil — sobra | 0.60 |
+| Pandeo lateral-torsional | Ec. F2-2 ($\phi=0.90$) | inestabilidad global | 0.72 |
+| **Flexión biaxial** | Ec. H1-1b | **combina — gobierna** | **0.89** |
+| Corte | Ec. G2-1 ($\phi=0.90$) | resistencia | 0.40 |
+| Fluencia local del alma | Ec. J10-2 ($\phi=1.0$) | fuerza concentrada | 0.32 |
+| Aplastamiento del alma | Ec. J10-4 ($\phi=0.75$) | fuerza concentrada | 0.24 |
+| Flecha vertical | AIST TR13 ($L/600$) | servicio | 0.44 |
+| Flecha lateral | AIST TR13 ($L/400$) | servicio | 0.23 |
+| Fatiga (Clase C) | Ec. A-3-1 | vida útil | 0.48 |
+
+**Solución:** viga carrilera **W610×155 + canal C310×45** (A36), riel A55, sobre apoyos cada
+8 m. Gobierna la **flexión biaxial** (uso 0.89) por el empuje lateral, con el LTB de los 8 m
+sin arriostrar pisándole los talones (0.72). La resistencia a flexión pura sobra; el diseño lo
+sostiene el **canal de refuerzo**, que resuelve LTB y flexión lateral a la vez. Y la fatiga
+—que aquí holga— es la que gobernaría en una grúa de servicio pesado: **el mismo elemento
+cambia de estado límite crítico según cuántas veces pase la grúa.**
+
+[^asce]: American Society of Civil Engineers, *Minimum Design Loads and Associated Criteria
+for Buildings and Other Structures (ASCE/SEI 7)*, §4.9 "Crane Loads". Los factores de impacto
+(25 %), empuje lateral (20 %) y tracción longitudinal (10 %) provienen de §4.9.3 a §4.9.5.
+
+[^aist]: Association for Iron & Steel Technology, *Technical Report No. 13 — Guide for the
+Design and Construction of Mill Buildings*, y AISC *Design Guide 7 — Industrial Buildings*.
+Fijan los límites de deflexión de vigas carrileras ($L/600$ vertical, $L/400$ lateral para
+Clase C) y el tratamiento de fatiga por clase de grúa.
+
+[^cmaa]: Crane Manufacturers Association of America, *CMAA 70 — Specifications for Top Running
+Bridge and Gantry Type Multiple Girder Electric Overhead Traveling Cranes*. Las clases A–F
+relacionan el servicio de la grúa con el número de ciclos de diseño (Clase C $\approx$
+$10^5$–$5\times10^5$). En la práctica argentina, el CIRSOC 301 replica las disposiciones de
+AISC 360 usadas en este ejemplo.

@@ -50,6 +50,23 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-23 · `acero/ejemplo-viga-carrilera-puente-grua` · ⚠️ 6 hallazgos
+
+**Commit:** `6177844` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (Python)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N/C | §3 (párrafo tras Ec. F2-2) + Note "Por qué el canal" | Mecanismo equivocado: "sin el canal… su L_r cae por debajo de la luz y M_n se desploma". Recalculado, el perfil desnudo (W24×104): L_p=3.69, **L_r=10.9 m > 8 m**, φM_n=83.8 → **LTB uso 0.77, pasa**. Lo que falla sin canal es la **flexión biaxial**: φM_ny cae de 24.6 a 15.2 y H1=0.77+0.27=**1.04>1**. La tesis se sostiene, pero por la capacidad lateral. | Reformular: el desnudo pasa LTB; el canal rescata la flexión lateral/biaxial. | ✅ aplicado (working tree) — §3 y Note reescritos al mecanismo biaxial (φM_ny 24.6→15.2, H1 1.04→0.89) |
+| 2 | 🟡 | N | §2 tabla + Ec. cargas | Cadena de redondeo: resultados (39.3/31.4/26.2) de P=13.97 pero operandos mostrados redondeados (14.0/17.5): 2.25·17.5=39.4≠39.3, etc. Usos finales sin cambio. | Declarar P≈13.97 o propagar. | ✅ aplicado — P=13.97 (137 kN), P_v=17.46; operandos corregidos; "una rueda al centro" 35.0→34.9, 12→13 % |
+| 3 | 🟡 | N | §4, Ec. H1-1b | "0.72+0.16=0.89": los sumandos redondeados dan 0.88; el 0.89 es correcto sin redondear (0.722+0.164=0.886). | Sumandos a 3 cifras o quitar el paso. | ✅ aplicado — 0.722+0.164=0.89 |
+| 4 | 🟡 | N | Resumen, fila M_p | Uso (0.54)=64.8/119.8 omite φ; con φ=0.90 es 0.60 (base del resto de las filas). | Usar 0.60. | ✅ aplicado — (0.54)→0.60, ref. con φ=0.90 |
+| 5 | 🟡 | N | §3, Ec. F2-2 | Aritmética con L_r=12.7 da 99.6; el post escribe 99.7 (de L_r=12.74). | Usar L_r=12.74. | ✅ aplicado — 12.7→12.74 en F2-6, zona y F2-2 (M_n=99.7 reproduce) |
+| 6 | 🔵 | N/R | §6, Ec. J10-2 | k=2.87 es 1.5·t_f (real ≈ 4.04 cm); conservador, no cambia el uso 0.32. "5·2.87" da 87.9, el post decía 87.8. | Anotar origen de k. | ✅ aplicado — k anotado (conservador); 87.8→87.9 (reproduce) |
+
+**Verificado y correcto (recalculado con Python):** Cargas de grúa (impacto 25 %, lateral 20 %, longitudinal 10 % — ASCE 7 §4.9). Carga móvil M=2.25P, V=1.5P; "13 % más que una rueda al centro" (39.3 vs 34.9). Sección combinada y_NA=6.74, I_x=169 300, S_x,inf=4540, I_y=17 520, r_y=8.30, S_y,top=1081. M_p=119.8, L_p=4.15, L_r=12.74, M_n=99.7, φM_n=89.7 (0.72). Biaxial φM_ny=24.6, H1=0.886 (0.89). Corte 106.0 (0.40). Crippling 114.8 (0.24). Flechas 0.59/1.33 (0.44) y 0.46/2.0 (0.23). Fatiga Δσ=692; F_SR Cat. C a 5·10⁵=1450 (0.48), 2·10⁶=914 (0.76), umbral 703=69 MPa (0.98). Cadena de usos coincide entre prosa, resumen, `caption`, `alt` y SVG (barras a escala 250 px). Enlaces `capF-flexion`, `capH-fuerzas-combinadas`, `ejemplo-diagonal-hss-traccion` existen (no-draft); imagen `viga-carrilera.svg` existe. Frontmatter válido vs Zod (`subsection: "ejemplos"`). Build OK (92 páginas). Refs AISC (F2-1/2/5/6, H1-1b, G2-1, J10-2/4, A-3-1) correctas; labels por cláusula de código intencionales (como F-A1).
+
+**No verificable:** LTB de la sección monosimétrica (el post recomienda confirmarlo con pandeo por autovalores en SAP2000 — no ejecutado); propiedades tabuladas de W610×155 y C310×45 (tomadas de tablas de perfil, no recalculadas desde geometría).
+
 ### 2026-07-23 · `hormigon/ejemplo-anclajes-pedestal` · ⚠️ 5 hallazgos
 
 **Commit:** `53a8521` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (port a Python del motor `placaBaseAnchorage.ts`)

@@ -381,7 +381,7 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 6, soldadura de filete, bloque de corte) | D | [x] | ◻ | — sin auditar | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) |
 | F-A2 | Columna de galpón a compresión (pandeo flexural, KL, esbeltez) | E | [ ] | ◻ | — | gancho a D9 (pandeo lineal SAP) |
 | F-A3 | Viga laminada con pandeo lateral-torsional (Lb, Lp, Lr, Cb) | F | [ ] | ◻ | — | |
-| F-A4 | Viga carrilera de puente grúa (flexión biaxial + corte) | F/G/H | [ ] | ◻ | — | cierra posts de puente grúa |
+| F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
 | F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
 | F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | — | |
 | F-A7 | Conexión apernada a corte simple (corte, aplastamiento, desgarro, bloque) | J | [ ] | ◻ | — | engancha placa base |
