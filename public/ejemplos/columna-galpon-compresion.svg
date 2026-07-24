@@ -72,7 +72,7 @@
   <!-- caja lever -->
   <rect x="490" y="300" width="325" height="128" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
   <text x="502" y="322" font-size="11.5" fill="#222" font-weight="bold">La palanca: bajar L_c/r, no subir F_y</text>
-  <text x="502" y="342" font-size="11" fill="#333">El eje fuerte pandea elástico (F_cr = 0.877·F_e),</text>
+  <text x="502" y="342" font-size="11" fill="#333">El eje fuerte pandea elástico (F_n = 0.877·F_e),</text>
   <text x="502" y="358" font-size="11" fill="#333">y F_e no depende de F_y — solo de E y la geometría:</text>
   <text x="502" y="380" font-size="11" fill="#c0392b">  Cantilever K=2:           φP_n = 79.3 tonf</text>
   <text x="502" y="398" font-size="11" fill="#1c7c3c">  Arriostrar el marco K=1:  φP_n = 209 tonf</text>
