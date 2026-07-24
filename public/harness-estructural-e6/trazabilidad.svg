@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1c7c3c"/>
+    </marker>
+  </defs>
+  <rect width="860" height="430" fill="#ffffff"/>
+  <text x="430" y="26" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">Cada número del Word es una copia del JSON — el modelo no interviene</text>
+
+  <!-- ===== JSON de la herramienta ===== -->
+  <rect x="20" y="60" width="322" height="316" rx="8" fill="#f7f8fa" stroke="#cfd6de"/>
+  <text x="36" y="82" font-size="12" fill="#333" font-weight="bold">Resultado de la herramienta (JSON)</text>
+  <text x="36" y="108" font-size="10.5" fill="#333" font-family="Consolas, monospace">"verificaciones": [</text>
+  <text x="36" y="128" font-size="10.5" fill="#333" font-family="Consolas, monospace"> { "Flexion", dem 27.0,</text>
+  <text x="36" y="144" font-size="10.5" fill="#333" font-family="Consolas, monospace">   cap 27.37, uso <tspan fill="#1c7c3c" font-weight="bold">0.987</tspan>,</text>
+  <text x="36" y="160" font-size="10.5" fill="#1a63a8" font-family="Consolas, monospace">   ref "§22.2 / 9.3.2" },</text>
+  <text x="36" y="180" font-size="10.5" fill="#333" font-family="Consolas, monospace"> { "Corte", dem 14.76,</text>
+  <text x="36" y="196" font-size="10.5" fill="#333" font-family="Consolas, monospace">   cap 20.88, uso 0.707,</text>
+  <text x="36" y="212" font-size="10.5" fill="#1a63a8" font-family="Consolas, monospace">   ref "Tabla 22.5.5.1" },</text>
+  <text x="36" y="232" font-size="10.5" fill="#888" font-family="Consolas, monospace">   …</text>
+  <text x="36" y="252" font-size="10.5" fill="#333" font-family="Consolas, monospace">]</text>
+  <text x="36" y="272" font-size="10.5" fill="#333" font-family="Consolas, monospace">"gobierna": "Flexion",</text>
+  <text x="36" y="288" font-size="10.5" fill="#333" font-family="Consolas, monospace">"cumple": <tspan fill="#1c7c3c" font-weight="bold">true</tspan></text>
+  <text x="36" y="330" font-size="10" fill="#555" font-style="italic">calculado por Python (E1),</text>
+  <text x="36" y="345" font-size="10" fill="#555" font-style="italic">con su cita en cada línea</text>
+
+  <!-- ===== flecha: python-docx, sin LLM ===== -->
+  <text x="430" y="150" font-size="11.5" text-anchor="middle" fill="#555" font-weight="bold">python-docx</text>
+  <text x="430" y="166" font-size="9.5" text-anchor="middle" fill="#555">(plantilla)</text>
+  <line x1="352" y1="200" x2="508" y2="200" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+
+  <!-- LLM tachado sobre la flecha -->
+  <rect x="372" y="216" width="116" height="26" rx="5" fill="#fdecea" stroke="#c0392b"/>
+  <text x="430" y="234" font-size="10.5" text-anchor="middle" fill="#c0392b">modelo de lenguaje</text>
+  <line x1="376" y1="238" x2="484" y2="220" stroke="#c0392b" stroke-width="1.6"/>
+  <text x="430" y="260" font-size="9.5" text-anchor="middle" fill="#c0392b" font-weight="bold">no interviene en esta etapa</text>
+
+  <!-- ===== documento Word ===== -->
+  <rect x="518" y="60" width="322" height="316" rx="8" fill="#ffffff" stroke="#8aa6c4" stroke-width="1.4"/>
+  <rect x="518" y="60" width="322" height="34" rx="8" fill="#eaf1fb" stroke="#8aa6c4"/>
+  <text x="679" y="82" font-size="12" text-anchor="middle" fill="#1a63a8" font-weight="bold">Memoria de cálculo (.docx)</text>
+
+  <text x="534" y="118" font-size="10.5" fill="#333">2. Verificaciones</text>
+  <!-- tabla -->
+  <line x1="534" y1="126" x2="824" y2="126" stroke="#cfd6de"/>
+  <text x="540" y="142" font-size="9.5" fill="#555">Estado límite</text>
+  <text x="690" y="142" font-size="9.5" fill="#555">Dem.</text>
+  <text x="740" y="142" font-size="9.5" fill="#555">Cap.</text>
+  <text x="792" y="142" font-size="9.5" fill="#555">Uso</text>
+  <line x1="534" y1="150" x2="824" y2="150" stroke="#cfd6de"/>
+  <text x="540" y="168" font-size="10" fill="#1c7c3c">Flexión</text>
+  <text x="690" y="168" font-size="10" fill="#1c7c3c">27.0</text>
+  <text x="740" y="168" font-size="10" fill="#1c7c3c">27.37</text>
+  <text x="792" y="168" font-size="10" fill="#1c7c3c" font-weight="bold">0.987</text>
+  <text x="540" y="188" font-size="10" fill="#1c7c3c">Corte</text>
+  <text x="690" y="188" font-size="10" fill="#1c7c3c">14.76</text>
+  <text x="740" y="188" font-size="10" fill="#1c7c3c">20.88</text>
+  <text x="792" y="188" font-size="10" fill="#1c7c3c">0.707</text>
+  <text x="540" y="208" font-size="10" fill="#888">…</text>
+  <line x1="534" y1="218" x2="824" y2="218" stroke="#cfd6de"/>
+
+  <text x="534" y="246" font-size="10.5" fill="#333">3. Resultado</text>
+  <text x="534" y="266" font-size="10.5" fill="#1c7c3c" font-weight="bold">El elemento CUMPLE</text>
+  <text x="534" y="282" font-size="10" fill="#333">gobierna «Flexión», uso 0.987</text>
+
+  <text x="534" y="330" font-size="9" fill="#555" font-style="italic">«Cada número es trazable al JSON de</text>
+  <text x="534" y="343" font-size="9" fill="#555" font-style="italic">origen; ninguno lo escribió un LLM.</text>
+  <text x="534" y="356" font-size="9" fill="#555" font-style="italic">Requiere revisión y firma profesional.»</text>
+
+  <!-- línea de trazabilidad de un número -->
+  <path d="M196,140 C360,120 620,150 786,160" fill="none" stroke="#1c7c3c" stroke-width="1.1" stroke-dasharray="4 3"/>
+  <text x="430" y="112" font-size="9" text-anchor="middle" fill="#1c7c3c">mismo 0.987, copiado</text>
+</svg>

@@ -1,0 +1,115 @@
+---
+title: "Harness estructural (3): un RAG que se niega a inventar secciones"
+description: "El asistente ya verifica con herramientas; ahora necesita responder preguntas conceptuales sobre la norma —y hacerlo con cita verificable, no con secciones inventadas—. Construyo un RAG 100 % local sobre el corpus normativo, con dos reglas que sostienen la garantía: la cita es un dato del retrieval (no la escribe el modelo) y, sin respaldo suficiente, el sistema se niega. Incluye el hallazgo de calibración que casi rompe todo: el modelo de embeddings encuentra 'parecido' hasta donde no lo hay."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "RAG", "embeddings", "Ollama", "ACI 318-25", "AISC 360-22", "cita", "harness"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 3
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## De verificar a responder
+
+En los peldaños anteriores el asistente aprendió a [calcular con
+herramientas](/blog/harness-estructural-e1-tools-que-calculan/) y elegí el [modelo local que
+las opera](/blog/harness-estructural-e2-elegir-motor/). Pero un ingeniero no solo pide
+verificaciones: también pregunta. *¿Cuándo obliga la norma a poner refuerzo mínimo de corte? ¿Qué
+factor de reducción corresponde a una sección controlada por tracción?* Eso no es un cálculo, es
+una consulta a la norma —y la respuesta, para servir, tiene que llegar **con la sección exacta que
+la respalda**, no con una cita plausible que el modelo se inventó.
+
+Ese es el riesgo real de un LLM sobre normativa: no que se equivoque en un número, sino que cite
+*"según ACI 318-25 §9.7.2"* con total seguridad cuando esa sección no dice eso —o no existe—. La
+etapa 3 es un RAG (retrieval-augmented generation) 100 % local que ataca exactamente eso.
+
+## Dos reglas para "cero secciones inventadas"
+
+<Note type="warning" title="La cita es un dato, no una redacción">
+**Regla 1: la cita sale del retrieval, no del modelo.** El sistema recupera fragmentos del corpus,
+y cada fragmento ya viaja con su sección (`§9.6.1`) extraída de su encabezado. Las citas que
+acompañan la respuesta son esas —las de los fragmentos recuperados—, no las que el modelo escriba
+en su prosa. La procedencia es del sistema; el modelo solo redacta.
+
+**Regla 2: sin respaldo, no hay respuesta.** Si ningún fragmento supera un umbral de similitud, el
+sistema **se niega** —igual que una herramienta de E1 se niega cuando la norma no aplica—. No
+improvisa. Prefiere un "no lo sé con respaldo" a una cita inventada.
+</Note>
+
+<Figure
+  src="/harness-estructural-e3/rag-con-cita.svg"
+  alt="Flujo del RAG: la pregunta se convierte en un vector y se compara con los fragmentos del corpus, cada uno etiquetado con su sección de norma. Un umbral de similitud (0.70) decide: si el mejor fragmento supera el umbral, se arma la respuesta usando solo esos fragmentos y con sus secciones como cita; si ningún fragmento lo supera, el sistema se niega en vez de improvisar. Las citas salen de los fragmentos recuperados, no del modelo."
+  caption="El corpus se trocea por sección, y cada fragmento lleva su cita. La pregunta recupera fragmentos por similitud; el umbral separa respaldo de ruido. La respuesta se redacta solo con lo recuperado, y la cita es la del fragmento —no la que el modelo escriba—."
+/>
+
+## Cómo está armado, y por qué tan liviano
+
+El corpus son las [páginas de referencia normativa](/hormigon/) que ya había extraído de ACI
+318-25 y AISC 360-22: una por capítulo, con la sección en cada encabezado. Se trocea por sección
+—254 fragmentos, 168 con número de sección explícito—, y de ahí sale la cita.
+
+Todo corre local y sin dependencias pesadas: los embeddings los da un modelo chico
+(`nomic-embed-text`) servido por el mismo Ollama, y la búsqueda es similitud coseno en memoria.
+Nada de bases vectoriales ni servicios externos —el corpus es de cientos de fragmentos, no de
+millones—. La restricción real del proyecto es la memoria de la GPU (8 GB), así que menos piezas es
+mejor.
+
+## El hallazgo que casi rompe la garantía
+
+Acá casi me pego un tiro en el pie. Mi primer umbral fue 0.5: si un fragmento se parece a la
+pregunta con similitud ≥ 0.5, cuenta como respaldo. Antes de confiar, medí los puntajes reales, y
+encontré algo incómodo:
+
+```
+¿cuándo se exige refuerzo mínimo de corte?   →  0.755  ACI 318-25 §7.6.3   (pertinente)
+¿qué es el factor de efecto de tamaño?        →  0.747  ACI 318-25 §22.5.5.1.3
+¿cuál es la capital de Francia?               →  0.631  AISC 360-22 Cap. B  (¡ajeno!)
+```
+
+El modelo de embeddings encuentra "parecido" **en todas partes**: hasta *"la capital de Francia"*
+saca 0.63 contra un capítulo de acero. Con el umbral en 0.5, esa pregunta habría pasado el filtro
+y el sistema habría intentado responderla con una sección normativa —exactamente la cita inventada
+que quería evitar—. Lo pertinente ronda 0.72–0.76 y lo ajeno ~0.63, así que **subí el umbral a
+0.70**, que separa limpio el respaldo del ruido. La lección: un RAG sin calibrar su umbral contra
+preguntas *fuera* de dominio es un generador de citas falsas con pasos extra.
+
+## Funcionando
+
+Una pregunta del dominio devuelve la respuesta con su cita y los fragmentos que la respaldan:
+
+```
+> ¿cuándo obliga ACI 318-25 a colocar refuerzo mínimo de corte en una viga?
+
+Según [ACI 318-25 §7.6.3], el refuerzo mínimo de corte debe proveerse en toda
+región donde Vu > φVc.
+
+citas (del retrieval, verificables):
+  · ACI 318-25 §7.6.3   [0.78]
+  · ACI 318-25 §9.6.2   [0.76]
+```
+
+Y una pregunta ajena al corpus recibe la única respuesta honesta:
+
+```
+> ¿cuál es la capital de Francia y cómo hago un buen risotto?
+
+No encontré respaldo en el corpus normativo (ACI 318-25 / AISC 360-22) para
+responder eso con cita. Prefiero no improvisar.
+```
+
+Ese "prefiero no improvisar" es el entregable de la etapa. Un asistente normativo que puede decir
+*no* es más útil que uno que siempre responde: el que siempre responde te obliga a verificar cada
+cita a mano, y entonces no te ahorró nada.
+
+## Lo que viene
+
+Ya tengo las dos mitades del asistente: las herramientas que **calculan con cita** (E1) y el RAG
+que **responde con cita** (E3). Falta unirlas en un solo punto de entrada que decida, ante cada
+consulta, si toca calcular o si toca responder —y que lo haga sin que yo le diga cuál es cuál—. Ese
+es el harness, la etapa 4.
+
+*El RAG, el troceo del corpus y la calibración del umbral viven en el repositorio del proyecto. El
+corpus normativo son las páginas de referencia enlazadas arriba.*
