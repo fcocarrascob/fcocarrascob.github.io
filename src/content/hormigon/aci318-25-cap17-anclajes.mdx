@@ -252,17 +252,44 @@ verificarlo.
 
 ### 2.4 Interacción tracción–corte (17.8)
 
-Cuando ambas demandas superan el 20% de su capacidad, el mismo hormigón no puede estar
-al límite en los dos modos a la vez:
+El mismo hormigón no puede estar al límite en los dos modos a la vez. ACI 318-25 verifica
+la interacción con una **ley de potencia $5/3$**, y —esto es lo nuevo— la aplica **por
+separado a los modos de hormigón y a los de acero**:
 
-<Equation label="Ec. 17.8.3">
+<Equation label="Ec. 17.8.2 (anclaje individual, hormigón)">
 $$
-\frac{N_{ua}}{\phi N_n} + \frac{V_{ua}}{\phi V_n} \leq 1.2
+\left(\frac{N_{ua}}{\phi N_{n,c}}\right)^{5/3} +
+\left(\frac{V_{ua}}{\phi V_{n,c}}\right)^{5/3} \leq 1
 $$
 </Equation>
 
-usando en cada término el modo gobernante de su familia. Es frecuente que cada modo pase
-individualmente y la suma no — conviene dejarla siempre calculada.
+<Equation label="Ec. 17.8.3 (grupo, hormigón)">
+$$
+\left(\frac{N_{ua,g}}{\phi N_{n,cg}}\right)^{5/3} +
+\left(\frac{V_{ua,g}}{\phi V_{n,cg}}\right)^{5/3} \leq 1
+$$
+</Equation>
+
+donde $\phi N_{n,c}$ es el **menor** de $\phi N_{cb}$, $\phi N_a$, $\phi N_{pn}$ y
+$\phi N_{sb}$, y $\phi V_{n,c}$ el menor de $\phi V_{cb}$ y $\phi V_{cp}$ (para grupos,
+los homólogos $\phi N_{cbg}$, $\phi N_{ag}$, $\phi N_{sbg}$ y $\phi V_{cbg}$,
+$\phi V_{cpg}$). La **Sec. 17.8.4** exige además verificar la interacción sobre la
+**resistencia del acero** del anclaje más solicitado.
+
+<Note type="warning" title="Cambió respecto a ACI 318-19">
+Hasta ACI 318-19 la interacción era una **regla trilineal**: si $V_{ua} \le 0.2\phi V_n$
+se permitía la tracción plena, si $N_{ua} \le 0.2\phi N_n$ el corte pleno, y en el resto
+$\frac{N_{ua}}{\phi N_n} + \frac{V_{ua}}{\phi V_n} \le 1.2$. ACI 318-25 la reemplazó por
+la ley de potencia $5/3$ separada por modo de falla; el comentario R17.8.1 la describe
+explícitamente como **"un enfoque menos conservador"**.
+
+En la práctica la nueva regla **es más permisiva**: un punto que antes daba
+$0.58 + 0.56 = 1.14$ (uso 0.95 del límite 1.2) ahora da
+$0.58^{5/3} + 0.56^{5/3} = 0.40 + 0.38 = 0.78 \le 1$.
+</Note>
+
+Es frecuente que cada modo pase individualmente y la interacción no — conviene dejarla
+siempre calculada.
 
 ---
 

@@ -142,19 +142,28 @@ hormigón dentro de la curva.
   caption="Izquierda: el gancho ancla aplastando el hormigón interior del codo — y ℓ_dh crece con d_b^1.5, así que rinde cada vez menos con barras gruesas. Derecha: el traslape son dos desarrollos cosidos por bielas, con el doble de fuerza radial en la misma zona."
 />
 
-<Equation label="Ec. 25.4.3.1">
+<Equation label="Ec. 25.4.3.1(a)">
 $$
-\ell_{dh} = \left(\frac{f_y\,\psi_e\,\psi_r\,\psi_o\,\psi_c}{23\,\lambda\sqrt{f'_c}}\right) d_b^{1.5}
+\ell_{dh} = \left(\frac{f_y\,\psi_e\,\psi_s\,\psi_{cc}\,\psi_r}{21\,\lambda\sqrt{f'_c}}\right) d_b^{1.5}
 \;\geq\; \max(8\,d_b,\ 150\ \text{mm})
 $$
 </Equation>
 
+<Note type="warning" title="Cambió respecto a ACI 318-19">
+ACI 318-19 escribía esta ecuación con denominador **23** y los factores
+$\psi_e\,\psi_r\,\psi_o\,\psi_c$. ACI 318-25 usa denominador **21** y renombra los
+factores a $\psi_e$ (epóxico), $\psi_s$ (tamaño de barra), $\psi_{cc}$ (recubrimiento)
+y $\psi_r$ (refuerzo de confinamiento), definidos en 25.4.3.2. El cambio de 23 a 21
+hace $\ell_{dh}$ un **≈ 10 % más largo**: usar la forma antigua queda del lado inseguro.
+</Note>
+
 El exponente **1.5** es el dato para la intuición: la fuerza crece con $d_b^2$ pero la
 capacidad del codo no la acompaña — los ganchos de barras gruesas rinden
-proporcionalmente menos (para φ25, Gr 420, $f'_c=25$: $\ell_{dh} \approx 460$ mm ≈
-$18\,d_b$; para φ36 ya va en $\approx 22\,d_b$). Los factores $\psi_o$ (ubicación y
-confinamiento) y $\psi_c$ (resistencia del hormigón) castigan el mismo modo de falla:
-el **splitting lateral** del plano del gancho. Geometría estándar: extensión de
+proporcionalmente menos (para φ25, Gr 420, $f'_c = 25$ MPa y todos los $\psi = 1$:
+$\ell_{dh} = 500$ mm $= 20\,d_b$; para φ36 ya va en $864$ mm $= 24\,d_b$). Los factores
+$\psi_{cc}$ (recubrimiento) y $\psi_r$
+(confinamiento) castigan el mismo modo de falla: el **splitting lateral** del plano del
+gancho. Geometría estándar: extensión de
 $12\,d_b$ tras el codo en ganchos de 90°, $4\,d_b \geq 65$ mm en los de 180°, diámetro
 interior de doblado $6\,d_b$ hasta el Nº 25.
 

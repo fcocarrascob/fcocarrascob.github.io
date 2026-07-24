@@ -1,6 +1,6 @@
 ---
 title: "AISC 360-22 Cap. E — Columnas en compresión"
-description: "El Capítulo E de AISC 360-22 contado desde la estabilidad: la resistencia real de una columna no es Fy·Ag sino lo que el pandeo deja usar. La curva de columna (Fcr), la longitud efectiva Lc = KL, los tres modos de pandeo global (flexión, torsional, flexo-torsional), el pandeo local y el orden de diseño."
+description: "El Capítulo E de AISC 360-22 contado desde la estabilidad: la resistencia real de una columna no es Fy·Ag sino lo que el pandeo deja usar. La curva de columna (Fn), la longitud efectiva Lc = KL, los tres modos de pandeo global (flexión, torsional, flexo-torsional), el pandeo local y el orden de diseño."
 pubDate: 2026-06-18
 updatedDate: 2026-07-07
 tags: ["aisc360", "compresión", "columnas", "pandeo", "estabilidad", "longitud efectiva", "esbeltez", "LRFD", "ASD"]
@@ -16,11 +16,11 @@ import Figure from '../../components/content/Figure.astro';
 
 A una columna casi nunca la vence la *resistencia* del material. Un trozo corto de perfil
 se aplastaría cuando toda la sección alcanza $F_y$, en $F_y A_g$ — pero ninguna columna
-real llega ahí: **pandea antes**, con una tensión crítica $F_{cr} < F_y$, y el pandeo es
+real llega ahí: **pandea antes**, con una tensión nominal $F_n < F_y$, y el pandeo es
 súbito. Todo el Capítulo E es medir cuánto de ese techo $F_y A_g$ le roba la inestabilidad:
 
 $$
-P_n = F_{cr}\,A_g \qquad\qquad \frac{F_{cr}}{F_y} = \text{la fracción de } F_y \text{ que la columna alcanza a usar}
+P_n = F_n\,A_g \qquad\qquad \frac{F_n}{F_y} = \text{la fracción de } F_y \text{ que la columna alcanza a usar}
 $$
 
 | Estado límite | Qué es | Naturaleza |
@@ -47,6 +47,13 @@ $$
 $$
 </Note>
 
+<Note type="warning" title="Notación: F_n, no F_cr">
+AISC 360-22 llama **$F_n$** ("nominal stress") a la tensión que sale de la curva de columna
+—Ecs. E3-1, E3-2, E3-3, E4-1 y E7-1—. En **AISC 360-16** ese mismo valor se llamaba
+$F_{cr}$. Documentación, planillas o software anteriores a 2022 usan la notación antigua;
+el valor numérico es el mismo.
+</Note>
+
 ---
 
 ## 1. La esbeltez manda: longitud efectiva $L_c = KL$ (E2)
@@ -59,10 +66,10 @@ extremos. El factor $K$ traduce las condiciones de apoyo:
 <Figure
   src="/aisc360-22-capE/longitud-efectiva.svg"
   alt="Cuatro columnas con distintas condiciones de apoyo y sus formas pandeadas: rótula-rótula K=1.0, empotrado-empotrado K=0.5, empotrado-rótula K=0.7, y empotrado-libre (voladizo) K=2.0; cada una con su longitud efectiva Lc = KL"
-  caption="L_c = K·L. Empotrar los extremos acorta la longitud que 'cuenta' para el pandeo (baja K, sube F_cr); un extremo libre la duplica. La misma columna rinde distinto según cómo se sujete."
+  caption="L_c = K·L. Empotrar los extremos acorta la longitud que 'cuenta' para el pandeo (baja K, sube F_n); un extremo libre la duplica. La misma columna rinde distinto según cómo se sujete."
 />
 
-<Equation label="Ec. E2">
+<Equation label="Sec. E2">
 $$
 L_c = K L
 $$
@@ -86,16 +93,16 @@ los extremos. Su resistencia es:
 
 <Equation label="Ec. E3-1">
 $$
-P_n = F_{cr} \, A_g
+P_n = F_n \, A_g
 $$
 </Equation>
 
-Todo el contenido está en $F_{cr}$, y la mejor forma de entenderla es como una curva de
-$F_{cr}$ contra la esbeltez $L_c/r$ — la **curva de columna**:
+Todo el contenido está en $F_n$, y la mejor forma de entenderla es como una curva de
+$F_n$ contra la esbeltez $L_c/r$ — la **curva de columna**:
 
 <Figure
   src="/aisc360-22-capE/curva-columna.svg"
-  alt="Curva de F_cr en función de la esbeltez Lc/r: una meseta cerca de Fy para columnas cortas, una transición inelástica, y una rama elástica que sigue 0.877 veces la curva de Euler para columnas esbeltas; la transición ocurre en Lc/r = 4.71 raíz de E/Fy"
+  alt="Curva de F_n en función de la esbeltez Lc/r: una meseta cerca de Fy para columnas cortas, una transición inelástica, y una rama elástica que sigue 0.877 veces la curva de Euler para columnas esbeltas; la transición ocurre en Lc/r = 4.71 raíz de E/Fy"
   caption="La curva de columna. Corta/intermedia → pandeo inelástico (Ec. E3-2). Esbelta → pandeo elástico de Euler castigado por 0.877 (Ec. E3-3). El material F_y es un techo que solo las columnas muy cortas rozan."
 />
 
@@ -116,7 +123,7 @@ $L_c/r = 4.71\sqrt{E/F_y}$ (equivalente a $F_y/F_e = 2.25$):
 
 <Equation label="Ec. E3-2">
 $$
-F_{cr} = \left[ 0.658^{\, F_y / F_e} \right] F_y
+F_n = \left[ 0.658^{\, F_y / F_e} \right] F_y
 $$
 </Equation>
 
@@ -125,12 +132,12 @@ $$
 
 <Equation label="Ec. E3-3">
 $$
-F_{cr} = 0.877 \, F_e
+F_n = 0.877 \, F_e
 $$
 </Equation>
 
 La lectura de la curva es la tesis del capítulo hecha gráfico: a la izquierda (columnas
-rechonchas) $F_{cr}$ roza $F_y$; a la derecha (columnas esbeltas) se desploma. **Bajar
+rechonchas) $F_n$ roza $F_y$; a la derecha (columnas esbeltas) se desploma. **Bajar
 $L_c/r$ mueve la columna hacia la izquierda, hacia el material.**
 
 ---
@@ -147,7 +154,7 @@ a la vez** (flexo-torsional), y a veces esos modos ceden antes que el de flexió
   caption="Los modos de pandeo. La flexión (E3) gobierna en perfiles doblemente simétricos compactos; el torsional y flexo-torsional (E4) aparecen en secciones de simetría simple o asimétricas —ángulos, tés, canales, cruciformes—; el local (E7) arruga las placas esbeltas."
 />
 
-El cálculo reusa la misma curva de columna (Ecs. E3-2/E3-3 para $F_{cr}$), pero cambiando
+El cálculo reusa la misma curva de columna (Ecs. E3-2/E3-3 para $F_n$), pero cambiando
 la tensión de pandeo elástico $F_e$ por la que corresponde al modo. Para miembros
 **doblemente simétricos**:
 
@@ -193,12 +200,12 @@ canales el centro de corte está *desplazado*, así que empujar por el centroide
 Los tres modos anteriores tratan la columna como un todo. Pero si alguna placa de la
 sección es **esbelta** ($\lambda > \lambda_r$ de la Tabla B4.1a), esa placa se arruga
 localmente *antes* de que pandee la columna entera, y la sección nunca desarrolla toda su
-área. La norma lo trata con el **método del ancho efectivo**: se calcula $F_{cr}$ igual que
+área. La norma lo trata con el **método del ancho efectivo**: se calcula $F_n$ igual que
 en E3/E4 (con la sección completa) pero se aplica sobre un **área efectiva** reducida:
 
 <Equation label="Ec. E7-1">
 $$
-P_n = F_{cr} \, A_e
+P_n = F_n \, A_e
 $$
 </Equation>
 
@@ -207,8 +214,8 @@ efectivo $b_e < b$ (se "descuenta" la parte de placa que ya se arrugó y dejó d
 
 <Equation label="Ec. E7-3">
 $$
-b_e = b \left[ 1 - c_1 \sqrt{\frac{F_{el}}{F_{cr}}} \, \right] \sqrt{\frac{F_{el}}{F_{cr}}}
-\qquad \text{si } \lambda > \lambda_r \sqrt{F_y / F_{cr}}
+b_e = b \left[ 1 - c_1 \sqrt{\frac{F_{el}}{F_n}} \, \right] \sqrt{\frac{F_{el}}{F_n}}
+\qquad \text{si } \lambda > \lambda_r \sqrt{F_y / F_n}
 $$
 </Equation>
 
@@ -217,7 +224,7 @@ con la tensión de pandeo local elástico $F_{el} = \left( c_2 \, \lambda_r/\lam
 ($c_2 = (1 - \sqrt{1 - 4 c_1})/2 c_1$). Para **HSS circulares esbeltos**
 ($D/t > 0.11\,E/F_y$) se usa directamente:
 
-<Equation label="Ec. E7-19">
+<Equation label="Ec. E7-7">
 $$
 A_e = \left[ \frac{0.038 \, E}{F_y \left(D/t\right)} + \frac{2}{3} \right] A_g \leq A_g
 $$
@@ -242,8 +249,8 @@ flowchart TD
     C -- "no" --> E["usar A_g"]
     D --> F["4. Modo de pandeo → F_e<br/>flexión (E3) / torsional o<br/>flexo-torsional (E4)"]
     E --> F
-    F --> G["5. F_cr de la curva de columna<br/>E3-2 (inelástico) o E3-3 (elástico)"]
-    G --> H["6. P_n = F_cr·A (menor modo)<br/>φ_c·P_n ≥ P_u  (φ_c = 0.90)"]
+    F --> G["5. F_n de la curva de columna<br/>E3-2 (inelástico) o E3-3 (elástico)"]
+    G --> H["6. P_n = F_n·A (menor modo)<br/>φ_c·P_n ≥ P_u  (φ_c = 0.90)"]
 ```
 
 Lo que el orden deja claro: si $P_n$ no alcanza, subir el grado del acero ($F_y$) ayuda
@@ -260,6 +267,6 @@ mejor los apoyos o elegir un perfil con mayor radio de giro.
 | Longitud efectiva | $L_c = KL$ en ambos ejes (Sec. E2) | fija la esbeltez |
 | Esbeltez | mayor $L_c/r$; $\leq 200$ recomendado | protagonista |
 | Elementos esbeltos | $\lambda$ vs $\lambda_r$ → $A_e$ (Sec. E7) | inestabilidad local |
-| Pandeo por flexión | $F_{cr}$ con $F_e$ de Euler (Sec. E3) | inestabilidad global — súbita |
-| Pandeo torsional / flexo-torsional | $F_{cr}$ con $F_e$ de E4 | inestabilidad global — súbita |
+| Pandeo por flexión | $F_n$ con $F_e$ de Euler (Sec. E3) | inestabilidad global — súbita |
+| Pandeo torsional / flexo-torsional | $F_n$ con $F_e$ de E4 | inestabilidad global — súbita |
 | Resistencia de diseño | $\phi_c P_n \geq P_u$, $\phi_c = 0.90$ | — |
