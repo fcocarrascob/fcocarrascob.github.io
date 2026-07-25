@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="bf-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="bf-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+    <marker id="bf-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f6f4a"/>
+    </marker>
+  </defs>
+  <rect width="840" height="470" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Conexión con placas de ala (BFP): la conexión pasa, el nudo de la columna no</text>
+
+  <!-- ================= columna ================= -->
+  <rect x="150" y="52" width="16" height="368" fill="#dfe5ec" stroke="#333" stroke-width="1.3"/>
+  <rect x="196" y="52" width="16" height="368" fill="#dfe5ec" stroke="#333" stroke-width="1.3"/>
+  <rect x="166" y="52" width="30" height="368" fill="#f2f5f8" stroke="#c8d2dd" stroke-width="1"/>
+  <text x="181" y="440" font-size="10.5" text-anchor="middle" fill="#555">columna W310×97</text>
+  <text x="181" y="453" font-size="10" text-anchor="middle" fill="#555">P_u = 200 tonf</text>
+
+  <!-- zona panel -->
+  <rect x="166" y="150" width="30" height="158" fill="#f7d9d5" stroke="#c0392b" stroke-width="1.6"/>
+  <path d="M172,166 h18 M190,166 l-5,-4 M190,166 l-5,4" stroke="#c0392b" stroke-width="1.3" fill="none"/>
+  <path d="M190,292 h-18 M172,292 l5,-4 M172,292 l5,4" stroke="#c0392b" stroke-width="1.3" fill="none"/>
+  <text x="181" y="234" font-size="10" text-anchor="middle" fill="#c0392b" font-weight="bold">zona</text>
+  <text x="181" y="246" font-size="10" text-anchor="middle" fill="#c0392b" font-weight="bold">panel</text>
+
+  <!-- doubler (propuesto) -->
+  <rect x="162" y="146" width="38" height="166" fill="none" stroke="#1f4e79" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="140" y="240" font-size="10" text-anchor="end" fill="#1f4e79">doubler</text>
+  <text x="140" y="252" font-size="10" text-anchor="end" fill="#1f4e79">6 mm</text>
+  <line x1="144" y1="245" x2="162" y2="232" stroke="#1f4e79" stroke-width="0.9"/>
+
+  <!-- rigidizadores de continuidad (propuestos) -->
+  <rect x="166" y="142" width="30" height="8" fill="#e8f0e8" stroke="#1f6f4a" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <rect x="166" y="308" width="30" height="8" fill="#e8f0e8" stroke="#1f6f4a" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="140" y="120" font-size="10" text-anchor="end" fill="#1f6f4a">rigidizadores</text>
+  <text x="140" y="132" font-size="10" text-anchor="end" fill="#1f6f4a">2 PL 100×12</text>
+  <line x1="144" y1="136" x2="164" y2="146" stroke="#1f6f4a" stroke-width="0.9"/>
+
+  <!-- ================= viga ================= -->
+  <rect x="212" y="150" width="250" height="8" fill="#9bb0c6" stroke="#333" stroke-width="1"/>
+  <rect x="212" y="300" width="250" height="8" fill="#9bb0c6" stroke="#333" stroke-width="1"/>
+  <rect x="212" y="158" width="250" height="142" fill="#f4f7fa" stroke="#c8d2dd" stroke-width="1"/>
+  <text x="370" y="228" font-size="11" text-anchor="middle" fill="#7a8ba0">viga W460×74</text>
+  <text x="370" y="243" font-size="10.5" text-anchor="middle" fill="#7a8ba0">M_u = 32 tonf·m</text>
+
+  <!-- placas de ala -->
+  <rect x="212" y="141" width="150" height="9" fill="#eef2f7" stroke="#333" stroke-width="1.5"/>
+  <rect x="212" y="308" width="150" height="9" fill="#eef2f7" stroke="#333" stroke-width="1.5"/>
+  <text x="300" y="133" font-size="10.5" text-anchor="middle" fill="#333" font-weight="bold">placa de ala PL 200×20 (A36)</text>
+  <!-- CJP -->
+  <path d="M212,141 l-7,0 0,9 z" fill="#c07a00"/>
+  <path d="M212,308 l-7,0 0,9 z" fill="#c07a00"/>
+  <text x="236" y="336" font-size="9.5" fill="#c07a00">CJP a la columna</text>
+
+  <!-- pernos -->
+  <g fill="#333">
+    <circle cx="248" cy="146" r="5"/><circle cx="276" cy="146" r="5"/><circle cx="304" cy="146" r="5"/>
+    <circle cx="248" cy="312" r="5"/><circle cx="276" cy="312" r="5"/><circle cx="304" cy="312" r="5"/>
+  </g>
+  <text x="330" y="118" font-size="10" fill="#333">6 Ø24 A490-N por placa</text>
+
+  <!-- plancha de corte -->
+  <rect x="212" y="205" width="46" height="50" fill="#eef2f7" stroke="#666" stroke-width="1.1"/>
+  <text x="268" y="270" font-size="9.5" fill="#666">plancha de corte (V_u = 15 tonf)</text>
+
+  <!-- fuerzas -->
+  <line x1="380" y1="145" x2="480" y2="145" stroke="#c0392b" stroke-width="2.6" marker-end="url(#bf-t)"/>
+  <text x="430" y="138" font-size="11.5" text-anchor="middle" fill="#c0392b" font-weight="bold">F_f = 67.1 tonf</text>
+  <line x1="380" y1="313" x2="280" y2="313" stroke="#1f6f4a" stroke-width="2.6" marker-end="url(#bf-g)"/>
+  <text x="400" y="330" font-size="11.5" text-anchor="middle" fill="#1f6f4a" font-weight="bold">C = 67.1 tonf</text>
+
+  <!-- corte de columna -->
+  <line x1="181" y1="110" x2="181" y2="72" stroke="#555" stroke-width="1.6" marker-end="url(#bf-a)"/>
+  <text x="192" y="82" font-size="10" fill="#555">V_col = 9.1 tonf</text>
+
+  <!-- ================= leyenda ================= -->
+  <rect x="500" y="52" width="322" height="196" rx="6" fill="#fdf3f2" stroke="#c0392b"/>
+  <text x="514" y="72" font-size="11.5" fill="#c0392b" font-weight="bold">Lo que falla está en la columna</text>
+  <text x="514" y="94" font-size="10.5" fill="#333">Flexión local del ala (J10-1) 47.0 tonf</text>
+  <text x="800" y="94" font-size="10.5" fill="#c0392b" text-anchor="end" font-weight="bold">1.43 ✗</text>
+  <text x="514" y="113" font-size="10.5" fill="#333">Fluencia local del alma (J10-2) 60.1</text>
+  <text x="800" y="113" font-size="10.5" fill="#c0392b" text-anchor="end" font-weight="bold">1.12 ✗</text>
+  <text x="514" y="132" font-size="10.5" fill="#333">Zona panel (J10-10) 54.4</text>
+  <text x="800" y="132" font-size="10.5" fill="#c0392b" text-anchor="end" font-weight="bold">1.07 ✗</text>
+  <text x="514" y="151" font-size="10.5" fill="#333">Aplastamiento del alma (J10-4) 68.4</text>
+  <text x="800" y="151" font-size="10.5" fill="#555" text-anchor="end">0.98</text>
+  <line x1="514" y1="162" x2="808" y2="162" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 3"/>
+  <text x="514" y="180" font-size="10.5" fill="#333">La conexión y la viga (pernos, placas, F13.1):</text>
+  <text x="800" y="180" font-size="10.5" fill="#1f6f4a" text-anchor="end" font-weight="bold">≤ 0.76 ✓</text>
+  <text x="514" y="204" font-size="10" fill="#666">Demanda del panel: F_f − V_col = 57.9 tonf.</text>
+  <text x="514" y="219" font-size="10" fill="#666">Sin el término axial (1.4 − P_r/P_c) el uso sería</text>
+  <text x="514" y="234" font-size="10" fill="#666">1.00 exacto: el P_u de gravedad se lleva ese 6 %.</text>
+
+  <rect x="500" y="262" width="322" height="106" rx="6" fill="#f8fafc" stroke="#9bb0c6"/>
+  <text x="514" y="282" font-size="11" fill="#222" font-weight="bold">La solución no está en la conexión</text>
+  <text x="514" y="302" font-size="10" fill="#333">2 rigidizadores de continuidad PL 100×12</text>
+  <text x="514" y="317" font-size="10" fill="#333">(A_st requerida 8.8 cm², provista 24.0) →  J10-1, J10-2</text>
+  <text x="514" y="336" font-size="10" fill="#333">Doubler de 6 mm: zona panel 1.07 → 0.66</text>
+  <text x="514" y="356" font-size="10" fill="#888">…o una columna con ala y alma más gruesas.</text>
+
+  <text x="500" y="440" font-size="9.5" fill="#888">Rigidizadores y doubler se dibujan en línea punteada: son el refuerzo propuesto, no parte de la conexión verificada.</text>
+</svg>
