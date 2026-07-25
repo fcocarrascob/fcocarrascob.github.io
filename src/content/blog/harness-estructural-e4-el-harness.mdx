@@ -1,0 +1,110 @@
+---
+title: "Harness estructural (4): un solo punto de entrada que decide calcular o responder"
+description: "Las herramientas calculan con cita; el RAG responde con cita. La etapa 4 las une en un harness local que, ante cualquier consulta, decide solo si toca verificar (y calcula, y se repara si la herramienta se niega) o si toca responder sobre la norma (y va al RAG). El bucle de agente sobre 8 GB, con dos comportamientos que solo se ven cuando lo enfrentás a un modelo real: el rechazo de una herramienta como señal de reparación, y una alucinación que resultó útil."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "agentes", "function calling", "RAG", "Ollama", "Llama 3.1", "harness"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 4
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Juntar las dos mitades
+
+Hasta acá tengo dos capacidades sueltas: [herramientas que
+calculan](/blog/harness-estructural-e1-tools-que-calculan/) una verificación con su cita, y un
+[RAG que responde](/blog/harness-estructural-e3-rag-con-cita/) preguntas normativas con su cita.
+Pero un usuario no quiere elegir cuál invocar. Escribe lo que necesita —*"verifica esta zapata"* o
+*"¿qué φ uso acá?"*— y el asistente tiene que **decidir solo** qué corresponde. Esa decisión, más
+el bucle que la ejecuta, es el harness: la etapa 4.
+
+## Cómo decide
+
+La heurística resultó más simple de lo que temía. Al modelo se le ofrecen las herramientas; **si
+elige una, es una verificación; si no elige ninguna, es una pregunta** y va al RAG.
+
+<Figure
+  src="/harness-estructural-e4/router.svg"
+  alt="Diagrama del harness: la consulta en lenguaje natural entra a un router. El modelo, con las herramientas disponibles, decide. Si llama a una herramienta válida, va por la vía de verificación: ejecuta el cálculo en Python, y si la herramienta se niega, el error vuelve al modelo para que corrija y reintente; luego narra el resultado con sus citas. Si no llama a ninguna herramienta (o inventa una que no existe), va por la vía de consulta normativa: el RAG responde con cita o se niega. Ambas vías terminan en una respuesta con procedencia."
+  caption="Un solo punto de entrada. Que el modelo elija o no una herramienta es la señal que enruta: verificación (calcula, se repara, narra) o consulta normativa (RAG). En las dos vías, la respuesta llega con su cita."
+/>
+
+## El rechazo como señal de reparación
+
+En la vía de verificación pasa algo que me gusta especialmente. Recordemos que las herramientas
+**se niegan** cuando la norma no aplica, con un mensaje que dice *qué corresponde*. En el harness,
+ese rechazo no es un callejón sin salida: **se le devuelve al modelo para que corrija y reintente**.
+
+El caso concreto salió de la [etapa 2](/blog/harness-estructural-e2-elegir-motor/): los modelos a
+veces pasan el módulo de elasticidad `E` en las unidades equivocadas. Endurecí las herramientas de
+acero para que detecten una `E` que "parece estar en MPa" y se nieguen con un mensaje claro. En el
+bucle, ese mensaje vuelve al modelo —*"E parece estar en MPa; omítela o pásala en kgf/cm²"*—, el
+modelo corrige, y la segunda llamada calcula. El rechazo de E1 se volvió el mecanismo de
+autocorrección de E4.
+
+## Una alucinación que resultó útil
+
+Acá está la clase de cosa que solo aparece cuando dejás de testear con simulacros y enfrentás el
+sistema a un modelo real. Le pregunté al harness, en lenguaje natural, *"¿qué φ corresponde a una
+sección controlada por tracción?"*. Esperaba que **no** llamara a ninguna herramienta (no hay nada
+que verificar) y que la consulta cayera al RAG. En cambio, Llama se inventó una herramienta:
+
+```
+struct_llm.bench.dispatch.ToolDesconocida: 'phi_secciones_controladas'
+```
+
+Llamó a `phi_secciones_controladas`, que no existe. Mi primer instinto fue "hay que enseñarle a no
+alucinar herramientas". Pero la lectura correcta es otra: **una herramienta inexistente no es una
+verificación válida** —es el modelo tanteando—, así que el router la trata como si no hubiera
+llamado a nada, y deriva la consulta al RAG. La alucinación, en vez de romper el sistema, activa
+exactamente la vía correcta.
+
+<Note type="tip" title="Robustez, no perfección">
+El harness no necesita que el modelo sea perfecto; necesita **degradar bien** cuando el modelo se
+equivoca. Una herramienta que se niega con instrucciones, un router que trata una alucinación como
+"no era verificación", una ejecución que devuelve un error en vez de reventar: son barandas. El
+modelo puede tropezar, y el sistema lo encauza.
+</Note>
+
+## Funcionando, las dos vías
+
+Una verificación —los números salen de la herramienta, y el modelo los narra citándolos—:
+
+```
+> verifica una zapata de 2.20 m bajo columna 40×40, D=60, L=30, G25
+
+[verificación] herramienta: zapata_aislada  ✓
+  Corte en una dirección   uso=0.856  24.0 / 28.05 tonf   · ACI 318-25 Tabla 22.5.5.1 Ec. (c)
+  Punzonamiento            uso=0.609  101.7 / 167.0 tonf  · ACI 318-25 Tabla 22.6.5.2 Ec. (a)
+  ...
+  gobierna: Refuerzo mínimo · uso máximo: 0.951
+```
+
+Y una consulta normativa —la misma interfaz, pero enrutada al RAG—:
+
+```
+> ¿qué factor φ corresponde a una sección controlada por tracción?
+
+[consulta normativa · RAG]
+Para una sección controlada por tracción, el factor de reducción φ es 0.90.
+
+citas (del corpus, verificables):
+  · ACI 318-25 §21.2.1
+```
+
+Misma caja de texto, dos comportamientos, y en ambos cada número o afirmación llega con su
+procedencia. Ese es el harness: no un modelo más grande, sino un **andamiaje** que pone al modelo a
+hacer lo que sabe (entender, elegir, narrar) y le saca de las manos lo que no debe tocar (los
+números, las citas).
+
+## Lo que viene
+
+El asistente ya responde y verifica. El siguiente entregable tangible es el **documento**: que una
+verificación se convierta en una memoria de cálculo en Word, con cada número trazable —y sin que el
+modelo escriba ninguno—. Esa es la etapa 6.
+
+*El harness, el router y el bucle de reparación viven en el repositorio del proyecto. Las etapas
+anteriores están enlazadas arriba.*

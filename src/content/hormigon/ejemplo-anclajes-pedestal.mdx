@@ -47,7 +47,7 @@ vuelca hacia un lado) y un corte horizontal en la base.
 
 <Figure
   src="/ejemplos/anclajes-pedestal.svg"
-  alt="Panel izquierdo: planta de un pedestal de 100×100 cm con 4 pernos φ1″ en patrón 50×50 (distancia al borde 25 cm), la fila traccionada de barlovento marcada en rojo con T=4 tonf cada uno, el corte V=3.5 tonf hacia el borde x+, y una sección con el cono de arrancamiento a 35° y el embebido h_ef=40 cm. Panel derecho: diagrama de interacción tracción–corte con la región segura bajo la recta N/φN + V/φV = 1.2 y el punto de diseño (0.58, 0.56) cuya suma 1.14 queda dentro, más la lista de los seis modos verificados con sus usos: breakout tracción 0.58, pullout 0.38, side-face blowout no aplica, breakout de corte 0.56, pryout 0.11 e interacción 1.14 (gobierna)."
+  alt="Panel izquierdo: planta de un pedestal de 100×100 cm con 4 pernos φ1″ en patrón 50×50 (distancia al borde 25 cm), la fila traccionada de barlovento marcada en rojo con T=4 tonf cada uno, el corte V=3.5 tonf hacia el borde x+, y una sección con el cono de arrancamiento a 35° y el embebido h_ef=40 cm. Panel derecho: diagrama de interacción tracción–corte con la región segura bajo la curva (N/φN)^(5/3) + (V/φV)^(5/3) = 1 y el punto de diseño (0.58, 0.56) que da 0.78 y queda dentro, más la lista de los seis modos verificados con sus usos: breakout tracción 0.58, pullout 0.38, side-face blowout no aplica, breakout de corte 0.56, pryout 0.11 e interacción 0.78 (gobierna)."
   caption="Los modos del hormigón (φ = 0.70): en tracción gobierna el cono de arrancamiento; en corte, el breakout hacia el borde; y la combinación de ambos, la interacción N–V, es la que finalmente manda."
 />
 
@@ -155,19 +155,32 @@ Uso 0.11: lejísimos de gobernar (el pedestal es ancho, sin borde trasero cercan
 
 ## 3. Interacción tracción–corte (17.8.3)
 
-Acá está la moraleja. Ninguno de los modos individuales llega a 0.6, pero **tracción y corte
-solicitan el mismo hormigón a la vez**. Como ambos superan el 20 % de su capacidad, se exige
-(17.8.3):
+Ninguno de los modos individuales llega a 0.6, pero **tracción y corte solicitan el mismo
+hormigón a la vez**. ACI 318-25 lo verifica con una ley de potencia $5/3$ sobre los modos
+de hormigón del grupo (Ec. 17.8.3), tomando en cada término el menor de su familia:
 
 <Equation label="Ec. 17.8.3">
 $$
-\frac{N_u}{\phi N_n} + \frac{V_u}{\phi V_n} = 0.58 + 0.56 = 1.14 \;\le\; 1.2
+\left(\frac{N_{ua,g}}{\phi N_{n,cg}}\right)^{5/3} + \left(\frac{V_{ua,g}}{\phi V_{n,cg}}\right)^{5/3}
+= 0.58^{5/3} + 0.56^{5/3} = 0.40 + 0.38 = 0.78 \;\le\; 1
 $$
 </Equation>
 
-Pasa, pero **con poco margen (uso 0.95 del límite 1.2)**: es la verificación que realmente
-manda el diseño. Si el momento o el corte subieran un poco, la interacción se pasaría de 1.2
-mucho antes que cualquier modo individual llegara a 1.0.
+Pasa con **uso 0.78**. Sigue siendo la verificación más exigente del conjunto —más que
+cualquier modo individual— pero con margen real: la interacción se agota recién cuando los
+usos individuales rondan 0.68 cada uno.
+
+<Note type="warning" title="Con la regla anterior este era el punto crítico">
+Bajo ACI 318-19 la interacción era lineal con límite 1.2, y este mismo caso daba
+$0.58 + 0.56 = 1.14$, **uso 0.95** — casi al límite, y la conclusión del ejemplo era que
+un escalón más de carga lo dejaba fuera. ACI 318-25 reemplazó esa regla trilineal por la
+ley $5/3$ separada por modo de falla, que R17.8.1 describe como *"un enfoque menos
+conservador"*. El diseño no cambió; **cambió el criterio con que se lo mide**.
+</Note>
+
+Además, la **Sec. 17.8.4** exige verificar la interacción sobre la resistencia del **acero**
+del anclaje más solicitado: con usos de $\approx 0.26$ en tracción y $\approx 0.44$ en corte,
+$0.26^{5/3} + 0.44^{5/3} = 0.11 + 0.26 = 0.37$ — holgado.
 
 <Note type="warning" title="Si no diera: armadura de anclaje">
 Los usos del hormigón (0.58, 0.56) son mayores que los del acero del perno (≈ 0.26 en
@@ -175,8 +188,9 @@ tracción, ≈ 0.44 en corte): el grupo está **gobernado por modos frágiles**.
 prefiere que ceda el acero dúctil—. La salida, y el detalle habitual en pedestales
 industriales chilenos, es la **armadura de anclaje** (§17.5.2.1): estribos y barras verticales
 que cosen el cono, permiten **ignorar el breakout** y llevan la falla al acero. Con la
-demanda de este ejemplo el hormigón alcanza, pero apenas; un escalón más de carga obliga a
-esa armadura (ver §4 de la nota teórica).
+demanda de este ejemplo el hormigón alcanza con margen (interacción 0.78); con más carga —o
+si se exige comportamiento dúctil por NCh2369— corresponde esa armadura (ver §4 de la nota
+teórica).
 </Note>
 
 ## Resumen: demanda vs. capacidad
@@ -188,11 +202,12 @@ esa armadura (ver §4 de la nota teórica).
 | Desprendimiento lateral | Ec. 17.6.4 | — | no aplica ($c_a > 0.4h_{ef}$) | — |
 | Breakout de corte | Ec. 17.7.2 | $V_u = 3.5$ tonf | $\phi V_{cbg} = 6.2$ | 0.56 |
 | Pryout | Ec. 17.7.3 | $V_u = 3.5$ tonf | $\phi V_{cpg} = 32.4$ | 0.11 |
-| **Interacción N–V** | Ec. 17.8.3 | $0.58 + 0.56$ | $\le 1.2$ | **0.95** |
+| **Interacción N–V (hormigón)** | Ec. 17.8.3 | $0.58^{5/3} + 0.56^{5/3}$ | $\le 1$ | **0.78** |
+| Interacción N–V (acero) | Ec. 17.8.4 | $0.26^{5/3} + 0.44^{5/3}$ | $\le 1$ | 0.37 |
 
 **Solución:** el grupo de 4 φ1″ con $h_{ef} = 40$ cm en el pedestal $100 \times 100$ verifica
 todos los modos del hormigón, con la **interacción tracción–corte** como verificación
-gobernante (1.14 de 1.2). El pedestal ancho es el que hace pasar el breakout y el pryout —lo
+gobernante (uso 0.78). El pedestal ancho es el que hace pasar el breakout y el pryout —lo
 dimensiona el anclaje, no la columna—; para una base sísmica con más demanda, el paso siguiente
 es la armadura de anclaje que lleva la falla del hormigón frágil al acero dúctil.
 

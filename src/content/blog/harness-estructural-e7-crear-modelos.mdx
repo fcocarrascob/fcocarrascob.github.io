@@ -1,0 +1,149 @@
+---
+title: "Harness estructural (7): crear modelos desde lenguaje natural — y no creerles"
+description: "La última flecha del harness se invierte: además de leer modelos de SAP2000, ahora los crea y los modifica. Pero escribir es más peligroso que leer, así que la etapa entera es una colección de desconfianzas ejecutables: la geometría la arma Python desde parámetros (el LLM nunca escribe una coordenada), todo modelo creado o modificado se corre y se contrasta contra la estática antes de devolverse, el modelo del usuario es intocable, y la escritura vive detrás de su propio interruptor. Con los hallazgos del camino: el motor trunca números al transcribir —y una guarda determinista lo denuncia—, emite listas y números como strings —y una coerción tipada por firma los repara—, y dos perfiles que la verificación rechazó por razones que valió la pena entender."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "SAP2000", "COM", "round-trip", "trazabilidad", "harness", "agentes", "seguridad"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 7
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Invertir la flecha
+
+En la etapa anterior el harness aprendió a **leer** un modelo de SAP2000: fuerzas, secciones,
+reacciones, todo con procedencia. Esta etapa invierte la flecha: *"crea un pórtico plano de 2
+vanos y 2 pisos, luz de 6 m, altura de piso 3 m, columnas W12X50, vigas W14X30, muerta 2 tonf/m
+y viva 1 tonf/m"* — y treinta segundos después hay un `.sdb` construido, analizado y contrastado.
+
+Crear es más peligroso que leer, por dos razones distintas. La primera es obvia: escribir puede
+destruir —el modelo del usuario que estaba abierto, trabajo sin guardar—. La segunda es más
+sutil: un modelo mal construido *parece* un modelo. Tiene nudos, barras, cargas; corre; da
+números. Si la viga quedó apoyada donde no era o la carga entró con el signo cambiado, nada en
+la superficie lo delata. Toda la etapa está diseñada alrededor de esas dos desconfianzas.
+
+## El LLM no escribe coordenadas
+
+La tentación con un puente COM y un modelo de lenguaje es dejarlo escribir scripts: *"generá las
+llamadas API para este pórtico"*. Funciona en demos y es exactamente lo que este proyecto no
+hace, porque un script generado es texto plausible con números adentro — coordenadas, signos,
+restricciones — y ya sabemos cómo termina eso.
+
+En su lugar, **construcción paramétrica**: el LLM elige la herramienta y pasa parámetros de alto
+nivel (luces, alturas, cantidad de vanos y pisos, perfiles, cargas). La grilla de nudos, las
+columnas continuas, las restricciones de base, los patrones de carga y el combo LRFD los arma una
+función de Python, determinista y testeada, con las llamadas COM ya verificadas en la biblioteca
+de scripts de Skills_SAP. Los perfiles no se definen a mano: se importan del catálogo AISC
+instalado con SAP2000, así el W12X50 del modelo es el W12X50 de la tabla.
+
+<Figure
+  src="/harness-estructural-e7/roundtrip.svg"
+  alt="Diagrama del ciclo completo. El usuario pide en lenguaje natural; el LLM extrae parámetros de alto nivel; el constructor en Python arma la geometría, patrones y combos en SAP2000; el modelo se analiza; el contraste estático compara el resultado contra la solución cerrada (momento wL²/8 o equilibrio de reacciones) y se niega si no coincide; recién entonces el lector y las herramientas de verificación pueden operar sobre el modelo creado, hasta la memoria Word. Dos guardas marcadas: la auditoría de transcripción sobre los parámetros, y la restauración del modelo del usuario al final."
+  caption="El round-trip de E7: del pedido al modelo, del modelo al análisis, del análisis de vuelta a la verificación y la memoria. El LLM solo aporta parámetros — y hasta esos se auditan."
+/>
+
+## No creerle al constructor
+
+Que la geometría la arme Python no la hace correcta: un bug del constructor produce modelos
+malos con toda la disciplina del mundo. Por eso **ningún modelo se devuelve sin contrastarse
+contra una solución que se conoce de antemano**:
+
+- La viga simplemente apoyada se corre y su momento máximo bajo la carga muerta se compara con
+  **wL²/8**. En vivo: 12.000000000000002 contra 12.0.
+- El pórtico se corre y se verifica el **equilibrio global**: la suma de reacciones verticales
+  debe ser exactamente la carga aplicada (w · luz · vanos · pisos) y la horizontal, cero. En
+  vivo: 48.0 contra 48, delta 0.0 %.
+
+Si el contraste no cierra dentro del 0.1 %, la herramienta **se niega y pide no usar el modelo**.
+Es el mismo principio de las etapas anteriores — negarse antes que entregar un número que el
+llamador no puede saber que está mal — aplicado ahora a un modelo entero.
+
+<Note type="warning" title="El modelo del usuario es intocable">
+Crear un modelo nuevo cierra el que estaba abierto. Antes de tocar nada, el constructor guarda el
+modelo del usuario a su ruta y esa ruta viaja en el resultado (`modelo_previo`) para restaurarlo
+con una herramienta dedicada. Si el modelo abierto no tiene ruta —Untitled, trabajo sin
+guardar— el constructor **se niega**: no existe el caso en que trabajo ajeno se descarte en
+silencio. Y la escritura completa vive detrás de su propio interruptor (`--sap-rw`): el harness
+con `--sap` a secas sigue siendo de solo lectura.
+</Note>
+
+## El round-trip, en vivo
+
+La secuencia completa con el motor local, sin tocar el teclado de SAP2000: el pedido en lenguaje
+natural crea el pórtico (transcripción perfecta de los nueve parámetros, equilibrio exacto);
+el segundo pedido — *"verifica a compresión la barra C0_1 del modelo con el combo LRFD"* — usa
+las herramientas de la etapa anterior **sobre el modelo recién creado**: lee Pu = 23.77 tonf del
+análisis, verifica con AISC 360-22 (φPn = 228.8 tonf, uso 0.104, gobierna pandeo por flexión) y
+narra con cada número citado. De ahí a la memoria Word es el camino ya pavimentado en E6. Al
+final, el modelo original del usuario vuelve a estar abierto, como si nada hubiera pasado.
+
+Lo que sí pasó en el camino — y vale más que el caso feliz — fueron tres sorpresas:
+
+**El motor trunca números.** Pedida una viga con *"carga muerta de 1.5 tonf/m"*, llama3.1 pasó
+`carga_muerta_tonf_m: 1`. Sistemático: a temperatura 0, con dos fraseos distintos. Los
+parámetros del usuario son los únicos números que *tienen* que pasar por el LLM — es quien arma
+la llamada — y ahí está el riesgo residual del diseño. La respuesta no fue pelear con el prompt:
+es una **guarda determinista** que compara los números de la consulta contra los argumentos de la
+llamada, y todo número que el usuario escribió y no aparece en ningún argumento genera un aviso
+explícito: *"el valor 1.5 de la consulta no aparece en ningún argumento — posible error de
+transcripción"*. No puede corregirlo (no sabe a qué argumento iba); lo **denuncia**, que es lo
+que un revisor necesita.
+
+**Un rechazo genuino.** La primera columna del pórtico de prueba era W12X26, y la verificación
+se negó: alma esbelta en compresión pura (h/tw = 49.7 > λr = 35.9 para acero grado 50), y el
+área efectiva de la Sección E7 de AISC no está implementada. Correcto: el W12X26 *es* esbelto en
+compresión y la herramienta lo dice en vez de calcular de más.
+
+**Un rechazo conservador.** El reemplazo obvio, W12X40, también fue rechazado — pero por otra
+razón: la esbeltez del alma se deriva de las dimensiones del perfil como (d−2t_f)/t_w, que no
+descuenta los filetes de laminación. Eso da 37.0 contra el h/tw real de tabla, 33.6, que sí
+pasa. Es el costo documentado de derivar propiedades desde el modelo: conservador, nunca
+inseguro, y avisado en cada resultado. El pórtico del demo terminó con W12X50, que pasa con
+holgura real.
+
+## Modificar, con el mismo peaje
+
+Crear no alcanza: el flujo real es iterativo — *"cambia la viga a W18X50"*, *"sube la muerta a
+3 tonf/m"* —. La modificación llegó con dos reglas propias:
+
+**Solo modelos propios.** Las herramientas de modificación se niegan ante cualquier modelo que
+el harness no haya creado. El modelo real del usuario — el de la nave industrial con el que se
+cerró la etapa anterior — es de **solo lectura**, y eso no es una convención: está probado con
+un test que intenta modificarlo y espera el rechazo.
+
+**El contraste se recomputa desde el modelo.** Después de cada modificación, el modelo se
+re-corre y el equilibrio se verifica de nuevo — pero la carga aplicada no se toma de lo que se
+pidió, sino que se **reintegra leyendo las cargas realmente asignadas** en el modelo. Así el
+peaje sobrevive a cualquier cambio: al cambiar la sección de la viga, el equilibrio cerró en
+12.0/12.0; al subir la carga muerta a 3 tonf/m, la carga recomputada pasó a 18 tonf y el
+equilibrio cerró en 18.0/18.0. La secuencia completa, en vivo y por lenguaje natural: crear el
+pórtico, cambiar la viga a W18X50, subir la carga, y **re-verificar a flexión con el momento
+leído del modelo ya modificado** (Mu = 9.64 tonf·m, uso 0.184, con su cita AISC).
+
+En esa secuencia apareció el último endurecimiento de la serie: el motor emitió la lista de
+barras como *string* (`"['V1_1']"`) y el número como texto (`"3"`). La reparación no fue de
+prompt sino de tipo, y con una regla estricta: la **coerción se guía por la firma** de la
+herramienta — un string numérico se convierte solo si el parámetro espera un número, un string
+con forma de lista se parsea — y un nombre de barra como `"8"`, que es string en la firma,
+jamás se toca. La misma familia de defensas que el `null` que significa "no me lo dieron":
+arreglar la codificación es legítimo; adivinar el contenido, no.
+
+## Dónde queda la serie
+
+El harness hace ahora el ciclo completo en local: **entiende el pedido, crea el modelo, lo
+analiza, lo modifica, lo lee, verifica contra la norma con cita, y documenta en Word** — y en
+cada eslabón hay una guarda que prefiere negarse antes que dejar pasar un número sin respaldo.
+Las siete etapas del roadmap técnico están cerradas. Queda tela para rato — más geometrías
+paramétricas, y el catálogo de verificaciones que es otra pista entera — pero la arquitectura
+ya no tiene huecos: las dos flechas, leer y escribir, están tendidas, y las dos pasan por el
+mismo peaje.
+
+La lección que esta etapa agrega a la serie es quizás la más transferible: cuando un agente
+*produce* artefactos (un modelo, no una respuesta), la pregunta no es si el resultado se ve
+bien, sino **contra qué solución conocida se contrasta antes de aceptarlo**. wL²/8 tiene 200
+años y sigue siendo el mejor test de integración que existe.
+
+*El constructor, sus guardas y sus tests viven en el repositorio del proyecto.*

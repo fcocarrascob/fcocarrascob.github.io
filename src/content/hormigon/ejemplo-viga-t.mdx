@@ -1,0 +1,215 @@
+---
+title: "Ejemplo — Viga T: ancho efectivo y los dos signos del momento (ACI 318-25)"
+description: "Verificación a flexión de una viga interior de piso que trabaja en T con la losa: el ancho efectivo de la Tabla 6.3.2.1, y la misma sección comportándose como dos vigas distintas según el signo del momento. En positivo el ala ancha deja el bloque comprimido en 1.7 cm y la 'viga T' se calcula como rectangular, con ductilidad enorme; en negativo el bloque se hunde 15 cm en el alma angosta, el mismo momento pide más acero, la ductilidad cae 12 veces y agregar barras de más castiga el φ. La T con eje neutro bajo el ala pediría 105 cm² de acero: en pisos, no existe."
+pubDate: 2026-07-25
+tags: ["ejemplo", "hormigón", "vigas", "viga T", "ancho efectivo", "flexión", "ductilidad", "aci318"]
+subsection: "ejemplos"
+chapter: "Cap. 9 — Vigas"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Ninguna viga de piso trabaja sola: se hormigona monolítica con la losa, y en momento positivo
+la losa comprime *con* ella —la sección real es una **T**, no el rectángulo del plano—. La
+[nota del Cap. 9](/hormigon/aci318-25-cap9-vigas) cuenta la flexión y su jerarquía dúctil; en la
+[viga rectangular](/hormigon/ejemplo-viga-flexion-corte) ya bajamos a números el caso base. Acá
+agregamos la losa —con la referencia normativa[^aci] de cada paso— y aparece el fenómeno que
+hace interesante a la T: como el ala está **arriba**, ayuda solo cuando la compresión está
+arriba. La misma sección es **dos vigas distintas según el signo del momento**: anchísima y
+dúctil en el vano, angosta y tacaña en el apoyo.
+
+## El caso
+
+Viga interior de un piso de bodega (sobrecarga alta), continua, hormigonada con la losa. Los
+momentos vienen de la envolvente del análisis del pórtico. La verificamos a flexión en las dos
+secciones críticas: centro del vano (momento positivo) y cara del apoyo (momento negativo). El
+corte se verifica igual que en la [viga rectangular](/hormigon/ejemplo-viga-flexion-corte) —el
+ala no juega en el corte— y no se repite acá.
+
+| Dato | Valor |
+|---|---|
+| Alma | $b_w = 30$ cm, $h = 60$ cm, $d = 54$ cm (una capa) |
+| Losa | $h_f = 12$ cm; vigas cada $2.5$ m ($s_w = 220$ cm libres) |
+| Luz | $L = 6.0$ m entre ejes; $\ell_n = 5.7$ m libre |
+| Hormigón | $f'_c = 250$ kgf/cm² ($\beta_1 = 0.85$) |
+| Acero | $f_y = 4200$ kgf/cm², $E_s = 2.1\times10^6$ kgf/cm² ($\varepsilon_{ty} = 0.002$) |
+| Momento positivo (vano) | $M_u^+ = 25$ tonf·m (dato del análisis) — armadura propuesta: 4Ø22 ($15.20$ cm²) |
+| Momento negativo (apoyo) | $M_u^- = 35$ tonf·m (dato del análisis) — armadura propuesta: 6Ø22 ($22.81$ cm²) |
+
+<Figure
+  src="/ejemplos/viga-t-seccion.svg"
+  alt="Dos cortes de la misma viga T de alma 30×60 con losa de 12 cm y ancho efectivo 172.5 cm. Izquierda, momento positivo: el bloque de compresión es una franja de a = 1.7 cm en la parte superior del ala ancha, el eje neutro c = 2.1 cm queda dentro del ala y la deformación del acero inferior llega a 0.076. Derecha, momento negativo: la compresión ocupa el fondo del alma angosta con a = 15.0 cm, el eje neutro baja a c = 17.7 cm y la deformación del acero superior es 0.0062, apenas sobre el límite de 0.005; el acero de 6Ø22 se distribuye arriba en una franja de 57 cm (el límite ℓ_n/10 de la Sec. 24.3.4)."
+  caption="La misma sección, los dos signos. En positivo (izquierda) el ala de 172.5 cm deja el bloque comprimido en 1.7 cm y la falla es dúctil con enorme margen (ε_t = 0.076). En negativo (derecha) la compresión solo dispone del alma de 30 cm: el bloque se hunde 15 cm, y la ductilidad se estrecha 12 veces (ε_t = 0.0062)."
+/>
+
+<Note type="info" title="Por qué este caso aísla el efecto del ala">
+Materiales, luz y alma son los mismos de una viga rectangular corriente; lo único nuevo es la
+losa. Así, cada diferencia entre el vano y el apoyo —el tamaño del bloque comprimido, el acero
+requerido, la ductilidad, el $\phi$— es atribuible a una sola causa: **dónde está el ala
+respecto de la compresión**.
+</Note>
+
+## 1. Cuánta losa trabaja: el ancho efectivo
+
+La compresión no se reparte uniforme por toda la losa: se concentra cerca del alma y decae con
+la distancia (*shear lag*). La norma lo resuelve con un ancho efectivo que sí se puede suponer
+uniformemente comprimido — para viga interior, un vuelo a cada lado (Tabla 6.3.2.1):
+
+<Equation label="Tabla 6.3.2.1">
+$$
+\text{vuelo} \le \min\left(8h_f;\ \tfrac{s_w}{2};\ \tfrac{\ell_n}{8}\right)
+= \min\left(96;\ 110;\ 71.25\right) = 71.25 \ \text{cm}
+\;\Rightarrow\;
+b = 30 + 2 \cdot 71.25 = 172.5 \ \text{cm}
+$$
+</Equation>
+
+Gobierna $\ell_n/8$ (la luz corta no alcanza a "activar" más losa). El ala efectiva es **5.75
+veces** el ancho del alma.
+
+## 2. Momento positivo: el ala ancha lo hace fácil
+
+En el vano la compresión está arriba, donde está el ala. Con 4Ø22 ($A_s = 15.20$ cm²) y el
+bloque rectangular repartido en $b = 172.5$ cm:
+
+<Equation label="Sec. 22.2.2.4.1">
+$$
+a = \frac{A_s f_y}{0.85 f'_c\, b} = \frac{15.20 \cdot 4200}{0.85 \cdot 250 \cdot 172.5}
+= 1.74 \ \text{cm} \;\le\; h_f = 12 \ \text{cm}
+$$
+</Equation>
+
+El bloque comprimido es una **lámina de 1.7 cm** en la cara superior del ala: ni se acerca al
+fondo de la losa. Y esa es la regla práctica que este chequeo formaliza: si $a \le h_f$, la
+zona comprimida es un rectángulo de ancho $b$ y **la viga T se calcula como rectangular** —la
+forma de T queda abajo, en la zona traccionada, donde el hormigón no cuenta—.
+
+<Equation label="Ec. 9.3.2.1 ($\phi = 0.90$)">
+$$
+\phi M_n = 0.90 \cdot 15.20 \cdot 4200 \left(54 - \tfrac{1.74}{2}\right)
+= 30.5 \ \text{tonf·m} \;\ge\; M_u^+ = 25 \quad (\text{uso } 0.82)
+$$
+</Equation>
+
+Con $c = a/\beta_1 = 2.05$ cm, la deformación del acero es $\varepsilon_t = 0.003\,(54 -
+2.05)/2.05 = \mathbf{0.076}$ — 15 veces el umbral de 0.005: la sección es controlada por
+tracción con un margen enorme. El ala ancha mantiene el eje neutro pegado arriba, y eso compra
+una falla anunciadísima.
+
+## 3. Momento negativo: la misma viga, sin su ala
+
+En la cara del apoyo el momento se invierte: la tracción va arriba (el acero se reparte en la
+losa) y la compresión **abajo, donde solo hay alma**. El ala sigue ahí, pero del lado
+traccionado: no aporta nada. Con 6Ø22 ($A_s = 22.81$ cm²) en una capa dentro de la losa —el
+mismo $d = 54$ cm que abajo— y $b_w = 30$ cm:
+
+<Equation label="Bloque en el alma">
+$$
+a = \frac{22.81 \cdot 4200}{0.85 \cdot 250 \cdot 30} = 15.0 \ \text{cm}
+\qquad
+c = \frac{a}{\beta_1} = 17.7 \ \text{cm}
+$$
+</Equation>
+
+El bloque ya no es una lámina: se hunde **15 cm** en el alma —un cuarto de la altura—, el brazo
+de palanca se acorta y la ductilidad se estrecha:
+
+<Equation label="Sec. 21.2.2">
+$$
+\varepsilon_t = 0.003\,\frac{54 - 17.7}{17.7} = 0.0062 \;\ge\; 0.005
+\;\Rightarrow\; \phi = 0.90 \ (\text{justo})
+$$
+</Equation>
+
+<Equation label="Ec. 9.3.2.1 (negativo)">
+$$
+\phi M_n = 0.90 \cdot 22.81 \cdot 4200 \left(54 - \tfrac{15.0}{2}\right)
+= 40.1 \ \text{tonf·m} \;\ge\; M_u^- = 35 \quad (\text{uso } 0.87 \ \Leftarrow \text{gobierna})
+$$
+</Equation>
+
+La comparación directa deja el contraste limpio: para resistir el mismo momento de 35 tonf·m,
+la cara positiva necesitaría $17.5$ cm² y la negativa $19.5$ cm² — más acero para lo mismo. Y
+en las secciones tal como quedaron armadas, el alma angosta cobra el resto: un brazo de palanca
+12 % menor ($46.5$ contra $53.1$ cm) y una deformación del acero **12 veces menor** (0.0062
+contra 0.076). Misma sección, mismo momento, dos vigas.
+
+<Note type="warning" title="En el alma angosta, más acero rinde cada vez menos">
+La reacción instintiva ante el uso 0.87 sería subir a 6Ø25 ($29.45$ cm²) "para ganar holgura".
+Pero en el alma angosta cada barra extra empuja el eje neutro hacia abajo: con 6Ø25,
+$c = 22.8$ cm y $\varepsilon_t = 0.0041 < 0.005$ — la sección **sale de controlada por
+tracción** y el $\phi$ cae de 0.90 a 0.825 (Tabla 21.2.2). Resultado: 29 % más acero para
+apenas 13 % más capacidad ($\phi M_n = 45.2$ contra 40.1 tonf·m). Y hay un veredicto peor: la
+Sec. 9.3.3.1 exige a las vigas $\varepsilon_t \ge \varepsilon_{ty} + 0.003 = 0.005$ — con
+0.0041, la alternativa no es que rinda poco: **no está permitida como viga**. La palanca del momento negativo no es
+apilar barras: es más alma ($b_w$, $h$) o acero en compresión.
+</Note>
+
+<Figure
+  src="/ejemplos/viga-t-resumen.svg"
+  alt="Barras de capacidad φM_n contra demanda para las tres alternativas: el vano con 4Ø22 y ala ancha (30.5 tonf·m contra 25, uso 0.82), el apoyo con 6Ø22 y solo alma (40.1 contra 35, uso 0.87, gobierna) y la alternativa de 6Ø25 en el apoyo (45.2 tonf·m, pero con ε_t = 0.0041 el φ cae a 0.825 y la Sec. 9.3.3.1 —que exige ε_t ≥ 0.005 en vigas— la deja fuera de norma: 29 % más acero para solo 13 % más capacidad). Abajo, una caja calcula que llenar el ala exigiría 104.7 cm² de acero (22Ø25, cuantía 6.5 %): la T verdadera no existe en pisos."
+  caption="Las dos caras contra su demanda — gobierna la cara sin ala — y el espejismo de apilar barras en el alma angosta: 6Ø25 agrega 29 % de acero pero solo 13 % de capacidad, porque el φ cae a 0.825 al salir de la zona controlada por tracción."
+/>
+
+Dos detalles normativos cierran la sección crítica. El acero mínimo (Sec. 9.6.1.2):
+$A_{s,\min} = (14/f_y)\, b_w d = 5.4$ cm², holgado en ambas caras. Y el control de fisuración
+del negativo (Sec. 24.3.4): esas 6Ø22 no se amontonan sobre el alma, se **distribuyen sobre
+$\min(b;\ \ell_n/10) = \min(172.5;\ 57) = 57$ cm** — y como el ancho efectivo excede ese
+límite, las porciones exteriores del ala llevan refuerzo adherido adicional. La losa
+traccionada fisura junto a la viga, y el acero tiene que estar donde están las fisuras.
+
+## 4. ¿Y la T "verdadera"? Casi no existe
+
+Todo el cálculo positivo quedó rectangular porque $a \le h_f$. ¿Cuánto acero haría falta para
+que el bloque atravesara el ala y el eje neutro cayera en el alma —la viga T con compresión en
+T, la del capítulo de los libros—?
+
+<Equation label="Ala llena">
+$$
+A_{s,\lim} = \frac{0.85 f'_c\, b\, h_f}{f_y}
+= \frac{0.85 \cdot 250 \cdot 172.5 \cdot 12}{4200} = 104.7 \ \text{cm}^2
+\quad (\approx 22\text{Ø}25,\ \rho_w = 6.5\%)
+$$
+</Equation>
+
+**Siete veces** el acero que llevamos, una cuantía del 6.5 % que ninguna viga de piso admite
+(congestión, mínimos de ductilidad, y mucho antes gobernaría el corte). Por eso el caso "T
+verdadera" es una rareza de vigas de gran luz o secciones prefabricadas con alas cortas — en un
+piso corriente, la viga T en positivo **es** una rectangular ancha, y el chequeo $a \le h_f$ es
+el peaje de una línea que lo confirma.
+
+<Note type="tip" title="El ala vale más por ductilidad y rigidez que por resistencia">
+La comparación honesta: este mismo vano calculado ignorando la losa ($b = b_w = 30$ cm) da
+$\phi M_n = 28.2$ tonf·m — solo **8 % menos** que los 30.5 con ala. ¿Por qué tan poco? Porque
+en positivo el acero es el mismo y el brazo apenas cambia (el bloque pasa de 10 a 1.7 cm). Lo
+que el ala compra de verdad es la **ductilidad** ($\varepsilon_t$ de 0.011 a 0.076) y la
+**rigidez** de la sección — y lo que castiga de verdad es olvidar que en el apoyo no está:
+ahí el bloque sí se hunde, y esa cara es la que gobierna el diseño.
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Demanda | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|:---:|
+| Ancho efectivo | Tabla 6.3.2.1 ($\ell_n/8$ gobierna) | cuánta losa trabaja | — | $b = 172.5$ cm | — |
+| Flexión positiva (4Ø22) | $a = 1.74 \le h_f$ → rectangular | dúctil, $\varepsilon_t = 0.076$ | $25$ tonf·m | $\phi M_n = 30.5$ tonf·m | 0.82 |
+| **Flexión negativa (6Ø22)** | bloque en el alma, $a = 15.0$ cm | **dúctil justo, $\varepsilon_t = 0.0062$ — gobierna** | $\mathbf{35}$ **tonf·m** | $\phi M_n = \mathbf{40.1}$ **tonf·m** | **0.87** |
+| Acero mínimo | Sec. 9.6.1.2 | fisuración frágil | $A_{s,\min} = 5.4$ cm² | $15.2$ / $22.8$ cm² | ✓ |
+| Distribución del negativo | Sec. 24.3.4 | control de fisuración | — | en $57$ cm ($\ell_n/10$) + refuerzo en el ala | ✓ |
+| Corte | como en la [viga rectangular](/hormigon/ejemplo-viga-flexion-corte) | el ala no juega | — | — | — |
+
+**Solución:** viga **30×60 con losa colaborante de 12 cm** ($b = 172.5$ cm efectivos), **4Ø22
+abajo** en el vano (uso 0.82) y **6Ø22 arriba** en el apoyo, distribuidas en los 57 cm que
+permite la Sec. 24.3.4 (uso 0.87, gobierna). En positivo la T se calcula como rectangular —el bloque de 1.7 cm ni se
+acerca al fondo del ala— y en negativo la misma sección trabaja solo con su alma de 30 cm. Es
+la lección de la viga T: **el ala manda solo cuando la compresión está de su lado, y el diseño
+lo gobierna la cara donde no está.**
+
+[^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
+(ACI 318-25) and Commentary*, Farmington Hills, MI, 2025 — Tabla 6.3.2.1 (ancho efectivo),
+Cap. 9 (vigas), Sec. 21.2.2 (secciones controladas por tracción) y Sec. 24.3.4 (distribución
+del refuerzo en alas traccionadas). En Chile el diseño en hormigón armado se rige por la NCh430
+(que adopta el ACI 318 con modificaciones); en vigas sísmicas de marcos especiales se agregan
+además los requisitos de cuantía y detallamiento del Cap. 18, no cubiertos por este ejemplo.

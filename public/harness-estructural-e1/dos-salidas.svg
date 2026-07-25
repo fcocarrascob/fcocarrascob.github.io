@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1c7c3c"/>
+    </marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+    <marker id="k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect width="860" height="420" fill="#ffffff"/>
+  <text x="430" y="28" font-size="16" text-anchor="middle" fill="#222" font-weight="bold">Una herramienta, dos salidas — nunca un número inventado</text>
+
+  <!-- entrada / herramienta -->
+  <rect x="24" y="168" width="158" height="96" rx="6" fill="#f4f7fb" stroke="#8aa6c4"/>
+  <text x="103" y="190" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Herramienta</text>
+  <text x="103" y="211" font-size="10.5" text-anchor="middle" fill="#555">b, h, d, f'c, fy,</text>
+  <text x="103" y="226" font-size="10.5" text-anchor="middle" fill="#555">As, Av, s,</text>
+  <text x="103" y="241" font-size="10.5" text-anchor="middle" fill="#555">Mu, Vu …</text>
+
+  <!-- decisión -->
+  <polygon points="330,150 430,216 330,282 230,216" fill="#eef2f7" stroke="#555" stroke-width="1.4"/>
+  <text x="330" y="206" font-size="10.5" text-anchor="middle" fill="#333">¿los datos caen</text>
+  <text x="330" y="221" font-size="10.5" text-anchor="middle" fill="#333">dentro del alcance</text>
+  <text x="330" y="236" font-size="10.5" text-anchor="middle" fill="#333">de la ecuación?</text>
+  <line x1="182" y1="216" x2="226" y2="216" stroke="#555" stroke-width="1.4" marker-end="url(#k)"/>
+
+  <!-- rama SÍ (verde) -->
+  <path d="M330,150 L330,104 L520,104" fill="none" stroke="#1c7c3c" stroke-width="1.5" marker-end="url(#g)"/>
+  <text x="352" y="98" font-size="11" fill="#1c7c3c" font-weight="bold">sí → calcula</text>
+
+  <rect x="524" y="60" width="312" height="120" rx="6" fill="#eef7ee" stroke="#1c7c3c" stroke-width="1.5"/>
+  <text x="540" y="82" font-size="11.5" fill="#1c7c3c" font-weight="bold">Verificación con procedencia</text>
+  <text x="540" y="104" font-size="11" fill="#333" font-family="Consolas, monospace">"gobierna": "Flexion",</text>
+  <text x="540" y="122" font-size="11" fill="#333" font-family="Consolas, monospace">"uso": 0.99, "cumple": true,</text>
+  <text x="540" y="140" font-size="11" fill="#1a63a8" font-family="Consolas, monospace">"referencia":</text>
+  <text x="540" y="158" font-size="11" fill="#1a63a8" font-family="Consolas, monospace">"ACI 318-25 Sec. 22.2"</text>
+  <text x="540" y="174" font-size="9.5" fill="#555">cada número trae su cita a la norma</text>
+
+  <!-- rama NO (rojo) -->
+  <path d="M330,282 L330,328 L520,328" fill="none" stroke="#c0392b" stroke-width="1.5" marker-end="url(#r)"/>
+  <text x="352" y="322" font-size="11" fill="#c0392b" font-weight="bold">no → se niega</text>
+
+  <rect x="524" y="256" width="312" height="138" rx="6" fill="#fdecea" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="540" y="278" font-size="11.5" fill="#c0392b" font-weight="bold">Rechazo con razón (no un número)</text>
+  <text x="540" y="300" font-size="10.5" fill="#333" font-family="Consolas, monospace">"error": "Vs supera el tope</text>
+  <text x="540" y="316" font-size="10.5" fill="#333" font-family="Consolas, monospace">que protege la biela",</text>
+  <text x="540" y="334" font-size="10.5" fill="#1a63a8" font-family="Consolas, monospace">"referencia": "Sec. 22.5.1.2",</text>
+  <text x="540" y="352" font-size="10.5" fill="#333" font-family="Consolas, monospace">"alternativa": "aumentar la</text>
+  <text x="540" y="368" font-size="10.5" fill="#333" font-family="Consolas, monospace">sección; más estribos no ayudan"</text>
+  <text x="540" y="386" font-size="9.5" fill="#555">dice qué corresponde hacer en su lugar</text>
+</svg>

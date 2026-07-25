@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="400" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">φM_n de cada cara vs. su demanda — y el espejismo de apilar barras</text>
+
+  <!-- escala 6 px/(tonf*m) desde x=230 -->
+  <line x1="230" y1="60" x2="230" y2="240" stroke="#333" stroke-width="1"/>
+  <line x1="230" y1="240" x2="820" y2="240" stroke="#333" stroke-width="1"/>
+
+  <!-- M+ : capacidad 30.5, demanda 25 -->
+  <rect x="230" y="72" width="183" height="20" fill="#eef7ee" stroke="#1c7c3c" stroke-width="1.3"/>
+  <line x1="380" y1="66" x2="380" y2="98" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="224" y="86" font-size="10" text-anchor="end" fill="#4a5b6c">Vano M+ (4Ø22, ala ancha)</text>
+  <text x="419" y="86" font-size="9.5" fill="#1c7c3c">30.5 · uso 0.82</text>
+  <text x="380" y="62" font-size="8.5" text-anchor="middle" fill="#c0392b">M_u⁺ = 25</text>
+
+  <!-- M- 6o22 : capacidad 40.1, demanda 35 -->
+  <rect x="230" y="112" width="241" height="20" fill="#fff5e6" stroke="#c07a00" stroke-width="1.6"/>
+  <line x1="440" y1="106" x2="440" y2="138" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="224" y="126" font-size="10" text-anchor="end" fill="#a56a00" font-weight="bold">Apoyo M− (6Ø22, solo alma)</text>
+  <text x="477" y="126" font-size="9.5" fill="#a56a00" font-weight="bold">40.1 · uso 0.87 ◄ gobierna</text>
+  <text x="440" y="102" font-size="8.5" text-anchor="middle" fill="#c0392b">M_u⁻ = 35</text>
+
+  <!-- M- 6o25 : capacidad 45.2 con phi=0.82 -->
+  <rect x="230" y="152" width="271" height="20" fill="#fdecea" stroke="#c0392b" stroke-width="1.3" stroke-dasharray="6 3"/>
+  <text x="224" y="166" font-size="10" text-anchor="end" fill="#c0392b">…¿y con 6Ø25? (+29 % acero)</text>
+  <text x="507" y="166" font-size="9.5" fill="#c0392b">45.2 · +13 % — ε_t = 0.0041 &lt; 0.005: φ 0.825 y fuera de 9.3.3.1</text>
+
+  <!-- eje marcas -->
+  <text x="230" y="254" font-size="9" text-anchor="middle" fill="#888">0</text>
+  <line x1="410" y1="240" x2="410" y2="244" stroke="#888"/>
+  <text x="410" y="254" font-size="9" text-anchor="middle" fill="#888">30</text>
+  <line x1="590" y1="240" x2="590" y2="244" stroke="#888"/>
+  <text x="590" y="254" font-size="9" text-anchor="middle" fill="#888">60 tonf·m</text>
+
+  <!-- etiqueta lateral -->
+  <text x="60" y="90" font-size="10.5" fill="#5a6b7c" font-weight="bold">la cara con ala</text>
+  <text x="60" y="104" font-size="9.5" fill="#5a6b7c">sobra ductilidad</text>
+  <text x="60" y="130" font-size="10.5" fill="#5a6b7c" font-weight="bold">la cara sin ala</text>
+  <text x="60" y="144" font-size="9.5" fill="#5a6b7c">gobierna el diseño</text>
+  <text x="60" y="170" font-size="10.5" fill="#5a6b7c" font-weight="bold">apilar barras</text>
+  <text x="60" y="184" font-size="9.5" fill="#5a6b7c">rinde cada vez menos</text>
+
+  <!-- caja tesis -->
+  <rect x="230" y="284" width="590" height="100" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="244" y="304" font-size="11.5" fill="#222" font-weight="bold">La “T verdadera” (eje neutro bajo el ala) casi no existe</text>
+  <text x="244" y="323" font-size="10.5" fill="#333">Para que el bloque comprimido atraviese los 12 cm del ala harían falta</text>
+  <text x="244" y="339" font-size="10.5" fill="#c0392b" font-weight="bold">A_s = 0.85·f'c·b·h_f / f_y = 104.7 cm² ≈ 22Ø25 (ρ_w = 6.5 %)</text>
+  <text x="244" y="356" font-size="10.5" fill="#333">— siete veces el acero del vano. En un piso corriente, la viga T en positivo</text>
+  <text x="244" y="372" font-size="10.5" fill="#333">es una rectangular ancha; el chequeo a ≤ h_f es una línea y lo confirma.</text>
+</svg>

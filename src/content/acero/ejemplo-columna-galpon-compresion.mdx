@@ -57,15 +57,15 @@ en compresión es, ante todo, controlar $L_c/r$ en el eje que gobierna.
 ## 1. Longitud efectiva en los dos ejes (E2)
 
 Antes de la resistencia hay que fijar *cuánta* longitud pandea en cada eje. La longitud
-efectiva es $L_c = K L$ (Ec. E2):
+efectiva es $L_c = K L$ (Sec. E2):
 
-<Equation label="Ec. E2 (eje fuerte)">
+<Equation label="Sec. E2 (eje fuerte)">
 $$
 L_{cx} = K_x L = 2.0 \cdot 7.5 = 15.0 \ \text{m} = 1500 \ \text{cm}
 $$
 </Equation>
 
-<Equation label="Ec. E2 (eje débil)">
+<Equation label="Sec. E2 (eje débil)">
 $$
 L_{cy} = K_y L_y = 1.0 \cdot 3.75 = 3.75 \ \text{m} = 375 \ \text{cm}
 $$
@@ -130,29 +130,29 @@ la columna pandea en régimen **elástico**, y se usa la Ec. E3-3:
 
 <Equation label="Ec. E3-3">
 $$
-F_{cr} = 0.877\,F_e = 0.877 \cdot 1083 = 950 \ \text{kgf/cm}^2
+F_n = 0.877\,F_e = 0.877 \cdot 1083 = 950 \ \text{kgf/cm}^2
 $$
 </Equation>
 
 <Equation label="Ec. E3-1">
 $$
-\phi_c P_n = 0.90 \, F_{cr} A_g = 0.90 \cdot 950 \cdot 92.8 = 79\,344 \ \text{kgf} = 79.3 \ \text{tonf}
+\phi_c P_n = 0.90 \, F_n A_g = 0.90 \cdot 950 \cdot 92.8 = 79\,344 \ \text{kgf} = 79.3 \ \text{tonf}
 \;\ge\; P_u = 65 \ \text{tonf}
 $$
 </Equation>
 
-Pasa, con uso **0.82**. La columna solo aprovecha $F_{cr}/F_y = 950/3520 = 0.27$ de su acero:
+Pasa, con uso **0.82**. La columna solo aprovecha $F_n/F_y = 950/3520 = 0.27$ de su acero:
 la inestabilidad se llevó casi las tres cuartas partes del techo del material.
 
 <Figure
   src="/ejemplos/columna-galpon-curva.svg"
-  alt="Curva de columna F_cr contra L_c/r para F_y = 3520 kgf/cm²: rama inelástica verde (Ec. E3-2) hasta el quiebre en L_c/r = 113, y rama elástica azul (0.877·F_e, Ec. E3-3) después. Se marcan dos puntos de operación: el eje débil en λ=58 con F_cr=2751 sobre la rama inelástica, y el eje fuerte en λ=136 con F_cr=950 sobre la rama elástica; una flecha entre ambos indica que es el mismo perfil con 2.9 veces menos capacidad, solo por la esbeltez."
+  alt="Curva de columna F_n contra L_c/r para F_y = 3520 kgf/cm²: rama inelástica verde (Ec. E3-2) hasta el quiebre en L_c/r = 113, y rama elástica azul (0.877·F_e, Ec. E3-3) después. Se marcan dos puntos de operación: el eje débil en λ=58 con F_n=2751 sobre la rama inelástica, y el eje fuerte en λ=136 con F_n=950 sobre la rama elástica; una flecha entre ambos indica que es el mismo perfil con 2.9 veces menos capacidad, solo por la esbeltez."
   caption="Los dos ejes sobre la curva de columna. El eje débil (λ=58) cae en la meseta inelástica, cerca del material; el eje fuerte (λ=136) se hunde en la rama elástica de Euler. Es el mismo perfil: la esbeltez es toda la diferencia."
 />
 
 <Note type="tip" title="La palanca de diseño está en L_c/r, no en F_y">
 Si la columna no diera, la tentación es subir el grado del acero. Pero el eje que gobierna
-pandea **elástico**, y ahí $F_{cr} = 0.877\,F_e$ **no depende de $F_y$** —solo de $E$ y de la
+pandea **elástico**, y ahí $F_n = 0.877\,F_e$ **no depende de $F_y$** —solo de $E$ y de la
 geometría—: pasar de A36 a A992 no movería la capacidad del eje fuerte ni un kilo. Lo que de
 verdad sube $P_n$ es **bajar $L_c/r$** rompiendo el cantilever: un puntal o una viga de amarre
 en el plano del marco que lleve $K_x$ de $2.0$ a $\approx 1.0$.
@@ -181,7 +181,7 @@ secciones de simetría simple (ángulos, tés, canales), no a este perfil.
 
 | Verificación | Referencia | Naturaleza | Capacidad $\phi_c P_n$ | Uso |
 |---|---|:---:|:---:|:---:|
-| Longitud efectiva | Ec. E2 | fija la esbeltez | $L_{cx}=15$ m, $L_{cy}=3.75$ m | — |
+| Longitud efectiva | Sec. E2 | fija la esbeltez | $L_{cx}=15$ m, $L_{cy}=3.75$ m | — |
 | Esbeltez gobernante | Sec. E2 ($\le 200$) | protagonista | $L_c/r = 136$ (eje $x$) | ✓ |
 | Pandeo local | Sec. E7 | inestabilidad local | no esbelto → $A_e = A_g$ | — |
 | Pandeo eje débil (Y) | Ec. E3-2 ($\phi=0.90$) | inestabilidad global | $229.7$ tonf | 0.28 |

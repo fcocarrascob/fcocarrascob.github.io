@@ -231,16 +231,30 @@ gobiernan la **resistencia** (el diagrama) y la **esbeltez** (Cap. 6), no la def
 ## 4. Cortante (Cap. 22.5)
 
 La compresión axial ayuda al corte — cierra las fisuras diagonales y mantiene el
-engranaje de áridos trabajando. La forma simplificada de la Tabla 22.5.5.1 lo captura:
+engranaje de áridos trabajando. En la Tabla 22.5.5.1 de ACI 318-25 ese beneficio entra
+como un **término aditivo** $N_u/6A_g$, no como un multiplicador. Con estribos al menos
+mínimos ($A_v \ge A_{v,min}$, que en columnas es lo habitual) se puede usar la forma
+simple, Ec. (a) de la tabla:
 
-<Equation label="Ec. 22.5.5.1">
+<Equation label="Tabla 22.5.5.1(a)">
 $$
-V_c = 0.17\left(1 + \frac{N_u}{14\,A_g}\right)\lambda\sqrt{f'_c}\;b_w d
+V_c = \left(0.17\,\lambda\sqrt{f'_c} + \frac{N_u}{6\,A_g}\right) b_w d
 $$
 </Equation>
 
-con $N_u/A_g$ en MPa, positiva en compresión. La contribución de los estribos es la
-general:
+con $N_u/A_g$ en MPa, **positiva en compresión y negativa en tracción**, y el término
+axial acotado a $N_u/6A_g \le 0.05 f'_c$ (Sec. 22.5.5.1.2). $V_c$ nunca se toma menor
+que cero.
+
+<Note type="warning" title="Cambio respecto a ACI 318-14">
+La forma $V_c = 0.17\left(1 + \frac{N_u}{14A_g}\right)\lambda\sqrt{f'_c}\,b_w d$ —donde
+el axial **multiplica**— es la de ACI 318-14 y anteriores. Desde ACI 318-19 el axial es
+un **sumando** independiente. Además, si la columna **no** llevara $A_{v,min}$, no
+aplicaría esta ecuación sino la Ec. (c) de la tabla, con el factor de tamaño $\lambda_s$
+y la cuantía $\rho_w^{1/3}$.
+</Note>
+
+La contribución de los estribos es la general:
 
 <Equation label="Ec. 22.5.10.5.3">
 $$

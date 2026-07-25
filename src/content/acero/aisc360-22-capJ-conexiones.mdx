@@ -153,22 +153,24 @@ $\beta = 1.2 - 0.002(l/w) \leq 1.0$: los extremos se sobrecargan y el centro tra
 
 ## 3. El apoyo en la plancha: aplastamiento y desgarre (J3.11)
 
-Aunque el perno resista, la **plancha** puede ceder donde el perno apoya. El estado límite
-combina dos mecanismos en una sola fórmula: **aplastamiento** (el agujero se ovala, tope
+Aunque el perno resista, la **plancha** puede ceder donde el perno apoya. AISC 360-22 los
+trata como **dos estados límite separados** —**aplastamiento** (el agujero se ovala,
 $\propto d$) y **desgarre** o *tearout* (el perno arranca el material hasta el borde,
-término $\propto l_c$). Con la deformación del agujero como consideración de diseño:
+$\propto l_c$)— y se toma el **menor** de ambos. Con la deformación del agujero como
+consideración de diseño:
 
-<Equation label="Ec. J3-6a">
+<Equation label="Ecs. J3-6a y J3-6c">
 $$
-R_n = 1.2 \, l_c \, t \, F_u \leq 2.4 \, d \, t \, F_u
+R_n = \min\left( \underbrace{2.4 \, d \, t \, F_u}_{\text{aplastamiento (J3-6a)}} ,\;\;
+\underbrace{1.2 \, l_c \, t \, F_u}_{\text{desgarre (J3-6c)}} \right)
 $$
 </Equation>
 
 donde $l_c$ es la distancia **libre** entre el borde del agujero y el borde adyacente (otro
-agujero o el borde del material), $d$ el diámetro del perno y $t$ el espesor. El primer
-término gobierna cuando el perno está cerca del borde (poco $l_c$ → desgarre); el tope
-$2.4\,dtF_u$ gobierna cuando hay espacio de sobra (aplastamiento puro). Si la deformación
-**no** es consideración de diseño, los coeficientes suben a $1.5$ y $3.0$ (Ec. J3-6b).
+agujero o el borde del material), $d$ el diámetro del perno y $t$ el espesor. El desgarre
+gobierna cuando el perno está cerca del borde (poco $l_c$); el aplastamiento gobierna
+cuando hay espacio de sobra. Si la deformación **no** es consideración de diseño, los
+coeficientes suben a $3.0$ (J3-6b) y $1.5$ (J3-6d).
 
 ---
 
@@ -242,7 +244,7 @@ se sobrecarga, ceda primero —dúctil, avisando— el miembro y no —frágil, 
 | Perno — corte+tracción | $F_{nt}'$ reducido (Ec. J3-3a) | frágil |
 | Deslizamiento crítico | $\mu D_u h_f T_b n_s$ (Ec. J3-4) | servicio (fricción) |
 | Soldadura de filete | $R_n = F_{nw} A_{we}$; bono por ángulo (Ec. J2-5) | frágil — por la garganta |
-| Apoyo en la plancha | $1.2 l_c t F_u \leq 2.4 d t F_u$ (Ec. J3-6a) | frágil — aplastam./desgarre |
+| Apoyo en la plancha | menor de $2.4\,d\,t\,F_u$ (Ec. J3-6a) y $1.2\,l_c\,t\,F_u$ (Ec. J3-6c) | frágil — aplastam./desgarre |
 | Elemento — tracción | $F_y A_g$ (dúctil) / $F_u A_e$ (frágil) | ambas |
 | Elemento — rotura en bloque | Ec. J4-5 | frágil |
 | Geometría | $s \geq 2\tfrac{2}{3}d$, distancias al borde (J3.3–J3.5) | detallado / fija $l_c$ |

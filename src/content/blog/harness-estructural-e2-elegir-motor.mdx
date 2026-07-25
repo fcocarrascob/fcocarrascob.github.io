@@ -1,0 +1,162 @@
+---
+title: "Harness estructural (2): tres modelos locales, tres formas de fallar"
+description: "Con las cinco herramientas listas, la pregunta del segundo peldaño es cuál modelo local de 8 GB sabe operarlas. Armé un benchmark de function calling —12 tareas, cuatro dimensiones de puntaje— y medí Qwen3-8B, Llama 3.1-8B y Llama 3.2-3B. Los tres eligen la herramienta correcta el 100 % de las veces; toda la diferencia está aguas abajo, y cada modelo falla de una manera distinta. En el camino, medir con método destapó un bug de mi propio instrumento que en el papel era invisible."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "function calling", "benchmark", "Ollama", "Qwen3", "Llama 3.1", "evaluación", "harness", "agentes"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 2
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta del segundo peldaño
+
+En el [post anterior](/blog/harness-estructural-e1-tools-que-calculan/) construí las cinco
+herramientas de verificación y dejé fuera, a propósito, al modelo de lenguaje. La razón era una
+dependencia que recién ahora se puede pagar: **no se puede medir si un modelo sabe llamar
+herramientas sin tener herramientas que llamar.** E1 construyó el objeto de medición; E2 lo usa
+para responder una sola pregunta:
+
+> ¿Qué modelo local de 8 GB —de los que corren en mi GPU— sabe leer un enunciado en lenguaje
+> natural y traducirlo a la llamada correcta, con los datos correctos, en las unidades correctas?
+
+La respuesta importa porque ese modelo es el motor del harness que viene después. Y quería
+responderla **con método, no con sensaciones**: nada de "probé un par y este me pareció mejor".
+
+## Cómo se mide
+
+Armé un benchmark de 12 tareas. Cada una es un enunciado como se lo diría a un colega —*"verifica
+una zapata de 2.20 m bajo columna 40×40, muerta 60, viva 30, hormigón G25"*— y detrás tiene la
+llamada correcta conocida. Hay tareas canónicas (una por herramienta), variantes, dos **fuera de
+alcance** (donde lo correcto es que el modelo transmita el rechazo de la herramienta, no que
+invente un número) y una con distractor (un "montante a compresión" que hay que mapear a la
+herramienta de columna sin que aparezca la palabra "columna").
+
+Cada respuesta se puntúa en cuatro dimensiones, que se leen como un **embudo**:
+
+| Dimensión | Qué mide |
+|---|---|
+| formato | ¿emitió una llamada bien formada? |
+| tool | ¿eligió la herramienta correcta? |
+| args | ¿le pasó los datos correctos? |
+| **task success** | ¿ejecutar su llamada reproduce el resultado de referencia? |
+
+`task success` es la métrica que decide; las otras tres dicen *dónde* se rompe. Y hay un control
+importante: un modelo "oráculo" que devuelve siempre la llamada correcta tiene que sacar 100 %. Si
+no llega, el que está mal es el instrumento, no el modelo. (Guardá esta frase para el final.)
+
+## Tres modelos, tres formas de fallar
+
+Medí Qwen3-8B, Llama 3.1-8B y Llama 3.2-3B, todos por Ollama, a temperatura 0. El resultado:
+
+| Modelo | formato | tool | args | **task success** |
+|---|---:|---:|---:|---:|
+| **Llama 3.1-8B** | 100 % | 100 % | 83 % | **83 %** |
+| Qwen3-8B | 100 % | 100 % | 92 % | 67 % |
+| Llama 3.2-3B | 100 % | 100 % | 83 % | 8 % |
+
+Lo primero que salta: **los tres eligen la herramienta correcta el 100 % de las veces.** Ninguno
+confunde una viga con una zapata, ni se pierde con el distractor, ni deja de reconocer las tareas
+fuera de alcance. El problema no es entender el pedido. Toda la diferencia está *aguas abajo*, y
+cada modelo se cae de una manera propia.
+
+<Figure
+  src="/harness-estructural-e2/embudo.svg"
+  alt="Gráfico de embudo con cuatro etapas en el eje horizontal (formato, tool, args, task success) y porcentaje en el vertical. Las tres líneas —Llama 3.1, Qwen3 y Llama 3.2-3B— arrancan juntas en 100 % en formato y tool: los tres eligen la herramienta correcta siempre. Recién en args y task success divergen: Llama 3.1 baja a 83 y se mantiene en 83 (motor elegido); Qwen3 tiene args alto 92 pero cae a 67 en éxito; Llama 3.2-3B comparte args 83 con Llama 3.1 pero se desploma a 8 en éxito."
+  caption="Los tres coinciden en las dos primeras etapas: elegir la herramienta no es el problema. La caída ocurre entre 'args' y 'task success', y su forma distingue a cada modelo —sobre todo el desplome del 3B, que pasa los datos clave pero produce un resultado equivocado."
+/>
+
+### Qwen3 falla hacia el cálculo
+
+Qwen3 tiene el `args` más alto (92 %) pero un `task success` de 67 %. Esa brecha es reveladora:
+acierta los datos *clave* pero **rellena los argumentos opcionales con valores inventados** en vez
+de omitirlos y dejar que la herramienta use su valor por defecto. El caso típico es el módulo de
+elasticidad del acero. En vez de omitirlo —la herramienta ya sabe que son 2.040.000 kgf/cm²—,
+Qwen lo pasa explícitamente… en las unidades equivocadas:
+
+```
+Qwen3, columna de galpón → pasó E = 200000   (el valor en MPa, no en kgf/cm²)
+```
+
+Y acá se ve por qué el [principio de E1](/blog/harness-estructural-e1-tools-que-calculan/) —que la
+herramienta se niegue— importa tanto. Con esa `E` diez veces más chica, la esbeltez límite de las
+placas se desploma, y la herramienta **no calcula una columna mal**: se planta.
+
+```json
+{
+ "error": "ala esbelta: bf/2tf = 8.94 > lambda_r = 4.22",
+ "referencia": "AISC 360-22 Sec. E7",
+ "fuera_de_alcance": true
+}
+```
+
+Un error de unidades del modelo se convirtió en un rechazo trazable, no en una viga firmada con un
+número malo. La guarda de E1 salvó la medición de E2.
+
+### Llama 3.2-3B falla hacia el vacío
+
+El modelo de 3B es el caso más instructivo de todos. Miren la brecha: `args` 83 %, `task success`
+**8 %**. Emite la llamada perfectamente —la herramienta correcta, la estructura correcta— y después
+**botcha los números**. Sabe la *forma* del pedido y no puede cargar el *contenido*. Es
+exactamente el fracaso que el principio "los números no pasan por el LLM" anticipa: un modelo chico
+es un excelente enrutador y un pésimo calculista. Como motor queda descartado; a lo sumo serviría
+para elegir la herramienta y dejar los datos a otra capa.
+
+### Llama 3.1 gana… pero el número escondía un bug
+
+Llama 3.1-8B quedó primero con 83 %, y —a diferencia de Qwen— sus columnas `args` y `success` van
+pegadas: **cuando pasa los datos, acierta el resultado.** Sus dos únicas fallas son del modelo, no
+del método (una `E` en MPa, como Qwen, y un argumento obligatorio olvidado).
+
+Pero ese 83 % no fue el primer número que vi. En la primera corrida, Llama 3.1 marcaba 67 %, con
+cuatro tareas registradas como *"no emitió ninguna llamada"*. Raro para un modelo que en las otras
+ocho llamaba impecable. Tiré del hilo con una prueba que creía decisiva —forzar la llamada con
+`tool_choice: "required"`— y no cambió nada. Ahí miré la respuesta cruda:
+
+```json
+{
+ "name": "anclajes_grupo_hormigon",
+ "parameters": {"fc": 250, "hef": 40, "ca1": 25, "T_grupo": 8.0,
+                "ca_min": None, "detalle": False}
+}
+```
+
+Llama **sí** estaba emitiendo la llamada correcta —herramienta bien, datos bien—. Solo que Ollama
+la devolvía como texto en el campo `content`, no en el campo estructurado `tool_calls` donde mi
+código la buscaba. Y fíjense el detalle: `None`, `False` —literales de **Python**, no de JSON—. Mi
+parser fallaba dos veces: no miraba el `content`, y aunque lo mirara, `json.loads` se ahoga con
+`None`. Con un fallback que rescata la llamada del texto (y tolera los literales de Python), esas
+cuatro tareas "perdidas" reaparecieron, y Llama saltó de 67 % a 83 %.
+
+<Figure
+  src="/harness-estructural-e2/bug-del-instrumento.svg"
+  alt="A la izquierda, la respuesta cruda de Ollama para Llama 3.1: el campo tool_calls viene como lista vacía (marcado en rojo: el harness buscaba la llamada acá y estaba vacío), mientras que el campo content trae, como texto, la llamada correcta completa —name anclajes_grupo_hormigon y sus parameters— con los literales None y False de Python resaltados (json.loads se ahoga con ellos). A la derecha, el arreglo del parser: si tool_calls viene vacío, rescatar del content con json.loads y, si falla, ast.literal_eval; el resultado es que Llama 3.1 sube de 67 % a 83 %."
+  caption="El modelo hacía todo bien; el instrumento leía el campo equivocado en un dialecto equivocado. El arreglo es del parser, no del modelo —y el ranking correcto no existía hasta hacerlo."
+/>
+
+<Note type="tip" title="La verdadera lección de E2">
+El bug no estaba en ningún modelo: estaba en **mi instrumento de medición**. Y era invisible en el
+papel —el oráculo daba 100 %, los tests pasaban—; solo apareció cuando enfrenté el harness a un
+modelo real que serializaba sus respuestas de una forma que yo no había previsto. Medir con método
+no solo rankea modelos: **te obliga a arreglar tu propia regla de medir.** El ranking correcto
+—Llama 3.1 gana— no existía hasta después del arreglo.
+</Note>
+
+## El veredicto
+
+**El motor del harness va a ser Llama 3.1-8B.** No solo por el puntaje, sino por *cómo* falla:
+cuando duda, calla; cuando llama, no yerra un dato. Qwen3 queda como alternativa fuerte —su falla
+es sobre-especificar, que se corrige con un mejor prompt de sistema y endureciendo las herramientas
+para que detecten una `E` que "parece MPa"—. Ese endurecimiento, que recupera la única falla
+compartida por los dos modelos de 8 GB, es lo primero de la lista para la etapa siguiente.
+
+Con el motor elegido, el próximo peldaño es darle **memoria de la norma**: un sistema de
+recuperación (RAG) sobre el corpus normativo, para que las respuestas en lenguaje natural lleguen
+también con su cita verificable —igual que ya la traen los números de las herramientas—. Esa es la
+etapa 3.
+
+*El benchmark, el dataset de tareas y los resultados por modelo viven en el repositorio del
+proyecto. Los enunciados salen de los mismos ejemplos del blog que sirvieron de test en E1.*

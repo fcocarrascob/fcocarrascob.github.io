@@ -58,17 +58,26 @@
   <text x="150" y="296" font-size="8.5" text-anchor="middle" fill="#1a63a8">superficie del hormigón</text>
 
   <!-- =============== PANEL B: interacción + modos =============== -->
-  <text x="430" y="52" font-size="11.5" fill="#1a63a8" font-weight="bold">Interacción tracción–corte (17.8.3)</text>
+  <text x="430" y="52" font-size="11.5" fill="#1a63a8" font-weight="bold">Interacción tracción–corte (17.8.3, ley de potencia 5/3)</text>
 
   <!-- ejes -->
   <line x1="575" y1="235" x2="575" y2="70" stroke="#333" stroke-width="1"/>
   <line x1="575" y1="235" x2="775" y2="235" stroke="#333" stroke-width="1"/>
-  <text x="775" y="250" font-size="10" text-anchor="end" fill="#333">N / φN_n</text>
-  <text x="568" y="74" font-size="10" text-anchor="end" fill="#333">V / φV_n</text>
-  <!-- region segura (N+V<=1.2) -->
-  <polygon points="575,235 755,235 575,67" fill="#eef7ee" stroke="#1c7c3c" stroke-width="1.5"/>
-  <text x="642" y="205" font-size="10" fill="#1c7c3c">seguro</text>
-  <text x="690" y="150" font-size="9.5" fill="#1c7c3c" transform="rotate(-43 690,150)">N/φN + V/φV = 1.2</text>
+  <text x="775" y="250" font-size="10" text-anchor="end" fill="#333">N / φN_n,cg</text>
+  <text x="568" y="74" font-size="10" text-anchor="end" fill="#333">V / φV_n,cg</text>
+
+  <!-- region segura: (N/φN)^(5/3) + (V/φV)^(5/3) <= 1 -->
+  <path d="M575,235 L575,95 L590,97 L605,101 L620,107 L635,114 L650,123 L665,135 L680,149 L695,166 L710,188 L718,204 L725,235 Z"
+        fill="#eef7ee" stroke="#1c7c3c" stroke-width="1.6"/>
+  <text x="622" y="212" font-size="10" fill="#1c7c3c">seguro</text>
+
+  <!-- regla anterior (318-19), como referencia -->
+  <line x1="575" y1="67" x2="755" y2="235" stroke="#999" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="745" y="205" font-size="8.5" text-anchor="end" fill="#999">regla 318-19: N/φN + V/φV ≤ 1.2</text>
+
+  <!-- ecuacion de la curva -->
+  <text x="600" y="84" font-size="9.5" fill="#1c7c3c">(N/φN)<tspan font-size="7" dy="-4">5/3</tspan><tspan dy="4"> + (V/φV)</tspan><tspan font-size="7" dy="-4">5/3</tspan><tspan dy="4"> = 1</tspan></text>
+
   <!-- marcas 1.0 -->
   <line x1="575" y1="235" x2="575" y2="238"/>
   <text x="575" y="248" font-size="8" text-anchor="middle" fill="#888">0</text>
@@ -76,12 +85,13 @@
   <text x="725" y="248" font-size="8" text-anchor="middle" fill="#888">1.0</text>
   <line x1="573" y1="95" x2="577" y2="95" stroke="#888"/>
   <text x="568" y="99" font-size="8" text-anchor="end" fill="#888">1.0</text>
+
   <!-- punto (0.58, 0.56) -->
   <circle cx="662" cy="157" r="4.5" fill="#c0392b"/>
   <line x1="575" y1="157" x2="662" y2="157" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
   <line x1="662" y1="235" x2="662" y2="157" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
   <text x="672" y="150" font-size="10" fill="#c0392b" font-weight="bold">(0.58, 0.56)</text>
-  <text x="672" y="163" font-size="9.5" fill="#c0392b">suma = 1.14 ≤ 1.2 ✓</text>
+  <text x="672" y="163" font-size="9.5" fill="#c0392b">0.40 + 0.38 = 0.78 ≤ 1 ✓</text>
 
   <!-- lista de modos -->
   <text x="430" y="285" font-size="11.5" fill="#1a63a8" font-weight="bold">Modos verificados (φ = 0.70, hormigón fisurado)</text>
@@ -91,6 +101,6 @@
     <text x="440" y="348" fill="#333">Side-face blowout (17.6.4)</text><text x="700" y="348" fill="#555">no aplica (c_a &gt; 0.4 h_ef)</text>
     <text x="440" y="368" fill="#333">Breakout de corte (17.7.2)</text><text x="700" y="368" fill="#c07a00" font-weight="bold">dem 3.5 / 6.2 tonf → 0.56 ◄</text>
     <text x="440" y="388" fill="#333">Pryout (17.7.3)</text><text x="700" y="388" fill="#555">dem 3.5 / 32.4 tonf → 0.11</text>
-    <text x="440" y="408" fill="#c0392b" font-weight="bold">Interacción N–V (17.8.3)</text><text x="700" y="408" fill="#c0392b" font-weight="bold">1.14 ≤ 1.2 → gobierna</text>
+    <text x="440" y="408" fill="#c0392b" font-weight="bold">Interacción N–V (17.8.3)</text><text x="700" y="408" fill="#c0392b" font-weight="bold">0.78 ≤ 1 → gobierna</text>
   </g>
 </svg>

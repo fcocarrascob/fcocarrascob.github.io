@@ -1,0 +1,101 @@
+---
+title: "Harness estructural (6): la memoria en Word, sin que el modelo escriba un solo número"
+description: "El entregable más tangible del proyecto: que una verificación se convierta en una memoria de cálculo en Word lista para revisar y firmar. El principio del harness llevado hasta el documento final —el .docx se arma desde el JSON de las herramientas con python-docx, no desde texto libre—, de modo que cada número es trazable a su cálculo y ninguno lo escribió un modelo de lenguaje. Con la trazabilidad probada como un test de ida y vuelta."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "python-docx", "memoria de cálculo", "trazabilidad", "Word", "harness", "documentación"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 6
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## Del cálculo al documento
+
+Todo lo construido hasta acá —herramientas que calculan, un modelo que las opera, un RAG que
+responde— desemboca en algo muy concreto que un ingeniero necesita todos los días: **una memoria de
+cálculo**. Un documento con los datos de entrada, las verificaciones, la sección de norma de cada
+una, y el veredicto. Algo para revisar, firmar y archivar.
+
+Y acá el principio del proyecto —*los números nunca pasan por las manos del LLM*— llega a su prueba
+final. Sería tentador pedirle al modelo *"redactá la memoria de esta verificación"*. Sería un
+error: el modelo escribiría números, y un número en una memoria firmada no puede depender de un
+generador de texto plausible.
+
+<Note type="warning" title="El documento se arma desde el JSON, no desde prosa">
+La memoria la genera `python-docx` a partir del **objeto de resultado que devolvió la herramienta**
+—el mismo JSON con demanda, capacidad, uso y cita de cada verificación—. El modelo de lenguaje no
+interviene en esta etapa: a lo sumo, en el modo conversacional, eligió *qué* herramienta correr. Los
+números del documento son, literalmente, copias de los que calculó Python. La única superficie de
+error es la plantilla, y la plantilla se testea.
+</Note>
+
+<Figure
+  src="/harness-estructural-e6/trazabilidad.svg"
+  alt="Diagrama de la generación de la memoria. A la izquierda, el objeto de resultado (JSON) que produjo la herramienta, con sus verificaciones: demanda, capacidad, uso y referencia normativa. Una flecha etiquetada python-docx, sin pasar por el modelo de lenguaje, lleva ese JSON a un documento Word a la derecha, cuya tabla de verificaciones contiene exactamente los mismos números y citas. Arriba, el modelo de lenguaje aparece tachado sobre esa flecha: no participa. Cada número del Word tiene una línea que lo conecta con su origen en el JSON."
+  caption="El JSON de la herramienta se convierte en el .docx con python-docx, sin pasar por el modelo. Cada demanda, capacidad y uso del documento es una copia trazable del resultado; ninguno fue escrito ni estimado por un LLM."
+/>
+
+## Qué contiene la memoria
+
+La plantilla arma un documento estándar: identificación (proyecto, elemento, norma, fecha, quién
+revisa), datos de entrada, la tabla de verificaciones —estado límite, referencia, demanda,
+capacidad, uso y si cumple, en verde o rojo—, el veredicto con el estado límite que gobierna, las
+advertencias que haya devuelto la herramienta, y un pie que declara la procedencia:
+
+> *Documento generado automáticamente desde el resultado estructurado de la herramienta de
+> verificación. Cada número es trazable al JSON de origen; ninguno fue escrito ni estimado por un
+> modelo de lenguaje. Requiere revisión y firma de un profesional responsable.*
+
+Ese pie no es decorativo: es la declaración honesta de qué hizo la máquina y qué falta. La máquina
+calculó y documentó; la responsabilidad profesional —revisar y firmar— sigue siendo humana.
+
+## La trazabilidad, como test
+
+La afirmación "cada número del Word es trazable al JSON" no es una promesa: es una prueba
+automatizada. El test genera la memoria de un ejemplo, **vuelve a abrir el .docx**, y verifica que
+cada demanda, cada capacidad, cada uso y cada cita del resultado aparecen tal cual en el documento.
+
+```python
+for v in resultado.verificaciones:
+    assert str(v.demanda)    in texto_del_docx
+    assert str(v.capacidad)  in texto_del_docx
+    assert f"{v.uso:.3f}"    in texto_del_docx
+    assert str(v.referencia) in texto_del_docx
+```
+
+Es una verificación de ida y vuelta: del cálculo al documento y de vuelta al texto leído. Si algún
+día la plantilla dejara de reflejar fielmente el resultado, el test se pone rojo. La trazabilidad
+está clavada.
+
+## Dos modos
+
+En modo **determinista**, se le pasa una verificación y sale el documento —sin modelo de lenguaje
+en juego, ideal para reproducir los ejemplos del blog o integrar en un flujo—. En modo
+**conversacional**, se escribe la consulta en lenguaje natural, el harness elige la herramienta y
+calcula, y de ahí sale la memoria:
+
+```
+> memoria de una viga 30×60, d=54, G25, As=14.73, estribos φ10@25, Mu=27, Vu=14.76
+
+memoria: memoria_viva.docx  (CUMPLE · gobierna Flexión · uso 0.987)
+```
+
+El modelo entendió el pedido y eligió la herramienta de viga; el `0.987` —y todo el documento— lo
+puso el cálculo, no él.
+
+## Dónde queda el proyecto
+
+Con esto, el asistente estructural local hace el recorrido completo en mi máquina, sin nube:
+entiende un pedido, elige la herramienta o consulta la norma, calcula con procedencia, y **entrega
+una memoria de cálculo trazable**. Las piezas que faltan —leer y escribir modelos de un software de
+análisis— dependen de otra máquina y son harina de otro costal.
+
+La tesis que arrancó esta serie, repetida en cada etapa, terminó siendo el hilo que la sostiene: al
+LLM se le da lo que hace bien —entender, elegir, narrar— y se le quita lo que no debe tocar. Los
+números los calcula el código; las citas salen del corpus; el documento se arma desde el JSON. Lo
+que queda para el modelo es, precisamente, lo que un modelo de lenguaje sabe hacer.
+
+*La plantilla de la memoria y el test de trazabilidad viven en el repositorio del proyecto.*

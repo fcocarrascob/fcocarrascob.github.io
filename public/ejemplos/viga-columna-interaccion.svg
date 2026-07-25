@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="400" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La frontera H1-1 y el viaje del punto de demanda</text>
+
+  <!-- ejes: x(M)=100+340*M ; y(P)=300-218*P -->
+  <line x1="100" y1="60" x2="100" y2="300" stroke="#333" stroke-width="1.2"/>
+  <line x1="100" y1="300" x2="480" y2="300" stroke="#333" stroke-width="1.2"/>
+  <text x="290" y="330" font-size="11" text-anchor="middle" fill="#333">M_r / M_c</text>
+  <text x="60" y="180" font-size="11" fill="#333" transform="rotate(-90 60 180)" text-anchor="middle">P_r / P_c</text>
+
+  <!-- ticks -->
+  <line x1="100" y1="82" x2="96" y2="82" stroke="#888"/>
+  <text x="92" y="86" font-size="9" text-anchor="end" fill="#888">1.0</text>
+  <line x1="100" y1="191" x2="96" y2="191" stroke="#888"/>
+  <text x="92" y="195" font-size="9" text-anchor="end" fill="#888">0.5</text>
+  <line x1="100" y1="256" x2="96" y2="256" stroke="#888"/>
+  <text x="92" y="260" font-size="9" text-anchor="end" fill="#888">0.2</text>
+  <line x1="440" y1="300" x2="440" y2="304" stroke="#888"/>
+  <text x="440" y="316" font-size="9" text-anchor="middle" fill="#888">1.0</text>
+  <line x1="270" y1="300" x2="270" y2="304" stroke="#888"/>
+  <text x="270" y="316" font-size="9" text-anchor="middle" fill="#888">0.5</text>
+
+  <!-- frontera bilineal: (0,1)->(0.9,0.2)->(1.0,0) -->
+  <path d="M 100 82 L 406 256 L 440 300" fill="none" stroke="#c0392b" stroke-width="2.2"/>
+  <text x="270" y="150" font-size="10.5" fill="#c0392b" font-weight="bold">H1-1a</text>
+  <text x="270" y="164" font-size="9.5" fill="#c0392b">P/P_c + (8/9)·M/M_c = 1</text>
+  <text x="418" y="284" font-size="10" fill="#c0392b" font-weight="bold" text-anchor="end">H1-1b</text>
+  <!-- quiebre -->
+  <line x1="100" y1="256" x2="406" y2="256" stroke="#bbb" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <text x="108" y="250" font-size="8.5" fill="#999">quiebre P_r/P_c = 0.2</text>
+
+  <!-- linea de P constante -->
+  <line x1="100" y1="181" x2="280" y2="181" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <text x="104" y="176" font-size="8.5" fill="#999">P_r/P_c = 0.55</text>
+
+  <!-- punto A (1er orden): (0.329, 0.546) -->
+  <circle cx="212" cy="181" r="6" fill="#fff" stroke="#1a63a8" stroke-width="2"/>
+  <text x="206" y="206" font-size="10" fill="#1a63a8" font-weight="bold" text-anchor="end">1.er orden</text>
+  <text x="206" y="219" font-size="9.5" fill="#1a63a8" text-anchor="end">uso 0.84</text>
+
+  <!-- flecha A->B -->
+  <line x1="219" y1="181" x2="238" y2="181" stroke="#333" stroke-width="1.6"/>
+  <path d="M 246 181 L 236 176 L 236 186 Z" fill="#333"/>
+  <text x="229" y="169" font-size="9.5" fill="#333" font-weight="bold">×B₁ = 1.34</text>
+
+  <!-- punto B (amplificado): (0.440, 0.546) -->
+  <circle cx="250" cy="181" r="6" fill="#c0392b"/>
+  <text x="262" y="200" font-size="10" fill="#c0392b" font-weight="bold">con B₁ (P-δ)</text>
+  <text x="262" y="213" font-size="9.5" fill="#c0392b">uso 0.94 ◄ gobierna</text>
+
+  <!-- caja tesis -->
+  <rect x="510" y="70" width="310" height="200" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="524" y="92" font-size="11.5" fill="#222" font-weight="bold">Los usos por separado engañan</text>
+  <text x="524" y="114" font-size="10.5" fill="#333">Compresión sola:  0.55 — “cómoda”</text>
+  <text x="524" y="131" font-size="10.5" fill="#333">Flexión sola (1.er orden):  0.33 — “cómoda”</text>
+  <line x1="524" y1="142" x2="806" y2="142" stroke="#d5dde5"/>
+  <text x="524" y="161" font-size="10.5" fill="#333">Combinadas (H1-1a):  0.55 + 8/9·0.33 = 0.84</text>
+  <text x="524" y="178" font-size="10.5" fill="#c0392b" font-weight="bold">+ amplificación B₁ = 1.34  →  uso 0.94</text>
+  <line x1="524" y1="189" x2="806" y2="189" stroke="#d5dde5"/>
+  <text x="524" y="208" font-size="10" fill="#333">Diez puntos de uso los pone el P·δ que el</text>
+  <text x="524" y="223" font-size="10" fill="#333">análisis de primer orden no ve; y la suma</text>
+  <text x="524" y="238" font-size="10" fill="#333">ingenua 0.55 + 0.44 = 0.99 tampoco es la</text>
+  <text x="524" y="253" font-size="10" fill="#333">norma: H1-1a da crédito 8/9 a la flexión.</text>
+
+  <text x="510" y="330" font-size="9.5" fill="#888">Sin el puntal de media altura (L_cy = L_b = 7 m):</text>
+  <text x="510" y="345" font-size="9.5" fill="#c0392b" font-weight="bold">φP_n 164.9 → 60.9 tonf, φM_n 24.3 → 18.1 tonf·m, uso 2.0</text>
+  <text x="510" y="360" font-size="9.5" fill="#888">El arriostramiento trabaja para los dos sumandos a la vez.</text>
+</svg>

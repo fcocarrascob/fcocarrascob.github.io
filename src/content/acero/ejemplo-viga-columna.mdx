@@ -1,0 +1,208 @@
+---
+title: "Ejemplo — Viga-columna: compresión y flexión combinadas (AISC 360-22)"
+description: "Verificación de una columna de fachada que trabaja como viga-columna: compresión de la plataforma y flexión por el viento del paño. Por separado, cada verificación sobra (uso 0.55 a compresión, 0.33 a flexión); combinadas por H1-1a la columna queda al 0.94 — y diez puntos de ese uso los pone la amplificación B1 = 1.34 por P-δ, invisible en el análisis de primer orden. La interacción no es sumar usos, y el momento que entra a la ecuación no es el del análisis."
+pubDate: 2026-07-25
+tags: ["ejemplo", "acero", "viga-columna", "fuerzas combinadas", "interacción", "B1", "P-Delta", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. H — Fuerzas combinadas"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Casi ninguna columna real trabaja solo comprimida: siempre llega un momento —del viento, de una
+excentricidad, de un pórtico—. Y ahí las verificaciones que ya sabemos hacer por separado
+—la [columna a compresión](/acero/ejemplo-columna-galpon-compresion) del Cap. E, la
+[viga con LTB](/acero/ejemplo-viga-ltb) del Cap. F— dejan de bastar: la
+[nota del Cap. H](/acero/aisc360-22-capH-fuerzas-combinadas) cuenta que la viga-columna se
+verifica como un **presupuesto**: la compresión gasta una fracción de la capacidad y la flexión
+tiene que caber en lo que queda. Acá lo bajamos a números —con la referencia
+normativa[^aisc360] de cada paso— y con la trampa que hace interesante al capítulo: el momento
+que entra al presupuesto **no es el que entrega el análisis de primer orden**, sino ese momento
+amplificado por el efecto $P$-$\delta$ (el factor $B_1$ del Apéndice 8).
+
+## El caso
+
+Columna de fachada de una plataforma industrial **arriostrada** en ambas direcciones (las
+diagonales toman el desplazamiento lateral, así que no hay $P$-$\Delta$ de piso y $B_2$ no
+juega). La columna baja la carga vertical de la plataforma y, además, recibe el viento del paño
+de fachada como carga transversal entre sus apoyos. Fuera del plano, un puntal a media altura
+la arriostra; en el plano de flexión va libre los 7 m.
+
+| Dato | Valor |
+|---|---|
+| Perfil | W250×58 (laminado, doblemente simétrico) |
+| Propiedades (tabla) | $A = 74.2$ cm², $I_x = 8700$ cm⁴, $r_x = 10.8$ cm, $r_y = 5.03$ cm |
+| — | $Z_x = 767$ cm³, $S_x = 690$ cm³, $r_{ts} = 5.69$ cm, $J = 40.6$ cm⁴, $h_o = 23.9$ cm, $c = 1$ |
+| — | $b_f/2t_f = 7.53$, $h/t_w = 27.1$ |
+| Acero | ASTM A992: $F_y = 3520$ kgf/cm², $E = 2.04\times10^6$ kgf/cm² |
+| Altura | $L = 7.0$ m, biarticulada; puntal fuera del plano a media altura |
+| Longitudes efectivas | $L_{cx} = 7.0$ m (plano de flexión); $L_{cy} = L_b = 3.5$ m |
+| Compresión (factorada) | $P_u = 90$ tonf (plataforma) |
+| Viento (factorado) | $w_u = 1.3$ tonf/m → $M_u = w_u L^2/8 = 8.0$ tonf·m (primer orden) |
+
+<Figure
+  src="/ejemplos/viga-columna-esquema.svg"
+  alt="Izquierda: elevación de la columna W250×58 de 7 m biarticulada, con la carga axial P_u = 90 tonf bajando desde la plataforma, la carga transversal de viento w_u = 1.3 tonf/m sobre toda la altura, y el puntal fuera del plano a media altura que deja L_cy = L_b = 3.5 m. Derecha: el diagrama de momentos — la parábola de primer orden con máximo M_u = 8.0 tonf·m al centro, y superpuesta la curva amplificada por B_1 = 1.34 que llega a M_r = 10.7 tonf·m, con una flecha marcando el momento extra P·δ que aparece cuando la compresión actúa sobre la columna ya flectada."
+  caption="La columna lleva las dos cosas a la vez: 90 tonf de compresión y la flexión del viento. El diagrama de primer orden (M_u = 8.0 tonf·m) no es el que entra a la verificación: la compresión, actuando sobre la deformada, lo amplifica a M_r = 10.7 tonf·m (B_1 = 1.34)."
+/>
+
+<Note type="info" title="Por qué este caso aísla la interacción">
+Cada ingrediente por separado ya lo calculamos en esta serie: la curva de columna del Cap. E en
+la [columna de galpón](/acero/ejemplo-columna-galpon-compresion) y el LTB del Cap. F en la
+[viga arriostrada a media luz](/acero/ejemplo-viga-ltb). Acá los dos aparecen con holgura
+—ningún modo domina solo— y el pórtico arriostrado deja fuera el $B_2$: todo lo nuevo del
+ejemplo es **cómo se combinan** (H1-1) y el **momento amplificado** que exige la combinación
+($B_1$, $P$-$\delta$).
+</Note>
+
+## 1. La sección no pandea localmente
+
+Como en los ejemplos anteriores, primero se descarta el pandeo local (Tablas B4.1a y B4.1b): el ala con
+$b_f/2t_f = 7.53$ y el alma con $h/t_w = 27.1$ quedan bajo todos los límites que interesan
+—$0.38\sqrt{E/F_y} = 9.15$ y $3.76\sqrt{E/F_y} = 90.5$ para flexión (sección compacta),
+$0.56\sqrt{E/F_y} = 13.5$ y $1.49\sqrt{E/F_y} = 35.9$ para compresión (no esbelta)—. Los dos
+sumandos del presupuesto pueden desarrollar su resistencia completa.
+
+## 2. Primer sumando: la compresión sola (Cap. E)
+
+Con el puntal, cada eje pandea con su propia longitud: el fuerte con $L_{cx} = 7.0$ m y el
+débil con $L_{cy} = 3.5$ m.
+
+<Equation label="Esbelteces">
+$$
+\frac{L_{cx}}{r_x} = \frac{700}{10.8} = 64.8
+\qquad
+\frac{L_{cy}}{r_y} = \frac{350}{5.03} = 69.6 \quad\Leftarrow\ \text{gobierna}
+$$
+</Equation>
+
+<Equation label="Ec. E3-4 y E3-2">
+$$
+F_e = \frac{\pi^2 E}{(69.58)^2} = 4158 \ \text{kgf/cm}^2
+\;\Rightarrow\;
+F_n = 0.658^{F_y/F_e} F_y = 0.658^{0.846} \cdot 3520 = 2470 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Ec. E3-1">
+$$
+\phi_c P_n = 0.90 \cdot 2470 \cdot 74.2 = 164\,947 \ \text{kgf} = 164.9 \ \text{tonf}
+\qquad
+\frac{P_r}{P_c} = \frac{90}{164.9} = 0.55
+$$
+</Equation>
+
+Verificada sola, la columna va al **55 %**: cómoda.
+
+## 3. Segundo sumando: la flexión sola (Cap. F)
+
+El puntal que arriostra el eje débil también sujeta el ala comprimida: $L_b = 3.5$ m. Con
+$L_p = 1.76\,r_y\sqrt{E/F_y} = 2.13$ m y $L_r = 7.38$ m (Ec. F2-5 y F2-6), el tramo cae en la
+zona inelástica. El momento parabólico del viento da $C_b = 1.30$ en el tramo crítico
+(Ec. F1-1), y la recta F2-2 amplificada por $C_b$ **supera $M_p$, así que manda el tope**:
+
+<Equation label="Ec. F2-1 y F2-2">
+$$
+M_p = F_y Z_x = 2\,699\,840 \ \text{kgf·cm} = 27.0 \ \text{tonf·m}; \quad
+C_b\left[M_p - (M_p - 0.7F_y S_x)\tfrac{L_b - L_p}{L_r - L_p}\right] = 31.7 > M_p
+\;\Rightarrow\; \phi_b M_n = \phi_b M_p = 24.3 \ \text{tonf·m}
+$$
+</Equation>
+
+Contra el momento de primer orden, $M_u/\phi_b M_n = 8.0/24.3 = 0.33$. También cómoda. Y aquí
+está la trampa: **con 0.55 y 0.33 por separado, la columna parece sobrada** — pero ninguna de
+esas dos verificaciones es la que manda.
+
+## 4. El momento que entra al presupuesto: $B_1$ ($P$-$\delta$)
+
+La compresión no espera su turno: actúa **sobre la columna ya flectada** por el viento, y en
+cada sección agrega un momento $P \cdot \delta$ que el análisis de primer orden no ve. El
+Apéndice 8 lo recupera con el amplificador $B_1$ —el mismo mecanismo del
+[amplificador $P$-$\Delta$](/blog/pdelta-cuando-confiar-amplificador), aplicado a la flecha
+del miembro—, que compara $P_r$ con la carga de Euler del **plano de flexión** ($L_{c1} = 7.0$
+m, sin puntales que ayuden):
+
+<Equation label="Ec. A-8-5">
+$$
+P_{e1} = \frac{\pi^2 E I_x}{L_{c1}^2} = \frac{\pi^2 \cdot 2.04\times10^6 \cdot 8700}{700^2}
+= 357\,481 \ \text{kgf} = 357 \ \text{tonf}
+$$
+</Equation>
+
+<Equation label="Ec. A-8-3">
+$$
+B_1 = \frac{C_m}{1 - \alpha P_r / P_{e1}}
+= \frac{1.0}{1 - 90/357} = 1.34
+\;\Rightarrow\;
+M_r = 1.34 \cdot 8.0 = 10.7 \ \text{tonf·m}
+$$
+</Equation>
+
+($C_m = 1.0$ por carga transversal entre apoyos; $\alpha = 1.0$ en LRFD. Trabajamos con el
+método de la longitud efectiva, por eso $EI^* = EI_x$ pleno, sin la reducción $0.8\tau_b$ del
+análisis directo.) La columna usa un
+**cuarto de su carga de Euler**, y eso infla el momento un **34 %**. No es un refinamiento: es
+un tercio más de demanda de flexión que existe físicamente y que el primer orden simplemente
+no calcula.
+
+## 5. La interacción H1-1: el presupuesto
+
+Con $P_r/P_c = 0.55 \ge 0.2$ rige la Ec. H1-1a — la compresión entra completa y la flexión
+con el crédito $8/9$:
+
+<Equation label="Ec. H1-1a">
+$$
+\frac{P_r}{P_c} + \frac{8}{9}\frac{M_r}{M_c}
+= 0.55 + \frac{8}{9}\cdot\frac{10.7}{24.3}
+= 0.55 + 0.39 = \mathbf{0.94} \ \le 1.0 \quad\checkmark
+$$
+</Equation>
+
+<Figure
+  src="/ejemplos/viga-columna-interaccion.svg"
+  alt="Diagrama de interacción normalizado P_r/P_c contra M_r/M_c con la frontera bilineal del Cap. H: la rama H1-1a desde (0, 1) arriba con pendiente 8/9 y la rama H1-1b bajo P_r/P_c = 0.2. Sobre el plano se marcan dos puntos a la misma altura P_r/P_c = 0.55: el punto del análisis de primer orden (M/M_c = 0.33, uso 0.84) y el punto amplificado por B_1 (M/M_c = 0.44, uso 0.94), unidos por una flecha horizontal rotulada B_1 = 1.34. Una caja anota que los usos por separado (0.55 y 0.33) engañan — combinados dan 0.84 y con B_1 el uso sube a 0.94, mientras la suma ingenua 0.99 tampoco es la norma por el crédito 8/9 — y que sin el puntal de media altura φP_n cae a 60.9 tonf, φM_n a 18.1 tonf·m y el uso combinado a 2.0."
+  caption="La frontera bilineal de H1-1 y el viaje del punto de demanda: el primer orden lo deja en uso 0.84; la amplificación B_1 lo corre a 0.94. Los diez puntos de diferencia son el momento P·δ que el análisis de primer orden no ve."
+/>
+
+La cuenta desarma dos atajos tentadores. **Ignorar $B_1$** (usar el momento del análisis) da
+$0.55 + \tfrac{8}{9}(0.33) = 0.84$: diez puntos de uso escondidos —con menos holgura inicial,
+la diferencia entre "pasa" y "no pasa"—. Y **sumar los usos amplificados**
+($P_r/P_c + M_r/M_c = 0.55 + 0.44 = 0.99$) tampoco es la norma: H1-1a descuenta la flexión en $8/9$, porque la plastificación parcial de la sección
+deja convivir los dos efectos un poco mejor que la suma lineal. El presupuesto real es más
+exigente que los usos separados y un poco más amable que la suma ingenua.
+
+<Note type="tip" title="La palanca sigue siendo el arriostramiento">
+El puntal a media altura no es un detalle: sin él, $L_{cy} = L_b = 7$ m derrumba las dos
+capacidades a la vez —$\phi_c P_n$ cae de 164.9 a 60.9 tonf (esbeltez 139, pandeo elástico) y
+$\phi_b M_n$ de 24.3 a 18.1 tonf·m (zona inelástica de LTB, con $L_b = 7$ m ya al borde de
+$L_r = 7.38$ m y el $C_b = 1.14$ del tramo completo)— y el uso combinado se dispara de 0.94 a
+**2.0** ($B_1 = 1.34$ no cambia: el puntal es fuera del plano de flexión). La misma lección de
+la [columna](/acero/ejemplo-columna-galpon-compresion) y de la [viga](/acero/ejemplo-viga-ltb),
+ahora cobrada dos veces en la misma ecuación: en una viga-columna, cada metro de
+arriostramiento trabaja para los **dos sumandos** del presupuesto.
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Pandeo local | Tablas B4.1a/B4.1b | compacta / no esbelta | — | ✓ |
+| Compresión sola | Cap. E (E3) | pandeo eje débil, $L_{cy} = 3.5$ m | $\phi_c P_n = 164.9$ tonf | 0.55 |
+| Flexión sola (1.er orden) | Cap. F (F2, $C_b = 1.30$) | tope $\phi_b M_p$ | $\phi_b M_n = 24.3$ tonf·m | 0.33 |
+| Amplificación $P$-$\delta$ | Ap. 8 (A-8-3) | $B_1 = 1.34$ | $M_r = 10.7$ tonf·m | — |
+| **Interacción combinada** | **Ec. H1-1a** | **presupuesto — gobierna** | — | **0.94** |
+
+**Solución:** columna de fachada **W250×58** (A992) de 7 m con **un puntal fuera del plano a
+media altura**, que resiste $P_u = 90$ tonf más el viento del paño con uso combinado 0.94.
+Verificada a compresión sola (0.55) o a flexión sola (0.33) parece sobrada; la ecuación H1-1a
+—con el momento **amplificado** $B_1 = 1.34$— la deja al límite. Es la lección de las
+viga-columnas: **los usos separados no se suman ni se miran solos, y el momento que entra al
+presupuesto es el de segundo orden, no el del análisis.**
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022 — Cap. H (fuerzas combinadas), Cap. E
+(compresión), Cap. F (flexión) y Apéndice 8 (análisis aproximado de segundo orden). En Chile
+las estructuras industriales agregan los requisitos sísmicos de la NCh2369, que para columnas
+sismorresistentes impone además límites de esbeltez y compacidad propios.

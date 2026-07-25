@@ -93,8 +93,29 @@ su borde); muro de albañilería → a medio camino entre eje y cara.
 
 **Corte unidireccional — a distancia $d$ de la cara.** Como en cualquier elemento: la
 carga aplicada a menos de $d$ de la cara viaja directo al apoyo por compresión inclinada
-y no cuenta para el corte. Se verifica con el $V_c$ del corte en una dirección
-(Cap. 22.5): $\phi \cdot 0.17\lambda\sqrt{f'_c}\,b\,d$ en su forma simplificada.
+y no cuenta para el corte. Se verifica con el $V_c$ del corte en una dirección (Cap. 22.5)
+— pero **con la ecuación que corresponde a un elemento sin estribos**:
+
+<Equation label="Tabla 22.5.5.1(c)">
+$$
+V_c = \left(0.66\,\lambda_s\,\lambda\,(\rho_w)^{1/3}\sqrt{f'_c} + \frac{N_u}{6A_g}\right) b\,d
+\qquad
+\lambda_s = \sqrt{\frac{2}{1 + d/250}} \le 1
+$$
+</Equation>
+
+<Note type="warning" title="No usar 0.17λ√f'c en zapatas">
+La forma simplificada $V_c = 0.17\lambda\sqrt{f'_c}\,b\,d$ (Ec. (a) de la Tabla 22.5.5.1)
+**solo es válida si $A_v \ge A_{v,min}$**. Una zapata no lleva estribos, así que cae en
+$A_v < A_{v,min}$ y le corresponde la **Ec. (c)**, que incluye el factor de tamaño
+$\lambda_s$ y la cuantía longitudinal $\rho_w^{1/3}$.
+
+Esto importa justamente donde más: con $d = 250$ mm, $\lambda_s = 1$; con $d = 600$ mm,
+$\lambda_s = 0.80$; con $d = 1000$ mm, $\lambda_s = 0.69$. **Cuanto más gruesa la zapata,
+mayor el castigo** — y las zapatas típicas están muy por encima de los 250 mm. Usar
+$0.17\lambda\sqrt{f'_c}$ en una zapata gruesa poco armada es **inseguro**, y es la
+fórmula previa a ACI 318-19.
+</Note>
 
 **Punzonamiento — perímetro $b_o$ a $d/2$ de la cara (Cap. 22.6).** La losa invertida
 tiene el mismo modo frágil que la losa de piso: la columna puede "ensartarse" en la

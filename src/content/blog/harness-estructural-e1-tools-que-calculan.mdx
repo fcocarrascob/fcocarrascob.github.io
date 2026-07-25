@@ -1,0 +1,179 @@
+---
+title: "Harness estructural (1): las herramientas que calculan"
+description: "Arranca un proyecto de varios meses: un asistente de verificación estructural que corre 100 % local en mi GPU, capaz de leer un enunciado en lenguaje natural y devolver una verificación ACI/AISC trazable —sin que el modelo de lenguaje toque un solo número—. El primer peldaño son las herramientas: cinco verificaciones servidas por MCP, cada una con su cita normativa en la salida y con la orden de negarse cuando la norma no aplica. Este post cuenta el diseño y por qué se construye en este orden."
+pubDate: 2026-07-24
+draft: false
+tags: ["LLM local", "MCP", "function calling", "Ollama", "ACI 318-25", "AISC 360-22", "verificación", "harness", "agentes"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 1
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## El proyecto
+
+Quiero un asistente de verificación estructural que corra **entero en mi máquina** —sin API,
+sin nube, sin mandar los datos de un proyecto a un tercero— y que haga algo concreto: leer
+*"verifica una zapata de 2.20 m bajo una columna de 40×40, muerta 60 tonf, viva 30"* y devolver
+la verificación completa, con cada número citado a su sección de la norma, listo para pegar en
+una memoria de cálculo. Un modelo de lenguaje local (Ollama, sobre una GPU de 8 GB) orquesta y
+redacta; el cálculo lo hacen funciones auditadas; el documento final se arma desde un JSON
+estructurado.
+
+Es un proyecto de varios meses, y lo voy a construir por etapas, cada una con un entregable
+medible y su propio post. Esta es la primera. Vengo de leer
+[*Build a Reasoning Model*](/apuntes/reasoning-from-scratch-cap3-verificar-respuestas/) y de
+armar herramientas de cálculo para el blog; este proyecto junta las dos cosas en algo que uso.
+
+<Note type="info" title="El mapa de las etapas">
+**E1 — herramientas que calculan** (este post) · E2 — elegir el modelo local · E3 — respuestas
+con cita (RAG) · E4 — el harness que une todo · E5 — leer modelos de SAP2000 · E6 — la memoria en
+Word · E7 — crear modelos desde lenguaje natural. Cada peldaño se apoya en el anterior; ninguno
+tiene sentido sin el primero.
+</Note>
+
+## El principio que ordena todo
+
+Antes de escribir una línea, una decisión de arquitectura que define el resto del proyecto:
+
+<Note type="warning" title="Los números nunca pasan por las manos del LLM">
+El modelo de lenguaje decide *qué* verificar y *narra* el resultado. **Calcular, calculan
+funciones Python.** El Word se genera desde un JSON, no desde texto libre. Así la superficie donde
+el modelo puede alucinar queda reducida a la orquestación y la prosa —revisables de un vistazo— y
+desaparece por completo del tramo numérico, que es el que no perdona.
+</Note>
+
+Un LLM que "calcula" una tensión admisible es un generador de texto plausible: a veces acierta, y
+cuando falla, falla en silencio, con un número que se ve perfectamente razonable. Para una memoria
+que firma un profesional, eso es inaceptable. La salida no es prohibir el modelo —es fantástico
+para entender el pedido, elegir la verificación y explicar el resultado—; es **sacarle el cálculo
+de las manos** y dárselo a código que se puede testear. Todo lo que sigue es consecuencia de esta
+única regla.
+
+<Figure
+  src="/harness-estructural-e1/arquitectura.svg"
+  alt="Diagrama en dos zonas separadas por una línea roja punteada. Arriba, la zona del lenguaje (texto): el enunciado en lenguaje natural entra al modelo de lenguaje, que elige la herramienta, arma la llamada y narra el resultado —pero no produce ni un número—, y sale una respuesta redactada con cada número citado. Abajo, la zona del cálculo (números): la herramienta Python calcula y devuelve un JSON con el número más su cita normativa. La llamada baja del LLM a la herramienta llevando solo datos; el resultado con cita sube de vuelta. La línea roja del medio indica que los números nunca cruzan hacia arriba."
+  caption="El LLM vive arriba, en el texto; los números viven abajo, en código testeable. La llamada baja con datos y sin cálculo; el resultado sube con su cita. El modelo ve el número —para narrarlo y citarlo—, pero nunca lo produce."
+/>
+
+## E1: cinco herramientas, servidas por MCP
+
+El primer peldaño no es el modelo: son las herramientas que el modelo va a operar. Elegí cinco
+verificaciones que ya tenía trabajadas como [ejemplos en este blog](/hormigon/), de modo que cada
+una nace con su set de validación —los ejemplos publican todos sus valores intermedios—:
+
+| Herramienta | Norma | Reproduce |
+|---|---|---|
+| Viga a flexión y corte | ACI 318-25 | [viga 30×60](/hormigon/ejemplo-viga-flexion-corte/) |
+| Zapata aislada | ACI 318-25 | [zapata 2.20×2.20](/hormigon/ejemplo-zapata-aislada/) |
+| Columna a compresión | AISC 360-22 | [columna de galpón](/acero/ejemplo-columna-galpon-compresion/) |
+| Viga con pandeo lateral-torsional | AISC 360-22 | [viga W460](/acero/ejemplo-viga-ltb/) |
+| Grupo de anclajes | ACI 318-25 | [anclajes en pedestal](/hormigon/ejemplo-anclajes-pedestal/) |
+
+Se sirven por **MCP** (Model Context Protocol), el protocolo estándar para exponer herramientas a
+un modelo. Es una decisión deliberada: el mismo servidor MCP que hoy consumo desde Claude Code lo
+va a consumir mañana el harness local con el modelo de Ollama. **La capa de herramientas sobrevive
+al cambio de modelo**, así que se construye antes que el modelo. Si mañana cambio de Qwen a Llama,
+o el año que viene a lo que venga, las herramientas no se tocan.
+
+## La salida lleva su propia cita
+
+Una función que devuelve `27.4` no sirve en un contexto donde todo tiene que ser trazable. La
+regla es que **ningún número viaja solo**: cada verificación declara su norma, sección y ecuación.
+Esta es la salida real de la herramienta de viga sobre el ejemplo del blog, tal cual la recibe
+quien la llama:
+
+```json
+{
+ "elemento": "Viga rectangular de hormigon armado",
+ "norma": "ACI 318-25",
+ "cumple": true,
+ "uso_maximo": 0.987,
+ "gobierna": "Flexion",
+ "verificaciones": [
+  { "nombre": "Flexion",
+    "referencia": "ACI 318-25 Sec. 22.2 / 9.3.2 Ec. 22.2.2.4.1",
+    "demanda": 27.0, "capacidad": 27.37, "uso": 0.987, "cumple": true },
+  { "nombre": "Corte",
+    "referencia": "ACI 318-25 Tabla 22.5.5.1 Ec. (a)",
+    "demanda": 14.76, "capacidad": 20.88, "uso": 0.707, "cumple": true },
+  { "nombre": "Tope de biela comprimida",
+    "referencia": "ACI 318-25 Sec. 22.5.1.2",
+    "demanda": 14.25, "capacidad": 54.33, "uso": 0.262, "cumple": true }
+ ]
+}
+```
+
+La trazabilidad no es un adorno que se agrega al final: es la **forma del dato desde el origen**.
+Cuando en una etapa futura esto se vuelque a una memoria en Word, cada número del documento va a
+poder rastrearse hasta esta línea de JSON, y la memoria se va a auditar sola contra ella. El RAG
+de la etapa 3 y la memoria de la etapa 6 heredan la cita gratis, porque ya viene puesta.
+
+## La herramienta se niega antes que calcular mal
+
+Esta es la parte del diseño de la que estoy más convencido. Si le pido a la viga que verifique con
+estribos absurdamente juntos —tanto refuerzo de corte que la biela comprimida del hormigón fallaría
+antes—, no devuelve un número tranquilizador. Se planta:
+
+```json
+{
+ "error": "Vs = 272.2 tonf supera el tope 54.3 tonf que protege la biela comprimida",
+ "referencia": "ACI 318-25 Sec. 22.5.1.2",
+ "alternativa": "aumentar la seccion o f'c; mas estribos no ayudan",
+ "fuera_de_alcance": true
+}
+```
+
+<Note type="tip" title="Negarse es una feature, no un bug">
+Un asistente que *siempre* entrega un número es peligroso: quien lo usa no tiene cómo saber cuándo
+ese número quedó fuera del alcance de la fórmula que lo produjo. Prefiero mil veces una herramienta
+que responde *"esto no lo sé calcular, y esta es la razón normativa, y esto es lo que sí
+corresponde"* a una que rellena el hueco con algo plausible. Es exactamente lo que un LLM haría por
+su cuenta —y lo que acá tiene prohibido hacer—.
+</Note>
+
+<Figure
+  src="/harness-estructural-e1/dos-salidas.svg"
+  alt="Una herramienta con sus datos de entrada (b, h, d, f'c, fy, As, Mu, Vu) llega a un rombo de decisión: ¿los datos caen dentro del alcance de la ecuación? Por la rama sí (verde) sale una verificación con procedencia —gobierna, uso, cumple, y la referencia a la sección de la norma resaltada—. Por la rama no (rojo) sale un rechazo con razón, no un número: el error explicado, la referencia normativa y la alternativa de qué hacer en su lugar."
+  caption="La herramienta tiene exactamente dos salidas: calcula con cita, o se niega con razón. Nunca una tercera —un número plausible sin respaldo—, que es lo que un LLM haría por su cuenta."
+/>
+
+Este mecanismo hace, además, que cierta clase de errores sea **estructuralmente imposible**. El
+corte de una zapata, por ejemplo, cae obligatoriamente en la fila de la tabla que exige el factor
+de tamaño $\lambda_s$ (una zapata no lleva estribos); la herramienta no tiene forma de calcularlo
+con la ecuación simplificada, elige sola la que corresponde, y lo declara en la cita que devuelve.
+El criterio normativo correcto queda **codificado, no comentado**.
+
+## Cómo sé que están bien
+
+Las cinco herramientas reproducen los cinco ejemplos publicados, número a número: $\phi M_n = 27.4$
+tonf·m y $\varepsilon_t = 0.0112$ en la viga; $\lambda_s = 0.839$ y $\phi V_c = 27.9$ tonf en la
+zapata; $F_e = 1083$, $F_n = 950$ kgf/cm² en la columna; la interacción tracción-corte $= 0.78$ que
+gobierna los anclajes. Son **57 tests automatizados** que asertan contra el valor publicado y
+revisado. Los ejemplos del blog dejaron de ser solo ilustraciones: se volvieron el banco de pruebas
+del proyecto.
+
+<Note type="info" title="Un detalle de implementación que me llevó tiempo">
+Las herramientas **derivan** sus constantes desde la edición oficial de cada norma en vez de
+copiarlas de una tabla, y las validan contra los ejemplos. Suena burocrático, pero destapó una
+inconsistencia menor en cómo se convierten los coeficientes de ACI a las unidades de uso local
+—diferencias del orden del 1 %, irrelevantes en ingeniería, pero que dejan de ser un número copiado
+y pasan a ser un número con procedencia—. AISC, en cambio, publica ecuaciones homogéneas y no
+sufre nada de eso. Es material para una nota aparte; acá basta con que cada constante sea trazable.
+</Note>
+
+## Lo que viene
+
+Con las herramientas listas ya existe el objeto de medición del próximo peldaño: **¿qué modelo
+local de 8 GB sabe operarlas bien?** Tiene que leer el enunciado, elegir la herramienta correcta,
+pasarle los datos correctos en las unidades correctas, y transmitir el rechazo cuando la
+herramienta se niega —en vez de inventar un número—. Eso se puede medir con método, no con
+sensaciones. Es la etapa 2, y ahí aparece un resultado que no esperaba: dos modelos del mismo
+tamaño que empatan en el puntaje pero fallan de maneras **opuestas**, y un bug del propio
+instrumento de medición que solo se ve cuando lo enfrentás a un modelo real.
+
+*Las herramientas y el servidor MCP viven en un repositorio aparte; este post documenta el diseño,
+no el código. Los ejemplos que sirven de banco de pruebas están enlazados arriba.*
