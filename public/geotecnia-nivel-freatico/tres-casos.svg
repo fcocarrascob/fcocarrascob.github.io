@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <pattern id="agua" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#1a63a8" fill-opacity="0.10"/>
+      <line x1="0" y1="6" x2="8" y2="6" stroke="#1a63a8" stroke-width="0.8" opacity="0.35"/>
+    </pattern>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los tres casos del nivel freático — y qué cambia en cada uno</text>
+
+  <line x1="320" y1="52" x2="320" y2="330" stroke="#e5e2dc" stroke-width="1.5"/>
+  <line x1="620" y1="52" x2="620" y2="330" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ============== CASO I ============== -->
+  <g>
+    <text x="165" y="70" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Caso I — napa SOBRE el sello</text>
+    <text x="165" y="88" font-size="11.5" text-anchor="middle" fill="#666">0 ≤ D₁ ≤ D_f</text>
+
+    <line x1="50" y1="110" x2="280" y2="110" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="50" y="110" width="230" height="34" fill="#efece6"/>
+    <rect x="50" y="144" width="230" height="86" fill="url(#agua)"/>
+    <line x1="50" y1="144" x2="280" y2="144" stroke="#1a63a8" stroke-width="1.8"/>
+    <path d="M58,140 l5,-6 l5,6 z" fill="#1a63a8"/>
+    <text x="272" y="139" font-size="10.5" fill="#1a63a8" text-anchor="end">napa</text>
+    <rect x="128" y="164" width="74" height="18" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.3"/>
+    <line x1="100" y1="110" x2="100" y2="144" stroke="#666" stroke-width="1" marker-start="url(#fa)" marker-end="url(#fa)"/>
+    <text x="94" y="132" font-size="11" fill="#666" text-anchor="end">D₁</text>
+    <line x1="240" y1="144" x2="240" y2="182" stroke="#666" stroke-width="1" marker-start="url(#fa)" marker-end="url(#fa)"/>
+    <text x="248" y="167" font-size="11" fill="#666">D₂</text>
+
+    <text x="165" y="256" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">q = D₁γ + D₂γ'</text>
+    <text x="165" y="278" font-size="12" fill="#b02a1a" text-anchor="middle" font-weight="bold">y  γ → γ'  en el 3er término</text>
+    <text x="165" y="304" font-size="11.5" fill="#555" text-anchor="middle">Se castigan los DOS términos.</text>
+    <text x="165" y="321" font-size="11.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">Es el caso más severo.</text>
+  </g>
+
+  <!-- ============== CASO II ============== -->
+  <g>
+    <text x="470" y="70" font-size="13.5" text-anchor="middle" fill="#b35c0e" font-weight="bold">Caso II — napa bajo el sello</text>
+    <text x="470" y="88" font-size="11.5" text-anchor="middle" fill="#666">0 ≤ d ≤ B</text>
+
+    <line x1="350" y1="110" x2="580" y2="110" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="350" y="110" width="230" height="80" fill="#efece6"/>
+    <rect x="350" y="190" width="230" height="40" fill="url(#agua)"/>
+    <line x1="350" y1="190" x2="580" y2="190" stroke="#1a63a8" stroke-width="1.8"/>
+    <path d="M358,186 l5,-6 l5,6 z" fill="#1a63a8"/>
+    <rect x="433" y="164" width="74" height="18" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.3"/>
+    <line x1="545" y1="182" x2="545" y2="190" stroke="#666" stroke-width="1" marker-start="url(#fa)" marker-end="url(#fa)"/>
+    <text x="553" y="190" font-size="11" fill="#666">d</text>
+    <line x1="433" y1="240" x2="507" y2="240" stroke="#666" stroke-width="1" marker-start="url(#fa)" marker-end="url(#fa)"/>
+    <text x="470" y="234" font-size="11" fill="#666" text-anchor="middle">B</text>
+
+    <text x="470" y="256" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">q = γ D_f  (sin cambio)</text>
+    <text x="470" y="278" font-size="12" fill="#b35c0e" text-anchor="middle" font-weight="bold">γ̄ = γ' + (d/B)(γ − γ')</text>
+    <text x="470" y="304" font-size="11.5" fill="#555" text-anchor="middle">Solo el 3er término, e interpolado</text>
+    <text x="470" y="321" font-size="11.5" fill="#555" text-anchor="middle">linealmente según cuánto del bulbo se moja.</text>
+  </g>
+
+  <!-- ============== CASO III ============== -->
+  <g>
+    <text x="770" y="70" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Caso III — napa profunda</text>
+    <text x="770" y="88" font-size="11.5" text-anchor="middle" fill="#666">d ≥ B</text>
+
+    <line x1="650" y1="110" x2="880" y2="110" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="650" y="110" width="230" height="106" fill="#efece6"/>
+    <rect x="650" y="216" width="230" height="14" fill="url(#agua)"/>
+    <line x1="650" y1="216" x2="880" y2="216" stroke="#1a63a8" stroke-width="1.8"/>
+    <path d="M658,212 l5,-6 l5,6 z" fill="#1a63a8"/>
+    <rect x="733" y="164" width="74" height="18" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.3"/>
+    <line x1="845" y1="182" x2="845" y2="216" stroke="#1c7c3c" stroke-width="1" marker-start="url(#fa)" marker-end="url(#fa)"/>
+    <text x="853" y="203" font-size="11" fill="#1c7c3c">d ≥ B</text>
+
+    <text x="770" y="256" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">q = γ D_f</text>
+    <text x="770" y="278" font-size="12" fill="#1c7c3c" text-anchor="middle" font-weight="bold">γ sin modificar</text>
+    <text x="770" y="304" font-size="11.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">El agua no afecta la capacidad.</text>
+    <text x="770" y="321" font-size="11.5" fill="#555" text-anchor="middle">Queda fuera del bulbo de falla.</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="50" y="348" width="840" height="64" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="371" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">γ' = γ_sat − γ_w. Con γ_sat = 19 kN/m³ resulta γ' = 9,19: apenas el 51 % del peso húmedo.</text>
+  <text x="470" y="393" font-size="12" text-anchor="middle" fill="#555">Las tres expresiones suponen que <tspan font-weight="bold">no hay fuerzas de filtración</tspan>. Con flujo ascendente el efecto es peor y no lo cubre esta formulación.</text>
+</svg>
