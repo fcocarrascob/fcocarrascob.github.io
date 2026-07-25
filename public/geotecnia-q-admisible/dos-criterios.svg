@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="qa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="qar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="qab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="30" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">q_adm sale del menor de dos criterios que no se parecen en nada</text>
+
+  <line x1="470" y1="52" x2="470" y2="356" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ===== LEFT: falla por corte ===== -->
+  <g>
+    <text x="240" y="64" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Criterio 1 — Falla por corte del suelo</text>
+
+    <!-- carga -->
+    <line x1="240" y1="88" x2="240" y2="114" stroke="#666" stroke-width="2.5" marker-end="url(#qa)"/>
+    <text x="252" y="102" font-size="12.5" fill="#666">P</text>
+
+    <!-- terreno -->
+    <line x1="80" y1="140" x2="410" y2="140" stroke="#8a857c" stroke-width="1.5"/>
+    <rect x="80" y="140" width="330" height="50" fill="#efece6" opacity="0.6"/>
+
+    <!-- zapata -->
+    <rect x="196" y="118" width="88" height="22" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.5"/>
+
+    <!-- mecanismo de falla: cuña + corte radial + cuñas pasivas -->
+    <polyline points="196,140 240,183 284,140" fill="#b02a1a" fill-opacity="0.12" stroke="#b02a1a" stroke-width="2.5"/>
+    <path d="M196,140 Q168,178 132,140" fill="none" stroke="#b02a1a" stroke-width="2" stroke-dasharray="6 4"/>
+    <path d="M284,140 Q312,178 348,140" fill="none" stroke="#b02a1a" stroke-width="2" stroke-dasharray="6 4"/>
+
+    <!-- levantamiento del terreno -->
+    <line x1="150" y1="140" x2="150" y2="122" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#qar)"/>
+    <line x1="330" y1="140" x2="330" y2="122" stroke="#b02a1a" stroke-width="1.8" marker-end="url(#qar)"/>
+    <text x="150" y="116" font-size="11" fill="#b02a1a" text-anchor="middle">levanta</text>
+    <text x="330" y="116" font-size="11" fill="#b02a1a" text-anchor="middle">levanta</text>
+
+    <text x="240" y="214" font-size="12.5" fill="#555" text-anchor="middle">la superficie de falla aflora y la zapata se hunde</text>
+
+    <text x="240" y="252" font-size="13.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">q_u = 1,3 c'N_c + q N_q + 0,4 γ B N_γ</text>
+    <text x="240" y="278" font-size="13" fill="#b02a1a" text-anchor="middle">q_adm = q_u / FS,  con FS ≥ 3</text>
+
+    <text x="240" y="308" font-size="12.5" fill="#555" text-anchor="middle">ocurre o no ocurre</text>
+    <text x="240" y="328" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">SÚBITO — sin aviso</text>
+  </g>
+
+  <!-- ===== RIGHT: asentamiento ===== -->
+  <g>
+    <text x="700" y="64" font-size="13.5" text-anchor="middle" fill="#1a63a8" font-weight="bold">Criterio 2 — Asentamiento excesivo</text>
+
+    <line x1="700" y1="88" x2="700" y2="114" stroke="#666" stroke-width="2.5" marker-end="url(#qa)"/>
+    <text x="712" y="102" font-size="12.5" fill="#666">P</text>
+
+    <!-- terreno original (punteado) y terreno deformado -->
+    <line x1="540" y1="140" x2="870" y2="140" stroke="#8a857c" stroke-width="1" stroke-dasharray="5 4"/>
+    <path d="M540,140 Q620,142 640,156 L760,156 Q780,142 870,140" fill="#efece6" stroke="#8a857c" stroke-width="1.5"/>
+    <rect x="540" y="156" width="330" height="34" fill="#efece6" opacity="0.6"/>
+
+    <!-- zapata asentada -->
+    <rect x="656" y="134" width="88" height="22" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.5"/>
+    <rect x="656" y="118" width="88" height="22" fill="none" stroke="#8a857c" stroke-width="1" stroke-dasharray="4 3"/>
+
+    <!-- flecha del asentamiento -->
+    <line x1="620" y1="119" x2="620" y2="155" stroke="#1a63a8" stroke-width="1.8" marker-end="url(#qab)"/>
+    <text x="612" y="141" font-size="12" fill="#1a63a8" text-anchor="end">S</text>
+
+    <text x="700" y="214" font-size="12.5" fill="#555" text-anchor="middle">el suelo nunca falla, pero la estructura baja y se daña</text>
+
+    <text x="700" y="252" font-size="13.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">S_total = S_e + S_p + S_s</text>
+    <text x="700" y="278" font-size="13" fill="#1a63a8" text-anchor="middle">elástico + consolidación + secundaria</text>
+
+    <text x="700" y="308" font-size="12.5" fill="#555" text-anchor="middle">siempre ocurre: la pregunta es cuánto y cuándo</text>
+    <text x="700" y="328" font-size="12.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">PROGRESIVO — puede tardar años</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="70" y="352" width="800" height="62" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="375" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">q_adm = mín (criterio 1, criterio 2) — un q_adm que no declara cuál lo limita es un número incompleto.</text>
+  <text x="470" y="398" font-size="12.5" text-anchor="middle" fill="#555">La asimetría: ensanchar la zapata <tspan font-weight="bold" fill="#b02a1a">aumenta</tspan> la capacidad al corte, pero <tspan font-weight="bold" fill="#1a63a8">también aumenta</tspan> el asentamiento.</text>
+</svg>

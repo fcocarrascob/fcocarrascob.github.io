@@ -47,6 +47,25 @@ const acero = defineCollection({
   }),
 });
 
+// Geotecnia: a diferencia de `hormigon` y `acero`, esta sección no cuelga de una
+// norma sino de métodos con autor y año (Terzaghi 1943, Meyerhof 1963, …). Por eso
+// `chapter` guarda el método o el capítulo de origen, y `source` deja la
+// trazabilidad al libro y la edición — que acá es dato crítico, no adorno.
+const geotecnia = defineCollection({
+  loader: glob({ base: './src/content/geotecnia', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    subsection: z.string(),
+    chapter: z.string().optional(),
+    source: z.string().optional(),
+  }),
+});
+
 // Apuntes de libros: clases didácticas destiladas desde el "cerebro"
 // (repo material_teorico). `subsection` = slug del libro (keys en
 // src/lib/apuntes.ts → SUBSECTIONS); `chapter` ordena y titula dentro del
@@ -66,4 +85,4 @@ const apuntes = defineCollection({
   }),
 });
 
-export const collections = { blog, hormigon, acero, apuntes };
+export const collections = { blog, hormigon, acero, geotecnia, apuntes };
