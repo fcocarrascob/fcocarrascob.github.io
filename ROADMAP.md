@@ -394,10 +394,10 @@ lo completan:
 
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
-| F-A8 | Conexión de momento con placa de extremo extendida (end-plate apernada viga-columna: pernos a tracción con palanca, placa a flexión, soldaduras) | J / AISC 358 | [ ] | ◻ | — | tesis candidata: el momento se convierte en un par T–C y los pernos superiores trabajan a tracción con efecto palanca — la conexión "rígida" vive o muere por el espesor de la placa |
-| F-A9 | Conexión de momento con placas de ala (BFP) + zona panel de la columna (J10) | J | [ ] | ◻ | — | tesis candidata: la conexión pasa y la **columna** no — la zona panel (corte J10-9/J10-11) es el eslabón que nadie mira; gancho a rigidizadores de continuidad |
-| F-A10 | Conexión de corte con doble ángulo apernado (y comparación directa con la shear tab de F-A7) | J | [ ] | ◻ | — | tesis candidata: misma demanda, dos anatomías — la excentricidad que la shear tab concentra en la plancha, el doble ángulo la reparte; cuándo conviene cada una |
-| F-A11 | Empalme apernado de viga (placas de ala y alma, deslizamiento crítico vs aplastamiento) | J | [ ] | ◻ | — | tesis candidata: el empalme no copia la sección, copia sus **fuerzas** (ala = par de flexión, alma = corte); y el pretensado (slip-critical) cambia el estado límite, no la resistencia última |
+| F-A8 | **Placa de extremo extendida 4E** (par T–C, pernos a tracción, efecto palanca por T-stub, placa en corte, soldadura del ala, J10 del lado columna) | J / Manual P.9 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema+detalle T-stub y curva T_disp–t_p) · tesis: la resistencia del perno **no es una constante, es una curva del espesor de la placa** — con t_p=18 mm la palanca se come el 42 % y falla (1.15), con 22 mm queda al 0.83, y solo en t_c=31.1 mm desaparece; 4 mm de plancha = pasar o no pasar, con los mismos pernos; k_ds=1.5 (J2-5) es lo que salva el filete de 10 mm (0.83 vs 1.24) · engancha F-A7 (la hermana rígida) y F-A9 |
+| F-A9 | **Placas de ala (BFP) + zona panel** (pernos, placas, F13.1 del ala perforada; J10-1/J10-2/J10-4/J10-10 de la columna; rigidizadores y doubler) | J / F13 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con zona panel+refuerzos y barras conexión vs columna) · tesis: **la conexión pasa (≤0.74) y la columna no** (ala 1.43, alma 1.12, zona panel 1.07); el detalle fino es el término axial de J10-10: sin él la zona panel daba 1.00 **exacto** y el P_u de gravedad se lleva ese 6 % (la columna no puede usar dos veces el mismo acero); el crédito J10-11 (×1.156) salva pero **exige** modelar la deformación del panel · engancha F-A8 |
+| F-A10 | **Doble ángulo apernado vs shear tab** (misma demanda y mismos pernos; corte doble, apoyo, J4, y la excentricidad) | J | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (planta comparada 1 vs 2 planos y barras enfrentadas) · tesis: duplicar plano de corte y espesor de apoyo **muda el eslabón débil desde la conexión hasta el alma de la viga** (0.89 → 0.46); y la excentricidad, que la cadena de resistencia esconde, lleva el perno extremo de la tab al **0.99** (método elástico) contra 0.48 del doble ángulo — a cambio de 3.8× el acero y 3× los agujeros · complementa F-A7 |
+| F-A11 | **Empalme apernado de viga** (reparto M a las alas / V al alma, cubreplacas, J3.9 deslizamiento crítico, F13.1) | J / J6 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con el reparto y barras rotura vs deslizamiento) · tesis doble: **el empalme copia las fuerzas, no la sección** (cubreplaca 26.6 cm² < ala 27.55 y pasa, porque la demanda son 45.2 tonf y no las 87 del ala); y **pretensar no agrega resistencia, agrega una verificación** — el mismo perno vale 10.8 tonf a rotura y 6.1 a fricción, y el grupo pasa de 0.52 a 0.93; salidas: pernos, Clase B o n_s=2 |
 
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
@@ -409,10 +409,27 @@ Par "la columna en los dos materiales" completo; **trilogía de flexión en acer
 (F-A3 pura LTB → F-A4 carrilera); **F-A7 ✅ (conexión apernada, 2026-07-23)** cierra el arco de
 la conexión (placa base + anclajes F-H6 + shear tab). **Tanda 2026-07-25: F-A6 ✅
 (viga-columna, cierra la síntesis E+F+H del acero), F-H2 ✅ (viga T, complementa F-H1) y
-F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** Siguientes
-candidatos: la sub-serie de **conexiones típicas F-A8–F-A11** (arriba), **F-A5** (alma a
-corte + rigidizadores) o **F-H4** (muro de corte). Pendiente opcional en F-H3: planilla del
-canvas con región `program` que reproduzca el diagrama P–M (◻).
+F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** **Tanda
+2026-07-25 (tarde): sub-serie de conexiones típicas COMPLETA — F-A8 ✅ (end-plate 4E,
+palanca), F-A9 ✅ (BFP + zona panel), F-A10 ✅ (doble ángulo vs shear tab) y F-A11 ✅
+(empalme, deslizamiento crítico).** Con F-A7 y F-H6 el Cap. J queda cubierto de punta a
+punta: corte simple, momento apernado (dos familias), comparación de anatomías, empalme y
+anclaje al hormigón. Siguientes candidatos: **F-A5** (alma a corte + rigidizadores, el único
+capítulo de acero sin ejemplo), **F-H4** (muro de corte) o **F-H8** (cabezal de pilotes STM).
+
+**Cierre de la tanda de conexiones (2026-07-25, tarde):**
+- **Las cinco auditadas** (F-A7 a F-A11, 74 hallazgos, ver AUDIT.md). Hallazgo transversal:
+  las áreas netas iban sin el **sobreancho de 2 mm de B4.3b** —no conservador ~3 %—; corregido
+  en los cinco posts con propagación a prosa, tablas, `description`, `alt` y SVG.
+- **F-A7 ampliado con la sección de excentricidad** y reauditado: el perno extremo llega a
+  **0.995** (método elástico, justo en el límite) y la plancha suma flexión (0.48). Con eso su
+  tesis se completa: la cadena la gobierna la plancha (0.93), pero la holgura de los pernos era
+  aparente.
+- Quedan **2 hallazgos 🔵 anotados** que necesitan el *AISC Steel Construction Manual* 16.ª ed.
+  (no está en `material_teorico/referencias`): si la *conventional configuration* exige
+  $L_{eh} \ge 2d_b$, y el valor SI exacto de $F_{nv}$ en la Tabla J3.2 (372 vs 370 MPa).
+- Pendiente opcional en F-H3: planilla del canvas con región `program` que reproduzca el
+  diagrama P–M (◻).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 

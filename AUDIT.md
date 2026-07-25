@@ -50,6 +50,82 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-25 · Tanda de conexiones (F-A7 a F-A11) · ⚠️ 74 hallazgos en 5 posts
+
+**Commit:** `2b28dc4` (los 4 posts nuevos untracked; F-A7 modificado en working tree) ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (5 auditores en paralelo)
+
+**Hallazgo transversal 🔴/🟠 — áreas netas sin el sobreancho de B4.3b.** Los cinco posts
+calculaban $A_n$, $A_{nv}$, $A_{nt}$ y $Z_{neto}$ con el agujero **nominal**, cuando B4.3b
+exige tomarlo **2 mm mayor** para tracción y corte (verificado en
+`referencias/AISC360-22/capB-requisitos-de-diseno.md`). Era **no conservador** (~3 %) y
+contaminaba números titulares. **Aplicado en los cinco**, con propagación completa a prosa,
+ecuaciones, tablas resumen, `description`, `alt`/`caption` y SVG:
+
+| Post | Antes → después |
+|---|---|
+| `ejemplo-conexion-apernada-corte` | rotura en corte 33.8 → **32.3** tonf (0.89 → **0.93**); bloque 36.5 → 36.2 (0.82 → 0.83); $Z_{neto}$ 128.8 → 123.2 cm³, flexión 3.94 → 3.77 tonf·m (0.46 → 0.48); tabla t=12 mm 40.5/43.8 → 38.8/43.4 |
+| `ejemplo-conexion-doble-angulo` | los mismos, más doble ángulo 67.6 → 64.6 (0.44 → 0.46) y bloque 72.9 → 72.3 (0.41 → 0.42) |
+| `ejemplo-conexion-momento-end-plate` | placa en corte, rotura 59.8 → **58.2** tonf (0.60 → 0.62) |
+| `ejemplo-conexion-momento-placas-ala` | placa de ala 90.6 → **88.1** (0.74 → 0.76); F13.1 $A_{fn}$ 20.01 → 19.43, $\phi M_n$ 43.5 → **42.3** tonf·m (0.74 → 0.76); merma de la viga 17 % → 19 %; uso máximo del lado conexión 0.74 → **0.76** |
+| `ejemplo-empalme-apernado-viga` | cubreplaca 60.8 → **59.1** (0.74 → 0.76); planchas de alma 54.1 → 51.7 (0.22 → 0.23); F13.1 $A_{fn}$ 20.59 → 20.01, $\phi M_n$ 44.8 → **43.5** (0.45 → 0.46); margen F13.1 3 % → 6 %; merma 15 % → 17 % |
+
+**Segundo hallazgo transversal 🟠 — el 0.99 del perno excéntrico era truncamiento.**
+$r = 10.759$ contra $\phi r_n = 10.810$ da **0.9953**, que a dos decimales redondea a 1.00. Se
+reescribió como **0.995, justo en el límite** en F-A7 y F-A10 (prosa, tablas, ambos SVG,
+`description`, `alt`), y se agregó que el método del centro instantáneo del *Manual* recupera
+margen. La tesis no cambia; el número ahora es reproducible.
+
+| # | Sev | Post | Hallazgo | Estado |
+|---|-----|------|----------|--------|
+| 1 | 🟠 | F-A7 | "Subir a A490 no ayudaría" quedaba contradicho por la sección 6 nueva (ahí el perno **sí** manda) | ✅ calificado ("no ayudaría **a la cadena**") + dato: con A490 el perno extremo baja a 0.79 |
+| 2 | 🟠 | F-A7 | La Ec. de desgarre estaba rotulada **J3-6a** (que es aplastamiento); el desgarre es **J3-6c** | ✅ corregido en la ecuación, la prosa y la tabla resumen |
+| 3 | 🟠 | F-A7 | El título del SVG de esquema mantenía la tesis vieja ("la plancha gobierna, no los pernos") | ✅ reescrito: "la plancha gobierna la cadena; la excentricidad, el perno" |
+| 4 | 🟠 | F-A7 | La cadena declarada en el intro no se recorría entera (alma de la viga y soldadura sin verificar) | ✅ `Note` de alcance + la viga W460×74 declarada en la tabla de datos |
+| 5 | 🟡 | F-A7 | No se aplicaba la regla de resistencia **efectiva** del grupo (J3.7 User Note) | ✅ agregado: 40.9 tonf, uso 0.73, con fila propia en el resumen |
+| 6 | 🟠 | F-A10 | 43.3 tonf para el corte de 4 pernos, contra 43.2 en F-A7 (el correcto) | ✅ unificado en 43.2 (prosa, tabla y comentario del SVG) |
+| 7 | 🟠 | F-A10 | "El uso máximo cae de 0.89 a 0.46" contradecía la fila "uso máximo 0.99/0.48" del mismo post | ✅ calificado como "uso máximo **de la cadena de resistencia**" en `description`, intro y tabla |
+| 8 | 🟠 | F-A10 | La fila "flexión por excentricidad" comparaba rotura neta (tab) contra fluencia bruta (ángulos) | ✅ ambas en rotura neta: 3.77 vs **7.54** tonf·m (0.48 vs 0.22), con la barra del SVG corregida |
+| 9 | 🟠 | F-A10 | El `alt` mezclaba la excentricidad **en el plano** ($a$) con el centrado **fuera del plano** | ✅ separados en `alt` y `caption` |
+| 10 | 🟡 | F-A10 | Cotas de 60 y 55 mm dibujadas con la misma longitud; A36 sin declarar; "divide los usos por dos" sin excepción | ✅ los tres |
+| 11 | 🟠 | F-A8 | $0.75 \cdot 7950 \cdot 4.52 = 26\,950 \ne 26\,970$ (el valor venía de $A_b = 4.524$) | ✅ $A_b = 4.524$ declarado; el producto ahora cierra en 26 974 |
+| 12 | 🟠 | F-A8 | Ninguna capacidad de columna era reproducible: faltaban $F_y$, $l_b$, $E$ y $V_{col}$ | ✅ los cuatro declarados, más la hipótesis $P_r \le 0.4P_c$ que elige la rama J10-9 |
+| 13 | 🟡 | F-A8 | SVG con el brazo del par en 442 mm (la ecuación usa 442.5); detalle T-stub con $b'$ dibujado más largo que $a'$ | ✅ ambos corregidos en el SVG |
+| 14 | 🟡 | F-A8 | $b$ sin definir en $\min(L_e, 1.25b)$; $t_c$ sustituido en cm sin avisar; $d'$ sin definir; $\alpha' = 0.830$ (exacto 0.8293) | ✅ los cuatro (ahora $\alpha' = 0.83$ a dos decimales) |
+| 15 | 🟡 | F-A8 | "subir a 15 mm de pierna" cuando basta 13 mm; "hasta el 42 %" leído como máximo; `alt` con 36 mm y "bajo la curva" | ✅ los tres |
+| 16 | 🟡 | F-A9 | 97.6 tonf no reproducible con $A_b = 4.52$; uso de J10-11 reportado 0.86 (exacto 0.865) | ✅ 97.5 tonf y 0.87 |
+| 17 | 🟡 | F-A9 | La figura clasificaba F13.1 dentro de "LA CONEXIÓN" mientras el texto la asignaba a la viga | ✅ grupo renombrado "LA CONEXIÓN Y LA VIGA" en SVG, `alt` y `caption` |
+| 18 | 🟡 | F-A9 | Datos usados y no declarados ($l_b$, $E$, $Z_x$); rigidizadores "alineados con las alas de la viga" (van con las **placas**); J10.4/J10.5 omitidos sin decirlo; CJP y plancha de corte prometidas y no verificadas | ✅ los cuatro (el último, con `Note` de alcance) |
+| 19 | 🟡 | F-A11 | El deslizamiento del alma usaba $V_u$ crudo (0.25) mientras la fila contigua usaba la resultante excéntrica | ✅ misma base: 0.31 |
+| 20 | 🟡 | F-A11 | La flexión de las planchas de alma ignoraba $V_u e = 0.54$ tonf·m | ✅ 0.53 → **0.61** (el renglón que sostiene la tesis del reparto) |
+| 21 | 🟡 | F-A11 | El resumen omitía tres verificaciones del cuerpo; $Z_x$ y $L_{ev}$ sin declarar; 6083 vs 6084 kgf; J3-1 sin el paso en kgf; SVG con 442 | ✅ los cinco |
+| 22 | 🟡 | F-A11 | "no se mueva bajo carga de servicio" sugería verificar en servicio, cuando J3.9 usa combinaciones LRFD | ✅ aclarado |
+| 23 | 🔵 | F-A11 | Bloque de corte y compresión de la cubreplaca sin verificar | ✅ `Note`: 112.3 tonf (0.40) y $L_c/r = 11.3 < 25$, no gobiernan |
+| 24 | 🔵 | varios | Léxico y forma: voseo "Guardá", género de *shear tab*, cursivas, `x` por `×` en `alt`, líneas fuera de ancho, `T_{disp}` en itálica matemática, tags y `updatedDate` de F-A7 | ✅ aplicados |
+
+**No aplicado (queda anotado):**
+- 🔵 **F-A7 #14** — si la *conventional configuration* del *Manual* exige $L_{eh} \ge 2d_b = 44$ mm,
+  esta shear tab ($L_{eh} = 40$) quedaría fuera. **No verificable sin el Manual 16.ª ed.**, que no
+  está en `material_teorico/referencias`. Mitigado: la `Note` ya no afirma que el caso "está
+  tabulado" y remite a revisar las distancias al borde caso a caso.
+- 🔵 **F-A7 #13** — $F_{nv}$ de la Tabla J3.2 en SI: el post y la nota de capítulo usan 372 MPa
+  (= 54 ksi exacto) y la referencia interna tabula 370. Con 370 el perno extremo pasa de 0.995 a
+  1.001. **Pendiente de confirmar contra la Tabla J3.2 impresa**; el resultado se presenta como
+  "justo en el límite", que es robusto a la diferencia.
+- 🔵 **Numeración de las Ecs. 9-26 / 9-30 del *Manual*** (F-A8): las fórmulas son las correctas de
+  la Parte 9, pero la numeración cambió entre la 15.ª y la 16.ª ed. Sin el Manual en el repo.
+- 🔵 **Propiedades de perfil** (W460×74, W310×97, W360×162): consistentes con los equivalentes
+  imperiales, pero no hay tabla de perfiles en el repo contra la cual cerrarlas.
+
+**Verificado y correcto (lo más relevante):** toda la cadena de la zona panel de F-A9 —incluidos
+el 1.07 de J10-10, el "1.00 exacto" sin el término axial y el factor 1.156 de J10-11—; el método
+T-stub completo de F-A8 ($b'$, $a'$, $\rho$, $\delta$, $t_c$, $\alpha'$, la tabla de espesores y
+los 15 vértices de la curva del SVG); la tabla de deslizamiento de F-A11 (0.93 / 1.24 / 0.74 /
+0.62) y $T_b$ de la Tabla J3.1M; el reparto 81/19 por rigidez; $Y_t = 1.0$ en F13.1 y $\phi = 0.90$
+por F1(a); las escalas de las barras de los ocho SVG; frontmatter contra el schema Zod y todos los
+enlaces internos.
+
+
 ### 2026-07-25 · `hormigon/ejemplo-mensula-puntal-tensor` · ⚠️ 9 hallazgos
 
 **Commit:** `4bfbbd6` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -667,12 +743,16 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (13)
+### `acero` — acero (AISC 360-22) (17)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-conexion-momento-end-plate` | 2026-07-25 | ✅ | 0 (17 aplicados: 3🟠 8🟡 6🔵, 1🔵 anotado sin Manual) |
+| `ejemplo-conexion-momento-placas-ala` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🟠 5🟡 6🔵) |
+| `ejemplo-conexion-doble-angulo` | 2026-07-25 | ✅ | 0 (18 aplicados: 4🟠 11🟡 3🔵) |
+| `ejemplo-empalme-apernado-viga` | 2026-07-25 | ✅ | 0 (11 aplicados: 1🟠 8🟡 2🔵) |
 | `ejemplo-viga-columna` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🔴 1🟠 6🟡 4🔵) |
-| `ejemplo-conexion-apernada-corte` | 2026-07-23 | ✅ | 0 (4 aplicados: 2🟠 2🟡) |
+| `ejemplo-conexion-apernada-corte` | 2026-07-25 | ⚠️ | 2🔵 anotados (requieren el AISC *Manual*) · 14 aplicados: 1🔴 4🟠 6🟡 3🔵 |
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-07-23 | ⚠️ | 6 aplicados (working tree) |
