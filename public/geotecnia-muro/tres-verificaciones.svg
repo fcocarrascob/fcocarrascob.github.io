@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Las tres verificaciones — y la que gobierna es la que menos margen tiene por diseño</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Cada barra: factor de seguridad obtenido, contra el mínimo exigido (línea roja)</text>
+
+  <!-- ===== VUELCO ===== -->
+  <text x="76" y="98" font-size="13.5" fill="#1c7c3c" font-weight="bold">1 · Vuelco (§15.5)</text>
+  <text x="76" y="116" font-size="11" fill="#666">Σ M_R / Σ M_o = 646 / 199</text>
+  <rect x="330" y="82" width="440" height="26" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="330" y="82" width="286" height="26" fill="#1c7c3c" fill-opacity="0.75"/>
+  <line x1="506" y1="76" x2="506" y2="114" stroke="#b02a1a" stroke-width="1.8"/>
+  <text x="506" y="70" font-size="10" fill="#b02a1a" text-anchor="middle" font-weight="bold">mín 2,0</text>
+  <text x="630" y="100" font-size="14" fill="#1c7c3c" font-weight="bold">3,25</text>
+  <text x="784" y="100" font-size="11.5" fill="#888">holgura 1,62×</text>
+
+  <!-- ===== DESLIZAMIENTO ===== -->
+  <text x="76" y="176" font-size="13.5" fill="#b02a1a" font-weight="bold">2 · Deslizamiento (§15.6)</text>
+  <text x="76" y="194" font-size="11" fill="#666">(Σ V) tan φ'₂ + B c'₂ + P_p, sobre P_a</text>
+  <text x="76" y="210" font-size="11" fill="#b02a1a" font-weight="bold">con φ'₂ y c'₂ reducidos a 2/3, y sin P_p</text>
+  <rect x="330" y="160" width="440" height="26" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="330" y="160" width="132" height="26" fill="#b02a1a" fill-opacity="0.8"/>
+  <line x1="462" y1="154" x2="462" y2="192" stroke="#b02a1a" stroke-width="1.8"/>
+  <text x="462" y="148" font-size="10" fill="#b02a1a" text-anchor="middle" font-weight="bold">mín 1,5</text>
+  <text x="476" y="178" font-size="14" fill="#b02a1a" font-weight="bold">1,50</text>
+  <text x="784" y="178" font-size="11.5" fill="#b02a1a" font-weight="bold">holgura 1,00×</text>
+
+  <!-- ===== CAPACIDAD ===== -->
+  <text x="76" y="254" font-size="13.5" fill="#1a63a8" font-weight="bold">3 · Capacidad de carga (§15.7)</text>
+  <text x="76" y="272" font-size="11" fill="#666">Ec. (16.9) con inclinación y B' = B − 2e</text>
+  <text x="76" y="288" font-size="11" fill="#1a63a8">q_u = 596 kPa · q_max = 127 kPa</text>
+  <rect x="330" y="238" width="440" height="26" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="330" y="238" width="413" height="26" fill="#1a63a8" fill-opacity="0.75"/>
+  <line x1="594" y1="232" x2="594" y2="270" stroke="#b02a1a" stroke-width="1.8"/>
+  <text x="594" y="226" font-size="10" fill="#b02a1a" text-anchor="middle" font-weight="bold">mín 3,0</text>
+  <text x="757" y="256" font-size="14" fill="#1a63a8" font-weight="bold">4,69</text>
+  <text x="784" y="290" font-size="11.5" fill="#888">holgura 1,56×</text>
+
+  <!-- nota sobre el factor de inclinacion -->
+  <rect x="60" y="312" width="820" height="52" rx="6" fill="#1a63a8" fill-opacity="0.06" stroke="#1a63a8" stroke-width="1.2"/>
+  <text x="470" y="334" font-size="12.5" text-anchor="middle" fill="#1a63a8" font-weight="bold">Un detalle de la tercera: el factor de inclinación F_γi = (1 − β/φ')² vale 0,122 con β = 18,2°.</text>
+  <text x="470" y="353" font-size="12" text-anchor="middle" fill="#555">Se lleva el <tspan font-weight="bold">88 %</tspan> del término de peso propio. La carga inclinada es lo que hace distinta la verificación de un muro.</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="376" width="820" height="52" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="398" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">Gobierna el deslizamiento, justo en el límite. Y es la única de las tres con conservadurismo añadido.</text>
+  <text x="470" y="418" font-size="12" text-anchor="middle" fill="#555">Vuelco y capacidad se calculan con los parámetros tal cual; el deslizamiento, con ellos reducidos y descartando P_p.</text>
+</svg>

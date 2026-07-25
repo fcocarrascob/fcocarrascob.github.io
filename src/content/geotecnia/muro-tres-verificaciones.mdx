@@ -1,0 +1,251 @@
+---
+title: "El muro: tres verificaciones, y una que se descarta"
+description: "Un muro en voladizo de 6 m verificado por los tres criterios. Gobierna el deslizamiento, justo en el límite — y resulta ser la única verificación con conservadurismo añadido: se ignora el empuje pasivo y se reducen los parámetros. Sin esas convenciones el factor de seguridad se duplica. Cada una tiene su razón, y conviene conocerla."
+pubDate: 2026-08-03
+tags: ["ejemplo", "geotecnia", "muros de contención", "vuelco", "deslizamiento", "capacidad de soporte", "das"]
+subsection: "empujes-y-muros"
+chapter: "Empujes y muros"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+La [nota anterior](/geotecnia/tres-coeficientes-del-mismo-suelo) calculó el empuje. Esta lo pone a
+trabajar: un muro en voladizo completo, verificado por los tres criterios que el capítulo exige.
+
+Y el resultado tiene una vuelta que no esperaba al montar el ejemplo: **la verificación que
+gobierna es exactamente la única que lleva conservadurismo añadido**. Sin esas convenciones, el
+muro pasaría con holgura.
+
+<Note type="warning" title="Alcance">
+El muro está dimensionado con las proporciones de tanteo de §15.3 y los materiales son verosímiles
+pero inventados. El objetivo es mostrar el procedimiento y dónde está el margen, no entregar un
+diseño.
+</Note>
+
+---
+
+## 1. El muro
+
+<Figure
+  src="/geotecnia-muro/el-muro.svg"
+  alt="Sección de un muro en voladizo de 6 m de altura total, con base de 3,5 m, zapata de 0,5 m de espesor, alzado de 0,4 m, puntera de 1,0 m, talón de 2,1 m y empotramiento D_f de 1,0 m. El relleno de arena tiene φ' = 32°, γ = 18 kN/m³ y c' = 0; el suelo de fundación φ'₂ = 28° y c'₂ = 20 kPa; el hormigón γ_c = 24 kN/m³. Se dibuja el diagrama triangular del empuje activo de Rankine actuando sobre el plano vertical del talón, con resultante P_a = 100 kN/m aplicada a 2,00 m del sello. Flechas verticales indican los tres pesos: 53 kN/m del alzado, 42 de la zapata y 208 del suelo que descansa sobre el talón. A la derecha, las tablas de materiales y acciones: P_a = 99,6 kN/m, peso total 302,7 kN/m, momento resistente 646,2 kN·m/m y momento volcador 199,1 kN·m/m; se destaca que el 69 % del peso resistente no es el muro sino el suelo sobre el talón. Al pie: un muro en voladizo no resiste con su masa sino con el peso del suelo que carga sobre el talón, y de los 303 kN/m verticales 208 son relleno, por lo que la longitud del talón es la variable de dimensionamiento más eficaz."
+  caption="El dato que conviene tener presente antes de calcular nada: de los 303 kN/m que resisten, 208 son el relleno que descansa sobre el talón. El muro es sobre todo un mecanismo para movilizar el peso del propio suelo."
+/>
+
+Con `K_a = 0,307` sobre el plano vertical del talón:
+
+<Equation label="empuje activo">
+$$
+P_a = \tfrac{1}{2} K_a \gamma H^2 = \tfrac{1}{2}(0{,}307)(18)(6{,}0)^2 = 99{,}6 \ \text{kN/m}
+$$
+</Equation>
+
+aplicado a `H/3 = 2,00` m del sello.
+
+---
+
+## 2. Vuelco (§15.5)
+
+<Equation label="15.3">
+$$
+FS_{\text{vuelco}} = \frac{\sum M_R}{\sum M_o}
+$$
+</Equation>
+
+| Pieza | `W` (kN/m) | Brazo (m) | `M_R` |
+|---|---|---|---|
+| Zapata | 42,0 | 1,75 | 73,5 |
+| Alzado | 52,8 | 1,20 | 63,4 |
+| **Suelo sobre el talón** | **207,9** | 2,45 | **509,4** |
+| **Σ** | **302,7** | | **646,2** |
+
+Momento volcador: `99,6 × 2,00 = 199,1` kN·m/m.
+
+$$FS = 646{,}2 / 199{,}1 = \mathbf{3{,}25} \quad (\text{mín. 1,5 a 2}) \ \checkmark$$
+
+<Note type="info" title="El talón hace el trabajo">
+Los 207,9 kN/m del suelo sobre el talón aportan el **79 % del momento resistente**. Alargar el
+talón es, con diferencia, la forma más eficiente de mejorar el vuelco: añade peso *y* brazo a la
+vez, sin gastar hormigón.
+</Note>
+
+---
+
+## 3. Deslizamiento (§15.6) — el que gobierna
+
+<Equation label="15.12">
+$$
+FS = \frac{(\sum V)\tan\phi'_2 + B\,c'_2 + P_p}{P_a \cos\alpha}
+$$
+</Equation>
+
+Y aquí el capítulo introduce **dos convenciones** que cambian el resultado más que cualquier dato
+del suelo:
+
+1. **`P_p` se ignora** en muchos casos.
+2. **`φ′₂` y `c′₂` se reducen** a la mitad o dos tercios — Ec. (15.13).
+
+Con `φ′₂` y `c′₂` reducidos a 2/3 y sin `P_p`:
+
+$$FS = \frac{302{,}7 \tan(18{,}67°) + 3{,}5 \times 13{,}3}{99{,}6} = \frac{102{,}3 + 46{,}7}{99{,}6} = \mathbf{1{,}50}$$
+
+**Exactamente el mínimo exigido.** El muro pasa por los pelos.
+
+---
+
+## 4. Capacidad de carga (§15.7) — que es el Cap. 16 completo
+
+El muro transmite al suelo una carga **excéntrica e inclinada**. Eso obliga a usar la ecuación
+general con todo lo que la
+[serie de fundaciones](/geotecnia/terzaghi-vs-ecuacion-general) ya cubrió:
+
+$$e = \frac{B}{2} - \frac{\sum M_R - \sum M_o}{\sum V} = 1{,}75 - 1{,}477 = 0{,}273 \ \text{m}$$
+
+Como `e < B/6 = 0,583`, no hay despegue. `q_max = 127` kPa y `q_min = 46` kPa.
+
+Con `B′ = B − 2e = 2,954` m y una inclinación de la resultante `β = arctan(99,6/302,7) = 18,2°`:
+
+| Término | Valor |
+|---|---|
+| `c′N_c F_cd F_ci` | 358,5 kPa |
+| `q N_q F_qd F_qi` | 183,0 kPa |
+| `½ γ B′ N_γ F_γi` | **54,4 kPa** |
+| **`q_u`** | **596,0 kPa** |
+
+$$FS = 596{,}0 / 126{,}9 = \mathbf{4{,}69} \quad (\text{mín. 3}) \ \checkmark$$
+
+<Note type="tip" title="El factor que hace distinta a la verificación de un muro">
+El factor de inclinación del tercer término es `F_γi = (1 − β/φ′)²`. Con `β = 18,2°` y
+`φ′₂ = 28°`:
+
+$$F_{\gamma i} = (1 - 18{,}2/28)^2 = \mathbf{0{,}122}$$
+
+**Se lleva el 88 % del término de peso propio.** Es la penalización más severa de toda la serie, y
+existe solo porque la resultante no es vertical. Nótese además que `F_γi` se **anula** cuando
+`β = φ′`: una carga inclinada más allá del ángulo de fricción deja al suelo sin nada que aportar
+por ese término.
+</Note>
+
+---
+
+## 5. El veredicto
+
+<Figure
+  src="/geotecnia-muro/tres-verificaciones.svg"
+  alt="Las tres verificaciones con sus factores de seguridad representados como barras contra el mínimo exigido marcado por una línea roja. Vuelco, sección 15.5: FS = 3,25 contra un mínimo de 2,0, holgura 1,62 veces. Deslizamiento, sección 15.6, calculado con φ'₂ y c'₂ reducidos a dos tercios y sin contar el empuje pasivo: FS = 1,50 contra un mínimo de 1,5, holgura 1,00 veces, exactamente en el límite. Capacidad de carga, sección 15.7, con la ecuación (16.9) incluyendo inclinación y área efectiva B' = B − 2e, con q_u = 596 kPa y q_max = 127 kPa: FS = 4,69 contra un mínimo de 3, holgura 1,56 veces. Una caja destaca que el factor de inclinación F_γi vale 0,122 con β = 18,2 grados y se lleva el 88 % del término de peso propio. Al pie: gobierna el deslizamiento justo en el límite, y es la única de las tres con conservadurismo añadido, porque vuelco y capacidad se calculan con los parámetros tal cual mientras el deslizamiento los reduce y descarta el empuje pasivo."
+  caption="Las tres pasan, pero con holguras muy distintas. Y la que va justa es la única que se calcula con parámetros castigados."
+/>
+
+| Verificación | FS | Mínimo | Holgura |
+|---|---|---|---|
+| Vuelco | 3,25 | 2,0 | 1,62× |
+| **Deslizamiento** | **1,50** | **1,5** | **1,00×** |
+| Capacidad de carga | 4,69 | 3,0 | 1,56× |
+
+**Gobierna el deslizamiento**, que es el resultado habitual en muros en voladizo.
+
+---
+
+## 6. Dónde vive el conservadurismo
+
+Ahora la parte interesante. Las dos convenciones del §15.6 no son detalles: **deciden si el muro
+pasa**.
+
+<Figure
+  src="/geotecnia-muro/donde-vive-el-conservadurismo.svg"
+  alt="Gráfico de barras con el factor de seguridad al deslizamiento del mismo muro bajo cuatro convenciones de cálculo distintas, ninguna de las cuales cambia un solo dato del terreno. Con los parámetros reducidos a dos tercios y sin contar el empuje pasivo —el caso de diseño— sale 1,50, justo sobre el mínimo exigido de 1,5 marcado con línea punteada. Reducido a dos tercios pero contando el empuje pasivo, sube a 2,42, un 61 % más. Sin reducir los parámetros y sin empuje pasivo, 2,32, un 55 % más. Y sin reducir y contando el empuje pasivo, 3,24, un 116 % más. Al pie: las convenciones de cálculo más que duplican el factor de seguridad y son ellas, no el suelo, las que deciden si el muro pasa; cada una tiene su justificación física pero conviene saber que están ahí, porque un muro al límite puede estarlo por el método."
+  caption="Las cuatro barras son el mismo muro sobre el mismo suelo. Lo único que cambia es cuánto se permite contar."
+/>
+
+| Variante | FS | Respecto del diseño |
+|---|---|---|
+| **Reducido a 2/3, sin `P_p`** *(el caso de diseño)* | **1,50** | — |
+| Reducido a 2/3, contando `P_p` | 2,42 | **+61 %** |
+| Sin reducir, sin `P_p` | 2,32 | +55 % |
+| Sin reducir y contando `P_p` | 3,24 | **+116 %** |
+
+**Las convenciones más que duplican el factor de seguridad.** Un muro «al límite» puede estarlo
+por el método, no por el terreno.
+
+### Y cada convención tiene su razón
+
+Es tentador leer esto como conservadurismo apilado sin justificación. No lo es — hay **tres
+motivos distintos**, y conviene conocerlos porque determinan cuándo cada uno aplica:
+
+**1. `P_p` exige un desplazamiento que el muro no tolera.** La Tabla 14.1 lo cuantifica: movilizar
+el estado pasivo en arena densa requiere `0,005 H`. En la puntera de este muro, con `D_f = 1,0` m,
+eso son 5 mm de corrimiento horizontal — pero el estado pasivo se moviliza con el
+**desplazamiento de la estructura completa**, y un muro de 6 m que se desplace lo necesario ya
+falló por servicio. Es [el mismo principio](/geotecnia/tres-coeficientes-del-mismo-suelo) que hace
+que la punta de un pilote sea reserva y no capacidad utilizable.
+
+**2. El método simple sobreestima `P_p`.** El §14.7 lo advierte: la hipótesis de superficie de
+falla plana da valores altos, y el error crece con la fricción muro-suelo. Las soluciones con
+superficie curva dan menos.
+
+**3. La puntera puede desaparecer.** Es la razón más prosaica y quizá la más frecuente: una zanja
+de servicios, un colector, una excavación vecina. El suelo que provee `P_p` no está garantizado
+durante la vida del muro.
+
+Y la reducción de `φ′₂` y `c′₂` responde a algo distinto: son los parámetros del suelo **bajo la
+base**, movilizados en una interfaz hormigón-suelo que no es lo mismo que el interior del terreno,
+y sobre una superficie donde la construcción pudo alterar el material.
+
+<Note type="info" title="La lectura práctica">
+Si un muro no cumple el deslizamiento por poco, hay tres caminos, y conviene tomarlos en este
+orden:
+
+1. **Revisar las convenciones aplicadas** y ver si alguna es innecesariamente severa para el caso
+   (¿está garantizada la puntera? ¿hay medición del `φ′₂` real?).
+2. **Añadir un dentellón** bajo la zapata, que moviliza resistencia pasiva a mayor profundidad y
+   con menos desplazamiento.
+3. **Alargar el talón**, que sube `ΣV` y por tanto la fricción — y de paso mejora el vuelco.
+
+Lo que casi nunca conviene es engrosar el muro: añade peso donde menos brazo tiene y consume
+hormigón.
+</Note>
+
+---
+
+## 7. Un problema distinto: los cortes apuntalados
+
+El capítulo cierra con algo que parece lo mismo y no lo es. En un **corte apuntalado** la
+estructura se instala **a medida que se excava**, así que el suelo nunca llega a desarrollar el
+estado activo completo.
+
+**Consecuencia**: la distribución de presión **no es triangular**. Se usan **envolventes
+aparentes** —rectangulares o trapeciales— obtenidas empíricamente de mediciones en obra, no de la
+teoría de Rankine.
+
+> Generalizando: **la secuencia constructiva cambia el resultado del cálculo**. Ya lo habíamos
+> visto en pilotes —hincado o perforado cambia `K` casi al doble— y aparece de nuevo aquí. En
+> geotecnia, *cómo* se construye es un dato de entrada, no un detalle posterior.
+
+Y un modo de falla que no tiene equivalente en fundaciones: el **levantamiento del fondo**
+(§15.18), donde el suelo bajo la excavación se desplaza hacia arriba empujado por el peso del
+terreno adyacente. Es capacidad de soporte al revés.
+
+---
+
+## Qué preguntar
+
+1. **¿Qué convenciones se aplicaron al deslizamiento?** Es la verificación que gobierna y la que
+   más depende del método.
+2. **¿Se contó con `P_p`?** Si sí: ¿está garantizada la puntera durante toda la vida del muro?
+3. **¿De dónde salen `φ′₂` y `c′₂`?** Son del suelo bajo la base, que puede no ser el mismo del
+   relleno ni el de los sondajes del trasdós.
+4. **¿Se verificó la capacidad con factores de inclinación?** Sin ellos, `q_u` sale hasta un 88 %
+   alto en el tercer término.
+5. **¿Hay drenaje del trasdós?** La [nota anterior](/geotecnia/tres-coeficientes-del-mismo-suelo)
+   midió lo que cuesta no tenerlo: +32 % de empuje.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script que calcula el muro de punta a punta: empuje de
+Rankine, momentos respecto de la punta, las cuatro variantes de deslizamiento y la capacidad de
+carga por la Ec. (16.9) con factores de forma, profundidad e inclinación y área efectiva. Los
+factores `N_c`, `N_q` y `N_γ` salen de las formas cerradas de las Ecs. (16.6)–(16.8), verificadas
+antes contra las Tablas 16.1 y 16.2 del libro — 240 valores contrastados.
+</Note>
