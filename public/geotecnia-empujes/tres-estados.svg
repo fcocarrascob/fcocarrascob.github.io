@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ea1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1c7c3c"/>
+    </marker>
+    <marker id="ea2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="460" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El mismo suelo empuja tres veces distinto — según cuánto se mueva el muro</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Muro de 6 m · relleno de arena φ' = 32°, c' = 0, γ = 18 kN/m³ · presiones dibujadas a escala</text>
+
+  <line x1="330" y1="70" x2="330" y2="340" stroke="#e5e2dc" stroke-width="1.5"/>
+  <line x1="620" y1="70" x2="620" y2="340" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ============ ACTIVO ============ -->
+  <g>
+    <text x="165" y="90" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">ACTIVO</text>
+    <text x="165" y="108" font-size="11.5" text-anchor="middle" fill="#666">el muro se ALEJA</text>
+
+    <rect x="120" y="124" width="16" height="150" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="136" y="124" width="150" height="150" fill="#efece6" opacity="0.6"/>
+    <line x1="112" y1="199" x2="88" y2="199" stroke="#1c7c3c" stroke-width="2.2" marker-end="url(#ea1)"/>
+    <text x="84" y="195" font-size="10.5" fill="#1c7c3c" text-anchor="end">3 a 6 mm</text>
+
+    <!-- triangulo de presion, escala 60 px por unidad de K -->
+    <polygon points="136,124 154,274 136,274" fill="#1c7c3c" fill-opacity="0.55" stroke="#1c7c3c" stroke-width="1.4"/>
+
+    <text x="165" y="300" font-size="14" text-anchor="middle" fill="#1c7c3c" font-weight="bold">K_a = 0,307</text>
+    <text x="165" y="320" font-size="12.5" text-anchor="middle" fill="#222">P_a = 100 kN/m</text>
+    <text x="165" y="340" font-size="11" text-anchor="middle" fill="#888">tan²(45 − φ'/2)</text>
+  </g>
+
+  <!-- ============ EN REPOSO ============ -->
+  <g>
+    <text x="475" y="90" font-size="13.5" text-anchor="middle" fill="#1a63a8" font-weight="bold">EN REPOSO</text>
+    <text x="475" y="108" font-size="11.5" text-anchor="middle" fill="#666">el muro NO se mueve</text>
+
+    <rect x="410" y="124" width="16" height="150" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="426" y="124" width="150" height="150" fill="#efece6" opacity="0.6"/>
+    <text x="398" y="203" font-size="10.5" fill="#1a63a8" text-anchor="end">0 mm</text>
+
+    <polygon points="426,124 454,274 426,274" fill="#1a63a8" fill-opacity="0.55" stroke="#1a63a8" stroke-width="1.4"/>
+
+    <text x="475" y="300" font-size="14" text-anchor="middle" fill="#1a63a8" font-weight="bold">K_o = 0,470</text>
+    <text x="475" y="320" font-size="12.5" text-anchor="middle" fill="#222">P_o = 152 kN/m</text>
+    <text x="475" y="340" font-size="11" text-anchor="middle" fill="#888">1 − sen φ' (Jaky, 1944)</text>
+  </g>
+
+  <!-- ============ PASIVO ============ -->
+  <g>
+    <text x="770" y="90" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">PASIVO</text>
+    <text x="770" y="108" font-size="11.5" text-anchor="middle" fill="#666">el muro EMPUJA al suelo</text>
+
+    <rect x="655" y="124" width="16" height="150" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
+    <rect x="671" y="124" width="200" height="150" fill="#efece6" opacity="0.6"/>
+    <line x1="647" y1="199" x2="623" y2="199" stroke="#b02a1a" stroke-width="2.2" marker-start="url(#ea2)"/>
+    <text x="615" y="195" font-size="10.5" fill="#b02a1a" text-anchor="end">30 mm</text>
+
+    <polygon points="671,124 866,274 671,274" fill="#b02a1a" fill-opacity="0.55" stroke="#b02a1a" stroke-width="1.4"/>
+
+    <text x="770" y="300" font-size="14" text-anchor="middle" fill="#b02a1a" font-weight="bold">K_p = 3,255</text>
+    <text x="770" y="320" font-size="12.5" text-anchor="middle" fill="#222">P_p = 1055 kN/m</text>
+    <text x="770" y="340" font-size="11" text-anchor="middle" fill="#888">tan²(45 + φ'/2)</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="60" y="362" width="820" height="86" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="386" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">K_p / K_a = 10,6 sobre el mismo suelo. El empuje no es una propiedad del terreno.</text>
+  <text x="470" y="410" font-size="12.5" text-anchor="middle" fill="#555">Es el único parámetro de toda la serie que depende de <tspan font-weight="bold">cómo se comporte la estructura</tspan>, no solo del suelo.</text>
+  <text x="470" y="432" font-size="12.5" text-anchor="middle" fill="#555">Y el más grande —el pasivo— exige un giro de <tspan font-weight="bold" fill="#b02a1a">30 mm en 6 m de altura</tspan>: un muro así ya está fuera de servicio.</text>
+</svg>

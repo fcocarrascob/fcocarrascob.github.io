@@ -23,6 +23,12 @@ export const SUBSECTIONS = {
     description:
       'El otro criterio, y a menudo el que gobierna: asentamiento elástico, consolidación primaria y secundaria, la historia de tensiones (OCR) y el tiempo que tarda en ocurrir.',
   },
+  'empujes-y-muros': {
+    label: 'Empujes y muros',
+    norm: 'Das, 4ª ed.',
+    description:
+      'El suelo visto de costado: cuánto empuja horizontalmente contra una estructura de contención. Los estados activo, en reposo y pasivo, las teorías de Rankine y Coulomb, y las tres verificaciones de un muro.',
+  },
   ejemplos: {
     label: 'Ejemplos de cálculo',
     norm: 'Das, 4ª ed.',

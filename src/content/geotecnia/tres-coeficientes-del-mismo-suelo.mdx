@@ -1,0 +1,214 @@
+---
+title: "Los tres coeficientes del mismo suelo"
+description: "El empuje lateral es el único parámetro de la serie que no depende solo del suelo, sino de cuánto se mueva la estructura. Sobre el mismo relleno, K_p/K_a = 10,6 — pero el más grande exige un giro de 30 mm en 6 m de altura, y por eso casi nunca se puede contar. Con el efecto del relleno saturado y el OCR apareciendo por tercera vez, con tercer signo."
+pubDate: 2026-08-02
+tags: ["geotecnia", "empuje lateral", "rankine", "coulomb", "muros", "nivel freático", "OCR", "das"]
+subsection: "empujes-y-muros"
+chapter: "Empujes y muros"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Las ocho notas anteriores miraron el suelo **hacia abajo**: cuánto aguanta y cuánto se hunde. Esta
+abre una rama nueva y lo mira **de costado** — cuánto empuja horizontalmente contra una estructura
+de contención.
+
+Y trae una idea que no aparece en ninguna de las anteriores: **el empuje no es una propiedad del
+suelo.** Depende de cuánto se mueva el muro.
+
+---
+
+## 1. Tres coeficientes, un solo suelo
+
+Tomemos un muro de 6 m con relleno de arena: `φ′ = 32°`, `c′ = 0`, `γ = 18` kN/m³. Un único
+material, un único perfil. Según qué haga el muro:
+
+<Figure
+  src="/geotecnia-empujes/tres-estados.svg"
+  alt="Tres paneles con el mismo muro de 6 metros y relleno de arena de φ' = 32°, con los diagramas de presión dibujados a escala. Panel izquierdo, estado activo: el muro se aleja del suelo, basta un desplazamiento de 3 a 6 mm, el coeficiente K_a vale 0,307 por la fórmula tan²(45 − φ'/2) y el empuje resultante es P_a = 100 kN/m, con un triángulo de presión estrecho. Panel central, en reposo: el muro no se mueve en absoluto, K_o vale 0,470 según la fórmula de Jaky de 1944, uno menos seno de φ', y el empuje es P_o = 152 kN/m, con un triángulo algo más ancho. Panel derecho, estado pasivo: el muro empuja contra el suelo y necesita desplazarse 30 mm, el coeficiente K_p vale 3,255 por tan²(45 + φ'/2) y el empuje llega a P_p = 1055 kN/m, con un triángulo enormemente más ancho que los otros dos. Al pie: K_p dividido por K_a da 10,6 sobre el mismo suelo, el empuje no es una propiedad del terreno sino el único parámetro de la serie que depende de cómo se comporte la estructura; y el más grande, el pasivo, exige un giro de 30 mm en 6 m de altura, con lo que un muro así ya está fuera de servicio."
+  caption="Los tres diagramas están a la misma escala. El del estado pasivo es diez veces más ancho que el activo — y ésa es exactamente la razón por la que casi nunca se puede usar."
+/>
+
+| Estado | Qué hace el muro | Coeficiente | Empuje |
+|---|---|---|---|
+| **Activo** | Se **aleja** del suelo | `K_a = tan²(45 − φ′/2) = 0,307` | 100 kN/m |
+| **En reposo** | No se mueve | `K_o = 1 − sen φ′ = 0,470` | 152 kN/m |
+| **Pasivo** | **Empuja** al suelo | `K_p = tan²(45 + φ′/2) = 3,255` | **1055 kN/m** |
+
+**`K_p/K_a = 10,6`.** Mismo suelo, misma altura, misma densidad. Lo único que cambia es la
+dirección y magnitud del movimiento.
+
+<Note type="tip" title="Por qué esto es conceptualmente distinto a todo lo anterior">
+En las ocho notas previas, cada parámetro incierto lo era por falta de información: `φ′` se
+estima por correlación, `E_s` sale de una tabla con rango ×5, `σ′_c` se deduce de una construcción
+gráfica. Con mejores ensayos, se acotan.
+
+`K` no es así. **No hay ensayo que entregue «el coeficiente de empuje del suelo»**, porque no
+existe: existen tres, y cuál aplica lo decide la estructura. Es el primer parámetro de la serie
+que es tanto del suelo como del proyecto.
+</Note>
+
+---
+
+## 2. Pero el más grande casi nunca está disponible
+
+Aquí está el dato que convierte lo anterior en criterio de diseño. La Tabla 14.1 de Das da el
+**desplazamiento relativo necesario para movilizar cada estado**:
+
+| Suelo | `ΔL_a/H` (activo) | `ΔL_p/H` (pasivo) | En el muro de 6 m |
+|---|---|---|---|
+| **Arena densa** | 0,0005 – 0,001 | 0,005 | **3–6 mm** vs. **30 mm** |
+| Arena suelta | 0,001 – 0,002 | 0,010 | 6–12 mm vs. 60 mm |
+| Arcilla rígida | 0,01 | 0,02 | 60 mm vs. 120 mm |
+| Arcilla blanda | 0,02 | 0,04 | 120 mm vs. 240 mm |
+
+**Un muro de 6 m que gire 30 mm en la coronación está fuera de servicio.** Lo que significa que el
+empuje pasivo —el término más grande de todos, 1055 kN/m— **existe en la ecuación pero no en la
+obra**.
+
+Por eso el capítulo siguiente, al verificar el deslizamiento de un muro, dice que *«en muchos
+casos la fuerza pasiva `P_p` se ignora»*. No es conservadurismo gratuito: es reconocer que ese
+empuje no está ahí cuando se lo necesita.
+
+<Note type="info" title="Y es el mismo principio que ya apareció en pilotes">
+En la nota sobre [fundaciones profundas](/geotecnia/de-donde-sale-q-admisible), la fricción del
+fuste se moviliza con 5–10 mm mientras la punta necesita el 10–25 % del diámetro — 40 a 100 mm en
+un pilote de 400.
+
+Dos problemas distintos, el mismo patrón: **la componente resistente más grande es la que menos se
+puede contar**, porque exige un movimiento incompatible con el servicio de la estructura.
+
+Vale la pena tenerlo como regla general de lectura: cuando una ecuación ofrece un término de
+resistencia muy superior a los demás, conviene preguntar **cuánto hay que moverse para
+conseguirlo**.
+</Note>
+
+---
+
+## 3. Dos cosas que empeoran el empuje
+
+<Figure
+  src="/geotecnia-empujes/agua-y-ocr.svg"
+  alt="Dos paneles. El izquierdo trata el relleno saturado sobre el mismo muro de 6 metros con la napa a 3 metros del coronamiento: el diagrama muestra la presión del suelo en ocre y la del agua en azul. Sin napa el empuje activo es 100 kN/m; con napa, el empuje del suelo BAJA a 87 kN/m porque el peso sumergido γ' vale 9,19, pero el agua añade 44 kN/m empujando con K = 1, de modo que el total sube a 131 kN/m, un 32 % más. El panel derecho muestra el OCR apareciendo por tercera vez en la serie y con signo distinto cada vez: en el Cap. 9 reduce el asentamiento por un factor 4 y además es un umbral y no un gradiente; en el Cap. 18 sube la fricción de fuste del pilote mediante K = (1 − sen φ'_R)·√OCR del método beta; y en el Cap. 14 sube el empuje en reposo, con K_o multiplicado por raíz de OCR. Sobre el relleno de este muro, con K_o = 0,470, un OCR de 4 lo lleva a 0,940 y un OCR de 8 a 1,330, mayor que 1, con lo que la tensión horizontal supera a la vertical. Al pie: saturar el relleno reduce el empuje del suelo y aun así sube el total un 32 %, de modo que el drenaje del trasdós no es un detalle; y un suelo sobreconsolidado es mejor para fundar y peor para contener."
+  caption="El relleno saturado es el caso contraintuitivo: el suelo empuja menos y el total sube igual. Y el OCR completa su tercera aparición en la serie, con su tercer signo."
+/>
+
+### El relleno saturado — y por qué es contraintuitivo
+
+Si la napa sube hasta 3 m bajo la coronación:
+
+| Componente | Valor |
+|---|---|
+| Empuje del suelo (ahora con `γ′ = 9,19`) | **87 kN/m** — *baja* respecto de los 100 originales |
+| Empuje del agua (`K = 1`, hidrostático) | **+44 kN/m** |
+| **Total** | **131 kN/m — un +32 %** |
+
+**El suelo empuja menos y el total sube igual.** La razón es que el agua no tiene ángulo de
+fricción: empuja con `K = 1`, más del triple que `K_a = 0,307`. El alivio del peso sumergido no
+alcanza a compensarlo.
+
+> Es la misma tensión efectiva que en la [nota del nivel freático](/geotecnia/nivel-freatico-capacidad)
+> **reducía** la capacidad de soporte. Acá **aumenta** el empuje. En ambos casos por lo mismo:
+> `γ′` es la mitad de `γ`. Pero en fundaciones eso resta capacidad, y en muros añade carga.
+>
+> Por eso **el drenaje del trasdós no es un detalle constructivo**: es lo que evita un 32 % de
+> empuje adicional.
+
+### El OCR, por tercera vez y con tercer signo
+
+`K_o` para suelo sobreconsolidado se multiplica por `√OCR` — Ec. (14.7). Sobre este relleno:
+
+| `OCR` | `K_o` |
+|---|---|
+| 1 | 0,470 |
+| 4 | 0,940 |
+| 8 | **1,330** |
+
+Con `OCR = 8` el coeficiente **supera 1**: la tensión horizontal es mayor que la vertical. No es
+un error de cálculo — es un hecho conocido en arcillas fuertemente sobreconsolidadas, donde el
+suelo conserva memoria de una carga que ya no está.
+
+Y completa un patrón que vale la pena mirar junto:
+
+| Capítulo | Qué hace el OCR |
+|---|---|
+| Consolidación | **Reduce** el asentamiento ×4 (y es un umbral, no un gradiente) |
+| Pilotes | **Aumenta** la fricción de fuste, `K = (1 − sen φ′_R)√OCR` |
+| Empujes | **Aumenta** el empuje en reposo, `K_o × √OCR` |
+
+**Un suelo sobreconsolidado es mejor para fundar y peor para contener.** Mismo parámetro, tres
+signos.
+
+---
+
+## 4. Una buena noticia para variar
+
+Toda esta serie ha venido midiendo cuánto mueve el resultado un error en `φ′`: ~14 % de `q_adm`
+por cada grado. En empujes, la historia es distinta:
+
+<Figure
+  src="/geotecnia-empujes/menos-sensible.svg"
+  alt="Gráfico de barras horizontales comparando cuánto cambia cada resultado por cada grado de error en el ángulo de fricción. La capacidad de soporte, q_adm, cambia aproximadamente un 14 %, con la barra más larga con diferencia. El empuje pasivo K_p, dado por tan²(45 + φ'/2), cambia un 4,1 %. Y el empuje activo K_a, dado por tan²(45 − φ'/2), cambia un −4,0 %. Al pie se explica que la razón está en la forma de las funciones: N_q crece exponencialmente con φ' mientras K_a solo lo hace como una tangente; y la consecuencia práctica es que conviene gastar en caracterizar el suelo tres veces más para fundar que para contener."
+  caption="Un grado de error en φ' vale 14 % en capacidad de soporte y solo 4 % en empuje. La diferencia está en la forma de las funciones: N_q es exponencial, K_a es una tangente."
+/>
+
+| Resultado | Efecto de un grado de `φ′` |
+|---|---|
+| Capacidad de soporte `q_adm` | **~14 %** |
+| Empuje pasivo `K_p` | +4,1 % |
+| Empuje activo `K_a` | −4,0 % |
+
+**El empuje lateral es unas tres veces menos sensible a `φ′` que la capacidad de soporte.** La
+razón es la forma de las funciones: `N_q` crece exponencialmente con `φ′`, mientras `K_a` es una
+tangente al cuadrado.
+
+Y de ahí una conclusión práctica sobre dónde poner el presupuesto de investigación geotécnica:
+**conviene invertir bastante más en caracterizar el suelo para fundar que para contener.**
+
+---
+
+## 5. Rankine y Coulomb
+
+Un apunte sobre los dos métodos, porque la elección importa menos de lo que suele discutirse:
+
+- **Rankine (1857)** supone muro **liso**. Es el que usan las fórmulas de arriba.
+- **Coulomb (1776)** —150 años anterior— ya incluía la **fricción muro-relleno** `δ′`, y supone
+  que la superficie de falla es **plana**.
+
+Para el estado activo las diferencias son moderadas, y Rankine resulta algo conservador al
+despreciar `δ′`. Pero para el pasivo hay una advertencia explícita (§14.7): **la hipótesis de
+superficie plana sobreestima `P_p`**, y el error crece con `δ′`. Las soluciones con superficie
+curva son más realistas.
+
+> Sumando: `P_p` necesita un desplazamiento que la estructura no tolera **y además** el método
+> simple lo sobreestima. Dos razones independientes para no contar con él.
+
+---
+
+## 6. Qué preguntarle al informe
+
+Para un proyecto de contención, la lista cambia respecto de la de fundaciones:
+
+1. **¿Qué estado corresponde?** ¿El muro puede girar lo suficiente para desarrollar el activo, o
+   está impedido y hay que diseñar con `K_o`? Es la diferencia entre 100 y 152 kN/m.
+2. **¿Hay drenaje en el trasdós, y está garantizado a largo plazo?** Sin él, +32 %.
+3. **¿Cuál es el `OCR` del relleno o del terreno natural?** Puede multiplicar `K_o` por 2,8.
+4. **¿Se contó con `P_p`?** Si sí, ¿se verificó que el desplazamiento necesario sea admisible, y
+   que la puntera no vaya a excavarse después?
+5. **¿Hay cohesión en el relleno?** Entonces hay grieta de tracción hasta
+   `z_c = 2c′/(γ√K_a)`, y esa grieta se llena de agua.
+
+<Note type="info" title="Reproducibilidad">
+Los coeficientes, los empujes, el caso con napa y el barrido de sensibilidad se calcularon con
+script sobre las Ecs. (14.3), (14.7), (14.8), (14.18) y (14.20) de Das, 4ª ed. Los desplazamientos
+de movilización son de la Tabla 14.1 del mismo capítulo, reconstruida desde una extracción parcial
+y marcada para cotejo visual en el wiki.
+</Note>
+
+---
+
+**Lo que viene:** el destino de estos empujes — las tres verificaciones de un muro de contención,
+y por qué la tercera resulta ser el Cap. 16 completo.

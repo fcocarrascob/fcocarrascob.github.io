@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <pattern id="ag2" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#1a63a8" fill-opacity="0.10"/>
+      <line x1="0" y1="6" x2="8" y2="6" stroke="#1a63a8" stroke-width="0.8" opacity="0.35"/>
+    </pattern>
+  </defs>
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Dos cosas que empeoran el empuje — y una de ellas es contraintuitiva</text>
+
+  <line x1="470" y1="52" x2="470" y2="384" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ============ IZQUIERDA: el agua ============ -->
+  <g>
+    <text x="240" y="74" font-size="13.5" text-anchor="middle" fill="#1a63a8" font-weight="bold">1 · El relleno saturado</text>
+    <text x="240" y="92" font-size="11.5" text-anchor="middle" fill="#666">napa a 3 m del coronamiento, en el mismo muro de 6 m</text>
+
+    <!-- muro y diagrama -->
+    <rect x="90" y="112" width="14" height="150" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.3"/>
+    <rect x="104" y="112" width="120" height="75" fill="#efece6" opacity="0.6"/>
+    <rect x="104" y="187" width="120" height="75" fill="url(#ag2)"/>
+    <line x1="104" y1="187" x2="224" y2="187" stroke="#1a63a8" stroke-width="1.6"/>
+    <path d="M110,183 l5,-6 l5,6 z" fill="#1a63a8"/>
+    <text x="230" y="185" font-size="10" fill="#1a63a8">napa</text>
+
+    <!-- presiones: suelo (ocre) y agua (azul) -->
+    <polygon points="104,112 122,187 104,187" fill="#b35c0e" fill-opacity="0.6" stroke="#b35c0e" stroke-width="1.2"/>
+    <polygon points="104,187 122,187 132,262 104,262" fill="#b35c0e" fill-opacity="0.6" stroke="#b35c0e" stroke-width="1.2"/>
+    <polygon points="104,187 137,262 104,262" fill="#1a63a8" fill-opacity="0.45" stroke="#1a63a8" stroke-width="1.2" transform="translate(46,0)"/>
+    <text x="150" y="150" font-size="10.5" fill="#b35c0e">suelo</text>
+    <text x="168" y="252" font-size="10.5" fill="#1a63a8">agua</text>
+
+    <!-- numeros -->
+    <line x1="70" y1="284" x2="410" y2="284" stroke="#8a857c" stroke-width="1.2"/>
+    <g font-size="12.5">
+      <text x="76" y="306" fill="#555">Sin napa</text>
+      <text x="404" y="306" fill="#222" text-anchor="end" font-weight="bold">P_a = 100 kN/m</text>
+      <text x="76" y="332" fill="#555">Empuje del suelo (con γ' = 9,19)</text>
+      <text x="404" y="332" fill="#b35c0e" text-anchor="end" font-weight="bold">87 kN/m  ↓</text>
+      <text x="76" y="356" fill="#555">Empuje del agua (K = 1)</text>
+      <text x="404" y="356" fill="#1a63a8" text-anchor="end" font-weight="bold">+ 44 kN/m</text>
+    </g>
+    <line x1="70" y1="366" x2="410" y2="366" stroke="#8a857c" stroke-width="1.2"/>
+    <text x="76" y="388" font-size="13" fill="#222" font-weight="bold">TOTAL</text>
+    <text x="404" y="388" font-size="13.5" fill="#b02a1a" text-anchor="end" font-weight="bold">131 kN/m  ·  +32 %</text>
+  </g>
+
+  <!-- ============ DERECHA: el OCR ============ -->
+  <g>
+    <text x="700" y="74" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">2 · El OCR, por tercera vez en la serie</text>
+    <text x="700" y="92" font-size="11.5" text-anchor="middle" fill="#666">y por tercera vez con signo distinto</text>
+
+    <!-- tres cajas -->
+    <rect x="520" y="110" width="360" height="46" rx="5" fill="#1c7c3c" fill-opacity="0.07" stroke="#1c7c3c" stroke-width="1.2"/>
+    <text x="536" y="129" font-size="12" fill="#1c7c3c" font-weight="bold">Cap. 9 — asentamiento</text>
+    <text x="864" y="129" font-size="12.5" fill="#1c7c3c" text-anchor="end" font-weight="bold">lo REDUCE ×4</text>
+    <text x="536" y="147" font-size="11" fill="#666">y es un umbral, no un gradiente</text>
+
+    <rect x="520" y="164" width="360" height="46" rx="5" fill="#1c7c3c" fill-opacity="0.07" stroke="#1c7c3c" stroke-width="1.2"/>
+    <text x="536" y="183" font-size="12" fill="#1c7c3c" font-weight="bold">Cap. 18 — pilotes</text>
+    <text x="864" y="183" font-size="12.5" fill="#1c7c3c" text-anchor="end" font-weight="bold">SUBE la fricción</text>
+    <text x="536" y="201" font-size="11" fill="#666">K = (1 − sen φ'_R)·√OCR en el método β</text>
+
+    <rect x="520" y="218" width="360" height="46" rx="5" fill="#b02a1a" fill-opacity="0.08" stroke="#b02a1a" stroke-width="1.2"/>
+    <text x="536" y="237" font-size="12" fill="#b02a1a" font-weight="bold">Cap. 14 — empujes</text>
+    <text x="864" y="237" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">SUBE el empuje</text>
+    <text x="536" y="255" font-size="11" fill="#666">K_o × √OCR — Ec. (14.7)</text>
+
+    <!-- tabla Ko -->
+    <text x="520" y="292" font-size="11.5" fill="#666">Sobre el relleno de este muro (K_o = 0,470):</text>
+    <g font-size="12.5">
+      <text x="536" y="316" fill="#555">OCR = 1</text><text x="700" y="316" fill="#222" text-anchor="end">K_o = 0,470</text>
+      <text x="536" y="336" fill="#555">OCR = 4</text><text x="700" y="336" fill="#222" text-anchor="end">K_o = 0,940</text>
+      <text x="536" y="356" fill="#555">OCR = 8</text><text x="700" y="356" fill="#b02a1a" text-anchor="end" font-weight="bold">K_o = 1,330</text>
+    </g>
+    <text x="716" y="356" font-size="11.5" fill="#b02a1a" font-weight="bold">← mayor que 1</text>
+    <text x="536" y="382" font-size="11.5" fill="#555">La tensión horizontal supera a la vertical.</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="60" y="404" width="820" height="52" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="426" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">Saturar el relleno reduce el empuje del suelo y aun así sube el total un 32 %: el drenaje del trasdós no es un detalle.</text>
+  <text x="470" y="446" font-size="12.5" text-anchor="middle" fill="#555">Y un suelo sobreconsolidado es <tspan font-weight="bold" fill="#1c7c3c">mejor para fundar</tspan> y <tspan font-weight="bold" fill="#b02a1a">peor para contener</tspan>. Es el mismo parámetro con tres signos.</text>
+</svg>
