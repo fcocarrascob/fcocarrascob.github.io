@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El cierre obligatorio de todo ejemplo de esta sección: el análisis de sensibilidad</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Caso base: 81,7 mm de asentamiento total a 50 años. Cada barra es una decisión distinta sobre el mismo caso.</text>
+
+  <!-- eje cero -->
+  <line x1="620" y1="76" x2="620" y2="300" stroke="#8a857c" stroke-width="1.6"/>
+  <text x="620" y="318" font-size="11" fill="#666" text-anchor="middle">caso base · 81,7 mm</text>
+
+  <!-- guias -->
+  <g stroke="#e5e2dc" stroke-width="1">
+    <line x1="440" y1="76" x2="440" y2="300"/>
+    <line x1="530" y1="76" x2="530" y2="300"/>
+    <line x1="710" y1="76" x2="710" y2="300"/>
+  </g>
+  <text x="440" y="334" font-size="10" fill="#aaa" text-anchor="middle">−60 %</text>
+  <text x="530" y="334" font-size="10" fill="#aaa" text-anchor="middle">−30 %</text>
+  <text x="710" y="334" font-size="10" fill="#aaa" text-anchor="middle">+30 %</text>
+
+  <!-- fila 1: omitir la secundaria -->
+  <text x="606" y="102" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">Omitir la consolidación secundaria</text>
+  <rect x="428" y="88" width="192" height="22" fill="#b02a1a" fill-opacity="0.8"/>
+  <text x="420" y="104" font-size="13" fill="#b02a1a" text-anchor="end" font-weight="bold">−64 %  ·  29,3 mm</text>
+
+  <!-- fila 2: Cs/Cc -->
+  <text x="606" y="142" font-size="12" fill="#555" text-anchor="end">C_s/C_c = 0,17 en vez de 0,25</text>
+  <rect x="565" y="128" width="55" height="20" fill="#b35c0e" fill-opacity="0.75"/>
+  <text x="557" y="143" font-size="12" fill="#b35c0e" text-anchor="end" font-weight="bold">−18,5 %</text>
+
+  <!-- fila 3: OCR -->
+  <text x="606" y="180" font-size="12" fill="#555" text-anchor="end">La arcilla resulta sobreconsolidada</text>
+  <rect x="570" y="166" width="50" height="20" fill="#b35c0e" fill-opacity="0.75"/>
+  <text x="562" y="181" font-size="12" fill="#b35c0e" text-anchor="end" font-weight="bold">−16,7 %</text>
+
+  <!-- fila 4: E_s bajo -->
+  <text x="606" y="218" font-size="12" fill="#555" text-anchor="end">E_s de la arena: 15 en vez de 20</text>
+  <rect x="620" y="204" width="27" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="655" y="219" font-size="12" fill="#1a63a8" font-weight="bold">+4,5 %</text>
+
+  <!-- fila 5: E_s alto -->
+  <text x="606" y="256" font-size="12" fill="#555" text-anchor="end">E_s de la arena: 30 en vez de 20</text>
+  <rect x="593" y="242" width="27" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="585" y="257" font-size="12" fill="#1a63a8" text-anchor="end" font-weight="bold">−4,5 %</text>
+
+  <!-- fila 6: flexible -->
+  <text x="606" y="294" font-size="12" fill="#555" text-anchor="end">Suponerla flexible, no rígida</text>
+  <rect x="620" y="280" width="6" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="634" y="295" font-size="12" fill="#1a63a8" font-weight="bold">+1,0 %</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="352" width="820" height="72" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="376" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">La decisión más cara del cálculo es una que ni siquiera se toma: simplemente no calcular la fluencia.</text>
+  <text x="470" y="398" font-size="12.5" text-anchor="middle" fill="#555">Vale un 64 %. Los tres parámetros de la arcilla juntos valen la mitad de eso, y toda la modelación</text>
+  <text x="470" y="416" font-size="12.5" text-anchor="middle" fill="#555">de la zapata —rigidez, E_s de la arena— no llega al 5 %.</text>
+</svg>

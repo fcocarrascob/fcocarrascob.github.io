@@ -1,0 +1,210 @@
+---
+title: "Ejemplo — La zapata completa, por los dos criterios"
+description: "El cierre de la serie: la zapata del ejemplo de hormigón calculada desde cero sobre un perfil con arcilla blanda enterrada. La capacidad al corte sobra con uso 0,46; el asentamiento no cumple ni al año y medio. Con análisis de sensibilidad, y un límite del método que aparece al final y no se puede resolver redimensionando."
+pubDate: 2026-07-31
+tags: ["ejemplo", "geotecnia", "fundaciones", "capacidad de soporte", "asentamiento", "consolidación", "sensibilidad", "das"]
+subsection: "ejemplos"
+chapter: "Caps. 9, 16 y 17"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Esta serie empezó señalando una fila sin justificar en el
+[ejemplo de zapata aislada](/hormigon/ejemplo-zapata-aislada): $q_a = 2{,}0$ kgf/cm², tomado como
+dato. Seis notas después, toca calcularlo.
+
+Misma zapata, mismas cargas. Lo único que agrego es lo que aquel post no necesitaba declarar:
+**el perfil de suelo.**
+
+<Note type="warning" title="Alcance y responsabilidad">
+Este ejemplo muestra cómo se construye un $q_{adm}$ para poder leer críticamente el de un
+informe. **No reemplaza al informe de mecánica de suelos ni al geotecnista que lo firma.** El
+perfil que uso es verosímil pero inventado; en un proyecto real sale de sondajes.
+</Note>
+
+---
+
+## 1. El caso
+
+<Figure
+  src="/geotecnia-ejemplo-zapata/el-caso.svg"
+  alt="Sección del perfil de suelo con la zapata de 2,20 por 2,20 metros fundada a 1,5 m de profundidad y cargada con P = 90 tonf. El perfil tiene arena media húmeda con γ = 18 y φ' = 32° desde la superficie hasta 4,5 m, donde está el nivel freático; luego arena saturada con γ_sat = 19 hasta los 6 m; entre 6 y 9 m una capa de arcilla blanda con γ_sat = 17,3, e₀ = 1,0 y LL = 40; y roca debajo. Dos líneas punteadas naranjas marcan el bulbo de tensiones con pendiente 2:1, que se abre desde los bordes de la zapata y alcanza de lleno la capa de arcilla. A la derecha, la tabla de datos: carga muerta 60 tonf, carga viva 30 tonf, presión de servicio 182 kPa igual a 1,86 kgf/cm² y presión neta 155 kPa. Se indica que el post original tomó q_a = 2,0 kgf/cm² como dato y que aquí se calcula desde cero por los dos criterios; que el detalle que lo cambia todo es la arcilla blanda 4,5 m bajo el sello; y que la napa queda a 3,0 m bajo el sello, más que B = 2,20 m, de modo que es Caso III y no afecta la capacidad, aunque sí decide el peso sumergido con que se calcula σ'_o en la arcilla. Al pie: el bulbo de tensiones 2:1 alcanza la arcilla, y un cálculo que solo mire el suelo del sello no la vería."
+  caption="El perfil completo. La zapata se funda en arena competente, pero el bulbo de tensiones alcanza una capa de arcilla blanda a 4,5 m bajo el sello. Ahí está todo el problema."
+/>
+
+| Dato | Valor |
+|---|---|
+| Zapata | $2{,}20 \times 2{,}20$ m, $D_f = 1{,}5$ m |
+| Cargas de servicio | $D = 60$ tonf, $L = 30$ tonf |
+| Presión de servicio | $q = 182$ kPa $= 1{,}86$ kgf/cm² |
+| Arena (0–6 m) | $\gamma = 18$ kN/m³, $\gamma_{sat} = 19$, $\phi' = 32°$, $c' = 0$ |
+| Napa | 4,5 m |
+| Arcilla blanda (6–9 m) | $\gamma_{sat} = 17{,}3$, $e_0 = 1{,}0$, $LL = 40$ |
+
+---
+
+## 2. Criterio 1 — falla por corte
+
+Primero el nivel freático. La napa queda a $d = 4{,}5 - 1{,}5 = 3{,}0$ m bajo el sello, y
+$3{,}0 > B = 2{,}20$ m: es **Caso III**, no afecta la capacidad.
+
+**Terzaghi, Ec. (16.4)** — con $\phi' = 32°$, la Tabla 16.1 da $N_q = 28{,}52$ y
+$N_\gamma = 26{,}87$:
+
+<Equation label="Terzaghi">
+$$
+q_u = 27{,}0 \times 28{,}52 + 0{,}4 \times 18 \times 2{,}20 \times 26{,}87 = 1196 \ \text{kPa}
+$$
+</Equation>
+
+$$q_{adm} = 1196/3 = 399 \ \text{kPa} = \mathbf{4{,}06 \ \text{kgf/cm}^2}$$
+
+**Ecuación general, Ec. (16.9)** — la Tabla 16.2 da $N_q = 23{,}18$ y $N_\gamma = 30{,}21$, con
+$F_{qs} = 1{,}625$, $F_{\gamma s} = 0{,}600$ y $F_{qd} = 1{,}188$:
+
+$$q_u = 1567 \ \text{kPa} \quad\Rightarrow\quad q_{adm} = 522 \ \text{kPa} = 5{,}33 \ \text{kgf/cm}^2$$
+
+Los dos métodos difieren **+31 %**, coherente con lo medido en la
+[nota 2](/geotecnia/terzaghi-vs-ecuacion-general). Adopto el menor.
+
+> **Uso por corte: $182/399 = 0{,}46$.** Sobra más del doble.
+
+---
+
+## 3. Criterio 2 — asentamiento
+
+### 3a. Elástico en la arena, Ec. (17.2)
+
+Con $E_s = 20$ MN/m² (arena media-densa; Tabla 17.6: 15–30) y $\mu_s = 0{,}32$. En el centro,
+$m' = 1{,}00$ y $n' = 6{,}82$ dan $F_1 = 0{,}469$ y $F_2 = 0{,}023$, luego $I_s = 0{,}525$;
+$I_f = 0{,}74$ de la Tabla 17.5:
+
+$$S_e = \mathbf{11{,}1 \ \text{mm}} \quad \text{(rígida, con el factor 0,93)}$$
+
+### 3b. Consolidación primaria en la arcilla, Ec. (9.16)
+
+Tensión efectiva a media capa (7,5 m), descontando el empuje bajo la napa:
+
+$$\sigma'_o = 4{,}5(18) + 1{,}5(19-9{,}81) + 1{,}5(17{,}3-9{,}81) = 106{,}0 \ \text{kPa}$$
+
+Incremento por el método 2:1, evaluado en el techo, el centro y la base de la capa, y promediado
+con la regla de Simpson:
+
+| Posición | $z$ bajo el sello | $\Delta\sigma$ |
+|---|---|---|
+| Techo | 4,5 m | 16,75 kPa |
+| Centro | 6,0 m | 11,18 kPa |
+| Base | 7,5 m | 7,99 kPa |
+| **Promedio (Simpson)** | | **11,58 kPa** |
+
+Con $C_c = 0{,}009(40-10) = 0{,}270$ y $e_0 = 1{,}0$ sobre 3 m de capa:
+
+$$S_p = \frac{0{,}270 \times 3000}{1+1{,}0} \log\frac{117{,}6}{106{,}0} = \mathbf{18{,}2 \ \text{mm}}$$
+
+<Note type="tip" title="El umbral del OCR, aplicado">
+El $OCR$ umbral de este caso es $1 + 11{,}58/106{,}0 = \mathbf{1{,}11}$. Si la arcilla estuviera
+apenas sobreconsolidada —basta $OCR > 1{,}11$— el resultado caería a **4,6 mm**, un cuarto. Es
+exactamente el acantilado de la [nota 6](/geotecnia/ocr-historia-de-tensiones), y por eso
+$\sigma'_c$ es el primer dato que hay que exigirle al informe.
+</Note>
+
+### 3c. Secundaria, Ec. (9.28)
+
+Con $c_v = 0{,}0005$ cm²/s la primaria termina (90 %) en **1,2 años**. Tomando
+$C'_\alpha = 0{,}04\,C_c = 0{,}0108$ (Mesri y Godlewski, 1977), a 50 años:
+
+$$S_s = 0{,}0108 \times 3000 \times \log\frac{50}{1{,}2} = \mathbf{52{,}4 \ \text{mm}}$$
+
+---
+
+## 4. El veredicto
+
+<Figure
+  src="/geotecnia-ejemplo-zapata/los-dos-criterios.svg"
+  alt="Comparación de los dos criterios. A la izquierda, falla por corte: Terzaghi da q_adm = 399 kPa igual a 4,06 kgf/cm² y la ecuación general 522 kPa igual a 5,33 kgf/cm², con una diferencia entre métodos del 31 %, adoptándose el menor; la barra de uso marca 0,46 contra un límite de 1,00, con la anotación HOLGADO, sobra más del doble. A la derecha, asentamiento: elástico en la arena 11,1 mm, consolidación primaria 18,2 mm y secundaria a 50 años 52,4 mm, con un total de 81,7 mm; dos barras de uso contra el límite de 25 mm muestran 1,17 al final de la consolidación primaria a 1,2 años y 3,27 a los 50 años con fluencia, ambas superando el límite marcado en 1,00, con la anotación NO CUMPLE ni siquiera al año y medio. Al pie: para cumplir 25 mm al final de la consolidación primaria haría falta q = 159 kPa igual a 1,62 kgf/cm²; el criterio de asentamiento es 2,5 veces más restrictivo que el de corte y es el que manda; y el post original usó q_a = 2,0 kgf/cm², que sobre este perfil queda un 23 % del lado inseguro."
+  caption="La capacidad al corte sobra con holgura y el asentamiento no cumple ni al año y medio. Es la tesis de toda la serie, medida sobre un caso concreto."
+/>
+
+| Criterio | Resultado | Uso |
+|---|---|---|
+| Falla por corte | $q_{adm} = 4{,}06$ kgf/cm² | **0,46** — holgado |
+| Asentamiento, fin de primaria (1,2 años) | 29,3 mm vs. 25 mm | **1,17** — no cumple |
+| Asentamiento, 50 años | 81,7 mm vs. 25 mm | **3,27** — no cumple |
+
+Para cumplir los 25 mm al final de la primaria habría que bajar a $q = 159$ kPa
+= **1,62 kgf/cm²**. Es decir: **el criterio de asentamiento es 2,5 veces más restrictivo que el
+de corte**, y es el que fija el diseño.
+
+<Note type="warning" title="Y el número original quedaba corto">
+Aquel ejemplo de hormigón usó $q_a = 2{,}0$ kgf/cm². Sobre **este** perfil el valor honesto es
+1,62: el 2,0 queda un **23 % del lado inseguro** — no por un error de cálculo, sino porque nadie
+miró la capa de arcilla enterrada. Que es exactamente el punto de esta sección.
+</Note>
+
+### Un límite del método, que aparece al final
+
+Al resolver qué presión cumple los 25 mm **a 50 años**, la respuesta es que **no existe ninguna**.
+En la Ec. (9.28) la consolidación secundaria **no depende de la carga**: vale 52,4 mm sea cual sea
+la presión aplicada, y ya supera el límite por sí sola.
+
+Eso no es un resultado sobre el suelo: es un límite de la formulación. En la realidad la fluencia
+sí depende del nivel de tensiones, pero la ecuación simple no lo captura. Cuando el cálculo llega
+a ese punto, la respuesta ya no es redimensionar la zapata — es **cambiar de estrategia**
+(fundación profunda que atraviese la arcilla, mejoramiento del suelo, cimentación compensada) o
+revisar si 25 mm es el criterio adecuado a 50 años sobre este material.
+
+---
+
+## 5. Análisis de sensibilidad
+
+<Figure
+  src="/geotecnia-ejemplo-zapata/sensibilidad.svg"
+  alt="Gráfico de tornado del asentamiento total a 50 años, con caso base de 81,7 mm. La barra dominante corresponde a omitir la consolidación secundaria, que baja el resultado un 64 % hasta 29,3 mm. Le siguen, mucho más cortas: tomar C_s/C_c igual a 0,17 en vez de 0,25 baja un 18,5 %; que la arcilla resulte sobreconsolidada baja un 16,7 %; tomar E_s de la arena igual a 15 en vez de 20 sube un 4,5 %; tomarlo igual a 30 lo baja un 4,5 %; y suponer la zapata flexible en vez de rígida lo sube un 1,0 %. Al pie: la decisión más cara del cálculo es una que ni siquiera se toma, simplemente no calcular la fluencia, y vale un 64 %; los tres parámetros de la arcilla juntos valen la mitad de eso, y toda la modelación de la zapata no llega al 5 %."
+  caption="El orden de magnitud vuelve a ser el de toda la serie: los parámetros del suelo dominan y la modelación de la zapata es ruido. Pero el primer lugar lo ocupa algo distinto — una omisión."
+/>
+
+| Decisión | Efecto |
+|---|---|
+| **Omitir la consolidación secundaria** | **−64 %** |
+| $C_s/C_c = 0{,}17$ en vez de 0,25 | −18,5 % |
+| La arcilla resulta sobreconsolidada | −16,7 % |
+| $E_s$ de la arena: 15 o 30 en vez de 20 | ±4,5 % |
+| Suponerla flexible en vez de rígida | +1,0 % |
+
+**La decisión más cara del cálculo es una que ni siquiera se toma conscientemente:** simplemente
+no calcular la fluencia. Vale un 64 %, más que los tres parámetros de la arcilla juntos. Y toda la
+modelación de la zapata —rigidez, $E_s$ de la arena— no llega al 5 %.
+
+---
+
+## Cierre de la serie
+
+Siete notas para desarmar un número que aparecía como dato. El recorrido, en una línea cada una:
+
+1. [**De dónde sale $q_{adm}$**](/geotecnia/de-donde-sale-q-admisible) — son dos criterios, y
+   $q_{adm}$ es el menor.
+2. [**Terzaghi vs. la ecuación general**](/geotecnia/terzaghi-vs-ecuacion-general) — 34 % por el
+   método; un grado de $\phi'$ vale 14 %.
+3. [**El nivel freático**](/geotecnia/nivel-freatico-capacidad) — entre −7 % y −49 % según dónde
+   esté el agua.
+4. [**$E_s$**](/geotecnia/modulo-es-parametro-dominante) — factor 5 dentro del rango tabulado.
+5. [**El tiempo**](/geotecnia/cuanto-y-cuando-consolidacion) — de 25 a 106 mm entre la entrega y
+   los 50 años.
+6. [**El OCR**](/geotecnia/ocr-historia-de-tensiones) — factor 4, y es un umbral, no un gradiente.
+7. **Este ejemplo** — todo junto, sobre una zapata real.
+
+Si algo queda de las siete, que sea esto: **$q_{adm}$ no es una propiedad del suelo.** Es el
+resultado de una cadena de decisiones —método, parámetros, criterio, plazo— y cada eslabón mueve
+el número en un porcentaje que ya sabemos medir. Un informe que entregue un número sin declarar
+esa cadena no está entregando un dato: está entregando una conclusión sin su argumento.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script que calcula el caso completo: capacidad por ambos
+métodos, asentamiento en tres componentes, el $q$ límite por bisección —el asentamiento no es
+lineal en $q$, así que escalarlo sería incorrecto— y el barrido de sensibilidad. Las tablas de
+factores usadas (16.1, 16.2, 17.3, 17.4 y 9.3) se habían verificado antes contra las formas
+cerradas del propio libro: 391 valores contrastados y 5 erratas encontradas.
+</Note>
