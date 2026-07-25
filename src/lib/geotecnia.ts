@@ -29,6 +29,12 @@ export const SUBSECTIONS = {
     description:
       'El suelo visto de costado: cuánto empuja horizontalmente contra una estructura de contención. Los estados activo, en reposo y pasivo, las teorías de Rankine y Coulomb, y las tres verificaciones de un muro.',
   },
+  'fundaciones-profundas': {
+    label: 'Fundaciones profundas',
+    norm: 'Das, 4ª ed.',
+    description:
+      'Cuando la zapata no alcanza: pilotes y pozos perforados. La capacidad se reparte entre punta y fuste, pero los dos términos no se movilizan al mismo tiempo — y eso cambia el diseño.',
+  },
   ejemplos: {
     label: 'Ejemplos de cálculo',
     norm: 'Das, 4ª ed.',
