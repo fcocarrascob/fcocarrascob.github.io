@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 400" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="400" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Viga-columna de fachada: P_u = 90 tonf + viento w_u = 1.3 tonf/m</text>
+
+  <!-- ===== Elevacion (izquierda) ===== -->
+  <!-- columna -->
+  <rect x="152" y="70" width="12" height="250" fill="#e8edf2" stroke="#333" stroke-width="1.4"/>
+  <text x="176" y="200" font-size="10.5" fill="#333" font-weight="bold">W250×58</text>
+
+  <!-- apoyos articulados -->
+  <path d="M 158 320 L 146 336 L 170 336 Z" fill="none" stroke="#333" stroke-width="1.4"/>
+  <line x1="138" y1="336" x2="178" y2="336" stroke="#333" stroke-width="1.4"/>
+  <circle cx="158" cy="70" r="4" fill="#fff" stroke="#333" stroke-width="1.4"/>
+  <text x="188" y="340" font-size="9.5" fill="#666">articulada</text>
+
+  <!-- carga axial -->
+  <line x1="158" y1="38" x2="158" y2="62" stroke="#c0392b" stroke-width="2.2"/>
+  <path d="M 158 66 L 153 56 L 163 56 Z" fill="#c0392b"/>
+  <text x="168" y="46" font-size="11" fill="#c0392b" font-weight="bold">P_u = 90 tonf</text>
+
+  <!-- viento distribuido -->
+  <g stroke="#1a63a8" stroke-width="1.6">
+    <line x1="100" y1="85"  x2="140" y2="85"/>
+    <line x1="100" y1="120" x2="140" y2="120"/>
+    <line x1="100" y1="155" x2="140" y2="155"/>
+    <line x1="100" y1="190" x2="140" y2="190"/>
+    <line x1="100" y1="225" x2="140" y2="225"/>
+    <line x1="100" y1="260" x2="140" y2="260"/>
+    <line x1="100" y1="295" x2="140" y2="295"/>
+    <line x1="100" y1="80" x2="100" y2="300"/>
+  </g>
+  <g fill="#1a63a8">
+    <path d="M 148 85 L 138 80 L 138 90 Z"/>
+    <path d="M 148 120 L 138 115 L 138 125 Z"/>
+    <path d="M 148 155 L 138 150 L 138 160 Z"/>
+    <path d="M 148 190 L 138 185 L 138 195 Z"/>
+    <path d="M 148 225 L 138 220 L 138 230 Z"/>
+    <path d="M 148 260 L 138 255 L 138 265 Z"/>
+    <path d="M 148 295 L 138 290 L 138 300 Z"/>
+  </g>
+  <text x="94" y="192" font-size="10.5" fill="#1a63a8" text-anchor="end" font-weight="bold">w_u = 1.3 tonf/m</text>
+  <text x="94" y="206" font-size="9.5" fill="#1a63a8" text-anchor="end">(viento del paño)</text>
+
+  <!-- puntal fuera del plano -->
+  <circle cx="158" cy="195" r="5" fill="#1c7c3c"/>
+  <line x1="163" y1="195" x2="230" y2="195" stroke="#1c7c3c" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="236" y="190" font-size="9.5" fill="#1c7c3c" font-weight="bold">puntal a media altura</text>
+  <text x="236" y="203" font-size="9.5" fill="#1c7c3c">(fuera del plano):</text>
+  <text x="236" y="216" font-size="9.5" fill="#1c7c3c">L_cy = L_b = 3.5 m</text>
+
+  <!-- cota -->
+  <line x1="66" y1="70" x2="66" y2="320" stroke="#888" stroke-width="1"/>
+  <line x1="62" y1="70" x2="70" y2="70" stroke="#888"/>
+  <line x1="62" y1="320" x2="70" y2="320" stroke="#888"/>
+  <text x="58" y="200" font-size="10" fill="#888" text-anchor="end">7.0 m</text>
+  <text x="60" y="214" font-size="9" fill="#888" text-anchor="end">(L_cx = 7 m</text>
+  <text x="60" y="226" font-size="9" fill="#888" text-anchor="end">en el plano)</text>
+
+  <!-- ===== Diagrama de momentos (derecha) ===== -->
+  <text x="620" y="60" font-size="11.5" text-anchor="middle" fill="#222" font-weight="bold">Diagrama de momentos</text>
+  <!-- eje (columna) -->
+  <line x1="500" y1="80" x2="500" y2="330" stroke="#333" stroke-width="1.2"/>
+  <!-- parabola 1er orden: Mmax=8 -> 130 px (16.25 px/tonf*m) -->
+  <path d="M 500 80 Q 673 205 500 330" fill="#eaf1f8" fill-opacity="0.7" stroke="#1a63a8" stroke-width="2"/>
+  <!-- amplificada B1: Mmax=10.7 -> 174 px -->
+  <path d="M 500 80 Q 732 205 500 330" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 4"/>
+  <!-- marcas al centro -->
+  <line x1="565" y1="205" x2="587" y2="205" stroke="#333" stroke-width="1"/>
+  <path d="M 610 205 L 600 200 L 600 210 Z" fill="#c0392b"/>
+  <line x1="587" y1="205" x2="600" y2="205" stroke="#c0392b" stroke-width="1.6"/>
+  <text x="568" y="196" font-size="10" fill="#333">+ P·δ</text>
+  <text x="588" y="228" font-size="10.5" fill="#1a63a8" font-weight="bold" text-anchor="end">M_u = 8.0</text>
+  <text x="590" y="242" font-size="9.5" fill="#1a63a8" text-anchor="end">(1.er orden)</text>
+  <text x="622" y="182" font-size="10.5" fill="#c0392b" font-weight="bold">M_r = B₁·M_u = 10.7 tonf·m</text>
+  <text x="622" y="196" font-size="9.5" fill="#c0392b">B₁ = 1.34 (P-δ)</text>
+
+  <!-- caja resumen -->
+  <rect x="460" y="292" width="360" height="94" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="474" y="312" font-size="11.5" fill="#222" font-weight="bold">El primer orden se queda corto un 34 %</text>
+  <text x="474" y="331" font-size="10.5" fill="#333">P_u = 90 tonf es ¼ de la carga de Euler del plano</text>
+  <text x="474" y="347" font-size="10.5" fill="#333">(P_e1 = 357 tonf): la compresión sobre la deformada</text>
+  <text x="474" y="363" font-size="10.5" fill="#333">del viento agrega el momento P·δ que H1-1 sí exige.</text>
+  <text x="474" y="380" font-size="9.5" fill="#888">Pórtico arriostrado: B₂ (P-Δ de piso) no aplica.</text>
+</svg>
