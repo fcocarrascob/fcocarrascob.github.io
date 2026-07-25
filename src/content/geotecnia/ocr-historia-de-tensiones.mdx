@@ -1,0 +1,191 @@
+---
+title: "OCR: el factor 4 que puede no estar en el informe"
+description: "La historia de tensiones del suelo divide el asentamiento por cuatro — pero no de forma gradual. Es un umbral: apenas la carga cabe entera dentro de la presión de preconsolidación, el resultado cae de 28 a 7 mm y se queda ahí. Y el error de no saberlo tiene una dirección preferente, que no es la conveniente."
+pubDate: 2026-07-30
+tags: ["geotecnia", "consolidación", "OCR", "preconsolidación", "casagrande", "muestreo", "das"]
+subsection: "asentamientos"
+chapter: "Asentamientos"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En la [nota anterior](/geotecnia/cuanto-y-cuando-consolidacion) la consolidación primaria de la
+zapata daba 28 mm. Ese número depende de un dato que todavía no habíamos tocado y que puede
+dividirlo por cuatro: **qué tensión soportó ese suelo antes, en su historia geológica.**
+
+---
+
+## 1. Por qué el suelo tiene memoria
+
+Un depósito de arcilla estuvo sometido, en algún momento de su historia, a una tensión efectiva
+máxima. Pudo ser el peso de un glaciar, de estratos que después se erosionaron, o de una
+desecación prolongada. Esa tensión **dejó huella**: al recomprimirlo hasta ese nivel, el suelo se
+deforma poco, porque ya estuvo ahí. Solo cuando se lo supera empieza a deformarse en serio.
+
+Eso es lo que produce la forma característica de la curva `e – log σ'`:
+
+<Figure
+  src="/geotecnia-ocr/curva-e-log-sigma.svg"
+  alt="A la izquierda, la curva de índice de vacíos contra tensión efectiva en escala logarítmica. Un primer tramo verde de pendiente suave, la rama de recompresión con pendiente C_s, etiquetado como barato porque el suelo ya estuvo ahí. Un quiebre marcado con un punto negro y una vertical punteada en σ'_c. A partir de ahí un tramo rojo de pendiente mucho más pronunciada, la compresión virgen con pendiente C_c, etiquetado como caro porque es territorio nuevo. Junto al quiebre se esquematiza la construcción gráfica de Casagrande de 1936 con su bisectriz. Al pie se aclara que σ'_c no se mide sino que se deduce de la curva de laboratorio. A la derecha, tres cajas que indican qué ecuación aplica según dónde caiga la carga: si σ'_c = σ'_o el suelo es normalmente consolidado y todo el recorrido va por la rama virgen, Ec. (9.16) con solo C_c; si σ'_o + Δσ' es menor o igual que σ'_c la carga cabe y todo va por recompresión, Ec. (9.18) con solo C_s; y si σ'_o + Δσ' supera σ'_c la carga cruza, con un tramo barato y otro caro, Ec. (9.19) que usa C_s hasta σ'_c y luego C_c. Al pie: C_s vale entre 0,17 y 0,33 veces C_c según la Tabla 9.2, de modo que quedarse dentro de σ'_c cuesta entre 3 y 6 veces menos."
+  caption="Dos pendientes y una frontera. C_s es entre 3 y 6 veces menor que C_c, así que todo el problema se reduce a si la carga se queda del lado barato de σ'_c o lo cruza."
+/>
+
+Las definiciones salen solas:
+
+- **Normalmente consolidada (NC)**: la tensión actual **es** la máxima histórica. El suelo nunca
+  estuvo más cargado que ahora.
+- **Sobreconsolidada (OC)**: la actual es menor. La máxima histórica se llama **presión de
+  preconsolidación**, $\sigma'_c$.
+
+<Equation label="índice de sobreconsolidación">
+$$
+OCR = \frac{\sigma'_c}{\sigma'_o}
+$$
+</Equation>
+
+<Note type="warning" title="σ'_c no se mide">
+No hay ensayo que entregue $\sigma'_c$ directamente. Se **deduce** de la curva de laboratorio con
+una construcción gráfica —la de Casagrande (1936)—: encontrar el punto de mínimo radio de
+curvatura, trazar la horizontal y la tangente, bisecar el ángulo, y prolongar el tramo recto
+hasta cortarla. La abscisa del corte es $\sigma'_c$.
+
+Es decir: un parámetro que vale un factor 4 en el resultado sale de dibujar a mano sobre una
+curva experimental.
+</Note>
+
+---
+
+## 2. El acantilado
+
+Aquí está el resultado que no esperaba al hacer el barrido. Tomé el caso de la serie —capa de
+3 m, $\sigma'_o = 95{,}5$ kPa, $\Delta\sigma' = 16{,}5$ kPa— y calculé el asentamiento primario
+para OCR creciente:
+
+<Figure
+  src="/geotecnia-ocr/el-acantilado.svg"
+  alt="A la izquierda, gráfico del asentamiento primario S_p en milímetros contra el OCR, de 1,0 a 3,0. La curva parte en 28,0 mm para OCR = 1 (normalmente consolidada), cae abruptamente al aumentar el OCR y llega a 7,0 mm en OCR = 1,17, a partir de donde queda completamente plana para todo OCR mayor hasta 3,0 y más allá. Una cota lateral marca el factor 4 entre ambos valores. A la derecha se explica que lo que importa no es cuán sobreconsolidado está el suelo sino si la carga cabe dentro de σ'_c: el OCR umbral vale 1 + Δσ'/σ'_o y por lo tanto depende de la carga, no solo del suelo. Con un incremento del 17 % como en este caso el umbral está en 1,17; con una carga que agregue un 50 % se corre a 1,50, y con una que agregue el doble a 3,00. Como consecuencia de diseño se señala que bajar la presión de contacto puede meter la carga entera dentro de σ'_c y dividir el asentamiento por 4 de golpe, en vez de reducirlo proporcionalmente. Al pie: entre OCR 1,17 y 10 el asentamiento no cambia en absoluto, mientras que entre 1,00 y 1,17 cae un 75 %."
+  caption="Toda la información útil del OCR está concentrada entre 1,00 y 1,17. Más allá de ese umbral, saber si el suelo tiene OCR = 2 o OCR = 10 no cambia absolutamente nada."
+/>
+
+**No es un gradiente: es un umbral.** Y la razón, una vez vista, es evidente — depende de qué
+ecuación aplique:
+
+| Condición | Ecuación | $S_p$ |
+|---|---|---|
+| $\sigma'_c = \sigma'_o$ (NC) | (9.16), solo $C_c$ | 28,0 mm |
+| Cruza $\sigma'_c$ | (9.19), $C_s$ y luego $C_c$ | entre 28,0 y 7,0 |
+| $\sigma'_o + \Delta\sigma' \leq \sigma'_c$ | (9.18), solo $C_s$ | **7,0 mm, constante** |
+
+Apenas la carga cabe entera del lado de la recompresión, el asentamiento deja de depender del
+OCR: ya está todo en la rama barata, y estirar más $\sigma'_c$ no cambia nada.
+
+<Note type="tip" title="El umbral depende de la carga, no solo del suelo">
+$$
+OCR_{\text{umbral}} = 1 + \frac{\Delta\sigma'}{\sigma'_o}
+$$
+
+En este caso el incremento es del 17 %, así que el umbral está en 1,17. Con una carga que agregue
+un 50 % se corre a 1,50; con una que duplique la tensión, a 3,00.
+
+**Consecuencia de diseño:** bajar la presión de contacto no reduce el asentamiento de forma
+proporcional. Si consigue meter la carga entera dentro de $\sigma'_c$, lo **divide por cuatro de
+golpe**. Vale la pena verificar si ese umbral está al alcance antes de resignarse a fundación
+profunda.
+</Note>
+
+---
+
+## 3. Dentro de la rama barata, manda $C_s/C_c$
+
+Una vez del lado de la recompresión, el resultado pasa a depender de la razón entre las dos
+pendientes. La Tabla 9.2 del libro da valores de suelos naturales:
+
+| Suelo | $C_s/C_c$ | $S_p$ resultante |
+|---|---|---|
+| Arcilla de Nueva Orleans | 0,17 | 4,76 mm |
+| Arcilla de Chicago | 0,175 | 4,90 mm |
+| Arcilla azul de Boston | 0,20 | 5,61 mm |
+| Arcilla de Montana | 0,24 | 6,73 mm |
+| *(supuesto del Ejemplo 9.11)* | 0,25 | 7,01 mm |
+| Arcilla de Fuerte Gordon | 0,33 | 9,25 mm |
+
+Un **factor 1,9** solo por esa razón. Es mucho menos que el factor 4 del umbral, pero no es
+despreciable — y es otro número que rara vez se declara.
+
+---
+
+## 4. La dirección del error
+
+Supongamos que el informe no dice nada de $\sigma'_c$. Hay dos formas de equivocarse, y **no son
+simétricas**:
+
+<Figure
+  src="/geotecnia-ocr/direccion-del-error.svg"
+  alt="Dos paneles comparativos. El izquierdo, suponer normalmente consolidada cuando en realidad es sobreconsolidada: se calculan 28,0 mm cuando la realidad son 7,0, de modo que se sobreestima cuatro veces; es conservador pero sale caro, con fundación sobredimensionada o pilotes innecesarios. El derecho, suponer sobreconsolidada cuando en realidad es normalmente consolidada: se calculan 7,0 mm cuando la realidad son 28,0, de modo que se subestima cuatro veces; es del lado inseguro, la estructura asienta cuatro veces lo previsto y ya está construida. Abajo, una caja destacada advierte que hay un sesgo sistemático hacia el segundo error según la sección 9.6: una muestra perturbada por el muestreo aplana la curva e – log σ'; la curva de campo, la de laboratorio inalterada y la remoldeada se cortan cerca de e = 0,4 e₀ según Terzaghi y Peck (1967), pero la de laboratorio queda a la izquierda, lo que da un C_c menor y por lo tanto subestima el asentamiento."
+  caption="Los dos errores valen lo mismo en magnitud —un factor 4— pero uno cuesta dinero y el otro cuesta la estructura. Y el sesgo del muestreo empuja sistemáticamente hacia el segundo."
+/>
+
+Eso último es lo más incómodo del capítulo, y está en una sección corta que casi nadie cita.
+La §9.6 explica que **una muestra perturbada por el muestreo aplana la curva `e – log σ'`**: la
+curva de laboratorio queda a la izquierda de la de campo, y las tres —campo, laboratorio
+inalterada, remoldeada— se cortan aproximadamente en $e = 0{,}4 e_0$ (Terzaghi y Peck, 1967).
+
+Una curva más tendida significa **un $C_c$ menor**, y por lo tanto **un asentamiento
+subestimado**. La calidad del muestreo no es un detalle de laboratorio: es un sesgo sistemático
+hacia el lado inseguro.
+
+---
+
+## 5. Y una corrección más, la tridimensional
+
+Todo lo anterior sale del edómetro, que es un ensayo **unidimensional**: supone que
+$\Delta u = \Delta\sigma$ a cualquier profundidad. Bajo un área limitada eso no es cierto, y
+Skempton y Bjerrum (1957) propusieron corregirlo con un coeficiente de asentamiento función del
+parámetro de presión de poros $A$ y de $H/B$.
+
+Leonards (1976) trató aparte el caso de arcilla **sobreconsolidada**, con una corrección que
+depende justamente del OCR (Tabla 9.4). Para $B/H = 1$:
+
+| OCR | $K_{cir(OC)}$ | $S_p$ corregido |
+|---|---|---|
+| 2 | 0,957 | 6,71 mm |
+| 4 | 0,871 | 6,10 mm |
+| 6 | 0,800 | 5,61 mm |
+| 10 | 0,671 | 4,70 mm |
+| 16 | 0,600 | 4,20 mm |
+
+Es interesante que **esta corrección sí es progresiva con el OCR**, al revés que el cálculo
+edométrico. Así que aunque el asentamiento unidimensional se congele en 7,0 mm más allá del
+umbral, el corregido sigue bajando: hasta un 40 % adicional en arcillas muy sobreconsolidadas.
+
+---
+
+## 6. Qué preguntarle al informe
+
+1. **¿Cuál es $\sigma'_c$?** Es el dato que decide entre 28 y 7 mm. Sin él no hay cálculo de
+   consolidación posible, solo una suposición.
+2. **¿Cómo se obtuvo?** La construcción de Casagrande es gráfica y depende del criterio de quien
+   la traza.
+3. **¿Qué calidad tuvo el muestreo?** Muestra perturbada ⇒ $C_c$ subestimado ⇒ asentamiento
+   subestimado. El sesgo tiene dirección.
+4. **¿Se reportó $C_s$, o solo $C_c$?** Si la carga queda en recompresión, $C_s$ es el único que
+   importa, y su razón con $C_c$ vale casi un factor 2.
+5. **¿Se aplicó corrección tridimensional?** Skempton-Bjerrum o Leonards pueden restar otro
+   30-40 %.
+
+<Note type="info" title="Reproducibilidad">
+El barrido de OCR, la tabla de $C_s/C_c$ y la corrección de Leonards se calcularon con script
+sobre las Ecs. (9.16), (9.18) y (9.19), con los datos del Ejemplo 9.10 de Das
+($\sigma'_o = 95{,}52$ kPa, $\Delta\sigma' = 16{,}5$ kPa por el método 2:1, $C_c = 0{,}27$ por
+Skempton con $LL = 40$, $e_0 = 1{,}0$, capa de 3 m). Los dos extremos del barrido reproducen los
+Ejemplos 9.10 y 9.11 del libro: 28,0 y 7,0 mm.
+</Note>
+
+---
+
+**Lo que viene:** la última nota de la serie cobra las seis anteriores en un solo ejemplo — la
+zapata completa, verificada por los dos criterios, con todos los parámetros declarados y su
+análisis de sensibilidad.
