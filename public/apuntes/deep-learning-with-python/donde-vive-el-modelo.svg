@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 356" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="780" height="356" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Dónde vive el modelo: lo decide la restricción, no la comodidad</text>
+
+  <!-- Column 1: REST -->
+  <rect x="20" y="54" width="238" height="216" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <rect x="20" y="54" width="238" height="34" rx="8" fill="#2563eb"/>
+  <rect x="20" y="76" width="238" height="12" fill="#2563eb"/>
+  <text x="139" y="77" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">REST API</text>
+
+  <text x="38" y="108" font-size="10.5" font-weight="600" fill="#6b7280">CUÁNDO</text>
+  <text x="38" y="126" font-size="11" fill="#374151">· Internet confiable</text>
+  <text x="38" y="143" font-size="11" fill="#374151">· Sin latencia estricta</text>
+  <text x="38" y="160" font-size="11" fill="#374151">· Datos no sensibles</text>
+
+  <text x="38" y="186" font-size="10.5" font-weight="600" fill="#6b7280">COSTO</text>
+  <rect x="38" y="194" width="202" height="24" rx="4" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="139" y="211" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">~500 ms de round trip</text>
+
+  <text x="38" y="238" font-size="10.5" font-weight="600" fill="#6b7280">CON QUÉ</text>
+  <text x="38" y="256" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#2563eb">TF Serving · ONNX</text>
+
+  <!-- Column 2: device -->
+  <rect x="271" y="54" width="238" height="216" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <rect x="271" y="54" width="238" height="34" rx="8" fill="#2563eb"/>
+  <rect x="271" y="76" width="238" height="12" fill="#2563eb"/>
+  <text x="390" y="77" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">EN EL DISPOSITIVO</text>
+
+  <text x="289" y="108" font-size="10.5" font-weight="600" fill="#6b7280">CUÁNDO</text>
+  <text x="289" y="126" font-size="11" fill="#374151">· Latencia estricta</text>
+  <text x="289" y="143" font-size="11" fill="#374151">· Baja conectividad</text>
+  <text x="289" y="160" font-size="11" fill="#374151">· Datos que no pueden</text>
+  <text x="289" y="176" font-size="11" fill="#374151">  descifrarse fuera</text>
+
+  <text x="289" y="200" font-size="10.5" font-weight="600" fill="#6b7280">COSTO</text>
+  <rect x="289" y="208" width="202" height="24" rx="4" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="390" y="225" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">memoria, energía, accuracy</text>
+
+  <text x="289" y="248" font-size="10.5" font-weight="600" fill="#6b7280">CON QUÉ</text>
+  <text x="289" y="264" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#2563eb">TF Lite · ONNX runtime</text>
+
+  <!-- Column 3: browser -->
+  <rect x="522" y="54" width="238" height="216" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <rect x="522" y="54" width="238" height="34" rx="8" fill="#2563eb"/>
+  <rect x="522" y="76" width="238" height="12" fill="#2563eb"/>
+  <text x="641" y="77" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">EN EL NAVEGADOR</text>
+
+  <text x="540" y="108" font-size="10.5" font-weight="600" fill="#6b7280">CUÁNDO</text>
+  <text x="540" y="126" font-size="11" fill="#374151">· Descargar cómputo al</text>
+  <text x="540" y="142" font-size="11" fill="#374151">  usuario final</text>
+  <text x="540" y="159" font-size="11" fill="#374151">· Debe seguir sin conexión</text>
+
+  <text x="540" y="186" font-size="10.5" font-weight="600" fill="#6b7280">COSTO</text>
+  <rect x="540" y="194" width="202" height="38" rx="4" fill="#ffffff" stroke="#fecaca"/>
+  <text x="641" y="210" text-anchor="middle" font-size="10.5" fill="#991b1b">El modelo entero se descarga:</text>
+  <text x="641" y="225" text-anchor="middle" font-size="10.5" font-weight="700" fill="#991b1b">nada en él puede ser confidencial</text>
+
+  <text x="540" y="250" font-size="10.5" font-weight="600" fill="#6b7280">CON QUÉ</text>
+  <text x="540" y="266" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#2563eb">TensorFlow.js</text>
+
+  <!-- optimization footer -->
+  <rect x="20" y="286" width="740" height="52" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="40" y="306" font-size="11.5" font-weight="700" fill="#374151">Antes de enviarlo, optimízalo:</text>
+  <text x="215" y="306" font-size="11" fill="#374151"><tspan font-weight="700" fill="#2563eb">weight pruning</tspan> (conservar solo los pesos significativos) y</text>
+  <text x="40" y="326" font-size="11" fill="#374151"><tspan font-weight="700" fill="#2563eb">quantization</tspan> — <tspan font-family="'JetBrains Mono', ui-monospace, monospace">model.quantize("int8")</tspan> comprime cada peso a un byte: <tspan font-weight="700">4× más pequeño, accuracy similar</tspan></text>
+</svg>

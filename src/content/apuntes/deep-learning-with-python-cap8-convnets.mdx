@@ -1,0 +1,277 @@
+---
+title: "De 78 % a 98,6 % con las mismas 2 000 imágenes"
+description: "El capítulo 8 de Chollet introduce las redes convolucionales resolviendo el mismo problema cuatro veces: clasificar perros y gatos con solo 2 000 imágenes de entrenamiento. Desde cero da 78,6 %; con data augmentation, 83,9 %; reutilizando una Xception preentrenada, 98,1 %; y con fine-tuning, 98,6 % — lo que habría sido de los mejores resultados de la competencia original de Kaggle, entrenando con la décima parte de las imágenes que tenían los competidores. En el camino, las dos propiedades que explican por qué las convnets ganan en imágenes, y por qué el max pooling no es un detalle: quitarlo deja el mismo número de parámetros, así que lo que se pierde no es capacidad. Apuntes del Cap. 8."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "convnet", "cnn", "visión", "data augmentation", "transfer learning", "fine-tuning"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 8 — Clasificación de imágenes"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 8 (PDF 255–291)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Hasta aquí la serie trabajó con datos vectoriales. El capítulo 8 entra a visión
+por computador, que fue *"la primera gran historia de éxito del deep learning"* —
+y de paso deja una nota histórica que vale la pena leer entera.
+
+Entre 2011 y 2015 las convnets empezaron a ganar competencias: primero Dan
+Ciresan en dos de nicho (caracteres chinos ICDAR 2011, señales de tránsito
+alemanas IJCNN 2011) y **en otoño de 2012 el grupo de Hinton ganando ImageNet**.
+Pero eso **no bastó para volverlo mainstream**: en 2013 y 2014 el deep learning
+seguía enfrentando escepticismo intenso de la comunidad senior de visión, y solo
+en 2016 se volvió dominante.
+
+> *Uno de los autores recuerda haberle insistido a un ex-profesor, en febrero de
+> 2014, que se pasara al deep learning. "¡Es lo próximo grande!", le decía. "Bueno,
+> quizás es solo una moda", respondía el profesor. Para 2016, todo su laboratorio
+> hacía deep learning.* **"No hay forma de detener una idea a la que le llegó su
+> tiempo."**
+
+## 1. Patrón local vs. patrón global
+
+La demostración de entrada es directa: una convnet básica de tres capas sobre
+MNIST alcanza **99,1 % de accuracy de test**, contra el **97,8 %** de la red densa
+del [capítulo 2](/apuntes/deep-learning-with-python-cap2-bloques-matematicos).
+*"Redujimos la tasa de error en cerca de un 60 % (relativo)."*
+
+¿Por qué? La diferencia cabe en una frase: **las capas `Dense` aprenden patrones
+globales; las convolucionales aprenden patrones locales.**
+
+<Figure
+  src="/apuntes/deep-learning-with-python/convolucion.svg"
+  alt="Arriba, dos paneles comparando. Capa Dense, patrones globales: una grilla completa pintada de rojo, con la nota 'mira todos los píxeles a la vez'. Capa Conv, patrones locales: la misma grilla en blanco con una sola ventana de 3 por 3 resaltada en azul, con la nota 'mira una ventana de 3 × 3, y la desliza'. Al medio, la operación paso a paso en cuatro cajas encadenadas: mapa de entrada (alto, ancho, profundidad) → extraer parches 3 × 3 en cada ubicación posible → producto con el kernel, el MISMO para todos los parches → reensamblar en el mapa de salida (alto', ancho', número de filtros). Abajo, dos paneles con las consecuencias: invarianza a la traslación, un patrón aprendido en una esquina se reconoce en cualquier lugar porque el mundo visual es invariante a la traslación; y jerarquía espacial, bordes hacia ojos y orejas hacia 'gato', cada capa compone la anterior porque el mundo visual es jerárquico en el espacio."
+  caption="El kernel es el mismo para todos los parches. De ahí salen las dos propiedades, y cada una corresponde a una propiedad del mundo visual."
+  width={780}
+/>
+
+Las dos consecuencias son las que hacen a las convnets **eficientes en datos**:
+
+- **Invarianza a la traslación.** Tras aprender un patrón en la esquina inferior
+  derecha, la convnet lo reconoce en cualquier lugar. Una red densa tendría que
+  aprenderlo de nuevo en cada posición.
+- **Jerarquías espaciales.** La primera capa aprende bordes; la segunda, patrones
+  mayores hechos de los de la primera. Líneas y texturas se combinan en ojos y
+  orejas, que se combinan en "gato".
+
+Y cada una tiene su justificación: *"porque el mundo visual es fundamentalmente
+invariante a la traslación"* y *"porque el mundo visual es fundamentalmente
+jerárquico en el espacio"*.
+
+<Note type="info" title="Qué es realmente un canal de salida">
+Las convoluciones operan sobre **feature maps**: tensores rank-3 con dos ejes
+espaciales y un eje de profundidad. En la entrada, esa profundidad son los canales
+de color (3 para RGB, 1 para escala de grises). **Pero en la salida los canales ya
+no representan colores: representan filtros.** *"Los filtros codifican aspectos
+específicos de los datos: a alto nivel, un solo filtro podría codificar el
+concepto 'presencia de una cara en la entrada'."* Cada uno de los 64 canales de
+salida es un **mapa de respuesta**: una grilla 2D que indica dónde aparece ese
+patrón en la entrada.
+</Note>
+
+## 2. El pooling no es un detalle
+
+Este es el argumento que más me gustó del capítulo, porque descarta de entrada la
+explicación fácil. Se quitan las capas de max pooling del modelo MNIST y se
+imprime el `summary()`: el modelo resultante tiene **exactamente el mismo número
+de parámetros, 372 234**. Sea lo que sea lo que se pierde, no es capacidad.
+
+Conviene ser preciso con lo que hace el libro aquí: **construye ese modelo pero no
+lo entrena ni lo evalúa**. No hay una accuracy "sin pooling" con la cual comparar
+— lo que hay son dos razones de por qué no podría funcionar igual de bien.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/por-que-pooling.svg"
+  alt="Dos bandas. Arriba, en rojo, 'Sin max pooling': la cadena 28 × 28 → 26 × 26 → 24 × 24 → 22 × 22. Dos problemas anotados en líneas separadas: las ventanas 3 × 3 de la tercera capa solo ven 7 × 7 de la imagen original ('intenta reconocer un dígito así'), y el mapa final de 22 × 22, cuyo promediado destruye muchísima información. Abajo, en azul, 'Con max pooling (2 × 2, stride 2)': la cadena 28 × 28 → 26 × 26 → 13 × 13 → 11 × 11 → 5 × 5 → 3 × 3, con los pasos de pooling marcados en azul. Dos ventajas: las capas sucesivas miran ventanas cada vez mayores de la imagen original, y la información pasa del espacio a los canales. Al pie: ¿por qué max y no promedio? Las features codifican presencia, y es más informativo mirar la presencia máxima que la promedio."
+  caption="Mismos parámetros en ambos modelos. Lo que cambia no es la capacidad: es el tamaño de la ventana efectiva sobre la imagen original."
+  width={780}
+/>
+
+El argumento clave es el de la **ventana efectiva**: sin pooling, las ventanas
+3 × 3 de la tercera capa solo contienen información proveniente de ventanas 7 × 7
+de la entrada original. *"Intenta reconocer un dígito mirándolo solo a través de
+ventanas de 7 × 7 píxeles."* Necesitamos que las features de la última capa
+contengan información sobre **la totalidad de la entrada**.
+
+> En resumen: **submuestrear reduce el tamaño de los mapas, haciendo que la
+> información esté cada vez menos distribuida espacialmente y cada vez más
+> contenida en los canales**, mientras induce jerarquías haciendo que las
+> convoluciones sucesivas "miren" ventanas cada vez mayores de la imagen original.
+
+¿Y por qué **max** y no promedio? La razón es conceptual: *"las features tienden a
+codificar la **presencia espacial** de algún patrón, y es más informativo mirar la
+presencia máxima de distintas features que su presencia promedio."*
+
+Dos parámetros más que conviene tener claros:
+
+- **Padding.** Con una ventana 3 × 3 sobre un mapa de 5 × 5 solo hay **9
+  posiciones** donde centrarla, así que la salida se encoge dos celdas por
+  dimensión — de ahí que 28 × 28 pase a 26 × 26. `padding="same"` rellena para
+  conservar las dimensiones; **el default es `"valid"`**, sin relleno.
+- **Stride.** La distancia entre ventanas sucesivas, 1 por defecto. *"Las
+  convoluciones con stride rara vez se usan en modelos de clasificación"* — ahí se
+  prefiere el pooling.
+
+## 3. El arco: cuatro estrategias sobre 2 000 imágenes
+
+El problema real del capítulo: perros vs. gatos con **2 000 imágenes de
+entrenamiento, 1 000 de validación y 2 000 de test**, tomadas de un dataset
+original de 25 000. La reducción es deliberada: *"muchos de los datasets de
+imágenes que encontrarás en tu carrera solo contienen unos pocos miles de
+muestras, no decenas de miles. **Es buena práctica aprender con un dataset
+pequeño.**"*
+
+Ese recorte es el que da sentido a la comparación con la competencia de Kaggle de
+2013, donde *"las mejores entradas alcanzaron hasta un 95 % de accuracy"*. Los
+competidores entrenaban con **20 000 imágenes**; aquí se usan **2 000 — la décima
+parte**.
+
+El modelo es el mismo esquema de MNIST pero más grande: cinco `Conv2D` con
+`MaxPooling2D` entre medio, partiendo de entradas de **180 × 180** píxeles y
+llegando a mapas de **7 × 7** justo antes del `GlobalAveragePooling2D`. Y ahí
+aparece el patrón que conviene grabarse:
+
+> *"La profundidad de los mapas de features aumenta progresivamente en el modelo
+> (de 32 a 512), mientras que su tamaño decrece (de 180 × 180 a 7 × 7). **Este es
+> un patrón que verás en casi todas las ConvNets.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/cuatro-estrategias.svg"
+  alt="Título: el mismo problema, cuatro veces, con 2 000 imágenes de perros y gatos. Subtítulo: en la competencia original de Kaggle las mejores entradas llegaron hasta 95 %, con 10 veces más datos. Cuatro filas con barras horizontales de accuracy sobre un eje truncado que va de 70 % a 100 %, no de cero. 1, Desde cero: ConvNet de 5 bloques sin regularizar, overfittea desde la época 10, barra roja al 78,6 %. 2, Más data augmentation: RandomFlip, RandomRotation y RandomZoom más Dropout(0.25), overfittea recién en la época 60–70, barra ámbar al 83,9 %. 3, Feature extraction rápida: features de Xception cacheadas más clasificador nuevo, una época toma menos de 1 segundo incluso en CPU, barra azul clara al 98,1 %. 4, Fine-tuning: descongelar la base con learning rate 1e-5, solo después de entrenar la cabeza, barra azul oscura al 98,6 %. Al pie: el salto grande no viene de un modelo mejor, viene de reutilizar features aprendidas en 1,4 millones de imágenes."
+  caption="El 98,6 % habría sido de los mejores resultados de la competencia original de Kaggle. Ojo con el eje: parte en 70 %, no en cero, para que los saltos se distingan."
+  width={780}
+/>
+
+### Paso 1 → 2: data augmentation
+
+*"El overfitting se causa por tener muy pocas muestras de las que aprender. Con
+datos infinitos, tu modelo estaría expuesto a cada aspecto posible de la
+distribución: nunca overfittearía."*
+
+```python
+data_augmentation_layers = [
+    layers.RandomFlip("horizontal"),     # voltea el 50 % aleatorio
+    layers.RandomRotation(0.1),          # ±10 % de círculo = ±36°
+    layers.RandomZoom(0.2),              # ±20 %
+]
+augmented_train_dataset = train_dataset.map(data_augmentation, num_parallel_calls=8)
+```
+
+Dos decisiones de diseño que el capítulo justifica: las capas de augmentation
+pueden ir **dentro del modelo** (corren en GPU) o **en el pipeline de datos** (en
+CPU, paralelizadas entre núcleos). *"A veces hay beneficios de rendimiento en lo
+primero, pero **lo segundo es usualmente la mejor opción**."* Y el augmentation
+**solo se aplica en entrenamiento**: se evalúa sobre imágenes sin aumentar, porque
+es una técnica de regularización.
+
+<Note type="warning" title="El augmentation no crea información">
+*"Con esta configuración el modelo nunca ve la misma entrada dos veces, pero las
+entradas que ve **siguen fuertemente intercorrelacionadas**, porque vienen de un
+número pequeño de imágenes originales — **no puedes producir información nueva;
+solo puedes remezclar información existente**."* Por eso el capítulo agrega
+además un `Dropout(0.25)`. Con ambos, el overfitting se corre de la época 10 a las
+**60–70**.
+</Note>
+
+### Paso 2 → 3: reutilizar features
+
+Aquí está el salto grande, y no viene de un modelo mejor. Un **modelo
+preentrenado** sobre un dataset grande y general funciona como *"un modelo
+genérico del mundo visual"*, **aunque el problema nuevo involucre clases
+completamente distintas**. El capítulo usa **Xception** entrenada sobre ImageNet
+(1,4 millones de imágenes, 1 000 clases).
+
+**Feature extraction** = tomar la base convolucional (el *backbone*), pasar los
+datos nuevos por ella y entrenar un clasificador nuevo encima. El capítulo lo hace
+de dos maneras, y conviene no confundirlas:
+
+| Variante | Cómo | Costo | Test |
+|---|---|---|---|
+| **(a) rápida** | Correr la base **una sola vez** y cachear las features en NumPy; entrenar el clasificador sobre esos arrays | Baratísima — *"menos de 1 s por época incluso en CPU"*, pero **no admite data augmentation** | **98,1 %** |
+| **(b) end-to-end** | Encadenar la base **congelada** con el clasificador y entrenar todo junto | Cara — *"intratable en CPU"*, pero permite augmentation | **98,4 %** |
+
+El 98,4 % de la variante (b) no es la mejora que uno esperaría, y el libro lo dice
+sin adornos: *"esto no es una mejora sobre el modelo anterior, lo que es un poco
+decepcionante. Podría ser señal de que nuestra configuración de data augmentation
+no calza exactamente con la distribución de los datos de test."* Aun así, **es
+sobre esta versión —la de base congelada— que después se hace el fine-tuning**.
+
+> **¿Por qué solo la base y no el clasificador?** Dos razones. Las
+> representaciones de la base son **más genéricas y reutilizables**: los mapas de
+> features son mapas de presencia de conceptos genéricos, útiles sea cual sea el
+> problema. Las del clasificador son **específicas al conjunto de clases** con que
+> se entrenó. Y además: *"las capas densas se deshacen de la noción de espacio,
+> mientras que la ubicación de los objetos sí queda descrita por los mapas
+> convolucionales. Para problemas donde la ubicación importa, las features
+> densamente conectadas son largamente inútiles."*
+
+Congelar la base es obligatorio antes de entrenar la cabeza: *"como las capas
+densas de arriba están inicializadas al azar, **updates de pesos muy grandes se
+propagarían por la red, destruyendo efectivamente las representaciones
+aprendidas**"*. En Keras se hace con `trainable = False`, lo que vacía la lista de
+pesos entrenables (de 26 a 0 en la base de Xception).
+
+<Note type="warning" title="Si cambias trainable, recompila">
+*"Para que estos cambios surtan efecto, primero debes compilar el modelo. Si
+alguna vez modificas la entrenabilidad de los pesos después de compilar, debes
+recompilar, **o los cambios serán ignorados**."*
+</Note>
+
+### Paso 3 → 4: fine-tuning, y el orden que no se negocia
+
+El fine-tuning descongela la base y entrena conjuntamente la parte nueva y la
+reutilizada — *"ajusta levemente las representaciones más abstractas del modelo
+para hacerlas más relevantes al problema"*. Los cinco pasos, en este orden:
+
+1. Agregar tu red propia encima de la base entrenada.
+2. **Congelar** la base.
+3. **Entrenar la parte que agregaste.**
+4. **Descongelar** la base.
+5. Entrenar conjuntamente.
+
+El paso 3 no se puede saltar. *"Solo es posible hacer fine-tuning una vez que el
+clasificador de arriba ya está entrenado. Si no lo está, la señal de error que se
+propaga durante el entrenamiento será demasiado grande, y **las representaciones
+previamente aprendidas por las capas ajustadas serán destruidas**."*
+
+Y el learning rate baja a **`1e-5`**: *"quieres limitar la magnitud de las
+modificaciones que haces a las representaciones. Updates demasiado grandes pueden
+dañarlas."*
+
+<Note type="tip" title="Fine-tuning parcial: por qué solo las capas de arriba">
+Con modelos preentrenados grandes suele convenir descongelar **solo las tres o
+cuatro capas superiores** (`for layer in conv_base.layers[:-4]: layer.trainable =
+False`). Dos razones: las capas tempranas codifican features **genéricas y
+reutilizables** mientras las altas codifican las **especializadas** —que son las
+que necesitan repurposarse—, así que *"habría retornos rápidamente decrecientes en
+ajustar las capas bajas"*; y **mientras más parámetros entrenas, más riesgo de
+overfitting** — la base de Xception tiene **15 millones de parámetros**, *"así que
+sería riesgoso intentar entrenarla sobre tu dataset pequeño"*.
+
+Una excepción explícita: **no descongeles las capas de `BatchNormalization`.**
+</Note>
+
+## Para recordar
+
+- **Local vs. global**: `Dense` mira todos los píxeles; `Conv2D` mira una ventana
+  y la desliza, reusando el mismo kernel. De ahí salen la invarianza a la
+  traslación y las jerarquías espaciales.
+- **Los canales de salida son filtros**, no colores. Cada uno es un mapa de
+  respuesta 2D.
+- **El pooling no es opcional.** Quitarlo deja el mismo número de parámetros, así
+  que lo que se pierde no es capacidad: las capas profundas pasan a "ver" solo una
+  ventana de 7 × 7 de la imagen original.
+- **Max y no promedio**, porque las features codifican presencia.
+- **Profundidad ↑, tamaño ↓:** en el modelo de perros y gatos, de 32 a 512 canales
+  mientras los mapas van de 180 × 180 a 7 × 7. *"Un patrón que verás en casi todas
+  las ConvNets."*
+- **El data augmentation remezcla, no crea información** — por eso se combina con
+  dropout, y solo se aplica en entrenamiento.
+- **El salto real es reutilizar features.** De 83,9 % a 98,1 % no lo dio un modelo
+  mejor: lo dio ImageNet.
+- **El orden del fine-tuning no se negocia**: congelar → entrenar la cabeza →
+  descongelar → reentrenar con `lr = 1e-5`.
+
+Con las convnets funcionando, el **capítulo 9** —aún por procesar— entra en los
+patrones de arquitectura que hacen posibles modelos como Xception: conexiones
+residuales, `BatchNormalization` y convoluciones separables.

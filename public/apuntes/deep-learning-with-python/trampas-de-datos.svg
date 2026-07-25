@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="780" height="400" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Cuatro formas en que los datos te mienten</text>
+  <text x="390" y="50" text-anchor="middle" font-size="11.5" fill="#6b7280">Ninguna se detecta mirando la accuracy de validación</text>
+
+  <!-- 1. No representativos -->
+  <rect x="20" y="70" width="365" height="146" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="40" y="96" font-size="12.5" font-weight="700" fill="#991b1b">1 · Datos no representativos</text>
+  <text x="40" y="118" font-size="11" fill="#374151">Entrenas un buscador de platos con fotos de una</text>
+  <text x="40" y="134" font-size="11" fill="#374151">red social de foodies: profesionales, bien iluminadas.</text>
+  <text x="40" y="150" font-size="11" fill="#374151">Los usuarios suben fotos de celular en restaurantes</text>
+  <text x="40" y="166" font-size="11" fill="#374151">cualquiera.</text>
+  <rect x="40" y="176" width="325" height="28" rx="5" fill="#ffffff" stroke="#fecaca"/>
+  <text x="202" y="195" text-anchor="middle" font-size="11" fill="#991b1b">Test &gt; 90 % · en producción falla <tspan font-weight="700">8 de cada 10 veces</tspan></text>
+
+  <!-- 2. Concept drift -->
+  <rect x="395" y="70" width="365" height="146" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="415" y="96" font-size="12.5" font-weight="700" fill="#991b1b">2 · Concept drift</text>
+  <text x="415" y="118" font-size="11" fill="#374151">Las propiedades de los datos de producción cambian</text>
+  <text x="415" y="134" font-size="11" fill="#374151">con el tiempo. El dataset de IMDb es de 2011: el</text>
+  <text x="415" y="150" font-size="11" fill="#374151">vocabulario, las expresiones y los géneros evolucionan.</text>
+  <rect x="415" y="160" width="325" height="44" rx="5" fill="#ffffff" stroke="#fecaca"/>
+  <text x="577" y="178" text-anchor="middle" font-size="11" fill="#991b1b">Es <tspan font-weight="700">agudísimo en contextos adversariales</tspan>:</text>
+  <text x="577" y="195" text-anchor="middle" font-size="11" fill="#991b1b">el fraude cambia de patrón prácticamente a diario</text>
+
+  <!-- 3. Sesgo de muestreo -->
+  <rect x="20" y="228" width="365" height="146" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="40" y="254" font-size="12.5" font-weight="700" fill="#991b1b">3 · Sesgo de muestreo</text>
+  <text x="40" y="276" font-size="11" fill="#374151">El proceso de recolección interactúa con lo que</text>
+  <text x="40" y="292" font-size="11" fill="#374151">intentas predecir. 1948: el <tspan font-style="italic">Chicago Tribune</tspan> confía</text>
+  <text x="40" y="308" font-size="11" fill="#374151">en una encuesta telefónica.</text>
+  <rect x="40" y="318" width="325" height="44" rx="5" fill="#1a1a1a"/>
+  <text x="202" y="338" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="1">DEWEY DEFEATS TRUMAN</text>
+  <text x="202" y="354" text-anchor="middle" font-size="10" fill="#d1d5db">quien tenía teléfono en 1948 no era votante promedio</text>
+
+  <!-- 4. Target leaking -->
+  <rect x="395" y="228" width="365" height="146" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="415" y="254" font-size="12.5" font-weight="700" fill="#991b1b">4 · Target leaking</text>
+  <text x="415" y="276" font-size="11" fill="#374151">Features que dan información del target y que</text>
+  <text x="415" y="292" font-size="11" fill="#374151">no estarán disponibles en producción. Predices si</text>
+  <text x="415" y="308" font-size="11" fill="#374151">alguien será tratado por cáncer, y el registro incluye</text>
+  <text x="415" y="324" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#991b1b">"esta persona fue diagnosticada con cáncer"</text>
+  <rect x="415" y="334" width="325" height="28" rx="5" fill="#ffffff" stroke="#fecaca"/>
+  <text x="577" y="353" text-anchor="middle" font-size="11" fill="#991b1b">Validación excelente · <tspan font-weight="700">inútil en producción</tspan></text>
+
+  <text x="390" y="392" text-anchor="middle" font-size="11" fill="#374151">La pregunta que las desarma: <tspan font-weight="700" fill="#2563eb">¿toda feature estará disponible en la misma forma en producción?</tspan></text>
+</svg>
