@@ -1,0 +1,200 @@
+---
+title: "Cuánto y cuándo: la variable que faltaba"
+description: "La consolidación introduce el tiempo. El modelo del resorte de Terzaghi, la ley del cuadrado que hace que perder una cara de drenaje cuadruplique el plazo, la cola donde el último 10 % cuesta más que el primer 90 %, y la línea de tiempo completa de la zapata de la serie: de 25 mm al construir a 106 mm a los 50 años."
+pubDate: 2026-07-29
+tags: ["geotecnia", "consolidación", "terzaghi", "tiempo", "tensión efectiva", "fluencia", "das"]
+subsection: "asentamientos"
+chapter: "Asentamientos"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [post anterior](/geotecnia/modulo-es-parametro-dominante) calculó el asentamiento **elástico**
+—el que ocurre al cargar— y ya salían 25 mm sobre arcilla blanda. Pero en arcilla ese es apenas
+el primer sumando. Falta el que llega después, puede ser varias veces mayor, y trae una variable
+que ninguna nota anterior ha tocado: **el tiempo.**
+
+---
+
+## 1. El modelo del resorte
+
+La intuición de todo el Cap. 9 cabe en un cilindro con un resorte adentro, agua, un pistón
+impermeable y una válvula:
+
+<Figure
+  src="/geotecnia-tiempo/modelo-resorte.svg"
+  alt="Tres estados del modelo cilindro-resorte de Terzaghi. Primer panel, t = 0 con la válvula cerrada: se aplica la carga P sobre el pistón, el cilindro está lleno de agua y el resorte permanece extendido sin deformarse; Δu = P/A y Δσ' = 0, porque el agua es incompresible y toma toda la carga. Segundo panel, tiempo intermedio con la válvula abierta: sale agua por la válvula, el pistón baja respecto de su posición inicial marcada con línea punteada, y el resorte se comprime parcialmente; Δu baja mientras Δσ' sube, y es aquí donde ocurre el asentamiento. Tercer panel, t infinito: el pistón ha bajado su recorrido total S, el resorte está completamente comprimido y Δu = 0 con Δσ' = Δσ, toda la carga la toma el resorte y el asentamiento se completó. Al pie, la ecuación Δσ = Δσ' + Δu y la observación de que consolidar no es comprimir el suelo sino esperar a que salga el agua para que la carga llegue a los granos: en arena eso es instantáneo, en arcilla toma años."
+  caption="El resorte es el esqueleto de suelo; el agua, la presión de poros. Toda la consolidación es esa transferencia, y el asentamiento es su consecuencia geométrica."
+/>
+
+Traducido al principio de tensión efectiva que ya apareció en la nota del nivel freático:
+
+<Equation label="9.3">
+$$
+\Delta\sigma = \Delta\sigma' + \Delta u
+$$
+</Equation>
+
+En $t = 0$ el agua toma todo ($\Delta u = \Delta\sigma$, $\Delta\sigma' = 0$). En $t = \infty$ lo
+toma el esqueleto ($\Delta u = 0$, $\Delta\sigma' = \Delta\sigma$).
+
+**Consolidar no es «comprimir el suelo»: es esperar a que salga el agua.** Por eso en arena
+—permeable— ocurre de inmediato y se confunde con el asentamiento elástico, y en arcilla se
+arrastra durante años.
+
+---
+
+## 2. La ley del cuadrado
+
+Terzaghi (1925) planteó el problema como una ecuación de difusión:
+
+<Equation label="9.37">
+$$
+\frac{\partial u}{\partial t} = c_v \frac{\partial^2 u}{\partial z^2}
+\qquad\text{con}\qquad
+c_v = \frac{k}{\gamma_w m_v}
+$$
+</Equation>
+
+Su solución se tabula mediante el **factor tiempo adimensional**:
+
+<Equation label="factor tiempo">
+$$
+T_v = \frac{c_v \, t}{H_{dr}^2}
+$$
+</Equation>
+
+Y ahí está todo el capítulo comprimido en un exponente. **$H_{dr}$ —el camino de drenaje más
+largo— entra al cuadrado.** Una arcilla drenada por arriba y por abajo tiene $H_{dr} = H/2$;
+drenada solo por una cara, $H_{dr} = H$. Mismo suelo, mismo espesor: **cuatro veces el plazo.**
+
+<Figure
+  src="/geotecnia-tiempo/ley-del-cuadrado.svg"
+  alt="A la izquierda, tabla del tiempo hasta el 90 % de consolidación con c_v = 0,003 cm²/s para capas de arcilla de 1, 2, 3, 5 y 10 metros, comparando drenaje en dos caras (H_dr = H/2) contra drenaje en una cara (H_dr = H). Con dos caras: 8 días, 33 días, 2 meses, 7 meses y 27 meses respectivamente. Con una cara: 33 días, 4 meses, 10 meses, 27 meses y 9,0 años. Una cota marca el factor 4 entre ambas columnas en la fila de 10 metros. El texto señala que duplicar el espesor multiplica el tiempo por 4, y que perder una cara de drenaje hace exactamente lo mismo. A la derecha, cuatro barras horizontales del tiempo relativo tomando t(90 %) = 1: llegar al 50 % toma 0,23, al 90 % toma 1,00, al 95 % toma 1,33 y al 99 % toma 2,10. Se concluye que llegar al 99 % toma 2,1 veces lo que toma llegar al 90 %, y que por eso se diseña contra el 90 % y no contra el 100 %. Al pie: si el informe no dice si la capa drena por una cara o por dos, falta un factor 4 en el plazo, y ese dato no es del suelo sino de la estratigrafía."
+  caption="Una capa de 10 m tarda 27 meses en llegar al 90 % si drena por las dos caras, y 9 años si solo drena por una. El dato que decide no es una propiedad del suelo: es qué hay arriba y qué hay abajo de la capa compresible."
+/>
+
+<Note type="tip" title="El dato que casi nunca se pregunta">
+Si el informe no declara si la capa compresible drena por una o por dos caras, falta un factor 4
+en el plazo. Y no es un dato del suelo, es de **la estratigrafía**: un estrato de arena arriba y
+otro abajo dan drenaje doble; roca o arcilla impermeable en el fondo lo dejan en una sola cara.
+</Note>
+
+### La cola
+
+El panel derecho de la figura muestra algo poco intuitivo: la consolidación **nunca termina** en
+el sentido estricto. Con las Ecs. (9.42)–(9.43):
+
+| Grado $U$ | $T_v$ | Tiempo relativo a $t_{90}$ |
+|---|---|---|
+| 50 % | 0,197 | 0,23 |
+| 90 % | 0,848 | **1,00** |
+| 95 % | 1,129 | 1,33 |
+| 99 % | 1,781 | **2,10** |
+
+**Llegar al 99 % toma 2,1 veces lo que toma llegar al 90 %.** El último 10 % cuesta más que todo
+el primer 90 %. Por eso la práctica se ancla en el 90 %: perseguir el 100 % es perseguir una
+asíntota.
+
+---
+
+## 3. Y después de la primaria, la fluencia
+
+Cuando el exceso de presión de poros ya se disipó por completo, el suelo **sigue deformándose**
+por reajuste plástico. Es la consolidación secundaria:
+
+<Equation label="9.28 y 9.29">
+$$
+S_s = C'_\alpha H \log\!\left(\frac{t_2}{t_1}\right)
+\qquad\text{con}\qquad
+C'_\alpha = \frac{C_\alpha}{1 + e_p}
+$$
+</Equation>
+
+Y aquí hay una diferencia de naturaleza con todo lo anterior: **el logaritmo no se satura.**
+La primaria tiene un final —el 100 % asintótico—; la secundaria simplemente sigue, década tras
+década, sumando la misma cantidad por cada ciclo logarítmico de tiempo.
+
+Cuándo importa (Mesri, 1973):
+
+| Suelo | $C'_\alpha$ |
+|---|---|
+| Arcillas sobreconsolidadas | ≈ 0,001 o menos |
+| Arcillas normalmente consolidadas | 0,005 a 0,03 |
+| **Suelos orgánicos** | **≥ 0,04** |
+
+---
+
+## 4. La línea de tiempo de la zapata
+
+Junté todo sobre la zapata que viene siguiendo la serie, apoyada en 3 m de arcilla blanda:
+
+<Figure
+  src="/geotecnia-tiempo/linea-de-tiempo.svg"
+  alt="Cuatro barras apiladas que muestran la evolución del asentamiento total de la zapata de 2,20 × 2,20 m sobre 3 m de arcilla blanda con c_v = 0,0005 cm²/s, drenaje en dos caras y C'_α = 0,011. Al construir: solo 25,0 mm de asentamiento elástico. A 1 año: 25,0 de elástico más 24,0 de consolidación primaria, que va al 86 %, total 49,0 mm. A 10 años: 25,0 elástico, 28,0 de primaria ya terminada y 30,3 de secundaria, total 83,2 mm. A 50 años: 25,0, 28,0 y 53,3 de secundaria, total 106,3 mm y sigue creciendo. Dos líneas de referencia marcan los 25 y los 50 mm. Al pie: un cálculo que solo entrega el asentamiento elástico reporta 25 mm de un total que llegará a 106 mm, y como la secundaria crece con el logaritmo del tiempo la pregunta no es cuánto asienta sino cuánto asienta a qué plazo."
+  caption="De 25 mm al entregar la obra a 106 mm a los cincuenta años. Un informe que solo reporte el asentamiento elástico está entregando menos de la cuarta parte del total."
+/>
+
+Los tres componentes tienen escalas de tiempo completamente distintas:
+
+- **Elástico** — 25 mm, instantáneo. Ya está cuando se termina de construir.
+- **Primaria** — 28 mm, prácticamente completa al año y medio con esta geometría.
+- **Secundaria** — 53 mm a los 50 años, y contando.
+
+<Note type="warning" title="Cómo leer este caso, y cómo no">
+En este ejemplo la secundaria termina siendo **mayor que la primaria**, lo que puede sorprender.
+La razón es específica del caso: el incremento de tensión es pequeño
+($\Delta\sigma'/\sigma'_o = 16{,}5/95{,}5 = 17\,\%$), así que la deformación primaria es modesta
+—28 mm sobre 3000, un 0,93 %— mientras que la fluencia **no depende del incremento** y sigue su
+curso.
+
+No es un resultado universal: con un incremento de carga grande la primaria domina claramente.
+Pero sí ilustra lo que Das dice en §9.9: en suelos muy compresibles y orgánicos, la secundaria
+puede ser el término que manda.
+</Note>
+
+---
+
+## 5. Una errata verificada, de paso
+
+La Tabla 9.3 —la que relaciona $U$ con $T_v$ y es la que uno consulta para todo esto— tiene un
+error de imprenta. Al contrastar sus 99 valores contra las Ecs. (9.42) y (9.43) del propio
+capítulo:
+
+> **Para $U = 65\,\%$, la tabla imprime $T_v = 0{,}304$; el valor correcto es $0{,}340$.**
+
+Lo confirman dos caminos independientes: la Ec. (9.43) da 0,3404, y al invertir la serie exacta
+—Ec. (9.41)— el valor impreso corresponde a $U \approx 61{,}7\,\%$, no a 65 %. Además rompe la
+monotonía de la tabla, donde $T_v(64\,\%) = 0{,}329$ y $T_v(66\,\%) = 0{,}352$. Es una
+transposición de dígitos.
+
+---
+
+## 6. Qué preguntarle al informe
+
+1. **¿La capa compresible drena por una cara o por dos?** Factor 4 en el plazo.
+2. **¿Cuál es $c_v$, y de qué ensayo salió?** Casagrande ($t_{50}$) o Taylor ($t_{90}$) dan
+   valores distintos sobre la misma probeta.
+3. **¿A qué plazo está reportado el asentamiento?** «45 mm» no significa nada sin el horizonte.
+4. **¿Se calculó la secundaria?** Si el suelo es orgánico o muy compresible, omitirla puede ser
+   omitir el término mayor.
+5. **¿Contra qué grado de consolidación se dimensionó?** El 90 % es el estándar práctico; el
+   100 % no llega nunca.
+
+<Note type="info" title="Reproducibilidad">
+La tabla de plazos, la cola y la línea de tiempo se calcularon con script sobre las
+Ecs. (9.42)/(9.43) y (9.28). Los parámetros del caso son internamente coherentes:
+$c_v = 0{,}0005$ cm²/s ≈ 1,6 m²/año, propio de arcilla blanda —no el 0,003 del Ejemplo 9.6, que
+corresponde a un limo y drena seis veces más rápido—, y $C'_\alpha = 0{,}011$, que satisface la
+relación $C'_\alpha/C_c \approx 0{,}04$ de Mesri y Godlewski (1977) con el $C_c = 0{,}27$ del
+caso. La consolidación primaria de 28,0 mm es la del Ejemplo 9.10 de Das, verificada.
+</Note>
+
+---
+
+**Lo que viene:** falta el parámetro que decide si esos 28 mm de primaria son 28 o son 7. La
+historia de tensiones del suelo —el **OCR**— vale un factor 4, y es de los datos que un informe
+puede perfectamente no declarar.
