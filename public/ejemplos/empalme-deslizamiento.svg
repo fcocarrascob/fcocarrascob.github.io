@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="440" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los mismos 8 pernos, dos estados límite: rotura 0.52 · deslizamiento 0.93</text>
+
+  <!-- limite -->
+  <line x1="550" y1="56" x2="550" y2="330" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="7 4"/>
+  <text x="556" y="68" font-size="10.5" fill="#c0392b" font-weight="bold">límite 1.0</text>
+
+  <!-- eje -->
+  <line x1="250" y1="330" x2="700" y2="330" stroke="#333" stroke-width="1.1"/>
+  <g font-size="10" fill="#555" text-anchor="middle">
+    <line x1="325" y1="330" x2="325" y2="335" stroke="#ccc"/><text x="325" y="348">0.25</text>
+    <line x1="400" y1="330" x2="400" y2="335" stroke="#ccc"/><text x="400" y="348">0.50</text>
+    <line x1="475" y1="330" x2="475" y2="335" stroke="#ccc"/><text x="475" y="348">0.75</text>
+    <line x1="550" y1="330" x2="550" y2="335" stroke="#ccc"/><text x="550" y="348">1.00</text>
+    <line x1="625" y1="330" x2="625" y2="335" stroke="#ccc"/><text x="625" y="348">1.25</text>
+  </g>
+  <text x="475" y="370" font-size="11.5" text-anchor="middle" fill="#333">uso = F_f / φR_n     (F_f = 45.2 tonf)</text>
+
+  <!-- bloque 1: los dos estados limite -->
+  <text x="60" y="76" font-size="11.5" fill="#222" font-weight="bold">La conexión ejecutada: 8 pernos Ø22, Clase A</text>
+  <text x="240" y="102" font-size="10.5" fill="#333" text-anchor="end">Rotura — corte del perno (Ec. J3-1)</text>
+  <rect x="250" y="90" width="156" height="17" fill="#5b8db8"/>
+  <text x="414" y="103" font-size="10.5" fill="#1f4e79" font-weight="bold">0.52  ·  86.5 tonf</text>
+
+  <text x="240" y="132" font-size="10.5" fill="#333" text-anchor="end">Deslizamiento (Ec. J3-4)  GOBIERNA</text>
+  <rect x="250" y="120" width="279" height="17" fill="#c0392b"/>
+  <text x="537" y="133" font-size="10.5" fill="#c0392b" font-weight="bold">0.93  ·  48.7 tonf</text>
+
+  <line x1="250" y1="150" x2="700" y2="150" stroke="#d5dde6" stroke-width="1"/>
+
+  <!-- bloque 2: alternativas -->
+  <text x="60" y="176" font-size="11.5" fill="#222" font-weight="bold">Las salidas, todas contra el deslizamiento</text>
+  <text x="240" y="202" font-size="10.5" fill="#333" text-anchor="end">6 pernos, Clase A (μ = 0.30)</text>
+  <rect x="250" y="190" width="372" height="17" fill="#7d1f14"/>
+  <text x="630" y="203" font-size="10.5" fill="#c0392b" font-weight="bold">1.24 ✗  ·  36.5 tonf</text>
+
+  <text x="240" y="232" font-size="10.5" fill="#333" text-anchor="end">8 pernos, Clase A  — la elegida</text>
+  <rect x="250" y="220" width="279" height="17" fill="#c0392b"/>
+  <text x="537" y="233" font-size="10.5" fill="#c0392b" font-weight="bold">0.93  ·  48.7 tonf</text>
+
+  <text x="240" y="262" font-size="10.5" fill="#333" text-anchor="end">6 pernos, Clase B (chorreado, μ = 0.50)</text>
+  <rect x="250" y="250" width="222" height="17" fill="#1f6f4a"/>
+  <text x="480" y="263" font-size="10.5" fill="#1f6f4a" font-weight="bold">0.74  ·  60.8 tonf</text>
+
+  <text x="240" y="292" font-size="10.5" fill="#333" text-anchor="end">6 pernos, cubreplacas ext. + int. (n_s = 2)</text>
+  <rect x="250" y="280" width="186" height="17" fill="#1f6f4a"/>
+  <text x="444" y="293" font-size="10.5" fill="#1f6f4a" font-weight="bold">0.62  ·  73.0 tonf</text>
+
+  <!-- caja -->
+  <rect x="60" y="386" width="716" height="44" rx="6" fill="#f8fafc" stroke="#9bb0c6"/>
+  <text x="74" y="405" font-size="10.5" fill="#333">Pretensar no cambia la resistencia última de la conexión: agrega un estado límite —el deslizamiento— que resulta más exigente.</text>
+  <text x="74" y="421" font-size="10.5" fill="#333">Por eso J3.9 exige verificar el deslizamiento Y, además, todos los estados límite de una conexión de aplastamiento. No es una alternativa: es adicional.</text>
+
+  <!-- nota lateral -->
+  <rect x="700" y="240" width="120" height="120" rx="6" fill="#f8fafc" stroke="#9bb0c6"/>
+  <text x="712" y="260" font-size="10" fill="#222" font-weight="bold">Por perno</text>
+  <text x="712" y="280" font-size="10" fill="#1f4e79">rotura 10.8 tonf</text>
+  <text x="712" y="296" font-size="10" fill="#c0392b">fricción 6.1 tonf</text>
+  <text x="712" y="318" font-size="9.5" fill="#888">φ = 1.00, D_u = 1.13</text>
+  <text x="712" y="331" font-size="9.5" fill="#888">T_b = 17.9 tonf</text>
+  <text x="712" y="344" font-size="9.5" fill="#888">n_s = 1, h_f = 1.0</text>
+</svg>
