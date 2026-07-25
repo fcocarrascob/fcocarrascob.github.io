@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="450" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La misma zapata, el mismo q_adm — y el asentamiento que salga depende de qué E_s se elija</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Zapata 2,20 × 2,20 m · D_f = 1,5 m · q_o = 196 kPa · roca a 10 m · Ec. (17.2), centro, rígida</text>
+
+  <!-- encabezados -->
+  <text x="40" y="82" font-size="11.5" fill="#666" font-weight="bold">Tipo de suelo</text>
+  <text x="228" y="82" font-size="11.5" fill="#666" font-weight="bold" text-anchor="end">E_s (MN/m²)</text>
+  <text x="286" y="82" font-size="11.5" fill="#666" font-weight="bold" text-anchor="end">razón</text>
+  <text x="580" y="82" font-size="11.5" fill="#666" font-weight="bold" text-anchor="middle">asentamiento resultante (mm) — el rango que abre la incertidumbre de E_s</text>
+
+  <!-- umbral 25 mm -->
+  <line x1="500" y1="90" x2="500" y2="368" stroke="#b02a1a" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="506" y="348" font-size="11.5" fill="#b02a1a" font-weight="bold">25 mm</text>
+  <text x="506" y="361" font-size="10" fill="#b02a1a">límite con que se calibra q_adm</text>
+  
+
+  <!-- eje -->
+  <line x1="300" y1="368" x2="880" y2="368" stroke="#8a857c" stroke-width="1.3"/>
+  <text x="300" y="384" font-size="10.5" fill="#666" text-anchor="middle">0</text>
+  <text x="460" y="384" font-size="10.5" fill="#666" text-anchor="middle">20</text>
+  <text x="620" y="384" font-size="10.5" fill="#666" text-anchor="middle">40</text>
+  <text x="780" y="384" font-size="10.5" fill="#666" text-anchor="middle">60</text>
+
+  <!-- ============ filas (escala: 8 px por mm desde x = 300) ============ -->
+  <!-- Arcilla blanda 12.5 - 62.4 -->
+  <text x="40" y="106" font-size="12" fill="#b02a1a" font-weight="bold">Arcilla blanda</text>
+  <text x="228" y="106" font-size="11.5" fill="#555" text-anchor="end">4 – 20</text>
+  <text x="286" y="106" font-size="12" fill="#b02a1a" text-anchor="end" font-weight="bold">5,0×</text>
+  <rect x="400" y="96" width="399" height="14" fill="#b02a1a" fill-opacity="0.75"/>
+  <text x="807" y="107" font-size="11" fill="#b02a1a" font-weight="bold">12,5 → 62,4</text>
+
+  <!-- Arena limosa 14.1 - 28.1 -->
+  <text x="40" y="138" font-size="12" fill="#222">Arena limosa</text>
+  <text x="228" y="138" font-size="11.5" fill="#555" text-anchor="end">10 – 20</text>
+  <text x="286" y="138" font-size="12" fill="#666" text-anchor="end">2,0×</text>
+  <rect x="413" y="128" width="112" height="14" fill="#b35c0e" fill-opacity="0.7"/>
+  <text x="533" y="139" font-size="11" fill="#b35c0e">14,1 → 28,1</text>
+
+  <!-- Arena suelta 11.2 - 28.1 -->
+  <text x="40" y="170" font-size="12" fill="#222">Arena suelta</text>
+  <text x="228" y="170" font-size="11.5" fill="#555" text-anchor="end">10 – 25</text>
+  <text x="286" y="170" font-size="12" fill="#666" text-anchor="end">2,5×</text>
+  <rect x="390" y="160" width="135" height="14" fill="#b35c0e" fill-opacity="0.7"/>
+  <text x="533" y="171" font-size="11" fill="#b35c0e">11,2 → 28,1</text>
+
+  <!-- Arena semi-densa 9.3 - 18.5 -->
+  <text x="40" y="202" font-size="12" fill="#222">Arena semi-densa</text>
+  <text x="228" y="202" font-size="11.5" fill="#555" text-anchor="end">15 – 30</text>
+  <text x="286" y="202" font-size="12" fill="#666" text-anchor="end">2,0×</text>
+  <rect x="374" y="192" width="74" height="14" fill="#1a63a8" fill-opacity="0.6"/>
+  <text x="456" y="203" font-size="11" fill="#666">9,3 → 18,5</text>
+
+  <!-- Arcilla media 6.5 - 13.1 -->
+  <text x="40" y="234" font-size="12" fill="#222">Arcilla media</text>
+  <text x="228" y="234" font-size="11.5" fill="#555" text-anchor="end">20 – 40</text>
+  <text x="286" y="234" font-size="12" fill="#666" text-anchor="end">2,0×</text>
+  <rect x="352" y="224" width="53" height="14" fill="#1a63a8" fill-opacity="0.6"/>
+  <text x="413" y="235" font-size="11" fill="#666">6,5 → 13,1</text>
+
+  <!-- Arena densa 4.9 - 7.8 -->
+  <text x="40" y="266" font-size="12" fill="#222">Arena densa</text>
+  <text x="228" y="266" font-size="11.5" fill="#555" text-anchor="end">35 – 55</text>
+  <text x="286" y="266" font-size="12" fill="#1c7c3c" text-anchor="end" font-weight="bold">1,6×</text>
+  <rect x="339" y="256" width="23" height="14" fill="#1c7c3c" fill-opacity="0.6"/>
+  <text x="370" y="267" font-size="11" fill="#666">4,9 → 7,8</text>
+
+  <!-- Arcilla dura 2.7 - 6.8 -->
+  <text x="40" y="298" font-size="12" fill="#222">Arcilla dura</text>
+  <text x="228" y="298" font-size="11.5" fill="#555" text-anchor="end">40 – 100</text>
+  <text x="286" y="298" font-size="12" fill="#666" text-anchor="end">2,5×</text>
+  <rect x="322" y="288" width="33" height="14" fill="#1c7c3c" fill-opacity="0.6"/>
+  <text x="363" y="299" font-size="11" fill="#666">2,7 → 6,8</text>
+
+  <!-- Arena y grava 1.7 - 4.1 -->
+  <text x="40" y="330" font-size="12" fill="#222">Arena y grava</text>
+  <text x="228" y="330" font-size="11.5" fill="#555" text-anchor="end">70 – 170</text>
+  <text x="286" y="330" font-size="12" fill="#666" text-anchor="end">2,4×</text>
+  <rect x="314" y="320" width="19" height="14" fill="#1c7c3c" fill-opacity="0.6"/>
+  <text x="341" y="331" font-size="11" fill="#666">1,7 → 4,1</text>
+
+  <!-- takeaway -->
+  <rect x="40" y="396" width="840" height="46" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="460" y="418" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">En arcilla blanda la misma zapata asienta 12,5 mm o 62,4 mm según qué extremo del rango se tome.</text>
+  <text x="460" y="436" font-size="12" text-anchor="middle" fill="#555">Uno es un diseño correcto; el otro, dos veces y media el límite admisible. Y ambos salen de la misma tabla del libro.</text>
+</svg>

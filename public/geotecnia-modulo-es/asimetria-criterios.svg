@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los dos criterios responden de forma muy distinta a la misma decisión</text>
+
+  <line x1="470" y1="52" x2="470" y2="330" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ============ IZQUIERDA: enterrar la zapata ============ -->
+  <g>
+    <text x="240" y="72" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Enterrar la zapata un metro más</text>
+    <text x="240" y="90" font-size="11.5" text-anchor="middle" fill="#666">D_f: 1,5 → 2,5 m</text>
+
+    <line x1="120" y1="270" x2="380" y2="270" stroke="#8a857c" stroke-width="1.4"/>
+
+    <!-- capacidad -->
+    <rect x="150" y="130" width="70" height="140" fill="#b02a1a" fill-opacity="0.75"/>
+    <text x="185" y="122" font-size="16" fill="#b02a1a" text-anchor="middle" font-weight="bold">+47 %</text>
+    <text x="185" y="288" font-size="12" fill="#555" text-anchor="middle">capacidad</text>
+    <text x="185" y="304" font-size="11" fill="#888" text-anchor="middle">al corte</text>
+
+    <!-- asentamiento -->
+    <rect x="280" y="240" width="70" height="30" fill="#1a63a8" fill-opacity="0.75"/>
+    <text x="315" y="232" font-size="16" fill="#1a63a8" text-anchor="middle" font-weight="bold">−10 %</text>
+    <text x="315" y="288" font-size="12" fill="#555" text-anchor="middle">asentamiento</text>
+    <text x="315" y="304" font-size="11" fill="#888" text-anchor="middle">25,0 → 22,5 mm</text>
+
+    <text x="240" y="336" font-size="12" fill="#555" text-anchor="middle">Enterrar es la palanca barata de la capacidad.</text>
+    <text x="240" y="353" font-size="12" fill="#555" text-anchor="middle">Para el asentamiento apenas hace nada.</text>
+  </g>
+
+  <!-- ============ DERECHA: los dos metodos discrepan ============ -->
+  <g>
+    <text x="700" y="72" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Y los dos métodos del capítulo</text>
+    <text x="700" y="90" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">ni siquiera coinciden en cuánto</text>
+
+    <!-- ejes -->
+    <line x1="560" y1="270" x2="860" y2="270" stroke="#8a857c" stroke-width="1.4"/>
+    <line x1="560" y1="270" x2="560" y2="120" stroke="#8a857c" stroke-width="1.4"/>
+    <text x="552" y="124" font-size="10.5" fill="#666" text-anchor="end">1,0</text>
+    <text x="552" y="199" font-size="10.5" fill="#666" text-anchor="end">0,8</text>
+    <text x="552" y="274" font-size="10.5" fill="#666" text-anchor="end">0,6</text>
+    <text x="560" y="288" font-size="10.5" fill="#666" text-anchor="middle">0</text>
+    <text x="710" y="288" font-size="10.5" fill="#666" text-anchor="middle">0,5</text>
+    <text x="860" y="288" font-size="10.5" fill="#666" text-anchor="middle">1,0</text>
+    <text x="710" y="306" font-size="11.5" fill="#666" text-anchor="middle">D_f / B</text>
+    <text x="524" y="195" font-size="11" fill="#666" transform="rotate(-90 524 195)" text-anchor="middle">factor de empotramiento</text>
+
+    <!-- A1: casi plano -->
+    <polyline points="560,120 620,124 680,127 740,131 860,139" fill="none" stroke="#1c7c3c" stroke-width="2.6"/>
+    <text x="655" y="150" font-size="11.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">A₁ — Ec. (17.1)</text>
+    <text x="655" y="163" font-size="10.5" fill="#1c7c3c" text-anchor="middle">Janbu / Christian-Carrier</text>
+
+    <!-- If: cae fuerte -->
+    <polyline points="560,120 620,158 680,191 740,214 860,251" fill="none" stroke="#b35c0e" stroke-width="2.6"/>
+    <text x="700" y="240" font-size="11.5" fill="#b35c0e" font-weight="bold">I_f — Ec. (17.2)</text>
+    <text x="700" y="254" font-size="10.5" fill="#b35c0e">Fox (1948)</text>
+
+    <!-- discrepancia -->
+    <line x1="860" y1="139" x2="860" y2="251" stroke="#666" stroke-width="1.2" marker-start="url(#aa)" marker-end="url(#aa)"/>
+    <text x="852" y="200" font-size="12" fill="#666" text-anchor="end" font-weight="bold">46 %</text>
+
+    <text x="700" y="336" font-size="12" fill="#555" text-anchor="middle">A₁ dice que enterrar casi no reduce el asentamiento.</text>
+    <text x="700" y="353" font-size="12" fill="#555" text-anchor="middle">I_f dice que lo reduce un 35 % a D_f = B.</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="60" y="370" width="820" height="48" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="392" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">Ensanchar mejora la capacidad y empeora el asentamiento; enterrar mejora mucho una y poco el otro.</text>
+  <text x="470" y="410" font-size="12" text-anchor="middle" fill="#555">No hay una sola decisión de diseño que optimice los dos criterios a la vez. Por eso hay que calcular los dos.</text>
+</svg>
