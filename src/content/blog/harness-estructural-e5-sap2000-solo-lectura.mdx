@@ -1,0 +1,140 @@
+---
+title: "Harness estructural (5): leer SAP2000 — componer, no reescribir"
+description: "El harness llega a la máquina donde vive SAP2000 y aprende a leer un modelo real: fuerzas, secciones, reacciones, todo con procedencia. La pieza nueva no es un puente COM —ese ya existía en otro repo y se compone tal cual— sino la disciplina de siempre extendida a otra fuente de datos: el LLM elige nombres (barra, combo) y aporta criterio de ingeniería; los números viajan de SAP2000 a las herramientas de verificación por Python, sin pasar por el modelo. Y la lección repetida de la serie: correr el circuito en vivo contra un proyecto real destapó cinco bugs que ningún test de escritorio había visto."
+pubDate: 2026-07-24
+draft: true
+tags: ["LLM local", "SAP2000", "COM", "MCP", "composición", "trazabilidad", "harness", "agentes"]
+section: "Harness estructural"
+series: "Harness estructural local"
+seriesPart: 5
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La etapa que esperaba al notebook
+
+Las etapas anteriores se construyeron en el escritorio, donde está la GPU. Esta necesitaba la otra
+máquina: la que tiene SAP2000. El objetivo de E5 es acotado a propósito —**solo lectura**: que el
+harness pueda mirar un modelo abierto y usar lo que ve como fuente de datos para las verificaciones
+de E1. Crear y modificar modelos desde lenguaje natural es la etapa que viene (E7), no esta.
+
+Y había una decisión tomada de antemano, escrita en el roadmap para no re-litigarla: el puente COM
+a SAP2000 **ya existía**. Vive en otro repo (`Skills_SAP`), es un servidor MCP funcional, y su
+módulo de conexión —un singleton que se engancha a la instancia abierta— ya lo reutilizaba el
+pipeline de fundaciones de ese mismo proyecto. La tentación de reescribirlo "más limpio" dentro del
+harness era real y había que resistirla: **se compone, no se reescribe**. El módulo nuevo del
+harness lo localiza, lo importa tal cual, y construye encima.
+
+## El principio, extendido a otra fuente
+
+Toda la serie descansa en una regla: *los números nunca pasan por las manos del LLM*. Hasta ahora
+los números venían del usuario ("una zapata de 2.20 m, muerta 60 tonf..."). Con SAP2000 aparece
+una segunda fuente, y la regla se aplica con más razón todavía: si el modelo de análisis ya sabe
+que la compresión de la columna es 12.98 tonf, dejar que un modelo de lenguaje *transcriba* ese
+número sería introducir un intermediario falible exactamente donde no hace falta ninguno.
+
+La solución es una capa de **funciones compuestas**: `verificar_columna_desde_sap(barra, combo,
+K, L...)`. El LLM pasa **nombres** —qué barra, qué combinación— y el criterio de ingeniería que el
+modelo de análisis no tiene. La función lee de SAP2000 la sección (área, radios de giro,
+esbelteces locales calculadas de las dimensiones del perfil), el material, la demanda; y llama a
+la herramienta de E1 con esos valores, **de Python a Python**. La respuesta vuelve con la
+procedencia escrita: de qué archivo de modelo salió cada dato, de qué barra, bajo qué combo.
+
+<Figure
+  src="/harness-estructural-e5/composicion.svg"
+  alt="Diagrama del flujo de composición. A la izquierda, SAP2000 con el modelo abierto. Un lector de solo lectura extrae fuerzas, secciones y reacciones, cada una con su procedencia. Esos datos entran por Python directamente a la herramienta de verificación de E1, que produce el resultado JSON con citas, y de ahí la memoria Word. Arriba, el modelo de lenguaje solo aporta nombres —barra, combo— y criterio de ingeniería —K, longitudes de pandeo—; una flecha tachada indica que los números nunca pasan por él."
+  caption="La composición de E5: el LLM elige nombres y criterio; el lector lee con procedencia; los números viajan de SAP2000 a la herramienta por Python. El puente COM es el de Skills_SAP, importado tal cual."
+/>
+
+<Note type="info" title="Lo que SAP2000 no sabe, no se inventa">
+El modelo de análisis conoce el largo del objeto barra, pero **no las longitudes de pandeo** — eso
+depende de arriostramientos que son criterio del ingeniero. La columna de prueba mide 17.9 m entre
+nudos extremos; verificarla con ese largo da esbeltez 439 y la herramienta de E1 **se niega**
+(límite 200). Ese rechazo es el comportamiento correcto: antes que calcular con una longitud
+irreal, pide el dato que falta. Con las longitudes reales (arriostrada cada 1.64 m por las
+costaneras en el eje débil), verifica: φPn = 155.6 tonf, uso 0.083, cada línea con su cita AISC.
+</Note>
+
+## Leer con procedencia, negarse con opciones
+
+El lector fija las unidades antes de cada lectura y las restaura al salir (tonf·m para fuerzas,
+kgf/cm² y cm para secciones — el sistema nativo de las herramientas), de modo que da lo mismo en
+qué unidades haya quedado la interfaz gráfica. Y hereda la disciplina de E1 con un matiz nuevo: un
+nombre de combo que no existe no es un error fatal, es un **rechazo reparable que incluye la lista
+de combos válidos del modelo**. En el bucle del harness, ese mensaje vuelve al LLM como señal de
+reparación: se equivocó de nombre, acá están los nombres, corrige y reintenta.
+
+La métrica de cierre de la etapa era contrastar contra un proyecto real. El modelo de prueba es
+una nave industrial de verdad: 1435 barras, 42 combinaciones LRFD/ASD. Tres contrastes:
+
+- **Equilibrio global**: la suma de reacciones bajo peso propio da ΣF1 = ΣF2 = 0.000 y
+  ΣF3 = 158.24 tonf en 29 apoyos.
+- **Sección contra cálculo a mano**: el H460×191×16×12 devuelve Ag = 112.48 cm², que es
+  exactamente 2·19.1·1.6 + 42.8·1.2 desde las dimensiones nominales del nombre; el A36 da
+  Fy = 2531 kgf/cm² = 36 ksi exacto.
+- **Sección contra tablas AISC**: la W24X55 leída da Zx = 2195.9 cm³ (tabla: 134 in³ = 2196),
+  J = 49.1 cm⁴ (1.18 in⁴) y rts = 4.35 cm (1.71 in) — este último derivado de las dimensiones,
+  porque para un perfil I doblemente simétrico Cw = Iy·ho²/4 y la definición de AISC se reduce a
+  una fórmula cerrada.
+
+## Lo que destapó correr en vivo
+
+La lección metodológica de E2 —*medir destapa bugs del propio instrumento*— se repitió intacta.
+El primer intento en vivo con el motor local terminó en un stack trace, y los siguientes en fallas
+más sutiles. Cinco arreglos, cada uno con su test de regresión:
+
+1. **División por cero en la herramienta de columna.** El motor rellenó `Ky=0` (su modo de falla
+   conocido: sobre-especificar opcionales) y la guarda de entrada no validaba K. Ahora K ≤ 0 es un
+   rechazo reparable: *"K = 0 no es una condición de apoyo; omítelo para usar 1.0"*.
+2. **El harness descartaba evidencia.** Si el turno de reparación respondía en prosa en vez de
+   re-llamar, el bucle devolvía "no pude mapear tu consulta" y tiraba los pasos ya ejecutados —
+   incluido el rechazo que explicaba qué pasó. Ahora ese rechazo se narra.
+3. **Argumentos corrompidos al reparar.** La llamada original viaja en `tool_calls`, así que el
+   turno del asistente queda vacío en el historial; al corregir, el modelo reescribía los
+   argumentos *de memoria* y `LRFD_1` se convertía en `LRFD`. El mensaje de reparación ahora lleva
+   los argumentos originales explícitos.
+4. **Sobre-reparación de entradas.** El primo del falso positivo de E4, ahora en los inputs: al
+   corregir `Ky`, el modelo aprovechó de inventar una longitud de pandeo que nadie le dio. La
+   defensa no es de prompt, es determinista: en una reparación **solo pueden cambiar los
+   argumentos que el motivo del rechazo menciona**; el resto se revierte al valor original.
+5. **`null` significa "no me lo dieron".** El motor rellena opcionales con `null` y la herramienta
+   moría en aritmética con `None`. Ahora un argumento en `null` se trata como omitido: cae al
+   default de la herramienta, y si era obligatorio produce el error legible "falta X".
+
+Ninguno de estos bugs era visible en el escritorio, porque ninguno vive en el cálculo: viven en la
+costura entre el modelo de lenguaje y las herramientas. Es exactamente la superficie que el
+principio del proyecto achica pero no elimina — y por eso se testea.
+
+## Tres verificaciones compuestas, un patrón
+
+Con el patrón probado en la columna, las otras dos salieron como copy-paste disciplinado:
+
+- **Zapata desde reacciones**: las cargas muerta y viva salen de la reacción vertical del apoyo
+  bajo los casos de servicio que se nombren; la geometría es del ingeniero (la fundación no está
+  modelada: los apoyos son restricciones). La composición se niega ante tracción (uplift) y ante
+  excentricidad M/P apreciable, porque la herramienta de E1 es concéntrica y **componer no relaja
+  su alcance**. En el modelo real: D = 9.26 y L = 2.60 tonf leídos del nudo, y un veredicto
+  honesto — NO CUMPLE por desarrollo de barra (48.1 > 37.5 cm), narrado con la dirección correcta.
+- **Viga con LTB**: el perfil completo (Zx, Sx, ry, rts, J, ho, compacidad) sale del modelo; el
+  ingeniero aporta Lb y Cb. La W24X55 de la plataforma, con Lb = 1.93 m: cumple, gobierna el
+  pandeo lateral-torsional con uso 0.375.
+
+## Del modelo a la memoria
+
+El cierre junta E5 con E6: la verificación de la columna —con su demanda leída del modelo— pasa
+por `python-docx` y sale una **memoria de cálculo Word** cuyo pie declara la procedencia completa.
+El test de ida y vuelta de E6 se repite acá: se relee el .docx y ahí están el Pu = 12.9782 que
+leyó el lector, el φPn = 155.5944 que calculó la herramienta, la cita E3-2, y la ruta del archivo
+.sdb de donde salió todo.
+
+Un modelo de SAP2000 abierto, una consulta en lenguaje natural, y un documento donde cada número
+tiene un origen rastreable que no incluye a ningún generador de texto. Eso era E5.
+
+<Note type="info" title="Lo que queda">
+E7 —la última etapa— invierte la flecha: crear y modificar modelos desde lenguaje natural. La
+lectura era el requisito: no se puede verificar lo que se escribió sin poder leerlo de vuelta.
+</Note>
+
+*El lector, las composiciones y sus tests viven en el repositorio del proyecto; el puente COM
+sigue viviendo en el suyo.*
