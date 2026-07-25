@@ -1,0 +1,231 @@
+---
+title: "Terzaghi vs. la ecuación general: 34 % sobre la misma zapata"
+description: "Dos métodos igual de legítimos para calcular la capacidad de soporte, y una brecha sistemática de 23 a 36 % entre ellos. De dónde sale esa diferencia, por qué las dos tablas de factores no son intercambiables, y por qué al final estimar bien φ' importa más que elegir bien el método: un solo grado vale un 14 %."
+pubDate: 2026-07-26
+tags: ["geotecnia", "capacidad de soporte", "terzaghi", "meyerhof", "factores de capacidad", "sensibilidad", "das"]
+subsection: "capacidad-soporte"
+chapter: "Capacidad de soporte"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En la [nota anterior](/geotecnia/de-donde-sale-q-admisible) quedó planteado que $q_{adm}$ no es
+una propiedad del suelo sino el resultado de una convención de cálculo, y apareció un número
+suelto: sobre la misma zapata y el mismo suelo, Terzaghi y la ecuación general daban 2,00 y
+2,68 kgf/cm².
+
+Esta nota va a ese 34 %: **de dónde sale, si es sistemático o casualidad, y qué método usar.**
+
+---
+
+## 1. El mecanismo de Terzaghi (1943)
+
+Terzaghi fue el primero en dar una teoría global, y su esqueleto sigue vigente. Supone que bajo
+una zapata continua, al alcanzar la carga máxima, el suelo falla en **tres zonas**:
+
+<Figure
+  src="/geotecnia-terzaghi-vs-general/mecanismo-terzaghi.svg"
+  alt="Sección de una zapata apoyada sobre el terreno con la carga última q_u aplicada. Bajo la zapata, entre los puntos A y C, se dibuja en rojo la zona I: una cuña triangular rígida que baja hasta el punto D. A cada lado, en naranja, la zona II de corte radial, cuyos bordes son arcos de espiral logarítmica. Más afuera, en verde, la zona III: las cuñas pasivas de Rankine que llegan a la superficie en los puntos H y G. Sobre el nivel del sello, flechas ocres representan la sobrecarga equivalente q = γ·D_f con que se reemplaza el suelo por encima. En el vértice A se marca en azul el ángulo α. Dos cajas al pie: la primera explica que Terzaghi supuso α = φ' mientras que Vesić (1973) y trabajos posteriores mostraron que α = 45° + φ'/2, y que con esa corrección N_q y N_c admiten forma cerrada (Reissner 1924, Prandtl 1921) y cambian de valor. La segunda enumera lo que Terzaghi deja fuera: la resistencia al corte del suelo sobre el sello, la forma en planta y la inclinación de la carga; la ecuación general las recupera con factores, y de ahí sale casi toda la diferencia entre métodos."
+  caption="El mecanismo y sus tres zonas. Las dos cajas del pie contienen todo lo que explica la brecha entre métodos: un ángulo que estaba mal supuesto, y tres efectos que Terzaghi deja deliberadamente del lado seguro."
+/>
+
+De ese equilibrio sale la ecuación de tres términos. Para zapata continua:
+
+<Equation label="16.3">
+$$
+q_u = c'N_c + q\,N_q + \tfrac{1}{2}\gamma B\,N_\gamma
+$$
+</Equation>
+
+y para cuadrada y circular, con coeficientes empíricos:
+
+<Equation label="16.4 y 16.5">
+$$
+q_u^{\text{cuad}} = 1{,}3\,c'N_c + q\,N_q + 0{,}4\,\gamma B N_\gamma
+\qquad
+q_u^{\text{circ}} = 1{,}3\,c'N_c + q\,N_q + 0{,}3\,\gamma B N_\gamma
+$$
+</Equation>
+
+**Dos decisiones de Terzaghi que hay que tener presentes**, porque son las que después se
+corrigen:
+
+1. Supone $\alpha = \phi'$ para los ángulos de la cuña rígida.
+2. Reemplaza el suelo sobre el sello por una sobrecarga $q = \gamma D_f$, **despreciando su
+   resistencia al corte**. Es una simplificación deliberadamente conservadora.
+
+---
+
+## 2. La corrección, y por qué aparecen dos tablas
+
+Estudios posteriores (Vesić, 1973) confirmaron la forma del mecanismo pero mostraron que
+$\alpha$ está más cerca de $45° + \phi'/2$. Con esa corrección los factores dejan de ser
+tabulaciones empíricas y admiten **forma cerrada**:
+
+<Equation label="16.6 a 16.8">
+$$
+N_q = \tan^2\!\left(45 + \tfrac{\phi'}{2}\right) e^{\pi \tan \phi'}
+\qquad
+N_c = (N_q - 1)\cot \phi'
+\qquad
+N_\gamma = 2(N_q + 1)\tan \phi'
+$$
+</Equation>
+
+con $N_q$ de Reissner (1924), $N_c$ de Prandtl (1921) y $N_\gamma$ de Caquot y Kerisel (1953),
+confirmado por Vesić (1973).
+
+Y acá está el primer punto práctico: **el libro trae dos tablas de factores, y no son
+intercambiables.** La Tabla 16.1 es la de Terzaghi y va con las Ecs. (16.3)–(16.5). La Tabla
+16.2 son estas formas cerradas y va con la ecuación general. Usar los factores de una con la
+ecuación de la otra es un error silencioso, porque el resultado sigue teniendo unidades de
+presión y un orden de magnitud creíble.
+
+<Figure
+  src="/geotecnia-terzaghi-vs-general/dos-tablas.svg"
+  alt="Gráfico de barras divergentes centrado en cero, que muestra la diferencia porcentual del factor de Terzaghi (Tabla 16.1) respecto del de la ecuación general (Tabla 16.2), para tres ángulos de fricción. Grupo N_c: Terzaghi es mayor un 19 % a φ'=20°, un 23 % a 30° y un 27 % a 40°. Grupo N_q: mayor un 16 %, 22 % y 27 % respectivamente. Grupo N_γ: aquí la diferencia cambia de signo — Terzaghi es un 32 % MENOR a φ'=20°, un 15 % menor a 30°, y un 5 % mayor a 40°. Al pie, una caja concluye que cada tabla va con su ecuación y que mezclarlas no es un error de segundo orden: en N_c y N_q Terzaghi entrega entre 16 % y 27 % más, pero en N_γ entrega menos a ángulos bajos y más a ángulos altos, de modo que no existe un factor de corrección único que permita pasar de una tabla a la otra."
+  caption="No difieren en un factor de escala. N_c y N_q son sistemáticamente mayores en Terzaghi, pero N_γ cambia de signo alrededor de φ' ≈ 38°. Cualquier intento de convertir una tabla en la otra con un coeficiente único está condenado."
+/>
+
+<Note type="warning" title="Errata verificada en la Tabla 16.1">
+Al contrastar los 240 valores de las dos tablas contra las formas cerradas del propio capítulo
+apareció un error de imprenta: **para $\phi' = 18°$, la Tabla 16.1 da $N_c = 15{,}12$ cuando el
+valor correcto es $15{,}52$.** Los vecinos lo delatan —$N_c(17°) = 14{,}60$ y
+$N_c(19°) = 16{,}56$—: el 15,12 rompe la progresión. Es un dígito transpuesto.
+
+Es una razón concreta para **programar las Ecs. (16.6)–(16.8) en vez de leer tablas**: no hay
+riesgo de caer en una celda con errata ni de interpolar mal.
+</Note>
+
+---
+
+## 3. La ecuación general (Meyerhof, 1963)
+
+Recupera los tres efectos que Terzaghi deja fuera, multiplicando cada término por factores de
+**forma**, **profundidad** e **inclinación**:
+
+<Equation label="16.9">
+$$
+q_u = c'N_c F_{cs}F_{cd}F_{ci} + q\,N_q F_{qs}F_{qd}F_{qi} + \tfrac{1}{2}\gamma B N_\gamma F_{\gamma s}F_{\gamma d}F_{\gamma i}
+$$
+</Equation>
+
+**Forma** (De Beer, 1970) — corrige que una zapata cuadrada no es una franja infinita:
+
+$$
+F_{cs} = 1 + \frac{B}{L}\frac{N_q}{N_c}
+\qquad
+F_{qs} = 1 + \frac{B}{L}\tan\phi'
+\qquad
+F_{\gamma s} = 1 - 0{,}4\frac{B}{L}
+$$
+
+**Profundidad** (Hansen, 1970) — recupera la resistencia al corte sobre el sello. Para
+$D_f/B \leq 1$:
+
+$$
+F_{qd} = 1 + 2\tan\phi'(1-\sin\phi')^2\frac{D_f}{B}
+\qquad
+F_{cd} = F_{qd} - \frac{1-F_{qd}}{N_c \tan\phi'}
+\qquad
+F_{\gamma d} = 1
+$$
+
+<Note type="tip" title="El detalle que más se equivoca al programarlo">
+Para $D_f/B > 1$ hay que reemplazar $(D_f/B)$ por $\tan^{-1}(D_f/B)$ **en radianes**. No es
+cosmético: la primera forma crece sin límite y la segunda se satura en $\pi/2$. En una zapata
+profunda y angosta, olvidarlo sobreestima la capacidad de forma importante.
+</Note>
+
+**Inclinación** (Meyerhof, 1963; Hanna y Meyerhof, 1981), con $\beta$ medido desde la vertical:
+
+$$
+F_{ci} = F_{qi} = \left(1 - \frac{\beta°}{90°}\right)^2
+\qquad
+F_{\gamma i} = \left(1 - \frac{\beta}{\phi'}\right)^2
+$$
+
+Nótese que $F_{\gamma i}$ **se anula cuando $\beta = \phi'$**: una carga inclinada más allá del
+ángulo de fricción deja al suelo sin nada que aportar por peso propio. Es coherente con la
+física y es una buena verificación de que uno programó bien la fórmula.
+
+---
+
+## 4. La brecha: 23 a 36 %, y es sistemática
+
+Con todo lo anterior, la pregunta concreta. Sobre la zapata del ejemplo de hormigón
+—$2{,}20 \times 2{,}20$ m, $D_f = 1{,}5$ m, arena con $c' = 0$ y $\gamma = 18$ kN/m³—, barriendo
+todo el rango útil de $\phi'$:
+
+| $\phi'$ | Terzaghi, Ec. (16.4) | Ec. general, Ec. (16.9) | Diferencia |
+|---|---|---|---|
+| 20° | 86 kPa · 0,88 kgf/cm² | 117 kPa · 1,19 kgf/cm² | **+36 %** |
+| 25° | 159 kPa · 1,62 | 214 kPa · 2,18 | **+35 %** |
+| 30° | 303 kPa · 3,09 | 401 kPa · 4,09 | **+32 %** |
+| 35° | 613 kPa · 6,25 | 788 kPa · 8,04 | **+29 %** |
+| 40° | 1340 kPa · 13,67 | 1651 kPa · 16,84 | **+23 %** |
+
+El 34 % de la nota anterior no era una casualidad del $\phi'$ elegido: **la ecuación general
+entrega sistemáticamente más, entre un 23 y un 36 % en todo el rango.** Y tiene sentido — los
+factores de forma y profundidad solo pueden sumar capacidad, porque recuperan resistencia que
+Terzaghi había descartado.
+
+Vale la pena contrastar con lo que trae el propio libro: los Ejemplos 16.1 y 16.2 de Das
+resuelven el mismo caso —zapata 2×2 m, $\phi' = 25°$, $c' = 20$ kN/m², $D_f = 1{,}5$ m— por
+ambos métodos y obtienen 359,5 y 457,7 kN/m²: un **27 %**. Menos que nuestro 35 % a ese mismo
+ángulo, y la razón es instructiva: ese caso **tiene cohesión**, y el término $c'N_c$ es donde
+Terzaghi es más generoso (recuérdese la figura anterior: $N_c$ de Terzaghi es un 21 % mayor a
+25°). La cohesión amortigua la brecha.
+
+---
+
+## 5. Pero hay algo que importa más
+
+Toda la discusión anterior es sobre el método. Ahora la pregunta incómoda: **¿cuánto vale
+equivocarse en $\phi'$?**
+
+<Figure
+  src="/geotecnia-terzaghi-vs-general/brecha-metodos.svg"
+  alt="Dos paneles. El izquierdo grafica q_adm contra el ángulo de fricción supuesto, de 20° a 35°, con dos curvas: la de Terzaghi en rojo y la de la ecuación general en azul, siempre por encima, con la banda entre ambas sombreada. En φ'=30° se acota la separación entre curvas con una flecha doble etiquetada +32 %. Al pie se indica que la ecuación general entrega entre 23 % y 36 % más en todo el rango útil de φ'. El panel derecho responde cuánto mueve q_adm un solo grado de φ', con tres barras ocres: pasar de 25° a 26° la sube 13,5 %, de 30° a 31° un 14,5 %, y de 35° a 36° un 16,1 %. El texto señala que un grado —dentro del ruido de cualquier correlación con el SPT— vale más que la mitad de la brecha entre los dos métodos. Una caja final concluye: elegir bien el método importa, estimar bien φ' importa más."
+  caption="La comparación que ordena las prioridades. La brecha entre métodos es del orden de 30 %; un solo grado de error en φ' vale 14 %. Dos grados —perfectamente dentro de la dispersión de cualquier correlación con el SPT— y ya empatan con la diferencia entre Terzaghi y Meyerhof."
+/>
+
+**Un solo grado de $\phi'$ mueve $q_{adm}$ entre un 13,5 y un 16 %.** Dos grados y medio ya
+valen tanto como toda la discusión metodológica.
+
+Y $\phi'$ **no se mide**: se estima con correlaciones a partir del número de golpes del SPT,
+correlaciones cuya dispersión es de varios grados. Esa es, otra vez, la razón de que el factor
+de seguridad geotécnico sea 3 y no 1,5: no cubre la fórmula, cubre el dato de entrada.
+
+---
+
+## 6. Entonces, ¿cuál usar?
+
+En orden de importancia práctica:
+
+1. **Usa la ecuación general** si tienes la geometría real (forma en planta, empotramiento,
+   inclinación de la carga). Es más completa y es el estándar actual.
+2. **Terzaghi sigue sirviendo** para prediseño y para verificar el orden de magnitud, con la
+   ventaja de que es conservadora — su resultado está sistemáticamente del lado seguro respecto
+   de la general.
+3. **Nunca mezcles las tablas.** Cada una va con su ecuación.
+4. **Declara siempre el método** al reportar un $q_{adm}$. Sin eso, el número no es comparable
+   con ningún otro.
+5. **Y dedica el esfuerzo a $\phi'$**, no a la elección del método. Es donde está el error.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números de esta nota se generaron con script, no a mano: los factores salen de las
+formas cerradas de las Ecs. (16.6)–(16.8) y de la Tabla 16.1 para el $N_\gamma$ de Terzaghi
+(Kumbhojkar, 1993), que no tiene forma cerrada. Las tablas del libro se verificaron antes de
+usarlas —240 valores contra las ecuaciones del propio capítulo—, y de ahí salió la errata de
+$\phi' = 18°$.
+</Note>
+
+---
+
+**Lo que viene:** el nivel freático, que es el otro factor que puede mover $q_{adm}$ sin que
+cambie nada del suelo; y después el salto a la otra rama del árbol, la de asentamientos, donde
+el parámetro incierto ya no es $\phi'$ sino $E_s$ — con un rango de ×5.
