@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="760" height="380" fill="#ffffff"/>
+
+  <text x="380" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">La hipótesis del manifold: por qué generalizar es siquiera posible</text>
+
+  <!-- ── Left panel: the parent space vs the manifold ── -->
+  <rect x="24" y="56" width="340" height="230" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="194" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Espacio padre vs. manifold</text>
+
+  <!-- parent space box -->
+  <rect x="52" y="94" width="284" height="140" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="64" y="112" font-size="10.5" fill="#9ca3af">todos los arreglos 28×28 uint8</text>
+  <text x="64" y="128" font-size="10.5" font-weight="600" fill="#6b7280">256⁷⁸⁴ posibilidades</text>
+  <text x="64" y="144" font-size="10" fill="#9ca3af">más que átomos en el universo</text>
+
+  <!-- scattered noise dots -->
+  <g fill="#e5e7eb">
+    <circle cx="98" cy="180" r="2.5"/><circle cx="140" cy="206" r="2.5"/><circle cx="196" cy="112" r="2.5"/>
+    <circle cx="250" cy="196" r="2.5"/><circle cx="300" cy="130" r="2.5"/><circle cx="312" cy="212" r="2.5"/>
+    <circle cx="82" cy="216" r="2.5"/><circle cx="228" cy="122" r="2.5"/><circle cx="272" cy="164" r="2.5"/>
+  </g>
+
+  <!-- the manifold: a thin curved ribbon -->
+  <path d="M 76 214 C 130 176, 158 148, 214 158 C 268 168, 292 196, 322 178"
+        fill="none" stroke="#2563eb" stroke-width="9" stroke-linecap="round" opacity="0.22"/>
+  <path d="M 76 214 C 130 176, 158 148, 214 158 C 268 168, 292 196, 322 178"
+        fill="none" stroke="#2563eb" stroke-width="2"/>
+  <g fill="#1e3a8a">
+    <circle cx="90" cy="205" r="3.5"/><circle cx="136" cy="174" r="3.5"/><circle cx="182" cy="157" r="3.5"/>
+    <circle cx="228" cy="161" r="3.5"/><circle cx="272" cy="176" r="3.5"/><circle cx="312" cy="180" r="3.5"/>
+  </g>
+  <text x="194" y="256" text-anchor="middle" font-size="11" fill="#2563eb">Los dígitos reales ocupan un subespacio</text>
+  <text x="194" y="272" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb">diminuto, continuo y conectado</text>
+
+  <!-- ── Right panel: two kinds of interpolation ── -->
+  <rect x="396" y="56" width="340" height="230" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="566" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Dos formas de ir de A a B</text>
+
+  <!-- endpoints -->
+  <circle cx="446" cy="212" r="6" fill="#1e3a8a"/>
+  <text x="446" y="236" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">A</text>
+  <circle cx="690" cy="176" r="6" fill="#1e3a8a"/>
+  <text x="690" y="200" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">B</text>
+
+  <!-- manifold path (curved, blue) -->
+  <path d="M 446 212 C 500 140, 610 132, 690 176"
+        fill="none" stroke="#2563eb" stroke-width="2.5"/>
+  <circle cx="512" cy="163" r="4" fill="#2563eb"/>
+  <circle cx="570" cy="145" r="4" fill="#2563eb"/>
+  <circle cx="632" cy="146" r="4" fill="#2563eb"/>
+  <text x="570" y="110" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2563eb">sobre el manifold latente</text>
+  <text x="570" y="124" text-anchor="middle" font-size="10.5" fill="#2563eb">todo punto intermedio es un dígito válido</text>
+
+  <!-- linear path (straight, red dashed) -->
+  <line x1="446" y1="212" x2="690" y2="176" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 4"/>
+  <circle cx="568" cy="194" r="4" fill="#dc2626"/>
+  <text x="568" y="258" text-anchor="middle" font-size="10.5" font-weight="700" fill="#991b1b">interpolación lineal en el espacio padre</text>
+  <text x="568" y="272" text-anchor="middle" font-size="10.5" fill="#991b1b">el promedio de dos dígitos no suele ser un dígito</text>
+  <line x1="568" y1="198" x2="568" y2="246" stroke="#dc2626" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- ── footer ── -->
+  <rect x="24" y="300" width="712" height="62" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="380" y="322" text-anchor="middle" font-size="11.5" fill="#1e3a8a">Un modelo es una curva suave que el gradiente ajusta poco a poco: en algún punto intermedio <tspan font-weight="700">aproxima ese manifold</tspan>.</text>
+  <text x="380" y="344" text-anchor="middle" font-size="11.5" fill="#374151">Toda su generalización es <tspan font-weight="700">interpolación local</tspan> entre lo que ya vio — nunca razonamiento, abstracción ni sentido común.</text>
+</svg>

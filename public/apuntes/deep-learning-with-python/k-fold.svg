@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 356" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="760" height="356" fill="#ffffff"/>
+
+  <text x="380" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">K-fold: por qué un solo split no basta con 480 muestras</text>
+
+  <!-- headers -->
+  <text x="24" y="66" font-size="11" font-weight="600" fill="#6b7280">FOLD</text>
+  <text x="120" y="66" font-size="11" font-weight="600" fill="#6b7280">PARTICIONES</text>
+  <text x="600" y="66" font-size="11" font-weight="600" fill="#6b7280">MAE DE VALIDACIÓN</text>
+  <line x1="24" y1="76" x2="736" y2="76" stroke="#e5e7eb"/>
+
+  <!-- fold rows -->
+  <g font-size="11">
+    <!-- Fold 1 -->
+    <text x="24" y="106" font-size="11.5" font-weight="600" fill="#374151">1</text>
+    <rect x="120" y="90" width="110" height="26" rx="4" fill="#2563eb"/>
+    <text x="175" y="107" text-anchor="middle" fill="#ffffff" font-weight="600">val</text>
+    <rect x="234" y="90" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="289" y="107" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="348" y="90" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="403" y="107" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="462" y="90" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="517" y="107" text-anchor="middle" fill="#6b7280">train</text>
+    <text x="600" y="107" font-size="12.5" font-weight="600" fill="#374151">0,298</text>
+    <rect x="656" y="98" width="60" height="10" rx="2" fill="#f3f4f6"/>
+    <rect x="656" y="98" width="45" height="10" rx="2" fill="#93c5fd"/>
+
+    <!-- Fold 2 -->
+    <text x="24" y="146" font-size="11.5" font-weight="600" fill="#374151">2</text>
+    <rect x="120" y="130" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="175" y="147" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="234" y="130" width="110" height="26" rx="4" fill="#2563eb"/>
+    <text x="289" y="147" text-anchor="middle" fill="#ffffff" font-weight="600">val</text>
+    <rect x="348" y="130" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="403" y="147" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="462" y="130" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="517" y="147" text-anchor="middle" fill="#6b7280">train</text>
+    <text x="600" y="147" font-size="12.5" font-weight="700" fill="#dc2626">0,349</text>
+    <rect x="656" y="138" width="60" height="10" rx="2" fill="#f3f4f6"/>
+    <rect x="656" y="138" width="60" height="10" rx="2" fill="#dc2626"/>
+
+    <!-- Fold 3 -->
+    <text x="24" y="186" font-size="11.5" font-weight="600" fill="#374151">3</text>
+    <rect x="120" y="170" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="175" y="187" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="234" y="170" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="289" y="187" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="348" y="170" width="110" height="26" rx="4" fill="#2563eb"/>
+    <text x="403" y="187" text-anchor="middle" fill="#ffffff" font-weight="600">val</text>
+    <rect x="462" y="170" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="517" y="187" text-anchor="middle" fill="#6b7280">train</text>
+    <text x="600" y="187" font-size="12.5" font-weight="700" fill="#16a34a">0,232</text>
+    <rect x="656" y="178" width="60" height="10" rx="2" fill="#f3f4f6"/>
+    <rect x="656" y="178" width="24" height="10" rx="2" fill="#16a34a"/>
+
+    <!-- Fold 4 -->
+    <text x="24" y="226" font-size="11.5" font-weight="600" fill="#374151">4</text>
+    <rect x="120" y="210" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="175" y="227" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="234" y="210" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="289" y="227" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="348" y="210" width="110" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="403" y="227" text-anchor="middle" fill="#6b7280">train</text>
+    <rect x="462" y="210" width="110" height="26" rx="4" fill="#2563eb"/>
+    <text x="517" y="227" text-anchor="middle" fill="#ffffff" font-weight="600">val</text>
+    <text x="600" y="227" font-size="12.5" font-weight="600" fill="#374151">0,305</text>
+    <rect x="656" y="218" width="60" height="10" rx="2" fill="#f3f4f6"/>
+    <rect x="656" y="218" width="48" height="10" rx="2" fill="#93c5fd"/>
+  </g>
+
+  <line x1="24" y1="250" x2="736" y2="250" stroke="#d1d5db"/>
+
+  <!-- average -->
+  <text x="120" y="278" font-size="12" font-weight="700" fill="#1e3a8a">Promedio de los 4</text>
+  <text x="600" y="278" font-size="14" font-weight="700" fill="#1e3a8a">0,296</text>
+
+  <!-- footer -->
+  <rect x="24" y="296" width="712" height="46" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="380" y="315" text-anchor="middle" font-size="11.5" fill="#1e3a8a">Los folds van de <tspan font-weight="700">0,232 a 0,349</tspan> — un 50 % de diferencia según qué partición toque validar</text>
+  <text x="380" y="333" text-anchor="middle" font-size="11.5" fill="#374151">Con el factor de escala, el promedio equivale a errar por <tspan font-weight="700">US$ 29 600</tspan> en viviendas de US$ 60 000 a 500 000</text>
+</svg>
