@@ -1,8 +1,8 @@
 ---
 title: "Harness estructural (7): crear modelos desde lenguaje natural — y no creerles"
-description: "La última flecha del harness se invierte: además de leer modelos de SAP2000, ahora los crea. Pero crear es más peligroso que leer, así que la etapa entera es una colección de desconfianzas ejecutables: la geometría la arma Python desde parámetros (el LLM nunca escribe una coordenada), todo modelo creado se corre y se contrasta contra la estática antes de devolverse, el modelo del usuario es intocable, y la escritura vive detrás de su propio interruptor. Con dos hallazgos en vivo: el motor trunca números al transcribir —y una guarda determinista lo denuncia—, y dos perfiles que la verificación rechazó por razones que valió la pena entender."
+description: "La última flecha del harness se invierte: además de leer modelos de SAP2000, ahora los crea y los modifica. Pero escribir es más peligroso que leer, así que la etapa entera es una colección de desconfianzas ejecutables: la geometría la arma Python desde parámetros (el LLM nunca escribe una coordenada), todo modelo creado o modificado se corre y se contrasta contra la estática antes de devolverse, el modelo del usuario es intocable, y la escritura vive detrás de su propio interruptor. Con los hallazgos del camino: el motor trunca números al transcribir —y una guarda determinista lo denuncia—, emite listas y números como strings —y una coerción tipada por firma los repara—, y dos perfiles que la verificación rechazó por razones que valió la pena entender."
 pubDate: 2026-07-24
-draft: true
+draft: false
 tags: ["LLM local", "SAP2000", "COM", "round-trip", "trazabilidad", "harness", "agentes", "seguridad"]
 section: "Harness estructural"
 series: "Harness estructural local"
@@ -104,14 +104,42 @@ pasa. Es el costo documentado de derivar propiedades desde el modelo: conservado
 inseguro, y avisado en cada resultado. El pórtico del demo terminó con W12X50, que pasa con
 holgura real.
 
+## Modificar, con el mismo peaje
+
+Crear no alcanza: el flujo real es iterativo — *"cambia la viga a W18X50"*, *"sube la muerta a
+3 tonf/m"* —. La modificación llegó con dos reglas propias:
+
+**Solo modelos propios.** Las herramientas de modificación se niegan ante cualquier modelo que
+el harness no haya creado. El modelo real del usuario — el de la nave industrial con el que se
+cerró la etapa anterior — es de **solo lectura**, y eso no es una convención: está probado con
+un test que intenta modificarlo y espera el rechazo.
+
+**El contraste se recomputa desde el modelo.** Después de cada modificación, el modelo se
+re-corre y el equilibrio se verifica de nuevo — pero la carga aplicada no se toma de lo que se
+pidió, sino que se **reintegra leyendo las cargas realmente asignadas** en el modelo. Así el
+peaje sobrevive a cualquier cambio: al cambiar la sección de la viga, el equilibrio cerró en
+12.0/12.0; al subir la carga muerta a 3 tonf/m, la carga recomputada pasó a 18 tonf y el
+equilibrio cerró en 18.0/18.0. La secuencia completa, en vivo y por lenguaje natural: crear el
+pórtico, cambiar la viga a W18X50, subir la carga, y **re-verificar a flexión con el momento
+leído del modelo ya modificado** (Mu = 9.64 tonf·m, uso 0.184, con su cita AISC).
+
+En esa secuencia apareció el último endurecimiento de la serie: el motor emitió la lista de
+barras como *string* (`"['V1_1']"`) y el número como texto (`"3"`). La reparación no fue de
+prompt sino de tipo, y con una regla estricta: la **coerción se guía por la firma** de la
+herramienta — un string numérico se convierte solo si el parámetro espera un número, un string
+con forma de lista se parsea — y un nombre de barra como `"8"`, que es string en la firma,
+jamás se toca. La misma familia de defensas que el `null` que significa "no me lo dieron":
+arreglar la codificación es legítimo; adivinar el contenido, no.
+
 ## Dónde queda la serie
 
 El harness hace ahora el ciclo completo en local: **entiende el pedido, crea el modelo, lo
-analiza, lo lee, verifica contra la norma con cita, y documenta en Word** — y en cada eslabón
-hay una guarda que prefiere negarse antes que dejar pasar un número sin respaldo. Queda tela
-para rato: modificar modelos existentes, más geometrías paramétricas, y el catálogo de
-verificaciones que es otra pista entera. Pero la arquitectura ya no tiene huecos: las dos
-flechas — leer y escribir — están tendidas, y las dos pasan por el mismo peaje.
+analiza, lo modifica, lo lee, verifica contra la norma con cita, y documenta en Word** — y en
+cada eslabón hay una guarda que prefiere negarse antes que dejar pasar un número sin respaldo.
+Las siete etapas del roadmap técnico están cerradas. Queda tela para rato — más geometrías
+paramétricas, y el catálogo de verificaciones que es otra pista entera — pero la arquitectura
+ya no tiene huecos: las dos flechas, leer y escribir, están tendidas, y las dos pasan por el
+mismo peaje.
 
 La lección que esta etapa agrega a la serie es quizás la más transferible: cuando un agente
 *produce* artefactos (un modelo, no una respuesta), la pregunta no es si el resultado se ve
