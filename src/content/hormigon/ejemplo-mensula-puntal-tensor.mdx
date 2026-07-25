@@ -1,0 +1,195 @@
+---
+title: "Ejemplo — Ménsula corta por puntal-tensor (ACI 318-25)"
+description: "Diseño de una ménsula de columna que recibe una viga carrilera, por el método puntal-tensor del Cap. 23: con a_v/d = 0.375 la teoría de vigas no aplica y el cálculo se reduce a un triángulo — un puntal de hormigón, un tirante de acero y dos nodos. La jerarquía sale como la teoría quiere: gobierna el tirante (uso 0.95, dúctil), el puntal lo respalda (0.86), y la tracción horizontal N_uc = 0.2V_u que todo el mundo olvida resulta ser —con su palanca— un tercio de la fuerza del tirante. El final del diseño no es una ecuación: es el detalle de anclaje."
+pubDate: 2026-07-25
+tags: ["ejemplo", "hormigón", "ménsula", "puntal-tensor", "corbel", "regiones D", "anclaje", "aci318"]
+subsection: "ejemplos"
+chapter: "Cap. 23 — Puntal-tensor"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Todos los ejemplos de esta serie hasta ahora usan la misma hipótesis silenciosa: las secciones
+planas permanecen planas, y por eso existen "la flexión" y "el corte" como cosas separadas. En
+una ménsula esa hipótesis **muere**: la carga está tan cerca del apoyo ($a_v/d < 1$) que no
+alcanza a desarrollarse ningún campo de flexión — todo el elemento es una
+**región D**, y la [nota del Cap. 23](/hormigon/aci318-25-cap23-puntal-tensor) cuenta cómo se
+diseña ahí: eligiendo un **enrejado interno** de puntales de hormigón y tensores de acero —los
+*tirantes*, como también se les dice y como los llamaremos acá— que lleve la carga al apoyo. Acá lo bajamos a números —con la referencia normativa[^aci] de cada
+paso— para el caso más limpio que existe: un puntal, un tirante, dos nodos. Y con el
+ingrediente que hace honesto al ejemplo: la tracción horizontal $N_{uc}$ que la viga apoyada le
+transmite a la ménsula por fricción y retracción, la carga que no aparece en ningún análisis y
+que la norma obliga a inventar.
+
+## El caso
+
+Ménsula corta monolítica con una columna de 40×40, que recibe la reacción de una
+[viga carrilera de puente grúa](/acero/ejemplo-viga-carrilera-puente-grua) a través de una
+placa de apoyo. Además de la reacción vertical, la viga —que frena, parte y cambia de
+temperatura— arrastra la ménsula horizontalmente: sin un dato mejor, la norma exige diseñar
+para $N_{uc} = 0.2\,V_u$ (Sec. 16.5.3.4).
+
+| Dato | Valor |
+|---|---|
+| Columna / ancho de ménsula | $40 \times 40$ cm / $b = 40$ cm |
+| Ménsula | $h = 45$ cm en la cara, $30$ cm en el borde libre; vuelo $30$ cm |
+| Tirante | a $5$ cm de la cara superior → $d = 40$ cm |
+| Placa de apoyo | $20 \times 25$ cm, centrada a $a_v = 15$ cm de la cara |
+| Hormigón | $f'_c = 250$ kgf/cm² (peso normal, monolítica) |
+| Acero | $f_y = 4200$ kgf/cm² |
+| Reacción vertical (factorada) | $V_u = 28$ tonf (dato de diseño, del orden de la reacción factorada de la carrilera enlazada) |
+| Tracción horizontal | $N_{uc} = 0.2\,V_u = 5.6$ tonf (16.5.3.4) |
+
+Primero, los cerrojos que habilitan el método: $a_v/d = 15/40 = 0.375 \le 1$ (Sec. 16.5.1.1)
+—la carga vive pegada al apoyo— y el canto en el borde libre ($30$ cm) supera $0.5d = 20$ cm
+(Sec. 16.5.2.2). El techo global de corte (16.5.2.4, $0.2f'_c\,b\,d$ y compañía) da
+$\phi V_{n,\max} = 60$ tonf: uso 0.47, lejos. Y el aplastamiento bajo la placa (22.8.3.2,
+$\phi = 0.65$): $\phi B_n = 0.65 \cdot 0.85 \cdot 250 \cdot 500 = 69\,062$ kgf $= 69.1$ tonf,
+uso 0.41. Nada de eso gobierna:
+la pelea está en el enrejado interno.
+
+<Figure
+  src="/ejemplos/mensula-modelo.svg"
+  alt="Izquierda: geometría de la ménsula de 40 cm de ancho en la columna 40×40 — canto 45 cm en la cara, 30 en el borde, placa de apoyo a 15 cm de la cara — con las cargas V_u = 28 tonf vertical y N_uc = 5.6 tonf horizontal. Derecha: el modelo puntal-tensor superpuesto: el nodo A (CCT) bajo la placa al nivel del tirante, el tirante horizontal T = 18.0 tonf que entra a la columna, el puntal inclinado C = 30.3 tonf a 67.4 grados que baja al nodo B (CCC) en la esquina inferior de la unión con la columna, y el flujo de la carga bajando por el puntal. Se anota jd = 36 cm y el ancho del puntal ws = 8 cm."
+  caption="La ménsula y su enrejado interno: la carga baja al apoyo por un puntal inclinado de hormigón (C = 30.3 tonf, θ = 67.4°), sostenido por un tirante horizontal de acero (T = 18.0 tonf) anclado en la columna. No hay 'flexión' ni 'corte': hay un triángulo en equilibrio."
+/>
+
+<Note type="info" title="Por qué la ménsula es el caso más limpio del Cap. 23">
+En una región D general, elegir el enrejado tiene grados de libertad que incomodan (¿cuántos
+puntales?, ¿por dónde?). En la ménsula corta la geometría casi no deja alternativa: **un**
+puntal desde la placa al fondo de la unión, **un** tirante arriba, **dos** nodos. Por eso es el
+ejemplo canónico para aprender el método antes de usarlo en cabezales, vigas de gran altura o
+aberturas — el mismo triángulo, repetido.
+</Note>
+
+## 1. La geometría del modelo: el brazo lo eliges tú
+
+En teoría de vigas el brazo de palanca sale solo ($d - a/2$). Acá **lo fija el modelo**: el
+tirante corre a $5$ cm de la cara superior, y el puntal aterriza en el nodo inferior B con un
+ancho horizontal $w_s$ que hay que **suponer** (y luego verificar). Con $w_s = 8$ cm:
+
+<Equation label="Geometría del modelo">
+$$
+jd = d - \frac{w_s}{2} = 40 - 4 = 36 \ \text{cm}
+\qquad
+\theta = \arctan\frac{jd}{a_v} = \arctan\frac{36}{15} = 67.4°
+$$
+</Equation>
+
+El ángulo holgadamente sobre el mínimo de $25°$ (Sec. 23.2.7) — típico de ménsulas: el puntal
+es empinado porque la carga está encima del apoyo. Del equilibrio del modelo —el puntal por
+descomposición de $V_u$, el tirante tomando momento en el nodo B— salen las dos fuerzas del
+triángulo:
+
+<Equation label="Equilibrio del modelo">
+$$
+C = \frac{V_u}{\sin\theta} = \frac{28}{0.923} = 30.3 \ \text{tonf}
+\qquad
+T = \frac{V_u\, a_v + N_{uc}\,(jd + 5)}{jd} = \frac{420 + 230}{36} = 18.0 \ \text{tonf}
+$$
+</Equation>
+
+Nótese cómo entra $N_{uc}$: no solo tira — tira **con palanca**, porque actúa al nivel de la
+placa, 5 cm sobre el tirante (es el término $N_{uc}(h-d)$ que la Sec. 16.5.3.1 obliga a
+incluir en el momento de diseño). Entre el tiro directo y la palanca pone $6.4$ de las $18.0$
+tonf: **un tercio del tirante**, salido de una carga que ningún análisis de pórtico entrega.
+Olvidarla es diseñar el acero principal un 35 % corto.
+
+## 2. El tirante: el eslabón dúctil (y que gobierna)
+
+El acero del tirante se dimensiona directo, con el $\phi = 0.75$ de todo el método (Tabla
+21.2.1):
+
+<Equation label="Sec. 23.7.2">
+$$
+A_s \ge \frac{T}{\phi f_y} = \frac{18\,040}{0.75 \cdot 4200} = 5.73 \ \text{cm}^2
+\;\Rightarrow\; 3\text{Ø}16 = 6.03 \ \text{cm}^2 \quad (\text{uso } 0.95 \ \Leftarrow \text{gobierna})
+$$
+</Equation>
+
+Sobre el mínimo de ménsulas (16.5.5.1): $A_{s,\min} = 0.04\,(f'_c/f_y)\,b\,d = 3.81$ cm² ✓.
+Y el acero secundario que la ménsula exige (16.5.5.2): estribos cerrados horizontales con
+$A_h \ge 0.5\,(A_{sc} - A_n) = 0.5\,(6.03 - 1.78) = 2.13$ cm², repartidos en los $2/3$ de $d$
+adyacentes al tirante — **2 estribos Ø10 cerrados** ($3.14$ cm²) ✓. Estos estribos no son
+decorativos: cosen el puntal en su ancho (cuantía $0.0029 \ge 0.0025$, Sec. 23.5) y son
+justamente lo que habilita el $\beta_s = 0.75$ del paso siguiente.
+
+## 3. El puntal y sus nodos: el respaldo frágil
+
+El puntal diagonal es una franja de hormigón comprimido de ancho $w_s \sin\theta = 7.4$ cm
+(el ancho horizontal supuesto, proyectado perpendicular al eje). Su resistencia efectiva carga
+con el castigo de ser hormigón fisurable (Tabla 23.4.3a, $\beta_s = 0.75$ con armadura
+distribuida; $\beta_c = 1.0$):
+
+<Equation label="Ec. 23.4.1a y 23.4.3">
+$$
+f_{ce} = 0.85\,\beta_c \beta_s f'_c = 159\ \text{kgf/cm}^2
+\;\Rightarrow\;
+\phi F_{ns} = 0.75 \cdot 159 \cdot 7.4 \cdot 40 = 35\,298 \ \text{kgf} = 35.3 \ \text{tonf}
+\quad (\text{uso } 30.3/35.3 = 0.86)
+$$
+</Equation>
+
+(El puntal se verifica en su extremo angosto —el nodo B—, donde ya dispone del ancho completo
+$b = 40$ cm de la ménsula.) Los nodos, más holgados: el B (CCC, $\beta_n = 1.0$,
+$f_{ce} = 212.5$ kgf/cm² sobre $A_{nz} = 7.4 \cdot 40 = 295$ cm²) recibe el puntal con uso
+0.64, y el A (CCT, $\beta_n = 0.80$, $f_{ce} = 170$ kgf/cm² sobre la placa de $500$ cm²)
+reparte la carga con uso 0.44. La suposición inicial
+$w_s = 8$ cm queda **verificada**: el puntal cabe en el ancho que le dimos, con 14 % de
+holgura. (Si no hubiera cabido, se repite el ciclo con un $w_s$ mayor — que baja $jd$, sube
+$T$ y pide más acero: el método es honesto cobrando el brazo que uno declara.)
+
+## 4. El final del diseño no es una ecuación: es el anclaje
+
+El tirante trabaja a $f_y$ **desde el nodo A** — a $15$ cm del borde de la ménsula. Hacia la
+columna hay espacio de sobra: el gancho estándar de una Ø16 pide $\ell_{dh} \approx 24$ cm
+(Sec. 25.4.3, con $\psi_o = 1.25$ y $\psi_c = 0.83$) y la columna ofrece $35$. Pero hacia la
+**punta** no hay dónde desarrollar nada: por eso el tirante de una ménsula se cierra con una
+**horquilla en U** o se suelda a una barra transversal bajo la placa (16.5.6.3) — el detalle
+clásico que convierte las 3Ø16 en un tirante de verdad y no en tres barras sueltas.
+
+<Figure
+  src="/ejemplos/mensula-verificaciones.svg"
+  alt="Barras de uso de las seis verificaciones de la ménsula contra su capacidad: tirante 3Ø16 con uso 0.95 gobierna en rojo, puntal 0.86 en ámbar, nodo B 0.64, techo de corte de la sección 0.47, nodo A 0.44 y aplastamiento de la placa 0.41 en verde. Una caja anota que la jerarquía es la correcta — el acero dúctil por delante del hormigón frágil — y que N_uc = 0.2·V_u aporta, con su palanca, 6.4 tonf de las 18.0 del tirante: olvidarla deja el acero un 35 % corto."
+  caption="Las seis verificaciones, ordenadas: gobierna el tirante (0.95) con el puntal detrás (0.86) — acero dúctil antes que hormigón frágil, la jerarquía que el método busca. Y un tercio del tirante es la tracción N_uc que ningún análisis entrega."
+/>
+
+<Note type="tip" title="N_uc: la carga que la norma te obliga a inventar">
+La viga apoyada frena, parte, se acorta por retracción y fluencia, cambia de temperatura — y
+cada uno de esos fenómenos tira de la ménsula hacia afuera. Ese arrastre no sale del modelo
+del pórtico: la Sec. 16.5.3.4 lo tarifica en $N_{uc} = 0.2\,V_u$ como piso —y la 16.5.3.5 lo
+trata como carga viva—, salvo que el apoyo real (neopreno, teflón, apoyo deslizante)
+justifique otro valor. Aquí son 5.6 tonf que, con su palanca de 5 cm sobre el tirante, ponen
+6.4 de las 18.0 tonf: **un tercio del tirante**. Las ménsulas que fallan en servicio rara vez fallan
+por $V_u$ — fallan por el $N_{uc}$ no considerado o por el anclaje que no alcanzó a
+desarrollarse.
+</Note>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Geometría | 16.5.1.1 / 16.5.2.2 ($a_v/d = 0.375 \le 1$) | habilita el método | — | ✓ |
+| Techo de corte | 16.5.2.4 | frágil — techo global | $\phi V_{n,\max} = 60$ tonf | 0.47 |
+| Aplastamiento placa | 22.8.3.2 | frágil, local | $\phi B_n = 69.1$ tonf | 0.41 |
+| **Tirante (3Ø16 + $N_{uc}$ con palanca)** | **23.7.2 / 16.5.5.1** | **dúctil — gobierna** | $\phi A_s f_y = \mathbf{19.0}$ **tonf** | **0.95** |
+| Puntal diagonal | 23.4.3 ($\beta_s = 0.75$) | frágil — respaldo | $\phi F_{ns} = 35.3$ tonf | 0.86 |
+| Nodos A / B | 23.9 ($\beta_n = 0.80/1.0$) | frágil | $63.8$ / $47.1$ tonf | 0.44 / 0.64 |
+| Anclaje del tirante | 25.4.3 / 16.5.6.3 | el detalle que cierra | $\ell_{dh} = 24 \le 35$ cm | ✓ + horquilla |
+
+**Solución:** ménsula de **40 cm de ancho y 45 cm de canto** con **tirante 3Ø16** anclado con
+horquilla bajo la placa, **2 estribos Ø10 cerrados** en los $2/3$ superiores, para
+$V_u = 28$ tonf y $N_{uc} = 5.6$ tonf; gobierna el tirante con uso 0.95 y el puntal respalda
+con 0.86. Es la lección de las regiones D: **cuando la carga vive pegada al apoyo, no hay
+flexión ni corte que verificar — hay un enrejado que uno elige, un tirante que debe gobernar,
+y un anclaje que es la mitad del diseño.**
+
+[^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
+(ACI 318-25) and Commentary*, Farmington Hills, MI, 2025 — Cap. 23 (método puntal-tensor),
+Sec. 16.5 (ménsulas y cartelas), Sec. 22.8 (aplastamiento) y Sec. 25.4.3 (desarrollo de ganchos).
+En Chile el diseño en hormigón armado se rige por la NCh430 (que adopta el ACI 318 con
+modificaciones); en ménsulas que soportan vigas carrileras conviene además revisar las
+solicitaciones de frenado y tracción horizontal según NCh2369 y los datos del fabricante del
+puente grúa, que pueden superar el mínimo $0.2\,V_u$.
