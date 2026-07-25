@@ -50,6 +50,63 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-25 · `hormigon/ejemplo-mensula-puntal-tensor` · ⚠️ 9 hallazgos
+
+**Commit:** `4bfbbd6` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | Equilibrio del modelo + cadena completa | El equilibrio omitía la excentricidad de $N_{uc}$ (actúa en la placa, 5 cm sobre el tirante): $T = [V_ua_v + N_{uc}(jd+5)]/jd = 18.0$ tonf, no 17.3 (es el término $N_{uc}(h-d)$ de 16.5.3.1). Uso del tirante 0.91 → 0.95 | Incluir el término y actualizar toda la cadena | ✅ aplicado (working tree) — 17.3→18.0, 5.48→5.73, 0.91→0.95, "32 %"→"35 %" en prosa, ecuación, tabla, `alt`/`caption`, `description` y ambos SVG; la palanca ahora es parte de la tesis |
+| 2 | 🟡 | L | Cerrojos geométricos | El canto ≥ 0.5d es 16.5.2.2, no 16.5.1.1 | Citar cada regla con su sección | ✅ aplicado (working tree) |
+| 3 | 🟡 | U | Aplastamiento y puntal | `= 69.1 tonf` y `= 35.3 tonf` sin el paso en kgf | Intercalar `69 062 kgf` y `35 298 kgf` | ✅ aplicado (working tree) |
+| 4 | 🟡 | R | Nodos | Usos de nodos sin las áreas nodales ni $f_{ce}$ | Declarar $A_{nz}$ y $f_{ce}$ de A y B | ✅ aplicado (working tree) |
+| 5 | 🟡 | N | Tirante | Numerador declarado (17 300) no reproducía el 5.48 impreso | Coherencia numerador/resultado | ✅ aplicado (working tree) — ahora 18 040 → 5.73 |
+| 6 | 🟡 | L | Todo el post | "tirante" (28×) vs "tensor" de la nota del Cap. 23 | Unificar o declarar equivalencia | ✅ aplicado (working tree) — equivalencia declarada en el intro |
+| 7 | 🔵 | R | Puntal | No se decía que el puntal se verifica en su extremo angosto (nodo B) con el ancho completo b = 40 | Una frase | ✅ aplicado (working tree) |
+| 8 | 🔵 | C | Tabla de datos | $V_u = 28$ tonf vs 26.2 de la carrilera enlazada, sin declarar la relación | Declarar el origen del dato | ✅ aplicado (working tree) — "dato de diseño, del orden de la reacción de la carrilera" |
+| 9 | 🔵 | L | Citas de $N_{uc}$ | El piso $0.2V_u$ es 16.5.3.4; 16.5.3.5 es el tratamiento como carga viva (numeración 318-19, por confirmar en 318-25) | Separar las citas | ✅ aplicado (working tree) — pendiente confirmar numeración contra ACI 318-25 impreso |
+
+**Verificado y correcto:** geometría y cerrojos, techo de corte (60 tonf, y las tres ramas de 16.5.2.4), aplastamiento, $C = 30.3$, tirante/mínimos/$A_h$/cuantía 0.0029, puntal ($f_{ce} = 159$, 35.3 tonf), nodos recalculados, anclaje $\ell_{dh} = 24$ cm, toda la cadena idéntica entre prosa/tablas/SVG, frontmatter/schema, enlaces y activos, coherencia de tesis. Contraste posterior con la base ACI318-25 de `material_teorico` (2026-07-25): **confirmados** $f_{ce} = 0.85\beta_c\beta_s f'_c$ (23.4.3), $\beta_s = 0.75$ con refuerzo distribuido (Tabla 23.5.1 habilitante), $\beta_n$ CCC 1.0 / CCT 0.80 (23.9.2) y $\phi = 0.75$ de ménsulas y STM (21.2.1). **No verificable:** numeración exacta de §16.5 (la base no incluye el Cap. 16); NCh430/NCh2369 de la nota al pie.
+
+### 2026-07-25 · `hormigon/ejemplo-viga-t` · ⚠️ 9 hallazgos
+
+**Commit:** `4bfbbd6` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | `description`, caption, prosa y SVG sección | "ductilidad 19 veces menor": el cociente real 0.076/0.0062 = **12.3** (el 19 era contra la alternativa 6Ø25) | Reemplazar por 12 en los 4 sitios | ✅ aplicado (working tree) |
+| 2 | 🟠 | N | Comparación a 35 tonf·m | Mezcla de bases: aceros del caso hipotético (17.5/19.5) con brazos de las secciones armadas (53.1/46.5) | Separar y declarar cada base | ✅ aplicado (working tree) — frase partida en dos |
+| 3 | 🟠 | L | Distribución del negativo | 24.3.4 limita a $\min(b;\ \ell_n/10) = 57$ cm y pide refuerzo adicional en el resto del ala; el post decía "en el ancho efectivo" | Corregir con el número 57 | ✅ aplicado (working tree) — prosa, tabla, `alt`, Solución y SVG (barras reagrupadas en 57 cm); numeración por confirmar en 318-25 |
+| 4 | 🟡 | N | Note 6Ø25 | $\phi = 0.8248$, no 0.82 (con 0.82 exacto saldría 44.9, no 45.2) | Decir 0.825 | ✅ aplicado (working tree) |
+| 5 | 🟡 | F | Tabla resumen | Sin columna Demanda, a diferencia del hermano rectangular | Agregarla | ✅ aplicado (working tree) |
+| 6 | 🟡 | F | 4 `Equation` | Labels sin referencia normativa en un post que la promete | Etiquetar las de capacidad | ✅ aplicado (working tree) — las dos de flexión ahora `Ec. 9.3.2.1`; las descriptivas tienen precedente en el hermano |
+| 7 | 🟡 | N | $A_{s,\lim}$ | 21Ø25 = 103.1 < 104.7; el que cubre es 22Ø25 | Cambiar a 22Ø25 | ✅ aplicado (working tree) — ecuación, `alt` y SVG |
+| 8 | 🔵 | N | Note 6Ø25 | $\varepsilon_t = 0.0041$ vs el mínimo de 9.3.3.1 — argumento más fuerte que el del $\phi$ | Añadir media línea | ✅ aplicado y **verificado contra la base ACI318-25** (2026-07-25): el piso moderno es $\varepsilon_{ty}+0.003 = 0.005$ (no 0.004, marco confirmado en Tabla 21.2.2 y metadata de la base) → la alternativa 6Ø25 queda **fuera de norma**, y así se dice ahora en prosa, `alt` y SVG |
+| 9 | 🔵 | R | Datos | $d = 54$ del negativo sin justificar; $M_u^\pm$ sin marcar como datos | Declarar ambos | ✅ aplicado (working tree) |
+
+**Verificado y correcto:** ancho efectivo (71.25/172.5), áreas de barras, toda la cadena del positivo (1.74/2.05/0.076/30.5/0.82) y del negativo (15.0/17.7/0.0062/40.1/0.87), alternativa 6Ø25, aceros de comparación, mínimos y $A_{s,\lim}$ (104.7, ρ_w 6.5 %), caso sin ala (28.2, −8 %), referencias normativas, frontmatter, enlaces, coherencia de tesis y SVG. **No verificable:** texto literal de 24.3.4 (la base ACI318-25 de `material_teorico` no incluye el Cap. 24; 9.3.3.1 quedó cerrado vía el marco $\varepsilon_{ty}+0.003$ confirmado en la base); $M_u^\pm$ son datos de entrada. Nota editorial pendiente: normalizar Ø vs φ entre ejemplos nuevos y antiguos (repo-wide).
+
+### 2026-07-25 · `acero/ejemplo-viga-columna` · ⚠️ 12 hallazgos
+
+**Commit:** `4bfbbd6` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/C | Note sensibilidad | "zona elástica de LTB" con $L_b = 7.0 < L_r = 7.38$ m: es **inelástica** (F2-2, que es de donde sale el 18.1) | Corregir el texto | ✅ aplicado (working tree) — "zona inelástica, al borde de $L_r$" |
+| 2 | 🟠 | L | Ec. E3-2 | $F_{cr}$ contradice la convención del blog ($F_n$ en 360-22, declarada en la nota del Cap. E) | Renombrar a $F_n$ | ✅ aplicado (working tree) |
+| 3 | 🟡 | N | Ec. E3-4 | La sustitución con 69.6 no reproduce 4158 (sale de 69.58) | Escribir (69.58)² | ✅ aplicado (working tree) |
+| 4 | 🟡 | N/F | §5 | "sumar los usos (0.55+0.44)" con un 0.44 sin origen en la prosa | Explicitar $M_r/M_c$ | ✅ aplicado (working tree) |
+| 5 | 🟡 | F | `alt` figura interacción | Describía contenido inexistente ("a 6 % de la frontera") y omitía el bloque real | Ajustar al SVG | ✅ aplicado (working tree) |
+| 6 | 🟡 | L | Prosa/tabla/SVG | "dos puntales" vs "puntales" vs "puntal" (singular en el SVG) | Unificar en singular | ✅ aplicado (working tree) — un puntal en todos los soportes |
+| 7 | 🟡 | U | 3 ecuaciones | Resultados en tonf sin el paso en kgf, contra el estilo de la serie | Intercalar kgf | ✅ aplicado (working tree) — 164 947 / 2 699 840 / 357 481 |
+| 8 | 🟡 | L | §1 y resumen | "Tabla B4.1" mezcla B4.1a (compresión) y B4.1b (flexión) | Citar ambas | ✅ aplicado (working tree) |
+| 9 | 🔵 | R | Ec. A-8-5 | $EI_x$ pleno implica método de la longitud efectiva sin declararlo (análisis directo pediría $0.8\tau_b EI$) | Declarar el supuesto | ✅ aplicado (working tree) |
+| 10 | 🔵 | R | Note sensibilidad | Faltaba $C_b = 1.14$ del caso sin puntal (necesario para reproducir 18.1) y que $B_1$ no cambia | Declararlos | ✅ aplicado (working tree) |
+| 11 | 🔵 | F/R | Tabla del caso | Faltaba $c = 1$ (se usa en F2-6) | Agregarlo | ✅ aplicado (working tree) |
+| 12 | 🔵 | L | `tags` | `"P-delta"` vs `"P-Delta"` del post del blog | Unificar | ✅ aplicado (working tree) — `"P-Delta"` |
+
+**Verificado y correcto:** propiedades del W250×58 (= W10×39, 11 propiedades contrastadas), pandeo local, compresión (4158/2470/164.9/0.55), flexión ($L_p$ 2.13, $L_r$ 7.38, $C_b$ 1.30, tope $\phi_bM_p$ 24.3), amplificación ($P_{e1}$ 357, $B_1$ 1.34, $M_r$ 10.7), interacción (0.94 / sin $B_1$ 0.84 / suma ingenua 0.99), sensibilidad sin puntal (60.9/18.1/2.0 con esbeltez 139 elástica en compresión), referencias normativas 360-22, cadena idéntica en todos los soportes, frontmatter/enlaces/activos, coherencia de tesis. **No verificable:** texto literal de AISC 360-22 (verificado contra las notas del repo) y tabla impresa del perfil.
+
 ### 2026-07-23 · `acero/ejemplo-conexion-apernada-corte` · ⚠️ 4 hallazgos
 
 **Commit:** `836d475` (post untracked, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -589,10 +646,12 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (14)
+### `hormigon` — hormigon (ACI 318-25) (16)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-mensula-puntal-tensor` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🟠 5🟡 3🔵 · numeración §16.5 por confirmar en 318-25) |
+| `ejemplo-viga-t` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🔴 2🟠 4🟡 2🔵 · 24.3.4 por confirmar en 318-25) |
 | `ejemplo-columna-interaccion-esbeltez` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟡 2🔵) |
 | `ejemplo-anclajes-pedestal` | 2026-07-23 | ✅ | 0 (4 aplicados: 3🟡 1🔵 · 1🔵 descartado intencional) |
 | `ejemplo-zapata-aislada` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟠 1🟡 1🔵) |
@@ -608,10 +667,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (12)
+### `acero` — acero (AISC 360-22) (13)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-viga-columna` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🔴 1🟠 6🟡 4🔵) |
 | `ejemplo-conexion-apernada-corte` | 2026-07-23 | ✅ | 0 (4 aplicados: 2🟠 2🟡) |
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |

@@ -364,12 +364,12 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
 | F-H1 | **Viga a flexión + corte** | 9 | [x] | ✅ `viga-flexion-corte` | ⚠️ 2🔵 abiertos (1🟠 2🟡 aplicados 2026-07-23; #4 pide ACI a mano, #5 política) | Playwright + arnés mathjs (canvas ≡ post) ✅ |
-| F-H2 | Viga T (ancho efectivo, eje neutro en ala/alma) | 9 / 8 | [ ] | ◻ | — | — |
+| F-H2 | **Viga T** (ancho efectivo 6.3.2.1, M⁺ ala vs M⁻ alma, la T "verdadera") | 9 / 6 | [x] | ◻ | ✅ 2026-07-25 (1🔴 2🟠 4🟡 2🔵 aplicados) | a mano (Python) ✅ · 2 SVG (sección con los dos signos + barras) · tesis: la misma sección es **dos vigas según el signo** — en positivo a=1.7 cm y la T se calcula rectangular (ε_t=0.076); en negativo el bloque se hunde 15 cm en el alma, gobierna (0.87 vs 0.82) y apilar barras castiga: 6Ø25 saca la sección de controlada por tracción (φ 0.90→0.82, +29 % acero para +13 % capacidad); la T con eje neutro bajo el ala pediría 104.7 cm² (ρ_w=6.5 %) — no existe en pisos · complementa F-H1 |
 | F-H3 | **Columna: diagrama de interacción P–M + esbeltez** (barrido del eje neutro, P₀ y tope, balanceado, flexión pura, todas las combinaciones, esbeltez arriostrada) | 10 | [x] | ◻ (P–M pide programa) | ✅ 2026-07-23 (1🟡 2🔵 aplicados) | a mano (Python, iterando c) ✅ · 2 SVG (sección+compatibilidad y diagrama P–M) · tesis: gobierna la combinación sísmica de axial mínimo (0.9D+E), no la de gravedad con axial máximo, porque en la rama baja perder compresión acerca el punto a la frontera |
 | F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — | — |
 | F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | — sin auditar | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
 | F-H6 | **Grupo de anclajes en pedestal** (breakout, pullout, blowout, corte, pryout, interacción) | 17 | [x] | ◻ | — sin auditar | a mano (port del motor `placaBaseAnchorage.ts`) ✅ · pedestal industrial; tesis: modos individuales holgan pero la interacción N–V gobierna · engancha /herramientas/placa-base + ejemplo B1 |
-| F-H7 | Ménsula / corbel por puntal-tensor | 23 | [ ] | ◻ | — | modelo de bielas |
+| F-H7 | **Ménsula / corbel por puntal-tensor** (tirante, puntal, nodos, N_uc, anclaje) | 23 / 16.5 | [x] | ◻ | ✅ 2026-07-25 (1🟠 5🟡 3🔵 aplicados) | a mano (Python) ✅ · 2 SVG (geometría+modelo STM y barras de usos) · estrena Cap. 23 · tesis: con a_v/d=0.375 no hay flexión ni corte — hay un triángulo; gobierna el **tirante** (0.91, dúctil) con el puntal detrás (0.86), la jerarquía que el STM busca; N_uc=0.2V_u es **un tercio del tirante** (olvidarla = acero 32 % corto); el cierre es el anclaje (horquilla 16.5.6.3) · engancha F-A4 (recibe la carrilera) |
 | F-H8 | Cabezal de pilotes (pile cap) por puntal-tensor | 23 | [ ] | ◻ | — | |
 | F-H9 | Longitud de desarrollo y empalme | 25 | [ ] | ◻ | — | |
 | F-H10 | Losa unidireccional continua (coeficientes ACI) | 7 | [ ] | ◻ | — | |
@@ -383,8 +383,21 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-A3 | **Viga laminada con pandeo lateral-torsional** (Lb, Lp, Lr, Cb; tres zonas; dos esquemas de arriostramiento) | F | [x] | ◻ | ✅ 2026-07-23 (1🟡 aplicado) | a mano (Python) ✅ · 2 SVG (esquema+barras y curva Mn–Lb con los 2 puntos) · tesis: la misma viga W460×74 falla arriostrada solo en apoyos (Lb=8m, elástico, φMn=19.1<Mu=20) y sobra con un arriostre a media luz (Lb=4m, inelástico, φMn=51.0); el LTB se compra con arriostramiento y Cb, no con perfil mayor (φMp=52.4 ya sobra) · cierra la trilogía de flexión en acero (F pura → LTB → carrilera) |
 | F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
 | F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
-| F-A6 | Viga-columna (fuerzas combinadas, H1-1a/b, B1/B2) | H | [ ] | ◻ | — | |
+| F-A6 | **Viga-columna** (fuerzas combinadas H1-1a/b, amplificación B1 P-δ, C_m, C_b) | H / Ap. 8 | [x] | ◻ | ✅ 2026-07-25 (1🔴 1🟠 6🟡 4🔵 aplicados) | a mano (Python) ✅ · 2 SVG (esquema+momentos 1.er/2.º orden y frontera H1-1 con el viaje del punto) · síntesis de E+F · tesis: por separado la columna sobra (0.55 compresión, 0.33 flexión) y combinada queda al **0.94** — diez puntos los pone B1=1.34 (P-δ) invisible al primer orden; la suma ingenua (0.99) tampoco es la norma (crédito 8/9); sin puntales de media altura uso 2.0 (el arriostramiento trabaja para los dos sumandos) · engancha F-A2, F-A3 y post P-Delta (B1 ≡ amplificador) |
 | F-A7 | **Conexión apernada a corte simple** (shear tab: corte de pernos, aplastamiento/desgarre, corte fluencia/rotura de la plancha, rotura en bloque, geometría) | J | [x] | ◻ | ✅ 2026-07-23 (2🟠 2🟡 aplicados) | a mano (Python) ✅ · 2 SVG (esquema+modos de falla y cadena en barras) · tesis: la conexión es una cadena y gobierna la plancha (rotura por corte área neta, uso 0.89), no los pernos (0.69); la palanca es el espesor/geometría de la plancha · engancha /herramientas/placa-base + F-H6 |
+
+### F-A8+. Conexiones de acero típicas (pedido de Francisco, 2026-07-25)
+
+Sub-serie dentro de los ejemplos de Acero: las conexiones que un ingeniero verifica todas las
+semanas, cada una con su modo de falla protagonista. F-A7 (shear tab) ya abrió el arco; estas
+lo completan:
+
+| ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
+|----|---------|------|:----:|:--------:|:------:|--------|
+| F-A8 | Conexión de momento con placa de extremo extendida (end-plate apernada viga-columna: pernos a tracción con palanca, placa a flexión, soldaduras) | J / AISC 358 | [ ] | ◻ | — | tesis candidata: el momento se convierte en un par T–C y los pernos superiores trabajan a tracción con efecto palanca — la conexión "rígida" vive o muere por el espesor de la placa |
+| F-A9 | Conexión de momento con placas de ala (BFP) + zona panel de la columna (J10) | J | [ ] | ◻ | — | tesis candidata: la conexión pasa y la **columna** no — la zona panel (corte J10-9/J10-11) es el eslabón que nadie mira; gancho a rigidizadores de continuidad |
+| F-A10 | Conexión de corte con doble ángulo apernado (y comparación directa con la shear tab de F-A7) | J | [ ] | ◻ | — | tesis candidata: misma demanda, dos anatomías — la excentricidad que la shear tab concentra en la plancha, el doble ángulo la reparte; cuándo conviene cada una |
+| F-A11 | Empalme apernado de viga (placas de ala y alma, deslizamiento crítico vs aplastamiento) | J | [ ] | ◻ | — | tesis candidata: el empalme no copia la sección, copia sus **fuerzas** (ala = par de flexión, alma = corte); y el pretensado (slip-critical) cambia el estado límite, no la resistencia última |
 
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
@@ -394,10 +407,12 @@ F-H6 ✅ (grupo de anclajes) → F-A4 ✅ (viga carrilera) → **F-A2 ✅ (colum
 gancho a D9)** → **F-H3 ✅ (columna P–M + esbeltez)** → **F-A3 ✅ (viga con LTB, 2026-07-23)**.
 Par "la columna en los dos materiales" completo; **trilogía de flexión en acero completa**
 (F-A3 pura LTB → F-A4 carrilera); **F-A7 ✅ (conexión apernada, 2026-07-23)** cierra el arco de
-la conexión (placa base + anclajes F-H6 + shear tab). Siguientes candidatos: **F-A6**
-(viga-columna, H1-1, síntesis de E+F ya disponibles), **F-H2** (viga T) o **F-A5** (alma a corte +
-rigidizadores). Pendiente opcional en F-H3: planilla del canvas con región `program` que
-reproduzca el diagrama P–M (◻).
+la conexión (placa base + anclajes F-H6 + shear tab). **Tanda 2026-07-25: F-A6 ✅
+(viga-columna, cierra la síntesis E+F+H del acero), F-H2 ✅ (viga T, complementa F-H1) y
+F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** Siguientes
+candidatos: la sub-serie de **conexiones típicas F-A8–F-A11** (arriba), **F-A5** (alma a
+corte + rigidizadores) o **F-H4** (muro de corte). Pendiente opcional en F-H3: planilla del
+canvas con región `program` que reproduzca el diagrama P–M (◻).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
