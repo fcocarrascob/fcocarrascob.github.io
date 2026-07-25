@@ -1,0 +1,244 @@
+---
+title: "Cómo leer un informe de mecánica de suelos"
+description: "Un mismo dato de terreno —15 golpes de SPT— recorre cuatro eslabones de correlaciones hasta llegar a q_adm. Todas las rutas son legítimas y publicadas; el resultado varía por un factor 6,8. No es un argumento contra la geotecnia: es la razón por la que el número necesita su procedencia, y la lista de qué preguntar."
+pubDate: 2026-08-01
+tags: ["geotecnia", "informe de suelos", "SPT", "correlaciones", "incertidumbre", "clasificación", "das"]
+subsection: "fundamentos"
+chapter: "Fundamentos"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+La [primera nota de esta sección](/geotecnia/de-donde-sale-q-admisible) terminaba con seis
+preguntas para hacerle a un informe de mecánica de suelos. Siete notas después, con todos los
+factores ya medidos, toca la pregunta de fondo: **¿de dónde sale, físicamente, el número que ese
+informe entrega?**
+
+La respuesta es una cadena de correlaciones. Y vale la pena recorrerla entera, porque **es más
+larga de lo que uno supone.**
+
+<Note type="warning" title="Antes de empezar, qué NO es esta nota">
+No es una crítica al trabajo geotécnico ni una invitación a desconfiar de los informes. Lo que
+sigue muestra la **dispersión intrínseca** de un método basado en correlaciones empíricas — y esa
+dispersión es exactamente la razón por la que existe el factor de seguridad 3, y por la que el
+criterio profesional del geotecnista es insustituible.
+
+Lo que sí propongo es que **ese criterio viaje junto con el número**. Hoy al estructural le llega
+el resultado; no la ruta.
+</Note>
+
+---
+
+## 1. Lo primero: clasificar no es caracterizar
+
+Un informe empieza describiendo el perfil con símbolos USCS: `SM`, `CH`, `GP`. Es información
+real, pero conviene tener claro su alcance:
+
+| El informe dice | Qué sabemos | Qué **no** sabemos |
+|---|---|---|
+| `SP` — arena mal graduada | Granular, drena rápido, `c′ ≈ 0` | `φ′`: ¿30° o 40°? → **factor 4** en `q_adm` |
+| `CH` — arcilla de alta plasticidad | Consolidará, `LL ≥ 50` | `σ′_c` (×4), `c_v` (×4 en el plazo), `E_s` (×5) |
+| `SM` — arena limosa | Drenaje intermedio | Prácticamente todo lo que se necesita |
+
+La clasificación dice **de qué está hecho** el suelo. No entrega ni un solo parámetro de diseño.
+Es un mapa sin escala: sirve para saber qué te vas a encontrar, no para calcular.
+
+Los números salen de otro lado — y ahí empieza la cadena.
+
+---
+
+## 2. La cadena, eslabón por eslabón
+
+Partamos de un dato real y sigámoslo: **`N = 15` golpes** medidos con el SPT a una profundidad
+donde `σ′_o = 55` kN/m², bajo la zapata de 2,20 × 2,20 m que viene siguiendo esta serie.
+
+<Figure
+  src="/geotecnia-informe/la-cadena.svg"
+  alt="Diagrama de la cadena de correlaciones desde el dato de terreno hasta la presión admisible. Se parte de N = 15 golpes, señalado como el único dato medido. Eslabón 1, Ec. (12.4): la eficiencia del martillo varía de 45 % a 78 % según país y tipo, con cinco opciones, lo que lleva N₆₀ de 11,2 a 19,5, un factor 1,55. Eslabón 2, Ec. (12.7): la corrección por confinamiento tiene siete fórmulas de C_N publicadas, que llevan (N₁)₆₀ de 17,6 a 20,4, un factor 1,11. Eslabón 3, Ecs. (12.18 a 12.20): tres correlaciones publicadas para φ', que dan de 32,9° a 40,7°, un factor 3,32 en el resultado final. Eslabón 4, Ec. (16.4): la capacidad de soporte, con una sensibilidad de aproximadamente 14 % de q_adm por cada grado de φ'. Combinando, 5 × 7 × 3 = 105 rutas legítimas sobre el mismo dato de terreno, con q_adm entre 3,53 y 24,08 kgf/cm², un factor 6,8, y ninguna mal aplicada. Al pie se aclara que esto no dice que la geotecnia no sirva sino que el número necesita su procedencia: ningún geotecnista adoptaría 24 kgf/cm² y el criterio profesional recorta el rango, pero ese criterio no viaja con el número."
+  caption="Cuatro eslabones entre el dato medido y el número que llega al estructural. En cada uno hay que elegir, y todas las opciones son publicadas y aceptadas."
+/>
+
+### Eslabón 1 — de `N` a `N₆₀`: el martillo
+
+El número de golpes depende del equipo, no solo del suelo. Por eso se normaliza a una eficiencia
+del 60 %:
+
+<Equation label="12.4">
+$$
+N_{60} = \frac{N \cdot \eta_H \cdot \eta_B \cdot \eta_S \cdot \eta_R}{60}
+$$
+</Equation>
+
+El factor dominante es `η_H`, la eficiencia del martillo, y la Tabla 12.3 de Das la tabula **por
+país y tipo**:
+
+| Equipo | `η_H` | `N₆₀` para `N = 15` |
+|---|---|---|
+| Japón, caída libre | 78 % | 19,5 |
+| Japón, cuerda y polea | 67 % | 16,8 |
+| EE.UU., martillo de seguridad | 60 % | 15,0 |
+| China, cuerda y polea | 50 % | 12,5 |
+| EE.UU., martillo de anillos | 45 % | 11,3 |
+
+**Un 73 % de diferencia por el equipo.** Y el tipo de martillo casi nunca aparece en un informe.
+
+Hay un segundo factor que conviene mirar: `η_R`, la corrección por longitud de varilla, vale
+**0,75 para sondajes de 0 a 4 m** y sube a 1,00 sobre 10 m. Es decir, **castiga justo el rango de
+profundidad donde van las zapatas**.
+
+### Eslabón 2 — de `N₆₀` a `(N₁)₆₀`: el confinamiento
+
+La misma arena da más golpes a mayor profundidad, así que se corrige a un `σ′_o` estándar:
+
+<Equation label="12.7">
+$$
+(N_1)_{60} = C_N \cdot N_{60}
+$$
+</Equation>
+
+El problema: **el capítulo enuncia siete fórmulas distintas de `C_N`** — Liao y Whitman, tres
+versiones de Skempton, Seed, Peck y Bazaraa. En nuestro caso (`σ′_o/p_a = 0,55`) dan entre 1,176 y
+1,360: apenas un 16 %.
+
+<Note type="tip" title="Pero ese 16 % es una casualidad de la profundidad">
+Las siete fórmulas están normalizadas para dar `C_N = 1` en `σ′_o/p_a = 1`. Cerca de ese punto
+coinciden — por construcción. Fuera de él divergen: **50 % en `σ′_o/p_a = 0,25` y 123 % en 4,0.**
+
+El libro afirma que *«la magnitud del factor de corrección calculado mediante el uso de cualquiera
+de las relaciones es aproximadamente el mismo»* y recomienda usar la Ec. (12.8) para todo. La
+recomendación es razonable como convención; **la justificación no se sostiene**, y el rango de las
+fundaciones superficiales —`σ′_o/p_a` entre 0,25 y 0,5— es justamente donde la dispersión llega al
+18–50 %.
+</Note>
+
+### Eslabón 3 — de `(N₁)₆₀` a `φ′`: el que más pesa
+
+Tres correlaciones publicadas, todas en uso:
+
+| Ec. | Autor | `φ′` para nuestro caso |
+|---|---|---|
+| (12.18) | Peck, Hanson y Thornburn, vía Wolff (1989) | **32,9°** |
+| (12.20) | Hatanaka y Uchida (1996) | 40,1° |
+| (12.19) | Schmertmann (1975), vía Kulhawy y Mayne | **40,7°** |
+
+**Casi 8 grados de diferencia** sobre el mismo `N`. Y la discrepancia **crece con la densidad**:
+a `(N₁)₆₀ = 40` llega a 10 grados. Wolff se separa sistemáticamente de las otras dos porque tiene
+forma funcional distinta —parabólica frente a raíz y arcotangente—, no por ruido.
+
+### Eslabón 4 — de `φ′` a `q_adm`
+
+Aquí ya lo tenemos medido de la [nota 2](/geotecnia/terzaghi-vs-ecuacion-general): **~14 % de
+`q_adm` por cada grado de `φ′`**. Ocho grados son un factor de casi 3.
+
+---
+
+## 3. El resultado: factor 6,8
+
+Combinando las opciones de cada eslabón —5 martillos × 7 fórmulas de `C_N` × 3 correlaciones—
+salen **105 rutas legítimas** desde el mismo dato de terreno:
+
+| | `q_adm` | `φ′` implícito |
+|---|---|---|
+| **Mínimo** | 346 kPa = **3,53 kgf/cm²** | 31,0° |
+| Mediana | 963 kPa = 9,82 kgf/cm² | — |
+| **Máximo** | 2362 kPa = **24,08 kgf/cm²** | 43,2° |
+
+**Un factor 6,8**, sin que ninguna ruta esté mal aplicada.
+
+<Note type="info" title="El criterio profesional recorta ese rango — y no viaja con el número">
+Es evidente que ningún geotecnista adoptaría 24 kgf/cm² para una zapata. La experiencia, el
+conocimiento del sitio y el contraste con obras vecinas descartan los extremos mucho antes de
+llegar al informe. **Ese es precisamente el valor del oficio.**
+
+Pero el resultado que llega al estructural es un número solo. El criterio que lo produjo —qué
+ruta se tomó y por qué— se queda en la oficina del geotecnista. Lo que esta nota propone es
+simplemente **pedirlo**.
+</Note>
+
+---
+
+## 4. Y no todos los eslabones pesan igual
+
+Aislando cada uno —cambiando solo ese y dejando los otros fijos:
+
+<Figure
+  src="/geotecnia-informe/quien-aporta-la-dispersion.svg"
+  alt="Gráfico de barras horizontales que muestra cuánto varía q_adm si se cambia solo un eslabón de la cadena dejando los demás fijos. La correlación a φ' —Wolff, Schmertmann o Hatanaka— es la barra dominante con un factor 3,32, llevando q_adm de 455 a 1510 kPa. La eficiencia del martillo, de 45 a 78 %, aporta un factor 1,55, de 374 a 580 kPa. Y la fórmula de C_N, con sus siete opciones publicadas, aporta apenas un factor 1,11, de 412 a 458 kPa. Al pie se señala que el eslabón que más pesa es el que menos se declara, y que la fórmula de C_N aporta poco en este caso porque a σ'_o/p_a = 0,55 las siete casi coinciden, pero a 0,25 se abren un 50 % y a 4,0 un 123 %, de modo que su peso depende de la profundidad del ensayo."
+  caption="El eslabón dominante es la correlación de N a φ' — y es también el que menos se suele declarar."
+/>
+
+| Eslabón | Factor |
+|---|---|
+| **La correlación a `φ′`** | **3,32×** |
+| La eficiencia del martillo | 1,55× |
+| La fórmula de `C_N` | 1,11× *(en este caso)* |
+
+Dos lecturas útiles:
+
+- **El que más pesa es el que menos se declara.** Casi ningún informe dice si usó Wolff,
+  Schmertmann o Hatanaka.
+- **El peso de `C_N` depende de la profundidad del ensayo.** Aquí aporta poco porque
+  `σ′_o/p_a = 0,55` está cerca del punto donde las siete coinciden. En un ensayo somero o muy
+  profundo, se dispara.
+
+---
+
+## 5. Y hay una alternativa que evita medio problema
+
+Toda esta cadena existe porque **`φ′` y `c_u` se estiman por correlación**. El
+[Cap. 10 de Das](/geotecnia/de-donde-sale-q-admisible) ofrece la vía directa: medirlos en
+laboratorio con ensayo triaxial.
+
+Pero ahí aparece otra decisión que tampoco es de laboratorio, sino **de modelo**:
+
+| Prueba | Drena al cortar | Qué entrega | Cuándo |
+|---|---|---|---|
+| **CD** — consolidada drenada | Sí | `c′`, `φ′` efectivos | Largo plazo |
+| **CU** — consolidada no drenada | No (se mide `Δu`) | Ambos | La más usada |
+| **UU** — no consolidada no drenada | No | `c_u`, condición `φ = 0` | Corto plazo |
+
+Elegir mal significa usar parámetros de corto plazo para un problema de largo plazo, o al revés.
+Y **nada en la ecuación de Terzaghi avisa del error**: `φ′` es `φ′` y el número sale igual de
+creíble.
+
+Un detalle más del mismo capítulo, que ilustra lo mismo con un ensayo más simple: en el ejemplo de
+corte directo del propio libro, la misma arena densa entrega **`φ′ = 42°` de pico y `φ′_últ = 29°`
+de resistencia última**. Trece grados de diferencia según en qué punto de la curva se lea.
+
+---
+
+## 6. La lista completa, ordenada por impacto
+
+Con todo lo medido a lo largo de estas ocho notas:
+
+<Figure
+  src="/geotecnia-informe/que-preguntar.svg"
+  alt="Tabla de las preguntas que hacer a un informe de mecánica de suelos, ordenadas por cuánto mueven el resultado, con una barra de magnitud para cada una. Primero, qué E_s se usó y con qué rango: factor 5, porque el rango tabulado de arcilla blanda va de 4 a 20 MN/m². Segundo, si se calculó la consolidación secundaria: −64 %, la decisión más cara del cálculo. Tercero, qué correlación se usó de N a φ': factor 3,3, hasta 10 grados de diferencia entre Wolff, Schmertmann y Hatanaka. Cuarto, cuál es σ'_c, la presión de preconsolidación: factor 4, y es un umbral, no un gradiente. Quinto, a qué cota está la napa y en qué estación: de −7 % a −49 %. Sexto, qué método de capacidad de soporte se usó, Terzaghi o la ecuación general: +31 %. Séptimo, qué eficiencia de martillo tuvo el SPT: factor 1,55, y casi nunca aparece en el informe. Octavo, si la arcilla drena por una cara o por dos: factor 4 en el plazo, no en la magnitud. Al pie: ninguna de estas preguntas cuestiona al geotecnista, todas piden lo mismo, la procedencia del número; un q_adm sin su cadena no es un dato sino una conclusión sin su argumento."
+  caption="Ocho preguntas, todas con su magnitud medida en alguna nota de esta serie. Ninguna cuestiona el trabajo geotécnico: todas piden la misma cosa."
+/>
+
+---
+
+## Cierre
+
+Un informe de mecánica de suelos es un documento técnico excelente y casi siempre bien hecho. El
+problema no está en él: está en **cómo se transmite su resultado**.
+
+El geotecnista recorre la cadena con criterio, descarta las rutas absurdas, contrasta con la
+experiencia del sitio y entrega un número que es —casi siempre— razonable. Pero entrega **el
+número**, no la cadena. Y el estructural, que va a firmar, recibe una conclusión sin su argumento.
+
+Pedir la procedencia no es desconfiar. Es lo mismo que hacemos cuando exigimos que una memoria de
+cálculo declare la norma, la combinación de cargas y el método de análisis. **En geotecnia esa
+exigencia todavía no es costumbre, y debería serlo.**
+
+<Note type="info" title="Reproducibilidad">
+Las 105 rutas, el aislamiento de cada eslabón y las tablas de correlaciones se calcularon con
+script sobre las Ecs. (12.4), (12.7), (12.8)–(12.15), (12.18)–(12.20) y (16.4) de Das, 4ª ed. La
+Tabla 12.5 del libro se verificó antes celda a celda —56 valores, con **dos erratas encontradas**,
+ambas celdas duplicadas de la fila contigua— y de esa verificación salió también la refutación de
+la afirmación sobre la equivalencia de las siete `C_N`.
+</Note>

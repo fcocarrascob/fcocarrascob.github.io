@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a857c"/>
+    </marker>
+  </defs>
+  <rect width="940" height="470" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">De un dato de terreno a q_adm: cuatro eslabones, y ninguno es exacto</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">N = 15 golpes medidos a σ'_o = 55 kN/m² · zapata 2,20 × 2,20 m · D_f = 1,5 m · arena, FS = 3</text>
+
+  <!-- dato de partida -->
+  <rect x="60" y="76" width="140" height="54" rx="6" fill="#efece6" stroke="#8a857c" stroke-width="1.4"/>
+  <text x="130" y="99" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">N = 15</text>
+  <text x="130" y="118" font-size="11" text-anchor="middle" fill="#666">golpes en terreno</text>
+  <text x="130" y="146" font-size="10.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">el único dato medido</text>
+
+  <!-- eslabon 1 -->
+  <line x1="206" y1="103" x2="240" y2="103" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
+  <rect x="246" y="70" width="160" height="66" rx="6" fill="#b02a1a" fill-opacity="0.08" stroke="#b02a1a" stroke-width="1.3"/>
+  <text x="326" y="90" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">1 · Ec. (12.4)</text>
+  <text x="326" y="107" font-size="11" text-anchor="middle" fill="#555">eficiencia del martillo</text>
+  <text x="326" y="124" font-size="11" text-anchor="middle" fill="#555">η_H de 45 % a 78 %</text>
+  <text x="326" y="152" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">N₆₀ de 11,2 a 19,5</text>
+  <text x="326" y="168" font-size="11" text-anchor="middle" fill="#888">5 opciones · factor 1,55</text>
+
+  <!-- eslabon 2 -->
+  <line x1="412" y1="103" x2="446" y2="103" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
+  <rect x="452" y="70" width="160" height="66" rx="6" fill="#b35c0e" fill-opacity="0.09" stroke="#b35c0e" stroke-width="1.3"/>
+  <text x="532" y="90" font-size="12" text-anchor="middle" fill="#b35c0e" font-weight="bold">2 · Ec. (12.7)</text>
+  <text x="532" y="107" font-size="11" text-anchor="middle" fill="#555">corrección por confinamiento</text>
+  <text x="532" y="124" font-size="11" text-anchor="middle" fill="#555">SIETE fórmulas de C_N</text>
+  <text x="532" y="152" font-size="12" text-anchor="middle" fill="#b35c0e" font-weight="bold">(N₁)₆₀ de 17,6 a 20,4</text>
+  <text x="532" y="168" font-size="11" text-anchor="middle" fill="#888">7 opciones · factor 1,11</text>
+
+  <!-- eslabon 3 -->
+  <line x1="618" y1="103" x2="652" y2="103" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
+  <rect x="658" y="70" width="160" height="66" rx="6" fill="#1a63a8" fill-opacity="0.09" stroke="#1a63a8" stroke-width="1.3"/>
+  <text x="738" y="90" font-size="12" text-anchor="middle" fill="#1a63a8" font-weight="bold">3 · Ecs. (12.18–12.20)</text>
+  <text x="738" y="107" font-size="11" text-anchor="middle" fill="#555">correlación a φ'</text>
+  <text x="738" y="124" font-size="11" text-anchor="middle" fill="#555">TRES publicadas</text>
+  <text x="738" y="152" font-size="12" text-anchor="middle" fill="#1a63a8" font-weight="bold">φ' de 32,9° a 40,7°</text>
+  <text x="738" y="168" font-size="11" text-anchor="middle" fill="#1a63a8" font-weight="bold">3 opciones · factor 3,32</text>
+
+  <!-- eslabon 4 -->
+  <line x1="738" y1="180" x2="738" y2="212" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
+  <rect x="620" y="218" width="236" height="60" rx="6" fill="#1c7c3c" fill-opacity="0.08" stroke="#1c7c3c" stroke-width="1.3"/>
+  <text x="738" y="240" font-size="12" text-anchor="middle" fill="#1c7c3c" font-weight="bold">4 · Ec. (16.4) — capacidad de soporte</text>
+  <text x="738" y="259" font-size="11" text-anchor="middle" fill="#555">~14 % de q_adm por cada grado de φ'</text>
+  <text x="738" y="272" font-size="10.5" text-anchor="middle" fill="#888">(medido en la nota 2 de esta serie)</text>
+
+  <!-- resultado -->
+  <rect x="60" y="300" width="800" height="76" rx="6" fill="#b02a1a" fill-opacity="0.06" stroke="#b02a1a" stroke-width="1.5"/>
+  <text x="470" y="326" font-size="14" text-anchor="middle" fill="#b02a1a" font-weight="bold">5 × 7 × 3 = 105 rutas legítimas sobre el mismo dato de terreno</text>
+  <text x="470" y="350" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">q_adm entre 3,53 y 24,08 kgf/cm² — un factor 6,8</text>
+  <text x="470" y="368" font-size="11.5" text-anchor="middle" fill="#555">Ninguna está mal aplicada. Todas son correlaciones publicadas y aceptadas.</text>
+
+  <!-- nota de honestidad -->
+  <rect x="60" y="392" width="800" height="62" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="414" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">Esto no dice que la geotecnia no sirva: dice que el número necesita su procedencia.</text>
+  <text x="470" y="434" font-size="12" text-anchor="middle" fill="#555">Ningún geotecnista adoptaría 24 kgf/cm². El criterio profesional recorta ese rango — pero el criterio</text>
+  <text x="470" y="448" font-size="12" text-anchor="middle" fill="#555">no viaja con el número. Al estructural le llega el resultado, no la ruta.</text>
+</svg>

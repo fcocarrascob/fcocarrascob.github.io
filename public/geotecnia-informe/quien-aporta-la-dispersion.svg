@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="430" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Y no todos los eslabones aportan lo mismo</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Cada barra: cuánto varía q_adm si se cambia SOLO ese eslabón, dejando los otros fijos</text>
+
+  <!-- eje -->
+  <line x1="330" y1="290" x2="330" y2="86" stroke="#8a857c" stroke-width="1.5"/>
+  <line x1="330" y1="290" x2="880" y2="290" stroke="#8a857c" stroke-width="1.5"/>
+  <text x="330" y="308" font-size="11" fill="#666" text-anchor="middle">1,0</text>
+  <text x="468" y="308" font-size="11" fill="#666" text-anchor="middle">1,6</text>
+  <text x="605" y="308" font-size="11" fill="#666" text-anchor="middle">2,2</text>
+  <text x="743" y="308" font-size="11" fill="#666" text-anchor="middle">2,8</text>
+  <text x="880" y="308" font-size="11" fill="#666" text-anchor="middle">3,4</text>
+  <text x="605" y="328" font-size="12" fill="#666" text-anchor="middle">factor entre el mínimo y el máximo de q_adm</text>
+
+  <!-- fila 1: correlacion phi' -->
+  <text x="316" y="120" font-size="13" fill="#1a63a8" text-anchor="end" font-weight="bold">La correlación a φ'</text>
+  <text x="316" y="137" font-size="11" fill="#666" text-anchor="end">Wolff · Schmertmann · Hatanaka</text>
+  <rect x="330" y="102" width="530" height="40" fill="#1a63a8" fill-opacity="0.8"/>
+  <text x="850" y="127" font-size="15" fill="#ffffff" text-anchor="end" font-weight="bold">3,32×</text>
+  <text x="340" y="127" font-size="12" fill="#ffffff">455 → 1510 kPa</text>
+
+  <!-- fila 2: martillo -->
+  <text x="316" y="182" font-size="13" fill="#b02a1a" text-anchor="end" font-weight="bold">La eficiencia del martillo</text>
+  <text x="316" y="199" font-size="11" fill="#666" text-anchor="end">η_H de 45 % a 78 %</text>
+  <rect x="330" y="164" width="126" height="40" fill="#b02a1a" fill-opacity="0.8"/>
+  <text x="466" y="189" font-size="15" fill="#b02a1a" font-weight="bold">1,55×</text>
+  <text x="340" y="189" font-size="12" fill="#ffffff">374 → 580</text>
+
+  <!-- fila 3: CN -->
+  <text x="316" y="244" font-size="13" fill="#b35c0e" text-anchor="end" font-weight="bold">La fórmula de C_N</text>
+  <text x="316" y="261" font-size="11" fill="#666" text-anchor="end">siete opciones publicadas</text>
+  <rect x="330" y="226" width="25" height="40" fill="#b35c0e" fill-opacity="0.8"/>
+  <text x="365" y="251" font-size="15" fill="#b35c0e" font-weight="bold">1,11×</text>
+  <text x="418" y="251" font-size="11.5" fill="#888">412 → 458 kPa</text>
+
+  <!-- nota sobre CN -->
+  <rect x="60" y="346" width="820" height="70" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="368" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">El eslabón que más pesa es el que menos se declara: qué correlación se usó para pasar de N a φ'.</text>
+  <text x="470" y="389" font-size="12" text-anchor="middle" fill="#555">Y la fórmula de C_N aporta poco <tspan font-style="italic">en este caso</tspan> — a σ'_o/p_a = 0,55 las siete casi coinciden. Pero a 0,25</text>
+  <text x="470" y="406" font-size="12" text-anchor="middle" fill="#555">se abren un 50 % y a 4,0 un 123 %: <tspan font-weight="bold">su peso depende de la profundidad del ensayo.</tspan></text>
+</svg>
