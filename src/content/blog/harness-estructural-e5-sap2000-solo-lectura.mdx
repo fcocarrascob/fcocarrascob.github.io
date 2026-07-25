@@ -2,7 +2,7 @@
 title: "Harness estructural (5): leer SAP2000 — componer, no reescribir"
 description: "El harness llega a la máquina donde vive SAP2000 y aprende a leer un modelo real: fuerzas, secciones, reacciones, todo con procedencia. La pieza nueva no es un puente COM —ese ya existía en otro repo y se compone tal cual— sino la disciplina de siempre extendida a otra fuente de datos: el LLM elige nombres (barra, combo) y aporta criterio de ingeniería; los números viajan de SAP2000 a las herramientas de verificación por Python, sin pasar por el modelo. Y la lección repetida de la serie: correr el circuito en vivo contra un proyecto real destapó cinco bugs que ningún test de escritorio había visto."
 pubDate: 2026-07-24
-draft: true
+draft: false
 tags: ["LLM local", "SAP2000", "COM", "MCP", "composición", "trazabilidad", "harness", "agentes"]
 section: "Harness estructural"
 series: "Harness estructural local"
@@ -68,8 +68,8 @@ reparación: se equivocó de nombre, acá están los nombres, corrige y reintent
 La métrica de cierre de la etapa era contrastar contra un proyecto real. El modelo de prueba es
 una nave industrial de verdad: 1435 barras, 42 combinaciones LRFD/ASD. Tres contrastes:
 
-- **Equilibrio global**: la suma de reacciones bajo peso propio da ΣF1 = ΣF2 = 0.000 y
-  ΣF3 = 158.24 tonf en 29 apoyos.
+- **Equilibrio global**: la suma de reacciones bajo la carga muerta del modelo (caso DEAD) da
+  ΣF1 = ΣF2 = 0.000 y ΣF3 = 158.24 tonf en 29 apoyos.
 - **Sección contra cálculo a mano**: el H460×191×16×12 devuelve Ag = 112.48 cm², que es
   exactamente 2·19.1·1.6 + 42.8·1.2 desde las dimensiones nominales del nombre; el A36 da
   Fy = 2531 kgf/cm² = 36 ksi exacto.
