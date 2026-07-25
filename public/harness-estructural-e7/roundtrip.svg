@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1c7c3c"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+  </defs>
+  <rect width="900" height="470" fill="#ffffff"/>
+  <text x="450" y="26" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">E7: crear, correr, contrastar — y recién entonces creer</text>
+
+  <!-- ===== fila superior: pedido -> parametros -> constructor ===== -->
+  <rect x="20" y="52" width="230" height="88" rx="8" fill="#f7f8fa" stroke="#cfd6de"/>
+  <text x="135" y="74" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Pedido (lenguaje natural)</text>
+  <text x="135" y="94" font-size="10" text-anchor="middle" fill="#555">"portico de 2 vanos y 2 pisos,</text>
+  <text x="135" y="109" font-size="10" text-anchor="middle" fill="#555">luz 6 m, altura 3 m, W12X50,</text>
+  <text x="135" y="124" font-size="10" text-anchor="middle" fill="#555">muerta 2 tonf/m, viva 1"</text>
+
+  <line x1="250" y1="96" x2="322" y2="96" stroke="#1a63a8" stroke-width="2" marker-end="url(#b)"/>
+  <text x="286" y="84" font-size="9.5" text-anchor="middle" fill="#1a63a8">LLM: parametros</text>
+
+  <rect x="324" y="52" width="250" height="88" rx="8" fill="#f4eefb" stroke="#b9a3d8"/>
+  <text x="449" y="74" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Parametros de alto nivel</text>
+  <text x="449" y="94" font-size="10" text-anchor="middle" fill="#333" font-family="Consolas, monospace">luz 6 · altura 3 · 2x2</text>
+  <text x="449" y="110" font-size="10" text-anchor="middle" fill="#333" font-family="Consolas, monospace">W12X50 / W14X30 · D=2 · L=1</text>
+  <text x="449" y="128" font-size="9.5" text-anchor="middle" fill="#c0392b" font-weight="bold">⚠ auditoria: numero de la consulta que falte en los args → aviso</text>
+
+  <line x1="574" y1="96" x2="646" y2="96" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+  <text x="610" y="84" font-size="9.5" text-anchor="middle" fill="#555">Python</text>
+
+  <rect x="648" y="52" width="232" height="88" rx="8" fill="#eef6ef" stroke="#9fc7a7"/>
+  <text x="764" y="74" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Constructor parametrico</text>
+  <text x="764" y="94" font-size="10" text-anchor="middle" fill="#555">grilla, restricciones, patrones</text>
+  <text x="764" y="109" font-size="10" text-anchor="middle" fill="#555">D/PP/L, combo LRFD, perfiles</text>
+  <text x="764" y="124" font-size="10" text-anchor="middle" fill="#555">del catalogo AISC — sin LLM</text>
+
+  <!-- ===== bajada: modelo + analisis ===== -->
+  <line x1="764" y1="140" x2="764" y2="188" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+
+  <rect x="648" y="190" width="232" height="80" rx="8" fill="#f7f8fa" stroke="#cfd6de"/>
+  <text x="764" y="212" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Modelo .sdb + analisis</text>
+  <text x="764" y="232" font-size="10" text-anchor="middle" fill="#555">guardado en salidas/modelos/</text>
+  <text x="764" y="247" font-size="10" text-anchor="middle" fill="#555">RunAnalysis — resultados listos</text>
+
+  <!-- ===== contraste estatico (el peaje) ===== -->
+  <line x1="648" y1="230" x2="576" y2="230" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+
+  <rect x="324" y="190" width="250" height="80" rx="8" fill="#fdf3f0" stroke="#dba695"/>
+  <text x="449" y="212" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Contraste estatico (peaje)</text>
+  <text x="449" y="232" font-size="10.5" text-anchor="middle" fill="#333" font-family="Consolas, monospace">viga: M3 = wL²/8 → 12.0 / 12.0</text>
+  <text x="449" y="248" font-size="10.5" text-anchor="middle" fill="#333" font-family="Consolas, monospace">portico: ΣF3 = 48.0 / 48 · ΣF1 = 0</text>
+  <text x="449" y="263" font-size="9.5" text-anchor="middle" fill="#c0392b" font-weight="bold">si no cierra al 0.1 % → se niega</text>
+
+  <!-- ===== fila inferior: lector -> tools -> memoria ===== -->
+  <line x1="449" y1="270" x2="449" y2="318" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+  <text x="457" y="298" font-size="9.5" fill="#555">recien ahora se puede leer</text>
+
+  <rect x="20" y="320" width="270" height="86" rx="8" fill="#eef6ef" stroke="#9fc7a7"/>
+  <text x="155" y="342" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Lector (E5) + tools E1</text>
+  <text x="155" y="362" font-size="10.5" text-anchor="middle" fill="#333" font-family="Consolas, monospace">Pu = 23.77 tonf (leido)</text>
+  <text x="155" y="378" font-size="10.5" text-anchor="middle" fill="#333" font-family="Consolas, monospace">φPn = 228.8 · uso 0.104 ✓</text>
+  <text x="155" y="396" font-size="9.5" text-anchor="middle" fill="#1a63a8">cita AISC en cada linea</text>
+
+  <rect x="324" y="320" width="250" height="86" rx="8" fill="#f7f8fa" stroke="#cfd6de"/>
+  <text x="449" y="342" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Memoria Word (E6)</text>
+  <text x="449" y="362" font-size="10" text-anchor="middle" fill="#555">cada numero trazable al JSON;</text>
+  <text x="449" y="377" font-size="10" text-anchor="middle" fill="#555">la procedencia declara el .sdb,</text>
+  <text x="449" y="392" font-size="10" text-anchor="middle" fill="#555">la barra y el combo de origen</text>
+
+  <rect x="608" y="320" width="272" height="86" rx="8" fill="#fbf8ee" stroke="#dccf9e"/>
+  <text x="744" y="342" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">El modelo del usuario, intocable</text>
+  <text x="744" y="362" font-size="10" text-anchor="middle" fill="#555">se guarda antes de crear; su ruta viaja</text>
+  <text x="744" y="377" font-size="10" text-anchor="middle" fill="#555">en modelo_previo y se restaura al final.</text>
+  <text x="744" y="392" font-size="10" text-anchor="middle" fill="#555">Untitled → se niega. Escritura: --sap-rw</text>
+
+  <line x1="290" y1="363" x2="322" y2="363" stroke="#1c7c3c" stroke-width="2.4" marker-end="url(#g)"/>
+
+  <!-- pie -->
+  <text x="450" y="444" font-size="10.5" text-anchor="middle" fill="#888" font-style="italic">El LLM aporta parametros y elige herramientas; la geometria, el analisis, el contraste y el documento son de Python.</text>
+</svg>
