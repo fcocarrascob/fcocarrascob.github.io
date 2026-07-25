@@ -111,6 +111,27 @@ exactamente el acantilado de la [nota 6](/geotecnia/ocr-historia-de-tensiones), 
 $\sigma'_c$ es el primer dato que hay que exigirle al informe.
 </Note>
 
+<Note type="info" title="El método 2:1 contra la solución rigurosa">
+El 2:1 es una aproximación: reparte la carga en un tronco de pirámide con paredes a 2 vertical por
+1 horizontal, sin más justificación que su comodidad. La solución de Boussinesq bajo el centro de
+un rectángulo cargado, Ec. (8.33), es la respuesta elástica exacta:
+
+| $z$ bajo el sello | 2:1 | Boussinesq | dif. |
+|---|---|---|---|
+| 4,5 m | 16,75 kPa | 16,12 kPa | −4 % |
+| 6,0 m | 11,18 kPa | 9,44 kPa | −16 % |
+| 7,5 m | 7,99 kPa | 6,16 kPa | −23 % |
+| **Promedio** | **11,58 kPa** | **10,01 kPa** | **−14 %** |
+
+El 2:1 **sobreestima** el incremento, y cada vez más con la profundidad: al techo de la capa
+apenas un 4 %, a la base un 23 %. Sobre el asentamiento primario eso son **−13 %**: 15,9 mm en vez
+de 18,2.
+
+Vale la pena notar la dirección del error. El método aproximado es el conservador, así que usarlo
+no compromete la seguridad — pero sí infla el número que se le reporta al cliente, y sobre el total
+a 50 años el efecto es de apenas un 2,9 %, como se ve más abajo.
+</Note>
+
 ### 3c. Secundaria, Ec. (9.28)
 
 Con $c_v = 0{,}0005$ cm²/s la primaria termina (90 %) en **1,2 años**. Tomando
@@ -162,7 +183,7 @@ revisar si 25 mm es el criterio adecuado a 50 años sobre este material.
 
 <Figure
   src="/geotecnia-ejemplo-zapata/sensibilidad.svg"
-  alt="Gráfico de tornado del asentamiento total a 50 años, con caso base de 81,7 mm. La barra dominante corresponde a omitir la consolidación secundaria, que baja el resultado un 64 % hasta 29,3 mm. Le siguen, mucho más cortas: tomar C_s/C_c igual a 0,17 en vez de 0,25 baja un 18,5 %; que la arcilla resulte sobreconsolidada baja un 16,7 %; tomar E_s de la arena igual a 15 en vez de 20 sube un 4,5 %; tomarlo igual a 30 lo baja un 4,5 %; y suponer la zapata flexible en vez de rígida lo sube un 1,0 %. Al pie: la decisión más cara del cálculo es una que ni siquiera se toma, simplemente no calcular la fluencia, y vale un 64 %; los tres parámetros de la arcilla juntos valen la mitad de eso, y toda la modelación de la zapata no llega al 5 %."
+  alt="Gráfico de tornado del asentamiento total a 50 años, con caso base de 81,7 mm y todas las barras en una misma escala. La barra dominante, muchísimo más larga que el resto, corresponde a omitir la consolidación secundaria: baja el resultado un 64 %, hasta 29,3 mm. Le siguen, mucho más cortas: tomar C_s/C_c igual a 0,17 en vez de 0,25 baja un 18,5 %; que la arcilla resulte sobreconsolidada baja un 16,7 %; tomar E_s de la arena igual a 15 en vez de 20 sube un 4,5 %; tomarlo igual a 30 lo baja un 4,5 %; usar la solución de Boussinesq en vez del método 2:1 lo baja un 2,9 %; y suponer la zapata flexible en vez de rígida lo sube un 1,0 %. Al pie: la decisión más cara del cálculo es una que ni siquiera se toma, simplemente no calcular la fluencia, y vale un 64 %; los tres parámetros de la arcilla juntos valen la mitad de eso, y toda la modelación de la zapata —rigidez, E_s de la arena, método de distribución de tensiones— no llega al 5 %."
   caption="El orden de magnitud vuelve a ser el de toda la serie: los parámetros del suelo dominan y la modelación de la zapata es ruido. Pero el primer lugar lo ocupa algo distinto — una omisión."
 />
 
@@ -172,11 +193,20 @@ revisar si 25 mm es el criterio adecuado a 50 años sobre este material.
 | $C_s/C_c = 0{,}17$ en vez de 0,25 | −18,5 % |
 | La arcilla resulta sobreconsolidada | −16,7 % |
 | $E_s$ de la arena: 15 o 30 en vez de 20 | ±4,5 % |
+| Boussinesq en vez del método 2:1 | −2,9 % |
 | Suponerla flexible en vez de rígida | +1,0 % |
 
 **La decisión más cara del cálculo es una que ni siquiera se toma conscientemente:** simplemente
 no calcular la fluencia. Vale un 64 %, más que los tres parámetros de la arcilla juntos. Y toda la
-modelación de la zapata —rigidez, $E_s$ de la arena— no llega al 5 %.
+modelación de la zapata —rigidez, $E_s$ de la arena, método de distribución de tensiones— no llega
+al 5 %.
+
+El caso de Boussinesq merece un comentario aparte, porque es el que más engaña. Cambiar el método
+de distribución de tensiones mueve $\Delta\sigma$ un 14 % y el asentamiento primario un 13 %:
+cifras que, vistas solas, parecen justificar el cálculo riguroso. Sobre el total quedan en
+**2,9 %**, porque el primario es apenas un 22 % del asentamiento a 50 años. Es un buen recordatorio
+de que la sensibilidad hay que medirla sobre el número que gobierna la decisión, no sobre el
+término intermedio donde uno estaba trabajando.
 
 ---
 
@@ -205,6 +235,13 @@ esa cadena no está entregando un dato: está entregando una conclusión sin su 
 Todos los números salen de un único script que calcula el caso completo: capacidad por ambos
 métodos, asentamiento en tres componentes, el $q$ límite por bisección —el asentamiento no es
 lineal en $q$, así que escalarlo sería incorrecto— y el barrido de sensibilidad. Las tablas de
-factores usadas (16.1, 16.2, 17.3, 17.4 y 9.3) se habían verificado antes contra las formas
-cerradas del propio libro: 391 valores contrastados y 5 erratas encontradas.
+factores usadas (16.1, 16.2, 17.3, 17.4, 9.3 y 8.6) se habían verificado antes contra las formas
+cerradas del propio libro: **571 valores contrastados y 5 erratas encontradas**. La 8.6, la de
+Boussinesq, salió limpia: 180 de 180.
+
+*Actualización.* La versión original de esta nota no incluía el caso de sensibilidad del método de
+distribución de tensiones, porque el capítulo 8 no estaba procesado y no quise trasladar el 24 %
+que Das reporta para la geometría de su Ejemplo 9.10 a una zapata distinta. Con la Ec. (8.29)
+verificada, el valor propio de este caso resultó ser **13 %** sobre el primario y **2,9 %** sobre
+el total.
 </Note>
