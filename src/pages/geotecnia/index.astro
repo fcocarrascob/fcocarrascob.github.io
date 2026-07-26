@@ -1,8 +1,8 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import { getAllGeotecniaPosts, SUBSECTIONS } from '../../lib/geotecnia';
+import { BLOQUES, getGeotecniaSeries, SUBSECTIONS } from '../../lib/geotecnia';
 
-const posts = await getAllGeotecniaPosts();
+const posts = await getGeotecniaSeries();
 
 const subsectionCounts = Object.fromEntries(
   Object.keys(SUBSECTIONS).map((key) => [
@@ -10,6 +10,15 @@ const subsectionCounts = Object.fromEntries(
     posts.filter((p) => p.data.subsection === key).length,
   ])
 );
+
+// El arco agrupado por bloque. Un bloque puede tener notas todavía no escritas
+// (el rango las declara), así que se muestra lo que existe y se anuncia el resto.
+const bloques = BLOQUES.map((b) => ({
+  ...b,
+  posts: posts.filter(
+    (p) => (p.data.order ?? 0) >= b.range[0] && (p.data.order ?? 0) <= b.range[1]
+  ),
+}));
 ---
 <PageLayout title="Geotecnia" description="De dónde salen los números del informe de mecánica de suelos">
   <div class="mb-10">
@@ -29,7 +38,54 @@ const subsectionCounts = Object.fromEntries(
   </div>
 
   <section class="mb-12">
-    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-4">Sub-secciones</h2>
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Ruta de lectura</h2>
+    <p class="text-sm text-muted leading-relaxed mb-6">
+      Las notas se encadenan: cada una mide cuánto mueve el resultado un parámetro, y la siguiente
+      parte de ahí. Se pueden leer sueltas, pero en orden se acumulan. Los bloques son
+      independientes entre sí.
+    </p>
+
+    {bloques.map((bloque) => (
+      <div class="mb-8">
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent">
+            Bloque {bloque.n}
+          </span>
+          <h3 class="font-medium text-ink">{bloque.label}</h3>
+        </div>
+        <p class="text-sm text-muted leading-relaxed mb-3">{bloque.description}</p>
+        <ol class="divide-y divide-border border-y border-border">
+          {bloque.posts.map((post) => (
+            <li>
+              <a href={`/geotecnia/${post.id}`} class="flex gap-4 py-3 group items-baseline">
+                <span class="shrink-0 text-sm tabular-nums text-muted w-6">
+                  {post.data.order}
+                </span>
+                <div>
+                  <p class="text-ink group-hover:text-accent transition-colors">
+                    {post.data.title}
+                  </p>
+                  <p class="text-sm text-muted mt-0.5">{post.data.description}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ol>
+        {bloque.posts.length < bloque.range[1] - bloque.range[0] + 1 && (
+          <p class="text-sm text-muted mt-3 italic">
+            El bloque sigue abierto: la nota {bloque.posts.length + bloque.range[0]} está en
+            preparación.
+          </p>
+        )}
+      </div>
+    ))}
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Sub-secciones</h2>
+    <p class="text-sm text-muted leading-relaxed mb-4">
+      El mismo material agrupado por tema, para volver a buscar algo puntual.
+    </p>
     <ul class="divide-y divide-border border-y border-border">
       {Object.entries(SUBSECTIONS).map(([slug, sub]) => (
         <li>

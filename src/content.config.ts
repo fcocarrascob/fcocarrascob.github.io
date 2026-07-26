@@ -63,6 +63,10 @@ const geotecnia = defineCollection({
     subsection: z.string(),
     chapter: z.string().optional(),
     source: z.string().optional(),
+    // Posición en el arco de lectura. La taxonomía de subsecciones es temática
+    // y no coincide con el orden en que la serie se construye, así que la
+    // secuencia se declara acá en vez de dejarla implícita en la fecha.
+    order: z.number().optional(),
   }),
 });
 

@@ -1,9 +1,10 @@
 ---
 title: "Ejemplo — La zapata completa, por los dos criterios"
-description: "El cierre de la serie: la zapata del ejemplo de hormigón calculada desde cero sobre un perfil con arcilla blanda enterrada. La capacidad al corte sobra con uso 0,46; el asentamiento no cumple ni al año y medio. Con análisis de sensibilidad, y un límite del método que aparece al final y no se puede resolver redimensionando."
+description: "El ejemplo que cierra el bloque de la zapata superficial: la zapata del ejemplo de hormigón calculada desde cero sobre un perfil con arcilla blanda enterrada. La capacidad al corte sobra con uso 0,46; el asentamiento no cumple ni al año y medio. Con análisis de sensibilidad, y un límite del método que aparece al final y no se puede resolver redimensionando."
 pubDate: 2026-07-31
 tags: ["ejemplo", "geotecnia", "fundaciones", "capacidad de soporte", "asentamiento", "consolidación", "sensibilidad", "das"]
 subsection: "ejemplos"
+order: 7
 chapter: "Caps. 9, 16 y 17"
 source: "Das, 4ª ed. (2015)"
 ---
@@ -11,6 +12,8 @@ source: "Das, 4ª ed. (2015)"
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
+
+*Nota 7 · bloque 1, y lo cierra. Viene de [el OCR](/geotecnia/ocr-historia-de-tensiones).*
 
 Esta serie empezó señalando una fila sin justificar en el
 [ejemplo de zapata aislada](/hormigon/ejemplo-zapata-aislada): $q_a = 2{,}0$ kgf/cm², tomado como
@@ -210,7 +213,7 @@ término intermedio donde uno estaba trabajando.
 
 ---
 
-## Cierre de la serie
+## Cierre del bloque 1: la zapata superficial
 
 Siete notas para desarmar un número que aparecía como dato. El recorrido, en una línea cada una:
 
@@ -230,6 +233,15 @@ Si algo queda de las siete, que sea esto: **$q_{adm}$ no es una propiedad del su
 resultado de una cadena de decisiones —método, parámetros, criterio, plazo— y cada eslabón mueve
 el número en un porcentaje que ya sabemos medir. Un informe que entregue un número sin declarar
 esa cadena no está entregando un dato: está entregando una conclusión sin su argumento.
+
+---
+
+**Lo que viene:** este bloque cerró la zapata superficial, pero dio por dados los parámetros de
+entrada — $\phi'$, $E_s$, $C_c$, $\sigma'_c$ salieron todos de un informe que nunca abrimos. El
+[bloque 2](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos) hace justamente eso: de dónde
+salen físicamente esos números, y qué tan firmes son. Después el suelo cambia de papel —deja de
+sostener y pasa a empujar— y al final baja: pilotes, cuando la zapata ya no alcanza. El
+[recorrido completo está acá](/geotecnia).
 
 <Note type="info" title="Reproducibilidad">
 Todos los números salen de un único script que calcula el caso completo: capacidad por ambos

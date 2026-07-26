@@ -4,6 +4,7 @@ description: "Un muro en voladizo de 6 m verificado por los tres criterios. Gobi
 pubDate: 2026-08-03
 tags: ["ejemplo", "geotecnia", "muros de contención", "vuelco", "deslizamiento", "capacidad de soporte", "das"]
 subsection: "empujes-y-muros"
+order: 10
 chapter: "Empujes y muros"
 source: "Das, 4ª ed. (2015)"
 ---
@@ -11,6 +12,8 @@ source: "Das, 4ª ed. (2015)"
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
+
+*Nota 10 · bloque 3. Viene de [los tres coeficientes](/geotecnia/tres-coeficientes-del-mismo-suelo).*
 
 La [nota anterior](/geotecnia/tres-coeficientes-del-mismo-suelo) calculó el empuje. Esta lo pone a
 trabajar: un muro en voladizo completo, verificado por los tres criterios que el capítulo exige.
@@ -241,6 +244,13 @@ terreno adyacente. Es capacidad de soporte al revés.
    alto en el tercer término.
 5. **¿Hay drenaje del trasdós?** La [nota anterior](/geotecnia/tres-coeficientes-del-mismo-suelo)
    midió lo que cuesta no tenerlo: +32 % de empuje.
+
+---
+
+**Lo que viene:** con el muro cierra el bloque del suelo de costado. El
+[bloque 4](/geotecnia/pilotes-la-punta-casi-no-trabaja) baja: cuando la zapata no alcanza, la
+fundación se hunde hasta encontrar terreno competente — y ahí la capacidad se reparte entre
+punta y fuste, con una asimetría que reordena el diseño.
 
 <Note type="info" title="Reproducibilidad">
 Todos los números salen de un único script que calcula el muro de punta a punta: empuje de

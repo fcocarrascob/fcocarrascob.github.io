@@ -45,12 +45,57 @@ export const SUBSECTIONS = {
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;
 
+// Los bloques del arco. La taxonomía de subsecciones es temática y no coincide
+// con el orden en que la serie se construye: el bloque 1 atraviesa cuatro
+// subsecciones, y `fundamentos` reaparece en el 2. Por eso el recorrido se
+// declara acá, y no se deduce ni de la fecha ni de la subsección.
+export const BLOQUES = [
+  {
+    n: 1,
+    label: 'La zapata superficial',
+    range: [1, 7] as const,
+    description:
+      'De dónde sale q_adm y por qué son dos criterios y no uno. Cada nota mide cuánto mueve el resultado un parámetro, y la última los cobra todos en un ejemplo completo.',
+  },
+  {
+    n: 2,
+    label: 'El origen de los parámetros',
+    range: [8, 8] as const,
+    description:
+      'La vuelta atrás: de dónde salen físicamente los números que el bloque anterior usó como dato. El puente entre el terreno y el cálculo.',
+  },
+  {
+    n: 3,
+    label: 'El suelo de costado',
+    range: [9, 10] as const,
+    description:
+      'Hasta acá el suelo sostenía; ahora empuja. Los tres coeficientes según cuánto se mueva la estructura, y el muro que hay que verificar por tres caminos.',
+  },
+  {
+    n: 4,
+    label: 'Fundaciones profundas',
+    range: [11, 12] as const,
+    description:
+      'Cuando la zapata no alcanza. La capacidad se reparte entre punta y fuste, y los dos términos no se movilizan al mismo tiempo.',
+  },
+] as const;
+
 export async function getAllGeotecniaPosts() {
   const posts = await getCollection('geotecnia', ({ data }) => !data.draft);
   return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
+// El arco de lectura, en el orden en que se construye. Es el que usan las
+// páginas de subsección y la ruta de lectura: para una serie didáctica, el
+// orden cronológico inverso deja al lector entrando por el final.
+export async function getGeotecniaSeries() {
+  const posts = await getCollection('geotecnia', ({ data }) => !data.draft);
+  return posts.sort(
+    (a, b) => (a.data.order ?? Infinity) - (b.data.order ?? Infinity)
+  );
+}
+
 export async function getGeotecniaPostsBySubsection(subsection: string) {
-  const posts = await getAllGeotecniaPosts();
+  const posts = await getGeotecniaSeries();
   return posts.filter((post) => post.data.subsection === subsection);
 }

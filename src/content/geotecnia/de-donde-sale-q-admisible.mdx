@@ -4,6 +4,7 @@ description: "El informe de mecánica de suelos entrega una presión admisible y
 pubDate: 2026-07-25
 tags: ["geotecnia", "fundaciones", "capacidad de soporte", "asentamiento", "informe de suelos", "das"]
 subsection: "fundamentos"
+order: 1
 chapter: "Fundamentos"
 source: "Das, 4ª ed. (2015)"
 ---
@@ -11,6 +12,8 @@ source: "Das, 4ª ed. (2015)"
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
+
+*Nota 1 · bloque 1, la zapata superficial. Es el punto de partida; el [recorrido completo está acá](/geotecnia).*
 
 En el [ejemplo de zapata aislada](/hormigon/ejemplo-zapata-aislada) hay una fila de la tabla
 de datos que nunca justifiqué:
@@ -266,12 +269,21 @@ declara—:
 
 Esta nota planteó el mapa. Las siguientes recorren cada rama con números:
 
-- **Capacidad de soporte** — los métodos que compiten y por qué difieren; los factores de
-  forma, profundidad e inclinación; el nivel freático caso por caso.
-- **Asentamientos** — por qué $E_s$ es el parámetro más incierto de la geotecnia (rango de
-  ×5 en arcilla blanda), la historia de tensiones y el tiempo que tarda todo en ocurrir.
-- **Ejemplos** — la zapata completa, verificada por los dos criterios y con análisis de
-  sensibilidad.
+- **Capacidad de soporte** — [los métodos que compiten y por qué
+  difieren](/geotecnia/terzaghi-vs-ecuacion-general), y [el nivel freático caso por
+  caso](/geotecnia/nivel-freatico-capacidad).
+- **Asentamientos** — por qué [$E_s$ es el parámetro más
+  incierto](/geotecnia/modulo-es-parametro-dominante) de la geotecnia (rango de ×5 en arcilla
+  blanda), [el tiempo que tarda todo en ocurrir](/geotecnia/cuanto-y-cuando-consolidacion) y
+  [la historia de tensiones](/geotecnia/ocr-historia-de-tensiones).
+- **El ejemplo que los cobra** — [la zapata completa](/geotecnia/ejemplo-zapata-los-dos-criterios),
+  verificada por los dos criterios y con análisis de sensibilidad.
+
+Eso cierra el primer bloque. Después la serie vuelve atrás para preguntar
+[de dónde salen esos parámetros](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos), gira el
+suelo de costado —[empujes](/geotecnia/tres-coeficientes-del-mismo-suelo) y
+[muros](/geotecnia/muro-tres-verificaciones)— y termina bajando:
+[pilotes](/geotecnia/pilotes-la-punta-casi-no-trabaja), cuando la zapata ya no alcanza.
 
 <Note type="info" title="Fuente y trazabilidad">
 Los métodos, tablas y ecuaciones de esta serie salen de **Braja M. Das, *Fundamentos de
