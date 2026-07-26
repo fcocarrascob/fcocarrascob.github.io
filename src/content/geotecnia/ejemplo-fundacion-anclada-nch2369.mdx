@@ -1,0 +1,314 @@
+---
+title: "Ejemplo — La fundación anclada: se va el 80 % y llega el 0,7R₁"
+description: "Torre de proceso sobre roca: el dado no cumple el área apoyada mínima de 10.1.4 ni engordándolo poco. Anclarlo elimina ese requisito, pero 10.1.6 obliga a diseñar los anclajes con el sismo horizontal amplificado por 0,7R₁ = 2,10 — y esa amplificación de 2,1 multiplica la tracción del anclaje por 13,5. Con el modelo de balasto que además entrega el giro."
+pubDate: 2026-07-26
+tags: ["ejemplo", "geotecnia", "fundaciones", "nch2369", "industrial", "anclajes", "roca", "volcamiento", "sensibilidad"]
+subsection: "ejemplos"
+order: 14
+chapter: "Cap. 10 — NCh2369:2025"
+source: "NCh2369:2025"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 14 · bloque 5. Viene de [la zapata del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369).*
+
+La nota anterior terminó con una zapata que no cumplía el 80 % de área apoyada y se resolvió
+de la forma obvia: agrandándola un 14 %. Funcionó porque el desbalance era chico.
+
+Cuando no lo es —un equipo alto y liviano, que es el caso más común en una planta de proceso—
+agrandar deja de ser una solución: el momento crece con la altura del equipo y el peso
+estabilizador solo con el área del dado. Ahí NCh2369 ofrece la otra puerta, en **10.1.6**:
+
+> *«Las fundaciones ancladas tanto a roca como a suelos no requieren garantizar un porcentaje
+> mínimo de área de contacto.»*
+
+Suena a rebaja. No lo es. La frase siguiente cambia el nivel de carga con que se diseña todo:
+los anclajes y las tensiones de contacto se verifican con las combinaciones de 4.5 **en las que
+el estado de carga sísmico horizontal se amplificó por $0{,}7R_1 \ge 1{,}0$**. En este ejemplo
+ese factor vale 2,10 — y multiplica la tracción del anclaje por **13,5**.
+
+<Note type="warning" title="Alcance y responsabilidad">
+Los parámetros de la roca, la rigidez vertical y la capacidad a extracción de los anclajes son
+datos de entrada que aquí se declaran; en un proyecto real salen del informe de mecánica de
+suelos y de los ensayos de tracción de los anclajes de prueba. **Este ejemplo no reemplaza ni al
+informe ni al geotecnista que lo firma.** Las cláusulas se citan por su numeración en la edición
+**2025** de NCh2369.
+</Note>
+
+---
+
+## 1. El caso
+
+<Figure
+  src="/geotecnia-fundacion-anclada/el-caso.svg"
+  alt="Sección de una torre de proceso de 22 m de altura y 20 tonf de peso en operación, apoyada sobre un pedestal de 2,00 por 2,00 por 1,00 m y un dado de fundación de 4,00 por 4,00 m con 0,80 m de espesor, con el sello a 1,80 m de profundidad sobre roca fracturada. Cuatro barras de anclaje de 32 mm y 6 m de longitud libre bajan desde el dado al macizo rocoso, con su eje a 0,40 m del borde. El análisis sísmico entrega en la base de la torre V = 13 tonf y M = 150 tonf·m. A la derecha, la tabla de datos: pesos de dado 32,63 tonf, pedestal 10,20 y relleno 23,25, total 66,08; la roca con k_v = 40.000 tonf/m³, q_adm de 12 kgf/cm² estática y 18 sísmica, resistencia realista de 40 kgf/cm² y tan delta = 0,70; y el factor R = 3 de la Tabla 7 línea 10.1 para torres de proceso, que da 0,7R₁ = 2,10. Al pie: el peso de la torre es apenas el 23 % del total; el resto lo aporta la propia fundación."
+  caption="Una torre de proceso es el caso extremo del problema: mucho momento, poco peso. Los 20 tonf del equipo son menos de un cuarto de lo que baja al sello."
+/>
+
+| Dato | Valor |
+|---|---|
+| Torre de proceso | $H = 22$ m, $D = 20$ tonf en operación |
+| Dado | $4{,}00 \times 4{,}00$ m, espesor $0{,}80$ m, $D_f = 1{,}80$ m |
+| Pedestal | $2{,}00 \times 2{,}00$ m, altura $1{,}00$ m |
+| Sismo (análisis, reducido por $R$) | $V = 13$ tonf, $M = 150$ tonf·m en la base de la torre |
+| Roca fracturada | $k_v = 40.000$ tonf/m³, $\tan\delta = 0{,}70$ |
+| $q_{adm}$ del informe | $12$ kgf/cm² estática · $18$ kgf/cm² sísmica |
+| Resistencia «realista» | $40$ kgf/cm² (para la condición amplificada, C10.1.6) |
+| Anclajes | 4 barras Ø32, $L_{libre} = 6$ m, eje a $0{,}40$ m del borde |
+| Capacidad a extracción | $25$ tonf por barra (informe) |
+
+Los pesos: **32,63** tonf de dado, **10,20** de pedestal y **23,25** de relleno encima —
+**66,08 tonf**, más de tres veces el equipo. Con la torre, $N = 86{,}08$ tonf al sello.
+
+---
+
+## 2. Sin anclar, no hay caso
+
+Con la combinación de 4.5 **sin amplificar**, que es la que aplica a una fundación no anclada
+(10.1.4):
+
+| | Valor |
+|---|---|
+| $N$ | 86,08 tonf |
+| $V = 0{,}70 \times 13$ | 9,10 tonf |
+| $M = 0{,}70\,(150 + 13 \times 1{,}80)$ | 121,38 tonf·m |
+| $e = M/N$ | 1,410 m → $e/B = 0{,}353$ |
+| **Área apoyada** | **44,2 %** |
+
+Contra los umbrales de la nota anterior —núcleo central en 0,167, el 80 % en 0,233 y el 50 % en
+0,333— el caso queda fuera de los tres:
+
+> **No cumple como estándar menor (uso 1,81) ni como estándar mayor (uso 1,13).**
+>
+> Y la tensión de contacto, otra vez, sobra: $q_{max} = 2{,}43$ kgf/cm² contra 18 admisibles.
+> **Uso 0,14.**
+
+Agrandando el dado hasta cumplir:
+
+| Objetivo | $B$ necesario | Costo |
+|---|---|---|
+| 50 % apoyado (estándar mayor) | 4,09 m | +5 % de hormigón |
+| 80 % apoyado (estándar menor) | 4,71 m | **+38 %** de hormigón y excavación |
+
+El 50 % está a la vuelta de la esquina; el 80 %, no. Y esa es la decisión real: o se modela la
+fundación dentro del conjunto estructura-fundación para poder clasificarla como estándar mayor
+—lo que 10.1.4 premia justamente con el 50 %—, o se paga el 38 %, o se ancla.
+
+---
+
+## 3. Anclar cambia el nivel de carga
+
+<Equation label="NCh2369 Ec. (14), 5.14">
+$$
+R_1 = R \cdot \min\left(\frac{Q_0}{Q_{0,min}},\ 1\right) \le R
+$$
+</Equation>
+
+Para una **torre de proceso**, la Tabla 7 (línea 10.1) da $R = 3$ y $\xi = 0{,}03$. Si el diseño
+no quedó gobernado por el corte basal mínimo, $R_1 = R = 3$ y el factor de amplificación es:
+
+$$0{,}7 R_1 = 0{,}7 \times 3 = \mathbf{2{,}10} \ \ (\ge 1{,}0)$$
+
+Con él, la combinación sísmica cambia de escala:
+
+| | Sin amplificar | Amplificada ($\times 2{,}10$) |
+|---|---|---|
+| $N$ | 86,08 tonf | **86,08 tonf** |
+| $V$ | 9,10 tonf | 19,11 tonf |
+| $M$ | 121,38 tonf·m | 254,90 tonf·m |
+| $e = M/N$ | 1,410 m | **2,961 m** |
+
+<Note type="info" title="Solo el estado sísmico horizontal">
+$N$ no cambia. 10.1.6 amplifica *«el estado de carga sísmico horizontal»*: el peso propio, la
+carga de operación y la componente vertical del sismo entran sin tocar. Amplificar todo el
+combo es un error frecuente y, en este caso, además **inseguro al revés**: subir $N$ reduciría
+la tracción del anclaje, que es justamente lo que se está dimensionando.
+</Note>
+
+Y aquí está el punto: $e = 2{,}961$ m contra $B/2 = 2{,}00$ m. **La resultante cae fuera de la
+base.** No hay longitud de contacto que equilibre: sin anclajes, bajo esa combinación, el dado
+vuelca. La fórmula clásica $c = 3(B/2 - e)$ da negativo, que es la manera que tiene la
+aritmética de decir que el problema no tiene solución.
+
+---
+
+## 4. El modelo: balasto, levantamiento y anclajes
+
+Con anclajes hay dos incógnitas —cuánto se comprime la roca y cuánto se estira la barra— y hacen
+falta dos ecuaciones. 10.1.2 sugiere el camino al pedir que los giros se evalúen *«a través del
+uso de constantes de balasto»*: fundación rígida (ya verificada con la Ec. 25), roca como cama
+de resortes de constante $k_v$, anclajes como resortes axiales de rigidez
+$k_a = nEA/L_{libre} = 5.466$ tonf/m.
+
+Girando un ángulo $\theta$ en torno a un eje neutro a distancia $c$ del borde comprimido:
+
+<Equation label="Equilibrio, con c y θ como incógnitas">
+$$
+C = \tfrac{1}{2}k_v\,\theta\,B\,c^2 \qquad T = k_a\,\theta\,(x_a - c) \qquad C - T = N
+$$
+</Equation>
+
+$$C\left(\frac{B}{2}-\frac{c}{3}\right) + T\left(x_a - \frac{B}{2}\right) = M$$
+
+<Note type="tip" title="El modelo contiene al de la nota anterior">
+Si se quitan los anclajes ($T = 0$), la primera ecuación da $C = N$ y la segunda se reduce a
+$N(B/2 - c/3) = M$, es decir $c = 3(B/2 - e)$: **exactamente la fórmula de despegue** que usa
+10.1.4 y con la que se calculó el 63,3 % de la zapata del galpón. El giro y la constante de
+balasto se cancelan. Es una buena señal de que el modelo no está inventando nada nuevo: solo
+agrega el resorte que faltaba.
+</Note>
+
+Resolviendo para la combinación amplificada:
+
+<Figure
+  src="/geotecnia-fundacion-anclada/el-equilibrio.svg"
+  alt="Dos diagramas comparativos del equilibrio del dado. Arriba, la combinación sin amplificar: la longitud comprimida es de 2,012 m sobre los 4,00 m del dado, el giro es de 0,27 mrad, la presión máxima 2,20 kgf/cm² y la tracción en los anclajes apenas 2,37 tonf. Abajo, la combinación amplificada por 2,10: la longitud comprimida cae a 0,834 m, solo el 20,8 % del dado, el giro sube a 2,12 mrad, la presión máxima a 7,09 kgf/cm² y la tracción en los anclajes a 32,11 tonf, es decir 16,06 tonf por barra. Entre ambos, una flecha indica que el momento se multiplicó por 2,10 pero la tracción del anclaje por 13,5. Al pie: el peso propio absorbe un momento restaurador fijo, y todo lo que sobra se lo lleva el anclaje."
+  caption="El mismo dado bajo las dos combinaciones. El momento se multiplica por 2,10; la tracción del anclaje, por 13,5. Esa desproporción es el tema de este ejemplo."
+/>
+
+| | Sin amplificar | Amplificada |
+|---|---|---|
+| Longitud comprimida $c$ | 2,012 m (50,3 %) | **0,834 m (20,8 %)** |
+| Giro $\theta$ | 0,27 mrad | **2,12 mrad** |
+| $q_{max}$ | 2,20 kgf/cm² | 7,09 kgf/cm² |
+| Tracción $T$ | 2,37 tonf | **32,11 tonf** (16,06 por barra) |
+
+**El momento creció 2,10 veces y la tracción del anclaje 13,5.** La razón es puramente
+aritmética y vale para cualquier fundación anclada: el peso propio aporta un momento restaurador
+que es **fijo**, del orden de $N \cdot (B/2 - c/3)$, y el anclaje solo se lleva lo que sobra.
+Mientras el momento aplicado esté cerca de ese umbral, un pequeño aumento de la demanda produce
+un aumento enorme de la tracción. Diseñar el anclaje con la combinación sin amplificar no es
+quedarse un 110 % corto: es quedarse un 1.250 % corto.
+
+<Note type="info" title="El giro también es un resultado del cálculo">
+$\theta = 2{,}12$ mrad sobre una torre de 22 m son **47 mm de desplazamiento en la punta solo
+por el giro del dado**, sin contar la flexibilidad de la torre. Es el tipo de número que 10.1.2
+pide evaluar y que casi nunca se reporta, y el que decide si las pasarelas, las cañerías y las
+juntas de expansión conectadas al equipo van a sobrevivir el sismo. Vale la pena notar que sale
+del mismo cálculo, sin trabajo adicional.
+</Note>
+
+---
+
+## 5. Las verificaciones
+
+| Verificación | Demanda | Límite | Uso |
+|---|---|---|---|
+| Tensión de contacto (C10.1.6, $FS \approx 1{,}0$) | 7,09 kgf/cm² | 40 kgf/cm² | 0,18 |
+| **Anclajes: extracción de la roca** | 32,11 tonf | 50 tonf | **0,64** |
+| Anclajes: fluencia del acero | 32,11 tonf | 155,8 tonf | 0,21 |
+| Deslizamiento sobre la roca ($N\tan\delta$) | 19,11 tonf | 60,3 tonf | 0,32 |
+
+Dos observaciones sobre esta tabla.
+
+**La primera: el anclaje no lo dimensiona el acero.** La barra Ø32 tiene tres veces más
+capacidad de la necesaria; lo que manda es la extracción del macizo, con uso 0,64. Es
+exactamente la preocupación que declara el comentario C10.1.6: *«No se desea la potencial falla
+de los anclajes de fundaciones, ya sea por extracción o deslizamiento»*, porque repararlos
+implica detener la producción. El acero es lo barato y lo controlable; la adherencia a la roca
+es lo que hay que ensayar.
+
+**La segunda: contra qué se compara.** Para la condición amplificada, C10.1.6 dice que
+*«el factor de seguridad aplicado a esta condición extrema debería ser levemente mayor que 1,0»*
+y que la demanda debe compararse con una resistencia *«realista»* del suelo o la roca. Por eso
+la tensión de contacto no se verifica contra los 18 kgf/cm² admisibles sino contra los 40 de
+resistencia declarada: **son dos preguntas distintas** —¿trabaja bien en el sismo de diseño?
+frente a ¿resiste el escenario extremo?— y mezclarlas duplica el conservadurismo sin decirlo.
+
+<Note type="warning" title="Dos válvulas de escape que conviene conocer">
+10.1.6 agrega que *«la resistencia requerida para el método LRFD no necesita ser mayor que la
+máxima carga que el sistema puede transferir al elemento considerado»* (y para ASD, ese valor
+dividido por 1,5). Es diseño por capacidad: si los pernos de anclaje de la torre al pedestal
+fluyen antes, el dado nunca va a ver el momento amplificado completo, y ese es el techo real de
+la demanda. En equipos con anclajes dúctiles esta cláusula suele recortar bastante.
+
+La segunda está en **8.5.2**: los pernos y barras se detallan dúctiles —con silla, largo expuesto
+no menor que 250 mm ni que ocho diámetros, hilo bajo la tuerca de al menos 75 mm— *salvo* los
+que se diseñen para la tracción de las combinaciones amplificadas por $0{,}7R_1$. O se detalla
+para que fluya y se pueda reapretar, o se diseña para que no fluya. **Las dos son estrategias
+completas; mezclarlas a medias es lo que no sirve.**
+</Note>
+
+---
+
+## 6. Análisis de sensibilidad
+
+<Figure
+  src="/geotecnia-fundacion-anclada/sensibilidad.svg"
+  alt="Gráfico de tornado de la sensibilidad de la tracción del anclaje, con caso base T = 32,11 tonf y todas las barras en la misma escala porcentual. La barra dominante corresponde al R₁ mínimo, es decir una amplificación de 1,00 en vez de 2,10, que baja la tracción a 2,4 tonf: un menos 93 %. Le sigue R₁ = 2, con amplificación 1,40, que la baja a 10,4 tonf: un menos 68 %. Después, mucho más cortas: no contar el relleno sobre el dado la sube a 42,7 tonf, un más 33 %; mover los anclajes a 0,80 m del borde la sube a 35,4 tonf, un más 10 %; k_v de la roca a la mitad, o una longitud libre del anclaje de 3 m, la suben a 35,2 tonf con idéntico resultado, un más 10 %; y k_v al doble, o una longitud libre de 12 m, la bajan a 29,7 tonf, también idénticos, un menos 7 %. Al pie: el parámetro dominante no es del suelo ni de la fundación sino el R₁ del análisis sísmico, que decide entre 2,4 y 32,1 tonf, mientras toda la geometría y las rigideces suman menos de un 35 %; y las rigideces solo importan por su razón."
+  caption="Un solo parámetro —el R₁ que viene del análisis sísmico, no del suelo— vale más que todos los demás juntos."
+/>
+
+| Decisión | Tracción $T$ | Efecto |
+|---|---|---|
+| **$R_1$ tal que $0{,}7R_1 = 1{,}00$** (mínimo de 10.1.6) | 2,4 tonf | **−93 %** |
+| **$R_1 = 2$** ($0{,}7R_1 = 1{,}40$) | 10,4 tonf | **−68 %** |
+| No contar el relleno sobre el dado | 42,7 tonf | +33 % |
+| Anclajes a 0,80 m del borde | 35,4 tonf | +10 % |
+| $k_v$ de la roca a la mitad | 35,2 tonf | +10 % |
+| Longitud libre del anclaje: 3 m | 35,2 tonf | +10 % |
+| $k_v$ al doble | 29,7 tonf | −7 % |
+| Longitud libre: 12 m | 29,7 tonf | −7 % |
+| Anclajes a 0,20 m del borde | 30,7 tonf | −4 % |
+
+Tres lecturas.
+
+**El parámetro dominante no es del suelo, ni siquiera de la fundación: es del análisis sísmico.**
+$R_1$ sale de la Tabla 7 y de la Ec. (14), y decide entre 2,4 y 32,1 tonf de tracción — un factor
+13. Cualquier discusión sobre la roca es de segundo orden mientras ese número no esté firme. Y
+la Ec. (14) tiene una trampa amable: $R_1 = R\min(Q_0/Q_{0,min}, 1)$ **baja** si el diseño quedó
+gobernado por el corte basal mínimo, de modo que una estructura sobredimensionada por el mínimo
+normativo paga menos amplificación. Conviene verificar cuál de los dos casos aplica antes de
+copiar $R$ de la tabla.
+
+**Las rigideces solo importan por su razón.** Bajar $k_v$ a la mitad y acortar la longitud libre
+del anclaje a 3 m dan **exactamente el mismo +10 %**, y no es coincidencia: en las ecuaciones de
+equilibrio $k_v$ y $k_a$ aparecen siempre en el cociente $k_a/k_v$. Duplicar la rigidez del
+anclaje equivale a ablandar la roca a la mitad. Esto tiene una consecuencia práctica: **alargar
+la longitud libre de las barras es una forma barata de bajar la tracción** —un anclaje más
+flexible se lleva menos carga— y de paso mejora su capacidad de deformación, que es el
+comportamiento que 8.5.2 busca.
+
+**Y la tercera, que se repite desde la nota anterior:** no contar el relleno sobre el dado vale
+un +33 %. En las dos notas del bloque, el prisma de suelo o relleno encima de la fundación es de
+las cantidades más influyentes del cálculo, y es la que más fácilmente se pierde en obra si el
+relleno lateral no se ejecuta como el cálculo supuso.
+
+---
+
+## Anclar contra engordar
+
+| Opción | Costo |
+|---|---|
+| Dado anclado de 4,00 m | 12,8 m³ de hormigón + 4 barras Ø32 de 6 m |
+| Dado sin anclar de 4,71 m | 17,7 m³ de hormigón (**1,4 veces**) y la excavación asociada |
+
+En hormigón puro el anclaje gana. Pero la comparación honesta no es esa: **anclar cambia el
+nivel de carga de diseño de toda la interfaz**, y con eso aparecen la barra dimensionada por
+extracción del macizo, los ensayos de tracción que hay que hacer para verificarla, la llave de
+corte que 8.5.3 exige diseñar también con $0{,}7R_1$, y la inspección periódica de un elemento
+que la norma no quiere ver fallar. La decisión no es «cuál sale más barato en m³»: es **dónde se
+prefiere tener el riesgo**, en un dado sobredimensionado que nadie va a revisar nunca, o en un
+sistema de anclajes que hay que mantener.
+
+---
+
+**Lo que viene:** este ejemplo y el anterior dieron por sentado que la fundación es rígida —los
+dos verificaron la Ec. (25) de pasada y siguieron. El próximo se para justo en el otro lado: qué
+pasa cuando esa desigualdad no se cumple, por qué entonces el requisito de área apoyada
+desaparece por completo (10.1.5) y qué lo reemplaza cuando la fundación se modela sobre una cama
+de resortes en la que hay que anular los traccionados.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script: las combinaciones de 4.5 con y sin amplificación, el
+área apoyada por la fórmula clásica, la resolución del equilibrio de la fundación anclada sobre
+balasto por bisección sobre $c$, la bisección sobre $B$ para el dado sin anclar, y el barrido de
+sensibilidad. El modelo se contrastó contra su propio caso límite: haciendo $k_a \to 0$ reproduce
+$c = 3(B/2 - e)$ hasta la precisión de la máquina ($10^{-15}$ de diferencia relativa).
+
+Las cláusulas se citan desde el texto de NCh2369:**2025**; en la edición 2003 la numeración es
+distinta y el Capítulo 10 no tiene esta forma.
+</Note>
