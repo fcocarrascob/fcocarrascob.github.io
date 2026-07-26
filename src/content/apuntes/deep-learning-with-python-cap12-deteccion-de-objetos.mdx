@@ -1,0 +1,236 @@
+---
+title: "Cajas en vez de píxeles, y una pérdida que se persigue a sí misma"
+description: "El capítulo 12 cierra la trilogía de visión con la pregunta correcta: si la segmentación ya me da la caja mínima que contiene la máscara, ¿para qué existe la detección? La respuesta tiene dos costos —cómputo y etiquetado— y decide la arquitectura. Después construye un YOLO desde cero sobre COCO, y ahí está la idea que vale el capítulo: el objetivo de la confianza no es una constante, es el IoU actual entre la caja predicha y la real, así que el target se mueve con el propio modelo. Cierra con la feature pyramid network y un detector preentrenado que reconoce figuras en un cuadro puntillista. Apuntes del Cap. 12."
+pubDate: 2026-07-26
+tags: ["deep learning", "chollet", "detección de objetos", "yolo", "coco", "retinanet", "visión", "iou"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 12 — Detección de objetos"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 12 (PDF 353–374)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+La serie ya clasificó imágenes (una etiqueta) y las segmentó (una clase por píxel).
+Queda la tercera tarea: **dibujar cajas alrededor de los objetos**, para saber no
+solo qué hay sino **dónde**. Contar instancias, rastrear objetos frame a frame,
+recortar una zona para mandarla en mayor resolución a un OCR.
+
+Y el capítulo abre con la objeción que uno mismo se hace: si ya tengo la máscara
+de una instancia, puedo calcular la caja mínima que la contiene. **¿Para qué
+existe la detección, entonces?**
+
+<Note type="info" title="La respuesta, que decide toda la arquitectura">
+*"La segmentación es un **superconjunto estricto** de la detección. Devuelve toda
+la información que podría devolver un modelo de detección — y bastante más. Esta
+mayor riqueza tiene un **costo computacional significativo**: un buen modelo de
+detección típicamente corre **mucho más rápido**. También tiene un **costo de
+etiquetado**: para entrenar segmentación necesitas máscaras precisas al píxel,
+mucho más lentas de producir que las meras cajas."*
+
+De ahí la regla: **usa detección siempre que no necesites información a nivel de
+píxel** — por ejemplo, si todo lo que quieres es contar.
+</Note>
+
+## 1. Dos etapas y una etapa
+
+Un **R-CNN** (*region-based ConvNet*) trabaja en dos pasos. Primero produce **unos
+miles de cajas parcialmente solapadas** alrededor de zonas que "parecen objeto";
+esa etapa *"no es muy inteligente, así que a ese punto no estamos del todo seguros
+de si las regiones contienen objetos y, de ser así, cuáles"*. Después una ConvNet
+mira **cada propuesta** y la clasifica, se descartan las de puntaje bajo y se
+refinan las que quedan.
+
+En las primeras versiones la etapa 1 era *Selective Search*, un modelo heurístico.
+Y de paso el libro deja una definición que conviene tener a mano:
+
+> *"**Heurística** es un término que vas a oír bastante en machine learning:
+> simplemente significa **'un montón de reglas hardcodeadas que alguien se
+> inventó'**. Se usa en oposición a los modelos aprendidos, donde las reglas se
+> derivan automáticamente."*
+
+En Faster-R-CNN esa etapa pasó a ser una red aprendida. Pero el problema de fondo
+no se va: *"es bastante caro computacionalmente, sobre todo porque te obliga a
+**clasificar miles de parches — por cada imagen que procesas**"*. Inservible para
+tiempo real o para sistemas embebidos.
+
+Alrededor de **2015** aparece la alternativa: un solo modelo que predice
+**coordenadas y etiqueta a la vez**. RetinaNet, SSD y **YOLO** — *"sí, como el
+meme; es a propósito"*. Y sale una versión nueva casi cada año, cada una
+desarrollada por una organización distinta.
+
+<Note type="tip" title="La recomendación práctica de Chollet, que se salta la taxonomía">
+*"Mi opinión es que, en aplicaciones prácticas, generalmente **nunca necesitas** un
+sistema de detección caro como R-CNN: porque si haces inferencia server-side con
+una GPU potente, probablemente te convenga más un modelo de segmentación como
+Segment Anything; y si estás limitado en recursos, vas a querer una arquitectura
+más eficiente — un detector de una etapa."*
+
+Es decir: los dos extremos del espectro de recursos apuntan al mismo lado, y el
+medio queda vacío.
+</Note>
+
+## 2. YOLO desde cero: 96 números por celda
+
+> *"Construir un detector puede ser toda una empresa — no porque haya algo
+> teóricamente complejo, sino porque **hace falta mucho código** para manipular
+> cajas y salidas predichas."*
+
+El libro recrea **el YOLO original de 2015**, sobre **COCO 2017**: 117 266
+imágenes, de 1 a 63 objetos cada una, 91 clases posibles, **18 GB — el dataset más
+grande del libro**. Todas las coordenadas se reescalan al cuadrado unitario
+`[0, 1]` *"para no tener que chequear el tamaño de cada imagen"*, y se recorta a
+las imágenes con cuatro cajas o menos, lo que reduce los datos a la mitad.
+
+La idea: **partir la imagen en una grilla y predecir, en cada celda, una caja y una
+etiqueta**. Cada celda es responsable de las cajas **cuyo centro cae dentro de
+ella**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/yolo-salida.svg"
+  alt="Diagrama en dos partes. Arriba, el pipeline: imagen 448×448×3 → ResNet-50 que produce 14×14×2048 (401 408 floats, marcado en rojo) → Conv2D con strides=2 que reduce a 6×6×512 (18 432 floats, en verde) → Flatten y dos capas Dense (2048, dropout, 3456) → Reshape a 6×6×96. Debajo, a la izquierda, la grilla de 6×6 con una celda naranja destacada y un recuadro punteado alrededor: es la celda responsable porque el centro de la caja cae dentro de ella. Al centro, un panel naranja desglosa los 96 números por celda: los 5 primeros son la caja (x e y como centro relativo a la celda de 0 a 1; w y h como tamaño relativo a la imagen; y confidence), y los 91 restantes son un softmax sobre las etiquetas de COCO. A la derecha, un panel verde explica que en las etiquetas la confianza es 1 donde hay caja real y 0 en las otras 35 celdas, y que por eso la pérdida de esas confianzas cero se escala por 0,5. Al pie: el modelo total tiene 77 850 336 parámetros."
+  caption="El backbone se cambia a ResNet-50 justamente porque submuestrea con strides en vez de pooling: el mismo argumento del capítulo anterior, otra vez."
+  width={800}
+/>
+
+Dos detalles del diseño valen más que el resto.
+
+**Por qué hace falta un puntaje de confianza.** *"La mayoría de las imágenes no
+tendrá objetos distribuidos uniformemente en la grilla. Para dar cuenta de eso, el
+modelo emite un puntaje de confianza junto con cada caja: alta cuando se detecta un
+objeto ahí, y **cero cuando no hay ninguno**."* De 36 celdas, casi todas están
+vacías.
+
+**Por qué el `Flatten` no es un descuido.** *"Notá que como aplanamos el mapa de
+features entero antes de la capa de clasificación, **cada detector de grilla puede
+usar las features de la imagen completa; no hay restricción de localidad**. Esto es
+a propósito — **los objetos grandes no se van a quedar contenidos en una sola
+celda**."*
+
+## 3. La idea que vale el capítulo
+
+La pérdida de clasificación es la de siempre. La de la caja es error cuadrático
+sumado, solo en las celdas que tienen caja real. Lo delicado es **la confianza**.
+
+Uno esperaría que el objetivo fuera 1 donde hay objeto. No lo es:
+
+> *"Los autores querían que la confianza reflejara **no solo la presencia de un
+> objeto, sino qué tan buena es la caja predicha**. Para crear una estimación suave
+> de eso, proponen usar el **IoU** del capítulo anterior. Si la celda está vacía, la
+> confianza debería ser cero. Pero si contiene un objeto, **podemos usar el IoU
+> entre la predicción actual y la caja real como el valor objetivo de confianza**.
+> Así, a medida que el modelo mejora en ubicar cajas, **el IoU y la confianza
+> aprendida suben juntos**."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/confianza-iou.svg"
+  alt="Diagrama en tres bloques. A la izquierda, qué es el IoU: dos rectángulos solapados, uno verde continuo rotulado 'caja real' y uno azul punteado rotulado 'predicha', con la zona de intersección pintada en azul claro; debajo, IoU = intersección ÷ unión, de 0 a 1. A la derecha, el bucle de retroalimentación con flechas azules: 'El modelo mejora dónde pone la caja' → 'Sube el IoU entre predicha y real' → '…y con él sube el target de confianza, porque el target es el IoU' → y la flecha vuelve al primer cuadro cerrando el ciclo. Debajo del bucle: la confianza aprende a decir no solo si hay un objeto, sino qué tan buena es la caja que acaba de dibujar. En la franja inferior, tres cajas naranjas con los trucos de escalado: '× 5 a la ubicación' para que colocar bien la caja pese más; '× 0,5 a las celdas vacías' porque casi todas lo están y si no los ceros abruman la pérdida; y 'raíz de w y h (con signo)' para igualar cajas grandes y chicas, con signo porque al inicio el modelo predice tamaños negativos."
+  caption="El target no es un número que le dictas al modelo: es una medida de su propio desempeño actual. Y los tres escalados son puro oficio de 2015."
+  width={780}
+/>
+
+El detalle de implementación de la raíz cuadrada es el que revela que esto se
+escribió mirando entrenamientos reales:
+
+```python
+def signed_sqrt(x):
+    return ops.sign(x) * ops.sqrt(ops.absolute(x) + keras.config.epsilon())
+```
+
+La raíz **preserva el signo** *"ya que nuestro modelo podría predecir anchos y
+altos negativos al comienzo del entrenamiento"*.
+
+## 4. El resultado, contado sin maquillaje
+
+Cuatro épocas, `Adam(2e-4)`:
+
+> *"El entrenamiento toma **más de una hora** en el runtime de GPU gratuito de
+> Colab, y nuestro modelo **sigue subentrenado** (¡la pérdida de validación todavía
+> está bajando!)."*
+
+Para ver algo hay que bajar el corte de confianza a 0,1. Y la explicación de lo
+que se ve: *"aprende valores de confianza muy bajos porque **todavía no ha
+aprendido a ubicar objetos consistentemente**"*. La lista de lo que faltaría —más
+épocas, el COCO completo, augmentation que rote **imágenes y cajas**, varias cajas
+por celda— se enumera sin prometer que se hará: *"este ejemplo es realmente solo
+para tomarle el pulso al entrenamiento de detección"*.
+
+Me parece la parte más honesta del libro hasta aquí. Un ejemplo que no funciona
+bien, publicado igual, con el diagnóstico de por qué.
+
+## 5. La pirámide, y un detector que mira un Seurat
+
+RetinaNet también es de una etapa. Lo que cambia es **cómo usa la ConvNet**.
+
+El YOLO del capítulo toma las **salidas finales**, que mapean a áreas grandes de la
+imagen: *"no son muy efectivas para encontrar objetos pequeños"*. La solución obvia
+—usar capas tempranas, de alta resolución— no sirve porque *"su salida no es muy
+interesante semánticamente: puede mapear a bordes y curvas, pero **solo más
+adelante empezamos a construir representaciones de objetos enteros**"*.
+
+La **feature pyramid network** se queda con las dos cosas:
+
+> *"Las features finales se re-expanden con `Conv2DTranspose` progresivas, igual
+> que en el capítulo anterior. Pero, críticamente, **también incluimos conexiones
+> laterales donde sumamos esos mapas re-expandidos con los mapas del mismo tamaño
+> de la ConvNet original**. Esto combina las features **semánticamente
+> interesantes y de baja resolución** del final con las de **alta resolución y
+> pequeña escala** del comienzo."*
+
+Y no es exótico: *"las versiones recientes de YOLO también usan el mismo esquema"*.
+
+Usarlo son cuatro líneas, con la misma API de tareas de KerasHub que ya se usó
+para SAM:
+
+```python
+detector = keras_hub.models.ObjectDetector.from_preset(
+    "retinanet_resnet50_fpn_v2_coco",
+    bounding_box_format="rel_xywh",
+)
+predictions = detector.predict(image)
+```
+
+Devuelve `boxes`, `confidence`, `labels` y `num_detections` — hasta **100 objetos
+por imagen**.
+
+<Note type="tip" title="El test que cierra la sección de visión">
+En vez de una foto, el libro le pasa un cuadro puntillista: *Un domingo en la
+Grande Jatte* de Seurat. Y el modelo encuentra a las figuras.
+
+*"RetinaNet **generaliza a una pintura puntillista con facilidad**, ¡pese a no
+haber sido entrenado con este estilo! Esto es en realidad **una ventaja de los
+detectores de una etapa**. Pinturas y fotografías son muy distintas a nivel de
+píxel pero **comparten una estructura similar a alto nivel**. Los detectores de dos
+etapas, en cambio, están obligados a **clasificar parches pequeños en
+aislamiento**, lo que es especialmente difícil cuando esos parches se ven muy
+distintos de los datos de entrenamiento. **Los de una etapa pueden apoyarse en
+features de la entrada completa y son más robustos a entradas novedosas.**"*
+
+Es un argumento que no aparece cuando la comparación se plantea solo como
+"velocidad contra precisión": **una etapa también generaliza mejor fuera de
+distribución**, y por una razón estructural.
+</Note>
+
+## Para recordar
+
+- **La segmentación es superconjunto de la detección**, pero cuesta más cómputo
+  **y** más etiquetado. Si no necesitas el píxel, no lo pidas.
+- **Dos etapas** = propuestas + clasificar miles de parches por imagen. **Una
+  etapa** = caja y etiqueta de un golpe.
+- **La grilla reparte responsabilidad por el centro de la caja**, y cada celda
+  emite `(x, y, w, h, confidence)` más un softmax de 91 clases: 96 números.
+- El `Flatten` antes de la densa **elimina a propósito la restricción de
+  localidad** — los objetos grandes no caben en una celda.
+- **El target de confianza es el IoU actual**, no una constante: sube solo a
+  medida que el modelo mejora.
+- **Tres escalados en la pérdida**: ×5 la ubicación, ×0,5 las celdas vacías, y raíz
+  cuadrada con signo de `w` y `h`.
+- La **feature pyramid network** re-expande y **suma lateralmente** con los mapas
+  del mismo tamaño: semántica del final, resolución del comienzo.
+- Los detectores de una etapa **generalizan mejor fuera de distribución** porque
+  ven la imagen entera en vez de parches aislados.
+
+Con esto termina la sección de visión: clasificadores, segmentadores y detectores,
+todos entrenados desde cero. El **capítulo 13** cambia de tipo de dato y arranca
+con series de tiempo — donde, por primera vez en el libro, **un baseline de una
+línea le va a ganar a casi todo**.

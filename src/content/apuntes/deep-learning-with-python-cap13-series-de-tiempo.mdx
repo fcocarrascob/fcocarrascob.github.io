@@ -1,0 +1,313 @@
+---
+title: "El baseline de una línea que casi nadie logra superar"
+description: "El capítulo 13 usa una sola tarea —predecir la temperatura a 24 horas— y le tira encima seis modelos. La heurística de sentido común (la temperatura de mañana será la de hoy) da 2,44 °C de error y la red densa no la supera; la ConvNet 1D empeora las cosas. De ahí sale el mejor argumento del libro: que una solución exista en tu espacio de hipótesis no significa que el descenso de gradiente vaya a encontrarla, y por eso los priors arquitectónicos deciden. Después: la RNN como un bucle for con estado, el LSTM como una cinta transportadora, y el recurrent dropout que no puede usar la máscara de siempre. Apuntes del Cap. 13."
+pubDate: 2026-07-26
+tags: ["deep learning", "chollet", "series de tiempo", "rnn", "lstm", "gru", "baseline", "keras"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 13 — Pronóstico de series de tiempo"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 13 (PDF 375–404)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Después de vectores e imágenes, el tercer tipo de dato: **series de tiempo, donde
+el orden temporal lo es todo**.
+
+> *"A diferencia de los tipos de datos que has encontrado hasta ahora, trabajar con
+> series de tiempo implica **entender la dinámica de un sistema**: sus ciclos
+> periódicos, cómo tiende a lo largo del tiempo, su régimen regular y sus picos
+> súbitos."*
+
+La tarea del capítulo es una sola: **predecir la temperatura dentro de 24 horas**,
+dados cinco días de mediciones horarias de 14 variables meteorológicas de la
+estación de Jena — 420 551 registros cada 10 minutos entre 2009 y 2016. Y el
+capítulo entero consiste en tirarle seis modelos encima.
+
+## 1. Antes de modelar: dos decisiones que ya son la mitad del trabajo
+
+**El split no se baraja.**
+
+> *"Al trabajar con series de tiempo es importante usar datos de validación y test
+> **más recientes** que los de entrenamiento, porque estás tratando de **predecir el
+> futuro dado el pasado, no al revés**. **¡Algunos problemas resultan
+> considerablemente más simples si inviertes el eje del tiempo!**"*
+
+50 % / 25 % / 25 %, en orden cronológico. Y la normalización usa **media y
+desviación solo de los 210 225 timesteps de entrenamiento** — si usara todo, el
+futuro se filtraría en la escala.
+
+**Las muestras no se guardan.** Las ventanas se solapan casi por completo, así que
+materializarlas sería un derroche de memoria. `keras.utils.timeseries_dataset_from_array()`
+las genera al vuelo. Los tres parámetros codifican literalmente el enunciado:
+
+| Parámetro | Valor | Qué dice |
+|---|---|---|
+| `sampling_rate = 6` | 1 de cada 6 | un punto por hora |
+| `sequence_length = 120` | 120 horas | la entrada cubre **cinco días** |
+| `delay = 6 * (120 + 24 - 1)` | | el objetivo es la temperatura **24 h después del final** |
+
+## 2. El baseline, y por qué es el protagonista
+
+Antes de tocar deep learning: la serie es continua y tiene período diario, así que
+**la temperatura en 24 horas será igual a la de ahora**.
+
+**Val MAE 2,44 °C. Test MAE 2,62 °C.** *"Si siempre asumes eso, te vas a equivocar
+en dos grados y medio en promedio. No está tan mal, pero probablemente no lances un
+servicio meteorológico con esa heurística."*
+
+Entonces entra el deep learning. Un `Flatten` y dos `Dense`. Y no gana: *"algunas
+de las pérdidas de validación se acercan al baseline, pero **no de forma
+confiable**"*.
+
+<Note type="warning" title="El argumento central del capítulo">
+*"Podrías preguntarte: si existe un modelo simple y con buen desempeño que va de
+los datos a los objetivos, **¿por qué el modelo que estás entrenando no lo
+encuentra y lo mejora?** El espacio de modelos en el que estás buscando —tu espacio
+de hipótesis— es el espacio de todas las redes de dos capas con la configuración
+que definiste. **La heurística de sentido común es solo un modelo entre millones**
+que pueden representarse ahí. Es como buscar una aguja en un pajar. **Que una buena
+solución exista técnicamente en tu espacio de hipótesis no significa que vayas a
+poder encontrarla por descenso de gradiente.**"*
+
+*"Esa es una limitación bastante significativa del machine learning en general: **a
+menos que el algoritmo esté hardcodeado para buscar un tipo específico de modelo
+simple, a veces puede fallar en encontrar una solución simple a un problema
+simple.** Por eso el buen feature engineering y los **priors arquitectónicos**
+relevantes son esenciales: **necesitas decirle con precisión a tu modelo qué debe
+estar buscando.**"*
+</Note>
+
+Y todo lo que sigue es la aplicación de esa frase.
+
+## 3. La ConvNet 1D falla, y falla informativamente
+
+*"Hablando de priors: como nuestras secuencias tienen ciclos diarios, ¿tal vez un
+modelo convolucional funcione?"* Ventana inicial de 24 (un ciclo), y se reduce al
+submuestrear.
+
+**Val MAE ≈ 2,9 °C. Peor que la red densa, y muy lejos del baseline.** Dos razones,
+y ambas son sobre supuestos:
+
+1. *"Los datos meteorológicos **no respetan del todo el supuesto de invarianza a la
+   traslación**. Si bien tienen ciclos diarios, **los datos de una mañana tienen
+   propiedades distintas a los de una tarde o los de la mitad de la noche**. Solo
+   son invariantes para una escala de tiempo muy específica."*
+2. *"**El orden importa — y mucho.** El pasado reciente es muchísimo más informativo
+   que los datos de hace cinco días. Una ConvNet 1D no puede aprovechar eso. En
+   particular, **el max pooling y el global average pooling están destruyendo en
+   gran medida la información de orden.**"*
+
+Nótese la simetría con el capítulo 11: allí el pooling era malo porque destruía la
+**ubicación espacial**; aquí es malo porque destruye el **orden temporal**. Es la
+misma operación con la misma pérdida, medida en otro eje.
+
+## 4. Tres líneas de LSTM, y recién ahí
+
+```python
+x = layers.LSTM(16)(inputs)
+```
+
+**Val MAE 2,39 °C. Test 2,55 °C.** *"El modelo basado en LSTM finalmente puede
+superar el baseline (aunque apenas, por ahora), demostrando el valor del machine
+learning en esta tarea."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/jena-seis-modelos.svg"
+  alt="Gráfico de barras horizontales comparando seis modelos sobre el problema de Jena, con el MAE de validación en grados Celsius (menos es mejor). Una línea roja vertical punteada marca el baseline de sentido común en 2,44 °C. De arriba abajo: baseline de sentido común 2,44 (barra roja); red densa con Flatten y Dense, barra gris punteada que llega aproximadamente al baseline con la nota 'no de forma confiable'; ConvNet 1D con la barra más larga, cerca de 2,9, claramente peor; LSTM de 16 unidades en 2,39, apenas cruzando la línea; LSTM de 32 unidades con recurrent dropout en 2,27, la barra más corta y en verde, marcada como el mejor con +7 % sobre el baseline; GRU apilado con dropout, test 2,39 con +8,8 % sobre el baseline en test; y LSTM bidireccional, sin barra, con la nota de que es peor que el LSTM simple porque la mitad anticronológica no aporta y duplica la capacidad. Al pie: mejorar el baseline en un 10 % es el techo del dataset, porque con una sola estación el clima de mañana depende de lo que pasa en las estaciones vecinas."
+  caption="Seis intentos y una línea roja. Los dos modelos que no la cruzan son los que destruyen el orden; los que la cruzan son los que lo respetan."
+  width={800}
+/>
+
+**¿Qué es una RNN?** El libro la desarma hasta que no queda nada misterioso.
+
+> *"Una característica principal de todas las redes que has visto es que **no tienen
+> memoria**. Cada entrada se procesa independientemente. Para procesar una secuencia
+> tienes que mostrársela entera de una vez: convertirla en un solo punto de datos.
+> Eso hicimos con la densa. Estas redes se llaman **feedforward**."*
+>
+> *"En contraste, mientras lees esta frase la estás procesando **palabra por
+> palabra** —o más bien, sacada de ojo por sacada de ojo— **mientras mantienes
+> memorias de lo que vino antes**."*
+
+Y el mecanismo, completo:
+
+```python
+state_t = 0
+for input_t in input_sequence:
+    output_t = tanh(dot(W, input_t) + dot(U, state_t) + b)
+    state_t = output_t
+```
+
+> *"Bastante simple: en resumen, **una RNN es un bucle `for` que reutiliza
+> cantidades computadas durante la iteración anterior, nada más**."*
+
+`return_sequences` es el argumento que hay que tener claro: devolver **la secuencia
+completa** de salidas o **solo la última** (el default). Al apilar capas
+recurrentes, todas las intermedias deben devolver la secuencia completa.
+
+Pero `SimpleRNN` no se usa: *"aunque teóricamente debería poder retener información
+de muchos timesteps antes, en la práctica **esas dependencias de largo plazo
+resultan imposibles de aprender**, por el problema del **vanishing gradient**"*.
+
+## 5. La cinta transportadora
+
+> *"El LSTM agrega una manera de transportar información a través de muchos
+> timesteps. **Imagina una cinta transportadora corriendo paralela a la secuencia
+> que estás procesando. La información puede subirse a la cinta en cualquier punto,
+> ser transportada a un timestep posterior, y bajarse intacta cuando la
+> necesites.** […] **Esto debería recordarte las conexiones residuales del capítulo
+> 9: es prácticamente la misma idea.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/lstm-cinta.svg"
+  alt="Diagrama del LSTM desenrollado en el tiempo. En la parte superior, una banda celeste horizontal rotulada 'carry track' recorre todo el ancho con los valores c t-1, c t y c t+1 conectados por flechas. Debajo, tres celdas (t-1, t y t+1), con la del centro destacada en azul; entre ellas, flechas rotuladas 'state'. Cada celda recibe su input desde abajo (input t-1, input t, input t+1) y emite su output hacia arriba. Dos flechas punteadas celestes conectan la cinta con la celda central: una baja rotulada 'Vo · c_t entra al output' y otra sube rotulada 'i_t, f_t, k_t actualizan la cinta'. Abajo, en un recuadro, la fórmula c_t+1 = i_t * k_t + c_t * f_t. Al pie, una advertencia: podrías leer c_t * f_t como olvidar lo irrelevante e i_t * k_t como aportar lo nuevo, pero Chollet advierte que esa lectura no significa gran cosa, porque lo que hacen esas operaciones lo deciden los pesos, que se aprenden de cero; la celda acota la búsqueda, no es un diseño en sentido ingenieril."
+  caption="La mecánica cabe en una línea. Lo que el libro insiste en que no hagas es leerle intenciones."
+  width={800}
+/>
+
+Y ese último punto es el párrafo que más se salta y más importa:
+
+<Note type="warning" title="No le atribuyas propósito a las compuertas">
+*"Puedes decir que multiplicar `c_t` por `f_t` es una manera de **olvidar
+deliberadamente** información irrelevante, mientras que `i_t` y `k_t` aportan
+información sobre el presente. **Pero al final del día estas interpretaciones no
+significan gran cosa, porque lo que estas operaciones realmente hacen está
+determinado por el contenido de los pesos, y los pesos se aprenden end-to-end
+empezando de cero en cada corrida, lo que hace imposible acreditar a esta o aquella
+operación un propósito específico. La especificación de una celda RNN determina tu
+espacio de hipótesis —el espacio en el que buscarás— pero no determina qué hace la
+celda; eso depende de sus pesos. La misma celda con pesos distintos puede estar
+haciendo cosas muy distintas. Así que la combinación de operaciones que forma una
+celda RNN se interpreta mejor como un conjunto de restricciones sobre tu búsqueda,
+no como un diseño en sentido ingenieril.**"*
+
+*"**En resumen, no necesitas entender nada sobre la arquitectura específica de una
+celda LSTM; como humano, no debería ser tu trabajo entenderla.** Solo ten en mente
+lo que está pensada para hacer: permitir que información pasada sea reinyectada más
+tarde, combatiendo el vanishing gradient."*
+</Note>
+
+## 6. Recurrent dropout: la máscara que no puede cambiar
+
+El LSTM overfittea rápido. Pero el dropout de siempre no sirve aquí:
+
+> *"Se sabe desde hace tiempo que aplicar dropout **antes** de una capa recurrente
+> **entorpece el aprendizaje** en vez de ayudar. En 2015, Yarin Gal determinó la
+> forma correcta: **la misma máscara de dropout debe aplicarse en cada timestep**,
+> en vez de una que varía aleatoriamente. […] **Usar la misma máscara en cada
+> timestep permite a la red propagar correctamente su error de aprendizaje a través
+> del tiempo; una máscara temporalmente aleatoria interrumpiría esa señal de error y
+> sería dañina.**"*
+
+Gal hizo esa investigación **con Keras** y ayudó a construir el mecanismo en las
+capas recurrentes. De ahí los dos argumentos separados: `dropout` para las entradas
+y `recurrent_dropout` para las activaciones recurrentes internas.
+
+```python
+x = layers.LSTM(32, recurrent_dropout=0.25)(inputs)
+x = layers.Dropout(0.5)(x)
+```
+
+**50 épocas** —*"las redes regularizadas con dropout siempre tardan mucho más en
+converger"*— y **val MAE 2,27 °C, test 2,45 °C**: +7 % sobre el baseline.
+
+<Note type="tip" title="El costo escondido del recurrent dropout">
+*"Al usar una capa LSTM o GRU en GPU con argumentos por defecto, tu capa usará un
+**kernel cuDNN**, una implementación de bajo nivel altamente optimizada de NVIDIA.
+Como siempre, son una bendición mixta: rápidos pero **inflexibles**. **El recurrent
+dropout no está soportado por los kernels cuDNN, así que agregarlo fuerza al
+runtime a caer de vuelta a la implementación regular de TensorFlow, generalmente
+dos a cinco veces más lenta en GPU** — aunque su costo computacional sea el mismo."*
+
+Y un dato que sorprende: *"los modelos recurrentes con muy pocos parámetros tienden
+a ser **significativamente más rápidos en una CPU multinúcleo que en GPU**, porque
+solo involucran multiplicaciones de matrices pequeñas, y la cadena **no es bien
+paralelizable por la presencia de un bucle `for`**."*
+</Note>
+
+Apilar dos GRU con dropout lleva el test a **2,39 °C (+8,8 %)** — *"mejora un poco,
+aunque no dramáticamente. Puede que estés viendo **rendimientos decrecientes**"*.
+
+## 7. La bidireccionalidad que falla (y por qué eso enseña)
+
+Antes de probarla, el libro se pregunta si el orden cronológico fue una decisión
+arbitraria. Invierte las secuencias y entrena: **el LSTM invertido rinde muy por
+debajo del baseline**.
+
+> *"Tiene todo el sentido: la capa LSTM típicamente será mejor recordando el pasado
+> reciente que el distante y, naturalmente, los datos meteorológicos más recientes
+> son más predictivos (eso es justo lo que hace fuerte al baseline)."*
+>
+> *"Sin embargo, esto no es cierto para muchos otros problemas, incluido el lenguaje
+> natural: **la importancia de una palabra para entender una frase no depende
+> fuertemente de su posición**. Sobre texto, el procesamiento invertido funciona
+> igual de bien — puedes leer texto al revés perfectamente (¡pruébalo!)."*
+>
+> *"Y esto es lo importante: **una RNN entrenada sobre secuencias invertidas
+> aprenderá representaciones distintas**, tal como tendrías modelos mentales
+> distintos si el tiempo fluyera al revés — si vivieras una vida donde mueres el
+> primer día y naces el último. En machine learning, **las representaciones que son
+> distintas pero útiles siempre vale la pena explotarlas, y cuanto más difieran,
+> mejor**. Esta es la intuición detrás del **ensembling**."*
+
+Sobre Jena, `Bidirectional(LSTM(16))` **rinde peor** que el LSTM simple: *"toda la
+capacidad predictiva debe venir de la mitad cronológica, y **la presencia de la
+anticronológica duplica la capacidad de la red y la hace empezar a overfittear
+mucho antes**"*.
+
+Pero *"por un tiempo en 2016 **los LSTM bidireccionales se consideraron el estado
+del arte en muchas tareas de NLP**"*. El mismo componente, veredicto opuesto, según
+si el orden que uses importa o no. El capítulo siguiente lo va a usar.
+
+## 8. El techo, y una advertencia sobre mercados
+
+> *"En nuestra experiencia, **mejorar el baseline en un 10 % es probablemente lo
+> mejor que puedes hacer con este dataset**. No es tan bueno, pero tiene sentido:
+> **si bien el clima cercano es altamente predecible cuando tienes datos de una
+> grilla amplia de ubicaciones, no es muy predecible si solo tienes mediciones de
+> una sola ubicación.** La evolución del clima donde estás depende de los patrones
+> en las ubicaciones circundantes."*
+
+Y el recuadro que conviene leer entero antes de que se le ocurra a nadie:
+
+<Note type="warning" title="Mercados y machine learning">
+*"Algunos lectores van a querer tomar estas técnicas y probarlas para pronosticar
+el precio futuro de valores en el mercado. Pero **los mercados tienen
+características estadísticas muy distintas a fenómenos naturales como el clima.
+Cuando se trata de mercados, el desempeño pasado no es un buen predictor de los
+retornos futuros — mirar por el espejo retrovisor es una mala manera de manejar.**
+El machine learning es aplicable a datasets donde el pasado **sí** predice el
+futuro: clima, consumo eléctrico, flujo de gente en una tienda."*
+
+*"Recuerda siempre que **todo trading es fundamentalmente arbitraje de
+información**: obtener una ventaja usando datos o insights que otros participantes
+no tienen. **Tratar de usar técnicas conocidas y datos públicos para ganarle al
+mercado es efectivamente un callejón sin salida, ya que no tendrás ninguna ventaja
+de información frente a todos los demás.**"*
+</Note>
+
+## Para recordar
+
+- **Calcula el baseline de sentido común primero.** Aquí son 2,44 °C, y la mitad de
+  los modelos del capítulo no lo superan.
+- **Que la solución exista en tu espacio de hipótesis no implica que el gradiente la
+  encuentre.** Por eso los priors arquitectónicos deciden.
+- **La densa aplana el tiempo; la ConvNet 1D lo desordena con pooling.** Ambas
+  destruyen exactamente lo que la tarea necesita.
+- **Una RNN es un bucle `for` con estado**, y `return_sequences` controla si
+  devuelve todos los pasos o solo el último.
+- **El LSTM es una cinta transportadora paralela a la secuencia** — la misma idea
+  que las conexiones residuales.
+- **No le atribuyas propósitos a las compuertas.** La celda acota la búsqueda; los
+  pesos deciden qué hace.
+- **Recurrent dropout = la misma máscara en cada timestep**, y cuesta el kernel
+  cuDNN (2–5× más lento en GPU).
+- **La bidireccionalidad falla aquí y brilla en texto**, y la razón está en si el
+  orden que uses importa o solo importa que haya orden.
+- **El split de una serie de tiempo nunca se baraja**, y la normalización se calcula
+  solo sobre el tramo de entrenamiento.
+
+El **capítulo 14** abre la sección de texto, y reutiliza el LSTM bidireccional —
+esta vez sí, del lado correcto de la línea. Aunque lo va a superar un modelo de
+30 001 parámetros que ignora el orden por completo.

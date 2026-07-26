@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="800" height="420" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Seis modelos sobre el mismo problema, y una línea que casi nadie cruza</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Predecir la temperatura a 24 horas en Jena. MAE de validación en °C — menos es mejor</text>
+
+  <!-- axis -->
+  <line x1="250" y1="76" x2="250" y2="356" stroke="#d1d5db" stroke-width="1"/>
+  <line x1="250" y1="356" x2="760" y2="356" stroke="#d1d5db" stroke-width="1"/>
+
+  <!-- baseline vertical reference at 2.44 -->
+  <!-- scale: 2.0 -> x=250, 3.0 -> x=760  =>  510 px per 1.0 °C -->
+  <line x1="474" y1="70" x2="474" y2="360" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="5 4"/>
+  <text x="478" y="70" font-size="10.5" font-weight="700" fill="#b91c1c">baseline 2,44 °C</text>
+
+  <!-- ticks -->
+  <text x="250" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">2,0</text>
+  <text x="352" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">2,2</text>
+  <text x="454" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">2,4</text>
+  <text x="556" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">2,6</text>
+  <text x="658" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">2,8</text>
+  <text x="760" y="374" text-anchor="middle" font-size="10" fill="#9ca3af">3,0</text>
+
+  <!-- rows: y positions -->
+  <!-- 1. baseline 2.44 -->
+  <text x="242" y="102" text-anchor="end" font-size="11" font-weight="700" fill="#b91c1c">Baseline de sentido común</text>
+  <rect x="250" y="88" width="224" height="20" fill="#fecaca" stroke="#dc2626"/>
+  <text x="482" y="103" font-size="10.5" font-weight="700" fill="#b91c1c">2,44</text>
+
+  <!-- 2. dense ~ 2.45 (approx / unreliable) -->
+  <text x="242" y="146" text-anchor="end" font-size="11" fill="#374151">Red densa (Flatten + Dense)</text>
+  <rect x="250" y="132" width="232" height="20" fill="#f3f4f6" stroke="#9ca3af" stroke-dasharray="4 3"/>
+  <text x="490" y="147" font-size="10.5" fill="#6b7280">≈ baseline, pero no de forma confiable</text>
+
+  <!-- 3. conv1d 2.9 -->
+  <text x="242" y="190" text-anchor="end" font-size="11" fill="#374151">ConvNet 1D</text>
+  <rect x="250" y="176" width="459" height="20" fill="#fee2e2" stroke="#f87171"/>
+  <text x="717" y="191" font-size="10.5" font-weight="700" fill="#b91c1c">≈ 2,9</text>
+
+  <!-- 4. LSTM 2.39 -->
+  <text x="242" y="234" text-anchor="end" font-size="11" fill="#374151">LSTM (16 unidades)</text>
+  <rect x="250" y="220" width="199" height="20" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="482" y="235" font-size="10.5" font-weight="700" fill="#1e3a8a">2,39</text>
+
+  <!-- 5. LSTM + recurrent dropout 2.27 -->
+  <text x="242" y="278" text-anchor="end" font-size="11" font-weight="700" fill="#166534">LSTM(32) + recurrent dropout</text>
+  <rect x="250" y="264" width="138" height="20" fill="#bbf7d0" stroke="#16a34a"/>
+  <text x="396" y="279" font-size="10.5" font-weight="700" fill="#166534">2,27 — el mejor (+7 % sobre el baseline)</text>
+
+  <!-- 6. GRU stacked -> test 2.39 -->
+  <text x="242" y="322" text-anchor="end" font-size="11" fill="#374151">GRU apilado + dropout</text>
+  <rect x="250" y="308" width="199" height="20" fill="#d1fae5" stroke="#059669"/>
+  <text x="482" y="323" font-size="10.5" fill="#065f46">test 2,39 — +8,8 % sobre el baseline en test</text>
+
+  <!-- 7. bidireccional -->
+  <text x="242" y="352" text-anchor="end" font-size="11" fill="#374151">LSTM bidireccional</text>
+  <text x="256" y="352" font-size="10.5" fill="#b91c1c">peor que el LSTM simple — la mitad anticronológica no aporta y duplica la capacidad</text>
+
+  <!-- footer note -->
+  <rect x="20" y="386" width="760" height="26" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="400" y="404" text-anchor="middle" font-size="10.5" fill="#374151">Mejorar el baseline en un <tspan font-weight="700">10 %</tspan> es el techo del dataset: con una sola estación, el clima de mañana depende de lo que pasa en las estaciones vecinas.</text>
+</svg>

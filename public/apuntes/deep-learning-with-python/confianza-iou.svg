@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ci-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="ci-gr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="780" height="400" fill="#ffffff"/>
+
+  <text x="390" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">El objetivo de la confianza no es una constante: es el IoU actual</text>
+  <text x="390" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Un target que se mueve con el propio modelo, y que hace subir a los dos juntos</text>
+
+  <!-- left: what IoU is -->
+  <rect x="20" y="70" width="290" height="200" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="165" y="93" text-anchor="middle" font-size="11.5" font-weight="700" fill="#374151">IoU: cuánto calzan las dos cajas</text>
+
+  <rect x="72" y="110" width="110" height="80" fill="none" stroke="#16a34a" stroke-width="2"/>
+  <text x="76" y="106" font-size="10" font-weight="700" fill="#16a34a">caja real</text>
+  <rect x="130" y="140" width="110" height="80" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="196" y="236" font-size="10" font-weight="700" fill="#2563eb">predicha</text>
+  <rect x="130" y="140" width="52" height="50" fill="#bfdbfe" fill-opacity="0.75" stroke="none"/>
+  <text x="156" y="170" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1e3a8a">∩</text>
+
+  <text x="165" y="256" text-anchor="middle" font-size="11" fill="#374151">IoU = intersección ÷ unión — de <tspan font-weight="700">0</tspan> a <tspan font-weight="700">1</tspan></text>
+
+  <!-- right: the loop -->
+  <rect x="330" y="70" width="430" height="200" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="545" y="93" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">El bucle que se retroalimenta</text>
+
+  <rect x="360" y="108" width="150" height="46" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="435" y="128" text-anchor="middle" font-size="10.5" fill="#1e3a8a">El modelo mejora</text>
+  <text x="435" y="144" text-anchor="middle" font-size="10.5" fill="#1e3a8a">dónde pone la caja</text>
+
+  <line x1="514" y1="131" x2="574" y2="131" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ci-ar)"/>
+
+  <rect x="578" y="108" width="150" height="46" rx="6" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="653" y="128" text-anchor="middle" font-size="10.5" fill="#1e3a8a">Sube el IoU entre</text>
+  <text x="653" y="144" text-anchor="middle" font-size="10.5" fill="#1e3a8a">predicha y real</text>
+
+  <path d="M728,131 L744,131 L744,186 L595,186" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ci-ar)"/>
+
+  <rect x="360" y="166" width="230" height="42" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="475" y="184" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e3a8a">…y con él sube el target de confianza,</text>
+  <text x="475" y="200" text-anchor="middle" font-size="10.5" fill="#1e3a8a">porque el target <tspan font-weight="700">es</tspan> el IoU</text>
+
+  <path d="M360,187 L346,187 L346,131 L356,131" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ci-ar)"/>
+
+  <text x="545" y="234" text-anchor="middle" font-size="10.5" fill="#374151">La confianza aprende a decir <tspan font-weight="700">no solo si hay un objeto</tspan>,</text>
+  <text x="545" y="252" text-anchor="middle" font-size="10.5" fill="#374151">sino <tspan font-weight="700">qué tan buena es la caja</tspan> que acaba de dibujar.</text>
+
+  <!-- bottom: the three tricks -->
+  <text x="390" y="298" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Y los tres trucos de escalado que Redmon et al. le agregan a la pérdida</text>
+
+  <rect x="20" y="312" width="240" height="76" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="140" y="334" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">× 5 a la ubicación</text>
+  <text x="140" y="354" text-anchor="middle" font-size="10.5" fill="#374151">Para que colocar bien la caja</text>
+  <text x="140" y="370" text-anchor="middle" font-size="10.5" fill="#374151">pese más en el entrenamiento</text>
+
+  <rect x="270" y="312" width="240" height="76" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="390" y="334" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">× 0,5 a las celdas vacías</text>
+  <text x="390" y="354" text-anchor="middle" font-size="10.5" fill="#374151">Casi todas lo están: si no,</text>
+  <text x="390" y="370" text-anchor="middle" font-size="10.5" fill="#374151">los ceros abruman la pérdida</text>
+
+  <rect x="520" y="312" width="240" height="76" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="640" y="334" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">raíz de w y h (con signo)</text>
+  <text x="640" y="354" text-anchor="middle" font-size="10.5" fill="#374151">Iguala cajas grandes y chicas.</text>
+  <text x="640" y="370" text-anchor="middle" font-size="10.5" fill="#374151">Con signo, porque al inicio el</text>
+  <text x="640" y="384" text-anchor="middle" font-size="10.5" fill="#374151">modelo predice tamaños negativos</text>
+</svg>

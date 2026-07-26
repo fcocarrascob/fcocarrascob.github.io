@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="yo-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="800" height="420" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">De dónde sale cada número que emite YOLO</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Una grilla de 6 × 6, y en cada celda 5 números para la caja y 91 para la clase</text>
+
+  <!-- pipeline -->
+  <rect x="20" y="72" width="104" height="70" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="72" y="98" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">Imagen</text>
+  <text x="72" y="115" text-anchor="middle" font-size="10.5" fill="#6b7280">448 × 448 × 3</text>
+  <text x="72" y="131" text-anchor="middle" font-size="9.5" fill="#9ca3af">el tamaño importa</text>
+
+  <line x1="128" y1="107" x2="156" y2="107" stroke="#9ca3af" stroke-width="1.8" marker-end="url(#yo-ar)"/>
+
+  <rect x="160" y="72" width="130" height="70" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="225" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">ResNet-50</text>
+  <text x="225" y="111" text-anchor="middle" font-size="10.5" fill="#374151">14 × 14 × 2048</text>
+  <text x="225" y="129" text-anchor="middle" font-size="10" font-weight="700" fill="#b91c1c">401 408 floats</text>
+
+  <line x1="294" y1="107" x2="322" y2="107" stroke="#9ca3af" stroke-width="1.8" marker-end="url(#yo-ar)"/>
+
+  <rect x="326" y="72" width="140" height="70" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="396" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">Conv2D strides=2</text>
+  <text x="396" y="111" text-anchor="middle" font-size="10.5" fill="#374151">6 × 6 × 512</text>
+  <text x="396" y="129" text-anchor="middle" font-size="10" font-weight="700" fill="#047857">18 432 floats</text>
+
+  <line x1="470" y1="107" x2="498" y2="107" stroke="#9ca3af" stroke-width="1.8" marker-end="url(#yo-ar)"/>
+
+  <rect x="502" y="72" width="140" height="70" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="572" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">Flatten → Dense</text>
+  <text x="572" y="111" text-anchor="middle" font-size="10.5" fill="#6b7280">2048 → dropout</text>
+  <text x="572" y="128" text-anchor="middle" font-size="10.5" fill="#6b7280">→ 3456</text>
+
+  <line x1="646" y1="107" x2="674" y2="107" stroke="#9ca3af" stroke-width="1.8" marker-end="url(#yo-ar)"/>
+
+  <rect x="678" y="72" width="104" height="70" rx="6" fill="#fef3c7" stroke="#fcd34d"/>
+  <text x="730" y="98" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">Reshape</text>
+  <text x="730" y="118" text-anchor="middle" font-size="11" fill="#92400e">6 × 6 × 96</text>
+
+  <text x="400" y="164" text-anchor="middle" font-size="10.5" fill="#6b7280">El <tspan font-weight="700">Flatten</tspan> aplana el mapa entero antes de la densa: cada celda de la grilla ve la imagen completa. No hay restricción de localidad — y es a propósito.</text>
+
+  <!-- grid -->
+  <text x="150" y="200" text-anchor="middle" font-size="11.5" font-weight="700" fill="#374151">La grilla 6 × 6</text>
+  <g stroke="#d1d5db" fill="#ffffff">
+    <rect x="60" y="212" width="30" height="30"/><rect x="90" y="212" width="30" height="30"/><rect x="120" y="212" width="30" height="30"/><rect x="150" y="212" width="30" height="30"/><rect x="180" y="212" width="30" height="30"/><rect x="210" y="212" width="30" height="30"/>
+    <rect x="60" y="242" width="30" height="30"/><rect x="90" y="242" width="30" height="30"/><rect x="120" y="242" width="30" height="30"/><rect x="150" y="242" width="30" height="30"/><rect x="180" y="242" width="30" height="30"/><rect x="210" y="242" width="30" height="30"/>
+    <rect x="60" y="272" width="30" height="30"/><rect x="90" y="272" width="30" height="30"/><rect x="120" y="272" width="30" height="30"/><rect x="150" y="272" width="30" height="30"/><rect x="180" y="272" width="30" height="30"/><rect x="210" y="272" width="30" height="30"/>
+    <rect x="60" y="302" width="30" height="30"/><rect x="90" y="302" width="30" height="30"/><rect x="120" y="302" width="30" height="30"/><rect x="150" y="302" width="30" height="30"/><rect x="180" y="302" width="30" height="30"/><rect x="210" y="302" width="30" height="30"/>
+    <rect x="60" y="332" width="30" height="30"/><rect x="90" y="332" width="30" height="30"/><rect x="120" y="332" width="30" height="30"/><rect x="150" y="332" width="30" height="30"/><rect x="180" y="332" width="30" height="30"/><rect x="210" y="332" width="30" height="30"/>
+    <rect x="60" y="362" width="30" height="30"/><rect x="90" y="362" width="30" height="30"/><rect x="120" y="362" width="30" height="30"/><rect x="150" y="362" width="30" height="30"/><rect x="180" y="362" width="30" height="30"/><rect x="210" y="362" width="30" height="30"/>
+  </g>
+  <rect x="120" y="272" width="30" height="30" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>
+  <rect x="103" y="255" width="94" height="70" fill="none" stroke="#ea580c" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="150" y="410" text-anchor="middle" font-size="10" fill="#6b7280">La celda naranja es la responsable: <tspan font-weight="700" fill="#c2410c">el centro de la caja cae dentro de ella</tspan></text>
+
+  <!-- the 96 numbers -->
+  <rect x="290" y="196" width="230" height="196" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="405" y="218" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">Los 5 primeros: la caja</text>
+  <text x="405" y="240" text-anchor="middle" font-size="11" fill="#374151"><tspan font-weight="700">x, y</tspan> — centro relativo a la CELDA (0 a 1)</text>
+  <text x="405" y="258" text-anchor="middle" font-size="11" fill="#374151"><tspan font-weight="700">w, h</tspan> — tamaño relativo a la IMAGEN</text>
+  <text x="405" y="276" text-anchor="middle" font-size="11" fill="#374151"><tspan font-weight="700">confidence</tspan> — ¿hay algo acá?</text>
+  <line x1="310" y1="292" x2="500" y2="292" stroke="#fed7aa" stroke-width="1.5"/>
+  <text x="405" y="314" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">Los 91 restantes: la clase</text>
+  <text x="405" y="334" text-anchor="middle" font-size="11" fill="#374151">un softmax sobre las 91 etiquetas</text>
+  <text x="405" y="352" text-anchor="middle" font-size="11" fill="#374151">de COCO, por cada posición</text>
+  <text x="405" y="378" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">5 + 91 = 96 números por celda</text>
+
+  <!-- targets -->
+  <rect x="540" y="196" width="242" height="196" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="661" y="218" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">Qué dicen las etiquetas</text>
+  <text x="661" y="242" text-anchor="middle" font-size="11" fill="#374151">Confianza = <tspan font-weight="700">1</tspan> donde hay caja real</text>
+  <text x="661" y="260" text-anchor="middle" font-size="11" fill="#374151">Confianza = <tspan font-weight="700">0</tspan> en las otras 35 celdas</text>
+  <line x1="560" y1="278" x2="762" y2="278" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="661" y="300" text-anchor="middle" font-size="11" fill="#374151">Como casi todas las celdas están</text>
+  <text x="661" y="317" text-anchor="middle" font-size="11" fill="#374151">vacías, la pérdida de esas confianzas</text>
+  <text x="661" y="334" text-anchor="middle" font-size="11" fill="#374151">cero <tspan font-weight="700">se escala × 0,5</tspan> para que no</text>
+  <text x="661" y="351" text-anchor="middle" font-size="11" fill="#374151">abrume a todo lo demás.</text>
+  <text x="661" y="378" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">Total del modelo: 77 850 336 parámetros</text>
+</svg>
