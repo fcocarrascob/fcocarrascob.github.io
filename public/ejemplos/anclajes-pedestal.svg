@@ -86,21 +86,21 @@
   <line x1="573" y1="95" x2="577" y2="95" stroke="#888"/>
   <text x="568" y="99" font-size="8" text-anchor="end" fill="#888">1.0</text>
 
-  <!-- punto (0.58, 0.56) -->
-  <circle cx="662" cy="157" r="4.5" fill="#c0392b"/>
-  <line x1="575" y1="157" x2="662" y2="157" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
-  <line x1="662" y1="235" x2="662" y2="157" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
-  <text x="672" y="150" font-size="10" fill="#c0392b" font-weight="bold">(0.58, 0.56)</text>
-  <text x="672" y="163" font-size="9.5" fill="#c0392b">0.40 + 0.38 = 0.78 ≤ 1 ✓</text>
+  <!-- punto (0.57, 0.55) -->
+  <circle cx="660.5" cy="158" r="4.5" fill="#c0392b"/>
+  <line x1="575" y1="158" x2="660.5" y2="158" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
+  <line x1="660.5" y1="235" x2="660.5" y2="158" stroke="#c0392b" stroke-width="0.7" stroke-dasharray="3 2"/>
+  <text x="672" y="150" font-size="10" fill="#c0392b" font-weight="bold">(0.57, 0.55)</text>
+  <text x="672" y="163" font-size="9.5" fill="#c0392b">0.39 + 0.37 = 0.76 ≤ 1 ✓</text>
 
   <!-- lista de modos -->
-  <text x="430" y="285" font-size="11.5" fill="#1a63a8" font-weight="bold">Modos verificados (φ = 0.70, hormigón fisurado)</text>
+  <text x="430" y="285" font-size="11.5" fill="#1a63a8" font-weight="bold">Modos verificados (φ·Ψa = 0.75×0.95, hormigón fisurado)</text>
   <g font-size="10.5">
-    <text x="440" y="308" fill="#333">Breakout tracción (17.6.2)</text><text x="700" y="308" fill="#c0392b" font-weight="bold">dem 8.0 / 13.8 tonf → 0.58 ◄</text>
-    <text x="440" y="328" fill="#333">Pullout (17.6.3)</text><text x="700" y="328" fill="#555">dem 4.0 / 10.5 tonf → 0.38</text>
+    <text x="440" y="308" fill="#333">Breakout tracción (17.6.2)</text><text x="700" y="308" fill="#c0392b" font-weight="bold">dem 8.0 / 14.0 tonf → 0.57 ◄</text>
+    <text x="440" y="328" fill="#333">Pullout (17.6.3)</text><text x="700" y="328" fill="#555">dem 4.0 / 10.7 tonf → 0.37</text>
     <text x="440" y="348" fill="#333">Side-face blowout (17.6.4)</text><text x="700" y="348" fill="#555">no aplica (c_a &gt; 0.4 h_ef)</text>
-    <text x="440" y="368" fill="#333">Breakout de corte (17.7.2)</text><text x="700" y="368" fill="#c07a00" font-weight="bold">dem 3.5 / 6.2 tonf → 0.56 ◄</text>
-    <text x="440" y="388" fill="#333">Pryout (17.7.3)</text><text x="700" y="388" fill="#555">dem 3.5 / 32.4 tonf → 0.11</text>
-    <text x="440" y="408" fill="#c0392b" font-weight="bold">Interacción N–V (17.8.3)</text><text x="700" y="408" fill="#c0392b" font-weight="bold">0.78 ≤ 1 → gobierna</text>
+    <text x="440" y="368" fill="#333">Breakout de corte (17.7.2)</text><text x="700" y="368" fill="#c07a00" font-weight="bold">dem 3.5 / 6.3 tonf → 0.55 ◄</text>
+    <text x="440" y="388" fill="#333">Pryout (17.7.3)</text><text x="700" y="388" fill="#555">dem 3.5 / 33.0 tonf → 0.11</text>
+    <text x="440" y="408" fill="#c0392b" font-weight="bold">Interacción N–V (17.8.3)</text><text x="700" y="408" fill="#c0392b" font-weight="bold">0.76 ≤ 1 → gobierna</text>
   </g>
 </svg>

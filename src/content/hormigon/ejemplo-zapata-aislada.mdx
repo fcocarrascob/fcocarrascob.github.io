@@ -15,18 +15,20 @@ Una zapata aislada es una losa invertida: el suelo empuja hacia arriba y la colu
 hacia abajo, y con esa presión mayorada se verifica flexión, corte y punzonamiento. La
 [nota del Cap. 13](/hormigon/aci318-25-cap13-fundaciones) explica *por qué* cada sección
 crítica está donde está; acá lo bajamos a números[^aci318], en el orden real de diseño y con
-la referencia normativa de cada paso. El desenlace tiene una sorpresa muy actual: bajo el
-**corte en una dirección con efecto de tamaño** que introdujo ACI 318-19 y mantiene ACI
-318-25, **el canto lo termina fijando el corte en una dirección, no el punzonamiento** —al
-revés de la intuición clásica.
+la referencia normativa de cada paso. El desenlace tiene una sorpresa muy actual: con la
+**nueva expresión del corte en una dirección** que introdujo ACI 318-19 y mantiene ACI 318-25
+—coeficiente menor, cuantía $\rho_w^{1/3}$ y efecto de tamaño $\lambda_s$—, **el canto lo
+termina fijando el corte en una dirección, no el punzonamiento** —al revés de la intuición
+clásica.
 
 <Note type="tip" title="Cuando hay momento: la herramienta">
 Este ejemplo es de columna **concéntrica** (presión de suelo uniforme). Cuando la columna
 transmite momento, la presión deja de ser uniforme y hay que verificar el despegue y la
 $q_{\max}$ del borde: eso lo entrega la herramienta
-[zapata aislada biaxial](/herramientas/zapata-biaxial), con los mismos datos de columna y
-carga de este caso. Acá nos concentramos en el diseño del hormigón una vez conocida la
-presión.
+[zapata aislada biaxial](/herramientas/zapata-biaxial), con la misma carga de servicio de este
+caso. Ojo con un detalle: el surrogate de esa herramienta está entrenado con **pedestal fijo de
+50 × 50 cm**, así que la columna de 40 × 40 de este ejemplo no se puede ingresar tal cual. Acá
+nos concentramos en el diseño del hormigón una vez conocida la presión.
 </Note>
 
 ## El caso
@@ -45,8 +47,8 @@ en Chile: hormigón G25 y acero A630-420H.
 
 <Figure
   src="/ejemplos/zapata-aislada.svg"
-  alt="Panel izquierdo: sección de una zapata de 2.20 m de ancho y 0.55 m de alto bajo una columna de 40×40, con la presión mayorada del suelo q_u = 24.8 tonf/m² empujando hacia arriba, la malla inferior de 9 φ18, y las tres secciones críticas marcadas: momento en la cara de la columna, punzonamiento a d/2, y corte en una dirección a d (resaltado en rojo como el que gobierna). Panel derecho: barras de uso demanda/capacidad —presión 0.93, punzonamiento 0.61, corte una dirección 0.86 (gobierna), flexión 0.57 y desarrollo 0.86— y una caja que compara el corte en una dirección con el código antiguo (φV_c = 63.6 tonf, uso 0.38) contra ACI 318-25 con efecto de tamaño (φV_c = 27.9 tonf, uso 0.86)."
-  caption="El caso completo: la presión mayorada y las tres secciones críticas (izquierda), y el uso de cada verificación (derecha). El efecto de tamaño de ACI 318-25 baja tanto la capacidad al corte en una dirección que ésta pasa a gobernar el canto."
+  alt="Panel izquierdo: sección de una zapata de 2.20 m de ancho y 0.55 m de alto bajo una columna de 40×40, con la presión mayorada del suelo q_u = 24.8 tonf/m² empujando hacia arriba, la malla inferior de 9 φ18, y las tres secciones críticas marcadas: momento en la cara de la columna, punzonamiento a d/2, y corte en una dirección a d (resaltado en rojo como el que gobierna). Panel derecho: barras de uso demanda/capacidad —presión 0.93, punzonamiento 0.61, corte una dirección 0.86 (gobierna), flexión 0.57 y desarrollo 0.86— y una caja que compara el corte en una dirección con el código antiguo (φV_c = 63.6 tonf, uso 0.38) contra ACI 318-25 en dos tramos: la nueva expresión con λ_s = 1 (φV_c = 33.2 tonf, uso 0.72) y con el efecto de tamaño λ_s = 0.839 (φV_c = 27.9 tonf, uso 0.86)."
+  caption="El caso completo: la presión mayorada y las tres secciones críticas (izquierda), y el uso de cada verificación (derecha). La nueva expresión del corte en una dirección de ACI 318-25 —y dentro de ella sobre todo el término de cuantía— baja tanto la capacidad que ésta pasa a gobernar el canto."
 />
 
 ## 1. Dimensionamiento en planta (servicio)
@@ -129,10 +131,21 @@ Uso **0.86**: es el estado que **gobierna** el canto.
 <Note type="warning" title="Por qué ya no gobierna el punzonamiento">
 La regla clásica —"el punzonamiento decide el canto de la zapata"— nació con el $V_c$ antiguo
 en una dirección, $V_c = 0.53\sqrt{f'_c}\,b\,d$, que para esta zapata daría $\phi V_c = 63.6$
-tonf (uso **0.38**): holgadísimo. El efecto de tamaño de ACI 318-25 castiga los elementos
-**gruesos y poco armados** —exactamente una zapata— y baja esa capacidad a 27.9 tonf. Así,
-lo que antes sobraba ahora **manda**. Es la razón por la que las zapatas diseñadas con el
-código nuevo salen más gruesas.
+tonf (uso **0.38**): holgadísimo. La expresión de la Tabla 22.5.5.1 baja esa capacidad a
+$27.9$ tonf, y conviene ver la caída en sus **dos** tramos, porque suele atribuirse entera al
+efecto de tamaño y no es así:
+
+| | $\phi V_c$ | Uso |
+|---|:---:|:---:|
+| $0.53\sqrt{f'_c}\,b\,d$ (código antiguo) | 63.6 tonf | 0.38 |
+| $2.11\,\rho_w^{1/3}\sqrt{f'_c}\,b\,d$ (nueva expresión, $\lambda_s = 1$) | 33.2 tonf | **0.72** |
+| $\times\,\lambda_s = 0.839$ (efecto de tamaño) | **27.9 tonf** | **0.86** |
+
+El grueso lo pone el **cambio de expresión** —el coeficiente más bajo y el término
+$\rho_w^{1/3}$, que castiga lo **poco armado**: −48 %—; el efecto de tamaño agrega un −16 %
+más sobre eso. O sea que el corte en una dirección **ya gobernaba antes de aplicar $\lambda_s$**
+(0.72 contra 0.61 del punzonamiento): $\lambda_s$ no invierte el orden, lo profundiza. Esa es
+la razón por la que las zapatas diseñadas con el código nuevo salen más gruesas.
 
 Las constantes: el $2.11$ en kgf/cm² es el equivalente del $0.66$ en MPa del código (igual
 que $0.53 \leftrightarrow 0.17$); $\lambda_s$ usa $d$ en **mm**.
@@ -216,10 +229,14 @@ separación que cumplen la condición de confinamiento):
 
 <Equation label="Tabla 25.4.2.3">
 $$
-\ell_d = \frac{f_y\,\psi_t\psi_e\lambda}{6.7\sqrt{f'_c}}\,d_b
+\ell_d = \frac{f_y\,\psi_t\,\psi_e\,\psi_g}{6.7\,\lambda\sqrt{f'_c}}\,d_b
 = \frac{4200}{6.7\sqrt{250}}\cdot 1.8 = 71 \ \text{cm}
 $$
 </Equation>
+
+con $\lambda = \psi_t = \psi_e = \psi_g = 1.0$ (hormigón de peso normal, barra inferior, sin
+epóxico, $f_y \le 4200$). Ojo con la posición de $\lambda$: **divide**, junto a $\sqrt{f'_c}$
+—un hormigón liviano alarga $\ell_d$, no lo acorta—.
 
 (el $6.7$ en kgf/cm² es el equivalente del $2.1$ en MPa de la Tabla 25.4.2.3, misma
 conversión que $2.11 \leftrightarrow 0.66$ más arriba). La longitud disponible es el volado

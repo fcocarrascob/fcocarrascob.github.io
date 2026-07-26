@@ -134,18 +134,27 @@ mucha excentricidad o conexión corta → $U$ chico → mucha penalización.
 | 1 | La carga se transmite directamente a **cada** elemento de la sección | $1.0$ |
 | 2 | Todos los miembros **salvo HSS**, con la carga en **algunos** elementos | $1 - \bar{x}/l$ |
 | 3 | Carga transmitida solo por **soldaduras transversales** | $1.0$; $A_n$ = área de los elementos conectados |
-| 4 | Planchas, ángulos, canales y W con **soldaduras longitudinales** solamente | $\dfrac{3 l^2}{3 l^2 + w^2}\left(1 - \dfrac{\bar{x}}{w}\right)$ |
-| 5 | **HSS circular** con una plancha gusset concéntrica | $1.0$ si $l \geq 1.3D$; si $D \leq l < 1.3D$: $1 - \bar{x}/l$, $\bar{x} = D/\pi$ |
-| 6 | **HSS rectangular**, una plancha gusset ($l \geq H$) | $1 - \bar{x}/l$, $\bar{x} = \dfrac{B^2 + 2BH}{4(B+H)}$ |
-| 6 | **HSS rectangular**, dos planchas laterales ($l \geq H$) | $1 - \bar{x}/l$, $\bar{x} = \dfrac{B^2}{4(B+H)}$ |
+| 4 | Planchas, ángulos y canales soldados en el talón, tés y W con **soldaduras longitudinales** solamente | $\dfrac{3 l^2}{3 l^2 + w^2}\left(1 - \dfrac{\bar{x}}{l}\right)$ |
+| 5 | **HSS circular o rectangular** con **una** plancha gusset concéntrica pasante por ranuras | $1 - \bar{x}/l$; en el rectangular $\bar{x} = b - \dfrac{2b^2 + tH - 2t^2}{2H + 4b - 4t}$ con $b = B/2$ |
+| 6 | **HSS rectangular** con **dos** planchas gusset laterales | $U = \dfrac{B\,U_B + H\,U_H}{H+B}$, con $U_B = \dfrac{3l^2}{3l^2+B^2}$ y $U_H = \dfrac{3l^2}{3l^2+H^2}$ |
 | 7 | W, M, S, HP (o tés de ellos) con el **ala** conectada (≥ 3 conectores/línea) | $0.90$ si $b_f \geq \tfrac{2}{3} d$; si no, $0.85$ |
 | 7 | Los mismos perfiles con el **alma** conectada (≥ 4 conectores/línea) | $0.70$ |
 | 8 | Ángulos con ≥ 4 conectores por línea | $0.80$ |
 | 8 | Ángulos con 3 conectores por línea (con menos de 3, usar Caso 2) | $0.60$ |
 
 $B$ = ancho del HSS a 90° del plano de conexión, $H$ = altura en el plano de conexión,
-$D$ = diámetro del HSS circular, $d$ = peralte del perfil, $w$ = ancho de la plancha y
-$l_1, l_2$ ($\geq 4\times$ el tamaño de soldadura) las longitudes de soldadura longitudinal.
+$D$ = diámetro del HSS circular, $t$ = espesor de diseño del HSS, $d$ = peralte del perfil,
+$w$ = ancho de la plancha y $l_1, l_2$ ($\geq 4\times$ el tamaño de soldadura) las longitudes
+de soldadura longitudinal.
+
+<Note type="warning" title="Los casos 5 y 6 se renumeraron en 360-22">
+Si vienes de **AISC 360-16**, ojo: allá el Caso 5 era solo el **HSS circular** y el Caso 6 el
+rectangular con una plancha, con $\bar{x} = (B^2+2BH)/[4(B+H)]$ —una expresión que ignora el
+espesor de la pared—. En **360-22** los dos HSS con una plancha pasante quedaron juntos en el
+**Caso 5**, con una $\bar{x}$ que sí incorpora $t$ (y da un valor algo menor, o sea un $U$ algo
+mayor), y el Caso 6 pasó a ser el tubo con **dos planchas laterales**. Citar «Caso 6» para un
+tubo ranurado es la numeración de la edición anterior.
+</Note>
 
 <Note type="tip">
 Para perfiles laminados (Caso 7) y ángulos (Caso 8) se puede usar el valor tabulado **o**,

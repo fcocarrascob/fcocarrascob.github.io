@@ -8,7 +8,7 @@
     </marker>
   </defs>
   <rect width="840" height="470" fill="#ffffff"/>
-  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Viga carrilera: gobierna la flexión biaxial; la fatiga manda solo en servicio pesado</text>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Viga carrilera: gobierna la flexión biaxial; la fatiga manda solo en servicio severo</text>
 
   <!-- =============== PANEL A: sección transversal =============== -->
   <text x="40" y="52" font-size="11.5" fill="#1a63a8" font-weight="bold">Sección: W610×155 + canal C310×45 + riel A55</text>
@@ -62,14 +62,14 @@
   <text x="555" y="85" font-size="10.5" fill="#333" text-anchor="end">Pandeo LTB</text>
   <rect x="560" y="75" width="180" height="15" fill="#7fa8d0"/>
   <text x="746" y="86" font-size="10" fill="#333">0.72</text>
-  <!-- Biaxial 0.89 GOBIERNA -->
+  <!-- Biaxial 0.96 GOBIERNA -->
   <text x="555" y="112" font-size="10.5" fill="#c0392b" text-anchor="end" font-weight="bold">Flexión biaxial</text>
-  <rect x="560" y="102" width="222" height="15" fill="#c0392b"/>
-  <text x="788" y="113" font-size="10" fill="#c0392b" font-weight="bold">0.89</text>
-  <!-- Corte 0.40 -->
+  <rect x="560" y="102" width="240" height="15" fill="#c0392b"/>
+  <text x="806" y="113" font-size="10" fill="#c0392b" font-weight="bold">0.96</text>
+  <!-- Corte 0.36 -->
   <text x="555" y="139" font-size="10.5" fill="#333" text-anchor="end">Corte</text>
-  <rect x="560" y="129" width="100" height="15" fill="#7fa8d0"/>
-  <text x="666" y="140" font-size="10" fill="#333">0.40</text>
+  <rect x="560" y="129" width="90" height="15" fill="#7fa8d0"/>
+  <text x="656" y="140" font-size="10" fill="#333">0.36</text>
   <!-- Fluencia alma 0.32 -->
   <text x="555" y="166" font-size="10.5" fill="#333" text-anchor="end">Fluencia local alma</text>
   <rect x="560" y="156" width="80" height="15" fill="#7fa8d0"/>
@@ -87,13 +87,13 @@
   <rect x="560" y="237" width="120" height="15" fill="#e0a94b"/>
   <text x="686" y="248" font-size="10" fill="#333">0.48</text>
 
-  <!-- callout fatiga servicio pesado -->
+  <!-- callout fatiga servicio severo -->
   <rect x="470" y="368" width="345" height="82" rx="4" fill="#fbf3e0" stroke="#e0a94b" stroke-width="1.2"/>
   <text x="482" y="386" font-size="10.5" fill="#8a6d1f" font-weight="bold">La fatiga se da vuelta con el servicio de la grúa:</text>
   <text x="482" y="403" font-size="10" fill="#5a5030">Clase C (5·10⁵ ciclos) ............ uso 0.48</text>
-  <text x="482" y="418" font-size="10" fill="#5a5030">Clase D (2·10⁶ ciclos) ........... uso 0.76</text>
-  <text x="482" y="433" font-size="10" fill="#c0392b" font-weight="bold">Vida infinita (umbral CAFL) ... uso 0.98  → gobierna</text>
-  <text x="482" y="447" font-size="9" fill="#8a6d1f">Con la Clase correcta la fatiga holga; en servicio pesado toma el control.</text>
+  <text x="482" y="418" font-size="10" fill="#5a5030">Clase D (2·10⁶ ciclos) ........... uso 0.76  (no gobierna)</text>
+  <text x="482" y="433" font-size="10" fill="#c0392b" font-weight="bold">Vida infinita (>4.4·10⁶) ......... uso 0.98  → gobierna</text>
+  <text x="482" y="447" font-size="9" fill="#8a6d1f">Ni en Clase D desplaza al 0.96 de la flexión biaxial: solo lo hace en servicio severo.</text>
 
   <!-- nota panel A -->
   <text x="40" y="410" font-size="9.5" fill="#666">L_b = 8 m sin arriostrar → el canal sube I_y y controla</text>

@@ -50,6 +50,265 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+**Tanda 2026-07-26 — segunda pasada sobre los ocho ejemplos de Hormigón y Acero.** Los ocho ya
+tenían auditoría registrada (23 y 25 de julio); la columna «sin auditar» que los marcaba estaba
+en el ROADMAP, no acá. Esta segunda pasada fue más profunda —fue al **texto crudo de las normas**
+(PDF de ACI 318-25 SI y de AISC 360-22) y cruzó posts hermanos— y encontró **137 hallazgos:
+7🔴 · 26🟠 · 66🟡 · 38🔵**. Se aplicaron los **33 bloqueantes** (todos los 🔴 y 🟠) más los 🟡/🔵
+que caían dentro del mismo párrafo editado. Build verde, 144 páginas.
+
+Los dos hallazgos de fondo, ambos verificados contra el PDF antes de tocar nada: el ejemplo de
+anclajes minoraba con un **φ que ACI 318-25 ya no tiene** (0.70, de la Tabla 17.5.3 de 318-19) e
+ignoraba el **Ψ_a** de la nueva Tabla 17.5.4.1; y el de la diagonal HSS citaba el **Caso 6** de
+la Tabla D3.1 cuando en AISC 360-22 esa configuración es el **Caso 5**, con otra x̄ y otro
+resultado. Un tercero cambió un veredicto publicado: en el doble ángulo, el eslabón débil no se
+muda al alma de la viga —queda en empate técnico con ella, a 0.8 %—.
+
+**Deuda que abre esta tanda:** `src/lib/placaBaseAnchorage.ts` (motor de la herramienta de placa
+base) sigue en φ = 0.70 y en la regla lineal ≤ 1.2 de 318-19. El post ahora lo advierte, pero el
+motor no se tocó.
+
+### 2026-07-26 · `acero/ejemplo-viga-carrilera-puente-grua` · ❌ bloqueado (26 hallazgos · 1🔴 4🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-23)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N C | `caption`, Note de fatiga, conclusión, `alt` y el SVG | «La fatiga … tomaría el control **en servicio pesado**» es falso contra la tabla del propio post: Clase D (rotulada «pesado») da 692/914 = 0.757 → uso **0.76**, o sea **no gobierna**. Solo la fila «vida infinita» (692/703 = 0.984) supera al uso de la flexión biaxial. El `alt` además funde las dos filas | Reemplazar «servicio pesado» por «servicio severo / vida infinita» en caption, Note, conclusión, `alt` y SVG; en Clase D decir que la fatiga *se acerca* pero no gobierna | ✅ aplicado |
+| 2 | 🟠 | N C | §4, §7 | La prosa dice que la capacidad lateral «la da el módulo del conjunto **ala + canal**» y el símbolo es $S_{y,\text{top}}$, pero el número (1081 cm³) es el de la **sección completa**. Con ala superior + canal —que es el modelo del apunte teórico y de la DG 7— sale $I = 12\,142$ cm⁴ → $S_y = 749$ cm³ → $\phi_bM_{ny} = 17.1$ tonf·m → **H1 = 0.722 + 0.236 = 0.96**. Lo mismo en la flecha lateral: 0.46 cm con $I_y$ completo, **0.66** con ala+canal (uso 0.33) | Decidir el modelo y decirlo. Se adoptó **ala + canal** (el conservador y el coherente con el apunte), propagando 749 / 17.1 / 0.96 / 0.66 / 0.33 y el «sin canal» de 1.04 a 1.31 | ✅ aplicado |
+| 3 | 🟠 | R | Tabla del caso y §1 | $H = 1.12$ tonf/rueda no es reproducible: exige un peso de carro que nunca se declara (retro-cálculo: 2.4 t, y una división implícita por 2 rieles × 2 ruedas) | Agregar $W_c = 2.4$ t a la tabla y mostrar la división | ✅ aplicado |
+| 4 | 🟠 | N L | §5 y resumen | Corte con $\phi_v = 0.90$: **§G2.1(a)** da $\phi_v = 1.00$ para almas de perfiles I **laminados** con $h/t_w \le 2.24\sqrt{E/F_y} = 63.6$. Acá $h/t_w = 45.1$ → califica: $\phi_vV_n = 117.8$ tonf y **uso 0.36**, no 106.0 / 0.40 | Usar $\phi_v = 1.00$ citando G2.1(a) | ✅ aplicado |
+| 5 | 🟠 | C N | §8 | El rango de tensiones se calcula con $S_{x,\text{inf}}$ (**fibra inferior**, traccionada) pero los detalles que justifican la Categoría C están **arriba** («soldadura del canal, extremos de rigidizadores»). Bajo momento positivo el ala superior está comprimida, donde la fatiga normalmente no se evalúa | Declarar a qué fibra y detalle corresponde el 692 kgf/cm² | ✅ aplicado |
+| 6 | 🟡 | N R | Tabla de propiedades | $I_x$ combinado = 169 300 cm⁴ no se reproduce desde las secciones declaradas (con $\bar x$ del canal: 175 154; ignorándolo: 170 411). El par publicado (169 300 / 4540) es internamente coherente pero 3.4 % bajo | Declarar la hipótesis de posición del canal o corregir a ≈170 400 / 4559 | ⬜ |
+| 7 | 🟡 | N R | §3 | F2-1/F2-2 mezcla secciones sin avisar: $M_p$ y $0.7F_yS_x$ usan $Z_x$, $S_x$ del **perfil desnudo** mientras $L_p$ usa $r_y$ de la **combinada** | Añadir una línea que lo declare | ⬜ |
+| 8 | 🟡 | N | Note «Las dos ruedas gobiernan» | «13 % más» está redondeado hacia arriba: 2.25/2.00 = **12.5 %** exacto | «12.5 %» | ⬜ |
+| 9 | 🟡 | N R | §2 | $w \approx 0.204$ tonf/m = viga + canal + 2 %, **sin el riel** (A55 ≈ 31.8 kg/m → $w = 0.232$, $M_u = 65.1$) | Decir qué incluye $w$; si se omite el riel, declararlo | ⬜ |
+| 10 | 🟡 | R | Tabla del caso | No se declara $E$ (se infiere 2 039 000 kgf/cm² de $L_p$) ni la fuente de las propiedades de sección | Agregar $E$ y una nota sobre el origen del catálogo | ⬜ |
+| 11 | 🟡 | R | §1 | El +25 % de §4.9.3 depende del modo de operación, que no estaba en los datos; con botonera colgante son **+10 %** | Poner el modo de operación en la tabla y mencionar el +10 % | ✅ aplicado |
+| 12 | 🟡 | L | Todo el post vs. `apuntes/puentes-grua-cargas-viga-carrilera` | Deriva terminológica con su nota teórica: el apunte fija «canal-tapa (*cap channel*)» y «*surge*»; el ejemplo usa «canal de refuerzo» / «empuje lateral» sin declarar la equivalencia. Idem la notación de fatiga | Unificar en ambos | ⬜ |
+| 13 | 🟡 | N L | §3 | «casi duplica la inercia lateral»: 17 520/10 780 = 1.63 → **+63 %**, no ×2 | «la sube un 63 %» | ⬜ |
+| 14 | 🟡 | L | Notas al pie | «ASCE/SEI 7» sin edición y «AISC *Design Guide 7 — Industrial Buildings*» con título distinto al del apunte | Citar ASCE/SEI 7-22 §4.9 y el título vigente de la DG 7 | ⬜ |
+| 15 | 🟡 | N | Tabla de la Note de fatiga | «Vida infinita $>4\times10^6$»: el cruce exacto con $F_{TH} = 10$ ksi es $4.4\times10^6$ ciclos | Escribir $>4.4\times10^6$ | ✅ aplicado |
+| 16 | 🟡 | U | §8 | La misma ecuación usa dos exponentes: $(\cdot)^{0.333}$ y $(\cdot)^{1/3}$ (dan 20.60 y 20.65 ksi) | Usar 0.333 en ambos lados | ⬜ |
+| 17 | 🟡 | L N | §8 | Atribución de categoría: la **soldadura longitudinal continua** canal–ala es Categoría **B**, y el extremo de rigidizador transversal es **C′**. Usar C es conservador, pero la frase «Categoría C (soldadura del canal…)» es incorrecta como atribución | Reescribir declarando cuál detalle controla | ✅ aplicado (junto con el 5) |
+| 18 | 🟡 | C | §1 vs §4 | El §1 anuncia que el empuje da un brazo respecto al centro de corte → **torsión** y flexión lateral, pero después solo se verifica flexión lateral; la torsión nunca se trata ni se declara despreciada | Declarar que se absorbe con el modelo de flexión del ala + canal (práctica DG 7) | ✅ aplicado |
+| 19 | 🟡 | F | §2 | En la tabla de solicitaciones la fila $M_y = 2.52$ cae bajo la columna «Con impacto», pero el empuje lateral no lleva impacto | Renombrar la columna o marcar la fila | ⬜ |
+| 20 | 🟡 | N E | `hormigon/ejemplo-mensula-puntal-tensor.mdx` | La ménsula enlazada declara $V_u = 28$ tonf «del orden de la reacción factorada de la carrilera enlazada», pero este post da 42.9: **+53 %** | Ajustar allá el valor o el paréntesis | ⬜ |
+| 21 | 🔵 | R | §3 | $C_b = 1.0$ se justifica como «conservador», pero la carga entra en la **cabeza del riel**, efecto desestabilizante que $C_b$ de F1 no captura | Decir que $C_b = 1.0$ cubre también eso | ⬜ |
+| 22 | 🔵 | C | §6 | J10 se verifica solo bajo la rueda; no se chequea el **apoyo** (J10-3/J10-5) con $V_u = 42.9$ tonf | Agregar el chequeo de extremo o los rigidizadores de apoyo | ⬜ |
+| 23 | 🔵 | F | Tabla del caso | $F_u = 4080$ kgf/cm² se declara y nunca se usa | Quitarlo o usarlo | ⬜ |
+| 24 | 🔵 | E | Intro | El post no enlaza a su nota teórica `/apuntes/puentes-grua-cargas-viga-carrilera`. Ningún post de `acero` enlaza hoy a `apuntes`, así que es decisión de convención | Enlazarla | ⬜ |
+| 25 | 🔵 | N | §3 | $L_r = 12.74$ m no es exactamente reproducible: no se dan $r_{ts}$, $J$, $h_o$ ni $c$ (mi reproducción da 12.4 m, −3 %) | Publicar $r_{ts}$, $J$ y $h_o$ | ⬜ |
+| 26 | 🔵 | R | Tabla del caso | $P = 13.97$ tonf/rueda es dato del plano del fabricante. Sí es **coherente** con la Ec. del apunte ($\approx 13.9$ t) | Cerraría con el peso del puente en la tabla | ⬜ |
+
+**Verificado y correcto:** cargas de grúa (17.4625 → 17.46; 137.0 kN; 1.397 → 1.40); carga móvil: el teorema de la resultante da exactamente $M_{\max} = 2.25P$ y $V_{\max} = 1.5P$ (comprobado por equilibrio); solicitaciones 39.3 / 31.4 / 26.2 / 2.52, $M_u = 64.8$, $V_u = 42.9$; $I_y$ combinado exacto (10 780 + 6743 = 17 523) y $r_y = 8.303$; $L_p = 414.7$ cm (y 3.70 m para el desnudo); $M_p = 119.82$; F2-2 → 99.7, $\phi = 89.7$, uso 0.722, merma 16.8 %; perfil desnudo 83.8 (0.77); H1-1b es la rama correcta con $P_r = 0$; corte $A_w = 77.60$ cm² (aritmética correcta; ver hallazgo 4 por el φ); J10-2 = 87.9 (0.32) con $k = 1.5t_f$ conservador frente al $k_{des}$ tabulado; J10-4 = 114.8 (0.24); flechas 0.59 cm (0.44) y lateral; fatiga 692 kgf/cm², $F_{SR} = 1450$ (0.48), Clase D 914 (0.76), $F_{TH} = 703$ (0.98); numeración F2-1/F2-2/F2-5/F2-6, H1-1b, J10-2 y J10-4 verificada contra las referencias procesadas; altura del riel A55 = 6.5 cm; equivalencias W610×155 ≈ W24×104 y C310×45 ≈ C12×30. Coherencia con el apunte en impacto solo vertical, surge sin impacto, límites $L/600$ y $L/400$, el 20 % repartido a dos rieles y las clases CMAA.
+
+**No verificable:** $P = 13.97$ tonf/rueda (plano del fabricante); $L_r = 12.74$ m y 10.9 m del desnudo (faltan $r_{ts}$, $J$, $h_o$, $c$); $I_x = 169\,300$ y $S_{x,\text{inf}} = 4540$ (dependen de una hipótesis geométrica del canal no declarada); y los §4.9.3–4.9.5 de ASCE 7 y la Tabla A-3.1 del Apéndice 3, que **no están en el corpus local** (`ASCE7-cargas-minimas.md` es un stub): los porcentajes 25/20/10 %, $C_f = 44\times10^8$ y $F_{TH} = 10$ ksi se contrastaron contra el apunte y la práctica corriente, no contra el texto normativo.
+
+---
+
+### 2026-07-26 · `acero/ejemplo-diagonal-hss-traccion` · ❌ bloqueado (15 hallazgos · 2🔴 4🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-23) · **Contrastado contra el PDF de AISC 360-22**
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | §4 (Ec. J4-5), resumen, `alt`, SVG | **La Ec. J4-5 está incompleta: falta la cota $\le 0.60F_yA_{gv}$.** Como la unión es soldada, $A_{nv} = A_{gv} = 35.4$ cm², y al no haber término de tracción la cota manda siempre que $F_y < F_u$. Post: 69.5 tonf. Correcto: $0.75\cdot0.60\cdot3520\cdot35.4 = 56\,074$ kgf = **56.1 tonf**. Sobrestimación **+23.9 %**, no conservadora; el uso pasa de 0.60 a **0.75** | Escribir la ecuación con las dos ramas y publicar 56.1 / 0.75. La conclusión «no gobierna» se mantiene (56.1 > 48.4) | ✅ aplicado |
+| 2 | 🔴 | L | `description`, §2 (6 apariciones), `alt`, SVG | **En AISC 360-22 el caso citado no es el 6.** Verificado en el PDF: el **Caso 5** es «round and rectangular HSS with single concentric gusset through slots in the HSS» y el **Caso 6** es «rectangular HSS with two side gusset plates» con $U = (BU_B + HU_H)/(H+B)$. El post cita 360-22 en título y footnote pero usa la numeración de **360-16** | Reemplazar «Caso 6» por «Caso 5» en todas sus apariciones y en el SVG | ✅ aplicado |
+| 3 | 🟠 | N | §2 | La fórmula $\bar{x} = (B^2+2BH)/[4(B+H)]$ es la de **360-16**. El Caso 5 de 360-22 usa $\bar{x} = b - (2b^2 + tH - 2t^2)/(2H + 4b - 4t)$ con $b = B/2$ (verificado en el PDF), que reproduce el centroide del semiperfil **con espesor**: 3.593 cm. Con 360-22: $U = 0.760$, $A_e = 14.80$, $\phi P_n = 48.4$ tonf (post: 3.81 / 0.746 / 14.52 / 47.5). El post quedaba del lado conservador, pero con la fórmula de la edición anterior | Actualizar $\bar{x}$ y propagar 3.59 / 0.760 / 14.80 / 48.4 (y 52.2 para $l = 20$) | ✅ aplicado |
+| 4 | 🟠 | L | Tabla resumen | Cita **«Ec. J2-3»** para la soldadura de filete, pero §3 cita correctamente **J2-4** (J2-3 es penetración CJP/PJP, tapón y ranura) | Corregir la tabla a J2-4 | ✅ aplicado |
+| 5 | 🟠 | C R | §El caso, intro, footnote | El caso se plantea como «diagonal de un marco arriostrado industrial, solicitada por la combinación sísmica» y la footnote invoca NCh2369, pero la conexión se diseña solo para $P_u = 42$ tonf. NCh2369:2025 **§8.6.8** exige la **capacidad esperada** (cota inferior $F_yA_g = 76.4$ tonf, muy por encima de las 48.4 disponibles) y **§8.6.9** el momento de pandeo del gusset. Además el resultado publicado (frágil 48.4 < dúctil 68.7) es lo **contrario** del hilo conductor anunciado en el intro | Declarar el alcance: verificación de resistencia según AISC 360-22 con $P_u$ dado; bajo NCh2369 el detalle no calificaría | ✅ aplicado |
+| 6 | 🟠 | U | Tabla del caso, §3 | Colisión de símbolo: `$w$` es a la vez el **ancho de ranura** (19 mm) y la **pierna del filete** (6 mm), en la misma tabla | Usar $w_r$ para la ranura | ✅ aplicado |
+| 7 | 🟡 | N L | §3 | El post justifica no usar el incremento direccional por «el cordón longitudinal $\theta = 0$». El motivo exacto de 360-22 es más fuerte: **J2-5(2) impone $k_{ds} = 1.0$ obligatorio «for fillet welds to the ends of rectangular HSS loaded in tension»** | Citar J2-5(2) | ⬜ |
+| 8 | 🟡 | U | §3 | `\frac{42000}{4 \cdot 939}` sin separador de miles, contra el resto del post | `42\,000` | ⬜ |
+| 9 | 🟡 | U | §3 | La resistencia por centímetro se llama $\phi R_n$ y luego $\phi R_n'$ con prima nunca definida; después $\phi R_n$ vuelve a ser la capacidad total | Definir la prima | ⬜ |
+| 10 | 🟡 | C | `description` | Promete «**diseño completo** de una diagonal … con conexión soldada», pero la plancha gusset no se verifica (J4.1, Whitmore, bloque de corte en la plancha) | Acotar la promesa o declarar lo que queda fuera | ⬜ |
+| 11 | 🔵 | N | Tabla del caso, §5 | $r = 3.84$ cm; el AISC Manual lista 1.52 in = **3.861** cm para el HSS 4×4×1/4. Con 3.861, $L/r = 116.6$, que también redondea a 117 | Confirmar contra la tabla de perfiles | ⬜ |
+| 12 | 🔵 | L | §2 | El post afirmaba que el Caso exige $l \ge H$; esa condición aparece en 360-16 y no figura en el texto de 360-22 | Verificar en la tabla impresa | ✅ aplicado (se retiró la atribución) |
+| 13 | 🔵 | L | `acero/aisc360-22-capD-traccion.mdx` (fuera de alcance) | La nota teórica replica la Tabla D3.1 con la numeración de **360-16** y además escribe el Caso 4 como $(1 - \bar x/w)$ cuando la norma dice $(1 - \bar x/l)$ | Corregir en el mismo commit para que nota y ejemplo no se contradigan | ✅ aplicado (tabla renumerada, Caso 4 corregido y Note explicando el cambio de edición) |
+| 14 | 🔵 | R | §3 | No se declaran dos verificaciones de J2 que sí se cumplen: tamaño mínimo de filete (Tabla J2.4) y reducción por soldadura cargada en el extremo ($l/w = 25 < 100$) | Agregar una línea que las cierre | ⬜ |
+| 15 | 🔵 | F | §2 | Referencia hacia adelante: el paso 2 usa $l = 15$ cm «a definir en el paso 3» | Anunciar que $l$ es la variable de diseño | ✅ aplicado |
+
+**Verificado y correcto:** **el defecto transversal de la sub-serie de conexiones NO está en este post.** AISC 360-22 **B4.3b** dice dos cosas distintas: el sobreancho de 2 mm es **solo para agujeros de pernos**, y para este caso existe una regla propia: «*For slotted HSS welded to a gusset plate, the net area $A_n$ is the gross area minus the product of the thickness and the total width of material that is removed to form the slot*». El post hace exactamente eso ($A_n = 21.7 - 2\cdot0.59\cdot1.9 = 19.458$, descontando el **ancho de ranura** de 19 mm y no el espesor de plancha de 16), con lo que la holgura de fabricación ya está dentro. No corresponde sumar 2 mm. Además: fluencia 68 746 kgf (0.61); soldadura 939.18 kgf/cm, $l_{\min} = 11.2$ cm, 56.4 tonf (0.75); metal base vs. aporte (1158 y 1246 kgf/cm, ambos > 939 → gobierna el aporte); esbeltez 117 ≤ 300; conversiones de material (50/62/70 ksi). Cadena de consistencia sin desfases entre prosa, ecuaciones, Note, tabla, `caption`, `alt`, `description` y SVG. Frontmatter, imports, enlaces y activos: OK.
+
+**No verificable:** las propiedades de tabla del HSS 4×4×1/4 ($A_g$ y $t_{des}$ cuadran; $r$ parece 3.86 — hallazgo 11); $P_u = 42$ tonf es dato de entrada; y $R_y$ de A500 Gr. C para cuantificar la capacidad esperada de NCh2369 §8.6.8 (por eso el hallazgo 5 usa la cota $F_yA_g$, que no depende de $R_y$).
+
+---
+
+### 2026-07-26 · `hormigon/ejemplo-anclajes-pedestal` · ❌ bloqueado (22 hallazgos · 3🔴 4🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (port completo del motor `placaBaseAnchorage.ts`) · **Segunda pasada** (la primera fue el 2026-07-23) · **Contrastado contra el PDF de ACI 318-25 SI**
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | §3 y tabla resumen | Interacción del acero mal evaluada: $0.44^{5/3} = 0.2545 \to$ **0.25**, no 0.26; y la suma $0.1059 + 0.2545 =$ **0.36**, no 0.37. El error está en la prosa **y** en la fila del resumen | Corregir a 0.11 + 0.25 = 0.36 | ✅ aplicado |
+| 2 | 🔴 | N | §3 | «la interacción se agota recién cuando los usos individuales rondan **0.68** cada uno» es falso: $2r^{5/3} = 1 \Rightarrow r = 0.5^{0.6} =$ **0.6598**. Con 0.68 cada uno la suma es 1.052 > 1: ya **no** verifica | Reemplazar 0.68 por 0.66 | ✅ aplicado |
+| 3 | 🔴 | N/L | `description`, `caption`, §1–§3 y encabezado de la tabla | Todo el post usa **φ = 0.70** para los modos de hormigón y lo declara como ACI 318-25. Ese es el valor de **318-19** Tabla 17.5.3 Condición B. **Verificado en el PDF de 318-25**: los φ se consolidaron en la **Tabla 21.2.1** —(l) hormigón en tracción no redundante **0.65**, (m) redundante **0.75**, (n) hormigón en corte **0.75**— y 0.70 no existe. Además 318-25 estrena la **Tabla 17.5.4.1** con el factor $\Psi_a$ (0.95 para *cast-in* sin armadura suplementaria), que el post no tiene | Adoptar $\phi\Psi_a = 0.75 \times 0.95 = 0.7125$ (grupo redundante, criterio de R17.5.3) y rehacer la cadena de usos | ✅ aplicado: breakout N 13.8→**14.0** (0.58→**0.57**), pullout 10.5→**10.7** (0.38→**0.37**), breakout V 6.2→**6.3** (0.56→**0.55**), pryout 32.4→**33.0** (0.11), interacción 0.78→**0.76** |
+| 4 | 🟠 | N/C | §3 | El uso de acero en corte 0.44 sale de $3.5/8.0$ = corte **del grupo** contra capacidad **por perno**, mientras el término de tracción 0.26 = $4.0/15.4$ sí es por perno. La Sec. 17.8.4 se verifica sobre «el anclaje más solicitado»; con el propio supuesto del §2.1 sería $1.75/8.0 = 0.22$ | Unificar la base o declarar el supuesto | ✅ aplicado (se publica 0.22 con el supuesto del §2.1 → 0.19, y se deja el 0.44 como caso pesimista → 0.36) |
+| 5 | 🟠 | E/C | Enlace a `/herramientas/placa-base` | La herramienta enlazada implementa todavía la regla **lineal ≤ 1.2 de 318-19** (`src/lib/placaBaseAnchorage.ts:347-358`), justo lo que el `Note` declara superado, y minora con φ = 0.70 | Actualizar el motor, o advertir en el post | ✅ aplicado (advertencia en el post; **el motor queda como deuda**) |
+| 6 | 🟠 | R | Note de apertura | $\phi N_{sa} = 15.4$ y $\phi V_{sa} = 8.0$ tonf no son reproducibles: **no se declara el grado del acero del perno**. Retrocálculo: $A_{se} = 3.908$ cm² (φ1″ UNC) y $f_{uta} \approx 5270$ kgf/cm² (F1554 Gr. 55) con φ = 0.75 dan 15.45; y $0.6\cdot20\,607\cdot0.65 = 8037$ → 8.0 | Declarar grado, $A_{se,N}$ y los φ de acero usados | ✅ aplicado |
+| 7 | 🟠 | R | §2.1, §2.2 | No se da la **altura del pedestal** $h_a$, pero el cálculo asume $\psi_{h,V} = 1$ (exige $h_a \ge 1.5c_{a1} = 37.5$ cm) y el pryout se justifica con «sin borde trasero cercano» | Añadir $h_a$ y explicitar $\psi_{h,V} = \psi_{c,V} = \psi_{ec,V} = 1.0$ | ✅ aplicado ($h_a = 120$ cm) |
+| 8 | 🟡 | N | §2.2 | $0.70\cdot2\cdot23.1 = 32.34$, no 32.4 (el 32.4 sale de $N_{cbg}$ sin redondear) | Mostrar $N_{cbg} = 23.15$ | ✅ aplicado |
+| 9 | 🟡 | N | §1.2 | «$A_{brg} \approx 1.16\,d^2 = 7.50$ cm²»: $1.16\cdot2.54^2 = 7.484$. El 7.50 sale de la fórmula exacta de tuerca hex. pesada | Citar la fórmula exacta | ✅ aplicado |
+| 10 | 🟡 | R/F | §1.1, §2.1, §2.2 | Valores intermedios «puestos» sin derivación: $A_{Nc} = 8500$, $A_{Vc}/A_{Vco} = 4/3$, $\psi_{ed,V} = 0.90$, $N_{cbg,\text{grupo}} = 23.1$ (todos verificados contra el motor, pero el lector no puede) | Mostrar el ancho proyectado de cada área y el $c_{a2}$ | ⬜ (parcial: se declaró el origen de $N_{cbg,\text{grupo}}$) |
+| 11 | 🟡 | L/C | §3 | «tomando en cada término el menor de su familia» es impreciso: 17.8.3 define el término de grupo como mín(breakout, adherencia, blowout) — el **pullout no entra** (es per-anclaje, 17.8.2). Con la regla literal habría que usar 10.5 y el término daría 0.76. El valor usado es el correcto; la prosa es la que está mal | Reformular | ✅ aplicado |
+| 12 | 🟡 | L | Note de 318-19 | El mismo `Note` llama a la regla «lineal con límite 1.2» y tres líneas después «esa regla trilineal» | Usar «trilineal» las dos veces | ✅ aplicado |
+| 13 | 🟡 | F | §3 | Línea de 129 columnas dentro del `Note`; el resto del cuerpo va a ~94 | Rewrap | ⬜ |
+| 14 | 🟡 | F/C | Figura vs §2.1 | En el SVG la fila traccionada está en el borde **+y** y el corte apunta a **+x**, de modo que la «fila delantera hacia x+» contiene un perno traccionado y uno no. Numéricamente da igual por simetría, pero figura y texto no describen el mismo croquis | Girar la fila roja o ajustar la prosa | ⬜ |
+| 15 | 🟡 | U | Note de apertura | A $\phi N_{sa} = 15.4$ le falta la unidad, y «$\gg$ demanda» es exagerado en corte | Poner «tonf» y sustituir «$\gg$» por los usos reales | ✅ aplicado |
+| 16 | 🟡 | U/F | Tabla resumen | El encabezado declara «Capacidad ($\phi = 0.70$)» pero la columna no lleva unidad y la última fila usa los φ del acero, no ese | Añadir «tonf» y sacar el φ del encabezado | ✅ aplicado |
+| 17 | 🟡 | L | Tabla resumen | Rotula secciones como ecuaciones: «Ec. 17.6.4» y «Ec. 17.8.4» no son ecuaciones | Cambiar a «§17.6.4», «§17.8.4» | ✅ aplicado |
+| 18 | 🟡 | U | §1.1 | `\psi_{ed} = 0.7 + 0.3\,c_a/1.5h_{ef}` renderiza ambiguo; y los ψ van sin el calificador `,N` / `,V` que usa ACI | `\dfrac{c_{a,\min}}{1.5h_{ef}}` y homogeneizar subíndices | ✅ aplicado (parcial: la fracción) |
+| 19 | 🟡 | R | §1.1, §1.2, §2.1 | $\lambda_a$ aparece en la ecuación pero nunca se declara $\lambda_a = 1.0$; y las ecuaciones de pullout y breakout de corte omiten $\psi_{c,P}$, $\psi_{c,V}$, $\psi_{h,V}$ sin decir que valen 1.0 | Una línea de supuestos | ✅ aplicado |
+| 20 | 🔵 | N | §3, resumen, `alt`, SVG | Propagación de redondeo: con los usos sin redondear la interacción da 0.789, no 0.784. Es coherente en todo el post (gap ~1 %) pero conviene declararlo | Anotar «(con los usos redondeados)» | ⬜ |
+| 21 | 🔵 | C | Intro vs §3 | El intro promete que «la interacción tracción–corte **gobierna**»; §3 concluye que pasa con margen real. «Gobierna» aquí significa solo «mayor uso» | Matizar el intro | ⬜ |
+| 22 | 🔵 | L | Todo el post | *breakout*, *pullout*, *pryout*, *side-face blowout* y *cast-in* nunca van en cursiva en su primera aparición (la nota teórica del Cap. 17 tampoco) | Cursivar la primera aparición en ambos | ⬜ |
+
+**Verificado y correcto:** recalculé con `python` toda la cadena y coincide con `src/lib/placaBaseAnchorage.ts`. **Tracción:** $N_b = 10.1\sqrt{250}\cdot40^{1.5} = 40\,400$ kgf exacto; $A_{Nco} = 14\,400$; $A_{Nc} = 85\times100 = 8\,500$ cm²; razón 0.5903; $\psi_{ed} = 0.825$; $N_{cbg} = 19\,674$ kgf. **Pullout:** $A_{brg} = 7.504$ cm². **Blowout:** $0.4h_{ef} = 16 < c_a = 25$ → no aplica. **Corte:** $\ell_e = 20.32$; el tope 3.74 gobierna sobre 4.638; $V_b = 7\,392$ kgf; $A_{Vc}/A_{Vco} = 4/3$; $\psi_{ed,V} = 0.90$. **Pryout:** $k_{cp} = 2$; $N_{cbg,4} = 23\,146$ kgf. **Comparación 318-19:** $1.14/1.2 = 0.95$ y la cita de R17.8.1 coincide literalmente con la referencia procesada. **SVG:** los 12 vértices de la curva 5/3 dan sumas 0.996–1.004; el punto cae en píxel exacto con las escalas; el rectángulo $A_{Nc}$ mide 85 × 100 a escala; los seis modos coinciden con el `alt` y la tabla. Frontmatter, imports, enlaces y activos: OK.
+
+**No verificable:** el origen de $T = 4.0$ tonf/perno y $V_u = 3.5$ tonf (declarados como dato del análisis de placa, correcto que no se deriven acá).
+
+---
+
+### 2026-07-26 · `hormigon/ejemplo-zapata-aislada` · ⚠️ 13 hallazgos (3🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (todo el cuerpo numérico) · **Segunda pasada** (la primera fue el 2026-07-23) · **Encargo específico: el rótulo bruta/neta de L.42**
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | Intro, `caption`, Note «Por qué ya no gobierna el punzonamiento», `description` | La caída de capacidad al corte 1-D se atribuye **al efecto de tamaño**, pero recalculada la cadena el grueso lo aporta el término de cuantía: $\phi V_c$ antiguo = 63.60 tonf; con la expresión nueva y $\lambda_s = 1$ = **33.24** tonf (**−47.7 %**, por el coeficiente + $\rho_w^{1/3}$); recién ahí $\lambda_s = 0.839$ lleva a 27.90 (**−16.1 %** adicional). Con $\lambda_s = 1$ el uso sería **0.72 > 0.61** del punzonamiento: **la tesis se sostiene igual sin efecto de tamaño**, así que la causa declarada está sobredimensionada | Atribuir el giro a la nueva expresión completa de la Tabla 22.5.5.1 y dar la descomposición 63.6 → 33.2 → 27.9 | ✅ aplicado (tabla de dos tramos en el Note) |
+| 2 | 🟠 | N/U | §6 (Ec. «Tabla 25.4.2.3») | La fórmula impresa pone $\lambda$ en el **numerador**. En ACI $\lambda$ **divide**, junto a $\sqrt{f'_c}$ (hormigón liviano → $\ell_d$ **mayor**, no menor). Además falta $\psi_g$, que la propia nota del Cap. 25 de este repo lista. Sin impacto numérico ($\lambda = \psi_g = 1$) | $\ell_d = \dfrac{f_y\psi_t\psi_e\psi_g}{6.7\lambda\sqrt{f'_c}}d_b$ y declarar los cuatro factores = 1 | ✅ aplicado |
+| 3 | 🟠 | C/E | Note tip de apertura | Dice que la herramienta biaxial resuelve el caso «con los mismos **datos de columna** y carga». La herramienta tiene el **pedestal fijo en 50×50 cm** (`src/lib/zapataBiaxial.ts:103`) y su formulario no expone la sección de columna: la columna 40×40 de este ejemplo **no se puede ingresar** | Reformular declarando la limitación del surrogate | ✅ aplicado |
+| 4 | 🟡 | N | §2 | $d \approx 55 - 7.5 - 1.8 = 46$ cm: la aritmética escrita da **45.7** (que sí es el promedio exacto de las dos capas) | «$= 45.7 \approx 46$ cm» | ⬜ |
+| 5 | 🟡 | L/R | §1, tabla resumen | **El punto encargado.** El uso **es neto y es correcto**: con $q_a$ neta, $A_{req} = (D+L)/q_a$ usa solo la carga de columna, que es el procedimiento estándar — **no hay error de cálculo ni uso «como bruta»**. Lo que desalinea es la **glosa**: define neta como «la que ya descuenta el peso de la zapata y el relleno», mientras geotecnia usa «descuenta la sobrecarga $\gamma D_f$». Ambas coinciden solo si peso(zapata+relleno) ≈ $\gamma D_f$, y el post **no declara $D_f$ ni $\gamma$**. Comprobado con el perfil de la nota de geotecnia: 18.98 vs 18.6 tonf/m², **2 %** → la simplificación es legítima | Precisar la glosa, declarar $D_f$, y rotular «$q_a$ neta» también en la tabla resumen | ⬜ |
+| 6 | 🟡 | N/U | §4, §3 | $0.75\cdot14.1\cdot344\cdot46 = 167\,339$ kgf = **167.3** tonf, no 166.9 (el 166.9 sale de $v_c = 14.0647$); y el salto de kgf a tonf se hace sin mostrar el $/1000$ | Escribir «= 166 900 kgf (con $v_c = 14.06$)» y hacer explícita la conversión una vez | ⬜ |
+| 7 | 🟡 | L | §5 | Cita «Sec. 13.3.3.3, zapata cuadrada» para el reparto **uniforme**; según la propia nota del repo 13.3.3.3 es la cláusula de zapatas **rectangulares** ($\gamma_s = 2/(\beta+1)$) | Citar 13.3.3.2, verificando el numeral contra 318-25 | ⬜ |
+| 8 | 🟡 | E | `public/ejemplos/zapata-aislada.svg` | El dibujo tiene **8** círculos de armadura bajo el rótulo «9 φ18 @ 25 cm» (el post y el `alt` dicen 9, y $A_s = 22.90$ cm² es de 9) | Agregar el noveno círculo | ⬜ |
+| 9 | 🟡 | F | §3, §4 | Dos `Equation` con la **misma** `label="Verificación"` | «Verificación (corte 1-D)» y «(punzonamiento)» | ⬜ |
+| 10 | 🟡 | L | §3, `alt`, SVG | Tres variantes del mismo concepto: «corte en una dirección», «corte **1-D**» y «Corte **1 dir**» | Fijar una forma | ⬜ |
+| 11 | 🔵 | R | §3, §4, tabla del caso | No se declara $\lambda = 1$ (peso normal) pese a que la fórmula lo lleva, ni $D_f$ / peso del relleno — que son los datos que cierran el argumento «neta» del hallazgo 5 | Agregar $\lambda = 1$ y una fila $D_f$ | ⬜ (parcial: $\lambda = 1$ declarado en §6) |
+| 12 | 🔵 | N | `aci318-25-cap13-fundaciones.mdx` (fuera de alcance) | Detectado al validar $\lambda_s$. Esa nota afirma «$d = 600$ mm → $\lambda_s = 0.80$; $d = 1000$ mm → $\lambda_s = 0.69$». Con la misma fórmula que ambos posts usan: **0.767** y **0.632** | Corregir en la nota del Cap. 13 (no afecta ningún número de este post) | ⬜ |
+| 13 | 🔵 | C | `geotecnia/ejemplo-zapata-los-dos-criterios.mdx` (fuera de alcance) | El enredo bruta/neta que motivó el encargo **no está en este post**: allá $q_u$ se calcula con la sobrecarga incluida (resultado **bruto**), se divide por FS → $q_{adm} = 399$ kPa, y se compara contra 182 kPa = $P/A$, que es la presión **neta** de columna. Esa mezcla es la que hay que resolver | Resolver la convención en las notas de geotecnia (hallazgo **G-D** del ROADMAP); este post no requiere cambio numérico | ⬜ |
+
+**Verificado y correcto:** $A_{req} = 4.5$ m²; $A = 4.84$; $q_{serv} = 18.60$ (0.93); $N_u = 120$ tonf; $q_u = 24.8$; volado 0.90 m; $V_u = 24.0$; $\rho_w = 0.00226$; $\lambda_s = 0.8392$; $V_c = 37.20$, $\phi V_c = 27.90$, uso **0.86**; $\phi V_c$ antiguo 63.60 (0.38); $b_o = 344$ cm; $V_{u,\text{punz}} = 101.7$; $v_c = 14.06$; $\phi V_c = 166.9$ (0.61), con el **primer término** de la Tabla 22.6.5.2 gobernando (los otros dan 21.1 y 26.3) y el tope 214.6 sin controlar; $M_u = 22.1$ tonf·m; $A_{s,req} = 12.9$ y $A_{s,\min} = 21.8$ cm²; $A_s(9\phi18) = 22.90$; $a = 2.06$; $\phi M_n = 38.9$ (0.57); $\varepsilon_t = 0.054$; $\ell_d = 71$ cm contra 82.5 disponibles (0.86). Conversiones de coeficientes verificadas (0.66→2.11, 0.33→1.06, 2.1→6.7, 0.17↔0.53). Los 12 valores del cuerpo coinciden uno a uno con el `alt`, el `caption`, el SVG (barras a escala) y la tabla resumen. Frontmatter, estructura, enlaces y activos: OK.
+
+**No verificable:** el texto literal de ACI 318-25 para los numerales citados se contrastó **solo** contra las notas del propio repo y 318-19; los hallazgos 2 y 7 quedan sujetos a confirmar el numeral en el PDF. Tampoco es verificable acá el $q_a = 2.0$ kgf/cm² como dato de suelo (su retroanálisis vive en `geotecnia/ejemplo-zapata-los-dos-criterios`).
+
+---
+
+### 2026-07-26 · `acero/ejemplo-empalme-apernado-viga` · ⚠️ 19 hallazgos (3🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-25)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | `empalme-esquema.svg` vs. §4 y resumen | El SVG rotula «las planchas del alma dan 7.14 tonf·m (**uso 0.53**)»; el post dice **0.61** en tres lugares. 3.8/7.14 = 0.532 (solo la cuota por rigidez) vs. (3.8+0.54)/7.14 = 0.608 (con $V_u e$). El SVG omite el momento de la excentricidad que el texto sí suma | Corregir el SVG a 4.34/7.14 → uso 0.61 | ✅ aplicado |
+| 2 | 🟠 | N | Note final (rotura en bloque) | $\phi R_n = 112.3$ tonf solo se reproduce con $d_h = 24$ mm en $A_{nt}$, contradiciendo la regla B4.3b (26 mm) que el propio post declara y aplica en $A_n$, $A_{fn}$ y $A_{nv}$. Con 26 mm: gobierna el tope $0.6F_yA_{gv}+F_uA_{nt} = 148\,529$ kgf → **111.4 tonf, uso 0.41** | Recalcular con 26 mm y declarar la geometría del bloque ($L_v = 250$ mm, dos planos) | ✅ aplicado |
+| 3 | 🟠 | R | Ecs. J4-1 y J4-2 | Las propiedades del **A36 nunca se declaran**: $F_y$ y $F_u$ no aparecen ni en la tabla de datos ni en las ecuaciones, que muestran solo el resultado. El lector no puede reproducir 60.6, 59.1, 68.0, 51.7, 7.14 ni 164.5 (verificado: cuadran con 2530 y 4080) | Declarar A36 y A992 en la tabla de datos y sustituir los valores en las ecuaciones | ✅ aplicado |
+| 4 | 🟡 | R | §apoyos | Los apoyos 164.5 y 190.8 tonf se dan sin aritmética y dependen de la distancia del canto al primer perno del ala, no declarada (reproduje ambos suponiendo 40 mm) | Declarar esa distancia y anotar que el valor mezcla desgarramiento (bordes) con aplastamiento (interiores) | ⬜ |
+| 5 | 🟡 | N | §alma y resumen | La **demanda por perno del alma nunca aparece**; los usos 0.18 y 0.31 son inverificables sin rehacer el método elástico ($R = 3.79$ tonf, ambos cuadran) | Publicar la resultante de 3.79 tonf/perno | ⬜ |
+| 6 | 🟡 | N | `empalme-esquema.svg` | El SVG dice de la cubreplaca «uso 0.75», pero gobierna la rotura con **0.76** | Usar 0.76 en el SVG | ✅ aplicado |
+| 7 | 🟡 | F | `alt` Figura 1 | El `alt` no representa lo que la figura muestra (le faltan «7.14 tonf·m (uso 0.53)» y «$d-t_f$ = 442.5») y describe los 3.8 tonf·m como capacidad cuando son demanda | Reescribir el cierre del `alt` | ⬜ |
+| 8 | 🟡 | U | `alt` Figura 1 | «viga W460**x**74» con equis latina, contra `W460×74` del resto | Cambiar a `×` | ⬜ |
+| 9 | 🟡 | F | §cubreplacas | Línea de 141 columnas contra las 93-98 del resto | Reflowear a ~95 col | ⬜ |
+| 10 | 🟡 | F | Tabla resumen | Se presenta como ranking por uso descendente pero tiene tres inversiones (0.75 antes de 0.76; 0.31 después de 0.24; 0.23 después de 0.18) | Reordenar o declarar orden temático | ⬜ |
+| 11 | 🟡 | L | Pie de nota | Lista J3.7, J3.9, J4, J6 y F13.1 pero **omite J3.11**, de donde salen las Ecs. J3-6a/c citadas dos veces | Agregar J3.11 | ⬜ |
+| 12 | 🟡 | U | §pernos | $F_{nv} = 3793$ kgf/cm² entra desnudo; los cuatro posts hermanos lo declaran como «372 MPa = 3793 (A325-N)» | Declararlo con su valor en MPa y la Tabla J3.2 | ⬜ |
+| 13 | 🟡 | U | §1 | Las sustituciones cambian de unidad sin avisar (tabla en mm, ecuaciones en cm y m) | Anotar la unidad en la sustitución | ⬜ |
+| 14 | 🟡 | E | Intro | Único post de la sub-serie que **no enlaza** a la nota del Cap. J ni a un ejemplo hermano | Enlazar la nota del Cap. J y el ejemplo de placas de ala | ⬜ |
+| 15 | 🔵 | R | Note final | $L_c/r = 11.3$ no es derivable: implica una abertura de junta de ~46 mm nunca declarada. La regla de J4.4 sí es correcta | Declarar la abertura de la junta | ⬜ |
+| 16 | 🔵 | N | §2 | «las 87 tonf que el ala podría desarrollar» es $\phi F_yA_f$; la capacidad **nominal** del ala es 97.0 tonf. Mezclar «podría desarrollar» con un valor ya minorado es discutible | Escribir «las 87 tonf de $\phi F_yA_f$» o pasar a 97 | ⬜ |
+| 17 | 🔵 | R | §F13.1 | $\phi M_p = 52.4$ supone implícitamente sección compacta y $L_b \le L_p$ en el punto del empalme; no se declara | Añadir el supuesto | ⬜ |
+| 18 | 🔵 | R | §1 | El brazo del par usa centroides de **ala** ($d - t_f$); con centroides de cubreplaca daría 42.5 tonf. La elección es conservadora pero no se justifica | Anotar por qué | ⬜ |
+| 19 | 🔵 | F | `ROADMAP.md` | L.400 marca F-A11 «— sin auditar»; L.421 dice «Las cinco auditadas» | Actualizar al cerrar esta auditoría | ✅ aplicado |
+
+**Verificado y correcto:** participación de las alas $2\cdot27.55\cdot22.125^2/33\,300 = 0.810$ (81 %, y el 19 % → 3.8 tonf·m); $F_f = 20/0.4425 = 45.198$ tonf; $A_g = 26.6$, $A_n = 19.32$ cm² con el sobreancho de B4.3b; J4-1 = 60 568 kgf (0.75) y J4-2 = 59 119 (0.76), rotura gobernando; $A_b = 3.801$ cm²; J3-1 = 86 480 kgf → 86.5 tonf, uso **0.52**, y 10.8 tonf/perno; $T_b = 176$ kN = 17.9 tonf (M22 Grupo A, Tabla J3.1M); **J3-4 completa** (φ = 1.00 para agujero estándar, $D_u = 1.13$, $h_f = 1.0$, $n_s = 1$, Clase A μ = 0.30) → 6084 kgf/perno; las **cuatro filas de deslizamiento** (36.50/1.24 · 48.67/0.93 · Clase B 60.84/0.74 · $n_s{=}2$ 73.01/0.62); alma $A_{gv} = 44.8$ → J4-3 = 68 006 (0.18), $A_{nv} = 28.16$ → J4-4 = 51 702 (0.23), $Z = 313.6$ cm³ → 7.141 tonf·m con demanda 4.34 → 0.61; método elástico $J = 245$ cm², $R = 3.79$ tonf; **F13.1** con $Y_t = 1.0$ ($F_y/F_u = 0.770 \le 0.8$), $F_uA_{fn} = 91\,446 < Y_tF_yA_{fg} = 96\,976$ (gap 6.05 % → «un 6 %»), $\phi M_n = 43.5$, uso 0.46, pérdida 16.98 % → «17 %». Los cinco números de la tesis (26.6 / 27.55 / 45.2 / 0.52 / 0.93 / 1.24 / 10.8 / 6.1) idénticos en `description`, cuerpo, tablas, `caption`, conclusiones y ambos SVG. Frontmatter válido; imports usados; SVG existentes; enlace `/blog/factor-r-capacidad-esperada` resuelve.
+
+**No verificable:** el valor métrico exacto de $F_{nv}$ Grupo A rosca incluida en la Tabla J3.2 (el post usa 372 MPa = 3793, igual que los cuatro hermanos, pero la fuente procesada lo tabula como «54 (**370**)»; con 370 el uso titular sería 0.53 y no 0.52 — requiere el PDF de AISC 360-22 p. 16.1-131); los 112.3 tonf y el $L_c/r = 11.3$ (hallazgos 2 y 15); las propiedades de sección de la W460×74 ($S_x = 1457$ es consistente con $2I_x/d$, pero CISC lista 1460 y 1650).
+
+---
+
+### 2026-07-26 · `acero/ejemplo-conexion-doble-angulo` · ❌ bloqueado (10 hallazgos · 1🔴 2🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-25)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N C | `description`, intro, §2, §5, resumen, ambos `alt`, `caption` y los dos SVG | **La tesis central —«el eslabón débil se muda al alma de la viga»— la contradice la propia tabla del post.** Con los valores que el post declara, el eslabón menor del doble ángulo es la **rotura en corte de los ángulos**: $2\cdot0.75\cdot0.60\cdot4080\cdot17.6 = 64\,627$ kgf = **64.63 tonf** (uso **0.4642**), contra el apoyo en el alma $0.75\cdot4\cdot2.4\cdot2.2\cdot0.90\cdot4570 = 65\,150$ kgf = **65.15 tonf** (uso **0.4605**). 64.63 < 65.15, así que la flecha «← gobierna» está en la fila equivocada. La brecha es de 0.8 %, pero el sentido de la afirmación se invierte. El «0.46» sí es correcto en ambos casos | Reescribir como **empate técnico**: la conexión deja de ser el eslabón débil y queda al nivel del alma (0.464 vs 0.461, 0.8 %), que es exactamente lo que el Cap. J busca | ✅ aplicado |
+| 2 | 🟠 | N R | Tabla del caso y §3 | La tabla declara $L_{eh} = 40$ mm «común a las dos», pero para el doble ángulo el mismo cuadro fija $e = 55$ mm de gramil sobre un ala de 100 mm → la distancia al borde libre es **45 mm**. Con 45: bloque = **75.4 tonf, uso 0.40**, no 72.3 / 0.42 | Declarar $L_{eh} = 45$ y corregir, **o** declarar que el bloque del ángulo se toma con la geometría de la plancha por el lado conservador | ✅ aplicado (se declaró el criterio conservador) |
+| 3 | 🟠 | F | `ROADMAP.md` L.399 | La ficha F-A10 arrastra la tesis con el número **anterior a la corrección de F-A7**: «0.89 → 0.46» y «perno extremo al 0.99». Tras aplicar B4.3b el valor auditado es **0.93**, que es el que usa el post. La fila además sigue marcada «— sin auditar» | Actualizar la fila | ✅ aplicado |
+| 4 | 🟡 | N | §3, `alt`, SVG comparación | Rotura en bloque del doble ángulo: 30/72.3105 = **0.4149 → 0.41**, y el post publica **0.42** en tres apariciones (parece venir de duplicar el redondeado 0.83/2) | Unificar en 0.41 (o 0.40 si se acepta el hallazgo 2) | ⬜ |
+| 5 | 🟡 | F C | §2, §3, resumen | La `Note` promete repetir «esas verificaciones» pero la comparación omite la fila **J3.7 — resistencia efectiva del grupo**, que en F-A7 es un eslabón explícito (40.9 tonf · 0.73). Para el doble ángulo da 65.1 tonf · 0.46 y refuerza el punto | Agregar la fila o declarar la omisión | ⬜ |
+| 6 | 🟡 | L | Intro | *shear tab* aparece por primera vez en **negrita**; en F-A7 el anglicismo va en cursiva la primera vez | Cambiar a cursiva | ⬜ |
+| 7 | 🟡 | F | L.22, 88, 154, 202 | Restos de reflow: líneas de 140 y 107 columnas y dos huérfanas cortas | Re-ajustar al ancho del archivo | ⬜ |
+| 8 | 🔵 | R | §2 | «el tope de aplastamiento gobierna a los cuatro pernos» sin mostrar la comparación (verificado: desgarre 22 704 > tope 21 717 kgf) | Agregar el paréntesis con las dos cifras | ⬜ |
+| 9 | 🔵 | E | Todo el post | No enlaza a la nota `/acero/aisc360-22-capJ-conexiones`, que F-A7 sí referencia | Enlazarla | ⬜ |
+| 10 | 🔵 | R | §4 | Dos supuestos sin declarar: el momento $V_ue$ lo toman las **almas** de los dos ángulos ($Z = 392$ cm³) ignorando las alas salientes; y $e$ = gramil para el grupo del alma | Una línea de supuestos, como el «Se adopta $e = a$» de F-A7 | ⬜ |
+
+**Verificado y correcto:** $F_{nv} = 372$ MPa → 3793 kgf/cm², $A_b = 3.801$ cm²; corte simple 10 810 kgf y doble 21 620; 4 pernos 86.5 tonf (0.35) y 43.2 (0.69); apoyo en el elemento 56.9/113.8 tonf (0.53 / 0.26); apoyo en el alma 65.15 (0.46); fluencia en corte 42.5/85.0 (0.71 / 0.35); rotura en corte $A_{nv} = 17.6$ cm² → 32.31/64.63 (0.93 / 0.46); tope de fluencia del bloque $0.60F_yA_{gv} = 37\,191 < 0.60F_uA_{nv} = 37\,699$; profundidad 280 mm; $Z_{neto} = 123.2$ y 246.4 cm³; $\phi M_n$ 4.463/3.770 (0.40 / 0.48) y 8.926/7.540 (0.22); $J = 245$ cm²; perno extremo tab $\sqrt{7.714^2+7.50^2} = 10.759$ → **0.995**, doble ángulo 10.308 → **0.48**; acero 2.2 vs 8.4 kg (razón 3.84 → «3.8 veces»); agujeros 12/4. **Cadena cruzada con F-A7: coinciden 43.2/0.69, 56.9/0.53, 42.5/0.71, 32.3/0.93, 36.2/0.83, 65.1/0.46, 4.46/0.40, 3.77/0.48, 10.81/0.995 — sin discrepancias.** Citas J3-1, J3-6a/c, J3.11, J4-3 (φ=1.00), J4-4, J4-5 y Tabla J3.2 correctas contra la fuente procesada. Frontmatter, imports, SVG y enlace interno: OK.
+
+**No verificable:** el gramil $e = 55$ mm sobre ala de 100 mm (rango habitual 55–60; con 60 el perno extremo subiría de 0.48 a ~0.50); el peso 8.4 kg supone $A = 19.2$ cm² para el L100×100×10, no declarado; el conteo «8 pernos al soporte»; y el margen que se atribuye al centro instantáneo del *Manual* Parte 7, que no se cuantifica.
+
+---
+
+### 2026-07-26 · `acero/ejemplo-conexion-momento-placas-ala` · ⚠️ 16 hallazgos (4🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-25)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | §1 y tabla resumen | La sección se titula «(J3.7)» pero omite la combinación que J3.7 exige: la resistencia efectiva de cada perno es la menor entre corte y apoyo/desgarre, y el grupo es la suma. El post presenta corte (97.5, uso 0.69) y apoyo (137.2, uso 0.49) como filas independientes. Recalculado: borde limitado por desgarre (21 470), 4 interiores por corte (21 678) → $\phi R_n = 97.2$ tonf, **uso 0.69**. La tesis no cambia, pero la fila «0.49» sobredimensiona el margen | Agregar el cierre J3.7 con su fila, como en el post de shear tab | ✅ aplicado |
+| 2 | 🟠 | C | Note «El crédito de las alas…» | El Note aplica J10-11 **sin** degradación para el mismo $P_r/P_c = 0.462$ que dos párrafos antes obligó a pasar de J10-9 a J10-10. Es **correcto** —J10.6(b) parte en $0.75P_c$, no en $0.4P_c$— pero el post nunca lo dice, y la aparente contradicción cae justo sobre el argumento central | Añadir que en la rama (b) el umbral es $0.75P_c$ y la degradada es J10-12 | ✅ aplicado |
+| 3 | 🟠 | R | Tabla de datos y Ecs. J4-1/J4-2 | Ningún $F_y$ ni $F_u$ se declara: 3520/4570 y 2530/4080 aparecen desnudos dentro de las ecuaciones, y la Ec. J4-1/J4-2 **no sustituye nada** | Agregarlos a las filas de material y sustituirlos | ✅ aplicado |
+| 4 | 🟠 | R | Tabla de datos | No se declara el gramil transversal $g$ de las dos líneas de pernos; sin él no se reproduce la posición de las perforaciones ni el bloque de corte | Agregar $g = 100$ mm | ✅ aplicado |
+| 5 | 🟡 | C | §2, resumen, Note de alcance | El **bloque de corte** de la placa de ala (J4-5) no se verifica ni se declara fuera de alcance. Estimación con $g = 100$: $\phi R_n \approx 124.8$ tonf, uso ≈ 0.54 — **no gobierna**, la tesis se sostiene | Agregar la fila o nombrarlo en el alcance | ⬜ |
+| 6 | 🟡 | N | Ec. J3-1 y resumen | $6\cdot0.75\cdot4792\cdot4.524 = 97\,555$ kgf = **97.56 tonf**, publicado 97.5 (truncado). El uso no cambia | Publicar 97.6 | ⬜ |
+| 7 | 🟡 | N | Ec. de demanda del panel, `alt`, SVG | Tal como está escrita da 67.1 − 9.143 = 57.96 → **58.0**, no 57.9. El 57.9 sale de $F_f$ sin redondear (67.0860 → 57.943). Es el eslabón que alimenta el 1.07 | Mostrar $F_f = 67.09$ o anotar el redondeo | ⬜ |
+| 8 | 🟡 | N | §zona panel y SVG | «se llevó ese 6 %» sin base declarada: la **capacidad** cae 6.19 %, el **uso** sube 6.60 % (que son 7 puntos: 1.00 → 1.07). El 6 % solo es correcto leído sobre la capacidad | «un 6 % de la capacidad del panel» | ⬜ |
+| 9 | 🟡 | N | §zona panel, tablas, `alt` | El 1.07 es correcto **solo** sin redondeo (57.943/54.369 = 1.0657). Con los valores publicados, 57.9/54.4 = 1.0643 → 1.06 | Publicar la demanda con un decimal más | ⬜ |
+| 10 | 🟡 | F | Tabla de datos | Dos filas distintas con la misma clave «Columna» | Renombrar la segunda | ⬜ |
+| 11 | 🟡 | F | §3, resumen, `alt`, `caption` | «Hasta acá, **cinco** verificaciones»: van seis (falta la placa comprimida J4.4, uso 0.74, que se calcula pero no se tabula) | Contar seis y agregar la fila, o declarar por qué repite el 0.74 | ✅ aplicado (conteo corregido) |
+| 12 | 🔵 | U | Varias ecuaciones | La aritmética se ejecuta en kgf y el resultado se rotula en tonf sin la conversión. Es estilo de casa (el hermano de shear tab hace lo mismo) y es consistente dentro del post | Si se toca, cerrar en kgf y convertir explícito | ⬜ |
+| 13 | 🔵 | R | §2 | $L_c/r = 4.5$ no es reproducible: no se declaran $L$ ni $K$ (se reconstruye con $K = 0.65$, $L = 40$ mm, $r = t_p/\sqrt{12}$) | Declarar $K$ y $L$ | ⬜ |
+| 14 | 🔵 | R | Tabla de doublers | Mantiene $(1.4 - P_r/P_c) = 0.938$ constante al engrosar el alma, o sea **no** acredita el doubler a $P_c$. Es lo correcto y conservador, pero es un supuesto no declarado | Una línea: «el doubler no se acredita a $P_c$» | ⬜ |
+| 15 | 🔵 | F | Frontmatter | `chapter: "Cap. J"`, pero una de las verificaciones destacadas en la `description` es F13.1, del Cap. F | «Cap. J — Conexiones (con F13.1)» | ⬜ |
+| 16 | 🔵 | L | Nota al pie | La afirmación sobre diseño sísmico no lleva §, ni edición de AISC 341, ni año de NCh2369 | Citar AISC 341-22 §E3.6e/f y la sección de NCh2369:2025 | ⬜ |
+
+**Verificado y correcto:** se recalculó con `python` **todo** número publicado y ninguno está mal. $F_f = 67.086$; $A_b = 4.5239$; $F_{nv}$ A490-N = 470 MPa (Tabla J3.2, Grupo 150, roscas incluidas — rama correcta); desgarre $l_c = 27$ y 44 mm con **$d_h = 26$ para $l_c$ y 28 solo para áreas netas — la distinción B4.3b está bien aplicada**; grupo de apoyo 137.2 (0.49); placa $A_n = 28.8$ cm², perforación 28 % exacta; fluencia 91.1 (0.74) y rotura 88.1 (0.76), con rotura gobernando y $A_n/A_g = 0.72 < 0.85$. **F13.1:** $Y_t = 1.0$ ($F_y/F_u = 0.770$), $A_{fn} = 19.43$, rotura controla, $\phi M_n = 42.3$ (0.76), reducción frente a $\phi M_p = 52.4$ del **19.39 %**. **J10:** J10-1 = 47.0 (1.43, aplica porque 200 mm > $0.15b_f$); J10-2 = 60.1 (1.12, rama $5k+l_b$ correcta); J10-4 = 68.4 (0.98). **Zona panel:** $P_c = 433$ tonf, $P_r/P_c = 0.462 > 0.40$ → **rama J10-10, elección correcta**; base 57.959, J10-10 = 54.37; $V_{pz} = 57.943$; uso **1.0657 → 1.07**; y **el hallazgo que da título al post es exacto: sin el término axial, 57.943/57.959 = 0.99972 = «1.00»**. **J10-11:** factor 1.15573 → **1.156**, 67.0 tonf (0.87), con la condición de J10.6(b) bien citada. **Refuerzos:** $A_{st} = 8.8$ cm² (2 PL 100×12 = 24.0, cumplen J10.8); doubler 6 mm → 87.3 (0.66); 8 mm → 98.3 (0.59); **W310×158** vuelve a J10-9 y «no necesita nada» se sostiene. Los nueve usos y las nueve capacidades coinciden **carácter a carácter** entre prosa, ecuaciones, tabla, ambos `alt`, ambos `caption`, el texto de los dos SVG y la `description`.
+
+**No verificable:** las propiedades de catálogo de los tres perfiles (W460×74 $S_x{=}1457$, $Z_x{=}1655$; W310×97 $A_g{=}123$, $k{=}30.5$; W310×158 $t_w{=}15.5$). **Sensibilidad relevante:** J10-2 depende linealmente de $k$ — con $k_{des} = 30.2$ mm el uso pasa de 1.12 a 1.13 (no cambia la tesis). Y $P_u = 200$ tonf es dato de enunciado: con $P_u \le 173$ la rama sería J10-9 y el panel pasaría justo.
+
+---
+
+### 2026-07-26 · `acero/ejemplo-conexion-momento-end-plate` · ⚠️ 16 hallazgos (2🟠 aplicados)
+
+**Commit:** `f00d204` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí · **Segunda pasada** (la primera fue el 2026-07-25)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | F | §3 (`Debilitamiento por los agujeros`) | **Línea duplicada literal** dentro del `$$`: el `\qquad (d' = d_h,\ …)` aparece dos veces seguidas. KaTeX no falla, así que el build pasa, pero la ecuación renderiza el paréntesis dos veces y se desborda | Borrar la línea repetida | ✅ aplicado |
+| 2 | 🟠 | N/U | §7 | La frase declara $t_f = 21.8$ (columna) y en el mismo renglón escribe $l_b = t_f + 2t_p = 58.5$ mm. Con ese $t_f$: 65.8 mm. El 58.5 sale del ala de la **viga** (14.5 + 44). El resultado numérico está bien, pero el lector que rehaga la cuenta con el símbolo escrito obtiene otra cosa | Escribir $l_b = t_{f,\text{viga}} + 2t_p$ y decir que el reparto a 45° es a través de la placa | ✅ aplicado |
+| 3 | 🟡 | N/R | §7 | «longitud disponible alrededor del ala … 37.1 cm en total» es el único número cuya aritmética no se muestra (se reproduce como 19.0 + 2·(19.0−0.90)/2) | Explicitar la suma | ⬜ |
+| 4 | 🟡 | N/L | §3 vs §4 | El mismo agujero con dos anchos: $\delta$ usa $d_h = 26$ mm (Manual Parte 9) y §4 «el agujero de 28 mm que pide B4.3b». Ambas correctas en su contexto, pero sin una línea que lo diga parece incoherencia. Impacto recalculado: inmaterial (uso 1.15 → 1.17) | Media línea que distinga los dos usos | ⬜ |
+| 5 | 🟡 | C | Note tip vs tabla resumen | El Note sostiene que la placa de 22 mm da «comportamiento dúctil»; la tabla etiqueta ese mismo estado gobernante como «**frágil — gobierna**» | Desambiguar: «frágil (perno) precedido de fluencia de la placa» | ⬜ |
+| 6 | 🟡 | C | `description`, intro, §5 | «con 22 mm **sobra**» para un uso 0.83, y «cuatro milímetros —de 18 a 22— llevan la conexión de fallar a sobrar». La propia figura anota $t_p$ mín ≈ 19.3 mm y 20 mm ya pasa con 0.93: el salto real es de 1.3 mm | Reformular a «de fallar a pasar con holgura» y mencionar el 19.3 | ⬜ |
+| 7 | 🟡 | F | §3 | Orden expositivo invertido: la ecuación de geometría usa $a' = a + d_b/2$ pero $a = \min(L_e, 1.25b)$ se define después | Subir la definición de $a$ | ⬜ |
+| 8 | 🟡 | U | `alt` Figura 1 | «W460x74» y «W360x162» con `x` ASCII contra `×` del resto | Unificar | ⬜ |
+| 9 | 🟡 | U | §3, §5 | Notación irregular: `b = p_f = 45` sin unidad; `(b' = 3.3, p = 10 cm)` cambia de mm a cm; el `1.0` de la soldadura es $w = 1$ cm pero se lee como factor unitario | Poner unidad en cada valor | ⬜ |
+| 10 | 🟡 | U | `caption` Figura 2 | El `caption` es texto plano (sin KaTeX) y escribe `t_c = 31.1 mm`: el guion bajo se renderiza literal | «espesor crítico de 31.1 mm» | ⬜ |
+| 11 | 🟡 | C/L | §7 y Note de cierre | «esta columna es gruesa y **no necesita rigidizadores de continuidad**» es correcto bajo J10, pero el Note sismorresistente no advierte que **NCh2369:2025 8.7.6** los exige a todo evento en marcos a momento | Agregar 8.7.6 al Note de cierre | ⬜ |
+| 12 | 🟡 | L | §6 | «como los pernos traccionados no toman corte, no hay que investigar J3.8: la regla del 30 % se cumple sola» es un *non sequitur*: si $f_{rv} = 0$, J3.8 simplemente no aplica | Reescribir | ⬜ |
+| 13 | 🔵 | F | §7 vs resumen | §7 lista cuatro estados límite de la columna; el resumen replica dos y omite fluencia local del alma (0.62) y aplastamiento (0.51) | Agregar las filas o titular «los que mandan» | ⬜ |
+| 14 | 🔵 | R | Todo el post | Faltan datos para rehacerlo: alto/largo de la placa, distancia vertical entre filas traccionadas, la soldadura alma-placa que lleva $V_u$, y si se verificó J3.11 en placa y ala de columna | Declarar la geometría completa y el alcance | ⬜ |
+| 15 | 🔵 | R | §3 | El modelo T-stub se aplica **solo** a la placa; el ala de la columna es un segundo T-stub que también puede generar palanca (se cubre implícitamente con J10-1, uso 0.77, pero no se declara) | Declarar el supuesto | ⬜ |
+| 16 | 🔵 | N/L | §7 | J10-1 está formulada para plancha soldada; para el ala de columna de una conexión **apernada** el DG 4 usa líneas de fluencia con el patrón de pernos. La aproximación es de uso común, pero es una aproximación | Verificar contra DG 4 §3 y declararlo | ⬜ |
+
+**Verificado y correcto:** el par $T = C = 32/0.4425 = 72.32$ tonf y $T/4 = 18.08$; $A_b = 4.5239$; $F_{nt} = 780$ MPa → 7953.8 (el post usa 7950) y $F_{nv} = 470$ → 4792.7; $\phi r_n = 26.97$ tonf (0.670). **Todo el modelo T-stub recalculado y correcto**: $b' = 33$, $a = 40$, $a' = 52$, $\rho = 0.6346$, $\delta = 0.740$; $t_c = 31.14$ mm; la tabla de espesores reproduce exactamente (18 mm → 15.68, uso 1.153 · 20 → 19.36, 0.934 · 22 → 21.73, 0.832 · 25 → 23.25, 0.778 · 31.1 → 26.95, 0.671); el «42 %» del caption; el $t_p$ mín = 19.33 del `alt` y el quiebre $\alpha' = 1$ en 20.95 mm. Placa en corte 66.79 (0.541) y 58.16 (0.622), con φ = 1.00 / 0.75 correctos. Soldadura 2347.9 kgf/cm × 37.1 = 87.11 tonf (0.830), sin $k_{ds}$ 58.07, pierna requerida 13 mm; $k_{ds} = 1.5$ y su justificación coinciden con el User Note de J2.4. Pernos a corte 65.04 (0.231). Columna: J10-1 = 94.10 (0.769); J10-2 = 117.27 (0.617); J10-4 = 141.60 (0.511); J10-9 = 92.02 con demanda 63.17 (0.687); las ramas J10-9/J10-10 según $P_r \lessgtr 0.4P_c$ son correctas y coherentes con el ejemplo de placas de ala. Configuraciones 4E/4ES/8ES de AISC 358 y **NCh2369:2025 8.7.5** respaldan el Note de cierre; el «2 a 2.5 veces» sísmico da 2.00 y 2.30 con $C_{pr}$. Frontmatter, imports, notas al pie, enlaces y ambos SVG: verificados y consistentes con el post.
+
+**No verificable:** la numeración **Manual Ec. 9-26 y 9-30** (16.ª ed., Parte 9) — las fórmulas son correctas y reproducen todos los números, pero el número de ecuación no se cierra sin el *Manual*; las propiedades de perfil declaradas; el criterio del **DG 4** citado en §4; y el empate en 0.83 entre pernos con palanca (0.8320) y soldadura del ala (0.8302), que decide «gobierna la tracción de los pernos» por 0.2 % — con los redondeos declarados no es distinguible.
+
+---
+
 ### 2026-07-26 · `geotecnia/ejemplo-losa-rigida-o-flexible-nch2369` · ❌ bloqueado (20 hallazgos)
 
 **Commit:** `d505a62` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (script del post + barrido rehecho con peso congelado + `grep` sobre el PDF completo de NCh2369:2025)
@@ -1439,8 +1698,8 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-mensula-puntal-tensor` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🟠 5🟡 3🔵 · numeración §16.5 por confirmar en 318-25) |
 | `ejemplo-viga-t` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🔴 2🟠 4🟡 2🔵 · 24.3.4 por confirmar en 318-25) |
 | `ejemplo-columna-interaccion-esbeltez` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟡 2🔵) |
-| `ejemplo-anclajes-pedestal` | 2026-07-23 | ✅ | 0 (4 aplicados: 3🟡 1🔵 · 1🔵 descartado intencional) |
-| `ejemplo-zapata-aislada` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟠 1🟡 1🔵) |
+| `ejemplo-anclajes-pedestal` | 2026-07-26 | ⚠️ | 6 (0🔴 0🟠 · 3🟡 3🔵) · 2.ª pasada: 16 aplicados (3🔴 4🟠 9🟡) |
+| `ejemplo-zapata-aislada` | 2026-07-26 | ⚠️ | 10 (0🔴 0🟠 · 7🟡 3🔵) · 2.ª pasada: 3🟠 aplicados |
 | `ejemplo-viga-flexion-corte` | 2026-07-22 | ⚠️ | 2🔵 (1🟠 2🟡 aplicados) |
 | `aci318-25-alcance-y-definiciones` | — | — | — |
 | `aci318-25-cap10-columnas` | — | — | — |
@@ -1457,16 +1716,16 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
-| `ejemplo-conexion-momento-end-plate` | 2026-07-25 | ✅ | 0 (17 aplicados: 3🟠 8🟡 6🔵, 1🔵 anotado sin Manual) |
-| `ejemplo-conexion-momento-placas-ala` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🟠 5🟡 6🔵) |
-| `ejemplo-conexion-doble-angulo` | 2026-07-25 | ✅ | 0 (18 aplicados: 4🟠 11🟡 3🔵) |
-| `ejemplo-empalme-apernado-viga` | 2026-07-25 | ✅ | 0 (11 aplicados: 1🟠 8🟡 2🔵) |
+| `ejemplo-conexion-momento-end-plate` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados |
+| `ejemplo-conexion-momento-placas-ala` | 2026-07-26 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) |
+| `ejemplo-conexion-doble-angulo` | 2026-07-26 | ⚠️ | 7 (0🔴 0🟠 · 4🟡 3🔵) · 2.ª pasada: 3 aplicados (1🔴 2🟠) |
+| `ejemplo-empalme-apernado-viga` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 5 aplicados (3🟠 1🟡 1🔵) |
 | `ejemplo-viga-columna` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🔴 1🟠 6🟡 4🔵) |
 | `ejemplo-conexion-apernada-corte` | 2026-07-25 | ⚠️ | 2🔵 anotados (requieren el AISC *Manual*) · 14 aplicados: 1🔴 4🟠 6🟡 3🔵 |
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
-| `ejemplo-viga-carrilera-puente-grua` | 2026-07-23 | ⚠️ | 6 aplicados (working tree) |
-| `ejemplo-diagonal-hss-traccion` | 2026-07-23 | ✅ | 0 (3 aplicados: 2🟠 1🟡) |
+| `ejemplo-viga-carrilera-puente-grua` | 2026-07-26 | ⚠️ | 17 (0🔴 0🟠 · 11🟡 6🔵) · 2.ª pasada: 9 aplicados (1🔴 4🟠 4🟡) |
+| `ejemplo-diagonal-hss-traccion` | 2026-07-26 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |
 | `aisc360-22-capE-compresion` | — | — | — |
