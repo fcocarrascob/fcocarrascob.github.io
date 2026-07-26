@@ -1,0 +1,399 @@
+---
+title: "Ejemplo — La zapata del galpón: lo que NCh2369 agrega al método"
+description: "Zapata de una columna arriostrada de galpón industrial verificada según NCh2369:2025 Cap. 10. La capacidad de soporte sobra con uso 0,30; lo que no cumple son las dos verificaciones que la norma chilena agrega y que Das no tiene: el 80 % de área apoyada y el deslizamiento. Con el empuje pasivo que duplicaría el factor de seguridad y que la norma prohíbe contar."
+pubDate: 2026-07-26
+tags: ["ejemplo", "geotecnia", "fundaciones", "nch2369", "industrial", "deslizamiento", "estabilidad", "sismo", "sensibilidad", "das"]
+subsection: "ejemplos"
+order: 13
+chapter: "Cap. 10 — NCh2369:2025"
+source: "NCh2369:2025 y Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 13 · abre el bloque 5. Los bloques anteriores construyeron el método; este lo somete a la
+norma con que se firma en Chile.*
+
+Hasta acá la serie trabajó con Das: métodos con autor y año, y un `q_adm` que sale de dos
+criterios. Ninguna de las notas anteriores necesitó abrir una norma, porque **en geotecnia no hay
+una cláusula que entregue el número**.
+
+Pero sí hay una que dice **qué se verifica**. El Capítulo 10 de **NCh2369:2025** —*Diseño sísmico
+de estructuras e instalaciones industriales*— le exige a una fundación industrial dos cosas que
+no aparecen en ningún capítulo de Das:
+
+1. Que **al menos el 80 % del área bajo la zapata siga apoyada** bajo las combinaciones sísmicas
+   (10.1.4).
+2. Que **no deslice**, con una resistencia lateral en la que la norma prohíbe explícitamente
+   contar dos términos que la mecánica de suelos sí permite calcular (10.1.3).
+
+Este ejemplo toma una zapata perfectamente razonable —la de una columna arriostrada de galpón—
+y muestra que **la capacidad de soporte, que es lo que todo el mundo mira, es la verificación que
+más holgada queda**.
+
+<Note type="warning" title="Alcance y responsabilidad">
+Este ejemplo muestra cómo se aplican las verificaciones del Cap. 10 de NCh2369:2025 sobre un caso
+concreto. **No reemplaza al informe de mecánica de suelos ni al geotecnista que lo firma**: los
+parámetros del suelo, la presión admisible de cada condición de carga y la rigidez vertical son
+datos de entrada que aquí se declaran, y en un proyecto real salen de sondajes. Las cláusulas se
+citan por su numeración en la edición **2025**.
+</Note>
+
+---
+
+## 1. El caso
+
+<Figure
+  src="/geotecnia-zapata-galpon/el-caso.svg"
+  alt="Sección de la zapata de una columna arriostrada de galpón industrial. La zapata es de 3,00 por 3,00 metros con 0,60 m de espesor, fundada a 1,80 m de profundidad, con un pedestal de 0,80 por 0,80 m y 1,20 m de altura hasta el nivel de terreno. El suelo es arena media densa con φ' = 30 grados, γ = 18,5 kN/m³ y densidad relativa 65 %; la napa está profunda. Sobre la columna llegan D = 18 tonf, L = 10 tonf y la acción sísmica con N = más menos 42 tonf de axial y V = 16 tonf de corte horizontal, este último con brazo de 1,80 m hasta el sello. A la derecha, la tabla de datos y las dos presiones admisibles declaradas por el informe: 2,0 kgf/cm² estática y 3,0 kgf/cm² sísmica. Se destaca que la densidad relativa de 65 %, menor que el 70 % que exige la cláusula 10.1.3, prohíbe contar el empuje pasivo, y que los pesos de zapata, pedestal y suelo suman 34,65 tonf. Al pie: sin ese peso, la combinación de levantamiento daría una resultante de tracción de 11,40 tonf."
+  caption="La columna es de un marco arriostrado: base rotulada, el sismo llega como axial de signo alternante más el corte de la diagonal. El detalle que decide todo está en la esquina inferior derecha del recuadro de datos."
+/>
+
+| Dato | Valor |
+|---|---|
+| Zapata | $3{,}00 \times 3{,}00$ m, espesor $0{,}60$ m, $D_f = 1{,}80$ m |
+| Pedestal | $0{,}80 \times 0{,}80$ m, altura $1{,}20$ m |
+| Suelo | Arena media densa: $\phi' = 30°$, $c' = 0$, $\gamma = 18{,}5$ kN/m³, $D_R \approx 65$ % |
+| Napa | Profunda ($d > B$ bajo el sello) — Caso III, sin efecto |
+| $q_{adm}$ del informe | $2{,}0$ kgf/cm² estática · $3{,}0$ kgf/cm² sísmica |
+| $k_v$ del informe | 5.000 tonf/m³ |
+| Cargas en la base | $D = 18$ tonf, $L = 10$ tonf, $E$: $N = \pm 42$ tonf, $V = 16$ tonf |
+
+Los pesos que la zapata aporta por sí sola: **13,77** tonf de zapata, **1,96** de pedestal y
+**18,93** de suelo sobre ella — **34,65 tonf** en total, casi el doble de la carga permanente que
+baja por la columna.
+
+### El paso previo: ¿es rígida?
+
+Antes de repartir tensiones hay que saber si la fundación se puede tratar como rígida. NCh2369
+lo resuelve con un criterio cerrado, la Ec. (25), donde $L$ es la longitud de cálculo de la
+Tabla 10 —para una zarpa, la distancia entre el borde de la zapata y el borde del pedestal,
+$(3{,}00-0{,}80)/2 = 1{,}10$ m—, $I = e^3/12$ por unidad de longitud y $E = 2{,}4\cdot10^6$
+tonf/m² es el módulo del hormigón:
+
+<Equation label="NCh2369 Ec. (25)">
+$$
+\frac{L^4 k_v}{4EI} \le 1 \quad\Rightarrow\quad \frac{1{,}10^4 \times 5000}{4 \times 2{,}4\cdot10^6 \times 0{,}0180} = 0{,}042
+$$
+</Equation>
+
+Con 0,042 contra un límite de 1, la zapata es **holgadamente rígida** y se puede suponer la
+distribución de tensiones de contacto plana, que es lo que todo el resto del cálculo asume. Si
+no lo fuera, 10.1.5 obliga a modelarla con una cama de resortes anulando los traccionados, y
+**el requisito de área apoyada deja de aplicar**. Ese caso es el ejemplo siguiente de este
+bloque.
+
+---
+
+## 2. Las combinaciones (4.5)
+
+Sin sismo, NCh2369 remite a NCh3171. Con sismo, fija sus propias combinaciones ASD:
+
+<Equation label="NCh2369 4.5">
+$$
+D + 0{,}75\,aL + 0{,}75\,S_O + 0{,}75\,S_A + 0{,}70\,E \qquad\text{y}\qquad D + 0{,}75\,S_A + 0{,}70\,E
+$$
+</Equation>
+
+El factor $a$ reduce la sobrecarga por la probabilidad de que su valor nominal coexista con el
+sismo de diseño: la Tabla C-2 del comentario da $a = 0{,}25$ para plataformas de operación, que
+es el caso. Y **la segunda combinación, sin sobrecarga, es la que gobierna el levantamiento** —
+por eso existe.
+
+| Combinación | $N$ (tonf) | $V$ (tonf) | $M$ (tonf·m) | $e$ (m) | $e/B$ |
+|---|---|---|---|---|---|
+| Gravedad (NCh3171, $D+L$) | 62,65 | 0 | 0 | 0 | 0 |
+| Sismo, compresión | 83,92 | 11,20 | 20,16 | 0,240 | 0,080 |
+| **Sismo, levantamiento** | **23,25** | **11,20** | **20,16** | **0,867** | **0,289** |
+
+El momento en el sello no viene de la columna —la base es rotulada— sino del corte por su brazo:
+$M = 0{,}70 \times 16 \times 1{,}80 = 20{,}16$ tonf·m. Es el mismo $M$ en las dos combinaciones
+sísmicas, pero **cambia el $N$ que lo divide**, y con eso la excentricidad se multiplica por 3,6.
+
+<Note type="tip" title="El número que sostiene la verificación">
+Sin el peso de la zapata, el pedestal y el suelo que tiene encima, la combinación de levantamiento
+daría $N = 18 - 0{,}70 \times 42 = \mathbf{-11{,}40}$ **tonf**: tracción neta, la zapata se
+despega entera. Son los **34,65 tonf** de hormigón y suelo los únicos que la mantienen apoyada.
+
+Vale la pena notar por qué se pueden contar completos: 10.1.4 permite **despreciar las fuerzas de
+inercia de la fundación** si se hormigona contra el terreno natural o los rellenos están
+compactados y controlados. Es una concesión explícita de la norma, no una omisión del calculista.
+</Note>
+
+---
+
+## 3. El 80 % de área apoyada (10.1.4)
+
+Esta es la verificación que no existe en Das. NCh2369 clasifica las fundaciones rígidas no
+ancladas en tres categorías y le exige a cada una un mínimo de área en contacto:
+
+| Clasificación | Cuándo | Área apoyada mínima |
+|---|---|---|
+| **1 — Estándar menor** | La fundación **no** está en el modelo de la superestructura; se representa como apoyo idealizado | **80 %** |
+| **2 — Estándar mayor** | La fundación está modelada explícitamente, con interacción suelo-estructura al menos elástica | **50 %** |
+| **3 — Especial** | Modelación integrada con análisis tiempo-historia no lineal | Se define por proyecto |
+
+El galpón se modeló con las bases como apoyos idealizados y las zapatas fuera del modelo: es una
+**estándar menor**, y le toca el 80 %.
+
+Traducido a excentricidad, con la base en despegue el largo en contacto es
+$3(B/2 - e)$, de modo que:
+
+<Equation label="Das 16.7 · límites de 10.1.4">
+$$
+\frac{\text{área apoyada}}{B\,L} = 3\left(\frac{1}{2} - \frac{e}{B}\right)
+\quad\Rightarrow\quad
+80\ \% \Leftrightarrow \frac{e}{B} \le 0{,}233
+\qquad
+50\ \% \Leftrightarrow \frac{e}{B} \le 0{,}333
+$$
+</Equation>
+
+Los tres umbrales que importan, en una sola escala: el **núcleo central** en $e/B = 0{,}167$ (a
+partir de ahí hay despegue), el **80 %** en 0,233 y el **50 %** en 0,333. Este caso cae en
+$e/B = 0{,}289$:
+
+<Figure
+  src="/geotecnia-zapata-galpon/el-despegue.svg"
+  alt="Escala de excentricidad relativa e/B con cuatro zonas marcadas. Entre 0 y 0,167 toda la base está comprimida, es el núcleo central. En 0,167 empieza el despegue. En 0,233 está el límite del 80 % de área apoyada que exige la cláusula 10.1.4 para fundaciones estándar menores. En 0,333 está el límite del 50 % para fundaciones estándar mayores. En 0,5 la zapata vuelca. El caso cae en e/B = 0,289, entre el límite del 80 % y el del 50 %: no cumple como estándar menor pero sí como estándar mayor. Abajo, dos diagramas de presión de contacto en sección: a la izquierda la combinación de compresión con e/B = 0,080, dentro del núcleo, con distribución trapezoidal sobre el 100 % de la base y q_max = 1,38 kgf/cm²; a la derecha la combinación de levantamiento con e/B = 0,289, con distribución triangular sobre solo 1,90 m de los 3,00 m de la base, es decir el 63,3 %, y q_max = 0,82 kgf/cm². Al pie: la combinación que despega es la que menos presión produce, porque es la que tiene menos carga vertical."
+  caption="Los tres umbrales en una escala, y las dos combinaciones sísmicas dibujadas. La que despega es la que menos presión aplica: son problemas distintos, y por eso el 80 % es una verificación aparte y no un subproducto de la tensión de contacto."
+/>
+
+> **Área apoyada: 63,3 % contra un mínimo de 80 %. Uso 1,26 — no cumple.**
+>
+> La misma zapata, clasificada como **estándar mayor** (50 %), cumpliría con uso 0,79.
+
+---
+
+## 4. La capacidad de soporte, que sobra
+
+Ahora la verificación que sí está en Das, y que es la que casi todos revisan primero.
+
+### 4a. Tensión de contacto contra el $q_{adm}$ del informe
+
+10.1.4 pide que *«las tensiones de contacto máximas contra el suelo sean menores que las
+tensiones admisibles considerando el factor de seguridad correspondiente a esta condición de
+carga»*. **La norma no fija ese número**: lo delega en el informe, que por eso debe entregar dos
+valores, uno estático y uno para la condición eventual sísmica.
+
+| Combinación | $q_{max}$ | $q_{adm}$ | Uso |
+|---|---|---|---|
+| Gravedad | 0,70 kgf/cm² | 2,00 kgf/cm² | 0,35 |
+| Sismo, compresión | 1,38 kgf/cm² | 3,00 kgf/cm² | 0,46 |
+| Sismo, levantamiento | 0,82 kgf/cm² | 3,00 kgf/cm² | 0,27 |
+
+### 4b. Y la que el informe no puede haber hecho
+
+Ese $q_{adm}$ del informe es para **carga vertical centrada**. La combinación sísmica no lo es:
+tiene excentricidad *y* inclinación. Hay que rehacer la capacidad con el método del área efectiva
+(Meyerhof, 1953) sobre la Ec. (16.9), con $B' = B - 2e$, los factores de forma calculados con
+$B'$ y $L'$, y los de profundidad con $B$ —esa asimetría es la que más errores produce— más los
+factores de inclinación con $\beta = \arctan(V/N)$:
+
+<Equation label="Das Ec. (16.9), 16.7">
+$$
+q'_u = q N_q F_{qs} F_{qd} F_{qi} + \tfrac{1}{2}\gamma B' N_\gamma F_{\gamma s} F_{\gamma d} F_{\gamma i}
+$$
+</Equation>
+
+Con $\phi' = 30°$: $N_q = 18{,}40$ y $N_\gamma = 22{,}40$ (Tabla 16.2), $F_{qd} = 1{,}173$.
+
+| | Sismo, compresión | Sismo, levantamiento |
+|---|---|---|
+| $B'$ | 2,520 m | 1,266 m |
+| $\beta$ | 7,6° | 25,7° |
+| $F_{qi}$ | 0,838 | 0,510 |
+| $F_{\gamma i}$ | 0,557 | **0,020** |
+| $q'_u$ | 1088 kPa | 460 kPa |
+| $Q_{ult}$ | 839 tonf | 178 tonf |
+| $FS = Q_{ult}/N$ | 10,0 | 7,7 |
+| **Uso frente a $FS = 3$** | **0,30** | **0,39** |
+
+> **La capacidad de soporte sobra por un factor de más de tres**, en las dos combinaciones. Es la
+> verificación más holgada del cálculo.
+
+<Note type="info" title="Los factores de inclinación valen un 142 %">
+$F_{\gamma i} = (1 - \beta/\phi')^2$ se anula cuando la carga se inclina tanto como el ángulo de
+fricción del suelo. En la combinación de levantamiento, $\beta = 25{,}7°$ contra $\phi' = 30°$:
+el factor cae a **0,020** y el término de peso propio prácticamente desaparece.
+
+Ignorar los factores de inclinación —que es lo que ocurre cuando se usa el $q_{adm}$ del informe
+tal cual— da $q'_u = 1112$ kPa en vez de 460: un **+142 %** del lado inseguro. En la combinación de
+compresión, con $\beta = 7{,}6°$, el mismo error vale +30 %.
+
+Acá sobraba capacidad y no cambia el veredicto. En una fundación de equipo alta y liviana, con
+$\beta$ mayor y menos peso, sí lo cambia. Conviene tener presente, eso sí, que estos factores
+fueron calibrados con carga estática inclinada (Meyerhof, 1963; Hanna y Meyerhof, 1981), no con
+carga cíclica.
+</Note>
+
+---
+
+## 5. El deslizamiento (10.1.3)
+
+Acá NCh2369 escribe la ecuación completa, y después borra dos de sus tres términos.
+
+<Equation label="NCh2369 Ec. (22) y (24)">
+$$
+F_R = N' \tan\phi + c' A_c + E_{pm} \qquad\qquad E_{pm} = c_p E_p, \quad c_p = 0{,}5
+$$
+</Equation>
+
+Las dos restricciones que vienen inmediatamente después en el texto de la cláusula:
+
+- **La cohesión no se cuenta** *«salvo que el suelo presente cementación»*. Este suelo es arena,
+  con $c' = 0$ declarado; el asunto no se plantea.
+- **El empuje pasivo no se cuenta** *«si la fundación se encuentra embebida en suelos granulares
+  sueltos o de compacidad media (densidad relativa menor que 70 %)»*. El informe declara
+  $D_R \approx 65$ %. **Queda prohibido.**
+
+Sobre la combinación de levantamiento ($N' = 23{,}25$ tonf, $V = 11{,}20$ tonf), lo único que
+queda es la fricción:
+
+$$F_R = 23{,}25 \times \tan 30° = 13{,}42 \ \text{tonf} \quad\Rightarrow\quad FS = \frac{13{,}42}{11{,}20} = \mathbf{1{,}20}$$
+
+El comentario C10.1.3 no fija el factor de seguridad —dice que *«se debe evaluar en cada proyecto
+de acuerdo con sus condiciones específicas de operación»*— pero entrega como referencia el **1,3
+del Manual de Carreteras del MOP**. Contra ese valor:
+
+> **Deslizamiento: $FS = 1{,}20$ contra 1,3. Uso 1,08 — no cumple.**
+
+<Note type="warning" title="El término prohibido vale más que el permitido">
+Si este suelo tuviera $D_R \ge 70$ %, el pasivo sí se podría contar: con $K_p = \tan^2(45 + \phi'/2) = 3{,}00$
+(Rankine, Cap. 14), $E_p = \tfrac{1}{2}K_p\gamma D_f^2 B = 27{,}50$ tonf, y aplicando el
+$c_p = 0{,}5$ que la Ec. (24) impone, $E_{pm} = 13{,}75$ tonf.
+
+Eso es **más que toda la fricción disponible**, y llevaría el factor de seguridad de 1,20 a
+**2,43: un +102 %**. La verificación pasaría de fallar a sobrar, sin tocar una sola dimensión.
+
+El $c_p = 0{,}5$ tiene además una explicación física que esta serie ya midió. La
+[Tabla 14.1 de Das](/geotecnia/tres-coeficientes-del-mismo-suelo) muestra que el estado pasivo
+necesita **entre 2 y 10 veces más desplazamiento** que el activo para movilizarse: en arena densa,
+5 mm contra 25 mm. La norma no está siendo conservadora por gusto — está reconociendo que ese
+empuje **no está disponible** al nivel de desplazamiento que la fundación puede tolerar. Es la
+misma asimetría que hace que en un pilote
+[la punta casi no trabaje](/geotecnia/pilotes-la-punta-casi-no-trabaja).
+</Note>
+
+---
+
+## 6. El veredicto
+
+| Verificación | Demanda | Límite | Uso |
+|---|---|---|---|
+| Tensión de contacto, gravedad | 0,70 kgf/cm² | 2,00 kgf/cm² | 0,35 |
+| Tensión de contacto, sismo | 1,38 kgf/cm² | 3,00 kgf/cm² | 0,46 |
+| Capacidad de soporte (área efectiva, $FS = 3$) | 83,9 tonf | 279,5 tonf | 0,30 |
+| **Área apoyada ≥ 80 % (10.1.4-1)** | **63,3 %** | **80 %** | **1,26** |
+| **Deslizamiento $FS \ge 1{,}3$ (10.1.3)** | **1,20** | **1,30** | **1,08** |
+
+Las tres verificaciones que vienen de la mecánica de suelos pasan con holgura. **Las dos que
+agrega NCh2369 son las que fallan**, y las dos por la misma razón: la combinación de
+levantamiento deja poco peso vertical y todo el corte.
+
+### Qué zapata sí cumple
+
+Ambas verificaciones mejoran al agrandar la zapata, porque el peso propio y el suelo encima
+crecen con $B^2$ mientras el corte se mantiene. Resolviendo por bisección:
+
+| Objetivo | $B$ mínimo |
+|---|---|
+| Estándar menor (80 % apoyado) | 3,17 m |
+| Estándar mayor (50 % apoyado, pero gobierna el deslizamiento) | 3,09 m |
+
+Adoptando el módulo constructivo de 10 cm, **$B = 3{,}20$ m**:
+
+| Verificación | Resultado | Uso |
+|---|---|---|
+| Área apoyada | 82,4 % | 0,97 |
+| Deslizamiento | $FS = 1{,}44$ | 0,90 |
+| Tensión de contacto, sismo | 1,23 kgf/cm² | 0,41 |
+| Capacidad de soporte | — | 0,27 |
+
+**20 cm de lado más: un 14 % de hormigón y de excavación** por dos verificaciones que no tienen
+nada que ver con la resistencia del suelo. Y nótese el detalle: para la clasificación de
+*estándar mayor*, que exige apenas el 50 % de área apoyada, el que manda ya no es el área sino
+el deslizamiento — el 50 % se cumple con 3,00 m, pero el $FS = 1{,}3$ no.
+
+---
+
+## 7. Análisis de sensibilidad
+
+<Figure
+  src="/geotecnia-zapata-galpon/sensibilidad.svg"
+  alt="Gráfico de tornado de la sensibilidad de las dos verificaciones que fallan, con todas las barras en la misma escala porcentual. La barra dominante corresponde a no contar el peso del suelo sobre la zapata: la lleva a 0 % de área apoyada, un menos 100 %. Le sigue contar el empuje pasivo, que sube el factor de seguridad al deslizamiento de 1,20 a 2,43, un más 102 %. Después: un sismo 15 % mayor baja el área apoyada de 63,3 % a 26,9 %, un menos 57 %; contar una cohesión aparente de 10 kPa sube el factor de seguridad a 1,72, un más 43 %; un sismo 15 % menor sube el área apoyada a 88,0 %, un más 39 %; reclasificar la fundación a estándar mayor relaja el límite de 80 % a 50 %, un menos 37,5 % de exigencia; y φ' de 32 o 28 grados en vez de 30 mueve el factor de seguridad al deslizamiento apenas más menos 8 %. Al pie: el único parámetro del suelo de la lista es el que menos mueve el resultado, y las tres barras más grandes son decisiones de modelación y de clasificación, no propiedades del terreno."
+  caption="El orden se invierte respecto del resto de la serie: acá los parámetros del suelo son el ruido y las decisiones del calculista son la señal."
+/>
+
+| Decisión | Efecto |
+|---|---|
+| **No contar el suelo sobre la zapata** | **área apoyada 0 % (−100 %)** |
+| **Contar el empuje pasivo ($c_p = 0{,}5$)** | **$FS$ 1,20 → 2,43 (+102 %)** |
+| $E$ un 15 % mayor | área apoyada 63,3 → 26,9 % (−57 %) |
+| Contar $c' = 10$ kPa aparente | $FS$ 1,20 → 1,72 (+43 %) |
+| $E$ un 15 % menor | área apoyada 63,3 → 88,0 % (+39 %) |
+| Reclasificar a estándar mayor | límite 80 % → 50 % (−37,5 % de exigencia) |
+| $\phi' = 28°$ o $32°$ en vez de 30° | $FS$ ∓8 % |
+
+Tres lecturas.
+
+**Primera: el único parámetro del suelo de la lista es el que menos importa.** Dos grados de
+$\phi'$ —la incertidumbre que domina todos los ejemplos anteriores de esta serie— mueven el
+resultado un 8 %. Es exactamente el reverso del
+[ejemplo del bloque 1](/geotecnia/ejemplo-zapata-los-dos-criterios), donde los parámetros del
+suelo dominaban y la modelación de la zapata no llegaba al 5 %. La razón es estructural: **la
+estabilidad la deciden pesos y geometría, que se conocen bien; la capacidad la deciden parámetros
+inciertos, pero la capacidad sobra**. Cada verificación tiene sus propios dominantes, y
+extrapolar la sensibilidad de una a la otra lleva a mirar el parámetro equivocado.
+
+**Segunda: el término más caro del cálculo es el que la norma prohíbe.** El empuje pasivo vale
+más que toda la fricción disponible, y la única razón de que no esté es una línea del informe que
+dice $D_R \approx 65$ %. Un ensayo más, o un relleno estructural compactado y controlado alrededor
+de la fundación —que 10.1.3 sí permite computar, con la condición de que su longitud normal a la
+cara sea al menos $2{,}5h$—, cambian la verificación por completo. Es de las pocas veces en que
+**gastar en terreno es más barato que gastar en hormigón**.
+
+**Tercera: la barra más grande es una decisión de modelación.** Los 34,65 tonf de zapata,
+pedestal y suelo encima no son un dato del suelo ni una carga del análisis: son una consecuencia
+de haber dimensionado así. Sin ellos el problema no tiene solución, y por eso conviene mirarlos
+con el mismo cuidado que a las cargas — sobre todo el prisma de suelo, que es el más fácil de
+perder si el relleno lateral no es el que el cálculo supuso.
+
+---
+
+## Lo que este ejemplo agrega a la serie
+
+El bloque 1 cerró con una tesis: **$q_{adm}$ no es una propiedad del suelo**, sino el resultado de
+una cadena de decisiones. Este ejemplo agrega la mitad que faltaba para la práctica industrial
+chilena: **$q_{adm}$ tampoco es la verificación que dimensiona la zapata.**
+
+Sobre una arena competente y con una columna arriostrada, lo que fija el tamaño no es la
+resistencia del terreno —que sobra por un factor de tres— sino dos requisitos geométricos y de
+equilibrio que solo aparecen si se abre el Capítulo 10 de NCh2369. Un cálculo que verifique
+únicamente $q_{max} \le q_{adm}$ va a entregar una zapata de 3,00 m que **no cumple la norma**, y
+todos sus números van a estar bien.
+
+---
+
+**Lo que viene:** esta zapata cumplió el criterio de rigidez con un 0,042 contra 1. Cuando no lo
+cumple —losas de equipos, fundaciones esbeltas, radieres— el requisito de área apoyada
+desaparece y lo reemplaza otra cosa: verificar que los levantamientos sean tolerables, con la
+fundación modelada sobre resortes que hay que anular cuando traccionan. Ese es el próximo
+ejemplo del bloque, junto con las fundaciones ancladas de 10.1.6, que tampoco necesitan
+garantizar área de contacto pero pagan el precio de diseñarse con el sismo amplificado por
+$0{,}7R_1$.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script que calcula el caso completo: las tres combinaciones
+ASD al nivel del sello, el criterio de rigidez de la Ec. (25), la excentricidad y el área
+apoyada, la capacidad de soporte por área efectiva con y sin factores de inclinación, el
+deslizamiento con y sin los términos que la norma prohíbe, la bisección sobre $B$ para las dos
+clasificaciones y el barrido de sensibilidad.
+
+Los factores $N_q$ y $N_\gamma$ usan las formas cerradas del propio libro, Ecs. (16.6) y (16.8),
+verificadas contra la Tabla 16.2 (240 valores contrastados, 1 errata encontrada en la Tabla
+16.1). Las cláusulas de NCh2369 se citan desde el texto de la edición **2025**; la numeración de
+la edición 2003 es distinta.
+</Note>

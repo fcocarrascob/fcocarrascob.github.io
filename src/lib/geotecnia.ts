@@ -78,6 +78,13 @@ export const BLOQUES = [
     description:
       'Cuando la zapata no alcanza. La capacidad se reparte entre punta y fuste, y los dos términos no se movilizan al mismo tiempo.',
   },
+  {
+    n: 5,
+    label: 'La norma con que se firma en Chile',
+    range: [13, 16] as const,
+    description:
+      'Los bloques anteriores construyeron el método; este lo somete al Capítulo 10 de NCh2369:2025. Casos típicos de la industria nacional, y las verificaciones que la norma agrega —y los términos que prohíbe— sobre lo que la mecánica de suelos permite calcular.',
+  },
 ] as const;
 
 export async function getAllGeotecniaPosts() {
