@@ -56,6 +56,7 @@ informe ni al geotecnista que lo firma.** Las cláusulas se citan por su numerac
 | Sismo (análisis, reducido por $R$) | $V = 13$ tonf, $M = 150$ tonf·m en la base de la torre |
 | Roca fracturada | $k_v = 40.000$ tonf/m³, $\tan\delta = 0{,}70$ |
 | Pesos unitarios | Hormigón $2{,}55$ tonf/m³ · relleno sobre el dado $1{,}94$ tonf/m³ |
+| Hormigón | $E = 2{,}4\cdot10^6$ tonf/m² · acero de anclaje $E_s = 2{,}04\cdot10^7$ tonf/m² |
 | $q_{adm}$ del informe | $12$ kgf/cm² estática · $18$ kgf/cm² sísmica |
 | Resistencia «realista» | $40$ kgf/cm² (para la condición amplificada, C10.1.6) |
 | Anclajes | 4 barras Ø32 **A630-420H** (**2 traccionadas por dirección de sismo**), $L_{libre} = 6$ m, eje a $0{,}40$ m del borde |
@@ -145,9 +146,21 @@ aritmética de decir que el problema no tiene solución.
 
 Con anclajes hay dos incógnitas —cuánto se comprime la roca y cuánto se estira la barra— y hacen
 falta dos ecuaciones. El comentario C10.1.2 señala el camino al indicar que los giros instantáneos se
-evalúan *«a través del uso de constantes de balasto»*: fundación rígida (Ec. (25)), roca como cama
+evalúan *«a través del uso de constantes de balasto»*: fundación rígida, roca como cama
 de resortes de constante $k_v$, anclajes como resortes axiales de rigidez
-$k_a = nEA/L_{libre} = 5.466$ tonf/m.
+$k_a = nEA/L_{libre} = 5.466$ tonf/m con $n = 2$ barras traccionadas.
+
+La rigidez hay que verificarla, no suponerla. Con la zarpa del dado como longitud de cálculo de
+la Tabla 10 —$(4{,}00-2{,}00)/2 = 1{,}00$ m— y $I = 0{,}80^3/12 = 0{,}0427$ m³:
+
+<Equation label="NCh2369 Ec. (25)">
+$$
+1{,}00\sqrt[4]{\frac{40.000}{4 \times 2{,}4\cdot10^6 \times 0{,}0427}} = 0{,}559 \le 1
+$$
+</Equation>
+
+Rígida, aunque con menos holgura que la zapata del galpón (0,454): la roca es mucho más rígida
+—$k_v$ ocho veces mayor—, y eso empuja el criterio hacia arriba pese al dado más grueso.
 
 Girando un ángulo $\theta$ en torno a un eje neutro a distancia $c$ del borde comprimido:
 
@@ -172,7 +185,7 @@ Resolviendo para la combinación amplificada:
 
 <Figure
   src="/geotecnia-fundacion-anclada/el-equilibrio.svg"
-  alt="Dos diagramas comparativos del equilibrio del dado. Arriba, la combinación sin amplificar: la longitud comprimida es de 2,012 m sobre los 4,00 m del dado, el giro es de 0,27 mrad, la presión máxima 2,20 kgf/cm² y la tracción en los anclajes apenas 2,37 tonf. Abajo, la combinación amplificada por 2,10: la longitud comprimida cae a 0,834 m, solo el 20,8 % del dado, el giro sube a 2,12 mrad, la presión máxima a 7,09 kgf/cm² y la tracción en los anclajes a 32,11 tonf, es decir 16,06 tonf por barra. Entre ambos, una flecha indica que el momento se multiplicó por 2,10 pero la tracción del anclaje por 13,5. Al pie: el peso propio absorbe un momento restaurador fijo, y todo lo que sobra se lo lleva el anclaje."
+  alt="Dos diagramas comparativos del equilibrio del dado. Arriba, la combinación sin amplificar: la longitud comprimida es de 2,012 m sobre los 4,00 m del dado, el giro es de 0,27 mrad, la presión máxima 2,20 kgf/cm² y la tracción en los anclajes apenas 2,37 tonf. Abajo, la combinación amplificada por 2,10: la longitud comprimida cae a 0,834 m, solo el 20,8 % del dado, el giro sube a 2,12 mrad, la presión máxima a 7,09 kgf/cm² y la tracción en los anclajes a 32,11 tonf, es decir 16,06 tonf por barra. Entre ambos, una flecha indica que el momento se multiplicó por 2,10 pero la tracción del anclaje por 13,5. Al pie: el momento que el peso propio puede aportar está acotado por N por B medios, 172 tonf·m, y todo el excedente sobre ese techo se lo lleva el anclaje, que pasa de 6,96 a 106,67 tonf·m."
   caption="El mismo dado bajo las dos combinaciones. El momento se multiplica por 2,10; la tracción del anclaje, por 13,5. Esa desproporción es el tema de este ejemplo."
 />
 
@@ -184,11 +197,24 @@ Resolviendo para la combinación amplificada:
 | Tracción $T$ | 2,37 tonf | **32,11 tonf** (16,06 por barra) |
 
 **El momento creció 2,10 veces y la tracción del anclaje 13,5.** La razón es puramente
-aritmética y vale para cualquier fundación anclada: el peso propio aporta un momento restaurador
-que es **fijo**, del orden de $N \cdot (B/2 - c/3)$, y el anclaje solo se lleva lo que sobra.
-Mientras el momento aplicado esté cerca de ese umbral, un pequeño aumento de la demanda produce
-un aumento enorme de la tracción. Diseñar el anclaje con la combinación sin amplificar no es
-quedarse un 110 % corto: es quedarse un 1.250 % corto.
+aritmética y vale para cualquier fundación anclada. Descomponiendo el momento en sus dos
+aportes, $M = N(B/2 - c/3) + T(x_a - c/3)$:
+
+| | Sin amplificar | Amplificada | Factor |
+|---|---|---|---|
+| Momento total $M$ | 121,38 tonf·m | 254,90 tonf·m | ×2,10 |
+| Lo aporta el peso propio | 114,42 | 148,23 | ×1,30 |
+| **Lo aporta el anclaje** | **6,96** | **106,67** | **×15,3** |
+
+El peso propio **no** aporta un momento fijo —crece un 30 % al acortarse la zona comprimida—,
+pero sí está **acotado**: su máximo teórico es $N \cdot B/2 = 172$ tonf·m, con toda la reacción
+concentrada en el borde. Mientras la demanda quepa bajo ese techo el anclaje casi no trabaja;
+apenas lo supera, **todo el excedente es suyo**. Acá la demanda pasó de 121 a 255 tonf·m: cruzó
+los 172 y el anclaje pasó de llevarse el 6 % del momento a llevarse el 42 %.
+
+Esa es la desproporción, y no es un artificio del ejemplo: es la forma del problema. Diseñar el
+anclaje con la combinación sin amplificar no es quedarse un 110 % corto: es quedarse un 1.250 %
+corto.
 
 <Note type="info" title="El giro también es un resultado del cálculo">
 $\theta = 2{,}12$ mrad sobre una torre de 22 m son **47 mm de desplazamiento en la punta solo
@@ -245,11 +271,16 @@ dividido por 1,5). Es diseño por capacidad: si los pernos de anclaje de la torr
 fluyen antes, el dado nunca va a ver el momento amplificado completo, y ese es el techo real de
 la demanda. En equipos con anclajes dúctiles esta cláusula suele recortar bastante.
 
-La segunda está en **8.5.2**: los pernos y barras se detallan dúctiles —con silla, largo expuesto
-no menor que 250 mm ni que ocho diámetros, hilo bajo la tuerca de al menos 75 mm— *salvo* los
-que se diseñen para la tracción de las combinaciones amplificadas por $0{,}7R_1$. O se detalla
-para que fluya y se pueda reapretar, o se diseña para que no fluya. **Las dos son estrategias
-completas; mezclarlas a medias es lo que no sirve.**
+La segunda está en **8.5.2**, y hay que ubicarla bien: 8.5.1 acota la cláusula 8.5 a los apoyos
+que transmiten esfuerzos sísmicos **a** la fundación, así que rige los pernos de la torre al
+pedestal, **no** las barras que amarran el dado a la roca. Para esos pernos, el detalle dúctil
+—silla, largo expuesto no menor que 250 mm ni que ocho diámetros, hilo bajo la tuerca de al menos
+75 mm— es obligatorio *salvo* que se diseñen para la tracción de las combinaciones amplificadas
+por $0{,}7R_1$. O se detalla para que fluya y se pueda reapretar, o se diseña para que no fluya.
+**Las dos son estrategias completas; mezclarlas a medias es lo que no sirve.**
+
+Para las barras al macizo la disyuntiva es la misma, pero como **criterio**, no como cláusula: la
+norma no las detalla, y quien decide es el proyecto.
 </Note>
 
 ---
@@ -291,7 +322,8 @@ equilibrio $k_v$ y $k_a$ aparecen siempre en el cociente $k_a/k_v$. Duplicar la 
 anclaje equivale a ablandar la roca a la mitad. Esto tiene una consecuencia práctica: **alargar
 la longitud libre de las barras es una forma barata de bajar la tracción** —un anclaje más
 flexible se lleva menos carga— y de paso mejora su capacidad de deformación, que es el
-comportamiento que 8.5.2 busca.
+comportamiento que 8.5.2 persigue en los pernos de anclaje y que acá conviene por las mismas
+razones, aunque la cláusula no alcance a estas barras.
 
 **Y la tercera, que se repite desde la nota anterior:** no contar el relleno sobre el dado vale
 un +33 %. En las dos notas del bloque, el prisma de suelo o relleno encima de la fundación es de
@@ -309,9 +341,11 @@ relleno lateral no se ejecuta como el cálculo supuso.
 
 En hormigón puro el anclaje gana. Pero la comparación honesta no es esa: **anclar cambia el
 nivel de carga de diseño de toda la interfaz**, y con eso aparecen la barra dimensionada por
-extracción del macizo, los ensayos de tracción que hay que hacer para verificarla, la llave de
-corte que 8.5.3 exige diseñar también con $0{,}7R_1$, y la inspección periódica de un elemento
-que la norma no quiere ver fallar. La decisión no es «cuál sale más barato en m³»: es **dónde se
+extracción del macizo, los ensayos de tracción que hay que hacer para verificarla, y la
+inspección periódica de un elemento que la norma no quiere ver fallar. (La llave de corte que
+8.5.3 exige diseñar con $0{,}7R_1$ **no** entra en esta lista: es exigible igual en el dado de
+4,71 m sin anclar, porque depende de que haya apoyo con corte sísmico, no de cómo se resuelva
+el volcamiento.) La decisión no es «cuál sale más barato en m³»: es **dónde se
 prefiere tener el riesgo**, en un dado sobredimensionado que nadie va a revisar nunca, o en un
 sistema de anclajes que hay que mantener.
 

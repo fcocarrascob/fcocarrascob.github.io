@@ -45,7 +45,7 @@ proveedor del equipo. Las cláusulas se citan por su numeración en la edición 
 
 <Figure
   src="/geotecnia-losa-flexible/el-caso.svg"
-  alt="Losa de fundación de una sala eléctrica, de 14 m de largo por 6 m de ancho y 0,50 m de espesor, con tres líneas de columnas en x = 1, 7 y 13 m, es decir con luz libre de 6 m entre ellas. Las cargas de gravedad por línea de columnas son 40, 70 y 40 tonf, y la cupla sísmica agrega menos 95, cero y más 95 tonf, que con el factor 0,70 de la combinación ASD dan menos 26,5, 70 y 106,5 tonf: la columna del extremo izquierdo queda traccionada. El peso propio de la losa es de 105 tonf, o 7,5 tonf por metro. El suelo tiene k_v = 3.000 tonf/m³ según el informe, y acá se adopta una banda de 1.500 a 6.000 —un factor 2 a cada lado— siguiendo la recomendación de acotar la rigidez que hace el comentario C10.1.5, que no fija valores. A la derecha, la aplicación de la ecuación 25: para la zarpa, con longitud de cálculo de 1,10 m, el criterio vale 0,458 y la fundación es rígida; para la zona interior entre columnas, con longitud de cálculo de 6,00 m, vale 2,50 y no lo es. Al pie: la misma losa da dos respuestas porque la Tabla 10 define dos longitudes de cálculo distintas, y la longitud de cálculo es la única variable que entra en primera potencia."
+  alt="Losa de fundación de una sala eléctrica, de 14 m de largo por 6 m de ancho y 0,50 m de espesor, con tres líneas de columnas en x = 1, 7 y 13 m, es decir con luz libre de 6 m entre ellas. Las cargas de gravedad por línea de columnas son 40, 70 y 40 tonf, y la cupla sísmica agrega menos 95, cero y más 95 tonf, que con el factor 0,70 de la combinación ASD dan menos 26,5, 70 y 106,5 tonf: la columna del extremo izquierdo queda traccionada. El peso propio de la losa es de 105 tonf, o 7,5 tonf por metro. El suelo tiene k_v = 3.000 tonf/m³ según el informe, y acá se adopta una banda de 1.500 a 6.000 —un factor 2 a cada lado— siguiendo la recomendación de acotar la rigidez que hace el comentario C10.1.5, que no fija valores. A la derecha, la aplicación de la ecuación 25: para la zarpa, con longitud de cálculo de 1,00 m, el criterio vale 0,416 y la fundación es rígida; para la zona interior entre columnas, con longitud de cálculo de 6,00 m, vale 2,50 y no lo es. Ambas longitudes se miden hasta los ejes de columna, del lado conservador. Al pie: la misma losa da dos respuestas porque la Tabla 10 define dos longitudes de cálculo distintas, y la longitud de cálculo es la única variable que entra en primera potencia."
   caption="La misma losa, dos longitudes de cálculo y dos respuestas opuestas. La Tabla 10 no da una L por fundación: da una L por zona."
 />
 
@@ -79,13 +79,18 @@ por zona**, y en la misma losa conviven dos:
 
 | Zona | $L$ según Tabla 10 | Ec. (25) | ¿Rígida? |
 |---|---|---|---|
-| Zarpa (el voladizo del borde) | 1,10 m | **0,458** | sí |
+| Zarpa (el voladizo del borde) | 1,00 m | **0,416** | sí |
 | Zona interior entre columnas | 6,00 m | **2,50** | no |
+
+Las dos longitudes se toman **hasta los ejes** de columna, no hasta sus caras: el ancho de la
+columna no se declara en este ejemplo, y medir hasta el eje da la $L$ mayor. Como el criterio
+crece con $L$, las dos van del lado conservador — la zarpa real es más corta que 1,00 m y la luz
+libre real, menor que 6,00 m.
 
 La razón de que los dos números caigan a lados distintos del 1 es que **$L$ es la única variable
 que entra en primera potencia**. Todo lo demás —la rigidez del suelo y la de la losa— entra bajo
-una raíz cuarta, así que compensar el paso de 1,10 a 6,00 m, que multiplica el criterio por 5,45,
-exigiría multiplicar $EI$ por $5{,}45^4 = 885$. Es la misma aritmética que hace que la zapata
+una raíz cuarta, así que compensar el paso de 1,00 a 6,00 m, que multiplica el criterio por 6,
+exigiría multiplicar $EI$ por $6^4 = 1.296$. Es la misma aritmética que hace que la zapata
 aislada del [ejemplo del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) —donde la única $L$
 posible es la zarpa— salga rígida sin esfuerzo, y que casi ninguna losa con columnas separadas
 lo sea.
@@ -204,24 +209,40 @@ y comparando cada vez el análisis flexible contra la hipótesis plana:
 
 | Espesor | Ec. (25) | Largo levantado | $q_{max}$ flexible / plana |
 |---|---|---|---|
-| 0,25 m | 4,20 | 6,50 m | 1,36 |
-| 0,30 m | 3,66 | 5,90 m | 1,40 |
-| 0,40 m | 2,95 | 4,70 m | 1,37 |
+| 0,25 m | 4,20 | 4,60 m | 1,46 |
+| 0,30 m | 3,66 | 4,30 m | 1,48 |
+| 0,40 m | 2,95 | 3,80 m | 1,40 |
 | **0,50 m** | **2,50** | **3,40 m** | **1,31** |
-| 0,70 m | 1,94 | 1,40 m | 1,19 |
-| 0,90 m | 1,61 | 0,10 m | 1,11 |
-| 1,20 m | 1,30 | 0,00 m | 1,05 |
-| **1,70 m** | **1,00** | **0,00 m** | **1,02** |
-| 2,20 m | 0,82 | 0,00 m | 1,01 |
+| 0,70 m | 1,94 | 2,90 m | 1,17 |
+| 0,90 m | 1,61 | 2,60 m | 1,10 |
+| 1,20 m | 1,30 | 2,50 m | 1,05 |
+| **1,70 m** | **1,00** | **2,40 m** | **1,02** |
+| 2,20 m | 0,82 | 2,40 m | 1,01 |
+
+<Note type="warning" title="Por qué el barrido congela el peso propio">
+Engrosar la losa **la carga**: a 1,70 m el peso propio sube de 105 a 357 tonf y $N$ pasa de 255 a
+507. Ese peso extra aplasta el levantamiento por sí solo, sin que la rigidez tenga nada que ver.
+Barrido de forma ingenua, el largo levantado cae a **cero** desde los 1,20 m y uno concluiría que
+el umbral de la norma marca el punto donde la losa deja de despegarse.
+
+Es un artefacto. Con el peso congelado en los 105 tonf del caso base —que es lo que hay que hacer
+para aislar la variable— el levantamiento **no desaparece nunca**: baja de 4,30 a 2,40 m y ahí se
+queda. La columna de error, en cambio, es prácticamente insensible a la maniobra (1,31 contra
+1,307 en el caso base; 1,02 contra 1,020 en el umbral), y por eso es la que sostiene la lectura.
+</Note>
 
 Léase la fila del 1,00: **justo en el umbral de la norma, la hipótesis plana se equivoca en un
-2 %** y el levantamiento ya desapareció. Con el criterio en 2,50 —el caso real— se equivoca en un
-31 %. El criterio no es una formalidad administrativa: **está midiendo exactamente el error que
-uno cometería al suponer la distribución plana**, y el 1 está puesto donde ese error se vuelve
-despreciable.
+2 %**. Con el criterio en 2,50 —el caso real— se equivoca en un 31 %. El criterio no es una
+formalidad administrativa: **está midiendo exactamente el error que uno cometería al suponer la
+distribución plana**, y el 1 está puesto donde ese error se vuelve despreciable.
+
+Y el levantamiento dice lo mismo por otra vía. Los 2,40 m a los que converge no son cero: son
+**los 2,39 m que §3 obtuvo con la hipótesis plana**. Es decir, en el umbral los dos análisis
+dejan de discrepar — que es precisamente lo que «rígida» debería significar, y bastante mejor
+noticia que un cero.
 
 Nótese también lo apretada que es la transición en esta escala: entre 1,00 y 1,61 —apenas un
-60 % en el criterio— el error de la hipótesis plana pasa de 2 % a 11 %. Por eso la desigualdad se
+60 % en el criterio— el error de la hipótesis plana pasa de 2 % a 10 %. Por eso la desigualdad se
 escribe con una raíz cuarta y no con su cuarta potencia: en la escala de la norma, **cada décima
 cuenta**.
 

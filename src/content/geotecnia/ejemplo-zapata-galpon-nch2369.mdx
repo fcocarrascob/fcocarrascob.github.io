@@ -82,8 +82,9 @@ $$
 Con 0,454 contra un límite de 1, la zapata es **holgadamente rígida** y se puede suponer la
 distribución de tensiones de contacto plana, que es lo que todo el resto del cálculo asume. Si
 no lo fuera, es **10.1.4** el que obliga a modelarla con una cama de resortes anulando los
-traccionados, y **10.1.5** el que deja sin efecto el requisito de área apoyada. Ese caso es el ejemplo siguiente de este
-bloque.
+traccionados, y **10.1.5** el que deja sin efecto el requisito de área apoyada. Ese caso es
+[la losa de la sala eléctrica](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369), dos ejemplos
+más adelante en el bloque.
 
 ---
 
@@ -275,8 +276,10 @@ Eso es **más que toda la fricción disponible**, y llevaría el factor de segur
 
 El $c_p = 0{,}5$ tiene además una explicación física que esta serie ya midió. La
 [Tabla 14.1 de Das](/geotecnia/tres-coeficientes-del-mismo-suelo) muestra que el estado pasivo
-necesita **entre 2 y 10 veces más desplazamiento** que el activo para movilizarse: en arena densa,
-5 mm contra 25 mm. La norma no está siendo conservadora por gusto — está reconociendo que ese
+necesita **entre 2 y 10 veces más desplazamiento** que el activo para movilizarse. Das los da
+adimensionales, como fracción de la altura: en arena densa el activo se moviliza con
+$\Delta/H = 0{,}0005$–$0{,}001$ y el pasivo necesita $0{,}005$ — cinco a diez veces más.
+La norma no está siendo conservadora por gusto — está reconociendo que ese
 empuje **no está disponible** al nivel de desplazamiento que la fundación puede tolerar. Es la
 misma asimetría que hace que en un pilote
 [la punta casi no trabaje](/geotecnia/pilotes-la-punta-casi-no-trabaja).
@@ -383,13 +386,14 @@ todos sus números van a estar bien.
 
 ---
 
-**Lo que viene:** esta zapata cumplió el criterio de rigidez con un 0,454 contra 1. Cuando no lo
-cumple —losas de equipos, fundaciones esbeltas, radieres— el requisito de área apoyada
-desaparece y lo reemplaza otra cosa: verificar que los levantamientos sean tolerables, con la
-fundación modelada sobre resortes que hay que anular cuando traccionan. Ese es el próximo
-ejemplo del bloque, junto con las fundaciones ancladas de 10.1.6, que tampoco necesitan
-garantizar área de contacto pero pagan el precio de diseñarse con el sismo amplificado por
-$0{,}7R_1$.
+**Lo que viene:** esta zapata cumplió el criterio de rigidez con un 0,454 contra 1, y el 80 % de
+área apoyada se resolvió agrandándola. Hay dos salidas más cuando ninguna de las dos cosas
+funciona. La primera es **anclar**: las fundaciones ancladas de 10.1.6 no necesitan garantizar
+área de contacto, pero pagan el precio de diseñarse con el sismo amplificado por $0{,}7R_1$, y
+ese es el próximo ejemplo del bloque. La segunda aparece cuando el criterio de rigidez **no** se
+cumple —losas de equipos, fundaciones esbeltas, radieres—: ahí el requisito de área apoyada
+desaparece y lo reemplaza verificar que los levantamientos sean tolerables, con la fundación
+modelada sobre resortes que hay que anular cuando traccionan. Ese es el ejemplo siguiente.
 
 <Note type="info" title="Reproducibilidad">
 Todos los números salen de un único script que calcula el caso completo: las tres combinaciones

@@ -12,7 +12,7 @@
   </defs>
   <rect width="940" height="470" fill="#ffffff"/>
   <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El mismo dado bajo las dos combinaciones</text>
-  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Fundación rígida sobre cama de balasto (10.1.2), con levantamiento y anclajes elásticos. Escala horizontal 1 m = 55 px.</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Fundación rígida sobre cama de balasto (C10.1.2), con levantamiento y anclajes elásticos. Escala horizontal 1 m = 55 px.</text>
 
   <!-- ================= panel A: sin amplificar ================= -->
   <text x="220" y="86" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Combinación 4.5, sin amplificar</text>
@@ -52,8 +52,8 @@
 
   <!-- takeaway -->
   <rect x="60" y="322" width="820" height="118" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
-  <text x="470" y="348" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">El peso propio aporta un momento restaurador fijo, del orden de N(B/2 − c/3).</text>
-  <text x="470" y="372" font-size="12.5" text-anchor="middle" fill="#555">El anclaje solo se lleva lo que sobra — y por eso su tracción crece mucho más rápido que la demanda que la produce.</text>
+  <text x="470" y="348" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">El momento que el peso propio puede aportar está acotado por N·B/2 = 172 tonf·m.</text>
+  <text x="470" y="372" font-size="12.5" text-anchor="middle" fill="#555">Todo el excedente sobre ese techo se lo lleva el anclaje: 6,96 → 106,67 tonf·m, un factor 15,3.</text>
   <text x="470" y="400" font-size="12.5" text-anchor="middle" fill="#555">Diseñar el anclaje con la combinación sin amplificar no deja un 110 % de déficit: deja un 1.250 %.</text>
   <text x="470" y="424" font-size="11.5" text-anchor="middle" fill="#666">(El espesor del dado está fuera de escala para que se lea el diagrama de presiones.)</text>
 </svg>

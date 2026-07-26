@@ -56,8 +56,8 @@
 
   <rect x="550" y="136" width="340" height="76" rx="5" fill="#2e7d32" fill-opacity="0.08" stroke="#2e7d32" stroke-width="1.2"/>
   <text x="566" y="158" font-size="12" fill="#222" font-weight="bold">Zarpa (voladizo del borde)</text>
-  <text x="566" y="178" font-size="11.5" fill="#555">L = 1,10 m</text>
-  <text x="874" y="178" font-size="15" fill="#2e7d32" text-anchor="end" font-weight="bold">0,458</text>
+  <text x="566" y="178" font-size="11.5" fill="#555">L = 1,00 m</text>
+  <text x="874" y="178" font-size="15" fill="#2e7d32" text-anchor="end" font-weight="bold">0,416</text>
   <text x="566" y="198" font-size="11.5" fill="#2e7d32" font-weight="bold">rígida ✓</text>
 
   <rect x="550" y="226" width="340" height="76" rx="5" fill="#b02a1a" fill-opacity="0.08" stroke="#b02a1a" stroke-width="1.2"/>
@@ -72,5 +72,5 @@
 
   <!-- takeaway -->
   <rect x="60" y="414" width="820" height="42" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
-  <text x="470" y="440" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">L es la única variable en primera potencia: pasar de 1,10 a 6,00 m multiplica el criterio por 5,45.</text>
+  <text x="470" y="440" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">L es la única variable en primera potencia: pasar de 1,00 a 6,00 m multiplica el criterio por 6.</text>
 </svg>
