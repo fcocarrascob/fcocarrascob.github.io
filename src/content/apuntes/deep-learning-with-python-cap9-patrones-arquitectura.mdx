@@ -1,0 +1,349 @@
+---
+title: "Tres trucos que hacen entrenable una red profunda"
+description: "El capítulo 9 de Chollet explica cómo se diseña una arquitectura, y su definición operativa vale la pena: una buena arquitectura es la que reduce el espacio de búsqueda o facilita converger en él — le hace el trabajo fácil al descenso de gradiente, que según el libro es un proceso de búsqueda bastante estúpido. Los tres patrones que entrega tienen mecanismos que se explican en una frase cada uno: la conexión residual es un atajo sin ruido para el gradiente, la batch normalization normaliza las activaciones intermedias (y Chollet admite que nadie sabe bien por qué funciona), y la convolución separable parte el problema en espacio y canales, con ocho veces menos parámetros. Cierra con un detalle que enseña más que los tres juntos: por qué la primera capa del modelo no puede ser separable. Apuntes del Cap. 9."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "arquitectura", "residual", "batch normalization", "convnet", "xception"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 9 — Patrones de arquitectura de ConvNets"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 9 (PDF 292–307)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 8](/apuntes/deep-learning-with-python-cap8-convnets) construyó
+convnets sin explicar de dónde salían las decisiones de diseño. El 9 va a eso, y
+parte con una definición que no es estética sino operativa:
+
+> **Una buena arquitectura es la que reduce el tamaño del espacio de búsqueda o
+> de otro modo hace más fácil converger a un buen punto de ese espacio.**
+> Igual que el feature engineering, se trata de **hacerle el problema más fácil al
+> descenso de gradiente** — *"y recuerda que el descenso de gradiente es un
+> proceso de búsqueda bastante estúpido, así que necesita toda la ayuda que pueda
+> conseguir."*
+
+Y con una advertencia sobre el estatus de este conocimiento: *"la arquitectura de
+modelos es más arte que ciencia. […] **La palabra clave acá es intuitivamente:
+nadie puede darte una explicación clara de qué funciona y qué no.** Los expertos se
+apoyan en pattern matching, una habilidad que adquieren con práctica
+extensiva."* No hay mucha ciencia — pero, como en toda ingeniería, hay buenas
+prácticas.
+
+### El marco: modularidad, jerarquía, reutilización
+
+Antes de los tres patrones, el capítulo da la receta que los ordena. *"Si quieres
+simplificar un sistema complejo, hay una receta universal: estructura tu sopa
+amorfa de complejidad en **módulos**, organiza los módulos en una **jerarquía**, y
+empieza a **reutilizar** los mismos módulos en varios lugares."* Vale para una
+catedral, para tu propio cuerpo —tus cuatro extremidades son variantes del mismo
+plano— y para el código de Keras.
+
+El deep learning **es esa receta aplicada a la optimización continua**: se
+estructura el espacio de búsqueda en módulos (capas), organizados en una jerarquía
+profunda, reutilizando lo que se pueda — *"por ejemplo, las convoluciones se tratan
+enteramente de reutilizar la misma información en distintas ubicaciones
+espaciales"*. Por eso toda convnet popular no está hecha solo de capas sino de
+**bloques repetidos**, con una estructura piramidal donde los filtros crecen
+mientras los mapas se encogen.
+
+Y de ahí sale el problema que abre el primer patrón: *"las jerarquías profundas son
+intrínsecamente buenas porque fomentan la reutilización de features y por tanto la
+abstracción. En general, **una pila profunda de capas angostas rinde mejor que una
+pila superficial de capas grandes**. Sin embargo, **hay un límite a cuánto se
+pueden apilar capas**."*
+
+## 1. La conexión residual: un atajo para el gradiente
+
+**El problema primero.** Chollet lo plantea con el juego del teléfono
+descompuesto: un mensaje que se susurra de oído en oído y termina irreconocible.
+*"Es una metáfora divertida de los errores acumulativos que ocurren en la
+transmisión secuencial por un canal ruidoso."*
+
+Y backpropagation en una red profunda es exactamente eso. Tienes una cadena:
+
+```
+y = f4(f3(f2(f1(x))))
+```
+
+Para ajustar `f1` hay que **hacer percolar la información de error a través de
+`f2`, `f3` y `f4`**. Pero cada función sucesiva **introduce algo de ruido**. Si la
+cadena es muy profunda, ese ruido **empieza a abrumar la información del
+gradiente** y backpropagation deja de funcionar: el modelo no entrena en absoluto.
+Ese es el **gradiente que se desvanece**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/residual-mecanismo.svg"
+  alt="Tres bandas. Arriba, en rojo, 'Sin residual — el teléfono descompuesto': la cadena f1 → f2 → f3 → f4 → loss, con flechas de retorno rojas cuyo grosor va disminuyendo de derecha a izquierda hasta casi desaparecer, etiquetadas 'cada función agrega ruido' a la derecha y 'el gradiente se desvaneció' a la izquierda. Al medio, en azul, 'Con residual — se suma la entrada a la salida': x entra a block(x), marcado como 'puede ser destructivo, y está bien', y en paralelo un arco azul rotulado 'residual: una copia intacta de x' lleva la entrada por encima hasta un círculo de suma, dando block(x) + x. Abajo, en gris, el detalle de las shapes: si el bloque cambia el número de filtros se usa residual = Conv2D(64, 1)(residual); si incluye max pooling se usa residual = Conv2D(64, 1, strides=2)(residual)."
+  caption="El bloque puede ser todo lo destructivo que quiera. Lo que importa es que exista un camino por el que la información original llegue intacta al otro lado."
+  width={780}
+/>
+
+**El arreglo es forzar a cada función a ser no destructiva** — que retenga una
+versión sin ruido de su entrada. Y la forma más fácil de lograrlo es *"facilísima:
+simplemente suma la entrada de un bloque de vuelta a su salida"*:
+
+```python
+x = ...              # un tensor de entrada cualquiera
+residual = x         # guarda una referencia: esto es el "residual"
+x = block(x)         # este bloque puede ser destructivo o ruidoso, y está bien
+x = add([x, residual])
+```
+
+La conexión residual **actúa como un atajo de información alrededor de bloques
+destructivos o ruidosos** —los que contienen ReLU o dropout—, permitiendo que el
+gradiente de las capas tempranas se propague **sin ruido**. Es la idea que
+introdujo **ResNet** en 2015.
+
+<Note type="warning" title="El detalle que hay que resolver: las shapes">
+Sumar la entrada a la salida implica que **ambas deben tener la misma shape**, y
+eso no ocurre si el bloque cambia el número de filtros o incluye max pooling. Dos
+casos, dos arreglos:
+
+- **Cambia el número de filtros** → una `Conv2D` de **1 × 1 sin activación** que
+  proyecta linealmente el residual: `residual = layers.Conv2D(64, 1)(residual)`.
+- **Incluye max pooling** → **`strides` en la proyección** para igualar el
+  submuestreo: `residual = layers.Conv2D(64, 1, strides=2)(residual)`.
+
+Y se usa `padding="same"` en las convoluciones del bloque **para que el efecto de
+borde no cambie el tamaño** y desincronice las dos ramas.
+</Note>
+
+Empaquetado como función reutilizable, queda así — y nótese que la proyección solo
+se aplica cuando hace falta:
+
+```python
+def residual_block(x, filters, pooling=False):
+    residual = x
+    x = layers.Conv2D(filters, 3, activation="relu", padding="same")(x)
+    x = layers.Conv2D(filters, 3, activation="relu", padding="same")(x)
+    if pooling:
+        x = layers.MaxPooling2D(2, padding="same")(x)
+        residual = layers.Conv2D(filters, 1, strides=2)(residual)
+    elif filters != residual.shape[-1]:
+        residual = layers.Conv2D(filters, 1)(residual)
+    x = layers.add([x, residual])
+    return x
+```
+
+*"Con conexiones residuales puedes construir redes de profundidad arbitraria, sin
+tener que preocuparte por los gradientes que se desvanecen."*
+
+## 2. Batch normalization, y una lección sobre honestidad
+
+**El razonamiento que la motiva** es una extensión natural de algo que la serie ya
+vio. En el [capítulo 4](/apuntes/deep-learning-with-python-cap4-clasificacion-y-regresion)
+normalizábamos los datos **antes** de meterlos al modelo. Pero:
+
+> *"La normalización puede ser una preocupación **después de cada transformación**
+> que hace la red: aunque los datos que entran a una `Dense` o `Conv2D` tengan
+> media 0 y varianza unitaria, **no hay razón a priori para esperar que eso siga
+> siendo cierto a la salida**. ¿Podría ayudar normalizar las activaciones
+> intermedias?"*
+
+**El mecanismo** tiene dos modos, y la asimetría es lo interesante:
+
+- **En entrenamiento**, usa la **media y varianza del batch actual**.
+- **En inferencia** —cuando puede no haber un batch representativo— usa una
+  **media móvil exponencial** de las medias y varianzas vistas durante el
+  entrenamiento.
+
+<Note type="info" title="Lo que Chollet admite, y que conviene leer entero">
+*"Aunque el paper original sugirió que la batch normalization opera 'reduciendo el
+internal covariate shift', **nadie sabe realmente con seguridad por qué ayuda**.
+Hay varias hipótesis pero ninguna certeza. Verás que esto es cierto de muchas
+cosas en deep learning — **no es una ciencia exacta sino un conjunto de buenas
+prácticas de ingeniería derivadas empíricamente, tejidas por narrativas poco
+confiables**. A veces vas a sentir que el libro que tienes en la mano te dice cómo
+hacer algo pero no dice satisfactoriamente por qué funciona: eso es porque
+**sabemos el cómo pero no sabemos el porqué**."*
+
+En la práctica, su efecto principal **parece ser** que ayuda a la propagación del
+gradiente —igual que las conexiones residuales— y por tanto permite redes más
+profundas.
+</Note>
+
+**Dos detalles de uso que sí tienen explicación mecánica:**
+
+**`use_bias=False` en la capa anterior.** Tanto `Dense` como `Conv2D` llevan un
+vector de bias cuyo propósito es hacer la capa afín en vez de puramente lineal
+(`y = conv(x, kernel) + bias`). Como **la normalización se va a encargar de
+centrar la salida en cero**, ese bias ya no aporta nada — y la capa queda
+ligeramente más liviana sin él.
+
+**La activación va después de la batch norm**, no antes:
+
+```python
+x = layers.Conv2D(32, 3, use_bias=False)(x)   # sin activación acá
+x = layers.BatchNormalization()(x)
+x = layers.Activation("relu")(x)               # la activación, después
+```
+
+*"La razón intuitiva es que la batch normalization va a centrar tus entradas en
+cero, mientras que la ReLU **usa el cero como pivote** para conservar o descartar
+canales: normalizar antes de la activación **maximiza la utilización de la
+ReLU**."* Dicho eso, el propio libro aclara que **no es crítico** — si haces
+conv → activación → batch norm, el modelo igual entrena.
+
+Y la advertencia que el capítulo 8 anticipaba: **al hacer fine-tuning, deja las
+capas de batch norm congeladas**. Si no, *"seguirán actualizando su media y
+varianza internas, lo que puede interferir con los updates muy pequeños que se
+aplican a las capas `Conv2D` circundantes"*.
+
+## 3. Convolución separable: partir el problema en dos
+
+*"¿Y si te dijéramos que hay una capa que puedes usar como reemplazo directo de
+`Conv2D` que hará tu modelo más pequeño, más liviano, y que rinda unos puntos
+mejor?"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/separable-aritmetica.svg"
+  alt="Comparación en dos paneles. A la izquierda, Conv2D regular: una entrada de H por W por 64 canales pasa por un bloque que dice 'un kernel 3×3×64 por cada filtro de salida — espacio y canales, todo junto', dando una salida H' por W' por 64. A la derecha, SeparableConv2D en dos pasos: primero Depthwise, una conv 3×3 por cada canal por separado, dibujado como cuatro cuadraditos independientes cada uno con su 3×3; después Pointwise, una conv 1×1 que mezcla los canales, con la nota de que se concatenan y se mezclan. Debajo, el prior: las ubicaciones espaciales están correlacionadas, los canales son independientes. Al pie, la aritmética con 64 canales de entrada y 64 de salida: regular 3 × 3 × 64 × 64 = 36 864 parámetros; separable 3×3×64 + 64×64 = 4 672. Casi 8 veces menos."
+  caption="La convolución regular aprende espacio y canales de una sola vez. La separable los separa en dos operaciones, y ahí está el ahorro."
+  width={780}
+/>
+
+**El mecanismo son dos pasos:**
+
+1. **Depthwise** — una convolución espacial sobre **cada canal por separado**.
+2. **Pointwise** — una convolución **1 × 1** que mezcla los canales de salida.
+
+> Esto equivale a **separar el aprendizaje de features espaciales del de features
+> por canal**. Y como toda decisión de arquitectura, **es un prior**: así como la
+> convolución asume que los patrones no están atados a ubicaciones específicas, la
+> separable asume que **las ubicaciones espaciales están altamente correlacionadas
+> pero los canales son altamente independientes**. *"Un modelo con priors más
+> fuertes sobre la estructura de la información que va a procesar es un mejor
+> modelo — **mientras los priors sean acertados**."*
+
+**La aritmética del ahorro.** Con 64 canales de entrada y 64 de salida, ventana
+3 × 3:
+
+| | Cálculo | Parámetros |
+|---|---|---|
+| Regular | `3 × 3 × 64 × 64` | **36 864** |
+| Separable | `3 × 3 × 64 + 64 × 64` | **4 672** |
+
+Casi **ocho veces menos**, y la ventaja crece con el número de filtros.
+
+<Note type="tip" title="Por qué entonces no son más rápidas en GPU — y qué dice eso del campo">
+Uno esperaría un speedup dramático. **En CPU sí lo hay; en GPU no**, y la
+explicación es un ensayo sobre por qué la mejor idea no siempre gana:
+
+*"Esto sería cierto si escribieras implementaciones simples de CUDA o C++ —de
+hecho, **sí ves un speedup significativo corriendo en CPU**, donde la
+implementación subyacente es C++ paralelizado—. Pero en la práctica probablemente
+estás usando una GPU, y lo que ejecutas es **un kernel de cuDNN**, un código
+extraordinariamente optimizado hasta cada instrucción de máquina. Tiene sentido
+gastar ese esfuerzo, ya que las convoluciones de cuDNN son responsables de muchos
+exaflops cada día. **Pero un efecto secundario de esa micro-optimización extrema es
+que los enfoques alternativos tienen pocas chances de competir — incluso enfoques
+con ventajas intrínsecas significativas.**"*
+
+*"Pese a pedidos repetidos a NVIDIA, las separables no se han beneficiado del mismo
+nivel de optimización, y por eso **siguen siendo solo más o menos igual de rápidas
+que las regulares, aunque usan cuadráticamente menos parámetros y
+operaciones**."*
+
+*"Si experimentaras con alternativas —optimización sin gradientes, redes de
+spiking— tus primeras implementaciones serían **órdenes de magnitud más lentas**
+que una buena y vieja ConvNet, por muy ingeniosas que fueran tus ideas.
+**Convencer a otros de adoptar tu método sería difícil, incluso si fuera
+simplemente mejor.**"*
+
+El deep learning moderno, concluye, es **el producto de una co-evolución** entre
+hardware, software y algoritmos. *"A esta altura, descubrir un camino distinto
+requeriría una reingeniería de años de todo el ecosistema."*
+
+Aun así conviene usarlas: menos parámetros = menos overfitting, y su suposición
+lleva a convergencia más rápida.
+</Note>
+
+## 4. Los tres juntos — y la excepción que los explica
+
+<Figure
+  src="/apuntes/deep-learning-with-python/bloque-mini-xception.svg"
+  alt="Diagrama del bloque que el mini-Xception repite cinco veces. La cadena principal va de x a BatchNormalization, ReLU, SeparableConv2D con padding same y use_bias False, otra BatchNorm más ReLU, otra SeparableConv2D, un MaxPooling de 3 con strides 2, y termina en un círculo de suma. En paralelo, una rama azul etiquetada 'residual' sale de x, pasa por un Conv2D(size, 1, strides=2) que la proyecta a la shape correcta, y entra a la misma suma. Anotaciones: normaliza antes de la activación; sin bias porque la BatchNorm ya centra en cero; strides=2 en el pooling obliga a strides=2 en la proyección para que las dos ramas puedan sumarse. Abajo, en rojo: la primera capa del modelo NO es separable, porque el prior de que los canales son independientes no se cumple para una imagen RGB cruda — los canales rojo, verde y azul están altamente correlacionados. Un prior solo ayuda si es verdadero."
+  caption="El bloque completo. Cada elemento está ahí por una razón mecánica, incluida la proyección del residual con strides=2."
+  width={780}
+/>
+
+```python
+inputs = keras.Input(shape=(180, 180, 3))
+x = layers.Rescaling(1.0 / 255)(inputs)
+x = layers.Conv2D(filters=32, kernel_size=5, use_bias=False)(x)   # ← regular, no separable
+
+for size in [32, 64, 128, 256, 512]:
+    residual = x
+    x = layers.BatchNormalization()(x)
+    x = layers.Activation("relu")(x)
+    x = layers.SeparableConv2D(size, 3, padding="same", use_bias=False)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.Activation("relu")(x)
+    x = layers.SeparableConv2D(size, 3, padding="same", use_bias=False)(x)
+    x = layers.MaxPooling2D(3, strides=2, padding="same")(x)
+    residual = layers.Conv2D(size, 1, strides=2, padding="same", use_bias=False)(residual)
+    x = layers.add([x, residual])
+
+x = layers.GlobalAveragePooling2D()(x)
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(1, activation="sigmoid")(x)
+```
+
+**Y ahora la línea más instructiva del capítulo entero**, que es la que *no* usa
+una capa separable:
+
+> *"La suposición que subyace a la convolución separable —'los canales de features
+> son largamente independientes'— **¡no se cumple para imágenes RGB!** Los canales
+> rojo, verde y azul están de hecho **altamente correlacionados** en imágenes
+> naturales. Por eso la primera capa del modelo es una `Conv2D` regular.
+> Empezaremos a usar `SeparableConv2D` después."*
+
+Es la tesis del capítulo aplicada a sí misma. **El prior de la separable es lo que
+la hace eficiente, y también lo que la vuelve inaplicable en el único lugar donde
+el prior es falso.** Saber dónde deja de valer tu suposición es parte del diseño.
+
+Sobre el resultado: el modelo queda con **721 857 parámetros entrenables** contra
+los **1 569 089** del capítulo 8, y aun así rinde mejor — **90,8 % de accuracy de
+test contra 83,9 %**. El propio capítulo aclara que **no hubo tuning de
+hiperparámetros**: la configuración sale de las buenas prácticas más algo de
+intuición para el tamaño.
+
+<Note type="warning" title="El recuadro sobre ablación, que vale por el capítulo">
+*"Las arquitecturas de deep learning a menudo son **más evolucionadas que
+diseñadas**. Igual que en los sistemas biológicos, si tomas cualquier setup
+experimental complicado, lo más probable es que puedas **remover algunos módulos
+sin pérdida de rendimiento**."*
+
+*"Esto lo empeoran los incentivos: **haciendo un sistema más complejo de lo
+necesario, los investigadores pueden hacerlo parecer más novedoso** y aumentar sus
+chances de pasar la revisión por pares. La matemática en los papers de deep
+learning rara vez se usa para formalizar conceptos o derivar resultados no obvios
+— más bien se usa como **señal de seriedad, como un traje caro en un
+vendedor**."*
+
+La receta que propone: **estudios de ablación.** *"Si encuentras que X + Y + Z te
+da buenos resultados, prueba también X, Y, Z, X + Y, X + Z, Y + Z y mira qué pasa.
+Pregunta siempre: ¿podría haber una explicación más simple? ¿Es realmente
+necesaria esta complejidad añadida? ¿Por qué?"*
+</Note>
+
+## Para recordar
+
+- **El marco:** modularidad, jerarquía, reutilización. Toda ConvNet popular está
+  hecha de **bloques repetidos**, con filtros que crecen mientras los mapas se
+  encogen. **Profundo y angosto le gana a ancho y superficial.**
+- **Residual = atajo sin ruido.** Sumar la entrada a la salida garantiza que la
+  información original sobreviva al bloque, y con eso el gradiente también.
+- **Las shapes son el trabajo real del residual:** proyección 1 × 1 si cambian los
+  canales, `strides` si hay pooling.
+- **Batch norm normaliza las activaciones intermedias** con estadísticos del batch,
+  y media móvil en inferencia. `use_bias=False` antes, activación después. **Y
+  nadie sabe bien por qué funciona** — el libro lo dice explícitamente.
+- **Separable = depthwise + pointwise**, ~8× menos parámetros porque separa
+  espacio de canales.
+- **Un prior solo ayuda si es verdadero:** por eso la primera capa, que ve RGB
+  crudo, no puede ser separable.
+- **Haz ablaciones.** Es la vía barata a saber de dónde viene tu rendimiento.
+
+Con la arquitectura entendida, el **capítulo 10** abre el modelo para ver qué
+aprendieron esos filtros por dentro.

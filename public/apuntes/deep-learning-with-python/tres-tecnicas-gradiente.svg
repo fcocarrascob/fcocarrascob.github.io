@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 372" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="tg-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+    <marker id="tg-gr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect width="780" height="372" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Tres técnicas, tres usos distintos del gradiente</text>
+  <text x="390" y="50" text-anchor="middle" font-size="11.5" fill="#6b7280">En el entrenamiento el gradiente ajusta los pesos. Aquí los pesos están congelados.</text>
+
+  <!-- 1 -->
+  <rect x="20" y="70" width="240" height="228" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="140" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">1 · Activaciones intermedias</text>
+  <text x="140" y="112" text-anchor="middle" font-size="10" fill="#6b7280">¿cómo descompone ESTA imagen?</text>
+
+  <rect x="60" y="126" width="160" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="140" y="146" text-anchor="middle" font-size="10.5" fill="#374151">Imagen concreta</text>
+  <line x1="140" y1="156" x2="140" y2="172" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#tg-ar)"/>
+  <rect x="52" y="174" width="176" height="42" rx="5" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="140" y="192" text-anchor="middle" font-size="10" font-weight="600" fill="#1e3a8a">Modelo multi-salida</text>
+  <text x="140" y="206" text-anchor="middle" font-size="9" fill="#1e3a8a">una salida por capa conv/pool</text>
+  <line x1="140" y1="216" x2="140" y2="232" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#tg-ar)"/>
+  <rect x="60" y="234" width="160" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="140" y="254" text-anchor="middle" font-size="10.5" fill="#374151">Un mapa 2D por canal</text>
+
+  <rect x="52" y="272" width="176" height="20" rx="4" fill="#f3f4f6"/>
+  <text x="140" y="286" text-anchor="middle" font-size="10" font-weight="700" fill="#6b7280">SIN gradientes</text>
+
+  <!-- 2 -->
+  <rect x="270" y="70" width="240" height="228" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="390" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">2 · Visualización de filtros</text>
+  <text x="390" y="112" text-anchor="middle" font-size="10" fill="#2563eb">¿a qué patrón responde ESTE filtro?</text>
+
+  <rect x="310" y="126" width="160" height="30" rx="5" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="390" y="146" text-anchor="middle" font-size="10.5" fill="#1e3a8a">Ruido aleatorio</text>
+  <line x1="390" y1="156" x2="390" y2="172" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#tg-ar)"/>
+  <rect x="302" y="174" width="176" height="42" rx="5" fill="#bfdbfe" stroke="#3b82f6"/>
+  <text x="390" y="192" text-anchor="middle" font-size="10" font-weight="600" fill="#1e3a8a">loss = activación media</text>
+  <text x="390" y="206" text-anchor="middle" font-size="10" font-weight="600" fill="#1e3a8a">del filtro elegido</text>
+
+  <!-- feedback loop -->
+  <path d="M 302 195 C 282 195, 282 240, 306 240" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#tg-gr)"/>
+  <rect x="308" y="224" width="164" height="32" rx="5" fill="#ffffff" stroke="#dc2626"/>
+  <text x="390" y="238" text-anchor="middle" font-size="9.5" font-weight="700" fill="#991b1b">∂loss / ∂IMAGEN</text>
+  <text x="390" y="250" text-anchor="middle" font-size="9" fill="#991b1b">image += lr · grads</text>
+  <path d="M 472 240 C 494 240, 494 195, 480 195" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#tg-gr)"/>
+
+  <rect x="302" y="272" width="176" height="20" rx="4" fill="#dbeafe"/>
+  <text x="390" y="286" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">se actualiza LA IMAGEN</text>
+
+  <!-- 3 -->
+  <rect x="520" y="70" width="240" height="228" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="640" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">3 · Grad-CAM</text>
+  <text x="640" y="112" text-anchor="middle" font-size="10" fill="#2563eb">¿qué parte decidió la clase?</text>
+
+  <rect x="560" y="126" width="160" height="30" rx="5" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="640" y="146" text-anchor="middle" font-size="10.5" fill="#1e3a8a">Imagen concreta</text>
+  <line x1="640" y1="156" x2="640" y2="172" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#tg-ar)"/>
+  <rect x="552" y="174" width="176" height="30" rx="5" fill="#bfdbfe" stroke="#3b82f6"/>
+  <text x="640" y="193" text-anchor="middle" font-size="10" font-weight="600" fill="#1e3a8a">Mapa de la última conv</text>
+
+  <line x1="640" y1="204" x2="640" y2="220" stroke="#dc2626" stroke-width="1.8" marker-end="url(#tg-gr)"/>
+  <rect x="552" y="222" width="176" height="34" rx="5" fill="#ffffff" stroke="#dc2626"/>
+  <text x="640" y="236" text-anchor="middle" font-size="9.5" font-weight="700" fill="#991b1b">∂(clase ganadora) / ∂MAPA</text>
+  <text x="640" y="249" text-anchor="middle" font-size="9" fill="#991b1b">→ importancia de cada canal</text>
+
+  <rect x="552" y="272" width="176" height="20" rx="4" fill="#dbeafe"/>
+  <text x="640" y="286" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">no se actualiza nada: se lee</text>
+
+  <!-- footer -->
+  <rect x="20" y="310" width="740" height="48" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="390" y="330" text-anchor="middle" font-size="11.5" fill="#374151">La segunda invierte la dirección habitual: en vez de mover los pesos para que encajen con la imagen,</text>
+  <text x="390" y="348" text-anchor="middle" font-size="11.5" fill="#374151"><tspan font-weight="700" fill="#2563eb">mueve la imagen para que encaje con los pesos</tspan> — y por eso suma en vez de restar: es ascenso, no descenso.</text>
+</svg>
