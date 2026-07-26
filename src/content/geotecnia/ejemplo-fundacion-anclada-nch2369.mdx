@@ -55,9 +55,10 @@ informe ni al geotecnista que lo firma.** Las cláusulas se citan por su numerac
 | Pedestal | $2{,}00 \times 2{,}00$ m, altura $1{,}00$ m |
 | Sismo (análisis, reducido por $R$) | $V = 13$ tonf, $M = 150$ tonf·m en la base de la torre |
 | Roca fracturada | $k_v = 40.000$ tonf/m³, $\tan\delta = 0{,}70$ |
+| Pesos unitarios | Hormigón $2{,}55$ tonf/m³ · relleno sobre el dado $1{,}94$ tonf/m³ |
 | $q_{adm}$ del informe | $12$ kgf/cm² estática · $18$ kgf/cm² sísmica |
 | Resistencia «realista» | $40$ kgf/cm² (para la condición amplificada, C10.1.6) |
-| Anclajes | 4 barras Ø32 (**2 traccionadas por dirección de sismo**), $L_{libre} = 6$ m, eje a $0{,}40$ m del borde |
+| Anclajes | 4 barras Ø32 **A630-420H** (**2 traccionadas por dirección de sismo**), $L_{libre} = 6$ m, eje a $0{,}40$ m del borde |
 | Capacidad a extracción | $25$ tonf por barra (informe) |
 
 Los pesos: **32,63** tonf de dado, **10,20** de pedestal y **23,25** de relleno encima —
@@ -103,12 +104,17 @@ fundación dentro del conjunto estructura-fundación para poder clasificarla com
 
 <Equation label="NCh2369 Ec. (14), 5.14">
 $$
-R_1 = R \cdot \min\left(\frac{Q_0}{Q_{0,min}},\ 1\right) \le R
+R_1 = R^{*} \cdot \min\left(\frac{Q_0}{Q_{0,\text{mín}}},\ 1\right) \le R^{*} \le R
 $$
 </Equation>
 
-Para una **torre de proceso**, la Tabla 7 (línea 10.1) da $R = 3$ y $\xi = 0{,}03$. Si el diseño
-no quedó gobernado por el corte basal mínimo, $R_1 = R = 3$ y el factor de amplificación es:
+Nótese que quien entra en la Ec. (14) es $R^{*}$, no el $R$ de tabla: la Ec. (1b) hace degradar
+$R^{*}$ linealmente desde $R$ hasta 1,5 para estructuras de período corto ($T^{*} < C_r T_1$, con
+$C_r = 0{,}16R$). Son dos reducciones encadenadas, y saltarse la primera es el error más común.
+
+Para una **torre de proceso**, la Tabla 7 (línea 10.1) da $R = 3$ y $\xi = 0{,}03$. Si la torre es
+suficientemente flexible como para acceder al $R$ completo ($R^{*} = R$) y el diseño no quedó
+gobernado por el corte basal mínimo, entonces $R_1 = 3$ y el factor de amplificación es:
 
 $$0{,}7 R_1 = 0{,}7 \times 3 = \mathbf{2{,}10} \ \ (\ge 1{,}0)$$
 
@@ -138,8 +144,8 @@ aritmética de decir que el problema no tiene solución.
 ## 4. El modelo: balasto, levantamiento y anclajes
 
 Con anclajes hay dos incógnitas —cuánto se comprime la roca y cuánto se estira la barra— y hacen
-falta dos ecuaciones. 10.1.2 sugiere el camino al pedir que los giros se evalúen *«a través del
-uso de constantes de balasto»*: fundación rígida (ya verificada con la Ec. 25), roca como cama
+falta dos ecuaciones. El comentario C10.1.2 señala el camino al indicar que los giros instantáneos se
+evalúan *«a través del uso de constantes de balasto»*: fundación rígida (Ec. (25)), roca como cama
 de resortes de constante $k_v$, anclajes como resortes axiales de rigidez
 $k_a = nEA/L_{libre} = 5.466$ tonf/m.
 
@@ -155,8 +161,9 @@ $$C\left(\frac{B}{2}-\frac{c}{3}\right) + T\left(x_a - \frac{B}{2}\right) = M$$
 
 <Note type="tip" title="El modelo contiene al de la nota anterior">
 Si se quitan los anclajes ($T = 0$), la primera ecuación da $C = N$ y la segunda se reduce a
-$N(B/2 - c/3) = M$, es decir $c = 3(B/2 - e)$: **exactamente la fórmula de despegue** que usa
-10.1.4 y con la que se calculó el 63,3 % de la zapata del galpón. El giro y la constante de
+$N(B/2 - c/3) = M$, es decir $c = 3(B/2 - e)$: **exactamente la fórmula de despegue** (Das 16.7)
+con la que se verifica el área apoyada que exige 10.1.4, y con la que se calculó el 63,3 % de la
+zapata del galpón. El giro y la constante de
 balasto se cancelan. Es una buena señal de que el modelo no está inventando nada nuevo: solo
 agrega el resorte que faltaba.
 </Note>
@@ -199,18 +206,30 @@ del mismo cálculo, sin trabajo adicional.
 |---|---|---|---|
 | Tensión de contacto (C10.1.6, $FS \approx 1{,}0$) | 7,09 kgf/cm² | 40 kgf/cm² | 0,18 |
 | **Anclajes: extracción de la roca** | 32,11 tonf | 50 tonf | **0,64** |
-| Anclajes: fluencia del acero | 32,11 tonf | 155,8 tonf | 0,21 |
+| Anclajes: fluencia del acero (2 Ø32, A630-420H) | 32,11 tonf | 68,9 tonf | 0,47 |
 | Deslizamiento sobre la roca ($N\tan\delta$) | 19,11 tonf | 60,3 tonf | 0,32 |
 
 Dos observaciones sobre esta tabla.
 
-**La primera: el anclaje no lo dimensiona el acero.** La barra Ø32 tiene **tres veces** la
-capacidad del macizo a extracción (155,8 contra 50 tonf) y casi **cinco veces** la tracción de
-diseño; lo que manda es la extracción del macizo, con uso 0,64. Es
-exactamente la preocupación que declara el comentario C10.1.6: *«No se desea la potencial falla
-de los anclajes de fundaciones, ya sea por extracción o deslizamiento»*, porque repararlos
-implica detener la producción. El acero es lo barato y lo controlable; la adherencia a la roca
-es lo que hay que ensayar.
+**La primera: el anclaje no lo dimensiona el acero, y por poco.** Las dos barras traccionadas
+fluyen a 68,9 tonf y el macizo suelta a 50: apenas un **38 % de diferencia**, con usos de 0,47 y
+0,64. Manda la extracción, pero no con la holgura que uno querría — y esa estrechez es el
+resultado importante, porque decide **cuál de los dos modos de falla llega primero**.
+
+Llega primero el frágil. Es exactamente lo que el comentario C10.1.6 dice que no quiere ver:
+*«No se desea la potencial falla de los anclajes de fundaciones, ya sea por extracción o
+deslizamiento»*, porque repararlos implica detener la producción. El acero es lo barato, lo
+controlable y lo que avisa antes de romperse; la adherencia a la roca es lo que hay que ensayar,
+y con 38 puntos de margen los ensayos de tracción de los anclajes de prueba dejan de ser un
+trámite de obra: son los que sostienen el orden entre las dos capacidades.
+
+Conviene notar que esto **no invalida el diseño**. La estrategia acá es la de «no fluye»: los
+anclajes se dimensionaron para la tracción de la combinación amplificada por $0{,}7R_1$, que es
+el mismo criterio con el que 8.5.2 exime del detalle dúctil a los pernos de anclaje. La analogía
+hay que tomarla como tal, eso sí: 8.5.1 acota esa cláusula a los apoyos que transmiten esfuerzos
+sísmicos **a** la fundación, no a las barras que anclan la fundación al macizo. Lo que sí implica
+es que no hay fusible: si la demanda superara lo previsto, no hay barra que fluya y disipe antes
+de que la roca ceda. De ahí que el margen sobre la extracción sea el número a cuidar.
 
 **La segunda: contra qué se compara.** Para la condición amplificada, C10.1.6 dice que
 *«el factor de seguridad aplicado a esta condición extrema debería ser levemente mayor que 1,0»*
@@ -260,10 +279,11 @@ Tres lecturas.
 **El parámetro dominante no es del suelo, ni siquiera de la fundación: es del análisis sísmico.**
 $R_1$ sale de la Tabla 7 y de la Ec. (14), y decide entre 2,4 y 32,1 tonf de tracción — un factor
 13. Cualquier discusión sobre la roca es de segundo orden mientras ese número no esté firme. Y
-la Ec. (14) tiene una trampa amable: $R_1 = R\min(Q_0/Q_{0,min}, 1)$ **baja** si el diseño quedó
-gobernado por el corte basal mínimo, de modo que una estructura sobredimensionada por el mínimo
-normativo paga menos amplificación. Conviene verificar cuál de los dos casos aplica antes de
-copiar $R$ de la tabla.
+la Ec. (14) tiene dos trampas amables, las dos a favor: $R_1 = R^{*}\min(Q_0/Q_{0,\text{mín}}, 1)$
+**baja** si la estructura es de período corto (por $R^{*}$, Ec. 1b) y **vuelve a bajar** si el
+diseño quedó gobernado por el corte basal mínimo, de modo que una estructura rígida o
+sobredimensionada por el mínimo normativo paga menos amplificación. Conviene verificar los dos
+antes de copiar $R$ de la tabla — que es lo que casi siempre se hace.
 
 **Las rigideces solo importan por su razón.** Bajar $k_v$ a la mitad y acortar la longitud libre
 del anclaje a 3 m dan **exactamente el mismo +10 %**, y no es coincidencia: en las ecuaciones de

@@ -58,6 +58,7 @@ citan por su numeración en la edición **2025**.
 | Napa | Profunda ($d > B$ bajo el sello) — Caso III, sin efecto |
 | $q_{adm}$ del informe | $2{,}0$ kgf/cm² estática · $3{,}0$ kgf/cm² sísmica |
 | $k_v$ del informe | 5.000 tonf/m³ |
+| Hormigón | $\gamma_c = 2{,}55$ tonf/m³ · $E = 2{,}4\cdot10^6$ tonf/m² |
 | Cargas en la base | $D = 18$ tonf, $L = 10$ tonf, $E$: $N = \pm 42$ tonf, $V = 16$ tonf |
 
 Los pesos que la zapata aporta por sí sola: **13,77** tonf de zapata, **1,96** de pedestal y
@@ -74,14 +75,14 @@ tonf/m² es el módulo del hormigón:
 
 <Equation label="NCh2369 Ec. (25)">
 $$
-\frac{L^4 k_v}{4EI} \le 1 \quad\Rightarrow\quad \frac{1{,}10^4 \times 5000}{4 \times 2{,}4\cdot10^6 \times 0{,}0180} = 0{,}042
+L\sqrt[4]{\frac{k_v}{4EI}} \le 1 \quad\Rightarrow\quad 1{,}10\sqrt[4]{\frac{5000}{4 \times 2{,}4\cdot10^6 \times 0{,}0180}} = 0{,}454
 $$
 </Equation>
 
-Con 0,042 contra un límite de 1, la zapata es **holgadamente rígida** y se puede suponer la
+Con 0,454 contra un límite de 1, la zapata es **holgadamente rígida** y se puede suponer la
 distribución de tensiones de contacto plana, que es lo que todo el resto del cálculo asume. Si
-no lo fuera, 10.1.5 obliga a modelarla con una cama de resortes anulando los traccionados, y
-**el requisito de área apoyada deja de aplicar**. Ese caso es el ejemplo siguiente de este
+no lo fuera, es **10.1.4** el que obliga a modelarla con una cama de resortes anulando los
+traccionados, y **10.1.5** el que deja sin efecto el requisito de área apoyada. Ese caso es el ejemplo siguiente de este
 bloque.
 
 ---
@@ -172,7 +173,7 @@ Ahora la verificación que sí está en Das, y que es la que casi todos revisan 
 
 ### 4a. Tensión de contacto contra el $q_{adm}$ del informe
 
-10.1.4 pide que *«las tensiones de contacto máximas contra el suelo sean menores que las
+10.1.4 exige que *«las tensiones de contacto máximas contra el suelo deben ser menores que las
 tensiones admisibles considerando el factor de seguridad correspondiente a esta condición de
 carga»*. **La norma no fija ese número**: lo delega en el informe, que por eso debe entregar dos
 valores, uno estático y uno para la condición eventual sísmica.
@@ -236,7 +237,7 @@ Acá NCh2369 escribe la ecuación completa, y después borra dos de sus tres té
 
 <Equation label="NCh2369 Ec. (22) y (24)">
 $$
-F_R = N' \tan\phi + c' A_c + E_{pm} \qquad\qquad E_{pm} = c_p E_p, \quad c_p = 0{,}5
+F_R = N' \tan\phi' + c' A_c + E_{pm} \qquad\qquad E_{pm} = c_p E_p, \quad c_p = 0{,}5
 $$
 </Equation>
 
@@ -253,16 +254,21 @@ queda es la fricción:
 
 $$F_R = 23{,}25 \times \tan 30° = 13{,}42 \ \text{tonf} \quad\Rightarrow\quad FS = \frac{13{,}42}{11{,}20} = \mathbf{1{,}20}$$
 
-La cláusula 10.1.3 no fija el factor de seguridad —dice que *«se debe evaluar en cada proyecto
-de acuerdo con sus condiciones específicas de operación»*— pero entrega como referencia el **1,3
-del Manual de Carreteras del MOP**. Contra ese valor:
+La cláusula 10.1.3 no fija el factor de seguridad: dice que el FS sísmico al deslizamiento
+*«se debe evaluar en cada proyecto de acuerdo con sus condiciones específicas de operación»*. Es
+el comentario C10.1.3 el que ofrece, *«a modo de referencia»*, el **1,3 que el Manual de
+Carreteras del MOP establece como mínimo para el deslizamiento general** —no para la condición
+sísmica—. No es, entonces, un requisito normativo: es el número contra el que, a falta de otro
+definido por el proyecto, se termina comparando. Contra él:
 
 > **Deslizamiento: $FS = 1{,}20$ contra 1,3. Uso 1,08 — no cumple.**
 
 <Note type="warning" title="El término prohibido vale más que el permitido">
 Si este suelo tuviera $D_R \ge 70$ %, el pasivo sí se podría contar: con $K_p = \tan^2(45 + \phi'/2) = 3{,}00$
 (Rankine, Cap. 14), $E_p = \tfrac{1}{2}K_p\gamma D_f^2 B = 27{,}50$ tonf, y aplicando el
-$c_p = 0{,}5$ que la Ec. (24) impone, $E_{pm} = 13{,}75$ tonf.
+$c_p = 0{,}5$ que 10.1.3 fija por defecto —la Ec. (24) solo define $E_{pm} = c_pE_p$; el valor lo
+prescribe un párrafo aparte, y *«el empleo de mayores valores se debe justificar
+adecuadamente»*—, $E_{pm} = 13{,}75$ tonf.
 
 Eso es **más que toda la fricción disponible**, y llevaría el factor de seguridad de 1,20 a
 **2,43: un +102 %**. La verificación pasaría de fallar a sobrar, sin tocar una sola dimensión.
@@ -377,7 +383,7 @@ todos sus números van a estar bien.
 
 ---
 
-**Lo que viene:** esta zapata cumplió el criterio de rigidez con un 0,042 contra 1. Cuando no lo
+**Lo que viene:** esta zapata cumplió el criterio de rigidez con un 0,454 contra 1. Cuando no lo
 cumple —losas de equipos, fundaciones esbeltas, radieres— el requisito de área apoyada
 desaparece y lo reemplaza otra cosa: verificar que los levantamientos sean tolerables, con la
 fundación modelada sobre resortes que hay que anular cuando traccionan. Ese es el próximo
