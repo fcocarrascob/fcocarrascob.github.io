@@ -50,6 +50,33 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-26 · `geotecnia/ejemplo-pilotes-friccion-negativa-nch2369` · ❌ bloqueado (16 hallazgos: 2 🔴 · 4 🟠 · 3 🟡 · 7 🔵)
+
+**Commit:** `7401cf7` (el `.mdx` y `public/geotecnia-pilotes-friccion-negativa/` sin trackear a ese commit) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (script del autor + recálculo independiente del auditor + PDF de Das + PDF de NCh2369)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | L | L.23-24 | Cita atribuida a Das que **no existe en Das**: «uno de los pocos casos en geotecnia donde un término de resistencia se convierte en acción». `grep -a` sobre las 30.397 líneas del libro no la encuentra; la frase es del resumen interno `material_teorico/libros/geotecnia-das/18-pilotes.md`, es decir editorial propia | Quitar comillas y atribución, o citar la frase real de Das | ✅ aplicado — se quitó la atribución; ahora es afirmación propia y se cita la definición literal de Das |
+| 2 | 🔴 | N | L.388-390 vs L.187-191 | El chequeo de grupo (V4) aparece con dos pares de cifras: cuerpo 1.284,5 / 552,9 (bloque 4,20 × 4,20, 9 pilotes) y Reproducibilidad 653,6 / 245,7 (bloque 2,40 × 2,40, 4 pilotes, de una corrida anterior). Contradice «todos los números salen de un único script» | Unificar en 1.284,5 / 552,9 | ✅ aplicado — Reproducibilidad corregida a 1.284,5 / 552,9 |
+| 3 | 🟠 | L | L.275-277 | Cita de 10.2.5 truncada sin elipsis, y lo omitido contradice el argumento: la cláusula también admite «*o llevar a cabo una modelación integral con el suelo adyacente*», que sí puede imponer el asentamiento del terreno | Citar completo y acotar la afirmación al modelo de resortes | ✅ aplicado — cita completa y afirmación acotada al modelo de resortes |
+| 4 | 🟠 | R | L.55-63, L.113-121 | El post **nunca declara $\delta'$**, que es el parámetro que fija el número titular ($\delta' = 0{,}6\phi' = 15{,}6°$) — y es justamente el de mayor incertidumbre según su propia sensibilidad | Agregarlo a la tabla de datos | ✅ aplicado — fila nueva en la tabla de datos |
+| 5 | 🟠 | C | L.49-53 (fig. 1) vs L.219, L.238 | La figura del enunciado dibuja el **resultado** (cabezal 4,40 × 4,40, «9 pilotes») antes de que exista el problema; §4 parte del cabezal de 4 y la tesis es el salto 4 → 9 | Redibujar con 4 pilotes o declarar en el `caption` que anticipa la disposición final | ✅ aplicado — `caption` y `alt` declaran que la disposición dibujada es la final, la de §4 |
+| 6 | 🟠 | C | L.225 vs L.229-232 | La prosa habla de «aliviar la tracción» pero la tabla da $P = +47{,}56$ tonf (compresión): ningún pilote llega a tracción en ninguna combinación. El criterio de método es correcto; el enunciado numérico no aplica al caso | Reformular como criterio general declarado | ✅ aplicado — se declara que acá no hay tracción y el criterio queda como general |
+| 7 | 🟡 | N | L.343-344 | «devuelve el cabezal a la mitad» no está calculado y no cuadra: con $Q_n = 6{,}14$ tonf, 4 pilotes dan 1,03 (no pasa) y 6 dan 0,72 → es 9 → 6 pilotes | «de 9 pilotes a 6» | ✅ aplicado — «de 9 pilotes a 6», con el uso 0,72 |
+| 8 | 🟡 | N | L.211-216 | «no cambia el número» es falso para el **uso** publicado: 179,40/120 = 1,50 en una forma y 117,97/58,57 = 2,01 en la otra. Lo que no cambia es el veredicto | «no cambia el veredicto» + declarar la forma que usa la tabla | ✅ aplicado |
+| 9 | 🟡 | N | L.80-81, `alt` L.51, fig. 1 | Redondeo hacia abajo por la representación binaria del `.5`: $\sigma'_p = 8{,}925 \to$ 8,93 y $\sigma'_f = 12{,}225 \to$ 12,23; el post y la figura muestran 8,92 y 12,22 | Corregir en prosa, `alt` y figura | ✅ aplicado — post, `alt` y SVG regenerado |
+| 10 | 🔵 | R | L.126-133 vs L.380-382 | Asimetría de integración no declarada: el caso flotante usa $L-H_f = 18$ m (Ec. 18.56 tal como Das la escribe) y el de punta 17 m. Con 17 m coherentes, $Q_n^{flot} = 30{,}71$ y el «83 % más» pasaría a 100 % | Declarar la asimetría en Reproducibilidad | ✅ aplicado — declarada en la nota de Reproducibilidad |
+| 11 | 🔵 | R | L.181-183 | El contraste con el método α descansa en $lpha pprox 0{,}70$ declarado sin fuente; en Das sale de la Fig. 18.17, que se lee a ojo | Citar la figura y decir que α mueve el contraste proporcionalmente | ✅ aplicado |
+| 12 | 🔵 | R | L.113-121 | El caso declara OCR = 1,4 pero el arrastre usa $K' = 1-\sin\phi'$ (forma NC), que es lo que §18.15 prescribe; el §18.9 corregiría por $\sqrt{OCR}$ y daría 72,7 tonf (+18 %), o sea el supuesto va del lado no conservador y el post no lo comenta | Nota de una línea | ✅ aplicado — nota agregada con el +18 % |
+| 13 | 🔵 | R | L.266, L.296 | El factor **1,2 sobre $Q_n$** en la combinación estructural no está declarado como supuesto; ni ACI 318-25 ni NCh2369 fijan factor de carga para *downdrag* | Declararlo en la Note de alcance | ✅ aplicado |
+| 14 | 🔵 | R | L.157 (`alt` fig. 2, panel A) | La curva de asentamiento del panel A es **ilustrativa** (el generador la traza como $34[1-((z-3)/17)^{1{,}6}]$), no calculada; el `alt` la describe como si fuera un perfil obtenido del cálculo | Declararla esquemática | ✅ aplicado — `caption` y `alt` la declaran esquemática |
+| 15 | 🔵 | R | script `post16_…py` | Dos defectos del script fuente: (a) docstring y print llaman «normalmente consolidada» a la arcilla con OCR 1,4; (b) el print de V4 divide por `N_PILOTES` (4) en vez de `N_GRUPO` (9) e informa «138,2 por pilote» | Corregir en `material_teorico` | ✅ aplicado — ambos corregidos |
+| 16 | 🔵 | L | L.66-67 | 10.2.1 define la fundación profunda por «profundidad de enterramiento / **ancho de la fundación**»; el post la evalúa por pilote ($L/D = 35$). Medida sobre el cabezal (4,40 m) daría 4,8 < 5 | Aclarar «por pilote» | ✅ aplicado |
+
+**Verificado y correcto (extracto):** la cadena completa del número titular ($Q_n = 61{,}429$ tonf) es idéntica en ecuación, tabla, prosa, `alt`, `caption`, `description` y SVG; **la afirmación fuerte del post es cierta** —el auditor rehízo el álgebra y confirmó que la Ec. (18.56) de Das es literalmente la condición «arrastre arriba = fricción positiva abajo», con 33,518672 contra 33,518672 tonf—; la consolidación (34,21 cm, NC 60,09 cm, ahorro 43,1 %); las combinaciones 4.5 sobre las tres disposiciones de cabezal, incluyendo que 8 pilotes da 1,03 y por eso el salto es a 9; la sección ACI 318-25 ($\phi P_{n,max} = 382{,}9$ tonf, +103,3 % y +109,8 % bien usados en sus contextos); las 9 filas de sensibilidad; la validación V1 contra el ejemplo 18.12 de Das (−0,05 %); y que **la cita de 10.2.4 coincide palabra por palabra** con el PDF de NCh2369:2025 p. 123.
+
+**No verificable:** la capacidad de punta de 120,0 tonf y el ×1,33 sísmico (dato del informe, declarado como tal); los parámetros del suelo; y el 90 % de reducción por betún (Das cita a Baligh et al. 1978 pero no da porcentaje).
+
 ### 2026-07-25 · `apuntes/deep-learning-with-python-cap7-deep-dive-keras` · ⚠️ 12 hallazgos
 
 **Commit:** `b57b3fd` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (sin aritmética que recalcular; se verificó el rango de páginas y se parsearon los 4 snippets con `ast`)
@@ -1032,6 +1059,26 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aisc360-22-capG-corte` | — | — | — |
 | `aisc360-22-capH-fuerzas-combinadas` | — | — | — |
 | `aisc360-22-capJ-conexiones` | — | — | — |
+
+### `geotecnia` — geotecnia (15)
+
+| Post | Última auditoría | Veredicto | Abiertos |
+|------|------------------|-----------|----------|
+| `ejemplo-pilotes-friccion-negativa-nch2369` | 2026-07-26 | ✅ | 0 (16 aplicados: 2🔴 4🟠 3🟡 7🔵) |
+| `como-leer-un-informe-de-mecanica-de-suelos` | — | — | — |
+| `cuanto-y-cuando-consolidacion` | — | — | — |
+| `de-donde-sale-q-admisible` | — | — | — |
+| `ejemplo-fundacion-anclada-nch2369` | — | — | — |
+| `ejemplo-losa-rigida-o-flexible-nch2369` | — | — | — |
+| `ejemplo-zapata-galpon-nch2369` | — | — | — |
+| `ejemplo-zapata-los-dos-criterios` | — | — | — |
+| `modulo-es-parametro-dominante` | — | — | — |
+| `muro-tres-verificaciones` | — | — | — |
+| `nivel-freatico-capacidad` | — | — | — |
+| `ocr-historia-de-tensiones` | — | — | — |
+| `pilotes-la-punta-casi-no-trabaja` | — | — | — |
+| `terzaghi-vs-ecuacion-general` | — | — | — |
+| `tres-coeficientes-del-mismo-suelo` | — | — | — |
 
 ### `apuntes` — apuntes (26)
 
