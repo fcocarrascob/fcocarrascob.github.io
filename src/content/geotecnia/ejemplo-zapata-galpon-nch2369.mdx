@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — La zapata del galpón: lo que NCh2369 agrega al método"
-description: "Zapata de una columna arriostrada de galpón industrial verificada según NCh2369:2025 Cap. 10. La capacidad de soporte sobra con uso 0,30; lo que no cumple son las dos verificaciones que la norma chilena agrega y que Das no tiene: el 80 % de área apoyada y el deslizamiento. Con el empuje pasivo que duplicaría el factor de seguridad y que la norma prohíbe contar."
+description: "Zapata de una columna arriostrada de galpón industrial verificada según NCh2369:2025 Cap. 10. La capacidad de soporte sobra —uso 0,39 en la combinación que gobierna—; lo que no cumple son las dos que la norma chilena endurece: el 80 % de área apoyada —que Das no tiene— y el deslizamiento, que sí tiene pero sin la prohibición de contar cohesión y empuje pasivo. Con el empuje pasivo que duplicaría el factor de seguridad y que la norma prohíbe contar."
 pubDate: 2026-07-26
 tags: ["ejemplo", "geotecnia", "fundaciones", "nch2369", "industrial", "deslizamiento", "estabilidad", "sismo", "sensibilidad", "das"]
 subsection: "ejemplos"
@@ -22,12 +22,11 @@ una cláusula que entregue el número**.
 
 Pero sí hay una que dice **qué se verifica**. El Capítulo 10 de **NCh2369:2025** —*Diseño sísmico
 de estructuras e instalaciones industriales*— le exige a una fundación industrial dos cosas que
-no aparecen en ningún capítulo de Das:
+la mecánica de suelos, por sí sola, no pide:
 
 1. Que **al menos el 80 % del área bajo la zapata siga apoyada** bajo las combinaciones sísmicas
    (10.1.4).
-2. Que **no deslice**, con una resistencia lateral en la que la norma prohíbe explícitamente
-   contar dos términos que la mecánica de suelos sí permite calcular (10.1.3).
+2. Que **no deslice** — verificación que Das sí tiene (§15.6, y la usa [el muro](/geotecnia/muro-tres-verificaciones)), pero que acá llega con una resistencia lateral en la que la norma **prohíbe explícitamente** contar dos términos que la mecánica de suelos sí permite calcular, y con el factor de seguridad entregado al proyecto en vez del 1,5 del libro (10.1.3).
 
 Este ejemplo toma una zapata perfectamente razonable —la de una columna arriostrada de galpón—
 y muestra que **la capacidad de soporte, que es lo que todo el mundo mira, es la verificación que
@@ -254,7 +253,7 @@ queda es la fricción:
 
 $$F_R = 23{,}25 \times \tan 30° = 13{,}42 \ \text{tonf} \quad\Rightarrow\quad FS = \frac{13{,}42}{11{,}20} = \mathbf{1{,}20}$$
 
-El comentario C10.1.3 no fija el factor de seguridad —dice que *«se debe evaluar en cada proyecto
+La cláusula 10.1.3 no fija el factor de seguridad —dice que *«se debe evaluar en cada proyecto
 de acuerdo con sus condiciones específicas de operación»*— pero entrega como referencia el **1,3
 del Manual de Carreteras del MOP**. Contra ese valor:
 
@@ -285,12 +284,13 @@ misma asimetría que hace que en un pilote
 |---|---|---|---|
 | Tensión de contacto, gravedad | 0,70 kgf/cm² | 2,00 kgf/cm² | 0,35 |
 | Tensión de contacto, sismo | 1,38 kgf/cm² | 3,00 kgf/cm² | 0,46 |
-| Capacidad de soporte (área efectiva, $FS = 3$) | 83,9 tonf | 279,5 tonf | 0,30 |
+| Capacidad de soporte (área efectiva, $FS = 3$) — compresión | 83,9 tonf | 279,5 tonf | 0,30 |
+| Capacidad de soporte (área efectiva, $FS = 3$) — **levantamiento, la que gobierna** | 23,25 tonf | 59,4 tonf | **0,39** |
 | **Área apoyada ≥ 80 % (10.1.4-1)** | **63,3 %** | **80 %** | **1,26** |
 | **Deslizamiento $FS \ge 1{,}3$ (10.1.3)** | **1,20** | **1,30** | **1,08** |
 
 Las tres verificaciones que vienen de la mecánica de suelos pasan con holgura. **Las dos que
-agrega NCh2369 son las que fallan**, y las dos por la misma razón: la combinación de
+NCh2369 endurece son las que fallan**, y las dos por la misma razón: la combinación de
 levantamiento deja poco peso vertical y todo el corte.
 
 ### Qué zapata sí cumple

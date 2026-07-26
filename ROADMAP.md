@@ -456,32 +456,32 @@ Columnas: **Post** `[ ]`pend `[~]`curso `[x]`hecho · **Script** verificador en
 
 | # | Post | Subsección | Post | Script | Audit. |
 |---|------|-----------|:----:|:------:|:------:|
-| 1 | `de-donde-sale-q-admisible` | fundamentos | [x] | `post01` | ❌ 13 (1🔴 4🟠) |
-| 2 | `terzaghi-vs-ecuacion-general` | capacidad-soporte | [x] | `post02` | ⚠️ 15 (5🟠) |
-| 3 | `nivel-freatico-capacidad` | capacidad-soporte | [x] | `post03` | ⚠️ 12 (2🟠) |
+| 1 | `de-donde-sale-q-admisible` | fundamentos | [x] | `post01` | ⚠️ 10 (2🟠) |
+| 2 | `terzaghi-vs-ecuacion-general` | capacidad-soporte | [x] | `post02` | ⚠️ 11 (1🟠) |
+| 3 | `nivel-freatico-capacidad` | capacidad-soporte | [x] | `post03` | ⚠️ 11 (1🟠) |
 | 4 | `modulo-es-parametro-dominante` | asentamientos | [x] | `post04` | ⚠️ 18 (3🟠) |
-| 5 | `cuanto-y-cuando-consolidacion` | asentamientos | [x] | `post05` | ❌ 13 (1🔴 3🟠) |
-| 6 | `ocr-historia-de-tensiones` | asentamientos | [x] | `post06` | ❌ 12 (1🔴 2🟠) |
-| 7 | `ejemplo-zapata-los-dos-criterios` | ejemplos | [x] | `post07` | ❌ 13 (1🔴 3🟠) |
+| 5 | `cuanto-y-cuando-consolidacion` | asentamientos | [x] | `post05` | ⚠️ 11 (2🟠) |
+| 6 | `ocr-historia-de-tensiones` | asentamientos | [x] | `post06` | ⚠️ 10 (1🟠) |
+| 7 | `ejemplo-zapata-los-dos-criterios` | ejemplos | [x] | `post07` | ⚠️ 12 (3🟠) |
 
 ### Bloque 2 — El origen de los parámetros (`range: [8, 8]`)
 
 | # | Post | Subsección | Post | Script | Audit. |
 |---|------|-----------|:----:|:------:|:------:|
-| 8 | `como-leer-un-informe-de-mecanica-de-suelos` | fundamentos | [x] | `post08` | ⚠️ 12 (5🟠) |
+| 8 | `como-leer-un-informe-de-mecanica-de-suelos` | fundamentos | [x] | `post08` | ⚠️ 10 (3🟠) |
 
 ### Bloque 3 — El suelo de costado (`range: [9, 10]`)
 
 | # | Post | Subsección | Post | Script | Audit. |
 |---|------|-----------|:----:|:------:|:------:|
-| 9 | `tres-coeficientes-del-mismo-suelo` | empujes-y-muros | [x] | `post09` | ❌ 14 (2🔴 3🟠) |
-| 10 | `muro-tres-verificaciones` | empujes-y-muros | [x] | `post10` | ❌ 18 (1🔴 4🟠) |
+| 9 | `tres-coeficientes-del-mismo-suelo` | empujes-y-muros | [x] | `post09` | ⚠️ 10 (1🟠) |
+| 10 | `muro-tres-verificaciones` | empujes-y-muros | [x] | `post10` | ⚠️ 15 (2🟠) |
 
 ### Bloque 4 — Fundaciones profundas (`range: [11, 12]`) — **incompleto**
 
 | # | Post | Subsección | Post | Script | Audit. |
 |---|------|-----------|:----:|:------:|:------:|
-| 11 | `pilotes-la-punta-casi-no-trabaja` | fundaciones-profundas | [x] | `post11` | ❌ 20 (5🔴 6🟠) |
+| 11 | `pilotes-la-punta-casi-no-trabaja` | fundaciones-profundas | [x] | `post11` | ⚠️ 11 (2🟠) |
 | **12** | **Pozos perforados (Das cap. 19)** | fundaciones-profundas | **[ ]** | — | — |
 
 - [ ] **G-12. Pozos perforados — la deuda declarada de la sección.** `BLOQUES` reserva el
@@ -503,9 +503,9 @@ decisiones de modelación y de clasificación normativa son la señal.
 
 | # | Post | Cláusula | Post | Script | Audit. |
 |---|------|----------|:----:|:------:|:------:|
-| 13 | `ejemplo-zapata-galpon-nch2369` | 10.1.3 / 10.1.4 | [x] | `post13` | ❌ 18 (1🔴 4🟠) |
-| 14 | `ejemplo-fundacion-anclada-nch2369` | 10.1.6 (0,7R₁) | [x] | `post14` | ⚠️ 17 (7🟠) |
-| 15 | `ejemplo-losa-rigida-o-flexible-nch2369` | Ec. (25) / 10.1.5 | [x] | `post15` | ❌ 20 (2🔴 5🟠) |
+| 13 | `ejemplo-zapata-galpon-nch2369` | 10.1.3 / 10.1.4 | [x] | `post13` | ⚠️ 15 (2🟠) |
+| 14 | `ejemplo-fundacion-anclada-nch2369` | 10.1.6 (0,7R₁) | [x] | `post14` | ⚠️ 15 (5🟠) |
+| 15 | `ejemplo-losa-rigida-o-flexible-nch2369` | Ec. (25) / 10.1.5 | [x] | `post15` | ⚠️ 16 (3🟠) |
 | 16 | `ejemplo-pilotes-friccion-negativa-nch2369` | 10.2.4 | [x] | `post16` | ✅ 2026-07-26 (16 aplicados: 2🔴 4🟠 3🟡 7🔵) |
 
 ### Deuda y mantención
@@ -604,6 +604,53 @@ nota 2 afirma que Terzaghi es «**sistemáticamente** conservadora» respecto de
 El auditor construyó el contraejemplo: zapata **continua en superficie** con cohesión ($c'=20$ kPa,
 $\phi'=30°$), donde Terzaghi da **8,1 % mayor** (15,3 % con $c'=50$). Sin bono de forma ni de
 profundidad que lo compense, los $N_c$ y $N_q$ mayores de Terzaghi lo dejan del lado inseguro.
+
+### Corrección aplicada (2026-07-26)
+
+**Aplicados 40 de los 215 hallazgos abiertos: los 15 🔴 y 25 de los 56 🟠.** Ningún post queda ya
+en ❌; los catorce con hallazgos abiertos están en ⚠️. Build verde, 144 páginas. Quedan **175
+abiertos**: 31🟠 · 106🟡 · 38🔵.
+
+Lo corregido, por familia:
+
+- **Los cinco errores de fuente.** $N_c$ de Terzaghi es 5,70 y no 5,14 (nota 1, era la Tabla 16.2
+  metida en la ecuación de la 16.1); Coulomb es 81 años anterior a Rankine y no 150 (nota 9, **con
+  la ficha del cerebro corregida en el mismo commit**); el método λ usa tensión **efectiva** y no
+  total (nota 11); la Ec. de $Q_u = Q_p + Q_s$ es la 18.3/18.7 y no la 18.1 (nota 11); y la cita de
+  Das sobre el FS justificaba las pruebas de carga, no el rango (nota 11).
+- **Las afirmaciones que excedían su respaldo.** «Terzaghi es *sistemáticamente* conservadora» ahora
+  declara el contraejemplo (zapata continua en superficie con cohesión, donde entrega un 8–15 %
+  **más**); «el deslizamiento *no está en Das*» pasa a «Das sí lo tiene (§15.6), la norma lo
+  endurece»; «las siete $C_N$ coinciden *por construcción*» pasa a «seis de las siete»; «λ cae a un
+  tercio» pasa a «el **coeficiente** cae a un 37 %, y no es $f_{prom}$»; «en una zapata la teoría
+  está razonablemente asentada» ahora cita el 34 % que la propia serie midió.
+- **Los dos posts que contradecían a su máquina.** La nota 10 ya no dice «el muro pasa por los
+  pelos»: dice que queda **0,3 % por debajo** del mínimo y explica por qué eso es lo interesante.
+  La nota 11 publica 887 y 2.465 kN, los valores que imprime su script.
+- **Los parámetros que faltaban.** $\gamma = 18$ kN/m³ (nota 3), FS = 3 y que la tabla son $q_{adm}$
+  (nota 2), $\delta' = 0{,}7\phi'$ y $N_{60} = 20$ (nota 11), $E$ del hormigón (nota 15),
+  $\gamma_{sat}$ (nota 9), las **2 barras traccionadas** de las 4 (nota 14). Con eso los seis posts
+  pasan a ser reproducibles desde el texto.
+- **Las atribuciones normativas.** C10.1.5 **no trae ningún valor de $k_v$** —la banda 1.500–6.000
+  ahora se declara como adoptada, no como recomendada por la norma— y la frase sobre el FS de
+  deslizamiento está en la **cláusula** 10.1.3, no en su comentario.
+- **Los dos casos mezclados.** Las notas 5 y 6 ya declaran que su caso es el **Ejemplo 9.10 de
+  Das** (zapata de 1,5 × 1,5 m) y remiten a la nota 7 para el de la serie. La nota 7 declara su
+  supuesto de drenaje en dos caras y cuánto vale (factor 4 en el tiempo).
+
+**Lo que queda, y por qué no se aplicó:** los 31 🟠 restantes exigen **recalcular números
+publicados y regenerar figuras**, no reescribir prosa. Los cuatro de mayor alcance:
+
+1. **Nota 4 · $q_o$ bruta vs neta en la Ec. (17.2)** (G-D). Das pide neta; la nota usa bruta. Rehacer
+   la tabla de 8 suelos, el tornado y 3 SVG. **Requiere primero decidir la convención de sección**,
+   que arrastra a las notas 1 y 7 y a la etiqueta «neta» de `hormigon/ejemplo-zapata-aislada.mdx:42`.
+2. **Nota 4 · $I_f$ interpolado solo en la fila $\mu_s = 0{,}3$.** El caso base pasaría de 24,95 a
+   ≈27 mm y arrastra los 16 asentamientos.
+3. **Nota 9 · Ec. (14.7) aplicada a arena.** Corresponde la (14.4): $K_o$ pasa de 0,940 a 0,980 y de
+   1,330 a 1,415. La conclusión cualitativa se **refuerza**.
+4. **Nota 15 · el barrido no congela el peso propio.** Hay que añadir la columna de $N$ total y
+   corregir la lectura: lo que la Ec. (25) predice es el error de la hipótesis plana, no la
+   desaparición del levantamiento.
 
 ### Cierre de la auditoría (2026-07-26): qué resistió y qué no
 

@@ -45,7 +45,7 @@ proveedor del equipo. Las cláusulas se citan por su numeración en la edición 
 
 <Figure
   src="/geotecnia-losa-flexible/el-caso.svg"
-  alt="Losa de fundación de una sala eléctrica, de 14 m de largo por 6 m de ancho y 0,50 m de espesor, con tres líneas de columnas en x = 1, 7 y 13 m, es decir con luz libre de 6 m entre ellas. Las cargas de gravedad por línea de columnas son 40, 70 y 40 tonf, y la cupla sísmica agrega menos 95, cero y más 95 tonf, que con el factor 0,70 de la combinación ASD dan menos 26,5, 70 y 106,5 tonf: la columna del extremo izquierdo queda traccionada. El peso propio de la losa es de 105 tonf, o 7,5 tonf por metro. El suelo tiene k_v = 3.000 tonf/m³, con banda de 1.500 a 6.000 recomendada por el comentario C10.1.5. A la derecha, la aplicación de la ecuación 25: para la zarpa, con longitud de cálculo de 1,10 m, la razón vale 0,044 y la fundación es rígida; para la zona interior entre columnas, con longitud de cálculo de 6,00 m, la razón vale 38,9 y no lo es. Al pie: la misma losa da dos respuestas porque la Tabla 10 define dos longitudes de cálculo distintas, y la longitud entra elevada a la cuarta potencia."
+  alt="Losa de fundación de una sala eléctrica, de 14 m de largo por 6 m de ancho y 0,50 m de espesor, con tres líneas de columnas en x = 1, 7 y 13 m, es decir con luz libre de 6 m entre ellas. Las cargas de gravedad por línea de columnas son 40, 70 y 40 tonf, y la cupla sísmica agrega menos 95, cero y más 95 tonf, que con el factor 0,70 de la combinación ASD dan menos 26,5, 70 y 106,5 tonf: la columna del extremo izquierdo queda traccionada. El peso propio de la losa es de 105 tonf, o 7,5 tonf por metro. El suelo tiene k_v = 3.000 tonf/m³ según el informe, y acá se adopta una banda de 1.500 a 6.000 —un factor 2 a cada lado— siguiendo la recomendación de acotar la rigidez que hace el comentario C10.1.5, que no fija valores. A la derecha, la aplicación de la ecuación 25: para la zarpa, con longitud de cálculo de 1,10 m, la razón vale 0,044 y la fundación es rígida; para la zona interior entre columnas, con longitud de cálculo de 6,00 m, la razón vale 38,9 y no lo es. Al pie: la misma losa da dos respuestas porque la Tabla 10 define dos longitudes de cálculo distintas, y la longitud entra elevada a la cuarta potencia."
   caption="La misma losa, dos longitudes de cálculo y dos respuestas opuestas. La Tabla 10 no da una L por fundación: da una L por zona."
 />
 
@@ -57,7 +57,8 @@ proveedor del equipo. Las cláusulas se citan por su numeración en la edición 
 | Cupla sísmica | $\pm 95$ tonf → combinación $0{,}70E$ |
 | Combinación ASD | **−26,5** / 70,0 / 106,5 tonf |
 | Peso propio | 105 tonf ($7{,}5$ tonf/m) |
-| Suelo | $k_v = 3.000$ tonf/m³ (banda 1.500 – 6.000, C10.1.5) |
+| Hormigón | $E = 2{,}4\cdot10^6$ tonf/m² (≈ 23,5 GPa) |
+| Suelo | $k_v = 3.000$ tonf/m³ del informe; banda 1.500 – 6.000 **adoptada acá** (factor 2 a cada lado), siguiendo la recomendación de C10.1.5 |
 
 Es una sala eléctrica arriostrada: el sismo llega como cupla, y en la combinación de diseño la
 columna del extremo izquierdo queda **traccionada con 26,5 tonf**. Con el peso propio de la losa,
@@ -215,8 +216,8 @@ cargas**. La misma losa sobre roca y con columnas cada 3 m sería rígida.
 
 <Figure
   src="/geotecnia-losa-flexible/sensibilidad.svg"
-  alt="Gráfico de tornado de la sensibilidad de la presión máxima de contacto, con caso base 9,57 tonf por metro cuadrado. La barra dominante corresponde a analizar solo la gravedad, sin la cupla sísmica: la presión baja a 4,11 tonf por metro cuadrado, un menos 57 %, y desaparece el levantamiento. Le siguen, mucho más cortas: k_v en el borde superior de la banda, 6.000 tonf/m³, sube la presión a 10,28, un más 7,4 %, con 3,9 m levantados; el espesor de 0,30 m la sube a 10,18, un más 6,4 %, con 5,9 m levantados; k_v en el borde inferior, 1.500 tonf/m³, la baja a 8,87, un menos 7,3 %, con 3,0 m levantados; el espesor de 0,80 m la baja a 9,02, un menos 5,7 %, con solo 0,7 m levantados; y el espesor de 1,20 m la baja a 9,34, un menos 2,4 %, sin levantamiento. Al pie: la banda completa de k_v que recomienda el comentario C10.1.5, un factor 4 entre extremos, mueve la presión menos de un 8 %, pero cambia el asentamiento por un factor 3."
-  caption="La banda de k_v que la norma manda explorar mueve poco la presión — pero mucho el asentamiento. Son dos preguntas distintas y conviene no leer una por la otra."
+  alt="Gráfico de tornado de la sensibilidad de la presión máxima de contacto, con caso base 9,57 tonf por metro cuadrado. La barra dominante corresponde a analizar solo la gravedad, sin la cupla sísmica: la presión baja a 4,11 tonf por metro cuadrado, un menos 57 %, y desaparece el levantamiento. Le siguen, mucho más cortas: k_v en el borde superior de la banda, 6.000 tonf/m³, sube la presión a 10,28, un más 7,4 %, con 3,9 m levantados; el espesor de 0,30 m la sube a 10,18, un más 6,4 %, con 5,9 m levantados; k_v en el borde inferior, 1.500 tonf/m³, la baja a 8,87, un menos 7,3 %, con 3,0 m levantados; el espesor de 0,80 m la baja a 9,02, un menos 5,7 %, con solo 0,7 m levantados; y el espesor de 1,20 m la baja a 9,34, un menos 2,4 %, sin levantamiento. Al pie: la banda completa de k_v adoptada, un factor 4 entre extremos, mueve la presión menos de un 8 %, pero cambia el asentamiento por un factor 3."
+  caption="La banda de k_v que el comentario recomienda explorar mueve poco la presión — pero mucho el asentamiento. Son dos preguntas distintas y conviene no leer una por la otra."
 />
 
 | Decisión | Resultado | Efecto sobre $q_{max}$ |
@@ -230,7 +231,7 @@ cargas**. La misma losa sobre roca y con columnas cada 3 m sería rígida.
 
 Dos lecturas.
 
-**La banda de $k_v$ mueve poco la presión y mucho el desplazamiento.** C10.1.5 recomienda acotar
+**La banda de $k_v$ mueve poco la presión y mucho el desplazamiento.** C10.1.5 —que no da valores— recomienda acotar
 la rigidez del suelo entre un *lower bound* y un *upper bound* porque *«se espera que controlen
 diferentes aspectos del diseño»*, y este barrido lo muestra literalmente: entre 1.500 y 6.000
 tonf/m³ —un factor 4— la presión máxima se mueve un 15 % de punta a punta, pero el asentamiento
@@ -248,7 +249,7 @@ precisamente, lo que 10.1.5 manda verificar.
 
 ## Lo que este ejemplo agrega al bloque
 
-Las tres notas del bloque 5 verificaron la misma losa imaginaria de tres formas distintas, y cada
+Las tres notas anteriores del bloque 5 verificaron tres fundaciones distintas con la misma norma, y cada
 una llegó a un requisito diferente:
 
 1. [La zapata del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) — rígida y no anclada:

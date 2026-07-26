@@ -45,7 +45,7 @@
     <text x="266" y="325" font-size="11" fill="#555" text-anchor="middle">peso propio 7,5 tonf/m (105 tonf)</text>
     <line x1="70" y1="356" x2="462" y2="356" stroke="#666" stroke-width="1" marker-start="url(#ea)" marker-end="url(#ea)"/>
     <text x="266" y="372" font-size="11.5" fill="#222" text-anchor="middle" font-weight="bold">14,00 m  ·  ancho 6,00 m  ·  espesor 0,50 m</text>
-    <text x="266" y="394" font-size="11.5" fill="#555" text-anchor="middle">suelo: k_v = 3.000 tonf/m³ (banda 1.500 – 6.000, C10.1.5)</text>
+    <text x="266" y="394" font-size="11.5" fill="#555" text-anchor="middle">suelo: k_v = 3.000 tonf/m³ (banda 1.500 – 6.000, adoptada)</text>
   </g>
 
   <!-- ======== Ec. (25) ======== -->

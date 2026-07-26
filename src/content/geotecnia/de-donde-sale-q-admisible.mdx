@@ -119,13 +119,13 @@ Leer los tres términos por separado explica casi todo el comportamiento de una 
 
 | Término | Qué representa | Cómo se comporta |
 |---|---|---|
-| $c'N_c$ | La cohesión | Único término vivo en arcilla saturada no drenada ($\phi = 0$, $N_c = 5{,}14$) |
+| $c'N_c$ | La cohesión | Único término vivo en arcilla saturada no drenada ($\phi = 0$: $N_c = 5{,}70$ en Terzaghi, Tabla 16.1; $2+\pi = 5{,}14$ en la ecuación general) |
 | $q\,N_q$ | La sobrecarga del suelo por encima del sello | Crece con $D_f$: **enterrar la zapata es la forma más barata de ganar capacidad** |
 | $0{,}4\,\gamma B\,N_\gamma$ | El peso propio del suelo bajo la zapata | Crece con $B$, y es el término que castiga la napa freática |
 
 <Figure
   src="/geotecnia-q-admisible/tres-terminos.svg"
-  alt="A la izquierda, sección de una zapata enterrada: la superficie del terreno arriba, la franja de suelo sobre el sello sombreada en ocre y acotada como D_f —de la que sale la sobrecarga q = γD_f, dibujada con flechas ocres apoyando a ambos lados del sello—, la zapata en gris con su carga vertical, el ancho B acotado abajo, y el suelo bajo la zapata rayado en azul como el que aporta el peso propio. A la derecha, los tres términos como filas con su color: c'N_c en verde (COHESIÓN, único término vivo en arcilla saturada no drenada con N_c = 5,14, vale 0 kPa en arena limpia); qN_q en ocre (SOBRECARGA, crece con D_f, 414 kPa, 70 %); y 0,4γBN_γ en azul (PESO PROPIO, crece con B y es el único que castiga la napa, 175 kPa, 30 %). Abajo, una barra apilada muestra el reparto 70/30, y una caja advierte que si la napa sube hasta el sello γ pasa a γ'≈γ/2 pero solo castiga el término azul, de modo que q_adm cae 15 % y no 33 %."
+  alt="A la izquierda, sección de una zapata enterrada: la superficie del terreno arriba, la franja de suelo sobre el sello sombreada en ocre y acotada como D_f —de la que sale la sobrecarga q = γD_f, dibujada con flechas ocres apoyando a ambos lados del sello—, la zapata en gris con su carga vertical, el ancho B acotado abajo, y el suelo bajo la zapata rayado en azul como el que aporta el peso propio. A la derecha, los tres términos como filas con su color: c'N_c en verde (COHESIÓN, único término vivo en arcilla saturada no drenada, con N_c = 5,70 en Terzaghi y 5,14 en la ecuación general, vale 0 kPa en arena limpia); qN_q en ocre (SOBRECARGA, crece con D_f, 414 kPa, 70 %); y 0,4γBN_γ en azul (PESO PROPIO, crece con B y es el único que castiga la napa, 175 kPa, 30 %). Abajo, una barra apilada muestra el reparto 70/30, y una caja advierte que si la napa sube hasta el sello γ pasa a γ'≈γ/2 pero solo castiga el término azul, de modo que q_adm cae 15 % y no 33 %."
   caption="Los tres términos sobre el caso real de esta nota. El reparto 70/30 explica por qué la regla de bolsillo «la napa te quita un tercio» no aplica acá: con D_f = 1,5 m la sobrecarga domina, y el agua solo castiga el término del peso propio."
 />
 
@@ -210,7 +210,7 @@ pueden ser exactamente el mismo terreno.
 Con la napa subiendo hasta el nivel del sello, el peso unitario del tercer término pasa de
 $\gamma$ a $\gamma' = \gamma_{sat} - \gamma_w = 19 - 9{,}81 = 9{,}19$ kN/m³: **el 51 %**.
 
-En esta zapata, la $q_{adm}$ cae de 196 a **168 kPa: un 15 %**. Menos de lo que uno
+En esta zapata, la $q_{adm}$ cae de 196 a **168 kPa: un 14,5 %**. Menos de lo que uno
 esperaría al ver que un peso unitario se parte por la mitad, y la razón es instructiva —
 con $D_f = 1{,}5$ m el reparto de la capacidad es:
 
@@ -282,7 +282,7 @@ Esta nota planteó el mapa. Las siguientes recorren cada rama con números:
 Eso cierra el primer bloque. Después la serie vuelve atrás para preguntar
 [de dónde salen esos parámetros](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos), gira el
 suelo de costado —[empujes](/geotecnia/tres-coeficientes-del-mismo-suelo) y
-[muros](/geotecnia/muro-tres-verificaciones)— y termina bajando:
+[muros](/geotecnia/muro-tres-verificaciones)—, baja a:
 [pilotes](/geotecnia/pilotes-la-punta-casi-no-trabaja), cuando la zapata ya no alcanza.
 
 <Note type="info" title="Fuente y trazabilidad">

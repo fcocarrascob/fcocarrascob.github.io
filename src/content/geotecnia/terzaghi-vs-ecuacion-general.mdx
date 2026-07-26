@@ -66,7 +66,9 @@ corrigen:
 
 Estudios posteriores (Vesić, 1973) confirmaron la forma del mecanismo pero mostraron que
 $\alpha$ está más cerca de $45° + \phi'/2$. Con esa corrección los factores dejan de ser
-tabulaciones empíricas y admiten **forma cerrada**:
+los de Terzaghi para pasar a los de la general. No es que unos sean empíricos y otros no —los
+$N_c$ y $N_q$ de Terzaghi también tienen forma cerrada, y solo su $N_\gamma$ carece de ella—:
+lo que cambia es el **valor**:
 
 <Equation label="16.6 a 16.8">
 $$
@@ -160,8 +162,9 @@ física y es una buena verificación de que uno programó bien la fórmula.
 ## 4. La brecha: 23 a 36 %, y es sistemática
 
 Con todo lo anterior, la pregunta concreta. Sobre la zapata del ejemplo de hormigón
-—$2{,}20 \times 2{,}20$ m, $D_f = 1{,}5$ m, arena con $c' = 0$ y $\gamma = 18$ kN/m³—, barriendo
-todo el rango útil de $\phi'$:
+—$2{,}20 \times 2{,}20$ m, $D_f = 1{,}5$ m, arena con $c' = 0$ y $\gamma = 18$ kN/m³, con
+$FS = 3$—, barriendo todo el rango útil de $\phi'$. **Las dos columnas son $q_{adm} = q_u/3$**,
+no $q_u$:
 
 | $\phi'$ | Terzaghi, Ec. (16.4) | Ec. general, Ec. (16.9) | Diferencia |
 |---|---|---|---|
@@ -196,7 +199,7 @@ equivocarse en $\phi'$?**
   caption="La comparación que ordena las prioridades. La brecha entre métodos es del orden de 30 %; un solo grado de error en φ' vale 14 %. Dos grados —perfectamente dentro de la dispersión de cualquier correlación con el SPT— y ya empatan con la diferencia entre Terzaghi y Meyerhof."
 />
 
-**Un solo grado de $\phi'$ mueve $q_{adm}$ entre un 13,5 y un 16 %.** Dos grados y medio ya
+**Un solo grado de $\phi'$ mueve $q_{adm}$ entre un 13,5 y un 16 %.** Dos grados ya
 valen tanto como toda la discusión metodológica.
 
 Y $\phi'$ **no se mide**: se estima con correlaciones a partir del número de golpes del SPT,
@@ -211,9 +214,12 @@ En orden de importancia práctica:
 
 1. **Usa la ecuación general** si tienes la geometría real (forma en planta, empotramiento,
    inclinación de la carga). Es más completa y es el estándar actual.
-2. **Terzaghi sigue sirviendo** para prediseño y para verificar el orden de magnitud, con la
-   ventaja de que es conservadora — su resultado está sistemáticamente del lado seguro respecto
-   de la general.
+2. **Terzaghi sigue sirviendo** para prediseño y para verificar el orden de magnitud, y en el
+   caso de esta nota queda del lado seguro. Pero **no lo está siempre**: la ventaja viene del bono
+   de forma y profundidad de la ecuación general, así que cuando ese bono no existe —zapata
+   continua en superficie, con cohesión— se invierte. Con $c' = 20$ kPa y $\phi' = 30°$, Terzaghi
+   entrega un 8 % **más** que la general, y con $c' = 50$ kPa, un 15 % más: sus $N_c$ y $N_q$
+   mayores dejan de estar compensados.
 3. **Nunca mezcles las tablas.** Cada una va con su ecuación.
 4. **Declara siempre el método** al reportar un $q_{adm}$. Sin eso, el número no es comparable
    con ningún otro.

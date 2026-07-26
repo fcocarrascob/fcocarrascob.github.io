@@ -133,11 +133,12 @@ Cuándo importa (Mesri, 1973):
 
 ## 4. La línea de tiempo de la zapata
 
-Junté todo sobre la zapata que viene siguiendo la serie, apoyada en 3 m de arcilla blanda:
+Junté todo sobre **el caso del Ejemplo 9.10 de Das** —una zapata de 1,5 × 1,5 m con 890 kN sobre 3 m de arcilla blanda—, que es el que trae los tres componentes resueltos en el libro.
+No es la zapata de 2,20 × 2,20 m que sigue el resto de la serie: esa la resuelve entera [la nota 7](/geotecnia/ejemplo-zapata-los-dos-criterios), y da 11,1 + 18,2 mm y un total de 81,7 mm a los cincuenta años. Los dos casos enseñan lo mismo; conviene no confundir sus cifras:
 
 <Figure
   src="/geotecnia-tiempo/linea-de-tiempo.svg"
-  alt="Cuatro barras apiladas que muestran la evolución del asentamiento total de la zapata de 2,20 × 2,20 m sobre 3 m de arcilla blanda con c_v = 0,0005 cm²/s, drenaje en dos caras y C'_α = 0,011. Al construir: solo 25,0 mm de asentamiento elástico. A 1 año: 25,0 de elástico más 24,0 de consolidación primaria, que va al 86 %, total 49,0 mm. A 10 años: 25,0 elástico, 28,0 de primaria ya terminada y 30,3 de secundaria, total 83,2 mm. A 50 años: 25,0, 28,0 y 53,3 de secundaria, total 106,3 mm y sigue creciendo. Dos líneas de referencia marcan los 25 y los 50 mm. Al pie: un cálculo que solo entrega el asentamiento elástico reporta 25 mm de un total que llegará a 106 mm, y como la secundaria crece con el logaritmo del tiempo la pregunta no es cuánto asienta sino cuánto asienta a qué plazo."
+  alt="Cuatro barras apiladas que muestran la evolución del asentamiento total de la zapata del Ejemplo 9.10 de Das, de 1,5 × 1,5 m sobre 3 m de arcilla blanda con c_v = 0,0005 cm²/s, drenaje en dos caras y C'_α = 0,011. Al construir: solo 25,0 mm de asentamiento elástico. A 1 año: 25,0 de elástico más 24,0 de consolidación primaria, que va al 86 %, total 49,0 mm. A 10 años: 25,0 elástico, 28,0 de primaria ya terminada y 30,3 de secundaria, total 83,2 mm. A 50 años: 25,0, 28,0 y 53,3 de secundaria, total 106,3 mm y sigue creciendo. Dos líneas de referencia marcan los 25 y los 50 mm. Al pie: un cálculo que solo entrega el asentamiento elástico reporta 25 mm de un total que llegará a 106 mm, y como la secundaria crece con el logaritmo del tiempo la pregunta no es cuánto asienta sino cuánto asienta a qué plazo."
   caption="De 25 mm al entregar la obra a 106 mm a los cincuenta años. Un informe que solo reporte el asentamiento elástico está entregando menos de la cuarta parte del total."
 />
 
@@ -191,7 +192,7 @@ transposición de dígitos.
 La tabla de plazos, la cola y la línea de tiempo se calcularon con script sobre las
 Ecs. (9.42)/(9.43) y (9.28). Los parámetros del caso son internamente coherentes:
 $c_v = 0{,}0005$ cm²/s ≈ 1,6 m²/año, propio de arcilla blanda —no el 0,003 del Ejemplo 9.6, que
-corresponde a un limo y drena seis veces más rápido—, y $C'_\alpha = 0{,}011$, que satisface la
+es alto para una arcilla blanda —más propio de un limo o de una arcilla limosa— y drena seis veces más rápido—, y $C'_\alpha = 0{,}011$, que satisface la
 relación $C'_\alpha/C_c \approx 0{,}04$ de Mesri y Godlewski (1977) con el $C_c = 0{,}27$ del
 caso. La consolidación primaria de 28,0 mm es la del Ejemplo 9.10 de Das, verificada.
 </Note>

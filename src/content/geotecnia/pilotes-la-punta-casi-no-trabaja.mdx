@@ -21,7 +21,7 @@ baja. Y al bajar cambian cosas que no son obvias.
 
 La ecuación de capacidad de un pilote es de una simplicidad engañosa:
 
-<Equation label="18.1">
+<Equation label="18.3 y 18.7">
 $$
 Q_u = Q_p + Q_s
 $$
@@ -74,16 +74,17 @@ Como `σ'_o` crece linealmente con la profundidad, uno esperaría que `Q_s` crec
 de la longitud. No lo hace. La ecuación (18.19) introduce una **profundidad crítica** `L' ≈ 15D`:
 más abajo de ese punto, `σ'_o` se toma constante e igual a su valor en `L'`.
 
-En el pilote de referencia —0,40 m de diámetro, arena con `φ' = 32°`, `γ = 18 kN/m³`, hincado de
-alto desplazamiento— eso ocurre a **6 metros**. Ignorar el tope no es un detalle:
+En el pilote de referencia —0,40 m de diámetro, arena con `φ' = 32°`, `γ = 18 kN/m³`,
+`δ' = 0,7φ' = 22,4°` (Das da 0,5 a 0,8 φ' en §18.9), `N₆₀ = 20`, hincado de alto
+desplazamiento— eso ocurre a **6 metros**. Ignorar el tope no es un detalle:
 
 | L (m) | Q_s real | Q_s ignorando L' | sobreestimación |
 |---|---|---|---|
 | 6 | 142 kN | 142 kN | 0 % |
 | 10 | 331 kN | 394 kN | +19 % |
-| 15 | 568 kN | 886 kN | +56 % |
+| 15 | 568 kN | 887 kN | +56 % |
 | 20 | 805 kN | 1 578 kN | **+96 %** |
-| 25 | 1 041 kN | 2 467 kN | **+137 %** |
+| 25 | 1 041 kN | 2 465 kN | **+137 %** |
 
 Y la punta satura antes todavía. La correlación de Meyerhof con el SPT, ecuación (18.15), lleva su
 propio tope:
@@ -117,7 +118,9 @@ el fuste el que trabaja.
 
 El método λ de Vijayvergiya y Focht (tabla 18.5) dice lo mismo en otro idioma. Su coeficiente cae de
 **0,318** para un pilote de 5 m a **0,117** para uno de 90 m: la fricción unitaria promedio se
-reduce a un tercio. Dos formulaciones independientes describiendo el mismo fenómeno.
+cae a un **37 %** de su valor. Ojo con la lectura: lo que cae es el **coeficiente** λ, no la
+fricción resultante — $f_{prom} = \lambda(\bar\sigma'_o + 2\bar c_u)$ y $\bar\sigma'_o$ crece
+con la longitud. Aun así, las dos formulaciones describen el mismo fenómeno.
 
 ## El reparto, y por qué engaña
 
@@ -139,8 +142,9 @@ que importa es la de `Q_s`.
 
 Hay un tercer punto que en el capítulo aparece casi de pasada y tiene consecuencias grandes. El
 coeficiente `K` de la ecuación (18.18) depende de **cómo se instaló el pilote** (sección 18.9):
-`K_o` si es perforado o inyectado, `1,4 K_o` si es hincado de bajo desplazamiento, `1,8 K_o` si es
-hincado de alto desplazamiento. El pilote que desplaza suelo al hincarse comprime el terreno contra
+`K_o` si es perforado o inyectado, `K_o` a `1,4 K_o` si es hincado de bajo desplazamiento, y
+`K_o` a `1,8 K_o` si es de alto. Son **rangos**: las cifras de más abajo toman el tope de cada
+uno, así que el 80 % de diferencia es la cota superior, no el resultado general. El pilote que desplaza suelo al hincarse comprime el terreno contra
 sí mismo y se gana su propia fricción.
 
 Mismo pilote de 0,40 × 15 m, mismo suelo, misma fórmula:
@@ -152,9 +156,11 @@ Mismo pilote de 0,40 × 15 m, mismo suelo, misma fórmula:
 />
 
 En grupos sobre arena la brecha se ensancha todavía más (sección 18.16). Los pilotes hincados con
-espaciamiento `d ≥ 3D` no llevan penalización: `η = 1`, nueve pilotes rinden nueve. Los perforados,
-al mismo espaciamiento, rinden entre **2/3 y 3/4**. Nueve perforados entregan lo que seis o siete
-hincados, y para igualar a nueve hincados harían falta **entre doce y catorce**.
+espaciamiento `d ≥ 3D` no llevan penalización: `η = 1`, nueve pilotes rinden nueve. Los perforados
+**a espaciamiento convencional —que Das define como `d < 3D`—** rinden entre **2/3 y 3/4**: nueve
+entregan lo que 6 a 6,75 hincados, y para igualar a nueve harían falta **entre doce y catorce**.
+Ojo con la comparación: no es a igual `d`, porque la condición de espaciamiento es parte del
+enunciado de cada caso.
 
 <Note type="warning">
 Si el método constructivo cambia en obra respecto del proyectado —y cambia— el cálculo hay que
@@ -165,8 +171,8 @@ rehacerlo. No es una sustitución neutral: es un parámetro que entra en la ecua
 
 El fuste en arcilla no tiene una fórmula, tiene tres. El capítulo presenta el **método λ**, el
 **método α** y el **método β**, y no se molesta en declarar un ganador porque no lo hay. Cada uno
-parte de una hipótesis distinta sobre qué controla el roce: la tensión total y la resistencia no
-drenada promediadas sobre la longitud (λ), la resistencia no drenada corregida por un factor
+parte de una hipótesis distinta sobre qué controla el roce: la tensión **efectiva** vertical y la
+resistencia no drenada, ambas promediadas sobre la longitud de empotramiento (λ), la resistencia no drenada corregida por un factor
 empírico (α), o los parámetros efectivos con la arcilla remoldeada (β).
 
 Es un patrón que ya apareció en esta serie con los [siete factores `C_N`](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos)
@@ -176,8 +182,10 @@ dispersión entre ellos es real y no está resuelta.
 ## El factor de seguridad, y una admisión del libro
 
 `FS = 2,5 a 4` para pilotes. Es alto comparado con el 3 de una zapata, y más alto todavía si se
-recuerda que en una zapata el FS se aplica sobre una teoría razonablemente asentada. Das explica el
-rango citando **«la falta de fiabilidad de los métodos de predicción»**.
+recuerda que en una zapata el FS se aplica sobre una teoría que esta serie ya mostró dispersa
+—un 34 % entre Terzaghi y la ecuación general—, y en pilotes lo es todavía más. Das justifica el rango por
+**«las incertidumbres del cálculo de la carga última»**, y recomienda pruebas de carga en proyectos
+grandes por **«la falta de fiabilidad de los métodos de predicción»**.
 
 Vale la pena tomarse en serio esa frase. Es el autor de un texto de 800 páginas diciendo que sus
 propias ecuaciones para pilotes tienen una dispersión que hay que cubrir con un factor. De ahí que
