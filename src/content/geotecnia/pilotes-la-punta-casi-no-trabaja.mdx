@@ -1,0 +1,210 @@
+---
+title: "Pilotes: la punta casi no trabaja"
+description: "Q_u = Q_p + Q_s sugiere que los dos términos suman. No al mismo tiempo: el fuste se moviliza con 5 a 10 mm y la punta necesita el 10 a 25 % del diámetro — 40 a 100 mm en un pilote de 400. Eso, más la profundidad crítica L' ≈ 15D, invierte la lógica de la zapata: alargar el pilote deja de comprar capacidad."
+pubDate: 2026-08-10
+tags: ["teoría", "geotecnia", "pilotes", "fundaciones profundas", "capacidad de soporte", "das"]
+subsection: "fundaciones-profundas"
+order: 11
+chapter: "Fundaciones profundas"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 11 · bloque 4, fundaciones profundas. Viene de [el muro](/geotecnia/muro-tres-verificaciones).*
+
+Todo lo anterior de la serie se movió en el mismo terreno: una zapata apoyada
+cerca de la superficie, con dos criterios compitiendo por gobernar. Cuando ese terreno no da, se
+baja. Y al bajar cambian cosas que no son obvias.
+
+La ecuación de capacidad de un pilote es de una simplicidad engañosa:
+
+<Equation label="18.3 y 18.7">
+$$
+Q_u = Q_p + Q_s
+$$
+</Equation>
+
+Capacidad de punta más resistencia por fuste. Se leen como dos aportes que se suman. El capítulo 18
+dedica buena parte de su extensión a explicar por qué esa suma es más frágil de lo que aparenta.
+
+## La primera asimetría: los dos términos no se movilizan al mismo tiempo
+
+Esta es la que reordena el diseño. La sección 18.6 da los desplazamientos necesarios para movilizar
+cada término, y no están en la misma escala:
+
+- **La fricción del fuste** se moviliza con un desplazamiento de **5 a 10 mm**, y —esto es lo
+  notable— *sin importar el tamaño ni la longitud del pilote*. Es una cifra absoluta.
+- **La resistencia de punta** necesita una penetración del **10 al 25 % del diámetro**: el 10 % en
+  pilotes hincados, el 25 % en perforados.
+
+En un pilote de 400 mm eso son **40 a 100 mm**. Un factor diez respecto del fuste.
+
+<Figure
+  src="/geotecnia-pilotes/dos-asimetrias.svg"
+  alt="Esquema de un pilote con las flechas de fricción lateral y resistencia de punta, junto a una escala comparativa de desplazamientos: 5 a 10 mm para el fuste contra 40 a 100 mm para la punta."
+  caption="Los dos términos de Q_u = Q_p + Q_s piden desplazamientos que difieren en un factor diez. Cifras de la sección 18.6."
+/>
+
+Ningún edificio tolera que su fundación baje 100 mm. Ni 40. La consecuencia es directa:
+
+<Note type="warning">
+En cargas de servicio **la carga la lleva el fuste**, y la punta es reserva de seguridad, no
+capacidad utilizable. La suma `Q_u = Q_p + Q_s` solo se alcanza en la falla.
+</Note>
+
+Es el mismo patrón que apareció en el [muro](/geotecnia/muro-tres-verificaciones): el empuje pasivo
+existe y es grande, pero exige un desplazamiento que la estructura no puede dar, así que se
+descarta. Acá no se descarta la punta —sigue en la ecuación—, pero conviene tener presente que lo
+que sostiene el edificio en el día a día es el roce del fuste.
+
+## La segunda asimetría: alargar el pilote deja de sumar
+
+La resistencia unitaria por fuste en arena sale de la ecuación (18.18):
+
+<Equation label="18.18">
+$$
+f = K \sigma'_o \tan \delta'
+$$
+</Equation>
+
+Como `σ'_o` crece linealmente con la profundidad, uno esperaría que `Q_s` creciera con el cuadrado
+de la longitud. No lo hace. La ecuación (18.19) introduce una **profundidad crítica** `L' ≈ 15D`:
+más abajo de ese punto, `σ'_o` se toma constante e igual a su valor en `L'`.
+
+En el pilote de referencia —0,40 m de diámetro, arena con `φ' = 32°`, `γ = 18 kN/m³`,
+`δ' = 0,7φ' = 22,4°` (Das da 0,5 a 0,8 φ' en §18.9), `N₆₀ = 20`, hincado de alto
+desplazamiento— eso ocurre a **6 metros**. Ignorar el tope no es un detalle:
+
+| L (m) | Q_s real | Q_s ignorando L' | sobreestimación |
+|---|---|---|---|
+| 6 | 142 kN | 142 kN | 0 % |
+| 10 | 331 kN | 394 kN | +19 % |
+| 15 | 568 kN | 887 kN | +56 % |
+| 20 | 805 kN | 1 578 kN | **+96 %** |
+| 25 | 1 041 kN | 2 465 kN | **+137 %** |
+
+Y la punta satura antes todavía. La correlación de Meyerhof con el SPT, ecuación (18.15), lleva su
+propio tope:
+
+<Equation label="18.15">
+$$
+q_p = 40 N_{60} \frac{L}{D} \le 400 N_{60}
+$$
+</Equation>
+
+El tope se alcanza en `L/D = 10`, o sea **a 4 metros** en este pilote. Desde ahí `Q_p` es una
+constante: 1 005 kN, dé lo mismo si el pilote sigue 5 o 20 metros más.
+
+<Figure
+  src="/geotecnia-pilotes/ambos-saturan.svg"
+  alt="Gráfico de capacidad contra longitud del pilote mostrando la curva real de Q_s aplanándose tras la profundidad crítica, la curva errónea que la ignora divergiendo hasta un 137 % de sobreestimación, y Q_p constante tras L/D = 10."
+  caption="Los dos términos saturan, y a distinta altura. Más allá de cierta longitud, seguir bajando compra poco."
+/>
+
+<Note>
+Vale la pena contrastar esto con lo que salió al comparar
+[las dos palancas de diseño de una zapata](/geotecnia/modulo-es-parametro-dominante): enterrarla un
+metro más sumaba **+47 %** de capacidad, y era la palanca más barata del proyecto. En un pilote la lógica
+se invierte. Existe una longitud natural más allá de la cual alargar es gastar hormigón: la punta ya
+topó y el fuste crece solo linealmente.
+</Note>
+
+Un detalle del gráfico que conviene notar: hacia los 25 m las dos curvas se juntan. El fuste tarda
+esa longitud en igualar lo que la punta entrega desde los 4 m — y aun así, en servicio, sigue siendo
+el fuste el que trabaja.
+
+El método λ de Vijayvergiya y Focht (tabla 18.5) dice lo mismo en otro idioma. Su coeficiente cae de
+**0,318** para un pilote de 5 m a **0,117** para uno de 90 m: la fricción unitaria promedio se
+cae a un **37 %** de su valor. Ojo con la lectura: lo que cae es el **coeficiente** λ, no la
+fricción resultante — $f_{prom} = \lambda(\bar\sigma'_o + 2\bar c_u)$ y $\bar\sigma'_o$ crece
+con la longitud. Aun así, las dos formulaciones describen el mismo fenómeno.
+
+## El reparto, y por qué engaña
+
+Con las dos saturaciones puestas, así queda el reparto en el pilote de referencia:
+
+| L (m) | Q_p (kN) | Q_s (kN) | Q_u (kN) | Q_s / Q_u | Q_adm (FS = 3) |
+|---|---|---|---|---|---|
+| 6 | 1 005 | 142 | 1 147 | 12 % | 382 |
+| 10 | 1 005 | 331 | 1 336 | 25 % | 445 |
+| 15 | 1 005 | 568 | 1 573 | 36 % | 524 |
+| 20 | 1 005 | 805 | 1 810 | 44 % | 603 |
+
+Leída sola, la tabla sugiere que la punta es el término dominante: aporta entre el 56 % y el 88 %
+de la capacidad última. Leída junto a la primera asimetría, dice otra cosa: **ese aporte mayoritario
+está disponible solo al precio de 40 a 100 mm de penetración**. En cargas de servicio, la columna
+que importa es la de `Q_s`.
+
+## La instalación es un parámetro de cálculo
+
+Hay un tercer punto que en el capítulo aparece casi de pasada y tiene consecuencias grandes. El
+coeficiente `K` de la ecuación (18.18) depende de **cómo se instaló el pilote** (sección 18.9):
+`K_o` si es perforado o inyectado, `K_o` a `1,4 K_o` si es hincado de bajo desplazamiento, y
+`K_o` a `1,8 K_o` si es de alto. Son **rangos**: las cifras de más abajo toman el tope de cada
+uno, así que el 80 % de diferencia es la cota superior, no el resultado general. El pilote que desplaza suelo al hincarse comprime el terreno contra
+sí mismo y se gana su propia fricción.
+
+Mismo pilote de 0,40 × 15 m, mismo suelo, misma fórmula:
+
+<Figure
+  src="/geotecnia-pilotes/la-instalacion.svg"
+  alt="Barras comparando la resistencia por fuste según el tipo de instalación: 316 kN perforado, 442 kN hincado de bajo desplazamiento, 568 kN hincado de alto desplazamiento; y esquema de grupos de pilotes con sus eficiencias."
+  caption="Entre un perforado y un hincado de alto desplazamiento hay un 80 % de fricción de diferencia. En grupo la penalización se acumula."
+/>
+
+En grupos sobre arena la brecha se ensancha todavía más (sección 18.16). Los pilotes hincados con
+espaciamiento `d ≥ 3D` no llevan penalización: `η = 1`, nueve pilotes rinden nueve. Los perforados
+**a espaciamiento convencional —que Das define como `d < 3D`—** rinden entre **2/3 y 3/4**: nueve
+entregan lo que 6 a 6,75 hincados, y para igualar a nueve harían falta **entre doce y catorce**.
+Ojo con la comparación: no es a igual `d`, porque la condición de espaciamiento es parte del
+enunciado de cada caso.
+
+<Note type="warning">
+Si el método constructivo cambia en obra respecto del proyectado —y cambia— el cálculo hay que
+rehacerlo. No es una sustitución neutral: es un parámetro que entra en la ecuación.
+</Note>
+
+## En arcilla: tres métodos que no coinciden
+
+El fuste en arcilla no tiene una fórmula, tiene tres. El capítulo presenta el **método λ**, el
+**método α** y el **método β**, y no se molesta en declarar un ganador porque no lo hay. Cada uno
+parte de una hipótesis distinta sobre qué controla el roce: la tensión **efectiva** vertical y la
+resistencia no drenada, ambas promediadas sobre la longitud de empotramiento (λ), la resistencia no drenada corregida por un factor
+empírico (α), o los parámetros efectivos con la arcilla remoldeada (β).
+
+Es un patrón que ya apareció en esta serie con los [siete factores `C_N`](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos)
+del SPT: cuando el libro ofrece varios métodos en paralelo sin jerarquizarlos, la señal es que la
+dispersión entre ellos es real y no está resuelta.
+
+## El factor de seguridad, y una admisión del libro
+
+`FS = 2,5 a 4` para pilotes. Es alto comparado con el 3 de una zapata, y más alto todavía si se
+recuerda que en una zapata el FS se aplica sobre una teoría que esta serie ya mostró dispersa
+—un 34 % entre Terzaghi y la ecuación general—, y en pilotes lo es todavía más. Das justifica el rango por
+**«las incertidumbres del cálculo de la carga última»**, y recomienda pruebas de carga en proyectos
+grandes por **«la falta de fiabilidad de los métodos de predicción»**.
+
+Vale la pena tomarse en serio esa frase. Es el autor de un texto de 800 páginas diciendo que sus
+propias ecuaciones para pilotes tienen una dispersión que hay que cubrir con un factor. De ahí que
+en obras de cierta envergadura se recurra a **ensayos de carga**: no es un lujo, es el
+reconocimiento de que la predicción por sí sola no basta.
+
+## Lo que queda
+
+Tres cosas para llevarse:
+
+1. **La suma `Q_p + Q_s` es una capacidad de falla, no de servicio.** Bajo carga de trabajo el
+   pilote se sostiene por el fuste; la punta es reserva.
+2. **Existe una longitud óptima.** Los dos términos saturan —el fuste en `L' ≈ 15D`, la punta en
+   `L/D = 10`— y alargar más allá compra cada vez menos. Es lo contrario de la zapata.
+3. **La instalación entra en el cálculo.** Un 80 % de diferencia en fricción entre perforado e
+   hincado, y hasta un 50 % más de pilotes en grupo para compensar.
+
+---
+
+**Lo que viene:** los **pozos perforados**, el otro tipo de fundación profunda, cierran este
+bloque. Tienen una geometría que permite ensanchar la base, y una tabla —la 19.1— que verifiqué
+entera sin encontrarle un solo error. El [recorrido completo de la serie está acá](/geotecnia).

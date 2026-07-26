@@ -1,0 +1,189 @@
+---
+title: "Binaria, multiclase o regresión: la última capa no se elige, se deduce"
+description: "El capítulo 4 de Chollet es el primer contacto con workflows de punta a punta: reseñas de IMDb, cables de Reuters y precios de vivienda en California. La lección de fondo es que la forma de la última capa y la función de pérdida las dicta el tipo de target, no el gusto del ingeniero — sigmoid + binary crossentropy, softmax + categorical crossentropy, o una capa desnuda + MSE. Por el camino aparecen dos hallazgos concretos: una capa intermedia de 4 unidades en un problema de 46 clases cuesta 8 puntos de accuracy, y con 480 muestras un solo split de validación da resultados que varían un 50 % según qué partición toque. Apuntes del Cap. 4."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "keras", "clasificación", "regresión", "k-fold", "overfitting", "imdb"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 4 — Clasificación y regresión"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 4 (PDF 128–159)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 3](/apuntes/deep-learning-with-python-cap3-frameworks-y-keras) dejó
+`compile()`, `fit()` y `predict()` listos para usar. El 4 los usa: tres problemas
+reales, uno por cada tipo de tarea sobre datos vectoriales. Y de los tres sale
+una regla que vale la pena internalizar temprano.
+
+## 1. La última capa la dicta el problema
+
+Es la lección estructural del capítulo. Frente a un problema nuevo, **tres cosas
+no son decisiones de diseño: son consecuencias del tipo de target**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tres-tareas.svg"
+  alt="Tabla visual de tres filas con cuatro columnas: el problema, última capa, pérdida y métrica. Fila 1, dos clases (reseña ¿positiva o negativa?, IMDb, 88 % de accuracy): Dense(1, 'sigmoid'), binary_crossentropy, accuracy. Fila 2, N clases una por muestra (cable de prensa ¿qué tema?, Reuters, 46 temas, 80 %): Dense(N, 'softmax'), categorical_crossentropy, accuracy y top-3. Fila 3, un valor continuo (¿cuánto vale la vivienda?, California, más o menos 31 000 dólares): Dense(1) sin activación, mean_squared_error, MAE. Al pie: la capa de regresión va desnuda, cualquier activación le acotaría el rango de salida."
+  caption="Ante un problema nuevo, estas tres columnas se deducen del target. Todo lo demás — cuántas capas, cuántas unidades — es lo que el capítulo 5 va a formalizar."
+  width={780}
+/>
+
+El caso de la regresión es el más instructivo, porque es el que uno tiende a
+equivocar: la última capa **no lleva activación**. Es puramente lineal, y eso es
+deliberado — *"aplicar una función de activación restringiría el rango que puede
+tomar la salida"*. Con una sigmoid al final, el modelo solo podría predecir
+valores entre 0 y 1. Al ser lineal, queda libre de aprender a predecir en
+cualquier rango.
+
+<Note type="info" title="Un detalle de interfaz que confunde">
+Para multiclase hay <strong>dos formas de manejar las etiquetas</strong>, y solo
+cambian el nombre de la pérdida: si las codificas one-hot, usas
+<code>categorical_crossentropy</code>; si las dejas como enteros, usas
+<code>sparse_categorical_crossentropy</code>. **Es matemáticamente la misma
+pérdida** — solo tiene otra interfaz.
+</Note>
+
+## 2. El overfitting llega, y llega temprano
+
+En los tres ejemplos ocurre lo mismo: la pérdida de entrenamiento baja
+monótonamente —*lo esperable al correr descenso de gradiente*— mientras la de
+validación mejora, hace pico y empieza a degradarse.
+
+| Problema | Épocas entrenadas | Pico de validación |
+|---|---|---|
+| IMDb (25 000 reseñas) | 20 | **época 4** |
+| Reuters (8 982 cables) | 20 | **época 9** |
+| California Housing (480 distritos) | 200 | **épocas 120–140** |
+
+El remedio que usa el capítulo es deliberadamente crudo: mirar dónde está el
+pico, tirar el modelo y **reentrenar desde cero exactamente esa cantidad de
+épocas**. El capítulo 5 mostrará que se puede hacer mejor (con un callback de
+early stopping), pero el punto pedagógico es que la curva de validación es la
+única instrumentación que uno tiene.
+
+<Note type="warning" title="Por qué no evaluar directamente en el test set">
+Parece más simple, y es exactamente lo que no hay que hacer. Vas a usar los
+resultados de validación **para decidir tus próximos cambios** — qué tamaño de
+modelo, cuántas épocas—. En cuanto empiezas a hacer eso, los scores de validación
+dejan de reflejar el desempeño sobre datos nuevos, porque el modelo fue
+modificado deliberadamente para rendir mejor en ellos. El test set es el conjunto
+que guardas **sin tocar** para la evaluación final insesgada.
+</Note>
+
+## 3. El cuello de botella de información
+
+Este es el hallazgo más concreto del capítulo, y sale del problema de Reuters:
+46 temas mutuamente excluyentes.
+
+En una pila de capas `Dense`, **cada capa solo puede acceder a la información
+presente en la salida de la capa anterior**. Si una capa descarta algo relevante
+para la clasificación, esa información **nunca puede ser recuperada** por las
+capas posteriores. Cada capa es un potencial embudo.
+
+El capítulo lo mide en vez de afirmarlo: toma el modelo que funciona
+(64 → 64 → 46) e intercala una capa de 4 unidades.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/cuello-de-botella.svg"
+  alt="Comparación en dos filas. Arriba, el modelo 64 → 64 → 46: tres cajas del mismo tamaño conectadas por flechas, con una barra de accuracy de validación azul al 79 %. Abajo, el modelo 64 → 4 → 46: la caja del medio es diminuta y roja, marcada '4 dimensiones para 46 clases', con una barra roja al 71 % y la anotación '−8 puntos absolutos'. Al pie, una caja: el modelo logra meter casi toda la información necesaria en esas 4 dimensiones, casi; regla, no pongas capas intermedias mucho menores que tu número de clases."
+  caption="Comprimir en 4 dimensiones la información suficiente para separar 46 clases cuesta 8 puntos absolutos de accuracy."
+  width={760}
+/>
+
+La explicación es geométrica: se está intentando comprimir en un espacio de 4
+dimensiones la información necesaria para recuperar los **hiperplanos de
+separación de 46 clases**. El modelo logra meter casi toda esa información ahí.
+Casi.
+
+Es también la razón por la que el modelo de Reuters usa capas de 64 unidades
+mientras el de IMDb usaba 16: con dos clases, 16 dimensiones sobran; con 46, se
+quedan cortas.
+
+<Note type="tip" title="Cómo leer el número de unidades">
+Chollet propone una intuición útil: la dimensionalidad del espacio de
+representación de una capa es *"cuánta libertad le estás permitiendo al modelo al
+aprender representaciones internas"*. Más unidades permiten representaciones más
+complejas, pero encarecen el cómputo **y pueden llevar a aprender patrones no
+deseados** — patrones que mejoran el entrenamiento pero no el test.
+</Note>
+
+### Y una métrica menos cruda
+
+Con 46 clases, la accuracy resulta *"una métrica un poco cruda"*: si la clase
+correcta es la **segunda** opción del modelo, la accuracy sobre esa muestra es
+cero — aunque ese modelo sea muchísimo mejor que un adivinador aleatorio. La
+alternativa es la **top-k accuracy**, que mide si la clase correcta está entre las
+k predicciones más probables:
+
+```python
+top_3_accuracy = keras.metrics.TopKCategoricalAccuracy(k=3, name="top_3_accuracy")
+model.compile(optimizer="adam", loss="categorical_crossentropy",
+              metrics=["accuracy", top_3_accuracy])
+```
+
+Relacionado: el modelo de Reuters saca **80 % de accuracy**. ¿Es bueno? Con 46
+clases posiblemente desbalanceadas no se puede saber a ojo, así que el capítulo
+lo mide barajando las etiquetas de test y comparándolas con las reales: **un
+clasificador aleatorio saca ≈ 19 %**. Recién con ese número el 80 % significa
+algo.
+
+## 4. Con pocos datos, un solo split miente
+
+El tercer ejemplo —480 distritos de California para predecir el precio mediano de
+la vivienda— usa a propósito la versión "pequeña" del dataset, *"porque los
+datasets del mundo real a menudo son diminutos y hay que saber manejar esos
+casos"*.
+
+Con tan pocos datos, el conjunto de validación quedaría en unos 100 ejemplos, y
+los scores variarían mucho según qué puntos toque validar. El capítulo lo
+cuantifica corriendo **K-fold** con K = 4:
+
+<Figure
+  src="/apuntes/deep-learning-with-python/k-fold.svg"
+  alt="Tabla de cuatro filas, una por fold. Cada fila muestra cuatro particiones donde una está marcada 'val' en azul y las otras tres 'train' en gris, rotando la posición de la validación. Los MAE de validación resultantes son 0,298 (fold 1), 0,349 en rojo (fold 2), 0,232 en verde (fold 3) y 0,305 (fold 4), cada uno con una barra proporcional. Abajo, el promedio de los 4: 0,296. Al pie: los folds van de 0,232 a 0,349, un 50 % de diferencia según qué partición toque validar; con el factor de escala el promedio equivale a errar por 29 600 dólares en viviendas de 60 000 a 500 000."
+  caption="El mismo modelo, los mismos datos, cuatro particiones distintas. El promedio es la única métrica confiable — ese es el punto entero de K-fold."
+  width={760}
+/>
+
+Los cuatro folds dan **0,232 a 0,349**: entre el mejor y el peor hay un 50 % de
+diferencia. Cualquiera de esos cuatro números, tomado solo, sería una lectura
+engañosa del modelo.
+
+Dos detalles del preprocesamiento de este ejemplo que se olvidan fácil:
+
+- **Normalización feature-wise.** Las ocho variables (latitud, población, número
+  de habitaciones…) tienen rangos incompatibles. A cada columna se le resta su
+  media y se la divide por su desviación estándar. Y una regla dura: **la media y
+  la desviación se calculan con los datos de entrenamiento** — *"nunca deberías
+  usar en tu workflow ninguna cantidad computada sobre los datos de test, ni
+  siquiera para algo tan simple como normalizar"*.
+- **Escalado de los targets.** Los precios van de 60 000 a 500 000, pero las
+  entradas normalizadas quedan cerca de 0 y los pesos se inicializan pequeños. El
+  modelo necesitaría pesos enormes para emitir esos números, y con un learning
+  rate chico tardaría muchísimo. El arreglo es dividir todos los targets por
+  100 000 y multiplicar de vuelta al interpretar.
+
+El modelo final se entrena 130 épocas sobre **todos** los datos de entrenamiento
+y recién ahí se mira el test: **MAE de 0,31**, es decir, un error de unos
+**US$ 31 000 en promedio**.
+
+## Para recordar
+
+- **La última capa y la pérdida se deducen del target.** Sigmoid + binary
+  crossentropy; softmax + categorical crossentropy; capa lineal desnuda + MSE.
+- **La capa de regresión no lleva activación** — cualquier activación le acotaría
+  el rango de salida.
+- **El overfitting llega temprano:** épocas 4, 9 y ~130 en los tres ejemplos. La
+  curva de validación es tu única instrumentación.
+- **No angostes las capas intermedias por debajo del número de clases:** 4
+  unidades para 46 clases cuestan 8 puntos absolutos, y esa información no se
+  recupera.
+- **Sin línea base, un porcentaje no significa nada.** El 80 % de Reuters se lee
+  contra el 19 % del azar.
+- **Con pocos datos, K-fold.** Un solo split puede darte 0,232 o 0,349 por puro
+  sorteo.
+- **Normaliza con estadísticos del entrenamiento**, nunca del test.
+
+Los tres ejemplos dejan el overfitting como un hecho observado y sin explicar. El
+**capítulo 5** va exactamente a eso: por qué ocurre, por qué generalizar es
+posible siquiera, y qué se hace al respecto.

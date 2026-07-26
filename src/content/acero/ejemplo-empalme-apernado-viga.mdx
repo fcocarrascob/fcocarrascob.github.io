@@ -1,0 +1,249 @@
+---
+title: "Ejemplo — Empalme apernado de viga: aplastamiento vs. deslizamiento crítico (AISC 360-22)"
+description: "Verificación de un empalme apernado de viga W460×74 con cubreplacas de ala y planchas de alma: el empalme no copia la sección, copia sus fuerzas (el momento se reparte a las alas como un par y el corte al alma). Y el pretensado no sube la resistencia última — cambia el estado límite: los mismos 8 pernos que quedan al 0.52 por rotura quedan al 0.93 por deslizamiento, y con 6 pernos el empalme resiste pero desliza (1.24)."
+pubDate: 2026-07-25
+tags: ["ejemplo", "acero", "conexiones", "empalme", "deslizamiento crítico", "pretensado", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. J — Conexiones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Un empalme parece un problema de copiado: cortar una viga por la mitad y reponer lo que se sacó.
+Pero el Cap. J[^aisc360] no pide reponer la **sección**, pide transferir las **fuerzas** que
+cruzan ese punto, y son dos cosas muy distintas. En este ejemplo la cubreplaca de ala tiene menos
+área que el ala que empalma —26.6 contra 27.55 cm²— y aun así pasa con holgura, porque lo que
+debe llevar no es la capacidad del ala sino las 45.2 tonf que le pide el momento del análisis.
+
+La segunda mitad del ejemplo es un cambio de estado límite. Si los pernos se pretensan y la
+conexión se declara de **deslizamiento crítico** (J3.9), no se agrega resistencia última: se
+agrega una verificación **más estricta**, la del deslizamiento, que aquí pasa a gobernar. Los
+mismos ocho pernos que quedan al 0.52 contra la rotura quedan al **0.93** contra el
+deslizamiento; y con seis, el empalme resiste sin romperse pero desliza (1.24).
+
+## El caso
+
+Empalme de montaje de una viga continua, ubicado a un cuarto de la luz, donde las solicitaciones
+son moderadas. Todo apernado, con cubreplacas exteriores en las alas y dos planchas en el alma.
+
+| Dato | Valor |
+|---|---|
+| Viga | W460×74 (A992): $d = 457$, $b_f = 190$, $t_f = 14.5$, $t_w = 9.0$ mm; $I_x = 33\,300$ cm⁴, $S_x = 1457$, $Z_x = 1655$ cm³ |
+| Cubreplacas de ala | A36, 190 × 14 mm, una por ala (exterior) |
+| Planchas de alma | A36, 2 × 8 × 280 mm (una a cada lado) |
+| Pernos | Ø22 A325 pretensados, agujeros estándar; 8 por ala y 4 en el alma a cada lado de la junta |
+| Geometría | $s = 70$, $g = 100$ mm; borde $L_e = 40$ mm en las cubreplacas y $L_{ev} = 35$ mm en las planchas de alma; $d_h = 24$ mm (26 mm para áreas netas, B4.3b) |
+| Superficie de contacto | Clase A ($\mu = 0.30$), $T_b = 176$ kN $= 17.9$ tonf (Tabla J3.1M) |
+| Solicitación (LRFD) | $M_u = 20$ tonf·m, $V_u = 12$ tonf |
+
+<Figure
+  src="/ejemplos/empalme-esquema.svg"
+  alt="Elevación de un empalme apernado de viga W460x74. La junta vertical divide la viga al centro; sobre el ala superior y bajo el ala inferior hay cubreplacas de 190 por 14 mm apernadas con ocho pernos Ø22 a cada lado de la junta en dos líneas de cuatro, y en el alma dos planchas de 8 por 280 mm con cuatro pernos a cada lado. Flechas indican el reparto de las solicitaciones: el momento de 20 tonf·m se convierte en un par de fuerzas de 45.2 tonf, tracción en la cubreplaca superior y compresión en la inferior, mientras el corte de 12 tonf viaja por las planchas del alma con una excentricidad de 45 mm hasta la línea de pernos. Una caja anota que las alas aportan el 81 por ciento del momento de inercia y el alma el 19 por ciento restante, equivalente a 3.8 tonf·m que las planchas del alma pueden tomar."
+  caption="El empalme no repone la sección: repone sus fuerzas. El momento viaja como un par por las cubreplacas de ala (45.2 tonf de tracción y de compresión) y el corte por las planchas del alma, con la excentricidad hasta la línea de pernos."
+/>
+
+## 1. Repartir: qué lleva cada plancha
+
+La hipótesis de diseño habitual asigna el **momento a las alas** y el **corte al alma**. No es
+arbitraria: es el reparto que la propia sección hace por rigidez. Las dos alas aportan
+
+<Equation label="Participación de las alas">
+$$
+\frac{I_{alas}}{I_x} = \frac{2 A_f \left(\frac{d - t_f}{2}\right)^2}{I_x}
+= \frac{2 \cdot 27.55 \cdot 22.13^2}{33\,300} = 0.81
+$$
+</Equation>
+
+el 81 % de la inercia. Diseñar las cubreplacas para **todo** el momento es, entonces,
+conservador; y el 19 % restante —3.8 tonf·m— queda del lado del alma, que hay que verificar que
+pueda llevarlo (lo hacemos en el punto 4). La fuerza del par:
+
+<Equation label="Fuerza de la cubreplaca">
+$$
+F_f = \frac{M_u}{d - t_f} = \frac{20}{0.4425} = 45.2 \ \text{tonf}
+$$
+</Equation>
+
+## 2. Las cubreplacas de ala (J4)
+
+Con $A_g = 19 \cdot 1.4 = 26.6$ cm² y $A_n = (19 - 2\cdot 2.6)\cdot 1.4 = 19.32$ cm² —el ancho
+de agujero para área neta lleva los 2 mm extra de B4.3b—:
+
+<Equation label="Ecs. J4-1 y J4-2">
+$$
+\phi R_n = 0.90\,F_y A_g = 60.6 \ \text{tonf} \ (0.75)
+\qquad
+\phi R_n = 0.75\,F_u A_n = 59.1 \ \text{tonf} \ (0.76)
+$$
+</Equation>
+
+Ambas pasan, con la rotura gobernando por poco. Y acá está el punto que abre el ejemplo:
+**la cubreplaca tiene menos área que el ala que empalma** (26.6 contra 27.55 cm²) y no importa, porque la demanda es de 45.2 tonf y no de las
+87 tonf que el ala podría desarrollar. AISC 360-22 es explícito: los empalmes se diseñan para las
+**resistencias requeridas** en el punto del empalme (J6), no para la capacidad del miembro.
+
+<Note type="warning" title="…salvo que otra regla mande, y suele mandar">
+El criterio "solo las fuerzas" es de AISC 360 y aplica a estructuras de gravedad. Hay tres
+situaciones donde el empalme sí debe copiar una fracción de la **capacidad**:
+
+- **Diseño sísmico**: AISC 341 y la NCh2369 exigen que el empalme desarrolle la capacidad
+  esperada del miembro; es la misma lógica de la [capacidad esperada](/blog/factor-r-capacidad-esperada)
+  que hace saltar las conexiones un factor de 2 o más.
+- **Puentes** (AASHTO): los empalmes se diseñan para el mayor entre las fuerzas mayoradas y una
+  fracción de la resistencia de la sección.
+- **Buena práctica de montaje**: un empalme dimensionado al milímetro de la demanda deja de ser
+  válido si el diagrama de momentos cambia (secuencia constructiva, apuntalamiento, una carga que
+  se movió).
+</Note>
+
+## 3. Los pernos: rotura y deslizamiento no son la misma verificación
+
+Ocho pernos Ø22 A325-N en corte simple, Ec. J3-1:
+
+<Equation label="Ec. J3-1 (8 pernos, corte simple)">
+$$
+\phi R_n = 8 \cdot 0.75 \cdot 3793 \cdot 3.80 = 86\,480 \ \text{kgf} = 86.5 \ \text{tonf}
+\;\ge\; F_f = 45.2 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 0.52.** El apoyo en la cubreplaca (164.5 tonf) y en el ala de la viga (190.8 tonf) sobran
+—usos 0.27 y 0.24—. Si el empalme fuera de tipo aplastamiento, terminaría acá con mucho margen.
+
+Pero un empalme de viga suele especificarse como **deslizamiento crítico**: se pretensan los
+pernos para que la unión transfiera por **fricción** y no se mueva en servicio (evitar el golpe
+del deslizamiento, la fisuración de la losa sobre él, la fatiga). La motivación es de servicio,
+pero la verificación no: J3.9 la plantea con las mismas combinaciones LRFD, y por eso el contraste
+es contra las mismas 45.2 tonf. J3.9 pone número a esa fricción:
+
+<Equation label="Ec. J3-4 (por perno)">
+$$
+\phi R_n = \phi\,\mu\,D_u\,h_f\,T_b\,n_s = 1.00 \cdot 0.30 \cdot 1.13 \cdot 1.0 \cdot 17\,947 \cdot 1
+= 6084 \ \text{kgf} = 6.08 \ \text{tonf}
+$$
+</Equation>
+
+con $\phi = 1.00$ para agujeros estándar, $D_u = 1.13$, $h_f = 1.0$ (sin planchas de relleno) y
+$n_s = 1$ plano de deslizamiento (una sola cubreplaca exterior). Ocho pernos:
+$\phi R_n = 48.7$ tonf contra 45.2 → **uso 0.93**.
+
+**El mismo perno vale 10.8 tonf contra la rotura y 6.1 tonf contra el deslizamiento.** No es que
+la conexión pretensada sea más débil —su resistencia última es idéntica—: es que se le agregó un
+estado límite de **servicio elevado a verificación**, y ese estado gobierna. El efecto sobre el
+diseño es directo:
+
+| Configuración | $\phi R_n$ deslizamiento | Uso |
+|---|:---:|:---:|
+| 6 pernos, cubreplaca exterior, Clase A | 36.5 tonf | **1.24 — desliza** |
+| **8 pernos, cubreplaca exterior, Clase A** | **48.7 tonf** | **0.93** |
+| 6 pernos, Clase B ($\mu = 0.50$, superficie chorreada) | 60.8 tonf | 0.74 |
+| 6 pernos, cubreplacas exterior + interiores ($n_s = 2$) | 73.0 tonf | 0.62 |
+
+Tres maneras de resolver el mismo problema, y ninguna toca el diámetro del perno: **agregar
+pernos, preparar la superficie o duplicar el plano de deslizamiento**. La última es la más
+elegante —cubreplacas interiores además de la exterior— porque duplica a la vez la fricción y el
+plano de corte.
+
+<Figure
+  src="/ejemplos/empalme-deslizamiento.svg"
+  alt="Dos barras enfrentadas para los mismos ocho pernos Ø22 pretensados del empalme: por rotura, según la ecuación J3-1, la capacidad es 86.5 tonf y el uso 0.52; por deslizamiento, según la ecuación J3-4, la capacidad es 48.7 tonf y el uso 0.93, casi el doble. Bajo ellas, cuatro barras muestran las alternativas de deslizamiento: seis pernos Clase A con 36.5 tonf y uso 1.24 que cruza el límite en rojo, ocho pernos Clase A con 48.7 y 0.93, seis pernos Clase B con 60.8 y 0.74, y seis pernos con dos planos de deslizamiento con 73.0 y 0.62. Una caja anota que el pretensado no cambia la resistencia última sino el estado límite que gobierna, y que una conexión de deslizamiento crítico debe cumplir además todos los estados límite de aplastamiento."
+  caption="El mismo grupo de pernos, dos verificaciones: la rotura deja uso 0.52, el deslizamiento 0.93. Pretensar no agrega resistencia última — agrega un estado límite más exigente, y las salidas son pernos, superficie o planos de deslizamiento."
+/>
+
+<Note type="tip" title="No es «una u otra»: el deslizamiento crítico es adicional">
+J3.9 lo dice sin ambigüedad: una conexión de deslizamiento crítico debe verificarse **contra el
+deslizamiento y además contra todos los estados límite de una conexión de aplastamiento**. La
+lógica es de dos niveles: la fricción gobierna el comportamiento en servicio; si se supera y la
+unión desliza, los pernos apoyan contra el agujero y actúa la resistencia última. Por eso este
+ejemplo calcula las dos y reporta las dos.
+</Note>
+
+## 4. El empalme del alma
+
+Las dos planchas de 8 × 280 mm llevan el corte, con la excentricidad hasta la línea de pernos
+($e = 45$ mm). Los cuatro pernos están en **corte doble** y, por lo tanto, con **dos planos de
+deslizamiento**:
+
+| Verificación | Capacidad | Uso |
+|---|:---:|:---:|
+| Perno extremo, método elástico ($J = 245$ cm²) | 21.6 tonf | 0.18 |
+| Deslizamiento, 4 pernos con $n_s = 2$ (misma resultante excéntrica) | 12.17 tonf/perno | 0.31 |
+| Planchas: fluencia en corte (J4-3) | 68.0 tonf | 0.18 |
+| Planchas: rotura en corte (J4-4) | 51.7 tonf | 0.23 |
+| Planchas: flexión disponible ($Z = 313.6$ cm³) | 7.14 tonf·m | **0.61** |
+
+Ese último renglón es el que cierra el reparto del punto 1: si en vez de mandar todo el momento a
+las alas se lo reparte por rigidez, el alma debe tomar **3.8 tonf·m**, más el momento de la propia
+excentricidad ($V_u e = 0.54$ tonf·m), contra los 7.14 que dan las planchas —uso 0.61—. Es decir,
+**cualquiera de los dos repartos funciona**, y por eso la simplificación
+"momento a las alas, corte al alma" es legítima acá. No siempre lo es: en perfiles de alma alta y
+alas delgadas la participación del alma sube y hay que repartir de verdad.
+
+## 5. El ala perforada (F13.1)
+
+Los agujeros del empalme también viven en la viga, y la Sección F13.1 obliga a mirarlos. Con dos
+agujeros por ala, $A_{fn} = (19 - 2\cdot 2.6)\cdot 1.45 = 20.01$ cm² contra
+$A_{fg} = 27.55$ cm²:
+
+<Equation label="Sección F13.1">
+$$
+F_u A_{fn} = 4570 \cdot 20.01 = 91\,446 \ \text{kgf}
+\;<\;
+Y_t F_y A_{fg} = 1.0 \cdot 3520 \cdot 27.55 = 96\,976 \ \text{kgf}
+$$
+</Equation>
+
+Por poco —un 6 %—, la rotura del ala **sí** controla, y el momento nominal de la viga en el
+empalme deja de ser $M_p$:
+
+<Equation label="Ec. F13-1">
+$$
+M_n = \frac{F_u A_{fn}}{A_{fg}}\,S_x = 48.4 \ \text{tonf·m}
+\quad (\phi M_n = 43.5 \ \text{tonf·m} \ge M_u = 20)
+$$
+</Equation>
+
+**Uso 0.46.** La viga empalmada conserva sobradamente su capacidad en ese punto —pero perdió un
+17 % respecto de su $\phi M_p = 0.90 F_y Z_x = 52.4$ tonf·m, y ese es el costo de perforar el ala—.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Capacidad | Uso |
+|---|---|:---:|:---:|
+| **Pernos de ala — deslizamiento** | Ec. J3-4 ($\phi = 1.00$) | $\mathbf{48.7}$ **tonf** | **0.93** |
+| Cubreplaca — fluencia | Ec. J4-1 | 60.6 tonf | 0.75 |
+| Cubreplaca — rotura neta | Ec. J4-2 | 59.1 tonf | 0.76 |
+| Planchas de alma — flexión (reparto por rigidez + $V_u e$) | J4 | 7.14 tonf·m | 0.61 |
+| Pernos de ala — corte | Ec. J3-1 | 86.5 tonf | 0.52 |
+| Viga — ala perforada | Ec. F13-1 | 43.5 tonf·m | 0.46 |
+| Apoyo en la cubreplaca | Ecs. J3-6a/c | 164.5 tonf | 0.27 |
+| Apoyo en el ala de la viga | Ecs. J3-6a/c | 190.8 tonf | 0.24 |
+| Pernos del alma — deslizamiento | Ec. J3-4 ($n_s = 2$) | 12.17 tonf/perno | 0.31 |
+| Planchas de alma — fluencia en corte | Ec. J4-3 | 68.0 tonf | 0.18 |
+| Planchas de alma — rotura en corte | Ec. J4-4 | 51.7 tonf | 0.23 |
+| Pernos del alma (excéntricos) | método elástico | 21.6 tonf | 0.18 |
+
+**Solución:** empalme con **cubreplacas de ala PL 190×14 (A36) y 8 pernos Ø22 A325 pretensados
+por ala**, más **2 planchas de alma PL 8×280 con 4 pernos**, transfiere $M_u = 20$ tonf·m y
+$V_u = 12$ tonf con uso máximo 0.93. Gobierna el **deslizamiento**, no la rotura. Las dos
+lecciones se resumen en una frase cada una: **el empalme copia las fuerzas, no la sección** —por
+eso una cubreplaca más chica que el ala es correcta—; y **pretensar no agrega resistencia, agrega
+una verificación** —por eso los mismos pernos pasan de 0.52 a 0.93 sin que cambie nada físico en
+la conexión—.
+
+<Note type="info" title="Los dos estados que no aparecen">
+También se verificaron y **no gobiernan**: la **rotura en bloque** de la cubreplaca (Ec. J4-5,
+$\phi R_n = 112.3$ tonf, uso 0.40) y la cubreplaca **comprimida** (J4.4, con $L_c/r = 11.3 < 25$,
+de modo que $P_n = F_y A_g$ y el valor coincide con la fluencia ya calculada). Queda fuera del
+alcance el empalme del **ala comprimida** en su detalle de contacto, que en un empalme apernado
+se diseña igual que el traccionado.
+</Note>
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. Secciones J3.7 (corte de pernos), J3.9
+(conexiones de deslizamiento crítico, Ec. J3-4 y Tabla J3.1M de pretensiones), J4 (elementos de
+conexión), J6 (empalmes) y F13.1 (rotura del ala traccionada). Los coeficientes de deslizamiento
+$\mu = 0.30$ (Clase A) y $0.50$ (Clase B) corresponden a superficies limpias con cascarilla de
+laminación y a superficies chorreadas, respectivamente.

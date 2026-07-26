@@ -394,10 +394,10 @@ lo completan:
 
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
-| F-A8 | Conexión de momento con placa de extremo extendida (end-plate apernada viga-columna: pernos a tracción con palanca, placa a flexión, soldaduras) | J / AISC 358 | [ ] | ◻ | — | tesis candidata: el momento se convierte en un par T–C y los pernos superiores trabajan a tracción con efecto palanca — la conexión "rígida" vive o muere por el espesor de la placa |
-| F-A9 | Conexión de momento con placas de ala (BFP) + zona panel de la columna (J10) | J | [ ] | ◻ | — | tesis candidata: la conexión pasa y la **columna** no — la zona panel (corte J10-9/J10-11) es el eslabón que nadie mira; gancho a rigidizadores de continuidad |
-| F-A10 | Conexión de corte con doble ángulo apernado (y comparación directa con la shear tab de F-A7) | J | [ ] | ◻ | — | tesis candidata: misma demanda, dos anatomías — la excentricidad que la shear tab concentra en la plancha, el doble ángulo la reparte; cuándo conviene cada una |
-| F-A11 | Empalme apernado de viga (placas de ala y alma, deslizamiento crítico vs aplastamiento) | J | [ ] | ◻ | — | tesis candidata: el empalme no copia la sección, copia sus **fuerzas** (ala = par de flexión, alma = corte); y el pretensado (slip-critical) cambia el estado límite, no la resistencia última |
+| F-A8 | **Placa de extremo extendida 4E** (par T–C, pernos a tracción, efecto palanca por T-stub, placa en corte, soldadura del ala, J10 del lado columna) | J / Manual P.9 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema+detalle T-stub y curva T_disp–t_p) · tesis: la resistencia del perno **no es una constante, es una curva del espesor de la placa** — con t_p=18 mm la palanca se come el 42 % y falla (1.15), con 22 mm queda al 0.83, y solo en t_c=31.1 mm desaparece; 4 mm de plancha = pasar o no pasar, con los mismos pernos; k_ds=1.5 (J2-5) es lo que salva el filete de 10 mm (0.83 vs 1.24) · engancha F-A7 (la hermana rígida) y F-A9 |
+| F-A9 | **Placas de ala (BFP) + zona panel** (pernos, placas, F13.1 del ala perforada; J10-1/J10-2/J10-4/J10-10 de la columna; rigidizadores y doubler) | J / F13 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con zona panel+refuerzos y barras conexión vs columna) · tesis: **la conexión pasa (≤0.74) y la columna no** (ala 1.43, alma 1.12, zona panel 1.07); el detalle fino es el término axial de J10-10: sin él la zona panel daba 1.00 **exacto** y el P_u de gravedad se lleva ese 6 % (la columna no puede usar dos veces el mismo acero); el crédito J10-11 (×1.156) salva pero **exige** modelar la deformación del panel · engancha F-A8 |
+| F-A10 | **Doble ángulo apernado vs shear tab** (misma demanda y mismos pernos; corte doble, apoyo, J4, y la excentricidad) | J | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (planta comparada 1 vs 2 planos y barras enfrentadas) · tesis: duplicar plano de corte y espesor de apoyo **muda el eslabón débil desde la conexión hasta el alma de la viga** (0.89 → 0.46); y la excentricidad, que la cadena de resistencia esconde, lleva el perno extremo de la tab al **0.99** (método elástico) contra 0.48 del doble ángulo — a cambio de 3.8× el acero y 3× los agujeros · complementa F-A7 |
+| F-A11 | **Empalme apernado de viga** (reparto M a las alas / V al alma, cubreplacas, J3.9 deslizamiento crítico, F13.1) | J / J6 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con el reparto y barras rotura vs deslizamiento) · tesis doble: **el empalme copia las fuerzas, no la sección** (cubreplaca 26.6 cm² < ala 27.55 y pasa, porque la demanda son 45.2 tonf y no las 87 del ala); y **pretensar no agrega resistencia, agrega una verificación** — el mismo perno vale 10.8 tonf a rotura y 6.1 a fricción, y el grupo pasa de 0.52 a 0.93; salidas: pernos, Clase B o n_s=2 |
 
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
@@ -409,10 +409,302 @@ Par "la columna en los dos materiales" completo; **trilogía de flexión en acer
 (F-A3 pura LTB → F-A4 carrilera); **F-A7 ✅ (conexión apernada, 2026-07-23)** cierra el arco de
 la conexión (placa base + anclajes F-H6 + shear tab). **Tanda 2026-07-25: F-A6 ✅
 (viga-columna, cierra la síntesis E+F+H del acero), F-H2 ✅ (viga T, complementa F-H1) y
-F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** Siguientes
-candidatos: la sub-serie de **conexiones típicas F-A8–F-A11** (arriba), **F-A5** (alma a
-corte + rigidizadores) o **F-H4** (muro de corte). Pendiente opcional en F-H3: planilla del
-canvas con región `program` que reproduzca el diagrama P–M (◻).
+F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** **Tanda
+2026-07-25 (tarde): sub-serie de conexiones típicas COMPLETA — F-A8 ✅ (end-plate 4E,
+palanca), F-A9 ✅ (BFP + zona panel), F-A10 ✅ (doble ángulo vs shear tab) y F-A11 ✅
+(empalme, deslizamiento crítico).** Con F-A7 y F-H6 el Cap. J queda cubierto de punta a
+punta: corte simple, momento apernado (dos familias), comparación de anatomías, empalme y
+anclaje al hormigón. Siguientes candidatos: **F-A5** (alma a corte + rigidizadores, el único
+capítulo de acero sin ejemplo), **F-H4** (muro de corte) o **F-H8** (cabezal de pilotes STM).
+
+**Cierre de la tanda de conexiones (2026-07-25, tarde):**
+- **Las cinco auditadas** (F-A7 a F-A11, 74 hallazgos, ver AUDIT.md). Hallazgo transversal:
+  las áreas netas iban sin el **sobreancho de 2 mm de B4.3b** —no conservador ~3 %—; corregido
+  en los cinco posts con propagación a prosa, tablas, `description`, `alt` y SVG.
+- **F-A7 ampliado con la sección de excentricidad** y reauditado: el perno extremo llega a
+  **0.995** (método elástico, justo en el límite) y la plancha suma flexión (0.48). Con eso su
+  tesis se completa: la cadena la gobierna la plancha (0.93), pero la holgura de los pernos era
+  aparente.
+- Quedan **2 hallazgos 🔵 anotados** que necesitan el *AISC Steel Construction Manual* 16.ª ed.
+  (no está en `material_teorico/referencias`): si la *conventional configuration* exige
+  $L_{eh} \ge 2d_b$, y el valor SI exacto de $F_{nv}$ en la Tabla J3.2 (372 vs 370 MPa).
+- Pendiente opcional en F-H3: planilla del canvas con región `program` que reproduzca el
+  diagrama P–M (◻).
+
+## G. Geotecnia (Das 4ª ed. + NCh2369:2025 Cap. 10)
+
+Sección `/geotecnia`, estrenada el 2026-07-25. A diferencia de Hormigón y Acero, acá **no hay
+una norma que entregue el número**: hay teoría, correlaciones y un informe de mecánica de
+suelos. Por eso `norm`/`source` declaran la **fuente** (autor + edición), que cumple el mismo
+papel de trazabilidad que la cláusula en ACI o AISC.
+
+El recorrido no lo fija ni la fecha ni la subsección: lo fija `order` en el frontmatter y
+`BLOQUES` en `src/lib/geotecnia.ts`. La taxonomía de subsecciones es temática y **cruza** los
+bloques (el bloque 1 atraviesa cuatro subsecciones y `fundamentos` reaparece en el 2).
+
+**Convención de trabajo** (la misma en los 15 posts, ver memoria `geotecnia-bloque5-nch2369`):
+script verificador `material_teorico/_procesamiento/scripts/postNN_*.py` con **todos** los
+números del post → 2-3 SVG en `public/geotecnia-<slug>/` → verificar el render con Playwright
+inyectando el SVG *inline* (un `<img src="file://...">` queda bloqueado) → `npm run build` →
+revisar warnings de KaTeX (**subíndices sin tilde**: `q_{max}`, no `q_{máx}`).
+
+Columnas: **Post** `[ ]`pend `[~]`curso `[x]`hecho · **Script** verificador en
+`material_teorico` · **Audit.** estado de `/auditar` (✅limpio · ⚠️con hallazgos · ❌bloqueado ·
+—sin auditar; el detalle vive en `AUDIT.md`).
+
+### Bloque 1 — La zapata superficial (`range: [1, 7]`)
+
+| # | Post | Subsección | Post | Script | Audit. |
+|---|------|-----------|:----:|:------:|:------:|
+| 1 | `de-donde-sale-q-admisible` | fundamentos | [x] | `post01` | ⚠️ 10 (2🟠) |
+| 2 | `terzaghi-vs-ecuacion-general` | capacidad-soporte | [x] | `post02` | ⚠️ 11 (1🟠) |
+| 3 | `nivel-freatico-capacidad` | capacidad-soporte | [x] | `post03` | ⚠️ 11 (1🟠) |
+| 4 | `modulo-es-parametro-dominante` | asentamientos | [x] | `post04` | ⚠️ 18 (3🟠) |
+| 5 | `cuanto-y-cuando-consolidacion` | asentamientos | [x] | `post05` | ⚠️ 11 (2🟠) |
+| 6 | `ocr-historia-de-tensiones` | asentamientos | [x] | `post06` | ⚠️ 10 (1🟠) |
+| 7 | `ejemplo-zapata-los-dos-criterios` | ejemplos | [x] | `post07` | ⚠️ 12 (3🟠) |
+
+### Bloque 2 — El origen de los parámetros (`range: [8, 8]`)
+
+| # | Post | Subsección | Post | Script | Audit. |
+|---|------|-----------|:----:|:------:|:------:|
+| 8 | `como-leer-un-informe-de-mecanica-de-suelos` | fundamentos | [x] | `post08` | ⚠️ 10 (3🟠) |
+
+### Bloque 3 — El suelo de costado (`range: [9, 10]`)
+
+| # | Post | Subsección | Post | Script | Audit. |
+|---|------|-----------|:----:|:------:|:------:|
+| 9 | `tres-coeficientes-del-mismo-suelo` | empujes-y-muros | [x] | `post09` | ⚠️ 10 (1🟠) |
+| 10 | `muro-tres-verificaciones` | empujes-y-muros | [x] | `post10` | ⚠️ 15 (2🟠) |
+
+### Bloque 4 — Fundaciones profundas (`range: [11, 12]`) — **incompleto**
+
+| # | Post | Subsección | Post | Script | Audit. |
+|---|------|-----------|:----:|:------:|:------:|
+| 11 | `pilotes-la-punta-casi-no-trabaja` | fundaciones-profundas | [x] | `post11` | ⚠️ 11 (2🟠) |
+| **12** | **Pozos perforados (Das cap. 19)** | fundaciones-profundas | **[ ]** | — | — |
+
+- [ ] **G-12. Pozos perforados — la deuda declarada de la sección.** `BLOQUES` reserva el
+  `range: [11, 12]` y el post 11 lo **anuncia al cierre**: *«los pozos perforados, el otro tipo
+  de fundación profunda, cierran este bloque. Tienen una geometría que permite ensanchar la
+  base, y una tabla —la 19.1— que verifiqué entera sin encontrarle un solo error»*. Es la misma
+  clase de promesa publicada que cerró el post 16. El cap. 19 ya está procesado en
+  `material_teorico/libros/geotecnia-das/19-pozos-perforados.md` y su tabla verificada con
+  `verify_das_cap19.py`, así que el trabajo pesado de fuente está hecho. Ganchos naturales: la
+  campana de base ensanchada (lo que un pilote no puede hacer) y el contraste de eficiencia de
+  grupo perforado vs hincado que el post 11 ya dejó planteado (2/3 a 3/4 contra η = 1).
+
+### Bloque 5 — La norma con que se firma en Chile (`range: [13, 16]`) — **completo**
+
+Casos típicos de la industria chilena bajo el Cap. 10 de NCh2369:2025. Tesis del bloque: la
+fundación **no la dimensiona `q_adm`** sino las verificaciones que agrega la norma sísmica, y en
+la sensibilidad se invierte el orden del bloque 1 — los parámetros del suelo son el ruido, las
+decisiones de modelación y de clasificación normativa son la señal.
+
+| # | Post | Cláusula | Post | Script | Audit. |
+|---|------|----------|:----:|:------:|:------:|
+| 13 | `ejemplo-zapata-galpon-nch2369` | 10.1.3 / 10.1.4 | [x] | `post13` | ⚠️ 15 (2🟠) |
+| 14 | `ejemplo-fundacion-anclada-nch2369` | 10.1.6 (0,7R₁) | [x] | `post14` | ⚠️ 15 (5🟠) |
+| 15 | `ejemplo-losa-rigida-o-flexible-nch2369` | Ec. (25) / 10.1.5 | [x] | `post15` | ⚠️ 16 (3🟠) |
+| 16 | `ejemplo-pilotes-friccion-negativa-nch2369` | 10.2.4 | [x] | `post16` | ✅ 2026-07-26 (16 aplicados: 2🔴 4🟠 3🟡 7🔵) |
+
+### Deuda y mantención
+
+- [x] **G-A. Auditar la sección** (hecho 2026-07-26). Los **15 posts** auditados en tres tandas,
+  **231 hallazgos**: 17🔴 · 60🟠 · 109🟡 · 45🔵. **Diez de los quince quedaron ❌ bloqueados**
+  (nueve siguen así; la nota 16 ya se cerró aplicando sus 16). Quedan **215 abiertos** en 14
+  posts: 15🔴 · 56🟠 · 106🟡 · 38🔵. El detalle vive en
+  `AUDIT.md`, que estrena sección de cobertura `geotecnia`.
+- [ ] **G-B. `getAllGeotecniaPosts()` es una trampa latente.** Ordena por `pubDate` desc
+  (`src/lib/geotecnia.ts:92`), y los posts 2–11 están **fechados a futuro** (hasta 2026-08-10)
+  mientras el bloque 5 salió el 2026-07-26 — así que ese orden deja el post 11 arriba del bloque
+  5. Hoy **no lo usa ninguna página** (las siete de la sección usan `getGeotecniaSeries()` o
+  `getGeotecniaPostsBySubsection()`, que ordenan por `order`, y `[slug].astro` llama a
+  `getCollection` directo): es código muerto. El riesgo es que quien agregue una página tome el
+  wrapper de nombre más obvio. Decidir entre borrarlo, renombrarlo a algo que declare el orden
+  (`getGeotecniaPostsByDate`) o alinear las fechas.
+- [ ] **G-C. Ninguna planilla del canvas.** Los ejemplos de Hormigón/Acero declaran planilla
+  interactiva como parte del formato (`ejemplos-calculo-workflow`); en geotecnia no hay ninguna.
+  Candidatos naturales: capacidad de soporte por la ecuación general (post 2/7) y el arrastre
+  del post 16, los dos con aritmética cerrada y sin iteración.
+
+### Hallazgos transversales de la auditoría (tanda 1, posts 1-5)
+
+Cinco posts, **71 hallazgos** (2🔴 17🟠 37🟡 15🔵), dos bloqueados. Las tesis centrales
+resistieron el recálculo independiente —las dos reglas del post 3, los 240 valores de tablas del
+post 2, la errata de la Tabla 9.3 del post 5, los 16 asentamientos del post 4—; lo que falla es
+**declaración, consistencia entre notas y dos atribuciones de caso**. Estos patrones se repiten y
+conviene arreglarlos de una vez, no post por post:
+
+- [ ] **G-D. `q_adm` bruta vs neta — el más sistémico.** La nota 1 declara el dato como *neto* y
+  lo retroanaliza como *bruto* (cambiaría 26,7° → 27,0° y la brecha a 35,5 %); la nota 4 mete
+  $q_o$ **bruta** en la Ec. (17.2) donde Das pide **neta** (el caso base pasaría de 24,95 a ~27 mm);
+  la nota 7 sí usa la neta. **Tres notas, dos criterios.** Hay que fijar uno y propagarlo — y las
+  notas 3 y 4 ya citan el 26,7° y los 196 kPa, así que el arreglo no es local.
+- [ ] **G-E. Deriva de cifras entre notas.** La brecha de la nota 2 citada como **30 % / 34 % /
+  31 %** en tres lugares; el mismo caso de napa como **15 %** (nota 1) y **14,5 %** (nota 3);
+  $C_s$ (Das, notas 5-7) contra $C_r$ (nota 16) para el mismo índice de recompresión;
+  $C'_\alpha$ como 0,011 y 0,0108; el fin de la primaria como 1,2 y 1,5 años. Ninguna es un
+  error de cálculo: son la misma cantidad escrita distinto en notas que se citan entre sí.
+- [ ] **G-F. Bases de porcentaje y parámetros sin declarar.** El FS = 3 que la nota 2 nunca
+  declara (quien aplique la ecuación citada obtiene un valor 3 veces mayor); el $\gamma = 18$
+  kN/m³ de la nota 3, sin el cual sus dos números titulares no se reproducen; el 46 % y el +47 %
+  de la nota 4. **Es el defecto más repetido de la sección** y el más barato de cerrar.
+- [ ] **G-G. La nota 1 es el mapa de entrada y quedó desactualizada.** Cierra con «y termina
+  bajando: pilotes», pero el arco ya tiene el bloque 5 con cuatro notas publicadas. Quien entra
+  por la puerta principal no se entera de que existe NCh2369 en la sección.
+- [ ] **G-H. Segunda promesa publicada sin cumplir.** La nota 4 dice que la cimentación
+  compensada «es tema de otra nota» y no existe (verificado con `grep` sobre los 16 posts). Se
+  suma a G-12 (pozos perforados). Decidir: escribirlas o retirar las promesas.
+- [ ] **G-I. Convención decimal por colección.** `geotecnia`/`blog`/`apuntes` usan coma
+  (334 / 240 / 62 usos de `{,}`); `hormigon`/`acero` usan punto (0 usos). Se nota al citar entre
+  secciones: la nota 1 cita `q_a = 2.0` del ejemplo de hormigón y lo escribe `2{,}0`. Decidir a
+  nivel de repo.
+
+**Tanda 2 (posts 6-10): 69 hallazgos más, total 140.** Ocho de los diez auditados quedaron
+**bloqueados**. Tres patrones nuevos, y dos incógnitas cerradas:
+
+- [ ] **G-J. La cadena de confianza tiene un eslabón sin verificar.** El 🔴 de la nota 9 —«Coulomb
+  (1776), 150 años anterior» a Rankine (1857), cuando son 81— **no lo inventó el post: lo heredó
+  textual** de `material_teorico/libros/geotecnia-das/14-presion-lateral-de-tierra.md:116`. Los
+  resúmenes procesados del cerebro **no están auditados**, y los posts los citan como si fueran la
+  fuente. El auditor lo pilló solo porque fue al PDF. Verificado que afecta a un solo post, pero el
+  problema es estructural: hay 14 capítulos procesados y ninguno pasó por auditoría.
+- [ ] **G-K. Referencias hacia adelante disfrazadas de hacia atrás.** Las notas 9 y 10 dicen «el
+  mismo principio que **ya** apareció en pilotes» / «**ya lo habíamos visto** en pilotes», y pilotes
+  es la nota **11**, posterior a ambas. Es consecuencia de escribir la serie fuera de orden: el
+  contenido existía en la cabeza del autor antes que en el arco.
+- [ ] **G-L. El veredicto del auditor no siempre calza con sus propios hallazgos.** En tres de los
+  diez reportes (notas 1, 7 y 10) el encabezado decía «⚠️» conteniendo un 🔴, que por la convención
+  de `AUDIT.md` implica ❌; en otro (nota 3) el conteo del título no coincidía con las filas de la
+  tabla. Se corrigieron al consolidar y quedó anotado en cada bloque. Conviene reforzarlo en
+  `.claude/agents/auditor.md`.
+
+**Dos incógnitas cerradas por la tanda 2:**
+
+- **G-D (bruta vs neta) tiene culpable, y no es el que parecía.** La nota 7 **sí usa la neta**
+  (155 kPa, verificado: da los 11,1 mm publicados; con la bruta darían 13,0) pero **no lo declara**;
+  la nota 4 usa la bruta y tampoco. Y el origen del enredo está fuera de geotecnia: el post
+  `hormigon/ejemplo-zapata-aislada.mdx` L.42 **rotula su $q_a = 2{,}0$ kgf/cm² como «neta» y luego
+  lo usa como bruta** ($A_{req} = P/q_a$). El arreglo empieza por esa etiqueta.
+- **El caso del Ejemplo 9.10 (🔴 de la nota 5): la nota 7 está limpia.** Declara explícitamente en
+  su recuadro de reproducibilidad que *«no quise trasladar… la geometría de su Ejemplo 9.10 a una
+  zapata distinta»* y calcula el caso real ($\sigma'_o = 106{,}0$, $S_p = 18{,}2$, $S_e = 11{,}1$,
+  total 81,7 mm — los seis números confirmados). **Las que mezclan los dos casos son las notas 5 y
+  6**, y las dos lo hacen llamándolo «el caso de la serie».
+
+**El hallazgo más caro de la tanda 2**: la nota 10 publica «**el muro pasa por los pelos**» y
+«las tres pasan», pero el deslizamiento da $FS = 1{,}4960 < 1{,}50$ — y **el propio verificador
+imprime «NO CUMPLE»** (`post10_muro_completo.py` L.112). Es un veredicto publicado que su propio
+script contradice. El margen (0,3 %) está dentro del ruido de los parámetros, y decirlo así
+refuerza la tesis del post en vez de debilitarla.
+
+**Un error de fondo, no de forma** (el único de la tanda que cambia una conclusión publicada): la
+nota 2 afirma que Terzaghi es «**sistemáticamente** conservadora» respecto de la ecuación general.
+El auditor construyó el contraejemplo: zapata **continua en superficie** con cohesión ($c'=20$ kPa,
+$\phi'=30°$), donde Terzaghi da **8,1 % mayor** (15,3 % con $c'=50$). Sin bono de forma ni de
+profundidad que lo compense, los $N_c$ y $N_q$ mayores de Terzaghi lo dejan del lado inseguro.
+
+### Corrección aplicada (2026-07-26)
+
+**Aplicados 40 de los 215 hallazgos abiertos: los 15 🔴 y 25 de los 56 🟠.** Ningún post queda ya
+en ❌; los catorce con hallazgos abiertos están en ⚠️. Build verde, 144 páginas. Quedan **175
+abiertos**: 31🟠 · 106🟡 · 38🔵.
+
+Lo corregido, por familia:
+
+- **Los cinco errores de fuente.** $N_c$ de Terzaghi es 5,70 y no 5,14 (nota 1, era la Tabla 16.2
+  metida en la ecuación de la 16.1); Coulomb es 81 años anterior a Rankine y no 150 (nota 9, **con
+  la ficha del cerebro corregida en el mismo commit**); el método λ usa tensión **efectiva** y no
+  total (nota 11); la Ec. de $Q_u = Q_p + Q_s$ es la 18.3/18.7 y no la 18.1 (nota 11); y la cita de
+  Das sobre el FS justificaba las pruebas de carga, no el rango (nota 11).
+- **Las afirmaciones que excedían su respaldo.** «Terzaghi es *sistemáticamente* conservadora» ahora
+  declara el contraejemplo (zapata continua en superficie con cohesión, donde entrega un 8–15 %
+  **más**); «el deslizamiento *no está en Das*» pasa a «Das sí lo tiene (§15.6), la norma lo
+  endurece»; «las siete $C_N$ coinciden *por construcción*» pasa a «seis de las siete»; «λ cae a un
+  tercio» pasa a «el **coeficiente** cae a un 37 %, y no es $f_{prom}$»; «en una zapata la teoría
+  está razonablemente asentada» ahora cita el 34 % que la propia serie midió.
+- **Los dos posts que contradecían a su máquina.** La nota 10 ya no dice «el muro pasa por los
+  pelos»: dice que queda **0,3 % por debajo** del mínimo y explica por qué eso es lo interesante.
+  La nota 11 publica 887 y 2.465 kN, los valores que imprime su script.
+- **Los parámetros que faltaban.** $\gamma = 18$ kN/m³ (nota 3), FS = 3 y que la tabla son $q_{adm}$
+  (nota 2), $\delta' = 0{,}7\phi'$ y $N_{60} = 20$ (nota 11), $E$ del hormigón (nota 15),
+  $\gamma_{sat}$ (nota 9), las **2 barras traccionadas** de las 4 (nota 14). Con eso los seis posts
+  pasan a ser reproducibles desde el texto.
+- **Las atribuciones normativas.** C10.1.5 **no trae ningún valor de $k_v$** —la banda 1.500–6.000
+  ahora se declara como adoptada, no como recomendada por la norma— y la frase sobre el FS de
+  deslizamiento está en la **cláusula** 10.1.3, no en su comentario.
+- **Los dos casos mezclados.** Las notas 5 y 6 ya declaran que su caso es el **Ejemplo 9.10 de
+  Das** (zapata de 1,5 × 1,5 m) y remiten a la nota 7 para el de la serie. La nota 7 declara su
+  supuesto de drenaje en dos caras y cuánto vale (factor 4 en el tiempo).
+
+**Lo que queda, y por qué no se aplicó:** los 31 🟠 restantes exigen **recalcular números
+publicados y regenerar figuras**, no reescribir prosa. Los cuatro de mayor alcance:
+
+1. **Nota 4 · $q_o$ bruta vs neta en la Ec. (17.2)** (G-D). Das pide neta; la nota usa bruta. Rehacer
+   la tabla de 8 suelos, el tornado y 3 SVG. **Requiere primero decidir la convención de sección**,
+   que arrastra a las notas 1 y 7 y a la etiqueta «neta» de `hormigon/ejemplo-zapata-aislada.mdx:42`.
+2. **Nota 4 · $I_f$ interpolado solo en la fila $\mu_s = 0{,}3$.** El caso base pasaría de 24,95 a
+   ≈27 mm y arrastra los 16 asentamientos.
+3. **Nota 9 · Ec. (14.7) aplicada a arena.** Corresponde la (14.4): $K_o$ pasa de 0,940 a 0,980 y de
+   1,330 a 1,415. La conclusión cualitativa se **refuerza**.
+4. **Nota 15 · el barrido no congela el peso propio.** Hay que añadir la columna de $N$ total y
+   corregir la lectura: lo que la Ec. (25) predice es el error de la hipótesis plana, no la
+   desaparición del levantamiento.
+
+### Cierre de la auditoría (2026-07-26): qué resistió y qué no
+
+**Lo que resistió.** Ningún experimento ni modelo quedó desmentido. Los auditores recalcularon de
+forma independiente —sin reusar los scripts— las dos reglas de la nota 3, los 240 valores de tablas
+de la nota 2, la errata de la Tabla 9.3 de la nota 5, los 16 asentamientos de la nota 4, el
+equilibrio anclado de la nota 14 (incluido su caso límite a $3{,}55\cdot10^{-15}$) y el barrido
+completo de la nota 15. Todo cerró. **La aritmética de la sección es sólida; lo que falla es lo que
+la rodea.**
+
+**Las tres familias de defecto, por frecuencia:**
+
+1. **Parámetros y bases que el post no declara** (aparece en 12 de 15). El lector no puede
+   reproducir el número aunque el número esté bien: el FS = 3 de la nota 2, el $\gamma = 18$ de la
+   3, el $\delta'$ y el $N_{60}$ de la 11 —que solo existe dentro del texto rasterizado de un
+   SVG—, el $E$ del hormigón de la 15, las 2 barras traccionadas de la 14.
+2. **Cifras que derivan entre notas que se citan entre sí** (11 de 15). La brecha de la nota 2
+   citada como 30 / 31 / 34 %; $C_s$ contra $C_r$; 5 mm contra 3–6 mm para la misma tabla de Das;
+   $C'_\alpha$ 0,011 contra 0,0108; la primaria a 1,2 contra 1,5 años.
+3. **Afirmaciones más fuertes que su respaldo** (9 de 15). «Terzaghi es *sistemáticamente*
+   conservadora» (contraejemplo construido), «el deslizamiento *no está en Das*» (§15.6 lo tiene),
+   «las siete fórmulas coinciden *por construcción*» (una no), «el momento restaurador es *fijo*»
+   (crece 30 %), «*el 1* de la Ec. (25) está calibrado» (hay correlación, no evidencia de
+   calibración).
+
+**Los dos casos donde el post contradice a su propia máquina:**
+
+- La nota 10 publica «el muro pasa por los pelos» con $FS = 1{,}4960 < 1{,}50$, y
+  `post10_muro_completo.py` imprime **«NO CUMPLE»**.
+- La nota 11 publica 886 y 2.467 kN donde su script imprime **887 y 2.465**, sin convención de
+  redondeo que lo explique.
+
+En los otros ocho posts con script verificado los veredictos coinciden — el patrón no es general.
+
+**Un hallazgo que cambia una tesis publicada**: en la nota 15 el barrido de espesores **no congela
+el peso propio**, que crece de 105 a 357 tonf. Por eso «el levantamiento ya desapareció» en el
+umbral: lo hace desaparecer el peso, no la rigidez. Congelando el peso, el levantamiento converge a
+**2,39 m** — exactamente el valor que el propio post da para la hipótesis rígida. La columna de
+error, que es lo que sostiene la tesis de calibración, **sí es robusta** (2 % en el umbral), y un
+auditor lo confirmó por un segundo camino: barriendo $k_v$ en vez del espesor, el error en la razón
+1,00 vuelve a dar 1,020.
+
+### Vacíos de fuente (verificados, no son omisiones del autor)
+
+- **Empuje sísmico (Mononobe-Okabe).** No está en Das cap. 14/15 **ni** en Sáez, *Fundamentos de
+  Geotecnia* (PUC). Un ejemplo de muro sísmico —el complemento obvio del post 10 y el que la
+  industria chilena pide— **requiere conseguir esa fuente aparte**. Es el bloqueo real para
+  extender el bloque 3.
+- **Distorsión angular admisible.** Das 4ª ed. no entrega límites (verificado al procesar el
+  cap. 17, que solo llega al asentamiento total tolerable de 25 mm en zapatas), y NCh2369 10.1.5
+  la remite a los objetivos de desempeño *«específicamente definidos para el proyecto»*. El post
+  15 lo declara explícitamente en vez de inventar un límite; mantener ese criterio.
+- **Licuefacción.** C10.2.1 de NCh2369 la nombra como motivo para ir a fundación profunda, pero
+  el Cap. 10 no da procedimiento. Cubrirla pediría NCh433 u otra fuente.
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
@@ -435,3 +727,15 @@ experimentos, jul 2026). Lo que sigue:
    mecánico y acotado.
 6. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
    experimento las pide; si no, se dejan caer.
+
+**Anexo 2026-07-26 — Geotecnia (sección G, nueva).** La sección `/geotecnia` se estrenó el
+2026-07-25 y creció fuera de este orden: 15 posts en dos días, con el bloque 5 (NCh2369 Cap. 10)
+completo el 2026-07-26. Lo que pide atención, en orden:
+
+1. **Auditar los 14 posts pendientes** (G-A). Es la deuda más grande del repo en proporción:
+   una sección entera publicada con una sola auditoría. El bloque 1 primero, porque su tesis la
+   citan las notas posteriores.
+2. **G-12, pozos perforados** — la única promesa publicada de la sección que sigue abierta, con
+   la fuente ya procesada y verificada.
+3. **G-B / G-C** (el wrapper por fecha, la primera planilla de canvas en geotecnia) como
+   intercalados mecánicos.

@@ -1,0 +1,118 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { BLOQUES, getGeotecniaSeries, SUBSECTIONS } from '../../lib/geotecnia';
+
+const posts = await getGeotecniaSeries();
+
+const subsectionCounts = Object.fromEntries(
+  Object.keys(SUBSECTIONS).map((key) => [
+    key,
+    posts.filter((p) => p.data.subsection === key).length,
+  ])
+);
+
+// El arco agrupado por bloque. Un bloque puede tener notas todavía no escritas
+// (el rango las declara), así que se muestra lo que existe y se anuncia el resto.
+const bloques = BLOQUES.map((b) => ({
+  ...b,
+  posts: posts.filter(
+    (p) => (p.data.order ?? 0) >= b.range[0] && (p.data.order ?? 0) <= b.range[1]
+  ),
+}));
+---
+<PageLayout title="Geotecnia" description="De dónde salen los números del informe de mecánica de suelos">
+  <div class="mb-10">
+    <p class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Sección</p>
+    <h1 class="text-2xl font-semibold text-ink mb-3">Geotecnia</h1>
+    <p class="text-muted leading-relaxed">
+      El ingeniero estructural recibe un informe de mecánica de suelos, copia la presión
+      admisible a la planilla y sigue. Esta sección abre esa caja negra: de dónde sale
+      <em>q<sub>adm</sub></em>, qué criterio la limita y qué preguntar cuando el número no cuadra.
+    </p>
+    <p class="text-muted leading-relaxed mt-4">
+      A diferencia de las secciones de hormigón y acero, acá no hay una cláusula que respalde
+      cada afirmación: hay métodos con autor y año, correlaciones con dispersión y varias
+      respuestas legítimas para el mismo problema. Por eso cada nota declara el método y la
+      edición, y cada ejemplo cierra con un análisis de sensibilidad.
+    </p>
+  </div>
+
+  <section class="mb-12">
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Ruta de lectura</h2>
+    <p class="text-sm text-muted leading-relaxed mb-6">
+      Las notas se encadenan: cada una mide cuánto mueve el resultado un parámetro, y la siguiente
+      parte de ahí. Se pueden leer sueltas, pero en orden se acumulan. Los bloques son
+      independientes entre sí.
+    </p>
+
+    {bloques.map((bloque) => (
+      <div class="mb-8">
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="text-xs font-semibold uppercase tracking-widest text-accent">
+            Bloque {bloque.n}
+          </span>
+          <h3 class="font-medium text-ink">{bloque.label}</h3>
+        </div>
+        <p class="text-sm text-muted leading-relaxed mb-3">{bloque.description}</p>
+        <ol class="divide-y divide-border border-y border-border">
+          {bloque.posts.map((post) => (
+            <li>
+              <a href={`/geotecnia/${post.id}`} class="flex gap-4 py-3 group items-baseline">
+                <span class="shrink-0 text-sm tabular-nums text-muted w-6">
+                  {post.data.order}
+                </span>
+                <div>
+                  <p class="text-ink group-hover:text-accent transition-colors">
+                    {post.data.title}
+                  </p>
+                  <p class="text-sm text-muted mt-0.5">{post.data.description}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ol>
+        {bloque.posts.length < bloque.range[1] - bloque.range[0] + 1 && (
+          <p class="text-sm text-muted mt-3 italic">
+            El bloque sigue abierto: la nota {bloque.posts.length + bloque.range[0]} está en
+            preparación.
+          </p>
+        )}
+      </div>
+    ))}
+  </section>
+
+  <section class="mb-12">
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-muted mb-2">Sub-secciones</h2>
+    <p class="text-sm text-muted leading-relaxed mb-4">
+      El mismo material agrupado por tema, para volver a buscar algo puntual.
+    </p>
+    <ul class="divide-y divide-border border-y border-border">
+      {Object.entries(SUBSECTIONS).map(([slug, sub]) => (
+        <li>
+          <a
+            href={`/geotecnia/${slug}`}
+            class="flex items-center justify-between py-4 group"
+          >
+            <div>
+              <p class="font-medium text-ink group-hover:text-accent transition-colors">
+                {sub.label}
+              </p>
+              <p class="text-sm text-muted mt-0.5">{sub.description}</p>
+            </div>
+            <span class="shrink-0 ml-6 text-sm text-muted">
+              {subsectionCounts[slug] ?? 0} nota{subsectionCounts[slug] !== 1 ? 's' : ''}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="text-sm text-muted border-t border-border pt-6">
+    <p>
+      <strong class="text-ink font-medium">Alcance y responsabilidad.</strong> Estas notas
+      explican cómo se construyen los números de un informe de mecánica de suelos, para poder
+      leerlo con criterio. No lo reemplazan ni reemplazan al geotecnista que lo firma.
+    </p>
+  </section>
+</PageLayout>

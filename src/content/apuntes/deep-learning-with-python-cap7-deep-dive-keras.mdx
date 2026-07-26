@@ -1,0 +1,290 @@
+---
+title: "Un grafo o una caja negra: las tres formas de construir un modelo en Keras"
+description: "El capítulo 7 de Chollet es el recorrido completo de la API de Keras, y todo él gira alrededor de un principio de diseño: divulgación progresiva de la complejidad. No hay una forma verdadera de usar Keras — hay un espectro que va de Sequential a escribir el bucle de entrenamiento desde cero, y todos los niveles interoperan. La distinción de fondo, la que decide qué podrás hacer después: un modelo funcional es una estructura de datos que puedes inspeccionar y reusar por partes; uno subclaseado es bytecode, una caja negra tras instanciarlo. Por el camino, los callbacks convierten fit() de avión de papel en dron, y sobrescribir train_step() resulta ser el punto medio que casi nadie conoce. Apuntes del Cap. 7."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "keras", "functional api", "callbacks", "tensorboard", "train_step"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 7 — Un recorrido profundo por Keras"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 7 (PDF 214–254)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 3](/apuntes/deep-learning-with-python-cap3-frameworks-y-keras)
+presentó `Layer` como la única abstracción de Keras y dejó `compile()` / `fit()`
+funcionando. El 7 recorre todo lo que hay entre eso y escribir un algoritmo de
+entrenamiento nuevo desde cero — y lo hace desde un principio de diseño explícito:
+
+> **Divulgación progresiva de la complejidad**: hacer que empezar sea fácil, pero
+> que manejar casos de alta complejidad sea posible, **requiriendo solo
+> aprendizaje incremental en cada paso**. *"Por muy nicho y complejo que sea lo
+> que quieras hacer, debe haber un camino claro hacia allá: un camino que se
+> construye sobre lo que ya aprendiste en los workflows más simples."*
+
+## 1. El espectro
+
+<Figure
+  src="/apuntes/deep-learning-with-python/espectro-workflows.svg"
+  alt="Una barra con degradado de azul claro a azul oscuro sobre una flecha que va de 'más usabilidad' a 'más flexibilidad', con cuatro cajas debajo. Sequential más capas built-in, 'básicamente una lista de Python', para usuarios novatos y modelos simples. Functional API más capas built-in, grafo de capas, 'como jugar con LEGO', para ingenieros con casos estándar. Functional API más capas, métricas y pérdidas propias, marcada con una flecha 'lo que usa el libro', para ingenieros con casos de nicho a la medida. Y Subclassing, escribes todo desde cero, bucles, recursión, lo que sea, para investigadores. Al pie: todos se apoyan en las mismas APIs Layer y Model, así que lo que aprendes de principiante te sirve de experto."
+  caption="Podrías usar Keras como usarías scikit-learn —llamar fit() y dejar que el framework haga lo suyo— o como usarías NumPy, controlando cada detalle."
+  width={780}
+/>
+
+La analogía del libro me parece la mejor forma de retenerlo: **Keras es el Python
+del deep learning**. Algunos lenguajes ofrecen una sola manera de escribir
+programas; Python es multiparadigma, y eso lo hace apto para administración de
+sistemas, ciencia de datos, ingeniería de ML o simplemente aprender a programar.
+
+Y la consecuencia práctica de que todos los niveles compartan `Layer` y `Model`:
+*"no tendrás que cambiarte a un framework completamente distinto al pasar de
+estudiante a investigador, o de científico de datos a ingeniero de deep
+learning."*
+
+## 2. Grafo o bytecode: la decisión que importa
+
+Las tres APIs de construcción no se diferencian solo en cuánto código escribes.
+Se diferencian en **qué es el modelo resultante**, y eso decide qué vas a poder
+hacer con él después.
+
+`Sequential` se despacha rápido: es una pila lineal, *"básicamente una lista de
+Python"*, y su aplicabilidad es **extremadamente limitada** — solo expresa modelos
+de una entrada y una salida. La decisión real está entre las otras dos.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/grafo-vs-caja-negra.svg"
+  alt="Comparación en dos paneles. A la izquierda, Functional API, 'una estructura de datos explícita', con un mini grafo dibujado: tres entradas (title, text_body, tags) que convergen en una capa Concatenate, luego una Dense, y de ahí dos salidas (priority y department). Debajo, tres vistos: summary() muestra la conectividad, plot_model() grafica la topología, y extracción de features — puedes engancharte a layers[4].output y agregar una salida nueva. A la derecha, Subclasear Model, 'un pedazo de bytecode', con una caja negra que contiene 'def call(self, inputs): ...' y la leyenda 'código crudo de Python'. Debajo, tres cruces: la conectividad vive dentro de call(), sin plot_model ni conectividad en summary(), sin extracción de features porque no hay grafo; y un visto: a cambio, bucles, recursión, lo que se te ocurra. Al pie: si tu modelo se puede expresar como un grafo acíclico dirigido de capas, recomendamos la Functional API; y no es excluyente, un modelo funcional con capas subclaseadas da lo mejor de ambos mundos."
+  caption="Un modelo funcional es un grafo que puedes ver, inspeccionar y modificar. Uno subclaseado es una clase de Python con un call() que contiene código crudo."
+  width={780}
+/>
+
+El ejemplo con el que trabaja el capítulo es un clasificador de tickets de
+soporte: **tres entradas** (el título del ticket, su cuerpo y las etiquetas que
+puso el usuario) y **dos salidas** (un score de prioridad y el departamento que
+debe atenderlo). Con la Functional API son unas pocas líneas — se declaran los
+`Input`, se los va pasando por capas y se cierra nombrando entradas y salidas:
+
+```python
+title = keras.Input(shape=(vocabulary_size,), name="title")
+text_body = keras.Input(shape=(vocabulary_size,), name="text_body")
+tags = keras.Input(shape=(num_tags,), name="tags")
+
+features = layers.Concatenate()([title, text_body, tags])
+features = layers.Dense(64, activation="relu", name="dense_features")(features)
+
+priority = layers.Dense(1, activation="sigmoid", name="priority")(features)
+department = layers.Dense(num_departments, activation="softmax",
+                          name="department")(features)
+
+model = keras.Model(inputs=[title, text_body, tags],
+                    outputs=[priority, department])
+```
+
+Y aquí llega el caso de uso que mejor ilustra la diferencia entre las dos APIs:
+la **extracción de features**. Digamos que ahora se quiere agregar una tercera
+salida que estime cuánto tardará en resolverse el ticket. Con un modelo funcional,
+**no hay que recrear ni reentrenar nada**:
+
+```python
+features = model.layers[4].output          # la capa Dense intermedia
+difficulty = layers.Dense(3, activation="softmax", name="difficulty")(features)
+new_model = keras.Model(inputs=[title, text_body, tags],
+                        outputs=[priority, department, difficulty])
+```
+
+Con un modelo subclaseado eso es imposible: *"una vez instanciado el modelo, su
+forward pass se vuelve una caja negra completa"*.
+
+<Note type="warning" title="La libertad del subclassing tiene un precio">
+*"Con modelos subclaseados eres responsable de más lógica, lo que significa que
+**tu superficie potencial de error es mucho mayor**. Estás desarrollando un objeto
+Python nuevo, no solo encajando ladrillos LEGO."* La recomendación del libro es
+explícita: **si tu modelo se puede expresar como un grafo acíclico dirigido de
+capas, usa la Functional API por sobre el subclassing**. Y no es una elección
+excluyente — todos los patrones interoperan, y *"usar modelos funcionales que
+incluyen capas subclaseadas provee lo mejor de ambos mundos"*.
+</Note>
+
+Un detalle de la Functional API que vale la pena entender bien: `keras.Input`
+devuelve un **tensor simbólico**. Tiene `shape` y `dtype` pero **no contiene
+datos** — *"está en lugar de futuros tensores de datos"*. Todas las capas de
+Keras se pueden llamar tanto sobre tensores reales como sobre simbólicos; en el
+segundo caso devuelven otro tensor simbólico con la shape actualizada. Eso es lo
+que permite armar el grafo antes de tener un solo dato.
+
+<Note type="info" title="¿Layer o Model?">
+*"Es simple: una capa es un bloque de construcción que usas para crear modelos, y
+un modelo es el objeto de nivel superior que efectivamente vas a entrenar y
+exportar. En corto: **un `Model` tiene `fit()`, `evaluate()` y `predict()`. Las
+capas no.** Fuera de eso, las dos clases son virtualmente idénticas."* (La otra
+diferencia: un modelo se puede guardar a disco.)
+</Note>
+
+## 3. De avión de papel a dron
+
+La metáfora de los callbacks es la mejor del capítulo:
+
+> *"Lanzar un entrenamiento sobre un dataset grande por decenas de épocas usando
+> `model.fit()` puede ser un poco como **lanzar un avión de papel**: pasado el
+> impulso inicial, no tienes control sobre su trayectoria ni su punto de
+> aterrizaje. Si quieres evitar malos resultados, es más inteligente usar, no un
+> avión de papel, sino **un dron** que pueda sensar su entorno, mandar datos de
+> vuelta a su operador y tomar decisiones de dirección automáticamente."*
+
+Un callback es un objeto que se pasa a `fit()` y que el modelo invoca en puntos
+específicos del entrenamiento. **Tiene acceso a todo el estado del modelo y puede
+actuar**: interrumpir el entrenamiento, guardar el modelo, cargar otro set de
+pesos. *"La barra de progreso de `fit()` que ya conoces es, de hecho, ¡un
+callback!"*
+
+La combinación clave resuelve un desperdicio que veníamos arrastrando desde el
+capítulo 4:
+
+```python
+callbacks_list = [
+    keras.callbacks.EarlyStopping(monitor="accuracy", patience=1),
+    keras.callbacks.ModelCheckpoint(filepath="checkpoint_path.keras",
+                                    monitor="val_loss", save_best_only=True),
+]
+model.fit(train_images, train_labels, epochs=10,
+          callbacks=callbacks_list, validation_data=(val_images, val_labels))
+```
+
+Sobre la estrategia de los capítulos anteriores —entrenar de más, contar las
+épocas hasta el pico, reentrenar desde cero— el libro es tajante: *"por supuesto,
+**este enfoque es un desperdicio**"*. `EarlyStopping` corta cuando la métrica deja
+de mejorar y `ModelCheckpoint` con `save_best_only=True` conserva la mejor versión
+vista.
+
+Escribir uno propio es subclasear `keras.callbacks.Callback` e implementar
+cualquiera de estos métodos de nombre transparente: `on_epoch_begin`,
+`on_epoch_end`, `on_batch_begin`, `on_batch_end`, `on_train_begin`,
+`on_train_end`. Todos reciben un dict **`logs`** con las métricas del batch,
+época o corrida anterior.
+
+Y el complemento visual es **TensorBoard**, que cierra lo que el capítulo llama
+*el bucle del progreso*: idea → experimento → resultados → idea. *"Mientras más
+iteraciones de este bucle puedas correr, más refinadas y potentes se vuelven tus
+ideas. Keras te ayuda a ir de idea a experimento en el menor tiempo posible, y las
+GPUs rápidas te ayudan a ir de experimento a resultado lo antes posible. ¿Pero qué
+hay de procesar los resultados? Ahí entra TensorBoard."*
+
+## 4. Los cuatro niveles de control
+
+<Figure
+  src="/apuntes/deep-learning-with-python/niveles-entrenamiento.svg"
+  alt="Cuatro filas en azul progresivamente más oscuro, cada una con lo que conservas a la derecha. Nivel 1, fit() a secas (compile, fit, evaluate, predict): conservas todo, es lo que usarás la mayor parte del tiempo. Nivel 2, fit() con métricas y callbacks propios (EarlyStopping, ModelCheckpoint, TensorBoard): todo, más el control de cuándo cortar y qué guardar. Nivel 3, sobrescribir train_step(), tu algoritmo con la infraestructura de fit(): conservas callbacks, optimizaciones de rendimiento y entrenamiento distribuido; marcado como el punto medio. Nivel 4, bucle escrito desde cero en el backend nativo: no conservas nada, reescribes callbacks, optimizaciones y distribución; para algoritmos genuinamente nuevos."
+  caption="Bajas un escalón solo cuando el anterior se te queda corto. El nivel 3 es el que suele pasarse por alto."
+  width={780}
+/>
+
+**¿Por qué querrías salir de `fit()`?** La razón de fondo es que *"el workflow
+integrado de `fit()` está enfocado únicamente en aprendizaje supervisado"*: un
+setup donde hay targets conocidos y la pérdida es función de esos targets y las
+predicciones. Pero hay setups **sin targets explícitos**: aprendizaje generativo,
+**self-supervised** (los targets se obtienen de las entradas) o **reinforcement
+learning**, donde el aprendizaje lo guían recompensas ocasionales — *"muy parecido
+a entrenar un perro"*.
+
+### El nivel 3: sobrescribir `train_step()`
+
+Escribir el bucle entero desde cero da máxima flexibilidad *"pero terminas
+escribiendo mucho código, mientras simultáneamente te pierdes muchas
+características convenientes de `fit()`, como callbacks, optimizaciones de
+rendimiento o soporte integrado para entrenamiento distribuido"*.
+
+El punto medio: **sobrescribir el método `train_step()` de `Model`** — la función
+que `fit()` llama por cada batch — y dejar que el framework haga el resto.
+
+```python
+loss_tracker = keras.metrics.Mean(name="loss")
+
+class CustomModel(keras.Model):
+    def train_step(self, data):
+        inputs, targets = data
+        with tf.GradientTape() as tape:
+            predictions = self(inputs, training=True)     # self, no model
+            loss = loss_fn(targets, predictions)
+        gradients = tape.gradient(loss, self.trainable_weights)
+        self.optimizer.apply(gradients, self.trainable_weights)
+        loss_tracker.update_state(loss)
+        return {"loss": loss_tracker.result()}
+
+    @property
+    def metrics(self):
+        return [loss_tracker]
+```
+
+Dos cosas que se agradecen: **esto no te impide usar la Functional API** (funciona
+con modelos secuenciales, funcionales o subclaseados), y **no necesitas decorar
+con `@tf.function` ni `@jax.jit`** — *"el framework lo hace por ti"*.
+
+La propiedad `metrics` no es decorativa: listar ahí el tracker **permite que el
+modelo llame automáticamente a `reset_state()` al inicio de cada época y de cada
+`evaluate()`**. Cualquier métrica que quieras resetear entre épocas debe estar en
+esa lista.
+
+<Note type="warning" title="Dos sutilezas al escribir el forward pass a mano">
+1. **Pasa `training=True`.** Algunas capas se comportan distinto en entrenamiento
+   y en inferencia: `dropout(inputs, training=True)` anula activaciones,
+   `dropout(inputs, training=False)` no hace nada.
+2. **Usa `model.trainable_weights`, no `model.weights`.** Los modelos tienen dos
+   tipos de pesos: los **entrenables**, que actualiza backpropagation, y los **no
+   entrenables**, que actualizan las propias capas durante el forward pass. Entre
+   las capas integradas de Keras, **la única con pesos no entrenables es
+   `BatchNormalization`**, que los necesita para rastrear media y desviación
+   estándar de los datos que la atraviesan.
+</Note>
+
+Hay una segunda variante, que **reemplaza a la anterior en vez de sumarse a
+ella**: si quieres usar la pérdida y las métricas que pasaste a `compile()`, tras
+compilar tienes acceso a `self.compute_loss` —que **combina tu pérdida con las
+pérdidas de regularización** que puedan agregar ciertas capas— y a
+`self.metrics`, que **también incluye una métrica que rastrea la pérdida**. En
+esta versión **ya no se sobrescribe la propiedad `metrics`**: si conservaras el
+override anterior, `self.metrics` seguiría devolviendo solo tu `loss_tracker` y
+el bucle de abajo no vería ninguna de las métricas de `compile()`.
+
+```python
+def train_step(self, data):
+    inputs, targets = data
+    with tf.GradientTape() as tape:
+        predictions = self(inputs, training=True)
+        loss = self.compute_loss(y=targets, y_pred=predictions)
+    gradients = tape.gradient(loss, self.trainable_weights)
+    self.optimizer.apply(gradients, self.trainable_weights)
+
+    for metric in self.metrics:
+        if metric.name == "loss":
+            metric.update_state(loss)
+        else:
+            metric.update_state(targets, predictions)
+    return {m.name: m.result() for m in self.metrics}
+```
+
+Ese bloque es **idéntico en TensorFlow y en PyTorch**. En JAX es más largo, porque
+las variables de métricas tienen que viajar como parte del estado.
+
+## Para recordar
+
+- **Divulgación progresiva de la complejidad:** no hay una forma verdadera de usar
+  Keras, y lo que aprendes de principiante te sirve de experto porque todo se
+  apoya en `Layer` y `Model`.
+- **Funcional = estructura de datos; subclaseado = bytecode.** Esa diferencia
+  decide si podrás graficar la topología, inspeccionar la conectividad y **reusar
+  features intermedias**.
+- **`keras.Input` es un tensor simbólico**: shape y dtype sin datos. Por eso se
+  puede armar el grafo antes de tener nada que procesar.
+- **`Model` tiene `fit`/`evaluate`/`predict`; `Layer` no.** Es casi toda la
+  diferencia.
+- **Los callbacks convierten `fit()` en un dron.** `EarlyStopping` +
+  `ModelCheckpoint` eliminan el reentrenamiento desperdiciado de los capítulos 4
+  y 5.
+- **Sobrescribir `train_step()` es el punto medio**: tu algoritmo, con los
+  callbacks, las optimizaciones y el entrenamiento distribuido de `fit()` intactos.
+- **`training=True` y `trainable_weights`** son los dos detalles que se olvidan al
+  escribir un forward pass a mano.
+
+Con la caja de herramientas completa, el **capítulo 8** deja los datos vectoriales
+y entra en visión por computador: convnets, data augmentation y modelos
+preentrenados.

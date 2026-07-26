@@ -1,0 +1,285 @@
+---
+title: "Ejemplo — Conexión de momento con placa de extremo extendida (AISC 360-22)"
+description: "Verificación de una conexión de momento viga-columna con placa de extremo extendida apernada (4E): el momento se convierte en un par tracción-compresión, los cuatro pernos superiores trabajan a tracción y el efecto palanca mete el espesor de la placa dentro de la resistencia de los pernos. Con placa de 18 mm la conexión falla (uso 1.15) y con 22 mm sobra (0.83) sin tocar un solo perno; el espesor que anula la palanca es 31.1 mm. Se cierra con la placa en corte, la soldadura del ala y los estados límite de la columna (J10)."
+pubDate: 2026-07-25
+tags: ["ejemplo", "acero", "conexiones", "conexión de momento", "end plate", "pernos", "efecto palanca", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. J — Conexiones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En una conexión de corte la fuerza viaja en línea recta. En una **conexión de momento** hay una
+traducción previa: el momento de la viga se convierte en un **par de fuerzas** —tracción arriba,
+compresión abajo— y recién entonces empieza la cadena de estados límite del
+[Cap. J](/acero/aisc360-22-capJ-conexiones). La placa de extremo extendida (*extended end plate*)
+es la forma más limpia de ver esa traducción: una plancha soldada al extremo de la viga, apernada
+a la columna, con pernos por fuera del ala traccionada. Acá la bajamos a números, con la
+referencia normativa[^aisc360] de cada paso.
+
+Y trae una sorpresa que no aparece en ninguna conexión de corte. La resistencia de los pernos a
+tracción **no depende solo de los pernos**: al flectarse, la placa se apoya en su borde y le
+devuelve al perno una tracción extra —el **efecto palanca** (*prying action*)—. Por eso el
+resultado de este ejemplo es que la conexión "rígida" vive o muere por el **espesor de la placa**:
+con 18 mm falla, con 22 mm sobra, y los pernos son los mismos.
+
+## El caso
+
+Viga de pórtico que llega a la cara del ala de una columna, con una conexión totalmente
+restringida (FR) de placa de extremo extendida de cuatro pernos a tracción —la configuración
+**4E**: dos pernos sobre el ala traccionada y dos bajo ella—.
+
+| Dato | Valor |
+|---|---|
+| Viga | W460×74 (A992): $d = 457$, $b_f = 190$, $t_f = 14.5$, $t_w = 9.0$ mm |
+| Columna | W360×162 (A992, $F_y = 3520$ kgf/cm²): $d = 364$, $b_f = 371$, $t_f = 21.8$, $t_w = 13.3$ mm, $k = 38.4$ mm |
+| Placa de extremo | A36 ($F_y = 2530$, $F_u = 4080$ kgf/cm²), ancho $b_p = 200$ mm, espesor $t_p$ **a determinar** |
+| Pernos | 4 × Ø24 A490 (Grupo 150) a tracción + 4 × Ø24 A490 a corte; $A_b = 4.524$ cm², $d_h = 26$ mm |
+| Geometría | $p_f = 45$ mm (cara del ala a la línea de pernos), borde $L_e = 40$ mm, gramil $g = 100$ mm |
+| Soldadura | filete doble de 10 mm, E70 ($F_{EXX} = 4920$ kgf/cm²) |
+| Solicitación (LRFD) | $M_u = 32$ tonf·m, $V_u = 15$ tonf; corte de columna $V_{col} = M_u/H = 9.1$ tonf ($H = 3.5$ m) |
+
+<Figure
+  src="/ejemplos/end-plate-esquema.svg"
+  alt="Elevación de una conexión de momento con placa de extremo extendida 4E: la viga W460x74 termina en una plancha de 200 mm de ancho apernada al ala de una columna W360x162 con ocho pernos Ø24 A490 en cuatro filas. El momento M_u = 32 tonf·m se descompone en un par de fuerzas: tracción T = 72.3 tonf en el ala superior, tomada por los cuatro pernos superiores (dos sobre el ala y dos bajo ella), y compresión C = 72.3 tonf en el ala inferior, que se transmite por contacto directo. A la derecha, un detalle del modelo T-stub muestra la placa flectada apoyándose en su borde, la fuerza del perno B, la fuerza de palanca q en el borde y las distancias b prima igual a 33 mm y a prima igual a 52 mm."
+  caption="El momento se traduce en un par: tracción en los cuatro pernos superiores, compresión por contacto en el ala inferior. El detalle de la derecha es el modelo T-stub: la placa flecta, se apoya en su borde y devuelve al perno una fuerza de palanca q que se suma a la tracción del par."
+/>
+
+<Note type="info" title="Por qué la placa de extremo y no otra conexión de momento">
+La placa de extremo concentra en un solo elemento —la plancha— casi todo lo que hay que entender
+de una conexión de momento: el par, la tracción de los pernos, la flexión de la chapa y la
+palanca. No hay soldadura de terreno, lo que la hace muy usada en montaje; su contracara es que
+el momento entra a la columna **concentrado en dos líneas**, así que la columna también entra al
+cálculo. Es la hermana rígida del
+[*shear tab* a corte](/acero/ejemplo-conexion-apernada-corte), que solo transfiere reacción.
+</Note>
+
+## 1. El par: de momento a fuerzas
+
+Con la hipótesis clásica —el par se forma entre los centros de las alas, el ala comprimida apoya
+por contacto directo contra la placa— la fuerza que deben tomar los pernos es:
+
+<Equation label="Fuerza del ala">
+$$
+T = C = \frac{M_u}{d - t_f} = \frac{32}{0.4425} = 72.3 \ \text{tonf}
+$$
+</Equation>
+
+Repartida entre los cuatro pernos de la zona traccionada, **18.1 tonf por perno**. Todo lo que
+sigue es la vida de esa fuerza.
+
+## 2. Los pernos a tracción (J3.7)
+
+La resistencia nominal a tracción de un Ø24 A490 (Grupo 150, $F_{nt} = 780$ MPa $= 7950$ kgf/cm²),
+Ec. J3-1:
+
+<Equation label="Ec. J3-1 (tracción, por perno)">
+$$
+\phi r_n = 0.75 \, F_{nt} A_b = 0.75 \cdot 7950 \cdot 4.524 = 26\,974 \ \text{kgf} = 27.0 \ \text{tonf}
+$$
+</Equation>
+
+Contra 18.1 tonf de demanda, **uso 0.67**. Si la historia terminara acá, la conexión sobraría con
+holgura. Pero el propio J3.7 avisa en una frase que cambia el problema: *la resistencia requerida
+a tracción debe incluir la tracción producida por el efecto palanca debido a la deformación de
+las partes conectadas*.
+
+## 3. El efecto palanca: la placa entra al cálculo
+
+La placa no es rígida. Al tirar de ella, flecta entre el ala de la viga y la línea de pernos, y
+su borde libre **apoya** contra el ala de la columna. Ese apoyo es una reacción $q$ que, por
+equilibrio, se suma a la tracción del perno: el perno no ve $T/4$, ve $T/4 + q$. Cuanto más
+delgada la placa, más flecta, más lejos apoya y mayor es $q$.
+
+AISC 360-22 obliga a incluirla pero no da la fórmula; el método clásico es el **modelo T-stub**
+del AISC *Manual* (Parte 9)[^manual], que trata la zona traccionada como una T equivalente. Con
+$d_b = 24$ mm, $d_h = 26$ mm y una longitud tributaria por perno $p = b_p/2 = 100$ mm:
+
+<Equation label="Geometría del T-stub">
+$$
+b = p_f = 45, \qquad b' = b - \frac{d_b}{2} = 33 \ \text{mm}, \qquad
+a' = a + \frac{d_b}{2} = 52 \ \text{mm}, \qquad
+\rho = \frac{b'}{a'} = 0.635
+$$
+</Equation>
+
+<Equation label="Debilitamiento por los agujeros">
+$$
+\delta = 1 - \frac{d'}{p} = 1 - \frac{26}{100} = 0.740
+\qquad (d' = d_h,\ \text{ancho del agujero sobre la longitud } p)
+\qquad (d' = d_h,\ \text{ancho del agujero sobre la longitud } p)
+$$
+</Equation>
+
+con $a = \min(L_e,\, 1.25\,b) = \min(40;\ 56.25) = 40$ mm (el tope de $1.25b$ evita darle
+crédito a un voladizo largo que no participa). El resultado central del método es el **espesor crítico** $t_c$: aquel
+para el cual la placa desarrolla su flexión justo cuando el perno alcanza su resistencia, es
+decir, el espesor a partir del cual **la palanca desaparece**:
+
+<Equation label="Espesor crítico (Manual Ec. 9-26)">
+$$
+t_c = \sqrt{\frac{4 \, B \, b'}{\phi \, p \, F_u}}
+= \sqrt{\frac{4 \cdot 26\,974 \cdot 3.3}{0.90 \cdot 10 \cdot 4080}} = 3.11 \ \text{cm} = 31.1 \ \text{mm}
+\qquad (b' = 3.3,\ p = 10 \ \text{cm})
+$$
+</Equation>
+
+Treinta y un milímetros de plancha para que el perno rinda sus 27.0 tonf limpias. Si la placa es
+más delgada —lo normal—, la capacidad disponible del perno baja según:
+
+<Equation label="Capacidad con palanca (Manual Ec. 9-30)">
+$$
+\alpha' = \frac{1}{\delta(1+\rho)}\left[\left(\frac{t_c}{t_p}\right)^2 - 1\right] \le 1,
+\qquad
+T_{\text{disp}} = B \left(\frac{t_p}{t_c}\right)^2 \left(1 + \delta\,\alpha'\right)
+$$
+</Equation>
+
+Con $t_p = 22$ mm: $\alpha' = 0.83$ y $T_{\text{disp}} = 21.7$ tonf contra 18.1 de demanda,
+**uso 0.83**. Pasa. Pero mirá lo que hace el espesor:
+
+| Espesor $t_p$ | $\alpha'$ | $T_{\text{disp}}$ por perno | Uso |
+|:---:|:---:|:---:|:---:|
+| 18 mm | 1.00 (palanca máxima) | 15.7 tonf | **1.15 — falla** |
+| 20 mm | 1.00 | 19.4 tonf | 0.93 |
+| **22 mm** | 0.83 | **21.7 tonf** | **0.83** |
+| 25 mm | 0.456 | 23.3 tonf | 0.78 |
+| 31.1 mm ($=t_c$) | 0 (sin palanca) | 27.0 tonf | 0.67 |
+
+**Cuatro milímetros de plancha —de 18 a 22— llevan la conexión de fallar a sobrar, con los mismos
+cuatro pernos.** Ese es el punto: en una conexión de momento con placa de extremo, el espesor de
+la chapa es una variable de resistencia, no de detallado.
+
+<Figure
+  src="/ejemplos/end-plate-palanca.svg"
+  alt="Curva de la capacidad disponible por perno T_disp contra el espesor de la placa t_p, desde 14 hasta 38 mm. La curva parte baja, crece de forma cuadrática y se aplana en la meseta B = 27.0 tonf a partir del espesor crítico t_c = 31.1 mm, donde la palanca desaparece. Una línea horizontal marca la demanda de 18.1 tonf por perno y su cruce con la curva define el espesor mínimo, 19.3 mm. Se marcan cuatro puntos: 18 mm con 15.7 tonf que falla (uso 1.15, bajo la línea de demanda), 22 mm con 21.7 tonf (uso 0.83), 25 mm con 23.3 tonf (0.78) y 31.1 mm con 27.0 tonf (0.67). Una caja anota que la zona sombreada entre la curva y la meseta B es la fracción de la resistencia del perno que se lleva la palanca."
+  caption="La capacidad del perno como función del espesor de la placa. Es una curva, no una constante: con la placa de 18 mm la palanca se come el 42 % de la resistencia del perno, y solo desaparece en t_c = 31.1 mm. La conexión se diseña eligiendo un punto de esta curva."
+/>
+
+<Note type="tip" title="Las dos filosofías de diseño de una placa de extremo">
+El método admite dos posiciones, y ambas son legítimas:
+
+- **Placa gruesa ($t_p \ge t_c$)**: la palanca es nula, el perno rinde el 100 %, pero la
+  conexión se vuelve rígida y frágil —falla el perno, sin aviso—. Es la filosofía del
+  *thick-plate design* del AISC *Design Guide* 4.
+- **Placa delgada ($t_p < t_c$)**: la placa fluye primero (comportamiento dúctil, con
+  advertencia visible), a costa de aceptar la palanca y perder resistencia del perno.
+
+Este ejemplo elige 22 mm: placa delgada controlada, con la palanca calculada y el perno al 0.83.
+En diseño sísmico la decisión no es libre —AISC 358 prequalifica configuraciones y espesores por
+líneas de fluencia—, pero el mecanismo es el mismo.
+</Note>
+
+## 4. La placa de extremo en corte (J4)
+
+La porción extendida de la placa debe llevar la mitad de la fuerza del ala ($T/2 = 36.2$ tonf) en
+corte, y la resistencia se toma sobre el ancho completo $b_p$ (formulación del *Design Guide* 4).
+Fluencia ($\phi = 1.00$) y rotura ($\phi = 0.75$, con el agujero de 28 mm que pide B4.3b para
+áreas netas):
+
+<Equation label="Ecs. J4-3 y J4-4">
+$$
+\phi R_n = 0.60\,F_y\,b_p t_p = 66.8 \ \text{tonf}
+\qquad
+\phi R_n = 0.75 \cdot 0.60\,F_u (b_p - 2 \cdot 2.8)\,t_p = 58.2 \ \text{tonf}
+$$
+</Equation>
+
+Usos 0.54 y 0.62. La placa de 22 mm resiste el corte con holgura: su problema era la **flexión**,
+no el corte.
+
+## 5. La soldadura ala–placa (J2)
+
+Filetes de 10 mm a ambas caras del ala, E70. La fuerza llega **perpendicular** al eje de las
+soldaduras, así que aplica el incremento direccional $k_{ds} = 1.0 + 0.5\sin^{1.5}90° = 1.5$
+(Ec. J2-5) —un grupo lineal de pierna uniforme cargado por su centro de gravedad—:
+
+<Equation label="Ec. J2-4 (por cm de soldadura)">
+$$
+\phi r_n = 0.75 \cdot 0.60 F_{EXX} \cdot 0.707\,w \cdot k_{ds}
+= 0.75 \cdot 0.60 \cdot 4920 \cdot 0.707 \cdot 1.0 \cdot 1.5 = 2348 \ \text{kgf/cm}
+$$
+</Equation>
+
+Con la longitud disponible alrededor del ala (cara exterior $b_f = 190$ mm más dos tramos
+interiores, $37.1$ cm en total): $\phi R_n = 87.1$ tonf ≥ $T = 72.3$, **uso 0.83**. Sin el crédito
+transversal ($k_{ds} = 1$) el filete de 10 mm no alcanzaría —58.1 tonf—: acá el 50 % de J2-5 es la
+diferencia entre pasar y tener que subir la pierna a 13 mm.
+
+## 6. Los pernos inferiores: el corte (J3.7)
+
+El corte $V_u = 15$ tonf se asigna a los cuatro pernos de la zona comprimida, donde no hay
+tracción que interactuar. Con $F_{nv} = 470$ MPa $= 4792$ kgf/cm² (A490-N, roscas incluidas):
+
+<Equation label="Ec. J3-1 (corte, 4 pernos)">
+$$
+\phi R_n = 4 \cdot 0.75 \cdot 4792 \cdot 4.524 = 65.0 \ \text{tonf} \;\ge\; V_u = 15 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 0.23.** Y como los pernos traccionados no toman corte, no hay que investigar la interacción
+tracción–corte de J3.8: la regla del 30 % de esa sección se cumple sola.
+
+## 7. El otro lado: la columna (J10)
+
+Las 72.3 tonf del par no desaparecen al cruzar la placa: entran a la columna concentradas en dos
+líneas, y ahí gobierna el Cap. J10 (alas y almas con fuerzas concentradas). Con la W360×162
+($t_f = 21.8$, $t_w = 13.3$ mm, $k = 38.4$ mm), longitud de apoyo $l_b = t_f + 2t_p = 58.5$ mm y
+$E = 2.04\times10^6$ kgf/cm²; para la zona panel se supone la columna poco comprimida
+($P_r \le 0.4P_c$), que es la rama J10-9 —si no lo fuera, aplicaría J10-10 con su reducción por
+axial, como en el [ejemplo de placas de ala](/acero/ejemplo-conexion-momento-placas-ala)—:
+
+| Estado límite | Ecuación | $\phi R_n$ | Uso |
+|---|---|:---:|:---:|
+| Flexión local del ala | J10-1: $6.25F_{yf}t_f^2$, $\phi = 0.90$ | 94.1 tonf | 0.77 |
+| Fluencia local del alma | J10-2: $F_{yw}t_w(5k + l_b)$, $\phi = 1.00$ | 117.3 tonf | 0.62 |
+| Aplastamiento del alma | J10-4, $\phi = 0.75$ | 141.6 tonf | 0.51 |
+| Corte en la zona panel | J10-9, $\phi = 0.90$ (demanda $T - V_{col} = 63.2$) | 92.0 tonf | 0.69 |
+
+Todo pasa: esta columna es gruesa y no necesita rigidizadores de continuidad ni plancha de
+refuerzo del alma (*doubler*). No es el caso general —con una columna más liviana el eslabón
+débil se muda al otro lado del nudo, que es exactamente lo que ocurre en el
+[ejemplo de conexión con placas de ala](/acero/ejemplo-conexion-momento-placas-ala)—.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Naturaleza | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| **Pernos a tracción con palanca** | J3.7 + Manual Parte 9 | **frágil — gobierna** | $\mathbf{21.7}$ **tonf/perno** | **0.83** |
+| Pernos a tracción sin palanca | Ec. J3-1 | frágil (referencia) | 27.0 tonf/perno | 0.67 |
+| **Soldadura del ala** | Ec. J2-4, $k_{ds} = 1.5$ | frágil | 87.1 tonf | **0.83** |
+| Placa — rotura en corte | Ec. J4-4 | frágil | 58.2 tonf | 0.62 |
+| Placa — fluencia en corte | Ec. J4-3 | dúctil | 66.8 tonf | 0.54 |
+| Pernos a corte | Ec. J3-1 | frágil | 65.0 tonf | 0.23 |
+| Columna — flexión local del ala | Ec. J10-1 | — | 94.1 tonf | 0.77 |
+| Columna — zona panel | Ec. J10-9 | dúctil | 92.0 tonf | 0.69 |
+
+**Solución:** placa de extremo extendida **4E de 22 mm (A36), 200 mm de ancho, con 8 pernos Ø24
+A490** (4 a tracción, 4 a corte) y filetes de 10 mm E70, resiste $M_u = 32$ tonf·m y $V_u = 15$
+tonf con uso máximo 0.83. Gobierna la **tracción de los pernos incluida la palanca** —un estado
+límite que no existe en las conexiones de corte y que hace depender la resistencia del perno del
+espesor de la chapa—. La lección de diseño es contraintuitiva y práctica: **si esta conexión no
+pasa, el primer movimiento no es agregar pernos, es engrosar la placa.**
+
+<Note type="warning" title="Si la conexión es sismorresistente, esto no basta">
+Todo lo anterior dimensiona la conexión para la **demanda del análisis**. En un marco especial a
+momento el criterio cambia: la conexión debe desarrollar la **capacidad esperada** de la viga
+($R_y F_y Z_x$, más sobrerresistencia por endurecimiento), no el $M_u$ de las combinaciones —el
+mismo salto de escala que aparece en la
+[serie del factor R](/blog/factor-r-capacidad-esperada)—. Con la W460×74 eso significaría un
+momento del orden de 2 a 2.5 veces mayor, otro espesor de placa y pernos más grandes; además,
+AISC 358 solo permite configuraciones **prequalificadas** (4E, 4ES, 8ES) con sus propias
+ecuaciones de líneas de fluencia, y la NCh2369 exige que la conexión supere la capacidad del
+miembro conectado.
+</Note>
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. Secciones J2 (soldaduras), J3 (pernos) y J10 (alas
+y almas con fuerzas concentradas).
+
+[^manual]: American Institute of Steel Construction, *Steel Construction Manual*, 16.ª ed.,
+Parte 9 (*Design of Connecting Elements*), modelo T-stub para el efecto palanca; y *Design
+Guide 4 — Extended End-Plate Moment Connections*, 2.ª ed., para el diseño por líneas de fluencia
+de la placa. AISC 360-22 exige incluir la palanca (J3.7) pero deja el método al ingeniero.

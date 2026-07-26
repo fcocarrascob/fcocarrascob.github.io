@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 384" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="gcn-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+  </defs>
+  <rect width="780" height="384" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Un grafo o una caja negra: qué eliges al construir el modelo</text>
+
+  <!-- LEFT: functional -->
+  <rect x="20" y="52" width="365" height="248" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="202" y="78" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">Functional API</text>
+  <text x="202" y="95" text-anchor="middle" font-size="11" fill="#2563eb">una <tspan font-weight="700">estructura de datos</tspan> explícita</text>
+
+  <!-- mini graph -->
+  <rect x="52" y="112" width="62" height="24" rx="4" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="83" y="129" text-anchor="middle" font-size="9.5" fill="#1e3a8a">title</text>
+  <rect x="52" y="144" width="62" height="24" rx="4" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="83" y="161" text-anchor="middle" font-size="9.5" fill="#1e3a8a">text_body</text>
+  <rect x="52" y="176" width="62" height="24" rx="4" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="83" y="193" text-anchor="middle" font-size="9.5" fill="#1e3a8a">tags</text>
+
+  <line x1="114" y1="124" x2="146" y2="150" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+  <line x1="114" y1="156" x2="146" y2="156" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+  <line x1="114" y1="188" x2="146" y2="162" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+
+  <rect x="148" y="144" width="72" height="24" rx="4" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="184" y="161" text-anchor="middle" font-size="9.5" fill="#1e3a8a">Concatenate</text>
+
+  <line x1="220" y1="156" x2="248" y2="156" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+  <rect x="250" y="144" width="58" height="24" rx="4" fill="#2563eb"/>
+  <text x="279" y="161" text-anchor="middle" font-size="9.5" fill="#ffffff">Dense</text>
+
+  <line x1="308" y1="150" x2="330" y2="130" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+  <line x1="308" y1="162" x2="330" y2="182" stroke="#60a5fa" stroke-width="1.4" marker-end="url(#gcn-ar)"/>
+  <rect x="292" y="108" width="76" height="22" rx="4" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="330" y="124" text-anchor="middle" font-size="9.5" fill="#1e3a8a">priority</text>
+  <rect x="292" y="182" width="76" height="22" rx="4" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="330" y="198" text-anchor="middle" font-size="9.5" fill="#1e3a8a">department</text>
+
+  <!-- what you get -->
+  <text x="40" y="232" font-size="11" fill="#1e3a8a">✓ <tspan font-family="'JetBrains Mono', ui-monospace, monospace">summary()</tspan> muestra la conectividad</text>
+  <text x="40" y="252" font-size="11" fill="#1e3a8a">✓ <tspan font-family="'JetBrains Mono', ui-monospace, monospace">plot_model()</tspan> grafica la topología</text>
+  <text x="40" y="272" font-size="11" fill="#1e3a8a">✓ <tspan font-weight="700">Extracción de features</tspan>: puedes engancharte</text>
+  <text x="52" y="288" font-size="11" fill="#1e3a8a">a <tspan font-family="'JetBrains Mono', ui-monospace, monospace">layers[4].output</tspan> y agregar una salida nueva</text>
+
+  <!-- RIGHT: subclassing -->
+  <rect x="395" y="52" width="365" height="248" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="577" y="78" text-anchor="middle" font-size="12.5" font-weight="700" fill="#374151">Subclasear Model</text>
+  <text x="577" y="95" text-anchor="middle" font-size="11" fill="#6b7280">un pedazo de <tspan font-weight="700">bytecode</tspan></text>
+
+  <!-- black box -->
+  <rect x="452" y="112" width="250" height="92" rx="6" fill="#1a1a1a"/>
+  <text x="577" y="140" text-anchor="middle" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#9ca3af">def call(self, inputs):</text>
+  <text x="577" y="160" text-anchor="middle" font-size="11" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#6b7280">    ...</text>
+  <text x="577" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">código crudo de Python</text>
+
+  <text x="415" y="232" font-size="11" fill="#991b1b">✗ La conectividad vive <tspan font-style="italic">dentro</tspan> de <tspan font-family="'JetBrains Mono', ui-monospace, monospace">call()</tspan></text>
+  <text x="415" y="252" font-size="11" fill="#991b1b">✗ Sin <tspan font-family="'JetBrains Mono', ui-monospace, monospace">plot_model()</tspan>, sin conectividad en <tspan font-family="'JetBrains Mono', ui-monospace, monospace">summary()</tspan></text>
+  <text x="415" y="272" font-size="11" fill="#991b1b">✗ Sin extracción de features: <tspan font-weight="700">no hay grafo</tspan></text>
+  <text x="415" y="288" font-size="11" fill="#374151">✓ A cambio: bucles, recursión, lo que se te ocurra</text>
+
+  <!-- footer -->
+  <rect x="20" y="316" width="740" height="52" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="390" y="338" text-anchor="middle" font-size="11.5" fill="#1e3a8a">"Si tu modelo se puede expresar como un grafo acíclico dirigido de capas, <tspan font-weight="700">recomendamos la Functional API</tspan>."</text>
+  <text x="390" y="357" text-anchor="middle" font-size="11.5" fill="#374151">Y no es excluyente: <tspan font-weight="700">un modelo funcional con capas subclaseadas</tspan> da lo mejor de ambos mundos</text>
+</svg>

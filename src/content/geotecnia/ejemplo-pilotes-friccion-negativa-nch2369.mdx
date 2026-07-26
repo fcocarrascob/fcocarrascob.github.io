@@ -1,0 +1,414 @@
+---
+title: "Ejemplo — Fricción negativa: el arrastre que la norma manda contar dos veces"
+description: "3 m de relleno sobre arcilla blanda hacen bajar el suelo 34 cm, y los 17 m de fuste que sostenían pasan a colgar: 61,43 tonf por pilote. NCh2369 10.2.4 obliga a incorporarlas dos veces —restándolas de la capacidad y sumándolas como carga— y eso lleva el cabezal de 4 pilotes a 9. Con la demostración de que la fórmula del plano neutro de Das es, exactamente, arrastre arriba = fricción abajo."
+pubDate: 2026-07-26
+tags: ["ejemplo", "geotecnia", "fundaciones", "nch2369", "industrial", "pilotes", "fricción negativa", "plano neutro", "consolidación", "das", "sensibilidad"]
+subsection: "ejemplos"
+order: 16
+chapter: "Cap. 10 — NCh2369:2025"
+source: "NCh2369:2025 · Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 16 · bloque 5. Viene de [la losa que no es rígida](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369).*
+
+Las tres notas anteriores del bloque discutieron **qué resiste** una fundación. Esta discute algo
+distinto: un término que estaba del lado de la resistencia y **se cambia de lado**.
+
+La fricción del fuste sostiene un pilote mientras el pilote baje más que el suelo. Si se invierte
+—si el suelo baja más que el pilote— el mismo roce, con la misma magnitud y la misma ecuación,
+empuja hacia abajo. Deja de ser capacidad y pasa a ser carga — uno de los pocos casos en
+geotecnia donde un término de resistencia se convierte en acción. Das lo define, en la sección
+18.15, como *«una fuerza de arrastre ejercida hacia abajo sobre el pilote por la tierra que lo
+rodea»*.
+
+NCh2369 le dedica una cláusula de dos frases, y las dos frases piden cosas distintas:
+
+> **10.2.4** *«En aquellos casos en que se prevé el desarrollo de fricción negativa sobre los
+> pilotes se debe incorporar este efecto **disminuyendo la capacidad de soporte** del pilote.
+> Adicionalmente, se debe incluir este efecto **como carga externa para el diseño estructural**
+> del pilote.»*
+
+Dos veces, entonces. Este ejemplo mide cuánto vale cada una y responde la pregunta que la
+redacción invita a hacerse: si es la misma fuerza, ¿no se está contando dos veces?
+
+<Note type="warning" title="Alcance y responsabilidad">
+El arrastre se calcula con el método de tensiones efectivas de Das (§18.15), que es el que la
+literatura de referencia de esta serie entrega; los parámetros del suelo, la capacidad de punta y
+el asentamiento de la arcilla son datos que aquí se declaran y que en un proyecto salen del
+informe de mecánica de suelos. La cláusula se cita por su numeración en la edición **2025**. La
+verificación estructural de la sección usa ACI 318-25 y desprecia esbeltez, por estar el pilote
+confinado lateralmente por el suelo en toda su longitud. Ni ACI 318-25 ni NCh2369 fijan un factor
+de carga para el arrastre: acá se mayora como carga permanente ($1{,}2\,Q_n$), que es el supuesto
+más habitual y el que usa AASHTO.
+</Note>
+
+---
+
+## 1. El caso
+
+<Figure
+  src="/geotecnia-pilotes-friccion-negativa/el-caso.svg"
+  alt="Corte de una plataforma industrial con el cabezal de pilotes de una torre de traspaso de correas. El perfil tiene tres capas: relleno granular compactado de 3,00 m con peso unitario 1,95 tonf/m³; arcilla blanda de 17,00 m entre las cotas 3 y 20 m, con peso sumergido 0,75 tonf/m³, ángulo de fricción efectivo de 26 grados, resistencia no drenada de 3,0 tonf/m² y OCR 1,4; y grava densa desde los 20,00 m. La napa coincide con el techo de la arcilla. Sobre el cabezal de 4,40 por 4,40 por 1,00 m bajan D = 360 tonf y L = 95 tonf, y llega un corte sísmico V = 60 tonf con brazo de 4,00 m. Se ven los pilotes pre-excavados de 0,60 m de diámetro y 21,0 m de largo, espaciados 1,80 m, que atraviesan la arcilla y se apoyan en la grava; el cabezal dibujado, de 9 pilotes, es el resultado del cálculo y no el punto de partida. A la derecha, la tabla que justifica que la cláusula 10.2.4 aplica: la sobrecarga del relleno es de 5,85 tonf/m², la tensión efectiva a media capa pasa de 6,38 a 12,23 tonf/m² con una preconsolidación de 8,93, y el asentamiento por consolidación suma 5,2 cm de recompresión más 29,0 cm de rama virgen. Al pie: el suelo baja 34 cm y el pilote, milímetros."
+  caption="El relleno no carga el pilote: carga la arcilla. Y al consolidarla la hace bajar 34 cm mientras el pilote, apoyado en la grava, no se mueve. El cabezal dibujado es el que resulta al final (§4); el cálculo parte de uno de 4 pilotes."
+/>
+
+| Dato | Valor |
+|---|---|
+| Relleno granular compactado | $3{,}00$ m, $\gamma = 1{,}95$ tonf/m³ (sobre la napa) |
+| Arcilla blanda, de 3 a 20 m | $17{,}00$ m, $\gamma' = 0{,}75$ tonf/m³, $\phi' = 26°$, $s_u = 3{,}0$ tonf/m² |
+| Historia de tensiones | OCR $= 1{,}4$, $C_c = 0{,}25$, $C_r = C_c/6$, $e_0 = 1{,}00$ |
+| Grava densa | desde $20{,}00$ m |
+| Pilotes | pre-excavados $\varnothing\,0{,}60$ m, $L = 21{,}0$ m, $s = 1{,}80$ m ($3D$) |
+| Fricción suelo-pilote | $\delta' = 0{,}6\,\phi' = 15{,}6°$ (centro del rango $0{,}5$–$0{,}7\,\phi'$ de Das) |
+| Capacidad de punta (informe) | $120{,}0$ tonf admisible estática; $\times 1{,}33$ en sismo |
+| Cargas de la torre | $D = 360$ tonf, $L = 95$ tonf, $V = 60$ tonf con brazo $4{,}00$ m |
+| Hormigón | $\gamma_c = 2{,}50$ tonf/m³, $f'_c = 25$ MPa |
+
+Es una torre de traspaso de correas sobre una plataforma industrial ganada con relleno. La
+geometría dispara dos definiciones de la norma antes de calcular nada: medida por pilote, con
+$L/D = 35$, la fundación es **profunda** según 10.2.1 (razón enterramiento/ancho mayor que 5), y con
+$s/D = 3{,}0$ los pilotes cumplen el mínimo de 10.2.2 para pre-excavados pero **no son aislados**
+—eso pediría $s > 6D$—, así que el grupo interactúa.
+
+---
+
+## 2. El disparador: «en aquellos casos en que se prevé»
+
+La cláusula no aplica siempre. Aplica cuando se *prevé* que el suelo va a bajar más que el
+pilote, y eso hay que demostrarlo. Acá lo demuestra el relleno: 3,00 m de material colocado sobre
+una arcilla blanda son una sobrecarga de $\Delta\sigma = 5{,}85$ tonf/m² aplicada en toda la
+superficie.
+
+A media capa la tensión efectiva pasa de $6{,}38$ a $12{,}23$ tonf/m², cruzando la
+preconsolidación de $8{,}93$ tonf/m², así que el asentamiento tiene los dos tramos que la
+[nota del OCR](/geotecnia/ocr-historia-de-tensiones) separa:
+
+| Tramo | Asentamiento |
+|---|---|
+| Recompresión, de $\sigma'_0$ a $\sigma'_p$ ($C_r$) | 5,2 cm |
+| Rama virgen, de $\sigma'_p$ a $\sigma'_f$ ($C_c$) | 29,0 cm |
+| **Total** | **34,2 cm** |
+
+**El suelo va a bajar 34 cm. El pilote, apoyado en la grava, baja milímetros.** Con eso la
+condición de 10.2.4 está verificada y no queda margen para discutirla — que es justamente lo que
+un informe debería dejar escrito, porque de esa frase depende todo lo que sigue.
+
+<Note type="tip" title="El OCR no es un detalle acá">
+Si la arcilla fuera normalmente consolidada (OCR = 1), los 34,2 cm serían **60,1 cm**: el tramo de
+recompresión desaparece y todo el incremento se recorre por la rama virgen. La preconsolidación
+—el factor 1,4 que el informe declara casi al pasar— se lleva un 43 % del asentamiento.
+</Note>
+
+---
+
+## 3. Dónde está el plano neutro
+
+El arrastre no actúa en toda la longitud del pilote. Actúa hasta la profundidad donde el pilote y
+el suelo bajan **lo mismo**: sobre ella el suelo va más rápido y cuelga; bajo ella el pilote va
+más rápido y el fuste vuelve a sostener. Esa profundidad es el **plano neutro**, y es lo único
+que hay que determinar, porque fija el largo sobre el que se integra.
+
+Das da la fricción unitaria con el método de tensiones efectivas, la misma Ec. (18.18) que ya
+apareció en [la nota de pilotes](/geotecnia/pilotes-la-punta-casi-no-trabaja) pero con el signo
+al revés:
+
+<Equation label="Das Ec. (18.57)">
+$$
+f_n = K' \sigma'_o \tan \delta'
+\qquad\text{con}\qquad
+K' = 1 - \sin\phi'
+\quad\text{y}\quad
+\sigma'_o = \gamma_f H_f + \gamma' z
+$$
+</Equation>
+
+Y para un pilote **flotante** en la arcilla, la profundidad neutra $L_1$ sale de una ecuación
+implícita que Das toma de Bowles (1982):
+
+<Equation label="Das Ec. (18.56)">
+$$
+L_1 = \frac{L - H_f}{L_1}\left[\frac{L - H_f}{2} + \frac{\gamma_f H_f}{\gamma'}\right] - \frac{2\gamma_f H_f}{\gamma'}
+$$
+</Equation>
+
+En este perfil da $L_1 = 11{,}26$ m bajo el techo de la arcilla, o sea **14,26 m de
+profundidad**. Con eso el arrastre sería $Q_n = 33{,}52$ tonf.
+
+Un supuesto del que conviene dejar constancia: §18.15 fija $K' = K_o = 1 - \sin\phi'$, la forma
+normalmente consolidada, aunque este caso declare OCR $= 1{,}4$. El §18.9 del mismo libro corrige
+por $\sqrt{OCR}$ cuando la arcilla está sobreconsolidada, y hacerlo acá subiría el arrastre a
+$72{,}7$ tonf, un **18 % más**. Se sigue §18.15 por ser la sección específica, pero el supuesto va
+del lado no conservador.
+
+<Note type="tip" title="Qué es, en realidad, la Ec. (18.56)">
+Das la presenta como una fórmula a resolver por tanteo y no dice de dónde sale. Sale de algo muy
+simple: **es la condición de que el arrastre de arriba iguale a la fricción positiva de abajo.**
+
+Integrando la Ec. (18.57) sobre los dos tramos e igualando, se llega —despejando— exactamente a
+la Ec. (18.56). Y numéricamente cierra: con $L_1 = 11{,}26$ m, el arrastre sobre el plano vale
+$33{,}52$ tonf y la fricción positiva bajo el plano vale $33{,}52$ tonf, iguales hasta el último
+dígito que entrega la máquina.
+
+Vale la pena saberlo porque explica la limitación de la fórmula: ese equilibrio **ignora la carga
+de cabeza y la resistencia de punta**. Un pilote más cargado se asienta más, alcanza antes al
+suelo y sube su plano neutro. La Ec. (18.56) entrega, entonces, el caso descargado — el plano más
+profundo y el arrastre más grande de la familia.
+</Note>
+
+Pero este pilote **no flota**: se apoya en la grava. Y ahí Das es explícito —*«para pilotes de
+soporte final puede suponerse que la profundidad neutral está situada en la punta»*—, que es la
+consecuencia directa de lo anterior: si el pilote no baja, el suelo baja más que él **en toda la
+arcilla** y nunca hay cruce.
+
+<Figure
+  src="/geotecnia-pilotes-friccion-negativa/plano-neutro.svg"
+  alt="Dos paneles. El panel A es un esquema que muestra, sobre el perfil de relleno, arcilla y grava, cuánto baja cada elemento: la curva del suelo parte de 34 cm en superficie y decrece hasta cero en el techo de la grava; el pilote de punta es una línea vertical prácticamente en cero, que sólo alcanza a la curva del suelo a los 20,00 m; y el pilote flotante, dibujado a trazos, cruza la curva del suelo a los 14,26 m de profundidad. Las dos profundidades están marcadas con líneas horizontales: plano neutro flotante a 14,26 m y plano neutro de punta a 20,00 m. El panel B muestra el diagrama de axial del pilote de punta: vale 55,93 tonf en la cabeza, se mantiene constante en los 3 m de relleno y luego crece de forma curva a lo largo de los 17 m de arcilla, alcanzando 117,36 tonf en la punta, un 110 % más que en la cabeza. Junto al fuste, cinco flechas hacia abajo marcan el arrastre. Al pie del panel: Q_n = 61,43 tonf sobre los 17 m de arcilla, por la ecuación 18.58."
+  caption="El plano neutro es donde el pilote y el suelo bajan lo mismo. Un pilote de punta no baja, así que ese punto cae al fondo y el arrastre corre por toda la arcilla. Las curvas del panel A son esquemáticas —sólo los 34 cm de superficie y el cero en la grava salen del cálculo—; el panel B está a escala."
+/>
+
+Integrando la Ec. (18.57) sobre los 17 m completos:
+
+<Equation label="Das Ec. (18.58)">
+$$
+Q_n = p K' \tan\delta' \left[\gamma_f H_f L_1 + \frac{\gamma' L_1^2}{2}\right] = 61{,}43 \ \text{tonf}
+$$
+</Equation>
+
+| | Arrastre |
+|---|---|
+| Si el pilote flotara ($L_1 = 11{,}26$ m) | 33,52 tonf |
+| **Como es, de punta ($L_1 = 17{,}00$ m)** | **61,43 tonf** |
+
+**El pilote «mejor» atrae un 83 % más de carga.** Es el resultado contraintuitivo del ejemplo:
+apoyar la punta en un estrato competente es lo que uno hace para no tener problemas, y es
+precisamente lo que maximiza el arrastre — porque el arrastre no lo produce la carga, lo produce
+el *movimiento relativo*, y un pilote que no se mueve lo maximiza.
+
+<Note type="info" title="Dos comprobaciones del número">
+**Contra el otro método.** Los $61{,}43$ tonf equivalen a una fricción unitaria media de
+$1{,}92$ tonf/m² (18,8 kPa) sobre los 17 m. El método $\alpha$, que usa la resistencia no drenada
+en vez de las tensiones efectivas ($\alpha \approx 0{,}70$ para $s_u = 3{,}0$ tonf/m², leído de la
+Fig. 18.17 de Das), da $67{,}29$ tonf: un **9,5 %** de diferencia, que se mueve proporcionalmente
+con lo que uno lea en esa gráfica. Es la dispersión normal entre los métodos que la
+[nota de pilotes](/geotecnia/pilotes-la-punta-casi-no-trabaja) ya había levantado, y acá deja
+tranquilo: no hay un orden de magnitud en juego.
+
+**Contra el efecto de grupo.** El arrastre de un grupo no puede superar lo que el bloque de suelo
+encerrado entre los pilotes pesa, más el corte en su perímetro. Para la huella final de
+$4{,}20 \times 4{,}20$ m: la suma individual de los 9 pilotes vale $552{,}9$ tonf y la cota del
+bloque, $1.284{,}5$ tonf ($328{,}1$ de peso más $956{,}4$ de corte perimetral). **Gobierna la suma
+individual**, así que no hay reducción por grupo y el arrastre se toma pilote a pilote.
+</Note>
+
+---
+
+## 4. Primera mitad: disminuyendo la capacidad de soporte
+
+Acá está el error que la cláusula previene, y es más grande de lo que parece. Un cálculo que no
+se haga la pregunta **cuenta ese mismo fuste como resistencia**:
+
+| | Capacidad admisible estática |
+|---|---|
+| Cálculo que ignora el arrastre: punta $+$ fuste$/FS$ | $120{,}0 + 61{,}43/3 = $ **140,48 tonf** |
+| Cálculo según 10.2.4: punta $-$ arrastre | $120{,}0 - 61{,}43 = $ **58,57 tonf** |
+
+**La capacidad admisible por pilote cae un 58 %, un factor 2,40.** Y el salto tiene dos mitades
+que conviene separar: 20,5 tonf son resistencia que se deja de tener y 61,4 tonf son carga que se
+agrega. Es **el mismo tramo de fuste contado con el signo cambiado**, y por eso el error de
+ignorarlo no vale $Q_n$ sino casi $Q_n$ más $Q_n/FS$.
+
+<Note type="tip" title="Restar de la capacidad o sumar a la demanda es lo mismo">
+La norma dice «disminuyendo la capacidad de soporte», pero
+$P + Q_n \le Q_{adm}$ y $P \le Q_{adm} - Q_n$ son la misma desigualdad. La elección de redacción
+no cambia el veredicto — sí cambia el uso que se tabula, que en la forma $P + Q_n \le Q_{adm}$
+(la de las tablas de acá) da 1,50 y en la otra, 2,01. Lo que sí cambiaría el veredicto es dividir
+$Q_n$ por el factor de seguridad, y no corresponde: $Q_n$ es una **carga**, no una resistencia.
+</Note>
+
+Con las combinaciones de 4.5 —las mismas de las tres notas anteriores, con $a = 0{,}25$ de la
+Tabla C-2— sobre el cabezal de 4 pilotes que el cálculo ingenuo aprueba:
+
+| Combinación | $N$ (tonf) | $P$/pilote | $P + Q_n$ | $Q_{adm}$ | uso |
+|---|---|---|---|---|---|
+| Gravedad (NCh3171, $D+L$) | 471,9 | 117,97 | 179,40 | 120,0 | **1,50** |
+| Sismo, compresión | 394,7 | 145,34 | 206,77 | 159,6 | 1,30 |
+| Sismo, levantamiento | 376,9 | 47,56 | — | 159,6 | 0,30 |
+
+> Ese cabezal, **sin** contar el arrastre, da uso 0,84 y se aprueba. Contándolo, da **1,50**.
+
+Y hay una asimetría de método en la tercera fila. Acá el pilote ni siquiera llega a tracción
+—queda con 47,56 tonf de compresión—, pero el criterio conviene declararlo igual porque en un caso
+con levantamiento sería decisivo: el arrastre **empuja hacia abajo**, o sea alivia la tracción, y
+no se acredita. Es un efecto diferido que puede no estar desarrollado cuando llegue el sismo, y
+descontar una tracción con él sería apostar a que la consolidación ya ocurrió. **El arrastre se
+cuenta donde perjudica y se ignora donde ayuda.**
+
+Cuántos pilotes hacen falta, entonces:
+
+| Pilotes | Cabezal | $P$/pilote (gravedad) | $P + Q_n$ | uso |
+|---|---|---|---|---|
+| 4 | $2{,}60 \times 2{,}60$ | 117,97 | 179,40 | 1,50 |
+| 6 | $4{,}40 \times 2{,}60$ | 80,60 | 142,03 | 1,18 |
+| **9** | $4{,}40 \times 4{,}40$ | 55,93 | 117,36 | **0,98** |
+
+**De 4 pilotes a 9.** El cabezal más que se duplica, y no porque la torre pese más ni porque el
+suelo sea peor de lo que decía el informe: porque 61,43 tonf que estaban del lado bueno de la
+desigualdad se pasaron al otro.
+
+---
+
+## 5. Segunda mitad: como carga externa para el diseño estructural
+
+La segunda frase de 10.2.4 parece una repetición de la primera. No lo es, y se ve mejor mirando
+**dónde** aparece la carga.
+
+El axial del pilote no es constante. Vale $55{,}93$ tonf bajo el cabezal, se mantiene en los 3 m
+de relleno, y crece a lo largo de toda la arcilla hasta **$117{,}36$ tonf en la punta**, que es
+donde el plano neutro cayó. Es el panel B de la figura anterior, y dice algo que casi ningún
+esquema de pilote dibuja: **el máximo del axial está en la punta, no en la cabeza**, y vale un
+**110 %** más.
+
+La verificación de la sección, con ACI 318-25:
+
+| | Valor |
+|---|---|
+| Sección | $\varnothing\,0{,}60$ m, $f'_c = 25$ MPa, 8 $\varnothing$ 22 ($\rho = 1{,}08$ %) |
+| $\phi P_{n,max}$ (22.4.2.1, con el factor 0,80) | 382,9 tonf |
+| $P_u$ en la cabeza ($1{,}2D + 1{,}6L$) | 71,34 tonf — uso 0,19 |
+| **$P_u$ en el plano neutro** ($+\,1{,}2\,Q_n$) | **145,06 tonf — uso 0,38** |
+
+Un pilote de hormigón de 0,60 m tiene axial de sobra: la verificación pasa con holgura en los dos
+puntos, y sería deshonesto sugerir lo contrario. Pero **la demanda de la sección se duplica**
+(+103 %), y ese factor 2 es lo que la segunda frase de la cláusula está protegiendo. En un pilote
+metálico, en un micropilote, o en uno de 0,45 m con la armadura recortada en el tramo inferior
+—donde el axial es máximo y donde a nadie se le ocurre que lo sea— ese factor 2 sí decide.
+
+<Note type="warning" title="Por qué la norma tuvo que escribir la segunda frase">
+La cláusula siguiente, **10.2.5**, pide que *«el análisis estructural debe incluir la interacción
+de los pilotes con el terreno, para lo cual se puede considerar el uso de resortes que permitan
+modelar dicha interacción, o llevar a cabo una modelación integral con el suelo adyacente»*.
+
+De las dos alternativas, la que se arma casi siempre es la primera: el pilote con una cama de
+resortes laterales y verticales. Y ese modelo **por construcción no puede producir el arrastre**,
+porque los resortes reaccionan al movimiento del pilote y acá el que se mueve es el suelo. La
+segunda alternativa —la modelación integral del terreno— sí podría, pero para eso habría que
+imponerle el asentamiento por consolidación, que es un análisis que rara vez se hace para
+dimensionar un cabezal.
+
+Un modelo de resortes cargado con las reacciones del cabezal entrega el axial de la cabeza,
+$55{,}93$ tonf, y nunca los $117{,}36$ de la punta. La fricción negativa hay que **agregarla a
+mano** como carga externa, que es exactamente lo que 10.2.4 dice, con esas palabras, y por eso lo
+dice aparte.
+</Note>
+
+---
+
+## 6. Entonces, ¿se cuenta dos veces?
+
+Sí, y no es doble contabilidad. Es **el mismo axial verificado contra dos resistencias que no
+tienen nada que ver entre sí**:
+
+1. **Verificación geotécnica.** $P + Q_n \le Q_{adm}$. La pregunta es si el suelo aguanta, y la
+   resistencia es la capacidad de punta del estrato. Resultado: 4 pilotes no bastan, hacen falta 9.
+2. **Verificación estructural.** $1{,}2P_D + 1{,}6P_L + 1{,}2Q_n \le \phi P_n$. La pregunta es si
+   el hormigón aguanta, y la resistencia es la de la sección. Resultado: pasa con uso 0,38, con
+   la demanda duplicada.
+
+Contar dos veces sería restar $Q_n$ de la capacidad geotécnica **y además** sumarlo otra vez a la
+misma desigualdad. Eso no es lo que dice la cláusula. Lo que dice es que ese arrastre no se agota
+en la verificación de suelo: sigue existiendo dentro del pilote, en una sección de hormigón que
+alguien tiene que dimensionar, y a una profundidad donde el análisis estructural habitual no lo ve.
+
+La trampa que la redacción previene es la del calculista que hace la primera verificación, la
+hace bien, y concluye que «la fricción negativa ya está incorporada».
+
+---
+
+## 7. Análisis de sensibilidad
+
+<Figure
+  src="/geotecnia-pilotes-friccion-negativa/sensibilidad.svg"
+  alt="Gráfico de tornado de la sensibilidad del arrastre, con caso base Q_n = 61,43 tonf por pilote. La barra dominante es el recubrimiento de betún en la zona de arrastre, que lo baja a 6,14 tonf, un menos 90 %. Le siguen: un pilote de 0,80 m en vez de 0,60 lo sube a 81,90 tonf, un más 33,3 %; un relleno de 5,0 m en vez de 3,0 lo sube a 81,03 tonf, un más 31,9 %; un pilote de 0,45 m lo baja a 46,07 tonf, un menos 25,0 %; un relleno de 1,5 m lo baja a 46,73 tonf, un menos 23,9 %; tomar delta prima igual a 0,7 phi prima, el borde superior del rango de Das, lo sube a 72,34 tonf, un más 17,8 %; tomarlo como 0,5 phi prima lo baja a 50,79 tonf, un menos 17,3 %; y los dos extremos del ángulo de fricción, 24 y 28 grados, lo mueven a 59,67 y 62,75 tonf, un menos 2,9 % y un más 2,1 %. Al pie: lo que mueve el arrastre son decisiones, no parámetros del suelo."
+  caption="Los ±2° de φ′ que se discuten en el informe valen menos de un 3 %. El espesor del relleno, el diámetro del pilote y la elección de δ′ valen entre un 17 % y un 33 % cada uno."
+/>
+
+| Decisión | $Q_n$ | Efecto |
+|---|---|---|
+| **Betún en la zona de arrastre** | 6,14 tonf | **−90,0 %** |
+| Pilote de $0{,}80$ m en vez de $0{,}60$ | 81,90 tonf | +33,3 % |
+| Relleno de $5{,}0$ m en vez de $3{,}0$ | 81,03 tonf | +31,9 % |
+| Pilote de $0{,}45$ m | 46,07 tonf | −25,0 % |
+| Relleno de $1{,}5$ m | 46,73 tonf | −23,9 % |
+| $\delta' = 0{,}7\,\phi'$ (borde superior de Das) | 72,34 tonf | +17,8 % |
+| $\delta' = 0{,}5\,\phi'$ (borde inferior de Das) | 50,79 tonf | −17,3 % |
+| $\phi' = 24°$ / $28°$ | 59,67 / 62,75 tonf | −2,9 % / +2,1 % |
+
+Tres lecturas.
+
+**El parámetro que se discute no es el que decide.** Los $\pm2°$ de $\phi'$ —el número sobre el
+que se negocia en las reuniones de revisión— valen menos de un 3 %. En cambio $\delta'$, que Das
+declara entre $0{,}5\phi'$ y $0{,}7\phi'$ **sin dar un criterio para elegir**, vale 35 puntos porcentuales de
+punta a punta —un factor 1,42—. La incertidumbre real no está en el suelo: está en el rango que la propia
+formulación deja abierto.
+
+**Agrandar el pilote empeora el arrastre, pero sigue conviniendo.** $Q_n$ crece con el perímetro,
+o sea linealmente con $D$: pasar de 0,60 a 0,80 m lo sube un 33 %. Pero el área de punta crece con
+$D^2$, un 78 %. La palanca sigue apuntando en la dirección correcta —sólo que menos de
+lo que uno supondría si olvidara este término.
+
+**Y hay una salida que no es un número.** El betún en la zona de arrastre es la única decisión de
+la tabla que cambia el problema en vez de moverlo: reduce el roce un 90 % y lleva el cabezal de 9
+pilotes a 6 (uso 0,72). Das la menciona en dos líneas al cerrar §18.15, citando los ensayos de campo de Baligh
+et al. (1978). No es una obviedad de proyecto: es una partida de especificación, y hay que
+decidirla antes de que los pilotes estén hechos.
+
+---
+
+## Lo que este ejemplo agrega al bloque
+
+Los cuatro casos del bloque 5 verificaron cuatro fundaciones con la misma norma, y cada uno
+terminó en un requisito distinto:
+
+1. [La zapata del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) — rígida y no anclada: **80 %
+   de área apoyada** y deslizamiento.
+2. [El dado de la torre](/geotecnia/ejemplo-fundacion-anclada-nch2369) — rígida y anclada: se cae
+   el área apoyada, entra el **sismo amplificado por $0{,}7R_1$**.
+3. [La losa de la sala eléctrica](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369) — flexible:
+   entra la **verificación de levantamientos tolerables**.
+4. Este cabezal — profundo: entra un término que **cambia de signo** y se verifica dos veces.
+
+Hay un hilo entre los cuatro, y es el mismo que el bloque abrió en su primera nota: **en la
+industria chilena la fundación casi nunca la dimensiona $q_{adm}$**. La dimensionan las cláusulas
+que la norma sísmica agrega alrededor, y que no aparecen en ningún libro de mecánica de suelos —
+el área apoyada, el $0{,}7R_1$, el criterio de rigidez, la fricción negativa contada dos veces.
+
+Y este último caso agrega algo propio. Los tres anteriores fallaban o pasaban por **cómo se
+verifica** algo que estaba a la vista. Este falla por un término que **no aparece en el modelo**:
+ni en las reacciones del cabezal, ni en las combinaciones de carga, ni en el análisis con
+resortes que la cláusula siguiente manda hacer. La única forma de que aparezca es que alguien
+haya leído el informe de mecánica de suelos, haya visto los 34 cm, y se haya acordado.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script: el asentamiento por consolidación con los dos tramos
+del OCR, la profundidad neutra de la Ec. (18.56), el arrastre de la Ec. (18.58), las tres
+combinaciones ASD sobre cada disposición de cabezal (4, 6 y 9 pilotes, con su propio peso y su
+propio $\sum x_i^2$), la verificación de la sección y los dos barridos de sensibilidad.
+
+Dos precisiones de integración. Das escribe el caso de punta como $L_1 = L - H_f$, que acá daría
+18 m; se integró sobre los **17 m de arcilla**, porque el último metro del pilote está en la grava
+y ahí no hay nada que consolide. El caso flotante, en cambio, usa la Ec. (18.56) **tal como Das la
+escribe**, con $L - H_f = 18$ m; hacerlo con 17 m coherentes daría $L_1 = 10{,}58$ m y
+$Q_n = 30{,}71$ tonf, con lo que el contraste entre flotante y de punta pasaría de 83 % a 100 %.
+
+Cuatro verificaciones acompañan el cálculo: **(1)** el ejemplo 18.12 de Das se reproduce con el
+mismo código, dando $Q_n = 140{,}68$ kN contra los $140{,}75$ del libro (**−0,05 %**); **(2)** se
+comprueba que la Ec. (18.56) equivale a igualar el arrastre con la fricción positiva de abajo,
+algebraicamente y numéricamente (33,52 contra 33,52 tonf, diferencia nula); **(3)** el arrastre
+por tensiones efectivas se contrasta contra el método $\alpha$ (+9,5 %); y **(4)** se verifica que
+la cota de grupo —peso del bloque de suelo más corte en su perímetro, $1.284{,}5$ tonf— no
+gobierna frente a la suma individual de los 9 pilotes, $552{,}9$ tonf.
+</Note>

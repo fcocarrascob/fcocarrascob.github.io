@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="450" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La instalación no es un detalle constructivo: es un parámetro de cálculo</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Mismo pilote de 0,40 × 15 m, mismo suelo. Lo único que cambia es cómo se puso ahí.</text>
+
+  <!-- ===== IZQUIERDA: friccion ===== -->
+  <text x="240" y="82" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Resistencia por fuste</text>
+
+  <line x1="120" y1="250" x2="400" y2="250" stroke="#8a857c" stroke-width="1.4"/>
+
+  <rect x="150" y="163" width="60" height="87" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="180" y="155" font-size="14" fill="#1a63a8" text-anchor="middle" font-weight="bold">316</text>
+  <text x="180" y="268" font-size="11.5" fill="#555" text-anchor="middle">Perforado</text>
+  <text x="180" y="284" font-size="10.5" fill="#888" text-anchor="middle">K = K_o</text>
+
+  <rect x="240" y="129" width="60" height="121" fill="#b35c0e" fill-opacity="0.7"/>
+  <text x="270" y="121" font-size="14" fill="#b35c0e" text-anchor="middle" font-weight="bold">442</text>
+  <text x="270" y="268" font-size="11.5" fill="#555" text-anchor="middle">Hincado, bajo</text>
+  <text x="270" y="284" font-size="10.5" fill="#888" text-anchor="middle">K = 1,4 K_o</text>
+  <text x="270" y="152" font-size="11.5" fill="#ffffff" text-anchor="middle" font-weight="bold">+40 %</text>
+
+  <rect x="330" y="94" width="60" height="156" fill="#b02a1a" fill-opacity="0.75"/>
+  <text x="360" y="86" font-size="14" fill="#b02a1a" text-anchor="middle" font-weight="bold">568</text>
+  <text x="360" y="268" font-size="11.5" fill="#555" text-anchor="middle">Hincado, alto</text>
+  <text x="360" y="284" font-size="10.5" fill="#888" text-anchor="middle">K = 1,8 K_o</text>
+  <text x="360" y="117" font-size="11.5" fill="#ffffff" text-anchor="middle" font-weight="bold">+80 %</text>
+
+  <text x="240" y="312" font-size="12" fill="#555" text-anchor="middle">Q_s en kN. El pilote que desplaza suelo</text>
+  <text x="240" y="328" font-size="12" fill="#555" text-anchor="middle">al hincarse comprime el terreno contra sí mismo.</text>
+
+  <!-- ===== DERECHA: grupos ===== -->
+  <line x1="470" y1="66" x2="470" y2="344" stroke="#e5e2dc" stroke-width="1.5"/>
+  <text x="700" y="82" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Y en grupos sobre arena (§18.16)</text>
+
+  <!-- hincado -->
+  <text x="520" y="116" font-size="12.5" fill="#1c7c3c" font-weight="bold">Hincados con d ≥ 3D</text>
+  <g fill="#1c7c3c" fill-opacity="0.75">
+    <circle cx="540" cy="146" r="9"/><circle cx="570" cy="146" r="9"/><circle cx="600" cy="146" r="9"/>
+    <circle cx="540" cy="176" r="9"/><circle cx="570" cy="176" r="9"/><circle cx="600" cy="176" r="9"/>
+    <circle cx="540" cy="206" r="9"/><circle cx="570" cy="206" r="9"/><circle cx="600" cy="206" r="9"/>
+  </g>
+  <text x="640" y="180" font-size="13" fill="#1c7c3c" font-weight="bold">η = 1,00</text>
+  <text x="640" y="198" font-size="11.5" fill="#666">9 pilotes rinden 9</text>
+
+  <!-- perforado -->
+  <text x="520" y="248" font-size="12.5" fill="#b02a1a" font-weight="bold">Perforados, mismo espaciamiento</text>
+  <g fill="#b02a1a" fill-opacity="0.75">
+    <circle cx="540" cy="278" r="9"/><circle cx="570" cy="278" r="9"/><circle cx="600" cy="278" r="9"/>
+    <circle cx="540" cy="308" r="9"/><circle cx="570" cy="308" r="9"/><circle cx="600" cy="308" r="9"/>
+  </g>
+  <g fill="#b02a1a" fill-opacity="0.2" stroke="#b02a1a" stroke-width="1" stroke-dasharray="3 2">
+    <circle cx="540" cy="338" r="9"/><circle cx="570" cy="338" r="9"/><circle cx="600" cy="338" r="9"/>
+  </g>
+  <text x="640" y="300" font-size="13" fill="#b02a1a" font-weight="bold">η = 2/3 a 3/4</text>
+  <text x="640" y="318" font-size="11.5" fill="#666">9 pilotes rinden 6 a 6,75</text>
+  <text x="640" y="336" font-size="11.5" fill="#b02a1a" font-weight="bold">harían falta 12 a 14</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="362" width="820" height="70" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="386" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">Entre un pilote perforado y uno hincado de alto desplazamiento hay un 80 % de fricción de diferencia.</text>
+  <text x="470" y="408" font-size="12.5" text-anchor="middle" fill="#555">Y en grupo, la penalización se acumula: para igualar a nueve pilotes hincados harían falta <tspan font-weight="bold">hasta catorce perforados</tspan>.</text>
+  <text x="470" y="426" font-size="12" text-anchor="middle" fill="#888">Si el método constructivo cambia en obra respecto del proyectado, el cálculo hay que rehacerlo.</text>
+</svg>

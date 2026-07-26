@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Sensibilidad de la tracción del anclaje</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Caso base: T = 32,11 tonf bajo la combinación amplificada. Escala única de 2,2 px por punto porcentual.</text>
+
+  <!-- eje del caso base -->
+  <line x1="620" y1="76" x2="620" y2="288" stroke="#8a857c" stroke-width="1.6"/>
+  <text x="620" y="306" font-size="11" fill="#666" text-anchor="middle">caso base · 32,1 tonf</text>
+
+  <!-- guias -->
+  <g stroke="#e5e2dc" stroke-width="1">
+    <line x1="400" y1="76" x2="400" y2="288"/>
+    <line x1="510" y1="76" x2="510" y2="288"/>
+    <line x1="730" y1="76" x2="730" y2="288"/>
+  </g>
+  <g font-size="10" fill="#aaa" text-anchor="middle">
+    <text x="400" y="306">−100 %</text>
+    <text x="510" y="306">−50 %</text>
+    <text x="730" y="306">+50 %</text>
+  </g>
+
+  <!-- fila 1: 0,7R1 = 1,00 -->
+  <text x="392" y="101" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">R₁ mínimo: 0,7R₁ = 1,00 en vez de 2,10</text>
+  <rect x="415.4" y="85" width="204.6" height="22" fill="#b02a1a" fill-opacity="0.85"/>
+  <text x="425" y="101" font-size="12" fill="#ffffff" font-weight="bold">T = 2,4 tonf</text>
+  <text x="612" y="101" font-size="12.5" fill="#ffffff" text-anchor="end" font-weight="bold">−93 %</text>
+
+  <!-- fila 2: R1 = 2 -->
+  <text x="392" y="135" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">R₁ = 2 (0,7R₁ = 1,40)</text>
+  <rect x="470.4" y="119" width="149.6" height="22" fill="#b02a1a" fill-opacity="0.7"/>
+  <text x="480" y="135" font-size="12" fill="#ffffff" font-weight="bold">T = 10,4 tonf</text>
+  <text x="612" y="135" font-size="12.5" fill="#ffffff" text-anchor="end" font-weight="bold">−68 %</text>
+
+  <!-- fila 3: sin relleno -->
+  <text x="392" y="169" font-size="12" fill="#555" text-anchor="end">No contar el relleno sobre el dado</text>
+  <rect x="620" y="154" width="72.6" height="20" fill="#b35c0e" fill-opacity="0.75"/>
+  <text x="629" y="169" font-size="11.5" fill="#ffffff" font-weight="bold">42,7</text>
+  <text x="700" y="169" font-size="12" fill="#b35c0e" font-weight="bold">+33 %</text>
+
+  <!-- fila 4: anclajes a 0,80 -->
+  <text x="392" y="203" font-size="12" fill="#555" text-anchor="end">Anclajes a 0,80 m del borde</text>
+  <rect x="620" y="188" width="22.7" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="651" y="203" font-size="12" fill="#1a63a8" font-weight="bold">+10 % · 35,4 tonf</text>
+
+  <!-- fila 5: kv mitad / L 3 m -->
+  <text x="392" y="237" font-size="12" fill="#555" text-anchor="end">k_v a la mitad  ·  o  ·  L libre de 3 m</text>
+  <rect x="620" y="222" width="21.1" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="649" y="237" font-size="12" fill="#1a63a8" font-weight="bold">+10 % · 35,2 tonf (idénticos)</text>
+
+  <!-- fila 6: kv doble / L 12 m -->
+  <text x="392" y="271" font-size="12" fill="#555" text-anchor="end">k_v al doble  ·  o  ·  L libre de 12 m</text>
+  <rect x="603.7" y="256" width="16.3" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="596" y="271" font-size="12" fill="#1a63a8" text-anchor="end" font-weight="bold">−7 % · 29,7 tonf (idénticos)</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="328" width="820" height="94" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="354" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">El parámetro dominante no es del suelo ni de la fundación: es el R₁ del análisis sísmico.</text>
+  <text x="470" y="378" font-size="12.5" text-anchor="middle" fill="#555">Decide entre 2,4 y 32,1 tonf de tracción — un factor 13 — mientras toda la geometría y las rigideces suman menos de un 35 %.</text>
+  <text x="470" y="402" font-size="12.5" text-anchor="middle" fill="#555">Y las rigideces solo importan por su razón: ablandar la roca a la mitad y acortar el anclaje a 3 m dan el mismo resultado.</text>
+</svg>

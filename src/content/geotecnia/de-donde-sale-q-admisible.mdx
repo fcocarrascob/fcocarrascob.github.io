@@ -1,0 +1,295 @@
+---
+title: "De dónde sale q_adm = 2,0 kgf/cm²"
+description: "El informe de mecánica de suelos entrega una presión admisible y el cálculo estructural la copia sin preguntar. Esta nota abre esa caja negra: los dos criterios que compiten por fijar q_adm, por qué el factor de seguridad es 3 y no 1,5, y un retroanálisis sobre una zapata ya publicada acá que muestra que el mismo número corresponde a suelos distintos según el método que se haya usado."
+pubDate: 2026-07-25
+tags: ["geotecnia", "fundaciones", "capacidad de soporte", "asentamiento", "informe de suelos", "das"]
+subsection: "fundamentos"
+order: 1
+chapter: "Fundamentos"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 1 · bloque 1, la zapata superficial. Es el punto de partida; el [recorrido completo está acá](/geotecnia).*
+
+En el [ejemplo de zapata aislada](/hormigon/ejemplo-zapata-aislada) hay una fila de la tabla
+de datos que nunca justifiqué:
+
+| Dato | Valor |
+|---|---|
+| Presión admisible neta del suelo | $q_a = 2{,}0$ kgf/cm² $= 20$ tonf/m² |
+
+Y en la [nota del Cap. 13 de ACI 318-25](/hormigon/aci318-25-cap13-fundaciones) lo dije con
+todas sus letras: *el diseño geotécnico —capacidad de soporte, asentamientos, la presión
+admisible— queda fuera de la norma; ACI 318 diseña el hormigón y recibe la geotecnia como
+dato.*
+
+Eso es correcto como reparto de responsabilidades, y es exactamente el problema. El
+estructural recibe un número, dimensiona con él, firma, y en la enorme mayoría de los casos
+**no sabe qué hay detrás**. Esta sección arranca ahí.
+
+<Note type="warning" title="Alcance y responsabilidad">
+Estas notas explican **cómo se construye** el número que aparece en un informe de mecánica de
+suelos, para poder leerlo con criterio y saber qué preguntar. **No reemplazan al informe ni al
+geotecnista que lo firma.** La diferencia con las secciones de hormigón y acero es de fondo:
+ahí el estructural es el firmante; acá, no.
+</Note>
+
+---
+
+## 1. La regla del juego cambia
+
+Las notas de ACI y AISC de este blog cuelgan de una cláusula: cada afirmación tiene un
+número de sección detrás. En geotecnia **no existe ese ancla**. No hay un código que entregue
+$q_{adm}$; hay teoría, correlaciones con dispersión, y varios métodos legítimos que dan
+respuestas distintas para el mismo suelo.
+
+Eso obliga a cambiar cuatro hábitos:
+
+| En ACI / AISC | En geotecnia |
+|---|---|
+| La cita es una **cláusula** | La cita es un **método, con autor y año** (Terzaghi 1943 ≠ Vesić 1973) |
+| Hay una respuesta correcta | Hay **varias respuestas legítimas**: hay que decir cuál se usó |
+| Todo es LRFD: $\phi R_n \geq R_u$ | Es **ASD**: $FS \geq 3$ sobre la falla, chocando con la superestructura mayorada |
+| El error está en aplicar mal la fórmula | El error está en los **parámetros de entrada**: $\phi'$, $c'$, $E_s$ |
+
+La cuarta es la que gobierna todo lo demás, y es la razón por la que cada ejemplo de esta
+sección va a cerrar con un análisis de sensibilidad en vez de un número solo.
+
+---
+
+## 2. $q_{adm}$ no es una propiedad del suelo
+
+Esta es la idea que hay que llevarse de la nota. La presión admisible **no se mide**: se
+calcula, y el resultado depende de decisiones que el informe no siempre declara.
+
+Un suelo tiene $\phi'$, $c'$, $\gamma$, $E_s$. Esas sí son propiedades (con su
+incertidumbre). $q_{adm}$, en cambio, es el resultado de una cadena:
+
+<Equation label="la cadena">
+$$
+\text{propiedades} \;\rightarrow\; \text{método de cálculo} \;\rightarrow\; \text{criterio que gobierna} \;\rightarrow\; FS \;\rightarrow\; q_{adm}
+$$
+</Equation>
+
+Cambiar cualquier eslabón cambia el número. Y hay **dos criterios distintos compitiendo** por
+fijarlo:
+
+1. **Falla por corte del suelo** — la zapata se hunde de golpe porque el terreno cede.
+2. **Asentamiento excesivo** — el suelo nunca falla, pero la estructura baja tanto que se
+   daña o deja de servir.
+
+<Equation label="la regla">
+$$
+q_{adm} = \min \big( q_{adm}^{\,\text{corte}} \;,\; q_{adm}^{\,\text{asentamiento}} \big)
+$$
+</Equation>
+
+**Un $q_{adm}$ sin decir cuál de los dos lo limita es un número incompleto**, porque las dos
+respuestas se comportan de forma opuesta: la capacidad al corte *crece* con el ancho de la
+zapata, y el asentamiento *también* crece con el ancho. Ensanchar resuelve un problema y
+agrava el otro.
+
+<Figure
+  src="/geotecnia-q-admisible/dos-criterios.svg"
+  alt="Comparación en dos paneles. Panel izquierdo, Criterio 1 — falla por corte del suelo: una zapata cargada con P sobre el terreno, con el mecanismo de falla de Terzaghi dibujado en rojo (cuña triangular bajo la zapata y dos superficies curvas punteadas que salen hacia los lados y afloran en la superficie, con flechas rojas indicando que el terreno levanta a ambos lados). Debajo, la ecuación q_u = 1,3c'N_c + qN_q + 0,4γBN_γ y la regla q_adm = q_u/FS con FS ≥ 3; se caracteriza como algo que ocurre o no ocurre, y como SÚBITO, sin aviso. Panel derecho, Criterio 2 — asentamiento excesivo: la misma zapata pero desplazada hacia abajo, con la posición original marcada en línea punteada, el terreno hundido en forma de plato alrededor y una flecha azul acotando el asentamiento S. Debajo, S_total = S_e + S_p + S_s (elástico más consolidación más secundaria); se caracteriza como algo que siempre ocurre —la pregunta es cuánto y cuándo— y como PROGRESIVO, puede tardar años. Al pie, una caja resume que q_adm es el mínimo de los dos criterios, y que la asimetría clave es que ensanchar la zapata aumenta la capacidad al corte pero también aumenta el asentamiento."
+  caption="Los dos criterios no compiten en igualdad de condiciones: uno es un evento que ocurre o no, el otro es un proceso que siempre ocurre. Y responden de forma opuesta a la misma decisión de diseño —ensanchar la zapata—, que es exactamente por qué hay que saber cuál de los dos fijó el número."
+/>
+
+---
+
+## 3. Criterio 1 — la falla por corte
+
+Terzaghi (1943) la resolvió con una ecuación de tres términos que sigue siendo el esqueleto
+de todo lo posterior. Para una zapata cuadrada:
+
+<Equation label="Terzaghi, zapata cuadrada">
+$$
+q_u = 1{,}3\,c'N_c \;+\; q\,N_q \;+\; 0{,}4\,\gamma B\,N_\gamma
+$$
+</Equation>
+
+donde $q = \gamma D_f$ es la sobrecarga al nivel del sello, y $N_c$, $N_q$, $N_\gamma$ son
+factores adimensionales que **dependen únicamente de $\phi'$**.
+
+Leer los tres términos por separado explica casi todo el comportamiento de una fundación:
+
+| Término | Qué representa | Cómo se comporta |
+|---|---|---|
+| $c'N_c$ | La cohesión | Único término vivo en arcilla saturada no drenada ($\phi = 0$: $N_c = 5{,}70$ en Terzaghi, Tabla 16.1; $2+\pi = 5{,}14$ en la ecuación general) |
+| $q\,N_q$ | La sobrecarga del suelo por encima del sello | Crece con $D_f$: **enterrar la zapata es la forma más barata de ganar capacidad** |
+| $0{,}4\,\gamma B\,N_\gamma$ | El peso propio del suelo bajo la zapata | Crece con $B$, y es el término que castiga la napa freática |
+
+<Figure
+  src="/geotecnia-q-admisible/tres-terminos.svg"
+  alt="A la izquierda, sección de una zapata enterrada: la superficie del terreno arriba, la franja de suelo sobre el sello sombreada en ocre y acotada como D_f —de la que sale la sobrecarga q = γD_f, dibujada con flechas ocres apoyando a ambos lados del sello—, la zapata en gris con su carga vertical, el ancho B acotado abajo, y el suelo bajo la zapata rayado en azul como el que aporta el peso propio. A la derecha, los tres términos como filas con su color: c'N_c en verde (COHESIÓN, único término vivo en arcilla saturada no drenada, con N_c = 5,70 en Terzaghi y 5,14 en la ecuación general, vale 0 kPa en arena limpia); qN_q en ocre (SOBRECARGA, crece con D_f, 414 kPa, 70 %); y 0,4γBN_γ en azul (PESO PROPIO, crece con B y es el único que castiga la napa, 175 kPa, 30 %). Abajo, una barra apilada muestra el reparto 70/30, y una caja advierte que si la napa sube hasta el sello γ pasa a γ'≈γ/2 pero solo castiga el término azul, de modo que q_adm cae 15 % y no 33 %."
+  caption="Los tres términos sobre el caso real de esta nota. El reparto 70/30 explica por qué la regla de bolsillo «la napa te quita un tercio» no aplica acá: con D_f = 1,5 m la sobrecarga domina, y el agua solo castiga el término del peso propio."
+/>
+
+---
+
+## 4. Criterio 2 — el asentamiento
+
+Es el que gobierna más seguido de lo que uno esperaría, y tiene tres componentes que se
+**suman**:
+
+<Equation label="asentamiento total">
+$$
+S_{\text{total}} = \underbrace{S_e}_{\text{elástico}} + \underbrace{S_p}_{\text{consolidación primaria}} + \underbrace{S_s}_{\text{secundaria}}
+$$
+</Equation>
+
+- **$S_e$, elástico** — inmediato. Ocurre al cargar. Es el único que existe en arena.
+- **$S_p$, consolidación primaria** — el agua sale lentamente de la arcilla y la carga se
+  transfiere del agua al esqueleto de suelo. **Dependiente del tiempo**, y en arcilla blanda
+  puede ser varias veces mayor que el elástico.
+- **$S_s$, secundaria** — fluencia posterior. Despreciable en arcilla dura; dominante en
+  turba y suelo orgánico.
+
+La diferencia con el criterio de corte es de naturaleza: la falla por corte **es o no es**;
+el asentamiento **siempre ocurre**, y la pregunta es cuánto y en cuánto tiempo.
+
+---
+
+## 5. Retroanálisis: ¿qué suelo hay detrás de 2,0 kgf/cm²?
+
+Acá está la parte entretenida. Tomo la zapata de aquel post —cuadrada, $B = L = 2{,}20$ m— y
+pregunto al revés: **¿qué habría que suponer para que salga 2,0 kgf/cm²?**
+
+Supuestos declarados: arena limpia ($c' = 0$), $\gamma = 18$ kN/m³, sin napa, y una
+profundidad de desplante $D_f = 1{,}5$ m. Ese último dato **no aparecía en el post original**
+—y no hacía falta, precisamente porque $q_a$ venía dado—, lo cual ya es sintomático.
+
+Con $FS = 3$, la capacidad última necesaria es $q_u = 3 \times 196 = 588$ kPa. Resolviendo
+para $\phi'$:
+
+| Método | $\phi'$ necesario |
+|---|---|
+| Terzaghi, ecuación de arriba | **26,7°** |
+| Ecuación general (Meyerhof, 1963), con factores de forma y profundidad | **24,3°** |
+
+**Dos grados y medio de diferencia en el mismo suelo, solo por el método.** Y visto al
+revés, que es más elocuente todavía — fijando $\phi' = 26{,}7°$ y preguntando qué entrega
+cada método:
+
+| Método | $q_{adm}$ |
+|---|---|
+| Terzaghi (1943) | 196 kPa = **2,00 kgf/cm²** |
+| Ecuación general (1963) | 263 kPa = **2,68 kgf/cm²** |
+
+**Un 34 % de diferencia.** Mismo suelo, misma zapata, misma profundidad. La diferencia son
+los factores de forma y profundidad que Terzaghi deja sobre la mesa y la ecuación general
+recupera.
+
+<Figure
+  src="/geotecnia-q-admisible/retroanalisis.svg"
+  alt="Dos gráficos de barras comparando los dos métodos sobre la misma zapata de 2,20 × 2,20 m con D_f = 1,5 m, arena c' = 0, γ = 18 kN/m³ y FS = 3. Gráfico izquierdo: para llegar a q_adm = 2,0 kgf/cm², el método de Terzaghi (1943) exige suponer φ' = 26,7° (barra roja) mientras que la ecuación general de Meyerhof (1963) exige solo 24,3° (barra azul), con la diferencia de 2,4° acotada entre ambas. Gráfico derecho: fijando φ' = 26,7°, Terzaghi entrega q_adm = 2,00 kgf/cm² (196 kPa, barra roja) y la ecuación general entrega 2,68 kgf/cm² (263 kPa, barra azul), un 34 % más. Al pie, una caja advierte que comparar el q_adm de dos informes sin saber qué ecuación usó cada uno no significa nada, porque un 2,7 kgf/cm² calculado con la ecuación general y un 2,0 con Terzaghi pueden ser exactamente el mismo terreno."
+  caption="El retroanálisis leído en las dos direcciones. A la izquierda, qué suelo hay que suponer para llegar al número publicado; a la derecha, qué número entrega cada método sobre el mismo suelo. Las dos lecturas dicen lo mismo: q_adm es el resultado de una convención de cálculo, no una propiedad del terreno."
+/>
+
+Y hay un tercer dato escondido en esas dos columnas, que conviene mirar junto: entre 24,3° y
+26,7° hay un **9 %** de diferencia en $\phi'$, y ese 9 % mueve $q_{adm}$ un **34 %**. Ésa es,
+en un solo número, la razón de ser de esta sección: **la sensibilidad de $q_{adm}$ a los
+parámetros de entrada es brutal, y ninguno de esos parámetros se mide directamente.** $\phi'$
+sale de correlaciones sobre un puñado de golpes de SPT. Un par de grados de más o de menos
+—perfectamente dentro del ruido de cualquier correlación— y la capacidad cambia un tercio.
+
+Por eso el factor de seguridad es 3.
+
+<Note type="tip" title="La consecuencia práctica">
+Comparar la $q_{adm}$ de dos informes sin saber qué ecuación usó cada uno **no significa
+nada**. Un 2,7 kgf/cm² calculado con la ecuación general y un 2,0 calculado con Terzaghi
+pueden ser exactamente el mismo terreno.
+</Note>
+
+### Y si sube la napa
+
+Con la napa subiendo hasta el nivel del sello, el peso unitario del tercer término pasa de
+$\gamma$ a $\gamma' = \gamma_{sat} - \gamma_w = 19 - 9{,}81 = 9{,}19$ kN/m³: **el 51 %**.
+
+En esta zapata, la $q_{adm}$ cae de 196 a **168 kPa: un 14,5 %**. Menos de lo que uno
+esperaría al ver que un peso unitario se parte por la mitad, y la razón es instructiva —
+con $D_f = 1{,}5$ m el reparto de la capacidad es:
+
+| Término | Aporte |
+|---|---|
+| $q\,N_q$ (sobrecarga) | 414 kPa — **70 %** |
+| $0{,}4\,\gamma B\,N_\gamma$ (peso propio) | 175 kPa — **30 %** |
+
+La napa solo castiga el segundo. En zapatas anchas y poco enterradas, donde ese término
+domina, la pérdida sí se acerca a un tercio. **El efecto de la napa no es una constante: hay
+que calcularlo caso a caso.**
+
+---
+
+## 6. Por qué el factor de seguridad es 3
+
+Un ingeniero estructural acostumbrado a $\phi = 0{,}90$ en flexión —un factor de seguridad
+efectivo del orden de 1,1 a 1,5— ve un $FS = 3$ y piensa que la geotecnia es
+exageradamente conservadora. No lo es: **está cubriendo otra cosa.**
+
+En una viga de hormigón, $f'_c$ y $f_y$ se conocen con buena precisión: hay ensayos de
+probetas, certificados de acero, control en obra. La incertidumbre está acotada y el $\phi$
+la cubre.
+
+En una fundación, la ecuación es igual de confiable, pero **los datos de entrada vienen de
+un puñado de sondajes y de correlaciones empíricas**. Ese 3 no protege contra un error de
+fórmula: protege contra no saber bien cuánto vale $\phi'$.
+
+Y hay un segundo detalle que confunde: el $q_{adm}$ ya trae su propio factor de seguridad
+incorporado, por eso **el área en planta se dimensiona con cargas de servicio, sin mayorar**.
+Mayorar contra $q_{adm}$ sería castigar dos veces. Esa es la doble contabilidad que ya
+aparecía en la nota del Cap. 13.
+
+---
+
+## 7. Las preguntas que hay que hacerle al informe
+
+Con lo anterior, la lista de lo que un $q_{adm}$ debería declarar —y muchas veces no
+declara—:
+
+1. **¿Bruta o neta?** La neta descuenta la presión que ya existía antes de excavar.
+2. **¿Qué criterio la limita: corte o asentamiento?** Son cálculos independientes, y la
+   respuesta cambia por completo qué pasa si se ensancha la zapata.
+3. **¿Con qué método?** Terzaghi, la ecuación general, Vesić. Vimos que valen un 34 %.
+4. **¿Para qué geometría?** $q_{adm}$ depende de $B$ y de $D_f$. **No es un valor del sitio,
+   es un valor de *esa* fundación.** Reutilizarlo en una zapata del doble de ancho es un
+   error silencioso.
+5. **¿Con qué cota de napa?** Y qué pasa si sube.
+6. **Si la limita el asentamiento, ¿cuánto asentamiento se aceptó?** Los métodos clásicos se
+   calibran contra 25 mm en zapatas y 50 mm en losas. Si tu estructura tolera menos, el
+   número no te sirve.
+
+---
+
+## Lo que viene
+
+Esta nota planteó el mapa. Las siguientes recorren cada rama con números:
+
+- **Capacidad de soporte** — [los métodos que compiten y por qué
+  difieren](/geotecnia/terzaghi-vs-ecuacion-general), y [el nivel freático caso por
+  caso](/geotecnia/nivel-freatico-capacidad).
+- **Asentamientos** — por qué [$E_s$ es el parámetro más
+  incierto](/geotecnia/modulo-es-parametro-dominante) de la geotecnia (rango de ×5 en arcilla
+  blanda), [el tiempo que tarda todo en ocurrir](/geotecnia/cuanto-y-cuando-consolidacion) y
+  [la historia de tensiones](/geotecnia/ocr-historia-de-tensiones).
+- **El ejemplo que los cobra** — [la zapata completa](/geotecnia/ejemplo-zapata-los-dos-criterios),
+  verificada por los dos criterios y con análisis de sensibilidad.
+
+Eso cierra el primer bloque. Después la serie vuelve atrás para preguntar
+[de dónde salen esos parámetros](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos), gira el
+suelo de costado —[empujes](/geotecnia/tres-coeficientes-del-mismo-suelo) y
+[muros](/geotecnia/muro-tres-verificaciones)—, baja a:
+[pilotes](/geotecnia/pilotes-la-punta-casi-no-trabaja), cuando la zapata ya no alcanza.
+
+<Note type="info" title="Fuente y trazabilidad">
+Los métodos, tablas y ecuaciones de esta serie salen de **Braja M. Das, *Fundamentos de
+Ingeniería Geotécnica*, 4ª edición (Cengage, 2015)** — traducción de *Fundamentals of
+Geotechnical Engineering*, 4th ed. (2013) —, capítulos 9, 16 y 17. Los factores de capacidad
+de carga y los ejemplos numéricos fueron verificados contra las formas cerradas del propio
+libro antes de publicarse. La conversión usada en toda la serie es
+$1$ kgf/cm² $= 98{,}07$ kPa $\approx 10$ tonf/m².
+</Note>

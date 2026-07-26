@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 440" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="rm-fw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+    <marker id="rm-bw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="rm-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="780" height="440" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">La conexión residual: un atajo sin ruido para el gradiente</text>
+
+  <!-- ── TOP: without residual ── -->
+  <rect x="20" y="50" width="740" height="132" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="40" y="74" font-size="12" font-weight="700" fill="#991b1b">Sin residual — el teléfono descompuesto</text>
+  <text x="40" y="92" font-size="10.5" fill="#374151" font-family="'JetBrains Mono', ui-monospace, monospace">y = f4(f3(f2(f1(x))))</text>
+
+  <g font-size="11">
+    <rect x="180" y="104" width="66" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+    <text x="213" y="124" text-anchor="middle" fill="#374151">f1</text>
+    <line x1="246" y1="119" x2="268" y2="119" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+    <rect x="270" y="104" width="66" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+    <text x="303" y="124" text-anchor="middle" fill="#374151">f2</text>
+    <line x1="336" y1="119" x2="358" y2="119" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+    <rect x="360" y="104" width="66" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+    <text x="393" y="124" text-anchor="middle" fill="#374151">f3</text>
+    <line x1="426" y1="119" x2="448" y2="119" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+    <rect x="450" y="104" width="66" height="30" rx="5" fill="#ffffff" stroke="#d1d5db"/>
+    <text x="483" y="124" text-anchor="middle" fill="#374151">f4</text>
+    <line x1="516" y1="119" x2="538" y2="119" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+    <rect x="540" y="104" width="66" height="30" rx="5" fill="#f3f4f6" stroke="#d1d5db"/>
+    <text x="573" y="124" text-anchor="middle" fill="#374151">loss</text>
+  </g>
+
+  <!-- backward, decaying -->
+  <line x1="540" y1="150" x2="518" y2="150" stroke="#dc2626" stroke-width="3" marker-end="url(#rm-bw)"/>
+  <line x1="450" y1="150" x2="428" y2="150" stroke="#dc2626" stroke-width="2.2" opacity="0.8" marker-end="url(#rm-bw)"/>
+  <line x1="360" y1="150" x2="338" y2="150" stroke="#dc2626" stroke-width="1.5" opacity="0.55" marker-end="url(#rm-bw)"/>
+  <line x1="270" y1="150" x2="248" y2="150" stroke="#dc2626" stroke-width="0.9" opacity="0.3" marker-end="url(#rm-bw)"/>
+  <text x="612" y="154" font-size="10.5" fill="#991b1b">cada función agrega ruido…</text>
+  <text x="172" y="154" text-anchor="end" font-size="10.5" font-weight="700" fill="#991b1b">el gradiente se desvaneció</text>
+  <text x="40" y="174" font-size="10.5" fill="#991b1b">Para ajustar f1 hay que hacer percolar el error a través de f2, f3 y f4. Si la cadena es muy profunda, <tspan font-weight="700">el ruido ahoga la señal</tspan>.</text>
+
+  <!-- ── MIDDLE: with residual ── -->
+  <rect x="20" y="194" width="740" height="128" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="40" y="216" font-size="12" font-weight="700" fill="#1e3a8a">Con residual — se suma la entrada a la salida</text>
+
+  <!-- residual arc, above the row -->
+  <path d="M 185 251 C 185 224, 450 224, 450 250" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#rm-ok)"/>
+  <text x="317" y="245" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2563eb">residual: una copia intacta de x</text>
+
+  <rect x="150" y="251" width="70" height="34" rx="5" fill="#ffffff" stroke="#60a5fa"/>
+  <text x="185" y="273" text-anchor="middle" font-size="11" fill="#1e3a8a">x</text>
+
+  <line x1="220" y1="268" x2="250" y2="268" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+  <rect x="252" y="251" width="150" height="34" rx="5" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="327" y="267" text-anchor="middle" font-size="11" fill="#374151">block(x)</text>
+  <text x="327" y="280" text-anchor="middle" font-size="9" fill="#6b7280">puede ser destructivo, y está bien</text>
+
+  <line x1="402" y1="268" x2="432" y2="268" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+  <circle cx="450" cy="268" r="16" fill="#2563eb"/>
+  <text x="450" y="274" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">+</text>
+
+  <line x1="466" y1="268" x2="496" y2="268" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#rm-fw)"/>
+  <rect x="498" y="251" width="200" height="34" rx="5" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="598" y="273" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">block(x) + x</text>
+
+  <text x="40" y="310" font-size="10.5" fill="#1e3a8a">La salida <tspan font-weight="700">siempre preserva la información original</tspan>, así que el gradiente tiene un camino de vuelta sin degradar.</text>
+
+  <!-- ── BOTTOM: the shape gotcha ── -->
+  <rect x="20" y="334" width="740" height="94" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="40" y="356" font-size="12" font-weight="700" fill="#374151">El detalle que hay que resolver: las shapes tienen que calzar para poder sumar</text>
+
+  <rect x="40" y="366" width="345" height="50" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="56" y="384" font-size="10.5" fill="#6b7280">Si el bloque <tspan font-weight="700" fill="#374151">cambia el nº de filtros</tspan>:</text>
+  <text x="56" y="403" font-size="10.5" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#2563eb">residual = Conv2D(64, 1)(residual)</text>
+
+  <rect x="395" y="366" width="345" height="50" rx="6" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="411" y="384" font-size="10.5" fill="#6b7280">Si el bloque <tspan font-weight="700" fill="#374151">incluye max pooling</tspan>:</text>
+  <text x="411" y="403" font-size="10.5" font-family="'JetBrains Mono', ui-monospace, monospace" fill="#2563eb">residual = Conv2D(64, 1, strides=2)(residual)</text>
+</svg>

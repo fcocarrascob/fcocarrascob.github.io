@@ -1,0 +1,277 @@
+---
+title: "Invertir el gradiente para ver lo que la red ve"
+description: "El capítulo 10 de Chollet desmonta el lugar común de que las redes son cajas negras: para convnets, dice, es directamente falso. De las cuatro técnicas que entrega, este apunte cubre las tres que giran en torno al gradiente, y lo que las separa es qué hace cada una con él: la primera no lo usa, la tercera solo lo lee, y la segunda invierte la dirección habitual — en vez de mover los pesos para que encajen con la imagen, congela los pesos y mueve la imagen para que encaje con un filtro, y por eso suma en vez de restar. Grad-CAM, la tercera, cabe en unas pocas líneas de NumPy y responde dos preguntas a la vez: por qué la red decidió esta clase y dónde está el objeto. Apuntes del Cap. 10."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "interpretabilidad", "grad-cam", "visualización", "convnet", "gradientes"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 10 — Interpretar lo que aprenden las ConvNets"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 10 (PDF 308–331)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 9](/apuntes/deep-learning-with-python-cap9-patrones-arquitectura)
+enseñó a construir convnets mejores. El 10 las abre para mirar adentro, y empieza
+corrigiendo algo que se repite mucho:
+
+> *"A menudo se dice que los modelos de deep learning son 'cajas negras': aprenden
+> representaciones difíciles de extraer y presentar en forma legible. Aunque esto
+> es parcialmente cierto para ciertos tipos de modelo, **definitivamente no es
+> cierto para las ConvNets**. Sus representaciones son **altamente susceptibles de
+> visualizarse**, en gran parte porque son representaciones de conceptos
+> visuales."*
+
+Lo que sigue son tres algoritmos, y lo que los hace interesantes juntos es **qué
+hace cada uno con el gradiente**: el primero no lo usa en absoluto, el segundo lo
+usa al revés de como estamos acostumbrados, y el tercero lo usa sin actualizar
+nada — solo para leer.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tres-tecnicas-gradiente.svg"
+  alt="Tres columnas. La primera, activaciones intermedias: de una imagen concreta a un modelo multi-salida con una salida por capa conv o pool, y de ahí a un mapa 2D por canal; etiquetada 'SIN gradientes'. La segunda, visualización de filtros: parte de ruido aleatorio, calcula una loss igual a la activación media del filtro elegido, y un bucle rojo calcula la derivada de la loss respecto de la IMAGEN y hace image += lr por grads, volviendo al inicio; etiquetada 'se actualiza LA IMAGEN'. La tercera, Grad-CAM: de una imagen concreta al mapa de la última convolución, y una flecha roja calcula la derivada de la clase ganadora respecto del MAPA para obtener la importancia de cada canal; etiquetada 'no se actualiza nada: se lee'. Al pie: la segunda invierte la dirección habitual, en vez de mover los pesos para que encajen con la imagen, mueve la imagen para que encaje con los pesos, y por eso suma en vez de restar."
+  caption="La del medio es la que invierte la dirección: como lo que se deriva es la imagen y no los pesos, el paso suma en vez de restar."
+  width={780}
+/>
+
+## 1. Activaciones intermedias: aprovechar que el modelo es un grafo
+
+La técnica más simple: mostrar **qué devuelve cada capa para una entrada
+concreta**. Como cada canal codifica features relativamente independientes, la
+forma correcta de mirarlos es **graficar cada canal por separado como una imagen
+2D**.
+
+El mecanismo se apoya directamente en lo que el
+[capítulo 7](/apuntes/deep-learning-with-python-cap7-deep-dive-keras) llamó
+extracción de features — un modelo funcional es un grafo inspeccionable:
+
+```python
+layer_outputs, layer_names = [], []
+for layer in model.layers:
+    if isinstance(layer, (layers.Conv2D, layers.MaxPooling2D)):
+        layer_outputs.append(layer.output)     # se engancha a la salida de cada capa
+        layer_names.append(layer.name)
+
+activation_model = keras.Model(inputs=model.input, outputs=layer_outputs)
+activations = activation_model.predict(img_tensor)   # → una lista de arrays
+```
+
+> *"Esta es la primera vez que encuentras en la práctica un modelo multi-salida:
+> hasta ahora todos han tenido exactamente una entrada y una salida. **Este tiene
+> una entrada y nueve salidas** — una por cada activación de capa."*
+
+**Las tres observaciones al mirar la grilla completa** — y la tercera es la que
+menos se espera:
+
+1. **La primera capa es una colección de detectores de bordes.** Ahí las
+   activaciones *"retienen casi toda la información presente en la imagen
+   inicial"*.
+2. **A mayor profundidad, más abstracción y menos interpretabilidad visual.**
+   Empiezan a codificar "oreja de gato", "ojo de gato".
+3. **La dispersión aumenta con la profundidad.** En la primera capa **todos** los
+   filtros se activan; más arriba **cada vez más filtros quedan en blanco** — lo
+   que significa que **el patrón de ese filtro no está en esta imagen**.
+
+<Note type="tip" title="La red como pipeline de destilación — y la prueba que puedes hacer ahora">
+*"Las features extraídas por una capa se vuelven cada vez más abstractas con la
+profundidad. Una red profunda actúa como un **pipeline de destilación de
+información**: la información irrelevante se filtra y la útil se magnifica."*
+
+Y la analogía que lo fija: *"tras observar una escena por unos segundos, un humano
+puede recordar qué objetos había (bicicleta, árbol) pero **no puede recordar su
+apariencia específica**. De hecho, si intentaras dibujar una bicicleta genérica de
+memoria, lo más probable es que **no te saliera ni remotamente bien**, aunque hayas
+visto miles. **Pruébalo ahora mismo: este efecto es absolutamente real.** Tu
+cerebro aprendió a abstraer completamente su input visual, volviendo tremendamente
+difícil recordar cómo se ven las cosas a tu alrededor."*
+</Note>
+
+## 2. Visualizar filtros: mover la imagen, no los pesos
+
+Aquí está el giro. En vez de preguntar *"qué le hace este filtro a una imagen"*,
+se pregunta **"qué imagen haría que este filtro se active al máximo"** — y se la
+construye desde ruido.
+
+> *"Esto se puede hacer con **ascenso de gradiente en el espacio de entrada**:
+> aplicar descenso de gradiente **al valor de la imagen de entrada**, de modo de
+> maximizar la respuesta de un filtro específico, **partiendo de una imagen en
+> blanco**."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/ascenso-gradiente.svg"
+  alt="Arriba, el bucle: ruido aleatorio uniform(0.4, 0.6) entra al feature_extractor con los pesos CONGELADOS, se calcula loss igual a la media de la activación del filtro elegido recortando 2 píxeles de borde, se obtiene la derivada de la loss respecto de la imagen (no de los pesos), y el bucle vuelve al inicio con image += learning_rate por grads, marcado 'SUMA, no resta', repitiendo 30 iteraciones. Abajo, tres detalles del mecanismo: tape.watch(image) porque en TensorFlow solo se vigilan automáticamente las Variable entrenables y la imagen es un tensor común; ops.normalize(grads) que divide por la norma L2 para que la magnitud del paso quede siempre en el mismo rango, el 'truco no obvio'; y model(x) en vez de predict(x) porque predict itera en batches y escala pero no es derivable. Al pie: lo que sale son bordes y colores en capas bajas, texturas simples en las medias, y plumas, ojos y hojas en las altas."
+  caption="El bucle completo. La diferencia con el entrenamiento cabe en dos caracteres: se deriva respecto de la imagen, y se suma."
+  width={780}
+/>
+
+**Las tres piezas del algoritmo.** Primero, la función a maximizar — un escalar
+que mide **cuánto activa una imagen a un filtro**:
+
+```python
+def compute_loss(image, filter_index):
+    activation = feature_extractor(image)
+    filter_activation = activation[:, 2:-2, 2:-2, filter_index]   # descarta el borde
+    return ops.mean(filter_activation)
+```
+
+Después, el paso de ascenso. Aquí, en TensorFlow:
+
+```python
+@tf.function
+def gradient_ascent_step(image, filter_index, learning_rate):
+    with tf.GradientTape() as tape:
+        tape.watch(image)                    # ← la imagen no es una Variable
+        loss = compute_loss(image, filter_index)
+    grads = tape.gradient(loss, image)       # ← ∂loss/∂imagen, no ∂loss/∂pesos
+    grads = ops.normalize(grads)
+    image += learning_rate * grads           # ← SUMA: es ascenso
+    return image
+```
+
+Y el bucle, que corre **30 iteraciones con learning rate 10,0** partiendo de ruido
+uniforme en `[0.4, 0.6]` — un rango centrado en 0,5 porque **Xception espera
+entradas en [0, 1]**.
+
+**Tres detalles del mecanismo que vale la pena entender, no memorizar:**
+
+- **`tape.watch(image)`** es obligatorio porque **solo las `Variable` entrenables
+  se vigilan automáticamente**. La imagen es un tensor común, así que hay que
+  pedirle explícitamente a la cinta que la rastree. (En PyTorch el equivalente es
+  `image.clone().detach().requires_grad_(True)`, y ahí **no hace falta resetear
+  gradientes** porque el tensor se recrea en cada iteración.)
+- **El truco de normalización**: dividir el gradiente por su norma L2. *"Esto
+  asegura que la magnitud de los updates hechos a la imagen esté siempre dentro
+  del mismo rango."* El libro lo llama explícitamente un truco *"no obvio"*.
+- **`model(x)` y no `predict(x)`.**
+
+<Note type="warning" title="predict() no es derivable">
+Ambos significan "corre el modelo sobre x", pero **`predict()` itera en batches y
+extrae el valor NumPy**, así que escala a arrays enormes — y por eso mismo **no es
+diferenciable: TensorFlow, PyTorch y JAX no pueden hacer backpropagation a través
+de él**. `model(x)` ocurre en memoria, no escala, pero sí es derivable.
+
+*"Siempre usa `predict()`, **salvo que estés en medio de escribir un bucle de
+descenso de gradiente de bajo nivel**"* — como es el caso aquí.
+</Note>
+
+**Lo que sale** es una progresión limpia: las capas bajas responden a **bordes
+direccionales y colores**; las intermedias a **texturas simples** hechas de
+combinaciones de esos bordes; las altas a **texturas de imágenes naturales —
+plumas, ojos, hojas**. La analogía que ofrece Chollet: *"cada capa aprende una
+colección de filtros tal que sus entradas pueden expresarse como una **combinación**
+de ellos. Esto es similar a cómo **la transformada de Fourier descompone señales
+sobre un banco de funciones coseno**."*
+
+## 3. Grad-CAM: tres líneas que responden dos preguntas
+
+La técnica más útil en la práctica, porque sirve para **depurar decisiones**.
+Responde a la vez *¿por qué la red dijo esta clase?* y *¿dónde está el objeto?*
+
+**La idea en una frase:** tomar el mapa de features de la última capa convolucional
+y **ponderar cada canal por el gradiente de la clase respecto de ese canal**.
+
+> *"Estás ponderando un mapa espacial de **'qué tan intensamente la imagen activa
+> los distintos canales'** por **'qué tan importante es cada canal respecto de la
+> clase'**, resultando en un mapa espacial de **'qué tan intensamente la imagen
+> activa la clase'**."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/grad-cam-algoritmo.svg"
+  alt="Arriba, el montaje: se parte el modelo en dos por la última capa convolucional. La imagen pasa por el Modelo A hasta la última conv, produciendo el mapa de features (alto, ancho, canales); ese mapa pasa por el Modelo B de ahí a las clases, y sale la clase ganadora por argmax. Una flecha roja punteada vuelve desde la clase hasta el mapa, etiquetada con la derivada de la clase ganadora respecto del mapa. Abajo, las tres operaciones: 1, cuánto importa cada canal, con mean(grads, axis=(0,1,2)), que promedia el gradiente sobre los ejes espaciales dejando un número por canal; 2, pondera el mapa, con output[:,:,i] *= pooled[i], de modo que los canales que no deciden la clase se apagan; 3, colapsa a un mapa 2D con mean(output, axis=-1), y eso es el heatmap, que se superpone al 40 % de opacidad."
+  caption="El montaje es partir el modelo en dos por la última convolución. Lo demás son tres operaciones de NumPy."
+  width={780}
+/>
+
+**El montaje**: dos modelos partidos por la última capa convolucional — uno que va
+de la imagen a ese mapa, y otro que va del mapa a las predicciones. Con eso se
+puede pedir el gradiente **de la clase ganadora respecto del mapa**:
+
+```python
+def get_top_class_gradients(img_array):
+    last_conv_layer_output = last_conv_layer_model(img_array)
+    with tf.GradientTape() as tape:
+        tape.watch(last_conv_layer_output)      # otra vez: no es una Variable
+        preds = classifier_model(last_conv_layer_output)
+        top_pred_index = ops.argmax(preds[0])
+        top_class_channel = preds[:, top_pred_index]
+    grads = tape.gradient(top_class_channel, last_conv_layer_output)
+    return grads, last_conv_layer_output
+
+grads, last_conv_layer_output = get_top_class_gradients(img_array)
+grads = ops.convert_to_numpy(grads)                          # ← a NumPy antes de seguir
+last_conv_layer_output = ops.convert_to_numpy(last_conv_layer_output)
+```
+
+<Note type="warning" title="Por qué ese paso a NumPy no es cosmético">
+Lo que sigue modifica el mapa **in situ** (`*=`), y el
+[capítulo 3](/apuntes/deep-learning-with-python-cap3-frameworks-y-keras) ya nos
+advirtió que **los tensores de TensorFlow no son asignables**. Hay que bajarlos a
+NumPy primero.
+</Note>
+
+**Y el algoritmo entero son estas líneas:**
+
+```python
+pooled_grads = np.mean(grads, axis=(0, 1, 2))            # 1. importancia de cada canal
+last_conv_layer_output = last_conv_layer_output[0].copy() # ← saca el eje de batch
+for i in range(pooled_grads.shape[-1]):
+    last_conv_layer_output[:, :, i] *= pooled_grads[i]   # 2. pondera cada canal
+heatmap = np.mean(last_conv_layer_output, axis=-1)       # 3. promedia sobre canales
+```
+
+La segunda línea es fácil de pasar por alto y **sin ella nada funciona**: el mapa
+sale del modelo con shape `(1, alto, ancho, canales)`, así que `[:, :, i]`
+indexaría **el ancho**, no los canales. Hay que dejarlo en `(alto, ancho, canales)`
+primero.
+
+Leídas una por una:
+
+1. **`pooled_grads`** promedia el gradiente sobre el batch y los dos ejes
+   espaciales —el batch es 1, así que en la práctica el promedio es espacial—,
+   dejando **un número por canal**: *"cuantifica la importancia de cada canal
+   respecto de la clase predicha"*.
+2. Se **multiplica cada canal del mapa por esa importancia** — los canales que no
+   participan de la decisión se apagan.
+3. **La media sobre canales del mapa resultante es el heatmap.**
+
+Después se recorta a positivos (`np.maximum(heatmap, 0)`) y se normaliza.
+
+**El ejemplo del libro** es una foto de dos elefantes africanos que Xception
+clasifica como `African_elephant` con **0,90331** de probabilidad. Superponiendo
+el heatmap se ve dónde miró la red — y aparece un hallazgo concreto: *"es
+interesante notar que **las orejas del elefante bebé están fuertemente
+activadas**: probablemente así es como la red distingue entre elefantes africanos e
+indios."*
+
+<Note type="info" title="Necesitas el modelo completo, no solo el backbone">
+Para Grad-CAM hace falta **la cabeza de clasificación**, no solo el extractor. Ahí
+entra la **API de tareas de KerasHub**: `ImageClassifier.from_preset(...)` envuelve
+preprocesamiento + extractor + cabeza en una sola clase. Y como esa tarea
+preprocesa dentro de `predict()`, para trabajar a bajo nivel hay que hacerlo a
+mano: `img_array = model.preprocessor(img_array)`.
+</Note>
+
+## Para recordar
+
+- **Las convnets no son cajas negras.** Sus representaciones son visuales, y por
+  eso se pueden mirar.
+- **Activaciones intermedias:** un modelo multi-salida enganchado a `layer.output`.
+  Sin gradientes. Revela que **la dispersión crece con la profundidad**.
+- **Una red es un pipeline de destilación:** las capas altas cargan menos
+  información sobre *cómo se ve* la entrada y más sobre *qué es*.
+- **Visualización de filtros = ascenso de gradiente en la entrada.** Pesos
+  congelados, `∂loss/∂imagen`, y `+=` en vez de `-=`.
+- **`tape.watch()` porque la imagen no es una `Variable`**, y **`model(x)` porque
+  `predict()` no es derivable**.
+- **Grad-CAM en tres líneas:** promediar el gradiente por canal da la importancia,
+  ponderar el mapa por ella apaga lo irrelevante, y promediar sobre canales deja
+  el heatmap.
+- Sirve para **depurar**: responde por qué **y** dónde.
+
+*(El capítulo cierra con una cuarta técnica que este apunte no cubre: visualizar el
+espacio latente proyectando las activaciones a 2D, con la advertencia de que
+—como en los mapamundis— **toda proyección destruye información**.)*
+
+El [capítulo 11](/apuntes/deep-learning-with-python-cap11-segmentacion) deja la
+clasificación y pasa a la segunda gran tarea de visión: predecir una clase para
+cada píxel.

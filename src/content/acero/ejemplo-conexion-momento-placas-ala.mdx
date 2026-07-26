@@ -1,0 +1,276 @@
+---
+title: "Ejemplo — Conexión de momento con placas de ala y zona panel (AISC 360-22)"
+description: "Verificación de una conexión de momento apernada con placas de ala (BFP) viga-columna: pernos, placas a tracción y compresión, y rotura del ala perforada de la viga (F13.1). Todo eso pasa con usos entre 0.49 y 0.76 — y la columna no: flexión local del ala 1.43, fluencia local del alma 1.12 y zona panel 1.07, donde el axial de la columna (término 1.4 − Pr/Pc de J10-10) se lleva el margen que faltaba. La solución no está en la conexión sino en rigidizadores de continuidad y una plancha de refuerzo del alma."
+pubDate: 2026-07-25
+tags: ["ejemplo", "acero", "conexiones", "conexión de momento", "zona panel", "rigidizadores", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. J — Conexiones"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Hay un reflejo casi universal al verificar una conexión de momento: revisar los pernos, las
+placas, las soldaduras, ver que todo pase, y firmar. Este ejemplo existe para mostrar por qué ese
+reflejo es insuficiente. La conexión —placas de ala apernadas, *bolted flange plate* o BFP— pasa
+cómoda, con usos entre 0.49 y 0.76. **La que no pasa es la columna**, en tres estados límite que
+viven del otro lado del nudo y que el Cap. J10[^aisc360] agrupa bajo un título que se lee como
+una advertencia: *alas y almas con fuerzas concentradas*.
+
+El protagonista es el menos visible de los tres: la **zona panel**, el rectángulo de alma de
+columna encerrado entre las alas de la viga, que debe cortar todo el par que la conexión le
+entrega. Y dentro de ella, un término que casi nadie mira: la compresión axial de la columna
+degrada su resistencia al corte.
+
+## El caso
+
+Nudo exterior de un marco a momento: la viga llega a la cara del ala de una columna que además
+lleva carga axial de gravedad. El momento se transfiere con dos placas soldadas a la columna
+(soldadura de penetración completa) y apernadas a las alas de la viga; el corte lo toma una
+plancha de corte independiente.
+
+| Dato | Valor |
+|---|---|
+| Viga | W460×74 (A992): $d = 457$, $b_f = 190$, $t_f = 14.5$ mm; $S_x = 1457$, $Z_x = 1655$ cm³ |
+| Columna | W310×97 (A992): $d = 308$, $b_f = 305$, $t_f = 15.4$, $t_w = 9.9$ mm, $k = 30.5$ mm, $A_g = 123$ cm²; $E = 2.04\times10^6$ kgf/cm² |
+| Placas de ala | A36, 200 × 20 mm, CJP a la columna, apernadas a la viga |
+| Pernos | 6 × Ø24 A490-N por placa (2 líneas × 3 filas), $s = 70$, $L_e = 40$ mm, $d_h = 26$ mm (28 mm para áreas netas, B4.3b) |
+| Solicitación (LRFD) | $M_u = 32$ tonf·m, $V_u = 15$ tonf |
+| Columna | $P_u = 200$ tonf, altura de entrepiso $H = 3.5$ m |
+
+<Figure
+  src="/ejemplos/bfp-esquema.svg"
+  alt="Elevación de una conexión de momento con placas de ala: la viga W460×74 llega a la cara de una columna W310×97, con una placa de 200 por 20 mm soldada con penetración completa a la columna y apernada al ala superior de la viga con seis pernos Ø24, y otra igual en el ala inferior. La fuerza del par Ff = 67.1 tonf entra a la columna concentrada en dos líneas. Sombreado en rojo, el rectángulo de la zona panel del alma de la columna, encerrado entre las prolongaciones de las alas de la viga, con las flechas del corte que debe resistir: la demanda Ff menos el corte de columna Vcol = 9.1 tonf da 57.9 tonf contra una capacidad de 54.4 tonf. Se anotan los tres estados límite que fallan en la columna: flexión local del ala con uso 1.43, fluencia local del alma 1.12 y zona panel 1.07, y se dibujan en línea punteada los refuerzos que los resuelven: dos rigidizadores de continuidad alineados con las placas de ala y una plancha de refuerzo del alma de 6 mm."
+  caption="La conexión (placas, pernos, soldaduras) pasa; el nudo de la columna no. Los tres estados límite que fallan son de la columna, y los refuerzos que los resuelven —rigidizadores de continuidad y plancha de refuerzo del alma— también."
+/>
+
+<Note type="info" title="Por qué una BFP y no una placa de extremo">
+La BFP separa las funciones: las placas de ala llevan el momento, una plancha aparte lleva el
+corte. Eso la hace fácil de montar y de reparar, y —a diferencia de la
+[placa de extremo](/acero/ejemplo-conexion-momento-end-plate)— **no hay pernos a tracción ni
+efecto palanca**: todos los pernos trabajan a corte. A cambio, el par entra a la columna en dos
+líneas muy concentradas, y por eso este es el ejemplo natural para mirar el Cap. J10.
+</Note>
+
+## 1. El par y los pernos (J3.7)
+
+Con las placas apoyadas sobre las alas, el brazo del par es la distancia entre los centros de las
+placas, es decir $d + t_p$:
+
+<Equation label="Fuerza de la placa de ala">
+$$
+F_f = \frac{M_u}{d + t_p} = \frac{32}{0.477} = 67.1 \ \text{tonf}
+$$
+</Equation>
+
+Seis pernos Ø24 A490-N en corte simple ($F_{nv} = 470$ MPa $= 4792$ kgf/cm²), Ec. J3-1:
+
+<Equation label="Ec. J3-1 (6 pernos)">
+$$
+\phi R_n = 6 \cdot 0.75 \cdot 4792 \cdot 4.524 = 97.5 \ \text{tonf} \;\ge\; F_f = 67.1 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 0.69.** El apoyo de esos pernos en el ala de la viga (el elemento más delgado del paquete,
+$t_f = 14.5$ mm, A992) se verifica con J3-6a/c; acá el desgarre gobierna a los seis pernos
+—$1.2\,l_c t F_u$ con $l_c = 2.7$ cm en los de borde y $4.4$ cm en los interiores— y suma
+$\phi R_n = 137.2$ tonf, **uso 0.49**.
+
+## 2. Las placas: tracción y compresión (J4)
+
+La placa traccionada repite el par dúctil/frágil de siempre, con $A_g = 40$ cm² y
+$A_n = (20 - 2 \cdot 2.8)\cdot 2.0 = 28.8$ cm² —el ancho de agujero para área neta
+lleva los 2 mm extra de B4.3b—:
+
+<Equation label="Ecs. J4-1 y J4-2">
+$$
+\phi R_n = 0.90\,F_y A_g = 91.1 \ \text{tonf}
+\qquad
+\phi R_n = 0.75\,F_u A_n = 88.1 \ \text{tonf}
+$$
+</Equation>
+
+Usos 0.74 y 0.76: con A36 y una perforación del 28 %, fluencia y rotura quedan casi empatadas y
+gobierna por poco la rotura. La placa comprimida se revisa por J4.4: su longitud no
+arriostrada es la de la ranura entre la cara de la columna y el primer perno, con
+$L_c/r = 4.5 \ll 25$, así que **no hay pandeo** y vale $\phi P_n = 0.90 F_y A_g = 91.1$ tonf.
+
+## 3. Un estado límite que vive en la viga: el ala perforada (F13.1)
+
+Perforar el ala traccionada de la viga para apernar la placa **reduce la capacidad de la viga**,
+no solo la de la conexión. La Sección F13.1 lo trata con una comparación directa:
+
+<Equation label="Sección F13.1">
+$$
+F_u A_{fn} = 4570 \cdot 19.43 = 88\,795 \ \text{kgf}
+\;<\;
+Y_t F_y A_{fg} = 1.0 \cdot 3520 \cdot 27.55 = 96\,976 \ \text{kgf}
+$$
+</Equation>
+
+Como el término de rotura es menor, la rotura del ala **sí** controla y el momento nominal deja
+de ser $M_p$:
+
+<Equation label="Ec. F13-1">
+$$
+M_n = \frac{F_u A_{fn}}{A_{fg}}\,S_x = \frac{88\,795}{27.55}\cdot 1457 = 47.0 \ \text{tonf·m}
+\quad (\phi M_n = 42.3 \ \text{tonf·m} \ge M_u = 32)
+$$
+</Equation>
+
+**Uso 0.76.** Pasa, pero es un recordatorio útil: los agujeros de la conexión bajan la capacidad
+de la viga un 19 % respecto de su $\phi M_p = 0.90 F_y Z_x = 52.4$ tonf·m.
+
+Hasta acá, cinco verificaciones y la peor da 0.76. La conexión está bien. Ahora cruzamos al otro
+lado del nudo.
+
+## 4. La columna: fuerzas concentradas (J10.1 a J10.3)
+
+Las 67.1 tonf de cada placa entran al ala de la columna en una línea de 200 mm. Tres estados
+límite compiten:
+
+<Equation label="Ec. J10-1 — flexión local del ala">
+$$
+\phi R_n = 0.90 \cdot 6.25\,F_{yf} t_f^2 = 0.90 \cdot 6.25 \cdot 3520 \cdot 1.54^2
+= 47.0 \ \text{tonf} \;<\; F_f = 67.1 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 1.43 — falla.** El ala de 15.4 mm de la W310×97 no puede flectar para repartir esa tracción:
+el modelo de líneas de fluencia de J10.1 se agota muy por debajo de la demanda.
+
+<Equation label="Ec. J10-2 — fluencia local del alma">
+$$
+\phi R_n = 1.00 \cdot F_{yw} t_w (5k + l_b) = 3520 \cdot 0.99\,(5\cdot 3.05 + 2.0)
+= 60.1 \ \text{tonf} \;<\; 67.1
+$$
+</Equation>
+
+**Uso 1.12 — falla.** El alma de 9.9 mm, en el ancho de reparto $5k + l_b$, tampoco alcanza.
+El tercero, el aplastamiento del alma (Ec. J10-4, $\phi = 0.75$), da $\phi R_n = 68.4$ tonf:
+**uso 0.98**, salvado por un pelo. Los otros dos estados de J10 —pandeo lateral (J10.4) y pandeo
+por compresión del alma (J10.5)— no aplican: el primero exige el ala traccionada sin arriostrar y
+el segundo, fuerzas de compresión en **ambas** alas, y acá el par es tracción arriba y compresión
+abajo.
+
+## 5. La zona panel: el eslabón que nadie mira (J10.6)
+
+La zona panel es el rectángulo de alma encerrado entre las prolongaciones de las alas de la viga.
+No recibe una fuerza: recibe un **corte**. La tracción de una placa y la compresión de la otra
+forman un par que el panel debe transmitir a la columna, descontando el corte que la propia
+columna se lleva:
+
+<Equation label="Demanda de corte en el panel">
+$$
+V_{pz} = F_f - V_{col} = 67.1 - \frac{M_u}{H} = 67.1 - \frac{32}{3.5} = 57.9 \ \text{tonf}
+$$
+</Equation>
+
+La capacidad depende de si el panel está o no comprimido. Con $P_c = F_y A_g = 3520 \cdot 123 =
+433$ tonf y $P_r = 200$ tonf, la razón $P_r/P_c = 0.462 > 0.40$, así que **no** aplica la ecuación
+simple J10-9 sino su versión degradada:
+
+<Equation label="Ec. J10-10 ($P_r > 0.4P_c$)">
+$$
+\phi R_n = 0.90 \cdot 0.60\,F_y d_c t_w \left(1.4 - \frac{P_r}{P_c}\right)
+= 58.0 \cdot (1.4 - 0.462) = 54.4 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 1.07 — falla.** Y acá está el detalle fino que da título a este ejemplo: **sin el término
+axial** la capacidad habría sido $58.0$ tonf y el uso, exactamente $1.00$. Es decir, la columna
+llegaba justo, y la compresión que ya trae —el $P_u$ de gravedad que nada tiene que ver con la
+conexión— se llevó el 6 % que faltaba. El corte y la compresión comparten el mismo material del
+alma, y J10-10 le pone número a ese reparto.
+
+<Note type="warning" title="El crédito de las alas de la columna tiene una condición que hay que ganarse">
+J10.6 ofrece una salida: si el análisis **incorpora la deformación inelástica de la zona panel en
+la estabilidad del marco**, se puede sumar el aporte de las alas de la columna (Ec. J10-11):
+
+$$
+\phi R_n = 0.90 \cdot 0.60 F_y d_c t_w \left(1 + \frac{3 b_{cf} t_{cf}^2}{d_b d_c t_w}\right)
+= 58.0 \cdot 1.156 = 67.0 \ \text{tonf} \quad (\text{uso } 0.87)
+$$
+
+De fallar a pasar con un factor de 1.156. Pero el crédito **no es gratis**: exige un modelo que
+represente la flexibilidad del panel (elementos de zona panel, resortes rotacionales o el modelo
+de Krawinkler), no el modelo de barras centro a centro de la oficina promedio. Si el análisis no
+lo hace, la ecuación aplicable es J10-10 y la conexión no pasa. Usar J10-11 con un modelo que no
+lo justifica es el atajo silencioso de este capítulo.
+</Note>
+
+## 6. La solución está en la columna, no en la conexión
+
+Ninguno de los tres problemas se arregla con más pernos o placas más gruesas. Se arreglan
+reforzando el nudo:
+
+**Rigidizadores de continuidad** (J10.8), alineados con las placas de ala —que es por donde entra
+la fuerza concentrada—, que prolongan el ala
+de la viga a través del alma de la columna y resuelven J10-1 y J10-2. El área requerida sale del
+déficit del estado límite que gobierna:
+
+<Equation label="Área de los rigidizadores">
+$$
+A_{st} \ge \frac{F_f - \phi R_n}{\phi F_y} = \frac{67.1 - 47.0}{0.90 \cdot 2.53} = 8.8 \ \text{cm}^2
+\quad\Rightarrow\quad \text{2 PL } 100\times12 = 24.0 \ \text{cm}^2 \ \checkmark
+$$
+</Equation>
+
+**Plancha de refuerzo del alma** (*doubler*), que engrosa la zona panel:
+
+| Refuerzo del alma | $t_w$ efectivo | $\phi R_n$ (J10-10) | Uso |
+|:---:|:---:|:---:|:---:|
+| sin refuerzo | 9.9 mm | 54.4 tonf | **1.07 — falla** |
+| doubler 6 mm | 15.9 mm | 87.3 tonf | 0.66 |
+| doubler 8 mm | 17.9 mm | 98.3 tonf | 0.59 |
+
+Con 6 mm de plancha adicional el panel pasa de 1.07 a 0.66. Es poco acero —una chapa de
+6 mm en el paño del nudo— pero es soldadura de taller cuidadosa; por eso, en la práctica, la
+alternativa que suele ganar es **elegir una columna de ala y alma más gruesas desde el
+principio**: la misma W310 en su versión de 158 kg/m tiene $t_w = 15.5$ mm y no necesita nada.
+
+<Figure
+  src="/ejemplos/bfp-verificaciones.svg"
+  alt="Dos grupos de barras de uso comparados contra el límite 1.0. Grupo de la izquierda, la conexión y la viga: apoyo en el ala de la viga 0.49, pernos a corte 0.69, placa de ala en fluencia 0.74, placa en rotura neta 0.76 y viga con el ala perforada según F13.1 0.76 — todas holgadas. Grupo de la derecha, la columna: aplastamiento del alma 0.98, zona panel según J10-10 con 1.07, fluencia local del alma 1.12 y flexión local del ala 1.43 — las tres últimas cruzan el límite. Sobre la barra de la zona panel se marca el tramo que aporta el término axial 1.4 menos Pr sobre Pc, que lleva el uso de 1.00 a 1.07, y una flecha muestra el efecto del doubler de 6 mm que la baja a 0.66."
+  caption="Las cinco verificaciones del lado de la conexión y la viga, todas bajo 0.80; las cuatro de la columna, tres de ellas sobre 1.0. El eslabón débil no está en la conexión que se dibuja, sino en el nudo que la recibe."
+/>
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Lado | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Apoyo en el ala de la viga | Ecs. J3-6a/c | conexión | 137.2 tonf | 0.49 |
+| Pernos a corte | Ec. J3-1 | conexión | 97.5 tonf | 0.69 |
+| Placa de ala — fluencia | Ec. J4-1 | conexión | 91.1 tonf | 0.74 |
+| Placa de ala — rotura neta | Ec. J4-2 | conexión | 88.1 tonf | 0.76 |
+| Viga — ala perforada | Ec. F13-1 | viga | 42.3 tonf·m | 0.76 |
+| Columna — aplastamiento del alma | Ec. J10-4 | columna | 68.4 tonf | 0.98 |
+| **Columna — zona panel** | **Ec. J10-10** | **columna** | $\mathbf{54.4}$ **tonf** | **1.07 ✗** |
+| **Columna — fluencia local del alma** | **Ec. J10-2** | **columna** | $\mathbf{60.1}$ **tonf** | **1.12 ✗** |
+| **Columna — flexión local del ala** | **Ec. J10-1** | **columna** | $\mathbf{47.0}$ **tonf** | **1.43 ✗** |
+
+**Solución:** la conexión BFP —placas 200×20 (A36) con 6 pernos Ø24 A490 por ala— resiste
+$M_u = 32$ tonf·m con uso máximo 0.76 y **no requiere cambios**. Lo que requiere refuerzo es la
+columna: **2 rigidizadores de continuidad PL 100×12 y una plancha de refuerzo del alma de 6 mm**,
+o bien una columna de perfil mayor. La lección: en una conexión de momento **la verificación no
+termina en la conexión**; el par que se entrega tan prolijamente tiene que ser recibido, y el
+receptor —el ala, el alma y sobre todo la zona panel de la columna— suele ser el eslabón débil.
+Y dentro de la zona panel, el término $(1.4 - P_r/P_c)$ recuerda algo que el diseño por partes
+esconde: **la columna no puede usar dos veces el mismo acero**, una para comprimir y otra para
+cortar.
+
+<Note type="info" title="Alcance de este ejemplo">
+Se verifican las placas de ala, sus pernos, la viga y los estados límite del nudo de la columna.
+Quedan fuera la **soldadura CJP** placa-columna (con metal de aporte *matching* desarrolla la
+placa, que ya se verificó) y la **plancha de corte** que lleva las 15 tonf de $V_u$, cuya cadena
+es la del [ejemplo de shear tab](/acero/ejemplo-conexion-apernada-corte).
+</Note>
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. Secciones J3 (pernos), J4 (elementos de conexión),
+J10 (alas y almas con fuerzas concentradas, Ecs. J10-1 a J10-12) y F13.1 (rotura del ala
+traccionada de vigas con agujeros). En diseño sísmico, AISC 341 y la NCh2369 endurecen estos
+requisitos: los rigidizadores de continuidad pasan a ser obligatorios salvo verificación
+específica, y la zona panel se dimensiona contra la capacidad esperada de la viga, no contra el
+momento del análisis.

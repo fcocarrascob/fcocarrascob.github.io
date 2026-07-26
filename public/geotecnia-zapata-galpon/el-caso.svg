@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 480" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ea" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="er" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+  </defs>
+  <rect width="940" height="480" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El caso: zapata de una columna arriostrada de galpón industrial</text>
+
+  <!-- ======== sección ======== -->
+  <g>
+    <!-- suelo (escala: 1 m = 40 px, superficie en y = 134) -->
+    <rect x="70" y="134" width="425" height="232" fill="#e8e0cd" stroke="#8a857c" stroke-width="1"/>
+    <line x1="70" y1="134" x2="495" y2="134" stroke="#8a857c" stroke-width="1.8"/>
+
+    <!-- zapata y pedestal -->
+    <rect x="190" y="182" width="120" height="24" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.6"/>
+    <rect x="234" y="134" width="32" height="48" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.3"/>
+
+    <!-- columna y diagonal -->
+    <rect x="243" y="82" width="14" height="52" fill="#dfe3e8" stroke="#8a857c" stroke-width="1.2"/>
+    <line x1="257" y1="130" x2="345" y2="82" stroke="#8a857c" stroke-width="4"/>
+    <text x="352" y="88" font-size="11" fill="#666">diagonal</text>
+    <circle cx="250" cy="134" r="3.2" fill="#ffffff" stroke="#222" stroke-width="1.4"/>
+    <text x="232" y="130" font-size="10.5" fill="#666" text-anchor="end">base rotulada</text>
+
+    <!-- cargas -->
+    <line x1="250" y1="52" x2="250" y2="78" stroke="#666" stroke-width="2.5" marker-end="url(#ea)"/>
+    <text x="262" y="60" font-size="11.5" fill="#222" font-weight="bold">D = 18 · L = 10 tonf</text>
+    <text x="262" y="76" font-size="11.5" fill="#b02a1a" font-weight="bold">E: N = ±42 tonf</text>
+    <line x1="152" y1="106" x2="238" y2="106" stroke="#b02a1a" stroke-width="2.5" marker-end="url(#er)"/>
+    <text x="146" y="110" font-size="11.5" fill="#b02a1a" text-anchor="end" font-weight="bold">V = 16 tonf</text>
+
+    <!-- cotas -->
+    <line x1="168" y1="134" x2="168" y2="206" stroke="#666" stroke-width="1" marker-start="url(#ea)" marker-end="url(#ea)"/>
+    <text x="162" y="174" font-size="11" fill="#666" text-anchor="end">D_f = 1,80</text>
+    <line x1="190" y1="226" x2="310" y2="226" stroke="#666" stroke-width="1" marker-start="url(#ea)" marker-end="url(#ea)"/>
+    <text x="250" y="242" font-size="11.5" fill="#222" text-anchor="middle" font-weight="bold">B = 3,00 m</text>
+    <line x1="322" y1="182" x2="322" y2="206" stroke="#666" stroke-width="1" marker-start="url(#ea)" marker-end="url(#ea)"/>
+    <text x="330" y="198" font-size="11" fill="#666">0,60</text>
+    <text x="330" y="160" font-size="11" fill="#666">pedestal 0,80 × 0,80</text>
+
+    <!-- suelo: etiquetas -->
+    <text x="82" y="278" font-size="12" fill="#222" font-weight="bold">Arena media densa</text>
+    <text x="82" y="296" font-size="11.5" fill="#555">φ' = 30° · c' = 0 · γ = 18,5 kN/m³</text>
+    <text x="82" y="318" font-size="12" fill="#b02a1a" font-weight="bold">D_R ≈ 65 %</text>
+    <text x="82" y="348" font-size="11.5" fill="#555">Napa profunda (d &gt; B bajo el sello): Caso III</text>
+  </g>
+
+  <!-- ======== datos ======== -->
+  <line x1="530" y1="52" x2="530" y2="404" stroke="#e5e2dc" stroke-width="1.5"/>
+  <text x="560" y="76" font-size="13" fill="#222" font-weight="bold">Lo que la zapata pesa por sí sola</text>
+  <g font-size="12">
+    <text x="560" y="102" fill="#555">Zapata 3,00 × 3,00 × 0,60</text><text x="890" y="102" fill="#222" text-anchor="end">13,77 tonf</text>
+    <text x="560" y="124" fill="#555">Pedestal 0,80 × 0,80 × 1,20</text><text x="890" y="124" fill="#222" text-anchor="end">1,96 tonf</text>
+    <text x="560" y="146" fill="#555">Suelo sobre la zapata</text><text x="890" y="146" fill="#222" text-anchor="end">18,93 tonf</text>
+  </g>
+  <line x1="560" y1="158" x2="890" y2="158" stroke="#e5e2dc" stroke-width="1.2"/>
+  <text x="560" y="180" font-size="12" fill="#222" font-weight="bold">Total</text>
+  <text x="890" y="180" font-size="12.5" fill="#222" text-anchor="end" font-weight="bold">34,65 tonf</text>
+
+  <text x="560" y="216" font-size="13" fill="#222" font-weight="bold">Del informe de mecánica de suelos</text>
+  <g font-size="12">
+    <text x="560" y="242" fill="#555">q_adm estática</text><text x="890" y="242" fill="#222" text-anchor="end">2,0 kgf/cm²</text>
+    <text x="560" y="264" fill="#555">q_adm sísmica (condición eventual)</text><text x="890" y="264" fill="#222" text-anchor="end">3,0 kgf/cm²</text>
+    <text x="560" y="286" fill="#555">k_v (rigidez vertical sísmica)</text><text x="890" y="286" fill="#222" text-anchor="end">5.000 tonf/m³</text>
+  </g>
+
+  <rect x="560" y="306" width="330" height="90" rx="5" fill="#b02a1a" fill-opacity="0.07" stroke="#b02a1a" stroke-width="1.2"/>
+  <text x="576" y="328" font-size="12" fill="#b02a1a" font-weight="bold">El detalle que lo cambia todo:</text>
+  <text x="576" y="349" font-size="12" fill="#555">D_R = 65 % &lt; 70 %, y por eso NCh2369 10.1.3</text>
+  <text x="576" y="367" font-size="12" fill="#555">prohíbe contar el empuje pasivo, que acá</text>
+  <text x="576" y="385" font-size="12" fill="#555">valdría 13,75 tonf.</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="426" width="820" height="38" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="450" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">Sin esos 34,65 tonf de hormigón y suelo, la combinación de levantamiento daría tracción neta: N = −11,40 tonf.</text>
+</svg>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="maq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a7449"/>
+    </marker>
+  </defs>
+  <rect width="940" height="440" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El mecanismo de Terzaghi: tres zonas, y el ángulo que hubo que corregir</text>
+
+  <!-- terreno -->
+  <line x1="90" y1="120" x2="850" y2="120" stroke="#8a857c" stroke-width="1.5"/>
+  <rect x="90" y="120" width="760" height="180" fill="#efece6" opacity="0.45"/>
+
+  <!-- zapata -->
+  <rect x="400" y="96" width="140" height="24" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.6"/>
+  <line x1="470" y1="66" x2="470" y2="92" stroke="#666" stroke-width="2.5" marker-end="url(#ma)"/>
+  <text x="470" y="60" font-size="12.5" fill="#666" text-anchor="middle">q_u</text>
+  <text x="416" y="112" font-size="12" fill="#555">A</text>
+  <text x="526" y="112" font-size="12" fill="#555">C</text>
+
+  <!-- zona I: cuna triangular ACD -->
+  <polygon points="400,120 540,120 470,196" fill="#b02a1a" fill-opacity="0.16" stroke="#b02a1a" stroke-width="2"/>
+  <text x="470" y="148" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">I</text>
+  <text x="470" y="165" font-size="10.5" fill="#b02a1a" text-anchor="middle">cuña rígida</text>
+  <text x="474" y="208" font-size="12" fill="#555">D</text>
+
+  <!-- zona II: corte radial, espiral logaritmica -->
+  <path d="M400,120 Q330,175 296,120" fill="#e67e22" fill-opacity="0.14" stroke="#b35c0e" stroke-width="2"/>
+  <path d="M540,120 Q610,175 644,120" fill="#e67e22" fill-opacity="0.14" stroke="#b35c0e" stroke-width="2"/>
+  <text x="348" y="141" font-size="12.5" fill="#b35c0e" text-anchor="middle" font-weight="bold">II</text>
+  <text x="592" y="141" font-size="12.5" fill="#b35c0e" text-anchor="middle" font-weight="bold">II</text>
+  <text x="470" y="238" font-size="11.5" fill="#b35c0e" text-anchor="middle">zonas de corte radial — arcos de espiral logarítmica</text>
+
+  <!-- zona III: cunas pasivas de Rankine -->
+  <polygon points="296,120 190,120 296,120" fill="none"/>
+  <polygon points="296,120 190,120 258,158" fill="#1c7c3c" fill-opacity="0.14" stroke="#1c7c3c" stroke-width="2"/>
+  <polygon points="644,120 750,120 682,158" fill="#1c7c3c" fill-opacity="0.14" stroke="#1c7c3c" stroke-width="2"/>
+  <text x="248" y="140" font-size="12.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">III</text>
+  <text x="692" y="140" font-size="12.5" fill="#1c7c3c" text-anchor="middle" font-weight="bold">III</text>
+  <text x="196" y="112" font-size="12" fill="#555">H</text>
+  <text x="742" y="112" font-size="12" fill="#555">G</text>
+  <text x="470" y="258" font-size="11.5" fill="#1c7c3c" text-anchor="middle">cuñas pasivas de Rankine — el terreno que hay que levantar</text>
+
+  <!-- angulo alfa -->
+  <path d="M400,120 A 26 26 0 0 0 415,142" fill="none" stroke="#1a63a8" stroke-width="1.8"/>
+  <text x="392" y="146" font-size="13" fill="#1a63a8" text-anchor="end" font-weight="bold">α</text>
+
+  <!-- sobrecarga equivalente -->
+  <g stroke="#8a7449" stroke-width="2">
+    <line x1="230" y1="80" x2="230" y2="114" marker-end="url(#maq)"/>
+    <line x1="300" y1="80" x2="300" y2="114" marker-end="url(#maq)"/>
+    <line x1="640" y1="80" x2="640" y2="114" marker-end="url(#maq)"/>
+    <line x1="710" y1="80" x2="710" y2="114" marker-end="url(#maq)"/>
+  </g>
+  <text x="150" y="94" font-size="12.5" fill="#8a7449" font-weight="bold">q = γ D_f</text>
+  <text x="770" y="94" font-size="12.5" fill="#8a7449">sobrecarga equivalente</text>
+
+  <!-- caja del angulo corregido -->
+  <rect x="90" y="286" width="380" height="128" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="106" y="308" font-size="13" fill="#222" font-weight="bold">El ángulo α y por qué importa</text>
+  <text x="106" y="330" font-size="12.5" fill="#b02a1a"><tspan font-weight="bold">Terzaghi (1943):</tspan> α = φ'</text>
+  <text x="106" y="352" font-size="12.5" fill="#1a63a8"><tspan font-weight="bold">Vesić (1973) y posteriores:</tspan> α = 45° + φ'/2</text>
+  <text x="106" y="378" font-size="12" fill="#555">Con la corrección, N_q y N_c admiten forma cerrada</text>
+  <text x="106" y="395" font-size="12" fill="#555">(Reissner 1924, Prandtl 1921) — y cambian de valor.</text>
+
+  <!-- caja de lo que se desprecia -->
+  <rect x="490" y="286" width="360" height="128" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="506" y="308" font-size="13" fill="#222" font-weight="bold">Lo que Terzaghi deja sobre la mesa</text>
+  <text x="506" y="330" font-size="12" fill="#555">El suelo sobre el sello se reemplaza por una sobrecarga</text>
+  <text x="506" y="347" font-size="12" fill="#555">equivalente: se desprecia su resistencia al corte.</text>
+  <text x="506" y="371" font-size="12" fill="#555">Tampoco entra la forma en planta ni la inclinación de</text>
+  <text x="506" y="388" font-size="12" fill="#555">la carga. La ecuación general los recupera con factores,</text>
+  <text x="506" y="405" font-size="12" fill="#555">y de ahí sale casi toda la diferencia entre métodos.</text>
+</svg>

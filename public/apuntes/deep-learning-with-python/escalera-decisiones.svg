@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="ed-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="760" height="420" fill="#ffffff"/>
+
+  <text x="380" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">El orden de las decisiones</text>
+  <text x="380" y="50" text-anchor="middle" font-size="11.5" fill="#6b7280">Para lograr el ajuste perfecto, primero hay que overfittear</text>
+
+  <!-- Q1 -->
+  <rect x="200" y="70" width="230" height="44" rx="8" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="315" y="97" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">¿La pérdida de entrenamiento baja?</text>
+  <line x1="430" y1="92" x2="470" y2="92" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="450" y="84" text-anchor="middle" font-size="10.5" font-weight="700" fill="#991b1b">no</text>
+  <rect x="472" y="70" width="264" height="44" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="604" y="89" text-anchor="middle" font-size="11" fill="#991b1b">Ajusta el <tspan font-weight="700">learning rate</tspan> y el <tspan font-weight="700">batch size</tspan></text>
+  <text x="604" y="105" text-anchor="middle" font-size="10.5" fill="#991b1b">siempre es la configuración del descenso</text>
+
+  <line x1="315" y1="114" x2="315" y2="138" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="326" y="130" font-size="10.5" font-weight="700" fill="#2563eb">sí</text>
+
+  <!-- Q2 -->
+  <rect x="200" y="140" width="230" height="44" rx="8" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="315" y="167" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">¿Le ganas a la línea base?</text>
+  <line x1="430" y1="162" x2="470" y2="162" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="450" y="154" text-anchor="middle" font-size="10.5" font-weight="700" fill="#991b1b">no</text>
+  <rect x="472" y="140" width="264" height="44" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="604" y="159" text-anchor="middle" font-size="11" fill="#991b1b">Los datos <tspan font-weight="700">no contienen la respuesta</tspan>,</text>
+  <text x="604" y="175" text-anchor="middle" font-size="11" fill="#991b1b">o tus <tspan font-weight="700">priors de arquitectura</tspan> son los equivocados</text>
+
+  <line x1="315" y1="184" x2="315" y2="208" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="326" y="200" font-size="10.5" font-weight="700" fill="#2563eb">sí</text>
+
+  <!-- Q3 -->
+  <rect x="200" y="210" width="230" height="44" rx="8" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="315" y="237" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">¿Logras overfittear?</text>
+  <line x1="430" y1="232" x2="470" y2="232" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="450" y="224" text-anchor="middle" font-size="10.5" font-weight="700" fill="#991b1b">no</text>
+  <rect x="472" y="210" width="264" height="44" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="604" y="229" text-anchor="middle" font-size="11" fill="#991b1b">Te falta <tspan font-weight="700">capacidad</tspan>: más capas,</text>
+  <text x="604" y="245" text-anchor="middle" font-size="11" fill="#991b1b">capas más grandes o mejores priors</text>
+
+  <line x1="315" y1="254" x2="315" y2="278" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ed-ar)"/>
+  <text x="326" y="270" font-size="10.5" font-weight="700" fill="#2563eb">sí</text>
+
+  <!-- Final -->
+  <rect x="24" y="280" width="712" height="34" rx="8" fill="#2563eb"/>
+  <text x="380" y="302" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Recién ahora: regularizar — y en este orden de impacto</text>
+
+  <!-- ladder -->
+  <g font-size="11">
+    <rect x="24" y="326" width="136" height="52" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="92" y="346" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">1. Más datos</text>
+    <text x="92" y="362" text-anchor="middle" font-size="10" fill="#1e3a8a">o mejores datos</text>
+
+    <rect x="168" y="326" width="136" height="52" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="236" y="346" text-anchor="middle" font-size="11" font-weight="700" fill="#1e3a8a">2. Mejores features</text>
+    <text x="236" y="362" text-anchor="middle" font-size="10" fill="#1e3a8a">feature engineering</text>
+
+    <rect x="312" y="326" width="136" height="52" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="380" y="346" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb">3. Menos capacidad</text>
+    <text x="380" y="362" text-anchor="middle" font-size="10" fill="#2563eb">reducir el modelo</text>
+
+    <rect x="456" y="326" width="136" height="52" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="524" y="346" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">4. L1 / L2</text>
+    <text x="524" y="362" text-anchor="middle" font-size="10" fill="#6b7280">para modelos chicos</text>
+
+    <rect x="600" y="326" width="136" height="52" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="668" y="346" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">5. Dropout</text>
+    <text x="668" y="362" text-anchor="middle" font-size="10" fill="#6b7280">para los grandes</text>
+  </g>
+
+  <text x="380" y="402" text-anchor="middle" font-size="11" fill="#6b7280">Gastar en recolección de datos casi siempre rinde más que gastar lo mismo en un modelo mejor</text>
+</svg>

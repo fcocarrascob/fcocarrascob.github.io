@@ -1,0 +1,220 @@
+---
+title: "No empiezas desde un dataset: empiezas desde un problema"
+description: "El capítulo 6 de Chollet es el que corrige la distorsión de los tutoriales. Todos los ejemplos previos del libro partían de un dataset etiquetado listo para entrenar; en el mundo real eso no existe. El capítulo entrega un blueprint de tres fases —definir la tarea, desarrollar el modelo, desplegarlo— y afirma que la fase que ocupa casi todo tutorial no es la más difícil: lo difícil es enmarcar problemas y recolectar, anotar y limpiar datos. Por el camino desmonta cuatro formas en que los datos mienten sin que la validación lo note, y deja una regla incómoda: si te dan 50 horas extra, gástalas en recolectar más datos. Apuntes del Cap. 6."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "workflow", "despliegue", "concept drift", "datos", "producción", "ética"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 6 — El workflow universal del machine learning"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 6 (PDF 195–213)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Los [capítulos 4](/apuntes/deep-learning-with-python-cap4-clasificacion-y-regresion)
+y [5](/apuntes/deep-learning-with-python-cap5-generalizacion) asumían un dataset
+etiquetado listo para entrenar. El 6 desmonta esa premisa en una línea:
+
+> **"No empiezas desde un dataset; empiezas desde un problema."**
+
+Y de inmediato pone el desarrollo del modelo en su lugar:
+
+> *"La mayoría de los tutoriales y proyectos de investigación asumen que este es
+> el único paso —se saltan la definición del problema y la recolección de datos,
+> que se asumen ya hechas, y se saltan el despliegue y el mantenimiento, que se
+> asume que maneja otro—. De hecho, el desarrollo del modelo es solo un paso del
+> workflow, y **no es el más difícil**. **Lo más difícil en machine learning es
+> enmarcar problemas y recolectar, anotar y limpiar datos.**"*
+
+## 1. El blueprint
+
+<Figure
+  src="/apuntes/deep-learning-with-python/workflow-tres-fases.svg"
+  alt="Tres columnas. La primera, DEFINIR LA TAREA: enmarcar el problema (entradas, targets, tipo de tarea), recolectar y anotar (lo más arduo, lento y costoso), entender los datos (clases, histogramas, leaking) y elegir la medida de éxito alineada con el negocio. La segunda, en azul sólido, DESARROLLAR: preparar los datos, elegir protocolo de evaluación, batir la línea base, escalar hasta overfittear y regularizar y ajustar. La tercera, DESPLEGAR: fijar expectativas (modos de falla, no '98 %'), enviar el modelo de inferencia, monitorear en producción con A/B testing y auditoría manual, y mantener recolectando para la v2. Una flecha roja punteada vuelve de la fase 3 a la 1, etiquetada 'concept drift: ningún modelo dura'. Al pie, la vida útil estimada: recomendador de música semanas, detección de fraude días, buscador de imágenes un par de años en el mejor caso."
+  caption="Las tres fases, y el bucle que las cierra. La fase 2 —la que cubre la mayoría de los tutoriales— está en el medio por una razón."
+  width={780}
+/>
+
+El capítulo se estructura alrededor de **siete proyectos ficticios** de una
+consultora de ML, y los usa para mostrar que cada uno mapea a un tipo de tarea
+distinto. El detalle que vale la pena notar: **uno de los siete no es un problema
+de deep learning**.
+
+| Proyecto | Tipo de tarea |
+|---|---|
+| Buscador de fotos personalizado | Multiclase **multilabel** |
+| Detección de spam y contenido ofensivo | Binaria (o de tres vías) |
+| **Recomendador de música** | **Factorización matricial**, no deep learning |
+| Fraude con tarjeta de crédito | Binaria |
+| Predicción de CTR de avisos | Regresión escalar |
+| Galletas defectuosas en la cinta | Detección de objetos **y luego** binaria |
+| Sitios arqueológicos por satélite | Ranking por **similitud** de imágenes |
+
+<Note type="warning" title="Las dos hipótesis que estás haciendo, y no verificando">
+Al terminar de enmarcar, estás asumiendo **(a) que tus targets pueden predecirse
+dados tus inputs** y **(b) que los datos disponibles son suficientemente
+informativos** para aprender esa relación. *"Hasta que tengas un modelo
+funcionando, estas son meramente hipótesis, esperando ser validadas o
+invalidadas."* Haber juntado ejemplos de X e Y **no significa que X contenga
+suficiente información para predecir Y**. El ejemplo del libro: predecir el
+movimiento de una acción desde su historial de precios *"es improbable que
+funcione, porque el historial de precios no contiene mucha información
+predictiva"*.
+</Note>
+
+## 2. Cuatro formas en que los datos mienten
+
+Esta es la parte del capítulo con más valor práctico, porque **ninguno de estos
+cuatro problemas se detecta mirando la curva de validación**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/trampas-de-datos.svg"
+  alt="Cuatro paneles rojos. 1, Datos no representativos: entrenas un buscador de platos con fotos profesionales de una red social de foodies y los usuarios suben fotos de celular; test sobre 90 % pero en producción falla 8 de cada 10 veces. 2, Concept drift: las propiedades de los datos de producción cambian con el tiempo; el dataset de IMDb es de 2011 y el vocabulario evoluciona; es agudísimo en contextos adversariales como el fraude, que cambia de patrón a diario. 3, Sesgo de muestreo: el proceso de recolección interactúa con lo que predices; en 1948 el Chicago Tribune confió en una encuesta telefónica y tituló DEWEY DEFEATS TRUMAN, porque quien tenía teléfono en 1948 no era el votante promedio. 4, Target leaking: features que dan información del target y no estarán en producción, como predecir si alguien será tratado por cáncer con un registro que ya dice que fue diagnosticado; validación excelente, inútil en producción. Al pie, la pregunta que las desarma: ¿toda feature estará disponible en la misma forma en producción?"
+  caption="Las cuatro trampas. La primera es la que Chollet llama, textualmente, 'un pecado capital'."
+  width={780}
+/>
+
+Vale la pena detenerse en dos.
+
+**El concept drift fija la vida útil del modelo**, y el capítulo se atreve a
+ponerle números: un recomendador de música dura **semanas**; un detector de
+fraude, **días**; un buscador de imágenes, *"un par de años en el mejor caso"*.
+La consecuencia operativa es que **apenas lanzas, deberías estar preparándote
+para entrenar la generación siguiente**. Y una recomendación específica: al
+seguir recolectando, **pon atención especial a las muestras que le resultan
+difíciles al modelo actual** — son las más probables de mejorar el desempeño.
+
+**El target leaking** es el más traicionero porque **produce métricas
+excelentes**. La pregunta que lo desarma cabe en una línea: *¿toda feature de mis
+datos estará disponible en la misma forma en producción?*
+
+<Note type="tip" title="La frase que reordena las prioridades">
+*"Si te dan 50 horas extra para gastar en un proyecto, lo más probable es que la
+forma más efectiva de asignarlas sea **recolectar más datos**, en vez de buscar
+mejoras incrementales de modelado."* El punto lo hizo famoso un paper de Google
+de 2009 —**"The Unreasonable Effectiveness of Data"**, un guiño al libro de
+Wigner de 1960— **antes de que el deep learning fuera popular**. Y el auge del
+deep learning, dice Chollet, *"solo ha aumentado la importancia de los datos"*.
+</Note>
+
+## 3. El recuadro de ética
+
+El capítulo se detiene, sin anunciarlo mucho, en algo que no suele aparecer en
+libros técnicos. Vale la pena reproducirlo con cierto detalle.
+
+> *"A veces te ofrecerán proyectos éticamente dudosos, como 'construir una IA que
+> califique la confiabilidad de alguien a partir de una foto de su cara'."*
+
+El argumento es de dos capas. Primero, **la validez del proyecto es dudosa**: no
+está claro por qué la confiabilidad se reflejaría en una cara. Segundo, y más
+importante: **recolectar un dataset para eso equivaldría a registrar los sesgos y
+prejuicios de quienes etiquetan las fotos**. El modelo estaría codificando esos
+sesgos **en un algoritmo de caja negra, dándoles una fina capa de legitimidad**.
+
+> *"En una sociedad ampliamente analfabeta en tecnología como la nuestra, 'el
+> algoritmo de IA dijo que esta persona no es confiable' extrañamente parece
+> cargar más peso y objetividad que 'Juan Pérez dijo que esta persona no es
+> confiable' —a pesar de que lo primero es una aproximación aprendida de lo
+> segundo—. Tu modelo estaría **lavando y operacionalizando a escala los peores
+> aspectos del juicio humano**, con efectos negativos sobre la vida de personas
+> reales."*
+>
+> *"La tecnología nunca es neutral. Si tu trabajo tiene algún impacto sobre el
+> mundo, ese impacto tiene una dirección moral: **las decisiones técnicas son
+> también decisiones éticas**."*
+
+## 4. La chuleta que vale la pena memorizar
+
+La fase 2 es, básicamente, el
+[capítulo 5](/apuntes/deep-learning-with-python-cap5-generalizacion) convertido en
+procedimiento: batir la línea base → escalar hasta overfittear → regularizar. Lo
+nuevo es la **Tabla 6.1**, que formaliza lo que el capítulo 4 mostró con tres
+ejemplos:
+
+| Tarea | Última capa | Pérdida | Métricas |
+|---|---|---|---|
+| Clasificación binaria | Sigmoid | Binary crossentropy | Binary accuracy, ROC AUC |
+| Multiclase, single-label | Softmax | Categorical crossentropy | Categorical accuracy, top-k, ROC AUC |
+| **Multiclase, multi-label** | **Sigmoid** | **Binary crossentropy** | Binary accuracy, ROC AUC |
+| Regresión | Ninguna | Mean squared error | Mean absolute error |
+
+La fila que suele sorprender es la tercera: **multilabel usa sigmoid y binary
+crossentropy**, no softmax — porque las clases ya no son mutuamente excluyentes y
+cada una se decide por separado.
+
+<Note type="info" title="Por qué no puedes optimizar tu métrica directamente">
+*"A menudo no es posible optimizar directamente la métrica que mide el éxito."*
+Las pérdidas deben ser **computables sobre un solo mini-batch** (idealmente sobre
+un solo punto) y **diferenciables** — si no, no hay backpropagation. El ejemplo
+concreto: **ROC AUC no se puede optimizar directamente**, así que se optimiza una
+**métrica proxy** como la crossentropy, esperando que mientras más baja la
+crossentropy, más alto el ROC AUC.
+</Note>
+
+## 5. Desplegar: dónde vive el modelo
+
+*"Un proyecto de ML no termina cuando llegas a un notebook de Colab que puede
+guardar un modelo entrenado. **Rara vez pones en producción el mismo objeto Python
+que manipulaste durante el entrenamiento.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/donde-vive-el-modelo.svg"
+  alt="Tres columnas comparando opciones de despliegue. REST API: cuando hay internet confiable, sin latencia estricta y datos no sensibles; costo, unos 500 ms de round trip; con TF Serving u ONNX. En el dispositivo: cuando hay latencia estricta, baja conectividad o datos que no pueden descifrarse fuera; costo en memoria, energía y accuracy; con TensorFlow Lite o el runtime de ONNX. En el navegador: cuando quieres descargar cómputo al usuario final o la app debe seguir sin conexión; costo, el modelo entero se descarga y nada en él puede ser confidencial; con TensorFlow.js. Al pie: antes de enviarlo, optimízalo con weight pruning y quantization — model.quantize('int8') comprime cada peso a un byte, 4 veces más pequeño con accuracy similar."
+  caption="La decisión no la toma la comodidad: la toman la conectividad, la latencia y la sensibilidad de los datos."
+  width={780}
+/>
+
+Dos advertencias del capítulo que conviene tener presentes:
+
+- **En el navegador, el modelo entero se descarga al dispositivo del usuario.**
+  Nada en él puede ser confidencial — *"dado un modelo entrenado, normalmente es
+  posible recuperar algo de información sobre los datos de entrenamiento: mejor
+  no hacer público tu modelo si fue entrenado con datos sensibles"*.
+- **La cuantización a `int8` es casi gratis**: `model.quantize("int8")` comprime
+  cada peso a un solo byte y da un modelo **cuatro veces más pequeño** que se
+  mantiene cerca de la accuracy original.
+
+### Y la conversación con quien recibe el modelo
+
+Esta es la parte del capítulo que menos se parece a un libro técnico y que más se
+parece al trabajo real. *"El éxito y la confianza del cliente se tratan de
+cumplir o superar consistentemente las expectativas de la gente; **el sistema que
+entregas es solo la mitad del cuadro**."*
+
+<Note type="warning" title="Nunca digas '98 % de accuracy'">
+La mayoría de la gente **redondea mentalmente el 98 % a 100 %**. En vez de eso,
+habla de tasas de falsos positivos y negativos, **y tradúcelas a unidades del
+negocio**. La reformulación textual del libro:
+
+*"Con esta configuración, el modelo de detección de fraude tendría una tasa de
+falsos negativos del 5 % y de falsos positivos del 2,5 %. Cada día, un promedio de
+**200 transacciones válidas serían marcadas como fraudulentas** y enviadas a
+revisión manual, y un promedio de **14 transacciones fraudulentas se escaparían**.
+Un promedio de **266 transacciones fraudulentas serían correctamente
+detectadas**."*
+
+Y muestra **los modos de falla**: ejemplos concretos de muestras mal
+clasificadas, en especial aquellas cuyo error resulte sorprendente.
+</Note>
+
+## Para recordar
+
+- **Empiezas del problema, no del dataset.** El desarrollo del modelo es un paso
+  de tres, y no el más difícil.
+- **Estás haciendo dos hipótesis** —que los targets son predecibles y que los
+  datos bastan— y son hipótesis hasta que hay un modelo que funcione.
+- **Cuatro trampas invisibles a la validación:** datos no representativos,
+  concept drift, sesgo de muestreo y target leaking.
+- **50 horas extra van a recolectar datos**, no a mejorar el modelo.
+- **La topología de la Tabla 6.1** te da capa final, pérdida y métricas por tipo
+  de tarea — con multilabel usando sigmoid, no softmax.
+- **No puedes optimizar cualquier métrica**: la pérdida debe ser computable por
+  mini-batch y diferenciable, de ahí los proxies.
+- **Dónde despliegas lo deciden las restricciones**, y lo que envías no es el
+  objeto Python que entrenaste.
+- **Ningún modelo dura para siempre.** Apenas lanzas, empieza la v2.
+- **Las decisiones técnicas son también decisiones éticas.**
+
+Con el mapa completo del proyecto en la cabeza, el **capítulo 7** vuelve a la
+herramienta: el recorrido completo de la API de Keras, de `fit()` a los bucles de
+entrenamiento escritos a mano.

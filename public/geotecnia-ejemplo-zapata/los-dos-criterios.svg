@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="450" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los dos criterios sobre la misma zapata — y el que gobierna no es el que se suele mirar</text>
+
+  <!-- ================= IZQUIERDA: corte ================= -->
+  <text x="240" y="66" font-size="13.5" text-anchor="middle" fill="#1c7c3c" font-weight="bold">Criterio 1 — falla por corte</text>
+
+  <text x="60" y="94" font-size="11.5" fill="#666">Terzaghi, Ec. (16.4)</text>
+  <text x="420" y="94" font-size="12" fill="#555" text-anchor="end">q_adm = 399 kPa = <tspan font-weight="bold" fill="#222">4,06 kgf/cm²</tspan></text>
+  <text x="60" y="116" font-size="11.5" fill="#666">Ec. general (16.9)</text>
+  <text x="420" y="116" font-size="12" fill="#555" text-anchor="end">q_adm = 522 kPa = <tspan font-weight="bold" fill="#222">5,33 kgf/cm²</tspan></text>
+  <text x="60" y="138" font-size="11" fill="#888">diferencia entre métodos: +31 % (se adopta el menor)</text>
+
+  <!-- barra de uso -->
+  <text x="60" y="176" font-size="12" fill="#555">uso = q servicio / q_adm</text>
+  <rect x="60" y="186" width="360" height="26" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="60" y="186" width="47" height="26" fill="#1c7c3c" fill-opacity="0.75"/>
+  <line x1="163" y1="180" x2="163" y2="218" stroke="#b02a1a" stroke-width="1.6"/>
+  <text x="163" y="176" font-size="10.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">límite 1,00</text>
+  <text x="117" y="204" font-size="12.5" fill="#1c7c3c" font-weight="bold">0,46</text>
+  <text x="60" y="232" font-size="12" fill="#1c7c3c" font-weight="bold">HOLGADO — sobra más del doble</text>
+
+  <!-- ================= DERECHA: asentamiento ================= -->
+  <line x1="470" y1="52" x2="470" y2="330" stroke="#e5e2dc" stroke-width="1.5"/>
+  <text x="700" y="66" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Criterio 2 — asentamiento</text>
+
+  <text x="520" y="94" font-size="11.5" fill="#666">Elástico en la arena, Ec. (17.2)</text>
+  <text x="880" y="94" font-size="12" fill="#222" text-anchor="end" font-weight="bold">11,1 mm</text>
+  <text x="520" y="116" font-size="11.5" fill="#666">Consolidación primaria, Ec. (9.16)</text>
+  <text x="880" y="116" font-size="12" fill="#222" text-anchor="end" font-weight="bold">18,2 mm</text>
+  <text x="520" y="138" font-size="11.5" fill="#666">Secundaria a 50 años, Ec. (9.28)</text>
+  <text x="880" y="138" font-size="12" fill="#b02a1a" text-anchor="end" font-weight="bold">52,4 mm</text>
+  <line x1="520" y1="148" x2="880" y2="148" stroke="#8a857c" stroke-width="1"/>
+  <text x="520" y="166" font-size="12" fill="#222" font-weight="bold">TOTAL a 50 años</text>
+  <text x="880" y="166" font-size="13" fill="#b02a1a" text-anchor="end" font-weight="bold">81,7 mm</text>
+
+  <!-- barras de uso -->
+  <text x="520" y="196" font-size="12" fill="#555">uso = S / 25 mm</text>
+
+  <rect x="520" y="210" width="360" height="22" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="520" y="210" width="120" height="22" fill="#b35c0e" fill-opacity="0.8"/>
+  <text x="648" y="226" font-size="11.5" fill="#b35c0e" font-weight="bold">1,17</text>
+  <text x="686" y="226" font-size="11" fill="#666">fin de la primaria (1,2 años)</text>
+
+  <rect x="520" y="242" width="360" height="22" fill="#efece6" stroke="#8a857c" stroke-width="1"/>
+  <rect x="520" y="242" width="336" height="22" fill="#b02a1a" fill-opacity="0.8"/>
+  <text x="688" y="258" font-size="11.5" fill="#ffffff" text-anchor="middle" font-weight="bold">3,27  ·  a 50 años, con fluencia</text>
+
+  <line x1="623" y1="204" x2="623" y2="270" stroke="#b02a1a" stroke-width="1.6"/>
+  <text x="623" y="200" font-size="10.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">límite 1,00</text>
+
+  <text x="520" y="306" font-size="12" fill="#b02a1a" font-weight="bold">NO CUMPLE — ni siquiera al año y medio</text>
+
+  <!-- ================= veredicto ================= -->
+  <rect x="60" y="348" width="820" height="90" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="372" font-size="13.5" text-anchor="middle" fill="#222" font-weight="bold">Para cumplir 25 mm al final de la consolidación primaria: q = 159 kPa = 1,62 kgf/cm²</text>
+  <text x="470" y="394" font-size="12.5" text-anchor="middle" fill="#555">El criterio de asentamiento es <tspan font-weight="bold">2,5 veces más restrictivo</tspan> que el de corte — y es el que manda.</text>
+  <text x="470" y="418" font-size="12.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">El post original usó q_a = 2,0 kgf/cm². Sobre este perfil, eso queda un 23 % del lado inseguro.</text>
+</svg>

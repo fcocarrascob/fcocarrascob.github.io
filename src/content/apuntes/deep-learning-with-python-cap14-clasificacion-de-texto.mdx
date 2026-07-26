@@ -1,0 +1,320 @@
+---
+title: "Treinta mil parámetros que ignoran el orden le ganan a dos millones que no"
+description: "El capítulo 14 enseña cómo se convierte texto en números y cómo se representa el orden de las palabras, y termina con un resultado incómodo que el libro no disimula: sobre IMDb, un modelo de bigramas de 30 001 parámetros —que trata la review como un conjunto desordenado— llega a 90,1 %, mientras el LSTM bidireccional de dos millones se queda en 84,4 %. El diagnóstico no es que el orden no sirva, sino que no hay datos suficientes para aprenderlo; preentrenar el embedding con CBOW sobre texto sin etiquetar recupera casi cinco puntos sin tocar la arquitectura. Por el camino: tokenizar es comprimir, y el one-hot supone falsamente que 'movie' y 'film' son ortogonales. Apuntes del Cap. 14."
+pubDate: 2026-07-26
+tags: ["deep learning", "chollet", "nlp", "tokenización", "embeddings", "bag-of-words", "lstm", "imdb"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 14 — Clasificación de texto"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 14 (PDF 405–443)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Empieza la sección de texto —tres capítulos que terminan en el Transformer— y este
+primero hace dos cosas: enseña **cómo se convierte texto en números** y **cómo se
+representa el orden de las palabras**. Termina con un resultado que va contra la
+intuición, y que el libro presenta sin maquillar.
+
+La distinción de apertura es más profunda de lo que parece:
+
+> *"Todo lenguaje de máquina fue **diseñado**: su punto de partida fue un ingeniero
+> escribiendo reglas formales sobre qué enunciados puedes hacer y qué significan.
+> **Las reglas vinieron primero**, y la gente empezó a usar el lenguaje cuando el
+> conjunto estuvo completo. Con el lenguaje humano es al revés: **el uso viene
+> primero y las reglas surgen después**. […] Sus 'reglas', como la gramática del
+> inglés, se formalizaron **a posteriori** y a menudo son ignoradas o rotas por sus
+> usuarios."*
+
+El arco histórico incluye la demo de IBM y Georgetown de los años 50 —**seis reglas
+hardcodeadas, ~200 entradas de tabla y 60 frases rusas elegidas a mano**— que
+prometió traducción resuelta en cinco años y consiguió casi una década de
+financiamiento. Y el momento en que el campo cambia de método:
+
+> *"Cuando te encuentras construyendo sistemas que son grandes pilas de reglas ad
+> hoc, como ingeniero astuto es probable que empieces a preguntarte: **'¿Podría usar
+> un corpus de datos para automatizar el proceso de encontrar estas reglas?'** Y
+> así, sin más, **te graduaste de hacer machine learning**."*
+
+Con la broma de Jelinek en los 90 de remate: *"Cada vez que despido a un lingüista,
+el rendimiento del reconocedor de voz sube."*
+
+## 1. Tokenizar son tres cosas, no una
+
+```
+"The cat sat on the mat."
+   ↓ estandarización
+"the cat sat on the mat"
+   ↓ splitting
+["the", "cat", "sat", "on", "the", "mat"]
+   ↓ indexing
+[3, 26, 65, 9, 3, 133]
+```
+
+**La estandarización** borra diferencias de codificación irrelevantes. El ejemplo
+del libro son dos frases casi idénticas —*"sunset came. i was staring at the Mexico
+sky. Isnt nature splendid??"* y *"Sunset came; I stared at the México sky. Isn't
+nature splendid?"*— que producirían representaciones completamente distintas
+*"porque un modelo no sabe a priori que 'i' e 'I' son la misma letra, que 'é' es una
+'e' con acento, o que 'staring' y 'stared' son formas del mismo verbo"*.
+
+Pero la recomendación moderna es **hacer lo mínimo**:
+
+<Note type="warning" title="El stemming pasó de buena práctica a mala idea">
+*"Durante muchas décadas en NLP fue práctica común usar expresiones regulares para
+mapear palabras a una raíz común ('tired' → 'tire', 'trophies' → 'trophy'), lo que
+se llama **stemming** o **lemmatization**. **Pero a medida que los modelos se han
+vuelto más expresivos, este tipo de estandarización tiende a hacer más mal que
+bien. El tiempo verbal y el número de una palabra son señales necesarias para su
+significado.** Para los modelos grandes de hoy, la mayor parte de la
+estandarización es tan ligera como sea posible."*
+</Note>
+
+## 2. Tokenizar es comprimir
+
+El libro implementa un `CharTokenizer` y un `WordTokenizer` idénticos salvo el paso
+de `split`, y los mide sobre **Moby Dick** completo. El resultado deja el trade-off
+a la vista, y la solución también.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tres-tokenizadores.svg"
+  alt="Diagrama en dos partes. Arriba, tres paneles comparando tokenizadores sobre Moby Dick con la frase de prueba 'Call me Ishmael. Some years ago--never mind how long precisely.'. Panel rojo, Carácter: vocabulario de 64, la frase da 63 tokens; cubre el libro entero con nada pero produce secuencias larguísimas, cero compresión. Panel ámbar, Palabra: vocabulario de 2 000, la frase da 13 tokens; el más corto, pero harían falta 17 000 términos para el libro entero y lo que sobra cae en [UNK]. Panel verde, Subword por byte-pair encoding: vocabulario de 2 000, la frase da 16 tokens; tres más que el de palabras, pero tokeniza todo el libro sin un solo [UNK] porque el peor caso es letra por letra. Abajo, un panel muestra cómo se construye el vocabulario BPE: al inicio cada palabra separada en letras ('b r o w n' ×3, 's l o w' ×1, 'f o x h o u n d' ×1); el par más frecuente es (o,w) que aparece 4 veces; en el paso 1 se fusiona a 'b r ow n' y 's l ow'; en el paso 6 ya es 'brown' completo; en el paso 10 aparece 'fox' mientras 'fox h o u n d' sigue a medias — las palabras comunes se fusionan enteras y las raras a medias. Al pie: buscar el tokenizador ideal es buscar la compresión ideal, secuencias cortas y vocabulario chico; por eso el truco fue reutilizar un algoritmo de compresión sin pérdida de 1994, que usa ChatGPT hasta hoy."
+  caption="El subword paga tres tokens más de largo a cambio de no perder nunca una palabra. Ese es todo el negocio."
+  width={800}
+/>
+
+La analogía que hace obvio el algoritmo:
+
+> *"Podemos pensar la búsqueda del tokenizador ideal como **la caza de una
+> compresión ideal de los datos**. Reducir el largo de tokens comprime el largo de
+> nuestros ejemplos. Un vocabulario pequeño reduce los bytes por token. **Si
+> logramos ambas cosas, podremos alimentar secuencias cortas y ricas en información
+> al modelo.**"*
+>
+> *"Esta analogía no siempre fue obvia, pero resulta poderosa. **Uno de los trucos
+> más efectivos de la última década de investigación en NLP fue reutilizar un
+> algoritmo de los 90 para compresión sin pérdida llamado byte-pair encoding** para
+> tokenizar. Lo usa ChatGPT y muchos otros modelos hasta hoy."*
+
+Y la respuesta operativa: **con un modelo preentrenado no hay elección** —*"tienes
+que preservar la tokenización exacta usada durante el preentrenamiento, o tirar a
+la basura las representaciones útiles contenidas en los pesos"*. Desde cero,
+subword casi siempre, *"porque cuanto más corto el largo promedio de tus entradas,
+mejor podrá el modelo rastrear dependencias de largo alcance"*. Salvo casos como la
+corrección ortográfica, donde carácter tiene sentido.
+
+## 3. La pregunta que divide las arquitecturas
+
+> *"Cómo debe un modelo representar tokens individuales es una pregunta poco
+> controversial: son features categóricas. **Una pregunta mucho más problemática es
+> cómo codificar el ordenamiento.**"*
+>
+> *"A diferencia de los pasos de una serie de tiempo, **las palabras de una frase no
+> tienen un orden natural y canónico**. Distintos idiomas ordenan de maneras muy
+> distintas […] Si aleatorizaras las palabras de una frase corta, a veces todavía
+> podrías descifrar qué decía. **El orden claramente importa, pero su relación con
+> el significado no es directa.**"*
+
+De ahí salen las tres familias: **descartar el orden** (bag-of-words), **procesar
+estrictamente en orden** (RNN), o el **híbrido** —*"el Transformer es técnicamente
+agnóstico al orden, pero inyecta información de posición en las representaciones"*.
+
+## 4. Los modelos de conjunto, que son ridículamente simples
+
+Bag-of-words: se tokeniza normalmente y **se convierte a conjunto**, olvidando el
+orden. Después, multi-hot sobre el vocabulario. Sobre IMDb, con
+`TextVectorization(max_tokens=20_000, output_mode="multi_hot")`, cada review es un
+vector de 20 000 números. Y el modelo es **una sola capa**:
+
+```python
+inputs = keras.Input(shape=(max_tokens,))
+outputs = layers.Dense(1, activation="sigmoid")(inputs)
+```
+
+**20 001 parámetros. 88,4 % de accuracy de test.** Entrena en menos de un minuto —
+*"la tokenización y codificación de la entrada es bastante más cara que actualizar
+los parámetros del modelo"*. Y una observación honesta sobre la curva: *"nuestro
+modelo es tan simple que **realmente no puede overfittear**"*.
+
+Después, **bigramas**. La motivación en dos ejemplos: *"el término 'United States'
+transmite un concepto distinto de 'states' y 'united' por separado. Una película que
+es **'not bad'** y una que es **'bad'** deberían recibir puntajes distintos."* Con
+`ngrams=2` y vocabulario de 30 000, unigramas y bigramas **compiten por el mismo
+espacio**:
+
+```python
+>>> text_vectorization.get_vocabulary()[100:108]
+["in a", "most", "him", "dont", "it was", "one of", "for the", "made"]
+```
+
+**30 001 parámetros. 90,1 %.** Y el límite está claro: más allá de trigramas *"el
+espacio de 4-gramas posibles en inglés es inmenso y el problema crece
+exponencialmente. **Tu modelo perdería su capacidad de generalizar, simplemente
+memorizando fragmentos enteros de frases con pesos adosados.**"*
+
+## 5. El one-hot es una decisión de feature engineering — y es la equivocada
+
+Para meter la secuencia completa a un LSTM hay que convertir enteros a floats. Lo
+más directo es one-hot: cada token, un vector de 30 000 con un solo 1.
+
+Funciona, y es carísimo: cada review es una matriz `(600, 30000)`, o sea **18
+millones de floats por una sola review**. **15 393 409 parámetros y 84,8 %** — peor
+que el modelo de 20 001.
+
+<Note type="info" title="Por qué el one-hot es un supuesto, no una tecnicidad">
+*"Cuando codificas algo con one-hot **estás tomando una decisión de feature
+engineering**. Estás inyectando un supuesto fundamental sobre la estructura de tu
+espacio de features: que **los distintos tokens son todos independientes entre sí**
+— los vectores one-hot son todos **ortogonales**. En el caso de las palabras, ese
+supuesto es claramente falso. **Las palabras forman un espacio estructurado:
+comparten información.** 'movie' y 'film' son intercambiables en la mayoría de las
+frases, así que sus vectores **no deberían ser ortogonales** — deberían ser el
+mismo, o suficientemente cercanos."*
+
+*"Más abstractamente: **la relación geométrica entre dos vectores de palabras
+debería reflejar la relación semántica entre esas palabras.**"*
+</Note>
+
+Los **word embeddings** son la contraparte punto por punto: punto flotante en vez
+de binario, densos en vez de dispersos, de 64 a 1024 dimensiones en vez de 30 000, y
+**aprendidos** en vez de hardcodeados. Y su estructura no es solo cercanía — **las
+direcciones significan cosas**: el mismo vector lleva de *cat* a *tiger* y de *dog*
+a *wolf* (*"de mascota a animal salvaje"*), y en espacios reales sumar un vector
+"femenino" a *king* da *queen*.
+
+¿Existe un espacio de embedding universal? *"Posiblemente, pero **todavía no hemos
+computado nada por el estilo**. […] Más pragmáticamente, **lo que hace bueno a un
+espacio depende fuertemente de tu tarea**: el perfecto para sentimiento de reviews
+puede verse distinto del ideal para clasificar documentos legales."*
+
+La capa `Embedding` *"se entiende mejor como **un diccionario que mapea índices
+enteros a vectores densos**"*. Y tiene un argumento sutil:
+
+```python
+x = keras.layers.Embedding(input_dim=max_tokens, output_dim=64, mask_zero=True)(inputs)
+x = keras.layers.Bidirectional(keras.layers.LSTM(64))(x)
+```
+
+`mask_zero=True` resuelve un problema que se pasa por alto fácil: como se rellena
+con `[PAD]` hasta 600 tokens, *"**la última representación que recibimos del LSTM
+podría contener el resultado de procesar recurrentemente la representación de
+`[PAD]` una y otra vez**. No nos interesa esa; nos interesa la de `'awful'`, **el
+último token que no es padding**."* Con la máscara, la capa *"emitirá la última
+representación no enmascarada"*.
+
+**Resultado: de 15 M a 2 M de parámetros… y 84,4 %.** La accuracy no se mueve.
+
+## 6. El diagnóstico, y la tabla completa
+
+<Figure
+  src="/apuntes/deep-learning-with-python/imdb-parametros-accuracy.svg"
+  alt="Tabla con barras horizontales de cinco modelos sobre IMDb, mostrando parámetros y accuracy de test. Bag-of-words de unigramas, una sola capa Dense sobre multi-hot: 20 001 parámetros, 88,4 %, barra verde. Bigramas, lo mismo pero con el vocabulario admitiendo pares: 30 001 parámetros, 90,1 %, la barra más larga y marcada como el mejor. LSTM bidireccional con one-hot, con la nota de 18 000 000 de floats por review: 15 393 409 parámetros, 84,8 %, barra roja muy corta. LSTM bidireccional con Embedding aprendido, 10 veces más chico y con la misma accuracy: 1 986 177 parámetros, 84,4 %, la barra más corta. LSTM bidireccional con Embedding preentrenado por CBOW, los mismos pesos y otra inicialización: 1 986 177 parámetros, 89,1 %, barra azul. Al pie: no es que el orden no sirva, es que no hay datos suficientes para aprenderlo; el LSTM llega a 99 % en entrenamiento antes de haber aprendido buenos embeddings, y preentrenar sobre texto sin etiquetar recupera casi cinco puntos sin tocar la arquitectura."
+  caption="Las dos barras verdes de arriba no tienen ninguna noción de secuencia. Las tres de abajo sí, y dos de ellas pierden."
+  width={800}
+/>
+
+El diagnóstico es preciso y no le echa la culpa a la idea:
+
+> *"¿Significa esto que un 'espacio de embedding estructurado' no es tan útil? Todo
+> lo contrario. **El problema en este caso particular es nuestro setup de
+> entrenamiento: no tenemos suficientes datos en nuestras 20 000 reviews para
+> entrenar efectivamente un buen word embedding.** Al final de las 10 épocas la
+> accuracy de entrenamiento ha superado el 99 %: **el modelo ha empezado a
+> overfittear y memorizar bastante antes de haber aprendido un conjunto óptimo de
+> embeddings.**"*
+
+## 7. Preentrenar: el directorio que se había ignorado
+
+La solución no es más arquitectura, es más datos — **sin necesidad de etiquetas**:
+
+> *"La idea es idear una **tarea no supervisada** para entrenar parámetros que no
+> necesite datos etiquetados. […] El preentrenamiento nos permite aprender patrones
+> generales del lenguaje, **cebando efectivamente el modelo antes de especializarlo**."*
+
+Y aquí vuelve el directorio **`unsup/`** de IMDb, que se había descartado al
+principio: otras **25 000 reviews sin etiquetar**, del mismo tamaño que los datos de
+entrenamiento, ahora perfectamente usables.
+
+**CBOW** (*Continuous Bag of Words*, Mikolov et al., 2013): deslizar una ventana de
+9 tokens y **adivinar la palabra del medio a partir de las 8 vecinas, desordenadas**.
+*"Si nuestra 'bolsa' contuviera 'sail', 'wave' y 'mast', podríamos adivinar que la
+palabra del medio es 'boat' u 'ocean'."*
+
+El modelo es de tres capas:
+
+```python
+inputs = keras.Input(shape=(2 * context_size,))
+cbow_embedding = layers.Embedding(max_tokens, hidden_dim)
+x = cbow_embedding(inputs)
+x = layers.GlobalAveragePooling1D()(x)          # promedia la bolsa
+outputs = layers.Dense(max_tokens, activation="sigmoid")(x)
+```
+
+> *"¡Eso es todo! **Refinando repetidamente nuestro espacio de embedding para ser
+> buenos prediciendo una palabra a partir de los embeddings de las cercanas,
+> aprendemos un embedding rico de los tokens usados en reviews de películas.**"*
+
+Acierta la palabra del medio **cerca del 12 % de las veces**. *"Puede no sonar como
+un gran resultado, pero **dado que tenemos 30 000 palabras entre las cuales
+adivinar, es una accuracy razonable**."*
+
+Y transferirlo al LSTM es **una línea**:
+
+```python
+lstm_embedding.embeddings.assign(cbow_embedding.embeddings)
+```
+
+*"Esto actúa efectivamente como **un inicializador nuevo y mejor** para los
+aproximadamente 2 millones de parámetros del embedding."*
+
+**Test accuracy: 89,1 %.** De 84,4 % a 89,1 % **sin tocar la arquitectura**, solo
+cambiando desde dónde arranca.
+
+<Note type="tip" title="Dos apartes que se llevan a cualquier proyecto">
+**El preprocesamiento de texto siempre corre en CPU.** *"Las GPU manejan
+estrictamente entradas numéricas, así que toda la tokenización debe ocurrir antes
+del paso de entrenamiento. […] El nombre del juego es ser **'suficientemente
+rápido'**: quieres asegurar que tus GPU caras siempre tengan un batch nuevo listo.
+**Si lo logras, la GPU es el cuello de botella y no hay nada que ganar mejorando tu
+velocidad de tokenización.**"* Y cuando el cuello de botella sí es la CPU —como en
+el modelo CBOW, tan simple que preprocesar cuesta más que entrenar— se llama
+`cache()` y *"las épocas posteriores son más de tres veces más rápidas que la
+primera"*.
+
+**El data augmentation de texto casi no funciona.** *"'The rain in Spain falls
+mainly on the plain' se convierte en 'The rain Spain falls plain on the mainly'. […]
+**A diferencia de las imágenes, donde puedes recortar, rotar y ajustar el color de
+una foto de un gato y seguir teniendo un gato reconocible, el lenguaje es
+dependiente del orden y altamente sensible a cambios diminutos. Una frase con dos
+palabras intercambiadas puede significar lo opuesto.** […] Usualmente es mejor idea
+**buscar más ejemplos de texto** que hundir tiempo en técnicas de augmentation."*
+</Note>
+
+## Para recordar
+
+- **Tokenizar son tres etapas**: estandarizar, partir, indexar. Y hoy la
+  estandarización debe ser **lo más ligera posible** — el stemming pasó de buena
+  práctica a mala idea.
+- **Buscar el tokenizador ideal es buscar la compresión ideal**: secuencias cortas
+  **y** vocabulario chico. Por eso ganó el byte-pair encoding, un algoritmo de
+  compresión de 1994.
+- **Con un modelo preentrenado, la tokenización no se elige**: se hereda exacta, o
+  se tiran a la basura los pesos.
+- **El one-hot supone que las palabras son ortogonales entre sí**, y eso es falso.
+  Un embedding es denso, de baja dimensión y aprendido, y **su geometría refleja
+  semántica**.
+- **`mask_zero=True`** hace que el LSTM emita la última representación **no** de
+  padding.
+- **El bigrama de 30 001 parámetros gana**, y no porque el orden no importe: porque
+  con 20 000 reviews no alcanza para aprenderlo.
+- **Preentrenar con CBOW sobre texto sin etiquetar** sube el LSTM de 84,4 % a
+  89,1 % sin cambiar una sola capa.
+- **Los modelos de conjunto dan mucho "bang for your buck"**: *"si trabajas en un
+  entorno con cómputo limitado y puedes sacrificar algo de precisión, suelen ser el
+  enfoque más costo-efectivo"*.
+
+El **capítulo 15** trae el Transformer, y con él la respuesta al problema que este
+capítulo se topa: no es mejor arquitectura solamente, es que esos modelos *"suelen
+entrenarse sobre grandes cantidades de texto, incluida toda la información de orden
+de palabras — precisamente los patrones estadísticos que nuestro LSTM está
+demasiado limitado por datos para aprender"*.

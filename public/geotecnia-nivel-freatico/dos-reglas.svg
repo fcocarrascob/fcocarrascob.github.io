@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="460" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Dos reglas exactas — y solo una de ellas depende de la geometría</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Válidas para arena limpia (c' = 0). Verificadas sobre 9 combinaciones de B y D_f</text>
+
+  <line x1="470" y1="70" x2="470" y2="382" stroke="#e5e2dc" stroke-width="1.5"/>
+
+  <!-- ============ IZQUIERDA: napa en superficie ============ -->
+  <g>
+    <text x="240" y="90" font-size="13.5" text-anchor="middle" fill="#b02a1a" font-weight="bold">Napa en la SUPERFICIE</text>
+
+    <rect x="80" y="106" width="320" height="52" rx="5" fill="#b02a1a" fill-opacity="0.08" stroke="#b02a1a" stroke-width="1.2"/>
+    <text x="240" y="130" font-size="13" text-anchor="middle" fill="#b02a1a" font-weight="bold">pérdida = 1 − γ'/γ = 48,9 %</text>
+    <text x="240" y="149" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">siempre, sea cual sea la zapata</text>
+
+    <text x="240" y="182" font-size="12" fill="#555" text-anchor="middle">Con la napa arriba, la sobrecarga q también</text>
+    <text x="240" y="199" font-size="12" fill="#555" text-anchor="middle">se calcula con γ', así que <tspan font-weight="bold" fill="#222">los dos términos</tspan></text>
+    <text x="240" y="216" font-size="12" fill="#555" text-anchor="middle">escalan por el mismo factor γ'/γ.</text>
+
+    <!-- barras identicas para geometrias distintas -->
+    <text x="240" y="248" font-size="11.5" fill="#666" text-anchor="middle">Cinco geometrías muy distintas, la misma pérdida:</text>
+    <g>
+      <rect x="98" y="266" width="42" height="66" fill="#b02a1a" fill-opacity="0.75"/>
+      <rect x="158" y="266" width="42" height="66" fill="#b02a1a" fill-opacity="0.75"/>
+      <rect x="218" y="266" width="42" height="66" fill="#b02a1a" fill-opacity="0.75"/>
+      <rect x="278" y="266" width="42" height="66" fill="#b02a1a" fill-opacity="0.75"/>
+      <rect x="338" y="266" width="42" height="66" fill="#b02a1a" fill-opacity="0.75"/>
+    </g>
+    <line x1="90" y1="332" x2="390" y2="332" stroke="#8a857c" stroke-width="1.3"/>
+    <text x="119" y="346" font-size="9.5" fill="#666" text-anchor="middle">8×0,5</text>
+    <text x="179" y="346" font-size="9.5" fill="#666" text-anchor="middle">4×1,5</text>
+    <text x="239" y="346" font-size="9.5" fill="#666" text-anchor="middle">2,2×1,5</text>
+    <text x="299" y="346" font-size="9.5" fill="#666" text-anchor="middle">1×1,5</text>
+    <text x="359" y="346" font-size="9.5" fill="#666" text-anchor="middle">2,2×4</text>
+    <text x="240" y="362" font-size="9.5" fill="#888" text-anchor="middle">B × D_f (m)</text>
+    <text x="240" y="260" font-size="11" fill="#b02a1a" text-anchor="middle" font-weight="bold">−48,9 % en las cinco</text>
+  </g>
+
+  <!-- ============ DERECHA: napa en el sello ============ -->
+  <g>
+    <text x="700" y="90" font-size="13.5" text-anchor="middle" fill="#b35c0e" font-weight="bold">Napa en el SELLO</text>
+
+    <rect x="530" y="106" width="340" height="52" rx="5" fill="#e67e22" fill-opacity="0.10" stroke="#b35c0e" stroke-width="1.2"/>
+    <text x="700" y="130" font-size="13" text-anchor="middle" fill="#b35c0e" font-weight="bold">pérdida = 48,9 % × f₃</text>
+    <text x="700" y="149" font-size="12" text-anchor="middle" fill="#b35c0e">f₃ = fracción del término de peso propio</text>
+
+    <!-- grafico: escala 2,6 px por punto porcentual, cero en y = 300 -->
+    <line x1="560" y1="300" x2="870" y2="300" stroke="#8a857c" stroke-width="1.4"/>
+    <line x1="560" y1="300" x2="560" y2="172" stroke="#8a857c" stroke-width="1.4"/>
+    <text x="552" y="304" font-size="10.5" fill="#666" text-anchor="end">0</text>
+    <text x="552" y="239" font-size="10.5" fill="#666" text-anchor="end">−25 %</text>
+    <text x="552" y="180" font-size="10.5" fill="#666" text-anchor="end">−45 %</text>
+    <text x="560" y="316" font-size="10.5" fill="#666" text-anchor="middle">0</text>
+    <text x="710" y="316" font-size="10.5" fill="#666" text-anchor="middle">50 %</text>
+    <text x="860" y="316" font-size="10.5" fill="#666" text-anchor="middle">100 %</text>
+    <text x="712" y="334" font-size="11" fill="#666" text-anchor="middle">f₃ — cuánto pesa el término ½γB N_γ</text>
+
+    <!-- recta teorica: perdida = 48,9 % x f3 -->
+    <line x1="560" y1="300" x2="860" y2="173" stroke="#b35c0e" stroke-width="2" stroke-dasharray="6 4"/>
+
+    <!-- los 9 casos calculados -->
+    <g fill="#b35c0e">
+      <circle cx="806" cy="196" r="4.5"/><circle cx="743" cy="223" r="4.5"/>
+      <circle cx="728" cy="229" r="4.5"/><circle cx="689" cy="245" r="4.5"/>
+      <circle cx="677" cy="251" r="4.5"/><circle cx="650" cy="262" r="4.5"/>
+      <circle cx="620" cy="274" r="4.5"/><circle cx="608" cy="280" r="4.5"/>
+      <circle cx="602" cy="283" r="4.5"/>
+    </g>
+
+    <text x="700" y="356" font-size="11.5" fill="#555" text-anchor="middle">Los 9 casos caen exactamente sobre la recta:</text>
+    <text x="700" y="373" font-size="11.5" fill="#555" text-anchor="middle">de <tspan font-weight="bold" fill="#b35c0e">−7 %</tspan> (zapata angosta y profunda) a <tspan font-weight="bold" fill="#b35c0e">−40 %</tspan> (losa ancha y somera).</text>
+  </g>
+
+  <!-- takeaway -->
+  <rect x="70" y="396" width="800" height="52" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="418" font-size="12.5" text-anchor="middle" fill="#222" font-weight="bold">«La napa te quita un tercio» no es una regla: es un caso particular.</text>
+  <text x="470" y="438" font-size="12" text-anchor="middle" fill="#555">El rango real va de −7 % a −49 % según dónde esté el agua y qué proporción de la capacidad venga del peso propio.</text>
+</svg>

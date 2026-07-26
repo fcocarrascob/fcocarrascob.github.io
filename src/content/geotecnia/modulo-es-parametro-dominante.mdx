@@ -1,0 +1,174 @@
+---
+title: "E_s: el parámetro que decide, y que nadie declara"
+description: "El salto al criterio de asentamiento. La misma zapata con el mismo q_adm asienta 12,5 mm o 62,4 mm sobre arcilla blanda, según qué extremo del rango de E_s se tome — y ambos valores salen de la misma tabla del libro. Un análisis de sensibilidad que ordena dónde conviene poner el esfuerzo."
+pubDate: 2026-07-28
+tags: ["geotecnia", "asentamiento", "módulo de elasticidad", "sensibilidad", "steinbrenner", "das"]
+subsection: "asentamientos"
+order: 4
+chapter: "Asentamientos"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 4 · bloque 1. Viene de [el nivel freático](/geotecnia/nivel-freatico-capacidad).*
+
+Las notas anteriores de este bloque recorrieron la rama de la **falla por corte**, y cada una terminó
+señalando al mismo culpable: la incertidumbre no está en las fórmulas sino en los parámetros.
+Un grado de $\phi'$ valía un 14 %; la cota de la napa, hasta un 49 %.
+
+Esta nota cruza a la otra rama —el **asentamiento**— y ahí el parámetro dominante ya no es
+$\phi'$. Es $E_s$, el módulo de elasticidad del suelo. Y su rango no se mide en grados: se mide
+en **múltiplos**.
+
+---
+
+## 1. Por qué $E_s$ es distinto
+
+El asentamiento elástico, por cualquiera de los métodos del capítulo, tiene la misma estructura:
+
+<Equation label="teoría de la elasticidad, Ec. 17.2">
+$$
+S_e = q_o (\alpha B') \frac{1 - \mu_s^2}{E_s} \, I_s \, I_f
+$$
+</Equation>
+
+Todo lo demás —$I_s$ el factor de forma de Steinbrenner (1934), $I_f$ el de profundidad de Fox
+(1948), $\mu_s$ el coeficiente de Poisson— son correcciones acotadas. **$E_s$ está en el
+denominador, solo, y sin acotar.**
+
+$S_e \propto 1/E_s$. Un $E_s$ a la mitad es un asentamiento al doble. Y a diferencia de $f'_c$,
+que se controla con probetas, o de $f_y$, que viene certificado, $E_s$ **no se mide en obra**:
+se estima de una tabla o de una correlación.
+
+---
+
+## 2. Lo que dice la tabla del propio libro
+
+La Tabla 17.6 de Das da los rangos recomendados cuando no hay ensayos. Apliqué cada uno a la
+zapata que viene siguiendo esta serie —$2{,}20 \times 2{,}20$ m con $q_o = 196$ kPa— y calculé
+el asentamiento en los dos extremos:
+
+<Figure
+  src="/geotecnia-modulo-es/rango-es.svg"
+  alt="Tabla-gráfico con ocho tipos de suelo. Para cada uno se indica el rango de E_s de la Tabla 17.6 de Das, la razón entre sus extremos, y una barra horizontal con el rango de asentamiento que produce sobre la zapata de referencia de 2,20 × 2,20 m con q_o = 196 kPa. Arcilla blanda: E_s de 4 a 20 MN/m², razón 5,0×, asentamiento de 12,5 a 62,4 mm — la barra más larga con diferencia, y la única que cruza ampliamente la línea punteada de los 25 mm. Arena limosa: 10 a 20, razón 2,0×, de 14,1 a 28,1 mm. Arena suelta: 10 a 25, razón 2,5×, de 11,2 a 28,1 mm. Arena semi-densa: 15 a 30, de 9,3 a 18,5 mm. Arcilla media: 20 a 40, de 6,5 a 13,1 mm. Arena densa: 35 a 55, razón 1,6× —la menor dispersión—, de 4,9 a 7,8 mm. Arcilla dura: 40 a 100, de 2,7 a 6,8 mm. Arena y grava: 70 a 170, de 1,7 a 4,1 mm. Una línea vertical punteada roja marca los 25 mm con que se calibran las fórmulas de q_adm por asentamiento. Al pie: en arcilla blanda la misma zapata asienta 12,5 mm o 62,4 mm según qué extremo del rango se tome; uno es un diseño correcto y el otro dos veces y media el límite admisible, y ambos salen de la misma tabla del libro."
+  caption="El mismo cálculo, la misma zapata, la misma presión. Lo único que cambia es de qué extremo del rango tabulado se tome E_s. En arcilla blanda eso decide entre un diseño correcto y uno inaceptable."
+/>
+
+En **arcilla blanda** —rango 4 a 20 MN/m², un factor 5— la misma zapata asienta entre
+**12,5 y 62,4 mm**. El primer valor es un diseño perfectamente correcto. El segundo es dos veces
+y media el límite de 25 mm con el que el propio capítulo calibra sus fórmulas de $q_{adm}$ por
+asentamiento.
+
+Y hay un detalle que ordena todo lo anterior de la serie: para las tres primeras filas de la
+tabla —arcilla blanda, arena limosa, arena suelta— **el asentamiento supera los 25 mm** con la
+$q_{adm}$ que salió del criterio de corte. Es decir: sobre esos suelos, los 196 kPa que
+calculamos en las notas 1 a 3 **no sirven**. Manda el asentamiento, y por bastante.
+
+---
+
+## 3. Qué mueve realmente el resultado
+
+Para ordenar prioridades, tomé un caso base —arcilla blanda con $E_s = 10$ MN/m², que da
+exactamente 25,0 mm— y moví una variable por vez:
+
+<Figure
+  src="/geotecnia-modulo-es/que-mueve-el-resultado.svg"
+  alt="Gráfico de tornado sobre un caso base de arcilla blanda con E_s = 10 MN/m² que produce 25,0 mm de asentamiento. Las dos barras dominantes corresponden a mover E_s dentro de su propio rango tabulado: al mínimo de 4 MN/m² el asentamiento sube un 150 % hasta 62,4 mm, y al máximo de 20 baja un 50 % hasta 12,5 mm. Separadas por una línea, el resto de las decisiones producen barras mucho más cortas: suponer la roca a 2 m en vez de 10 baja el asentamiento un 15,6 %, cambiar el coeficiente de Poisson de 0,45 a 0,30 lo sube un 12,7 %, tratar la cimentación como flexible en vez de rígida lo sube un 7,5 %, y suponer la roca a 30 m en vez de 10 lo sube apenas un 2,6 %. Al pie: discutir si la zapata es rígida o flexible mueve el resultado un 7 %, mientras que elegir mal E_s lo mueve un 150 %; el esfuerzo de cálculo y el de investigación geotécnica deberían repartirse en esa proporción y casi nunca se reparten así."
+  caption="El orden de magnitud es inequívoco. Todas las decisiones de modelación juntas —rigidez, Poisson, profundidad al estrato rígido— no llegan a la mitad de lo que vale elegir E_s dentro de su propio rango tabulado."
+/>
+
+La corrección por rigidez es un caso ilustrativo. El capítulo la da como un único número:
+
+<Equation label="17.10">
+$$
+S_e(\text{rígida}) = 0{,}93 \, S_e(\text{flexible, centro})
+$$
+</Equation>
+
+Un **7 %**. Es el tipo de refinamiento que da la sensación de estar calculando con precisión —y
+lo es—, pero discutirlo mientras se toma $E_s$ del aire es optimizar el decimal equivocado.
+
+---
+
+## 4. Una discrepancia entre métodos del mismo capítulo
+
+Al comparar el efecto del empotramiento apareció algo que no esperaba. Los dos métodos del
+capítulo tratan $D_f$ de forma muy distinta:
+
+- La **Ec. (17.1)** (Janbu et al., 1956, con los factores revisados por Christian y Carrier, 1978)
+  lo mete en $A_1$, que según la Tabla 17.1 baja de 1,00 a 0,85 **entre $D_f/B = 0$ y 20**.
+  Prácticamente plano.
+- La **Ec. (17.2)** lo mete en $I_f$ (Fox, 1948), que según la Tabla 17.5 baja de 1,00 a 0,65
+  **entre $D_f/B = 0$ y 1**.
+
+<Figure
+  src="/geotecnia-modulo-es/asimetria-criterios.svg"
+  alt="Dos paneles. El izquierdo compara el efecto de enterrar la zapata un metro más, de D_f = 1,5 a 2,5 m: la capacidad al corte sube un 47 %, representada por una barra roja alta, mientras que el asentamiento solo baja un 10 %, de 25,0 a 22,5 mm, representado por una barra azul mucho más baja. El texto señala que enterrar es la palanca barata de la capacidad pero para el asentamiento apenas hace nada. El panel derecho grafica el factor de empotramiento contra D_f/B para los dos métodos del capítulo: la curva verde de A₁, de la Ec. (17.1) de Janbu y Christian-Carrier, baja apenas de 1,0 a 0,95; la curva naranja de I_f, de la Ec. (17.2) de Fox, cae hasta 0,65. En D_f/B = 1 la separación entre ambas se acota en 46 %. Al pie: ensanchar mejora la capacidad y empeora el asentamiento, mientras que enterrar mejora mucho una y poco el otro; no hay una sola decisión de diseño que optimice los dos criterios a la vez, y por eso hay que calcular los dos."
+  caption="A la derecha, dos métodos del mismo capítulo discrepan un 46 % sobre cuánto ayuda enterrar la zapata. No es un error del libro —tienen derivaciones distintas y ámbitos distintos— pero sí es dispersión de método, del mismo orden que la que vimos entre Terzaghi y Meyerhof."
+/>
+
+<Note type="info" title="Sobre la discrepancia">
+Los dos factores no son estrictamente comparables: $A_1$ viene de la solución de Janbu para
+arcilla saturada con $\mu_s = 0{,}5$, e $I_f$ de la solución elástica general de Fox. Aun así,
+aplicados al mismo problema dan respuestas que difieren hasta un 46 %. Es la misma lección de la
+nota 2: **cuando dos métodos legítimos difieren tanto, declarar cuál se usó deja de ser una
+formalidad.**
+</Note>
+
+---
+
+## 5. La asimetría entre los dos criterios
+
+El panel izquierdo de la figura anterior es, quizá, lo más útil de esta nota para el día a día.
+Enterrar la zapata un metro más:
+
+| Criterio | Efecto |
+|---|---|
+| Capacidad al corte | **+47 %** (el término $qN_q$ crece linealmente con $D_f$) |
+| Asentamiento | **−10 %** (25,0 → 22,5 mm) |
+
+Y la otra palanca clásica, ensanchar, va en direcciones opuestas: **sube** la capacidad y
+**sube** el asentamiento, porque $S_e$ crece con $B$.
+
+<Note type="tip" title="La consecuencia de diseño">
+No existe una decisión geométrica que optimice los dos criterios a la vez. Si el problema es
+capacidad, **enterrar** es la palanca barata. Si el problema es asentamiento, enterrar apenas
+ayuda y ensanchar es contraproducente: hay que **reducir la presión** (más área, pero entonces
+más asentamiento por ancho) o **cambiar de estrategia** —mejorar el suelo, compensar la
+fundación, o irse a fundación profunda.
+
+Ese callejón es exactamente el que la cimentación compensada resuelve, y es tema de otra nota.
+</Note>
+
+---
+
+## 6. Qué preguntarle al informe
+
+Sumando a la lista que vienen dejando las notas anteriores:
+
+1. **¿De dónde salió $E_s$?** ¿Ensayo, correlación con SPT o CPT, o tabla? Es la pregunta que más
+   cambia el resultado de todo el cálculo geotécnico.
+2. **¿Con qué valor se calculó, y cuál es el rango?** Un $E_s$ sin banda de incertidumbre esconde
+   un factor que puede ser de 5.
+3. **¿A qué profundidad está el estrato rígido?** Entra en $I_s$ y puede valer un 15 %.
+4. **¿El $q_{adm}$ reportado está limitado por corte o por asentamiento?** Con las tres primeras
+   filas de la Tabla 17.6, la respuesta cambia por completo.
+5. **¿Qué asentamiento se aceptó?** Los métodos se calibran contra 25 mm en zapatas y 50 mm en
+   losas. Si la estructura tolera menos, el número no aplica.
+
+<Note type="info" title="Reproducibilidad">
+Los ocho suelos, el análisis de sensibilidad y la comparación de factores de empotramiento se
+calcularon con script sobre la Ec. (17.2), asentamiento en el centro, con las formas cerradas de
+$F_1$ y $F_2$ (Ecs. 17.4–17.8). Esas formas se habían verificado antes contra las Tablas 17.3 y
+17.4 del libro —52 valores— y contra los tres ejemplos resueltos del capítulo, que reproducen
+exactamente.
+</Note>
+
+---
+
+**Lo que viene:** el asentamiento elástico es solo el primer sumando. En arcilla falta el que
+llega después y puede ser varias veces mayor —[la **consolidación**](/geotecnia/cuanto-y-cuando-consolidacion)—, donde aparece un factor que
+no hemos tocado todavía: el tiempo.

@@ -1,0 +1,359 @@
+---
+title: "La tensión que gobierna todo: optimización contra generalización"
+description: "El capítulo 5 de Chollet es el marco conceptual que faltaba. Su tesis: el problema fundamental del machine learning es que no controlas la generalización — solo puedes ajustar el modelo a sus datos de entrenamiento, y si lo haces demasiado bien, la generalización se degrada. Cada buena práctica del deep learning es una forma de manejar esa tensión. En el camino responde por qué generalizar es siquiera posible (la hipótesis del manifold: toda la generalización de una red es interpolación local sobre una curva aprendida), demuestra que una red puede ajustar etiquetas barajadas al azar, y ordena las herramientas por impacto real: más datos primero, dropout último. Apuntes del Cap. 5."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "generalización", "overfitting", "manifold", "regularización", "dropout"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 5 — Fundamentos del machine learning"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 5 (PDF 160–194)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 4](/apuntes/deep-learning-with-python-cap4-clasificacion-y-regresion)
+mostró tres veces la misma curva: la validación mejora, hace pico, se degrada. El
+5 explica por qué, y lo hace enunciando el problema central de la disciplina:
+
+> **El problema fundamental del machine learning es la tensión entre optimización
+> y generalización.** *Optimización* es ajustar el modelo para el mejor desempeño
+> posible sobre los datos de entrenamiento —el *learning* de *machine
+> learning*—; *generalización* es qué tan bien rinde sobre datos que nunca vio.
+> El objetivo del juego es la generalización, **pero no la controlas**. Solo
+> puedes ajustar el modelo a sus datos de entrenamiento, y si lo haces demasiado
+> bien, entra el overfitting y la generalización sufre. **Cada una de las buenas
+> prácticas del deep learning es una forma de manejar esa tensión.**
+
+## 1. La curva es universal
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tension-generalizacion.svg"
+  alt="Gráfico de pérdida contra tiempo de entrenamiento con tres bandas verticales. La curva de entrenamiento, roja punteada, baja monótonamente. La curva de validación, azul sólida, baja, alcanza un mínimo marcado con un punto y la etiqueta 'el mejor modelo está aquí', y luego vuelve a subir. Las tres bandas se rotulan: UNDERFITTING (ambas bajan, aún hay progreso por hacer), ROBUST FIT (aproxima el manifold latente) y OVERFITTING (aprende patrones específicos del entrenamiento que son engañosos o irrelevantes fuera de él)."
+  caption="El patrón es universal: se ve con cualquier tipo de modelo y cualquier dataset. Al principio optimización y generalización están correlacionadas; después dejan de estarlo."
+  width={760}
+/>
+
+Al principio del entrenamiento, optimización y generalización **están
+correlacionadas**: menos pérdida de entrenamiento significa menos pérdida de test.
+Mientras eso pasa, el modelo está *underfit* — todavía hay progreso por hacer. En
+algún punto la correlación se rompe.
+
+Tres fuentes concretas de overfitting, cada una con su ejemplo:
+
+- **Datos ruidosos.** El set de entrenamiento de MNIST tiene garabatos que nadie
+  puede identificar. Y peor: entradas perfectamente válidas **mal etiquetadas**.
+  Si el modelo se desvía de su camino para incorporar esos outliers, un 4 muy
+  parecido al 4 mal etiquetado terminará clasificándose como 9.
+- **Features ambiguas.** Datos limpios y bien etiquetados también pueden ser
+  ruidosos. Clasificar bananas en *verde / madura / podrida* no tiene fronteras
+  objetivas: la misma foto recibe etiquetas distintas de dos anotadores. O
+  predecir lluvia desde la presión atmosférica: **las mismísimas mediciones
+  pueden ir seguidas a veces de lluvia y a veces de cielo despejado**.
+- **Correlaciones espurias.** *"Si en tu vida solo has visto dos gatos naranjas
+  atigrados y ambos resultaron ser terriblemente antisociales, podrías inferir
+  que los gatos naranjas suelen ser antisociales. Eso es overfitting."*
+
+<Note type="warning" title="No hace falta que la feature sea rarísima">
+Una palabra que aparece en 100 muestras, asociada a sentimiento positivo el 54 %
+de las veces y negativo el 46 %, puede ser una **casualidad estadística
+completa** — y aun así el modelo probablemente aprenda a usarla. Chollet:
+*"esta es una de las fuentes más comunes de overfitting."*
+</Note>
+
+El capítulo lo demuestra con un experimento limpio: toma MNIST y le concatena
+**784 dimensiones de ruido blanco** (la mitad de los datos pasa a ser ruido), y
+por separado 784 dimensiones de ceros. El contenido de información no cambia —un
+humano clasificaría igual de bien en ambos casos—. Resultado: la versión con
+ruido termina **un punto porcentual por debajo** en accuracy de validación,
+puramente por correlaciones espurias.
+
+## 2. Por qué generalizar es siquiera posible
+
+Antes de la respuesta, el capítulo cierra una puerta. **Una red puede ajustar
+cualquier cosa**, con tal de tener suficiente poder representacional:
+
+```python
+random_train_labels = train_labels[:]
+np.random.shuffle(random_train_labels)      # etiquetas al azar
+model.fit(train_images, random_train_labels, epochs=100, ...)
+```
+
+Aunque no hay ninguna relación entre entradas y etiquetas barajadas, **la pérdida
+de entrenamiento baja perfectamente bien**. La de validación, naturalmente, nunca
+mejora. Ni siquiera hacen falta datos MNIST: ruido blanco con etiquetas
+aleatorias también se ajusta, si el modelo tiene suficientes parámetros.
+Simplemente **memorizaría entradas específicas, como un diccionario de Python**.
+
+Entonces, ¿por qué generalizan? *"La naturaleza de la generalización en deep
+learning tiene bastante poco que ver con los modelos en sí y mucho que ver con la
+estructura de la información en el mundo real."*
+
+### La hipótesis del manifold
+
+La entrada de un clasificador MNIST es un arreglo de 28 × 28 enteros entre 0 y
+255. El total de valores posibles es **256 elevado a 784 — muchísimo más que el
+número de átomos en el universo**. Pero casi ninguno de esos se vería como un
+dígito manuscrito. Los dígitos reales ocupan un subespacio diminuto, y ese
+subespacio **no es un puñado de puntos al azar: es altamente estructurado**.
+
+Es *continuo* (modifica un poco una muestra y sigue siendo el mismo dígito) y
+*conectado por caminos suaves* (dados dos dígitos A y B, existe una secuencia de
+imágenes intermedias que transforman uno en otro, y **incluso las ambiguas siguen
+pareciendo dígitos**).
+
+<Figure
+  src="/apuntes/deep-learning-with-python/manifold.svg"
+  alt="Dos paneles. A la izquierda, 'Espacio padre vs. manifold': una caja rotulada 'todos los arreglos 28×28 uint8, 256 elevado a 784 posibilidades, más que átomos en el universo' con puntos grises dispersos, y atravesándola una cinta curva azul delgada con puntos azules encima; leyenda: los dígitos reales ocupan un subespacio diminuto, continuo y conectado. A la derecha, 'Dos formas de ir de A a B': dos puntos A y B unidos por dos caminos, uno curvo y azul sobre el manifold latente donde todo punto intermedio es un dígito válido, y otro recto y rojo punteado de interpolación lineal en el espacio padre, donde el promedio de dos dígitos no suele ser un dígito. Al pie: un modelo es una curva suave que el gradiente ajusta poco a poco, en algún punto intermedio aproxima ese manifold; toda su generalización es interpolación local entre lo que ya vio, nunca razonamiento, abstracción ni sentido común."
+  caption="La hipótesis del manifold: todos los datos naturales viven en un manifold de baja dimensión dentro del espacio de alta dimensión donde están codificados."
+  width={760}
+/>
+
+Un **manifold** es un subespacio de dimensión menor que es *localmente* similar a
+un espacio euclidiano: una curva suave en el plano es un manifold 1D dentro de un
+espacio 2D, porque en cada punto se le puede trazar una tangente.
+
+La **hipótesis del manifold** generaliza esto: *todos* los datos naturales viven
+en un manifold de baja dimensión. Es una afirmación fuerte sobre la estructura de
+la información en el universo. *"Hasta donde sabemos, es exacta, y es la razón por
+la que el deep learning funciona."* Vale para los dígitos, las caras humanas, la
+morfología de los árboles, los sonidos de la voz e incluso el lenguaje natural.
+
+Y de ahí sale el mecanismo: un modelo de deep learning es **una curva de muy alta
+dimensión**, suave y continua porque necesita ser diferenciable, que el descenso
+de gradiente ajusta **gradual y suavemente**. Como los datos forman un manifold
+estructurado, **hay un punto intermedio del entrenamiento en el que esa curva
+aproxima el manifold natural**. Ahí, moverse por la curva aprendida se parece a
+moverse por el manifold real, y el modelo puede entender entradas nuevas
+**interpolando** entre las vistas.
+
+<Note type="tip" title="Interpolación no es todo lo que hay">
+*"Sería un error asumir que la interpolación es todo lo que hay en la
+generalización. Es la punta del iceberg."* La interpolación solo permite entender
+cosas **muy cercanas a lo ya visto**: habilita generalización *local*. Los
+humanos, en cambio: *"cada uno de tus días es distinto de cualquier día que hayas
+vivido, y distinto de cualquier día vivido por cualquiera desde el amanecer de la
+humanidad. Puedes alternar entre pasar una semana en Nueva York, una en Shanghái
+y una en Bangalore sin requerir miles de vidas de aprendizaje para cada
+ciudad."* Esa **generalización extrema** viene de abstracción, modelos simbólicos,
+razonamiento y sentido común — lo que llamamos **razón**, en oposición a la
+intuición y el reconocimiento de patrones, que sí son interpolativos.
+</Note>
+
+La conclusión práctica es incómoda y vale la pena tenerla presente:
+
+> **Nunca esperes que un modelo de deep learning haga algo más que interpolación
+> cruda entre sus muestras de entrenamiento.** *"Lo único que vas a encontrar en
+> un modelo de deep learning es lo que pusiste en él: los priors codificados en
+> su arquitectura y los datos con que fue entrenado."*
+
+## 3. Medir la generalización sin engañarse
+
+*"Solo puedes controlar lo que puedes observar."* De ahí los tres conjuntos —y no
+dos—: entrenamiento, validación y test.
+
+La razón es que desarrollar un modelo **siempre** implica ajustar su
+configuración, y ese ajuste usa como señal el desempeño en validación. *"En
+esencia, ese ajuste es una forma de aprendizaje"*: una búsqueda en un espacio de
+parámetros. Cada vez que ajustas un hiperparámetro mirando la validación, **algo
+de información sobre esos datos se filtra al modelo**.
+
+<Note type="warning" title="Las fugas de información se acumulan">
+Una sola vez, para un parámetro: se filtran poquísimos bits y la validación sigue
+siendo confiable. Pero si repites muchas veces —correr un experimento, evaluar,
+modificar el modelo— filtras una cantidad cada vez más significativa. **Terminas
+con un modelo que rinde artificialmente bien en validación, porque es para eso
+que lo optimizaste.** Por eso hace falta un test set completamente separado, al
+que el modelo no haya tenido acceso ni siquiera indirectamente.
+</Note>
+
+Tres protocolos, en orden de robustez y de costo: **hold-out simple** (un split;
+falla con pocos datos, y se reconoce porque distintos barajados dan resultados
+muy distintos), **K-fold** (K modelos, score promedio) y **K-fold iterado con
+barajado** (K-fold repetido P veces, barajando antes de cada partición — entrenas
+P × K modelos, lo que puede ser muy caro).
+
+Y tres trampas del protocolo que conviene tener en una lista mental:
+
+- **Representatividad.** Si tus muestras vienen ordenadas por clase, tomar el
+  primer 80 % deja **solo las clases 0–7 en entrenamiento y 8–9 en test**. *"Parece
+  un error ridículo, pero es sorprendentemente común."* Baraja antes de partir.
+- **La flecha del tiempo.** Si predices el futuro desde el pasado, **no barajes**:
+  crearías una fuga temporal, entrenando con datos del futuro. Todo el test debe
+  ser posterior al entrenamiento.
+- **Redundancia.** Si algunos puntos aparecen dos veces (común con datos reales),
+  barajar y partir deja los mismos datos en ambos lados. En efecto estarías
+  testeando sobre tu entrenamiento — *"lo peor que puedes hacer"*.
+
+### El altímetro del cohete invisible
+
+Antes de cualquier cosa, hace falta una **línea base de sentido común**:
+
+> Entrenar un modelo de deep learning es como apretar un botón que lanza un cohete
+> en un mundo paralelo. No lo puedes oír ni ver. No puedes observar el proceso de
+> aprendizaje del manifold — ocurre en un espacio de miles de dimensiones, y
+> aunque lo proyectaras a 3D no lo podrías interpretar. **La única
+> retroalimentación que tienes son tus métricas de validación, como un altímetro
+> en tu cohete invisible.**
+
+Antes de empezar con un dataset, elige el umbral trivial que vas a intentar
+superar: 0,1 en MNIST (azar entre 10 clases), 0,5 en IMDb, 0,18–0,19 en Reuters
+por el desbalance. Y el caso que descoloca: **en un problema binario 90/10, un
+clasificador que siempre dice "A" ya saca 0,9**. *"Si no puedes ganarle a una
+solución trivial, tu modelo no vale nada."*
+
+## 4. Primero overfittear, después generalizar
+
+Aquí está la instrucción más contraintuitiva del capítulo:
+
+> **Para lograr el ajuste perfecto, primero debes overfittear. Como no sabes de
+> antemano dónde está la frontera, tienes que cruzarla para encontrarla.**
+
+Así que el objetivo inicial no es un modelo bueno: es un modelo **capaz de
+overfittear**. Recién después se combate el overfitting.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/escalera-decisiones.svg"
+  alt="Diagrama de decisión de tres preguntas encadenadas. ¿La pérdida de entrenamiento baja? Si no: ajusta el learning rate y el batch size, siempre es la configuración del descenso. ¿Le ganas a la línea base? Si no: los datos no contienen la respuesta, o tus priors de arquitectura son los equivocados. ¿Logras overfittear? Si no: te falta capacidad, más capas, capas más grandes o mejores priors. Si sí a las tres, una banda azul dice 'recién ahora: regularizar', seguida de cinco cajas numeradas en orden de impacto decreciente: 1. Más datos o mejores datos, 2. Mejores features, 3. Menos capacidad, 4. L1/L2 para modelos chicos, 5. Dropout para los grandes. Al pie: gastar en recolección de datos casi siempre rinde más que gastar lo mismo en un modelo mejor."
+  caption="Las tres preguntas van en este orden, y la regularización es lo último. Cada pregunta tiene un diagnóstico distinto."
+  width={760}
+/>
+
+Los tres diagnósticos, con lo que el capítulo mide en cada uno:
+
+**(1) La pérdida no baja.** *Esto siempre se puede superar*: recuerda que puedes
+ajustar un modelo a datos aleatorios. Siempre es la configuración del descenso de
+gradiente, y como todos los parámetros son interdependientes, **suele bastar con
+tocar learning rate y batch size**. El ejemplo: MNIST con `learning_rate=1.0` se
+queda atascado en 20–40 % de accuracy; bajándolo a `1e-2`, entrena sin problemas.
+
+**(2) Entrena, pero no le gana a la línea base.** *"Esta es quizás la peor
+situación en la que puedes estar. Indica que algo está fundamentalmente mal con tu
+enfoque, y puede no ser fácil saber qué."* O los datos no contienen la
+información para predecir el target —el caso de las etiquetas barajadas—, o el
+tipo de modelo no corresponde: **necesitas los priors de arquitectura
+adecuados**.
+
+**(3) Entrena y generaliza, pero no logras overfittear.** El síntoma es que la
+validación se estanca en vez de hacer pico y revertir. Es un problema de
+**capacidad**: el modelo no puede almacenar suficiente información. Se arregla
+con más capas, capas más grandes o mejores priors. *(Y también existe demasiada
+capacidad: "sabrás que tu modelo es demasiado grande si empieza a overfittear de
+inmediato".)*
+
+## 5. La escalera de la regularización
+
+Solo cuando el modelo ya generaliza algo **y** es capaz de overfittear, se pasa a
+maximizar la generalización. Y aquí el capítulo ordena las herramientas por
+impacto real, que no es el orden en que uno suele pensarlas:
+
+**1. Más datos, o mejores datos.** *"Gastar más esfuerzo y dinero en recolección
+de datos casi siempre da un retorno mucho mayor que gastar lo mismo en desarrollar
+un mejor modelo."* Y una advertencia de encuadre: *"el deep learning es ajuste de
+curvas, no magia"* — si tu problema es demasiado ruidoso o fundamentalmente
+discreto, como ordenar una lista, no te va a ayudar.
+
+**2. Mejores features.** El ejemplo canónico es leer la hora en un reloj
+analógico:
+
+| Representación | Qué hace falta |
+|---|---|
+| Píxeles crudos | Una red convolucional y bastante cómputo |
+| Coordenadas (x, y) de las puntas | Un script de cinco líneas + un ML simple |
+| **Ángulos θ de las manecillas** | **Nada de machine learning** — un redondeo y un lookup |
+
+*"Esa es la esencia del feature engineering: hacer un problema más fácil
+expresándolo de una forma más simple. Hacer que el manifold latente sea más suave,
+más simple y mejor organizado."* El deep learning eliminó la necesidad de *la
+mayoría* del feature engineering, pero no toda: buenas features resuelven el
+problema con menos recursos y, sobre todo, **con muchos menos datos**.
+
+**3. Menos capacidad.** Con recursos limitados de memorización, el modelo no puede
+memorizar; para bajar su pérdida tiene que **aprender representaciones
+comprimidas con poder predictivo** — precisamente lo que queremos. El capítulo lo
+mide sobre el modelo de IMDb:
+
+| Variante | Comportamiento |
+|---|---|
+| Original (16, 16) | Overfittea desde la **época 4** |
+| Más chico (4, 4) | Overfittea **más tarde (época 6)** y se degrada más lento |
+| Mucho más grande (512, 512) | Overfittea **tras una sola época**, más severamente, y su validation loss es más ruidosa |
+
+**4. Regularización de pesos (L1 / L2).** Es la navaja de Occam aplicada a los
+pesos: dados unos datos y una arquitectura, múltiples conjuntos de pesos podrían
+explicarlos, y **los modelos más simples tienen menos chance de overfittear**. Se
+implementa agregando a la pérdida un costo por tener pesos grandes.
+
+```python
+from keras.regularizers import l2
+layers.Dense(16, kernel_regularizer=l2(0.002), activation="relu")
+```
+
+El modelo con L2 resulta mucho más resistente al overfitting **aunque tenga
+exactamente el mismo número de parámetros**. Dos notas: como la penalización solo
+se agrega en entrenamiento, **la pérdida de entrenamiento será mucho más alta que
+la de test**; y *"weight decay es matemáticamente lo mismo que regularización
+L2"*, solo que con otro nombre.
+
+**5. Dropout.** Anular al azar (poner en cero) una fracción de las salidas de una
+capa durante el entrenamiento — típicamente entre 0,2 y 0,5. En test no se anula
+nada; se compensa la escala.
+
+```python
+model = keras.Sequential([
+    layers.Dense(16, activation="relu"),
+    layers.Dropout(0.5),
+    layers.Dense(16, activation="relu"),
+    layers.Dropout(0.5),
+    layers.Dense(1, activation="sigmoid"),
+])
+```
+
+Parece arbitrario, y la anécdota del origen es buena. Hinton:
+
+> *"Fui a mi banco. Los cajeros no paraban de cambiar y le pregunté a uno por qué.
+> Dijo que no sabía, pero que los movían mucho. Me figuré que debía ser porque
+> defraudar exitosamente al banco requeriría cooperación entre empleados. Eso me
+> hizo darme cuenta de que remover al azar un subconjunto distinto de neuronas en
+> cada ejemplo evitaría las conspiraciones y así reduciría el overfitting."*
+
+La idea central: introducir ruido en las salidas de una capa **rompe los patrones
+casuales que no son significativos** —las "conspiraciones"— que el modelo
+empezaría a memorizar si no hubiera ruido. En IMDb funciona **mejor que L2**.
+
+<Note type="info" title="Cuál de las dos, y cuándo">
+La regularización de pesos se usa típicamente en modelos **más pequeños**. Los
+modelos grandes tienden a estar tan sobre-parametrizados que restringir los
+valores de los pesos casi no afecta su capacidad ni su generalización; ahí se
+prefiere **dropout**.
+</Note>
+
+Queda una herramienta transversal: **early stopping**. Como en deep learning
+siempre usamos modelos enormemente sobre-parametrizados, **nunca ajustas del todo
+un modelo** — siempre interrumpes antes. Encontrar el punto exacto del ajuste más
+generalizable *"es una de las cosas más efectivas que puedes hacer"*. El capítulo
+4 lo hacía a mano (entrenar de más, contar las épocas, reentrenar desde cero); en
+Keras se automatiza con el callback `EarlyStopping`, que corta apenas la
+validación deja de mejorar **recordando el mejor estado del modelo**.
+
+## Para recordar
+
+- **No controlas la generalización.** Solo puedes ajustar el modelo a sus datos —
+  y si lo haces demasiado bien, la generalización se degrada. Todo lo demás es
+  administrar esa tensión.
+- **Una red puede ajustar etiquetas al azar.** Si generaliza no es por el modelo:
+  es por la estructura de los datos.
+- **Hipótesis del manifold:** los datos naturales viven en un subespacio de baja
+  dimensión, continuo y conectado. El modelo lo aproxima a mitad de camino y
+  desde ahí **interpola**. Eso es toda su generalización.
+- **Fugas de información:** cada decisión tomada mirando la validación la
+  contamina un poco. Por eso el test set existe y se toca una sola vez.
+- **Sin línea base no sabes si despegaste.** En un problema 90/10, decir siempre
+  "A" ya vale 0,9.
+- **Primero overfittea.** Si no lo logras, te falta capacidad; si no le ganas a la
+  línea base, el problema es de datos o de priors.
+- **La escalera, en orden:** más datos > mejores features > menos capacidad >
+  L1/L2 > dropout.
+
+Con la teoría de la generalización en su sitio, el **capítulo 6** —aún por
+procesar— convierte todo esto en un procedimiento completo de proyecto: definir la
+tarea, desarrollar el modelo y desplegarlo.

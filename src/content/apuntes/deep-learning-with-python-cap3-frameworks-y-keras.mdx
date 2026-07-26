@@ -1,0 +1,304 @@
+---
+title: "Un modelo, tres dialectos: TensorFlow, PyTorch, JAX y el rol de Keras"
+description: "El capítulo 3 de Chollet resuelve la pregunta que todo el mundo se hace al empezar: ¿cuál framework aprendo? La respuesta es que la pregunta está mal planteada — hay dos pisos, no cuatro competidores. Abajo, TensorFlow, PyTorch y JAX hacen tres cosas: autodiff, cómputo en GPU y distribución. Arriba, Keras 3 pone capas, modelos y el bucle de entrenamiento, y elige su backend después de que escribiste el código. El capítulo lo demuestra implementando el mismo clasificador lineal tres veces: lo único que cambia es cómo se guarda el estado y cómo se piden los gradientes. Apuntes del Cap. 3."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "keras", "tensorflow", "pytorch", "jax", "xla", "frameworks"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 3 — Introducción a TensorFlow, PyTorch, JAX y Keras"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 3 (PDF 84–127)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [capítulo 2](/apuntes/deep-learning-with-python-cap2-bloques-matematicos)
+terminó reimplementando MNIST a mano para probar que no hay magia. El 3 hace el
+movimiento contrario: **te saca de ahí**. *"En el mundo real no vas a escribir
+código de bajo nivel desde cero como hicimos al final del capítulo 2. Vas a usar
+un framework."*
+
+Y aquí el capítulo desactiva la pregunta con la que uno llega —*¿cuál aprendo?*—
+mostrando que está mal planteada.
+
+## 1. No son cuatro competidores: son dos pisos
+
+Los tres frameworks de bajo nivel combinan **exactamente tres características**:
+
+1. Una forma de calcular gradientes de funciones diferenciables arbitrarias
+   (**autodiferenciación**).
+2. Una forma de correr cómputo tensorial en **CPU y GPU** (y hardware
+   especializado).
+3. Una forma de **distribuir** el cómputo entre varios dispositivos o varias
+   máquinas.
+
+*"Juntas, estas tres características simples desbloquean todo el deep learning
+moderno."* Nada más. Todo lo demás —capas, modelos, pérdidas, optimizadores,
+métricas, el bucle de entrenamiento— es el piso de arriba, y ese piso es Keras.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/pila-frameworks.svg"
+  alt="Diagrama de tres bandas apiladas. Arriba, en azul sólido: Keras — capas, modelos, pérdidas, optimizadores, métricas, bucle de entrenamiento, etiquetado 'alto nivel' y 'el kit prefabricado'. Al medio, en azul claro: Backend — infraestructura tensorial, con tres cajas blancas (TensorFlow, PyTorch, JAX), etiquetado 'bajo nivel' y 'los materiales'. Abajo, en gris: Hardware — CPU, GPU, TPU. Nota al pie: el backend es enchufable, se puede cambiar después de escribir el código."
+  caption="La metáfora del libro: Keras es un kit prefabricado de construcción; TensorFlow, PyTorch y JAX son los materiales."
+  width={760}
+/>
+
+La consecuencia práctica es la parte interesante: **Keras 3 no es un framework
+autónomo**. Necesita un backend, y ese backend es **enchufable — se cambia
+después de haber escrito el código**. Podrías depurar tu modelo con PyTorch,
+entrenarlo en TPU con JAX por eficiencia y correr inferencia con las herramientas
+de TensorFlow. El mismo modelo.
+
+<Note type="info" title="Keras también corre sobre NumPy, pero solo de ida">
+NumPy sirve como backend de Keras, pero **no ofrece una API de gradientes**. Así
+que ahí quedas restringido a hacer predicciones desde un modelo ya entrenado:
+entrenar es imposible.
+</Note>
+
+## 2. El experimento del capítulo: el mismo modelo, tres veces
+
+La parte central del capítulo es un ejercicio comparativo deliberado. Se
+implementa **el mismo clasificador lineal** —dos nubes gaussianas de 1 000 puntos
+en el plano, MSE, 40 pasos de descenso de gradiente sobre el batch completo,
+learning rate 0,1— en TensorFlow, en PyTorch y en JAX.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/tres-dialectos.svg"
+  alt="Tres columnas de código lado a lado, tituladas TensorFlow, PyTorch y JAX, cada una dividida en tres bloques: estado, gradientes y update. TensorFlow: W = tf.Variable(...), with tf.GradientTape(), gW, gb = tape.gradient(loss, [W, b]), W.assign_sub(gW * lr). PyTorch: self.W = nn.Parameter(...), loss.backward(), optimizer.step(), model.zero_grad() resaltado en rojo. JAX: state = (W, b) con la nota 'no vive en ningún lado', grad_fn = jax.value_and_grad(loss), W = W - g[0] * lr. Al pie, tres cajas: en TensorFlow una cinta graba las ops dentro de su scope; en PyTorch los gradientes se acumulan y olvidar el reset es un bug real; en JAX una meta-función convierte la pérdida en su gradiente."
+  caption="Lo único que cambia entre las tres versiones: dónde vive el estado mutable y cómo se le pide el gradiente al framework."
+  width={780}
+/>
+
+### TensorFlow: la cinta
+
+Los tensores de TF **no son asignables** (`x[0, 0] = 0.` falla). Para tener estado
+mutable existe `tf.Variable` con sus métodos `.assign()`, `.assign_add()` y
+`.assign_sub()`. Y los gradientes se piden abriendo un scope que **graba** las
+operaciones:
+
+```python
+input_var = tf.Variable(initial_value=3.0)
+with tf.GradientTape() as tape:
+    result = tf.square(input_var)
+gradient = tape.gradient(result, input_var)
+```
+
+Solo se rastrean por defecto las **variables entrenables**; con un tensor
+constante hay que marcarlo a mano con `tape.watch()`. La razón es de economía:
+sería demasiado caro guardar preventivamente la información necesaria para
+derivar cualquier cosa respecto de cualquier cosa.
+
+### PyTorch: el encantamiento
+
+Aquí los tensores **sí** son asignables. No hay cinta explícita —PyTorch construye
+un grafo de un solo uso, pero oculto— y la API pública vive al nivel del tensor:
+`loss.backward()` corre backprop y puebla el atributo `.grad`.
+
+```python
+loss.backward()      # 1. backprop
+optimizer.step()     # 2. actualiza
+model.zero_grad()    # 3. resetea  ← el que se olvida
+```
+
+Chollet admite que esto **se siente confuso**: la loss, el optimizador y el
+`Module` parecen conocerse por algún mecanismo oculto de fondo —*"spooky action
+at a distance"*—. Su consejo es tratar esa secuencia de tres líneas como un
+**encantamiento mágico** que se recita en toda función de training step.
+
+<Note type="warning" title="El bug de PyTorch que todos cometen una vez">
+Los gradientes de PyTorch <strong>se acumulan</strong>: cada llamada a
+<code>backward()</code> <em>suma</em> el gradiente nuevo al que ya estaba. En el
+ejemplo del libro, llamar dos veces sobre <code>square(3.0)</code> hace que
+<code>.grad</code> pase de <code>6.</code> a <code>12.</code>. Si olvidas
+<code>model.zero_grad()</code>, tu entrenamiento arranca bien y después diverge
+sin explicación aparente. Chollet lo dice con todas sus letras: sería un bug
+mayor, <em>"y desafortunadamente es bastante común"</em>.
+</Note>
+
+### JAX: sin estado, por diseño
+
+JAX es **stateless**: sus funciones no mantienen estado persistente. Esa decisión
+es la que habilita paralelización automática y cómputo distribuido efectivos, y es
+la razón de que lo usen DeepMind, Apple, Midjourney, Anthropic y Cohere.
+
+Dos consecuencias que se notan de inmediato. La primera es la **aleatoriedad**:
+`np.random.normal()` devuelve algo distinto cada vez gracias a un estado global
+oculto, y eso en un framework stateless no puede existir. JAX usa **keys**, que
+son el primer argumento posicional obligatorio de toda operación aleatoria:
+
+```python
+seed_key = jax.random.key(123)
+jax.random.normal(seed_key, shape=(3,))   # siempre el mismo resultado
+new_key = jax.random.split(seed_key, num=1)[0]
+```
+
+Es más trabajo que `np.random`, y el libro lo justifica: hace el código
+**vectorizable** —el compilador puede paralelizarlo solo— **manteniendo el
+determinismo**. Ambas cosas a la vez son imposibles con un estado global.
+
+La segunda es la **metaprogramación**. En vez de una cinta, JAX **convierte tu
+función de pérdida en una función de gradiente**:
+
+```python
+grad_fn = jax.value_and_grad(compute_loss)
+loss, grads = grad_fn((W, b), inputs, targets)
+```
+
+Y como todo es stateless, el paso de entrenamiento **tiene que devolver los pesos
+nuevos** — si no los retorna, se pierden.
+
+## 3. Compilar: rápido, pero ciego
+
+Todo lo anterior corre en modo **eager**: una operación tras otra en el runtime
+de Python. Es lo ideal para depurar y típicamente lento. Compilar significa sacar
+la función de Python, reescribirla en un programa más eficiente y llamarla desde
+Python. Permite paralelizar y **fusionar** operaciones: reemplazar un `matmul`
+seguido de una `relu` por una sola op que nunca materializa el resultado
+intermedio.
+
+| Framework | Decorador | Compilador |
+|---|---|---|
+| TensorFlow | `@tf.function` | graph mode (por defecto) |
+| TensorFlow | `@tf.function(jit_compile=True)` | XLA |
+| JAX | `@jax.jit` | XLA |
+| PyTorch | `@torch.compile` | Dynamo |
+
+<Note type="warning" title="Depura primero, compila después">
+*"El código que escribes ya no es el código que se ejecuta"*, y eso puede volver
+dolorosa la experiencia de depuración. La regla del libro es explícita:
+**enciende la compilación solo después de haber depurado en el runtime de
+Python.**
+</Note>
+
+Sobre PyTorch el libro es notoriamente franco: en la práctica **la mayoría del
+código PyTorch no compila y corre eager**, porque su compilador Dynamo *"sigue
+siendo (en 2025) bastante inefectivo y lleno de trampas"*. Y por eso PyTorch es
+**el más lento de los frameworks mayores por amplio margen**: JAX suele dar entre
+20 % y 30 % de speedup, y en modelos grandes **3× o 5×, incluso después de usar
+`torch.compile()`**.
+
+Lo que hace único a cada uno, resumido:
+
+| | Su fuerza | Su costo |
+|---|---|---|
+| **TensorFlow** | El ecosistema de producción más maduro; `tf.data`, tensores de strings y *ragged tensors* | API desbordada (miles de ops); Hugging Face lo soporta menos |
+| **PyTorch** | Eager por defecto, fácil de depurar; **soporte de primera clase en Hugging Face** — hoy el principal motor de su adopción | El más lento; API inconsistente con NumPy y consigo misma (`axis` a veces es `dim`) |
+| **JAX** | El más rápido; API **idéntica** a NumPy; el mejor para TPUs | Más difícil de depurar; bucles de bajo nivel más verbosos |
+
+## 4. Keras: una sola abstracción
+
+La segunda mitad del capítulo cambia de registro. Keras existe desde marzo de
+2015 —es el más viejo de los cuatro— y su diseño parte de un principio: *"una API
+simple debe tener una única abstracción alrededor de la cual gire todo."*
+
+En Keras esa abstracción es **`Layer`**. Todo en Keras es una `Layer` o algo que
+interactúa estrechamente con una `Layer`. Y una capa es dos cosas: **estado**
+(los pesos) y **cómputo** (el forward pass).
+
+```python
+class SimpleDense(keras.Layer):
+    def __init__(self, units, activation=None):
+        super().__init__()
+        self.units = units
+        self.activation = activation
+
+    def build(self, input_shape):          # ← los pesos, aquí
+        batch_dim, input_dim = input_shape
+        self.W = self.add_weight(shape=(input_dim, self.units),
+                                 initializer="random_normal")
+        self.b = self.add_weight(shape=(self.units,), initializer="zeros")
+
+    def call(self, inputs):                 # ← el forward pass, aquí
+        y = keras.ops.matmul(inputs, self.W) + self.b
+        if self.activation is not None:
+            y = self.activation(y)
+        return y
+```
+
+La pregunta obvia es por qué dos métodos, si al final uno simplemente llama a la
+capa. La respuesta es que se quiere **crear el estado justo a tiempo**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/layer-build-call.svg"
+  alt="Diagrama. A la izquierda, una caja '1ª llamada layer(x)' con flecha a una caja grande titulada __call__() que contiene el código: if not self.built: self.build(inputs.shape); self.built = True; return self.call(inputs). De ahí salen dos flechas: una a build() en azul sólido, 'crea los pesos, ya sabiendo la shape'; otra a call() en azul claro, 'el forward pass y nada más'. Abajo, comparación en dos columnas: sin inferencia de shape hay que escribir NaiveDense(input_size=784, output_size=32), luego input_size=32, luego input_size=64 — cada capa tiene que saber la shape de la anterior. Con inferencia de shape basta SimpleDense(32), SimpleDense(64), SimpleDense(10) — solo declaras la salida y la entrada se deduce sola."
+  caption="El __call__() de la clase base llama a build() la primera vez, con la shape real de la entrada. Por eso los pesos no se crean en el constructor."
+  width={760}
+/>
+
+En el `NaiveDense` del capítulo 2 había que pasarle el tamaño de entrada al
+constructor, lo que obligaba a que **cada capa supiera la shape de la anterior**.
+En Keras las capas se construyen dinámicamente para calzar con la primera entrada
+que ven: solo declaras la salida.
+
+### De la capa al modelo, y la frase que conviene subrayar
+
+Un modelo es un **grafo de capas**. `Sequential` es el caso simple —una pila que
+mapea una entrada a una salida— pero hay redes de dos ramas, multi-cabeza y con
+conexiones residuales. El capítulo muestra de pasada el grafo completo de un
+Transformer, con la advertencia de que se entenderá recién en el capítulo 15.
+
+Y aquí está la idea que ordena todo lo que viene después:
+
+<Note type="tip" title="La arquitectura es una hipótesis, no un detalle">
+*"La topología de un modelo define un espacio de hipótesis."* Al elegir una
+arquitectura **restringes el espacio de posibilidades** a una serie específica de
+operaciones tensoriales; lo que buscas después son buenos valores para los pesos.
+Y como para aprender de los datos hay que hacer suposiciones sobre ellos,
+**la arquitectura codifica el conocimiento previo con el que tu modelo parte**.
+Un clasificador binario de una sola capa `Dense` sin activación está asumiendo,
+literalmente, que tus dos clases son linealmente separables.
+</Note>
+
+### `compile()`, `fit()` y el resto
+
+Definida la arquitectura faltan tres decisiones: la **pérdida** (qué minimizar),
+el **optimizador** (cómo actualizar) y las **métricas** (qué reportar). La
+distinción entre las dos últimas importa: **el entrenamiento no optimiza
+directamente las métricas, así que las métricas no necesitan ser
+diferenciables**.
+
+Sobre elegir la pérdida, el capítulo tiene el pasaje más citable del libro:
+
+> Tu red tomará **cualquier atajo que pueda** para minimizar la pérdida. Imagina
+> una IA omnipotente y estúpida entrenada por SGD con este objetivo mal elegido:
+> *"maximizar el bienestar promedio de todos los humanos vivos"*. Para
+> facilitarse el trabajo, esta IA podría **matar a todos menos a unos pocos** y
+> concentrarse en el bienestar de los que quedan, porque el promedio no se ve
+> afectado por cuántos queden. *"Todas las redes que construyas serán igual de
+> despiadadas bajando su función de pérdida, así que elige el objetivo con
+> cuidado."*
+
+Y el cierre práctico:
+
+- **`fit(x, y, epochs, batch_size, validation_data=...)`** corre el bucle de
+  mini-batch SGD y devuelve un `History` con las curvas por época.
+- **`evaluate()`** calcula pérdida y métricas después de entrenar.
+- **`predict(x, batch_size=128)`** hace inferencia **por batches**. Es preferible
+  a llamar `model(x)` directamente, porque esa forma procesa todo de una vez y
+  puede pedir más memoria de la que tiene tu GPU.
+
+Sobre la validación, el capítulo deja plantado lo que el capítulo 5 va a
+desarrollar: *"el objetivo del machine learning no es obtener modelos que rindan
+bien en los datos de entrenamiento —eso es fácil, basta seguir el gradiente—."*
+Un modelo podría simplemente memorizar el mapeo entre muestras y objetivos, lo
+que sería inútil para datos nuevos. De ahí la regla dura: **entrenamiento y
+validación estrictamente separados**; si el modelo vio algo de la validación
+durante el entrenamiento, la validation loss queda viciada.
+
+## Para recordar
+
+- **Dos pisos, no cuatro competidores.** Abajo, autodiff + GPU + distribución;
+  arriba, capas, modelos y el bucle. Keras necesita un backend, y el backend se
+  elige *después*.
+- **El estado es lo que separa a los tres.** `tf.Variable` con `assign`, tensores
+  asignables con `.grad` acumulativo, o nada — y devolver los pesos nuevos.
+- **`GradientTape`, `.backward()` y `value_and_grad`** son tres respuestas a la
+  misma pregunta: una cinta que graba, una llamada sobre el tensor, y una función
+  que devuelve funciones.
+- **Compila último.** El código que escribes deja de ser el que se ejecuta.
+- **`Layer` es la única abstracción**: pesos en `build()`, forward en `call()`, y
+  la shape de entrada se infiere sola.
+- **La topología define el espacio de hipótesis** — la arquitectura es la
+  suposición que haces sobre tus datos, no un detalle de implementación.
+
+Con la API en su sitio, el **capítulo 4** deja de hablar de herramientas y
+resuelve tres problemas reales: clasificación binaria, multiclase y regresión.

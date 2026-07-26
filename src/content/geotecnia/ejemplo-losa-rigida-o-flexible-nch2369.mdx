@@ -1,0 +1,325 @@
+---
+title: "Ejemplo — ¿Rígida o flexible? El criterio que decide el procedimiento entero"
+description: "La losa de una sala eléctrica cumple el 80 % de área apoyada con uso 0,96 — pero ese criterio no le aplica, porque la Ec. (25) de NCh2369 da 2,50 contra un límite de 1 y la losa no es rígida. Analizada como corresponde, sobre resortes sin tracción, se levanta un 24 % y la presión máxima es un 31 % mayor. Con el barrido que muestra que el umbral de la norma está calibrado."
+pubDate: 2026-07-26
+tags: ["ejemplo", "geotecnia", "fundaciones", "nch2369", "industrial", "losa", "balasto", "winkler", "sensibilidad"]
+subsection: "ejemplos"
+order: 15
+chapter: "Cap. 10 — NCh2369:2025"
+source: "NCh2369:2025"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 15 · bloque 5. Viene de [la fundación anclada](/geotecnia/ejemplo-fundacion-anclada-nch2369).*
+
+Los dos ejemplos anteriores verificaron la Ec. (25) de pasada, en una línea, y siguieron: la
+zapata del galpón dio 0,454 y el dado anclado también quedó holgadamente rígido. Cuando pasa
+eso, el criterio parece un trámite.
+
+No lo es. **Decide cuál de dos procedimientos incompatibles aplica.** Si la fundación es rígida,
+se supone distribución de tensiones plana y se verifica el porcentaje de área apoyada de 10.1.4.
+Si no lo es, 10.1.5 dice algo distinto:
+
+> *«Las fundaciones flexibles no requieren cumplir un nivel mínimo de área apoyada. En su
+> reemplazo se debe verificar si el nivel y distribución de los levantamientos puede ser tolerado
+> por la superestructura […].»*
+
+Este ejemplo toma una losa que **cumple** el requisito de área apoyada —82,9 % contra un mínimo
+de 80 %, uso 0,96— y muestra que ese resultado no significa nada, porque la losa no es rígida:
+la Ec. (25) le da 2,50 contra un límite de 1.
+
+<Note type="warning" title="Alcance y responsabilidad">
+El modelo de este ejemplo es una **viga sobre resortes de Winkler** que representa el
+comportamiento longitudinal de la losa; una losa real necesita un modelo bidimensional. La
+rigidez vertical del suelo y los límites de deformación tolerables por el equipamiento son datos
+que aquí se declaran y que en un proyecto salen del informe de mecánica de suelos y del
+proveedor del equipo. Las cláusulas se citan por su numeración en la edición **2025**.
+</Note>
+
+---
+
+## 1. El caso
+
+<Figure
+  src="/geotecnia-losa-flexible/el-caso.svg"
+  alt="Losa de fundación de una sala eléctrica, de 14 m de largo por 6 m de ancho y 0,50 m de espesor, con tres líneas de columnas en x = 1, 7 y 13 m, es decir con luz libre de 6 m entre ellas. Las cargas de gravedad por línea de columnas son 40, 70 y 40 tonf, y la cupla sísmica agrega menos 95, cero y más 95 tonf, que con el factor 0,70 de la combinación ASD dan menos 26,5, 70 y 106,5 tonf: la columna del extremo izquierdo queda traccionada. El peso propio de la losa es de 105 tonf, o 7,5 tonf por metro. El suelo tiene k_v = 3.000 tonf/m³ según el informe, y acá se adopta una banda de 1.500 a 6.000 —un factor 2 a cada lado— siguiendo la recomendación de acotar la rigidez que hace el comentario C10.1.5, que no fija valores. A la derecha, la aplicación de la ecuación 25: para la zarpa, con longitud de cálculo de 1,00 m, el criterio vale 0,416 y la fundación es rígida; para la zona interior entre columnas, con longitud de cálculo de 6,00 m, vale 2,50 y no lo es. Ambas longitudes se miden hasta los ejes de columna, del lado conservador. Al pie: la misma losa da dos respuestas porque la Tabla 10 define dos longitudes de cálculo distintas, y la longitud de cálculo es la única variable que entra en primera potencia."
+  caption="La misma losa, dos longitudes de cálculo y dos respuestas opuestas. La Tabla 10 no da una L por fundación: da una L por zona."
+/>
+
+| Dato | Valor |
+|---|---|
+| Losa | $14{,}0 \times 6{,}0$ m, espesor $0{,}50$ m |
+| Líneas de columnas | $x = 1{,}0$ / $7{,}0$ / $13{,}0$ m (luz libre $6{,}0$ m) |
+| Cargas de gravedad | 40 / 70 / 40 tonf |
+| Cupla sísmica | $\pm 95$ tonf → combinación $0{,}70E$ |
+| Combinación ASD | **−26,5** / 70,0 / 106,5 tonf |
+| Peso propio | 105 tonf ($7{,}5$ tonf/m) |
+| Hormigón | $E = 2{,}4\cdot10^6$ tonf/m² (≈ 23,5 GPa) |
+| Suelo | $k_v = 3.000$ tonf/m³ del informe; banda 1.500 – 6.000 **adoptada acá** (factor 2 a cada lado), siguiendo la recomendación de C10.1.5 |
+
+Es una sala eléctrica arriostrada: el sismo llega como cupla, y en la combinación de diseño la
+columna del extremo izquierdo queda **traccionada con 26,5 tonf**. Con el peso propio de la losa,
+al sello bajan 255 tonf en total.
+
+---
+
+## 2. La Ec. (25), y la trampa de la Tabla 10
+
+<Equation label="NCh2369 Ec. (25)">
+$$
+L\sqrt[4]{\frac{k_v}{4EI}} \le 1 \qquad\text{con}\qquad I = \frac{e^3}{12}
+$$
+</Equation>
+
+La trampa está en $L$. **La Tabla 10 no define una longitud de cálculo por fundación: define una
+por zona**, y en la misma losa conviven dos:
+
+| Zona | $L$ según Tabla 10 | Ec. (25) | ¿Rígida? |
+|---|---|---|---|
+| Zarpa (el voladizo del borde) | 1,00 m | **0,416** | sí |
+| Zona interior entre columnas | 6,00 m | **2,50** | no |
+
+Las dos longitudes se toman **hasta los ejes** de columna, no hasta sus caras: el ancho de la
+columna no se declara en este ejemplo, y medir hasta el eje da la $L$ mayor. Como el criterio
+crece con $L$, las dos van del lado conservador — la zarpa real es más corta que 1,00 m y la luz
+libre real, menor que 6,00 m.
+
+La razón de que los dos números caigan a lados distintos del 1 es que **$L$ es la única variable
+que entra en primera potencia**. Todo lo demás —la rigidez del suelo y la de la losa— entra bajo
+una raíz cuarta, así que compensar el paso de 1,00 a 6,00 m, que multiplica el criterio por 6,
+exigiría multiplicar $EI$ por $6^4 = 1.296$. Es la misma aritmética que hace que la zapata
+aislada del [ejemplo del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) —donde la única $L$
+posible es la zarpa— salga rígida sin esfuerzo, y que casi ninguna losa con columnas separadas
+lo sea.
+
+<Note type="warning" title="Un detalle de la Tabla 10 que este caso no cumple">
+La fila «zona interior entre columnas» define $L$ como la mayor luz libre entre columnas
+consecutivas *«con solicitaciones axiales que no difieran en más de 50 %»*. Acá las tres líneas
+llevan −26,5 / 70,0 / 106,5 tonf: difieren muchísimo más, así que la Tabla 10 estrictamente **no
+entrega una $L$ para este tramo** y la definición habría que establecerla en el proyecto.
+
+Se usa igual la luz de 6,00 m porque es la lectura natural y porque el veredicto va del lado
+seguro —cualquier $L$ razonable deja el criterio por encima de 1—, pero conviene saber que la
+condición del 50 % existe: en una fundación donde el criterio dé cerca de 1, es exactamente la
+clase de detalle que decide de qué lado cae.
+</Note>
+
+¿Cuánto espesor haría falta? Despejando de la Ec. (25):
+
+<Equation label="Espesor para que la Ec. (25) valga 1">
+$$
+e = \left(\frac{3L^4k_v}{E}\right)^{1/3}
+$$
+</Equation>
+
+| Luz libre entre columnas | Espesor necesario para ser «rígida» |
+|---|---|
+| 2,0 m | 0,39 m |
+| 3,0 m | 0,67 m |
+| 4,0 m | 0,99 m |
+| 5,0 m | 1,33 m |
+| **6,0 m** | **1,69 m** |
+| 8,0 m | 2,49 m |
+
+Con columnas a 6 m harían falta **1,69 m de espesor**, 3,4 veces el real. Nadie construye eso: la
+conclusión práctica es que **una losa de fundación con columnas separadas es flexible casi
+siempre**, y que el procedimiento de 10.1.4 —el que ocupa las dos notas anteriores— simplemente
+no le corresponde.
+
+---
+
+## 3. Si se la supusiera rígida, la losa se aprueba
+
+Es lo que pasa cuando el criterio se saltea. Con la distribución plana:
+
+| | Valor |
+|---|---|
+| $N$ total | 255,0 tonf |
+| Resultante | $+3{,}129$ m del centro → $e/L = 0{,}224$ |
+| Largo en contacto, $3(L/2-e)$ | 11,6 m |
+| **Área apoyada** | **82,9 %** |
+| $q_{max}$ plana | 7,32 tonf/m² |
+
+> $e/L = 0{,}224$ queda justo bajo el umbral de 0,233 que exige el 80 %.
+> **Cumple 10.1.4-1 con uso 0,96.** Aprobado por un pelo, y con el procedimiento equivocado.
+
+---
+
+## 4. Como es flexible: resortes, y sin tracción
+
+10.1.4 describe qué hacer cuando el criterio de rigidez no se cumple: *«el análisis estructural
+de la losa requiere la utilización de métodos o análisis numéricos, que incorporen, por ejemplo,
+una cama de resortes, teniendo la precaución de verificar que en el análisis no resulten resortes
+traccionados. De existir resortes traccionados, éstos se deben anular.»*
+
+Eso es exactamente lo que hace el modelo: viga de Euler-Bernoulli sobre resortes de Winkler
+($k = k_v \cdot b$ por metro), resuelta iterativamente anulando los resortes que resultan
+traccionados hasta que la lista se estabiliza. Aquí convergió anulando **34 resortes de 141**.
+
+<Figure
+  src="/geotecnia-losa-flexible/rigido-vs-flexible.svg"
+  alt="Comparación de los dos análisis sobre la misma losa de 14 m. Arriba, la hipótesis rígida: la presión de contacto es una recta que arranca en cero a 2,39 m del borde izquierdo y crece linealmente hasta 7,32 tonf por metro cuadrado en el borde derecho, con 82,9 % del área en contacto. Abajo, el análisis flexible sobre resortes de Winkler: la losa se levanta en los primeros 3,40 m, la presión es cero ahí, y luego crece de forma curva, con concentraciones bajo las líneas de columnas —3,66 tonf por metro cuadrado bajo la columna central— hasta un máximo de 9,57 en el borde derecho, un 31 % más que la hipótesis rígida, con solo el 75,9 % del área en contacto. Se marcan los asentamientos: la columna del extremo izquierdo se levanta 1,69 mm y el borde 2,46 mm, mientras que la columna derecha asienta 2,59 mm y el borde 3,19 mm. Al pie: la hipótesis rígida subestima la presión máxima un 31 % y el largo levantado en un metro."
+  caption="La distribución plana es una recta; la real no lo es. Bajo cada columna hay una concentración que la hipótesis rígida no puede representar, y el levantamiento es un metro más largo."
+/>
+
+| | Rígido (plano) | Flexible (Winkler) |
+|---|---|---|
+| $q_{max}$ | 7,32 tonf/m² | **9,57 tonf/m²** (+31 %) |
+| Área en contacto | 82,9 % | 75,9 % |
+| Largo levantado | 2,39 m | **3,40 m** |
+| $q$ bajo la columna central | — (recta) | 3,66 tonf/m² |
+
+Y los desplazamientos, que son lo que 10.1.5 pide verificar en reemplazo del área apoyada:
+
+| Punto | Desplazamiento |
+|---|---|
+| Borde izquierdo ($x=0$) | **−2,46 mm** (levanta) |
+| Columna 1 ($x=1$) | −1,69 mm (levanta) |
+| Columna 2 ($x=7$) | +1,22 mm |
+| Columna 3 ($x=13$) | +2,59 mm |
+| Borde derecho ($x=14$) | +3,19 mm |
+
+Entre las columnas 1 y 2 hay **2,91 mm en 6,0 m**, una distorsión angular de **1/2.062**; entre
+la 2 y la 3, 1/4.379.
+
+<Note type="warning" title="Contra qué se compara esa distorsión">
+Contra nada que esta serie pueda citar. Das, 4ª ed. —la fuente de toda la sección— **no entrega
+límites de distorsión angular admisible**; es un vacío verificado al procesar el Cap. 17, que
+solo llega hasta el asentamiento total tolerable de 25 mm en zapatas.
+
+Y NCh2369 tampoco lo fija: 10.1.5 dice que hay que verificar si el levantamiento *«puede ser
+tolerado por la superestructura cumpliendo con los objetivos de desempeño **específicamente
+definidos para el proyecto**»*. Es decir: el límite lo pone el proyecto, y en una sala eléctrica
+lo pone el fabricante de las celdas, no el geotecnista ni la norma sísmica.
+
+Esto no es un defecto del ejemplo, es la forma del problema: **el cálculo entrega un número que
+alguien más tiene que calificar.** Un informe que reporte «1/2.062» sin decir contra qué se
+compara está en la mitad del camino.
+</Note>
+
+---
+
+## 5. El umbral de la norma está calibrado
+
+Queda una pregunta honesta: el 1 de la Ec. (25), ¿de dónde sale? Barriendo el espesor de la losa
+y comparando cada vez el análisis flexible contra la hipótesis plana:
+
+| Espesor | Ec. (25) | Largo levantado | $q_{max}$ flexible / plana |
+|---|---|---|---|
+| 0,25 m | 4,20 | 4,60 m | 1,46 |
+| 0,30 m | 3,66 | 4,30 m | 1,48 |
+| 0,40 m | 2,95 | 3,80 m | 1,40 |
+| **0,50 m** | **2,50** | **3,40 m** | **1,31** |
+| 0,70 m | 1,94 | 2,90 m | 1,17 |
+| 0,90 m | 1,61 | 2,60 m | 1,10 |
+| 1,20 m | 1,30 | 2,50 m | 1,05 |
+| **1,70 m** | **1,00** | **2,40 m** | **1,02** |
+| 2,20 m | 0,82 | 2,40 m | 1,01 |
+
+<Note type="warning" title="Por qué el barrido congela el peso propio">
+Engrosar la losa **la carga**: a 1,70 m el peso propio sube de 105 a 357 tonf y $N$ pasa de 255 a
+507. Ese peso extra aplasta el levantamiento por sí solo, sin que la rigidez tenga nada que ver.
+Barrido de forma ingenua, el largo levantado cae a **cero** desde los 1,20 m y uno concluiría que
+el umbral de la norma marca el punto donde la losa deja de despegarse.
+
+Es un artefacto. Con el peso congelado en los 105 tonf del caso base —que es lo que hay que hacer
+para aislar la variable— el levantamiento **no desaparece nunca**: baja de 4,30 a 2,40 m y ahí se
+queda. La columna de error, en cambio, es prácticamente insensible a la maniobra (1,31 contra
+1,307 en el caso base; 1,02 contra 1,020 en el umbral), y por eso es la que sostiene la lectura.
+</Note>
+
+Léase la fila del 1,00: **justo en el umbral de la norma, la hipótesis plana se equivoca en un
+2 %**. Con el criterio en 2,50 —el caso real— se equivoca en un 31 %. El criterio no es una
+formalidad administrativa: **está midiendo exactamente el error que uno cometería al suponer la
+distribución plana**, y el 1 está puesto donde ese error se vuelve despreciable.
+
+Y el levantamiento dice lo mismo por otra vía. Los 2,40 m a los que converge no son cero: son
+**los 2,39 m que §3 obtuvo con la hipótesis plana**. Es decir, en el umbral los dos análisis
+dejan de discrepar — que es precisamente lo que «rígida» debería significar, y bastante mejor
+noticia que un cero.
+
+Nótese también lo apretada que es la transición en esta escala: entre 1,00 y 1,61 —apenas un
+60 % en el criterio— el error de la hipótesis plana pasa de 2 % a 10 %. Por eso la desigualdad se
+escribe con una raíz cuarta y no con su cuarta potencia: en la escala de la norma, **cada décima
+cuenta**.
+
+Es, además, la mejor forma de entender qué significa «rígida»: no es una propiedad de la
+fundación sola, sino de la fundación **frente al suelo que la sostiene y a la distancia entre las
+cargas**. La misma losa sobre roca y con columnas cada 3 m sería rígida.
+
+---
+
+## 6. Análisis de sensibilidad
+
+<Figure
+  src="/geotecnia-losa-flexible/sensibilidad.svg"
+  alt="Gráfico de tornado de la sensibilidad de la presión máxima de contacto, con caso base 9,57 tonf por metro cuadrado. La barra dominante corresponde a analizar solo la gravedad, sin la cupla sísmica: la presión baja a 4,11 tonf por metro cuadrado, un menos 57 %, y desaparece el levantamiento. Le siguen, mucho más cortas: k_v en el borde superior de la banda, 6.000 tonf/m³, sube la presión a 10,28, un más 7,4 %, con 3,9 m levantados; el espesor de 0,30 m la sube a 10,18, un más 6,4 %, con 5,9 m levantados; k_v en el borde inferior, 1.500 tonf/m³, la baja a 8,87, un menos 7,3 %, con 3,0 m levantados; el espesor de 0,80 m la baja a 9,02, un menos 5,7 %, con solo 0,7 m levantados; y el espesor de 1,20 m la baja a 9,34, un menos 2,4 %, sin levantamiento. Al pie: la banda completa de k_v adoptada, un factor 4 entre extremos, mueve la presión menos de un 8 %, pero cambia el asentamiento por un factor 3."
+  caption="La banda de k_v que el comentario recomienda explorar mueve poco la presión — pero mucho el asentamiento. Son dos preguntas distintas y conviene no leer una por la otra."
+/>
+
+| Decisión | Resultado | Efecto sobre $q_{max}$ |
+|---|---|---|
+| **Solo gravedad (sin la cupla sísmica)** | 4,11 tonf/m², sin levantamiento | **−57 %** |
+| $k_v = 6.000$ (upper bound, C10.1.5) | 10,28 tonf/m², 3,9 m levantados | +7,4 % |
+| Espesor 0,30 m | 10,18 tonf/m², 5,9 m levantados | +6,4 % |
+| $k_v = 1.500$ (lower bound, C10.1.5) | 8,87 tonf/m², 3,0 m levantados | −7,3 % |
+| Espesor 0,80 m | 9,02 tonf/m², 0,7 m levantados | −5,7 % |
+| Espesor 1,20 m | 9,34 tonf/m², sin levantamiento | −2,4 % |
+
+Dos lecturas.
+
+**La banda de $k_v$ mueve poco la presión y mucho el desplazamiento.** C10.1.5 —que no da valores— recomienda acotar
+la rigidez del suelo entre un *lower bound* y un *upper bound* porque *«se espera que controlen
+diferentes aspectos del diseño»*, y este barrido lo muestra literalmente: entre 1.500 y 6.000
+tonf/m³ —un factor 4— la presión máxima se mueve un 15 % de punta a punta, pero el asentamiento
+bajo la columna central pasa de 2,18 a 0,71 mm, **un factor 3**. Si lo que se está verificando es
+la tensión de contacto, la banda casi da igual; si lo que se verifica son deformaciones —que es
+justamente lo que 10.1.5 exige para una losa flexible— la banda lo es todo. Correr un solo $k_v$
+es responder media pregunta.
+
+**Y el espesor cambia el problema, no solo el resultado.** Pasar de 0,30 a 1,20 m mueve la
+presión máxima menos de un 9 %, pero el largo levantado va de 5,9 m a cero. La variable que el
+espesor gobierna no es la presión: es **cuánta losa deja de tocar el suelo** — que es,
+precisamente, lo que 10.1.5 manda verificar.
+
+---
+
+## Lo que este ejemplo agrega al bloque
+
+Las tres notas anteriores del bloque 5 verificaron tres fundaciones distintas con la misma norma, y cada
+una llegó a un requisito diferente:
+
+1. [La zapata del galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) — rígida y no anclada:
+   **80 % de área apoyada** y deslizamiento.
+2. [El dado de la torre](/geotecnia/ejemplo-fundacion-anclada-nch2369) — rígida y anclada: se cae
+   el área apoyada, entra el **sismo amplificado por $0{,}7R_1$**.
+3. Esta losa — flexible: se cae el área apoyada otra vez, y en su lugar entra la **verificación
+   de que los levantamientos sean tolerables**.
+
+Tres fundaciones, tres procedimientos incompatibles, y la elección entre ellos no la hace el
+calculista: la hacen dos preguntas objetivas —¿está anclada?, ¿cumple la Ec. (25)?— que se
+responden antes de calcular nada. **Equivocarse en esa bifurcación invalida todo lo que viene
+después**, aunque cada número individual esté bien, que es exactamente lo que pasa con el 82,9 %
+de esta losa.
+
+---
+
+**Lo que viene:** el bloque cierra bajando. Cuando ni la zapata ni la losa alcanzan quedan los
+pilotes, y NCh2369 les dedica 10.2 — con una cláusula, la 10.2.4, que le pide al calculista algo
+poco intuitivo: incorporar la fricción negativa **dos veces**, una restándola de la capacidad y
+otra sumándola como carga externa para el diseño estructural del pilote.
+
+<Note type="info" title="Reproducibilidad">
+Todos los números salen de un único script: la Ec. (25) para las dos longitudes de cálculo de la
+Tabla 10, el despeje del espesor necesario, la distribución plana con despegue, la viga sobre
+resortes de Winkler con anulación iterativa de los traccionados, el barrido de espesores y el de
+sensibilidad.
+
+El modelo se verificó de dos maneras: **equilibrio vertical** —la integral de la presión de
+contacto iguala las 255 tonf aplicadas con un error relativo de $1{,}4\cdot10^{-11}$— y
+**convergencia de malla**: con 70, 140 y 280 elementos, $q_{max}$ vale 9,5577, 9,5696 y 9,5725
+tonf/m², una variación del 0,2 % entre los extremos.
+</Note>

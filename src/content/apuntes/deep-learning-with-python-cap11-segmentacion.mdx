@@ -1,0 +1,265 @@
+---
+title: "De una etiqueta por imagen a una clase por píxel"
+description: "El capítulo 11 de Chollet construye el segundo tipo de modelo de visión del libro, y su valor didáctico está en dos decisiones de diseño que se explican solas. Primera: el encoder submuestrea con strides y no con max pooling, porque el pooling devuelve un escalar por ventana sin saber cuál de las cuatro posiciones lo produjo — y en segmentación la ubicación es justamente el output. Segunda: el decoder usa Conv2DTranspose, que es una convolución que aprende a hacer upsampling. Cierra con SAM, cuya innovación no es la arquitectura sino el prompting, y con el truco por el que sus datos de entrenamiento se fabrican solos. Apuntes del Cap. 11."
+pubDate: 2026-07-25
+tags: ["deep learning", "chollet", "segmentación", "encoder-decoder", "visión", "convnet", "sam"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 11 — Segmentación de imágenes"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 11 (PDF 332–352)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Hasta aquí la serie hizo una sola cosa con imágenes: meter una y sacar una
+etiqueta. El capítulo 11 amplía el mapa a **las tres tareas base de la visión por
+computador**:
+
+| Tarea | Qué produce | Dónde la has visto |
+|---|---|---|
+| **Clasificación** | Una o más etiquetas para la imagen | Buscar por palabra en Google Photos consulta un modelo multilabel de **más de 20 000 clases** |
+| **Segmentación** | Una clase **por cada píxel** | Cuando Zoom te pone un fondo detrás, separa tu cara del resto **con precisión de píxel** |
+| **Detección** | Rectángulos + clase | Un auto autónomo siguiendo autos, peatones y señales |
+
+*"Casi todas las aplicaciones de visión se reducen a una de esas tres."* Y dentro
+de segmentación hay tres sabores: **semántica** (cada píxel a una categoría
+genérica — dos gatos, todos los píxeles son "gato"), **de instancias** (distingue
+"gato 1" de "gato 2") y **panóptica** (asigna ambas etiquetas a cada píxel).
+
+<Note type="info" title="Qué es una máscara de segmentación">
+*"Es el equivalente en segmentación de una etiqueta: **una imagen del mismo tamaño
+que la entrada**, con un solo canal de color, donde cada valor entero corresponde
+a la clase del píxel correspondiente."*
+
+En el dataset del capítulo (Oxford-IIIT Pets, 7 390 fotos) los valores son **1
+(primer plano), 2 (fondo) y 3 (contorno)**, y el código les resta 1 para dejarlos
+en 0/1/2 — porque la pérdida los espera indexados desde cero.
+</Note>
+
+## 1. El problema cambia la arquitectura
+
+Si la salida debe tener el mismo tamaño que la entrada, la arquitectura no puede
+terminar en un `GlobalAveragePooling2D` y una `Dense`. Necesita **comprimir y
+volver a expandir**.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/encoder-decoder.svg"
+  alt="Diagrama simétrico. A la izquierda, ENCODER: la imagen de 200 × 200 × 3 pasa por Conv2D con strides=2 a 100 × 100 × 64, luego a 50 × 50 × 128, luego a 25 × 25 × 256. Al centro abajo, 'EL CUELLO': cada píxel de ese mapa resume un trozo grande de la imagen original, es compresión. A la derecha, DECODER, en espejo: de 25 × 25 × 256 con Conv2DTranspose y strides=2 se sube a 50 × 50 × 128, luego 100 × 100 × 64, y finalmente 200 × 200 × 3 con softmax por píxel. Al centro arriba, un recuadro explica que Conv2DTranspose es 'una capa de convolución que aprende a hacer upsampling', con el ejemplo de que (100,100,64) pasado por Conv2D(128,3,strides=2) da (50,50,128) y pasado por Conv2DTranspose(64,3,strides=2) vuelve al original. Al pie: se usa padding='same' en todas partes para que el relleno de borde no altere el tamaño de los mapas."
+  caption="El encoder es la misma pila de convoluciones de clasificación. Lo que cambia es cómo submuestrea, y que hay una segunda mitad que deshace el camino."
+  width={780}
+/>
+
+**La primera mitad se parece mucho a una convnet de clasificación**: una pila de
+`Conv2D` con filtros crecientes, submuestreando tres veces por un factor de 2
+hasta llegar a `(25, 25, 256)`. *"El propósito de esta primera mitad es codificar
+las imágenes en mapas más pequeños **donde cada ubicación espacial contiene
+información sobre un trozo grande de la imagen original**. Se puede entender como
+una especie de compresión."*
+
+Pero hay una diferencia, y es la parte más instructiva del capítulo.
+
+## 2. Por qué strides y no max pooling
+
+<Figure
+  src="/apuntes/deep-learning-with-python/strides-vs-pooling.svg"
+  alt="Comparación en dos paneles, bajo el subtítulo 'el mismo par de alternativas con el veredicto invertido, y es la misma operación la que lo explica'. A la izquierda, en rojo, max pooling 2 × 2: una ventana de cuatro celdas con los valores 0,2 — 0,9 — 0,3 — 0,1, de la que sale un único 0,9; la leyenda dice que devuelve un escalar por ventana, sin ningún conocimiento de cuál de las cuatro ubicaciones produjo ese valor. A la derecha, en azul, convolución con stride 2: la misma ventana de cuatro valores pasa por una combinación aprendida; la leyenda dice que el kernel pesa cada posición por separado, así que la salida retiene la estructura espacial de la ventana. (En el modelo del capítulo el kernel es de 3 × 3 con paso 2; se dibuja de 2 × 2 para poder compararlo con el pooling.) Abajo, dos cajas: clasificación, da igual dónde estaba, la salida es una etiqueta para toda la imagen y perder la ubicación no cuesta nada; segmentación, la ubicación ES el output, hay que emitir una clase por píxel y perder la ubicación destruye la tarea."
+  caption="La misma operación —reducir la ventana a un escalar de presencia— es la que hacía ganar al max pooling en clasificación y la que lo descarta aquí."
+  width={780}
+/>
+
+El argumento textual:
+
+> *"En las ConvNets de clasificación del capítulo 8 usábamos capas `MaxPooling2D`
+> para submuestrear. Aquí submuestreamos **agregando strides a una de cada dos
+> capas de convolución**. Hacemos esto porque, en segmentación, **nos importa
+> mucho la ubicación espacial de la información**, ya que necesitamos producir
+> máscaras por píxel como salida. **Cuando haces max pooling de 2 × 2, estás
+> destruyendo completamente la información de ubicación dentro de cada ventana:
+> devuelves un valor escalar por ventana, sin ningún conocimiento de cuál de las
+> cuatro ubicaciones produjo ese valor.**"*
+
+Vale la pena conectarlo con lo que decía el
+[capítulo 8](/apuntes/deep-learning-with-python-cap8-convnets), donde el max
+pooling salía **ganando** justamente contra las convoluciones con stride. **Es el
+mismo par de alternativas con el veredicto invertido**, y lo que lo explica en
+ambos casos es la misma operación: **reducir la ventana a un escalar de
+presencia** — quedarse con "hubo un 0,9 acá" y soltar todo lo demás.
+
+En clasificación eso alcanzaba y sobraba. En segmentación, ese mismo colapso borra
+precisamente el dato que el modelo tiene que emitir.
+
+<Note type="info" title="Un matiz que conviene no confundir">
+En el capítulo 8, lo que hacía al max superior **al promedio** era el estadístico
+—*"es más informativo mirar la presencia máxima de distintas features que su
+presencia promedio"*—, no el descarte de ubicación: **el average pooling descarta
+la ubicación exactamente igual**. El argumento de la ubicación es el que aparece
+recién aquí, y es el que da vuelta la comparación contra los strides.
+</Note>
+
+*"A lo largo del libro notarás que tendemos a usar strides en vez de max pooling en
+cualquier modelo al que le importe la ubicación de las features, como los modelos
+generativos del capítulo 17."*
+
+## 3. `Conv2DTranspose`: una convolución que aprende a agrandar
+
+La salida del encoder es `(25, 25, 256)`, pero necesitamos `(200, 200, 3)`.
+*"Necesitamos aplicar una especie de **inversa** de las transformaciones aplicadas
+hasta ahora, algo que **haga upsampling** en vez de submuestrear. Ese es el
+propósito de `Conv2DTranspose`: **puedes pensarlo como una capa de convolución que
+aprende a hacer upsampling**."*
+
+La simetría se ve mejor con el ejemplo que da el libro:
+
+```
+(100, 100, 64)
+  → Conv2D(128, 3, strides=2, padding="same")          → (50, 50, 128)
+  → Conv2DTranspose(64, 3, strides=2, padding="same")  → (100, 100, 64)   # vuelve
+```
+
+Y el modelo completo queda como un espejo:
+
+```python
+def get_model(img_size, num_classes):
+    inputs = keras.Input(shape=img_size + (3,))
+    x = Rescaling(1.0 / 255)(inputs)
+
+    # ── Encoder: comprime con strides ──
+    x = Conv2D(64, 3, strides=2, activation="relu", padding="same")(x)
+    x = Conv2D(64, 3, activation="relu", padding="same")(x)
+    x = Conv2D(128, 3, strides=2, activation="relu", padding="same")(x)
+    x = Conv2D(128, 3, activation="relu", padding="same")(x)
+    x = Conv2D(256, 3, strides=2, padding="same", activation="relu")(x)
+    x = Conv2D(256, 3, activation="relu", padding="same")(x)
+
+    # ── Decoder: re-expande con convoluciones transpuestas ──
+    x = Conv2DTranspose(256, 3, activation="relu", padding="same")(x)
+    x = Conv2DTranspose(256, 3, strides=2, activation="relu", padding="same")(x)
+    x = Conv2DTranspose(128, 3, activation="relu", padding="same")(x)
+    x = Conv2DTranspose(128, 3, strides=2, activation="relu", padding="same")(x)
+    x = Conv2DTranspose(64, 3, activation="relu", padding="same")(x)
+    x = Conv2DTranspose(64, 3, strides=2, activation="relu", padding="same")(x)
+
+    outputs = Conv2D(num_classes, 3, activation="softmax", padding="same")(x)
+    return keras.Model(inputs, outputs)
+```
+
+**La última capa es lo que define la tarea**: una convolución con **softmax**, que
+clasifica **cada píxel de salida** en una de las tres categorías. No hay `Dense` en
+ninguna parte — el modelo nunca aplana nada.
+
+Para leer la predicción se toma la clase más probable por píxel:
+`np.argmax(pred, axis=-1)`.
+
+<Note type="tip" title="La métrica: Intersection over Union">
+La accuracy por píxel engaña (si el 90 % de la imagen es fondo, predecir "fondo"
+en todo ya da 90 %). Se usa **IoU**: se calcula el **área de solape** entre la
+máscara predicha y la verdadera, el **área total cubierta por ambas** —*"todo el
+espacio que nos interesa: el objeto objetivo más cualquier pedazo extra que tu
+modelo haya incluido por error"*— y se divide una por otra. **1 = calce perfecto,
+0 = fallo total.**
+
+Keras la trae, pero con un par de flags que se olvidan:
+
+```python
+foreground_iou = keras.metrics.IoU(
+    num_classes=3,
+    target_class_ids=(0,),   # 0 = primer plano
+    sparse_y_true=True,      # los targets son IDs enteros...
+    sparse_y_pred=False,     # ...pero las predicciones son un softmax denso
+)
+```
+</Note>
+
+## 4. SAM: cuando el modelo ya no tiene clases
+
+La segunda mitad del capítulo introduce **Segment Anything** (Meta, abril 2023),
+entrenado con **11 millones de imágenes** y más de **mil millones de instancias**.
+Su tamaño no es menor: `model.count_params()` devuelve **641 090 864** — 641
+millones de parámetros, el modelo más grande del libro hasta ese punto.
+
+Pero lo interesante no es el tamaño:
+
+> *"SAM **no está limitado a un conjunto predefinido de clases de objetos**. Puedes
+> usarlo para segmentar objetos nuevos simplemente **dándole un ejemplo de lo que
+> buscas**. Ni siquiera necesitas hacerle fine-tuning primero."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/sam-tripletas.svg"
+  alt="Arriba, la arquitectura: la imagen entra a un image encoder descrito como 'similar a Xception' y el prompt (punto o caja) entra a un prompt encoder; ambos embeddings convergen en un mask decoder que emite 4 máscaras candidatas de 256 × 256 con su score, ordenadas por calidad, con la nota de que las otras 3 sirven si el prompt es ambiguo. Abajo, cómo se fabrican solos los datos: 1, una imagen de SA-1B con unas 100 máscaras; 2, elige una máscara al azar, esa es la respuesta; 3, inventa el prompt — punto es un píxel al azar dentro de la máscara, caja es la que encierra la máscara; 4, tripleta lista, repetir indefinidamente sin anotación extra. Al pie: el dataset y el modelo se construyeron mutuamente — expertos anotaron un set chico, entrenó un modelo inicial, ese modelo pre-segmentó las imágenes siguientes y los humanos solo corrigieron."
+  caption="Tres componentes que se entrenan a la vez. Y un generador de datos de entrenamiento que no necesita anotación adicional."
+  width={780}
+/>
+
+**La arquitectura son tres piezas:** un **image encoder** (*"similar al modelo
+Xception que usamos en capítulos previos"* — esto ya sabemos construirlo), un
+**prompt encoder** que embebe el punto o la caja, y un **mask decoder** que toma
+ambos embeddings y emite **varias máscaras candidatas**.
+
+**Y el truco de los datos es lo más elegante del capítulo.** El modelo se entrena
+sobre tripletas `(imagen, prompt, máscara)`, pero esas tripletas **no se anotan:
+se generan**:
+
+> *"Para una imagen dada, **elige una máscara al azar**. Después, **elige al azar
+> si crear un prompt de caja o de punto**. Para crear un prompt de punto, **elige
+> un píxel al azar dentro de la máscara**. Para crear uno de caja, **dibuja una
+> caja alrededor de todos los puntos dentro de la máscara**. Podemos repetir este
+> proceso indefinidamente."*
+
+Como cada imagen de SA-1B trae **unas 100 máscaras en promedio** (y algunas más de
+500), de una sola imagen salen cientos de ejemplos de entrenamiento sin anotación
+adicional.
+
+**Usarlo** es pasar la imagen y el prompt:
+
+```python
+outputs = model.predict({
+    "images": ops.expand_dims(image, axis=0),
+    "points": ops.expand_dims(input_point, axis=0),
+    "labels": ops.expand_dims(input_label, axis=0),
+})
+```
+
+Los puntos van **etiquetados**: **1 = primer plano** (lo que quieres) y **0 =
+fondo**. *"En casos ambiguos podrías pasar **múltiples puntos etiquetados** para
+refinar qué debe incluirse y qué excluirse."*
+
+La salida trae **cuatro máscaras candidatas ordenadas por calidad**. Y las otras
+tres no sobran: *"pueden ser útiles para **prompts ambiguos**"*. En el ejemplo del
+libro, al apuntar a un plátano, **una candidata alternativa incluye los dos
+plátanos** — el prompt no decía si querías la fruta o el racimo, así que el modelo
+ofrece ambas lecturas.
+
+<Note type="tip" title="El bucle que se cierra">
+SAM se construyó en un bucle de retroalimentación: **expertos humanos anotaron a
+mano un dataset pequeño**, eso entrenó un modelo inicial, y ese modelo condujo una
+etapa **semiautomática** donde las imágenes eran pre-segmentadas por SAM y los
+humanos solo **corregían**.
+
+Y el capítulo cierra señalando que ahora puedes hacer lo mismo: *"SAM puede ser una
+herramienta poderosa para **crear rápidamente grandes datasets de imágenes
+anotadas con máscaras de segmentación**."* El modelo que nació de ese bucle sirve
+para arrancar el tuyo.
+</Note>
+
+## Para recordar
+
+- **Tres tareas de visión**: clasificar (etiqueta), segmentar (clase por píxel),
+  detectar (caja + clase). Y tres tipos de segmentación: semántica, de instancias
+  y panóptica.
+- **Una máscara es una imagen del mismo tamaño** donde cada entero es la clase de
+  ese píxel.
+- **Encoder-decoder**: comprimir a un mapa pequeño donde cada posición resume un
+  trozo grande, y volver a expandir.
+- **Strides y no max pooling**, porque el pooling **devuelve un escalar sin saber
+  cuál de las cuatro posiciones lo produjo** — y aquí la ubicación es el output.
+- **`Conv2DTranspose` es una convolución que aprende a agrandar**, y deshace
+  exactamente lo que hizo la `Conv2D` con stride.
+- **Softmax por píxel al final**, y `argmax` sobre el último eje para leerlo.
+- **IoU** en vez de accuracy, con `sparse_y_true=True` y `sparse_y_pred=False`.
+- **La innovación de SAM es el prompting**, no la arquitectura. Y sus datos de
+  entrenamiento **se fabrican solos** a partir de máscaras existentes.
+
+El **capítulo 12** cierra la trilogía de visión con la tercera tarea: detección de
+objetos. Y arranca con la objeción obvia —si ya tengo la máscara, tengo la caja—
+para mostrar que la segmentación es un superconjunto **caro**, en cómputo y en
+etiquetado.

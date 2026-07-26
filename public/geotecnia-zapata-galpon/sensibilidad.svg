@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 480" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="480" fill="#ffffff"/>
+  <text x="470" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Sensibilidad de las dos verificaciones que fallan</text>
+  <text x="470" y="49" font-size="12" text-anchor="middle" fill="#666">Caso base: 63,3 % de área apoyada (límite 80 %) y FS = 1,20 al deslizamiento (límite 1,3). Escala única de 2,2 px por punto porcentual.</text>
+
+  <!-- eje del caso base -->
+  <line x1="620" y1="76" x2="620" y2="352" stroke="#8a857c" stroke-width="1.6"/>
+  <text x="620" y="370" font-size="11" fill="#666" text-anchor="middle">caso base</text>
+
+  <!-- guias -->
+  <g stroke="#e5e2dc" stroke-width="1">
+    <line x1="400" y1="76" x2="400" y2="352"/>
+    <line x1="510" y1="76" x2="510" y2="352"/>
+    <line x1="730" y1="76" x2="730" y2="352"/>
+    <line x1="840" y1="76" x2="840" y2="352"/>
+  </g>
+  <g font-size="10" fill="#aaa" text-anchor="middle">
+    <text x="400" y="370">−100 %</text>
+    <text x="510" y="370">−50 %</text>
+    <text x="730" y="370">+50 %</text>
+    <text x="840" y="370">+100 %</text>
+  </g>
+
+  <!-- fila 1: sin el suelo sobre la zapata -->
+  <text x="392" y="101" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">No contar el suelo sobre la zapata</text>
+  <rect x="400" y="85" width="220" height="22" fill="#b02a1a" fill-opacity="0.85"/>
+  <text x="410" y="101" font-size="12" fill="#ffffff" font-weight="bold">área apoyada 0 %</text>
+  <text x="612" y="101" font-size="12.5" fill="#ffffff" text-anchor="end" font-weight="bold">−100 %</text>
+
+  <!-- fila 2: contar el pasivo -->
+  <text x="392" y="135" font-size="12.5" fill="#b35c0e" text-anchor="end" font-weight="bold">Contar el empuje pasivo (lo prohíbe 10.1.3)</text>
+  <rect x="620" y="119" width="225.5" height="22" fill="#b35c0e" fill-opacity="0.85"/>
+  <text x="630" y="135" font-size="12" fill="#ffffff" font-weight="bold">FS 1,20 → 2,43</text>
+  <text x="853" y="135" font-size="12.5" fill="#b35c0e" font-weight="bold">+102 %</text>
+
+  <!-- fila 3: E mayor -->
+  <text x="392" y="169" font-size="12" fill="#555" text-anchor="end">Un sismo 15 % mayor</text>
+  <rect x="493.7" y="154" width="126.3" height="20" fill="#b02a1a" fill-opacity="0.7"/>
+  <text x="503" y="169" font-size="11.5" fill="#ffffff" font-weight="bold">área 26,9 %</text>
+  <text x="486" y="169" font-size="12" fill="#b02a1a" text-anchor="end" font-weight="bold">−57 %</text>
+
+  <!-- fila 4: cohesion aparente -->
+  <text x="392" y="203" font-size="12" fill="#555" text-anchor="end">Contar c' = 10 kPa aparente</text>
+  <rect x="620" y="188" width="95.3" height="20" fill="#b35c0e" fill-opacity="0.7"/>
+  <text x="629" y="203" font-size="11.5" fill="#ffffff" font-weight="bold">FS 1,72</text>
+  <text x="723" y="203" font-size="12" fill="#b35c0e" font-weight="bold">+43 %</text>
+
+  <!-- fila 5: E menor -->
+  <text x="392" y="237" font-size="12" fill="#555" text-anchor="end">Un sismo 15 % menor</text>
+  <rect x="620" y="222" width="86" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="629" y="237" font-size="11.5" fill="#ffffff" font-weight="bold">área 88,0 %</text>
+  <text x="714" y="237" font-size="12" fill="#1a63a8" font-weight="bold">+39 %</text>
+
+  <!-- fila 6: reclasificar -->
+  <text x="392" y="271" font-size="12" fill="#555" text-anchor="end">Reclasificar a fundación estándar mayor</text>
+  <rect x="537.5" y="256" width="82.5" height="20" fill="#b35c0e" fill-opacity="0.7"/>
+  <text x="546" y="271" font-size="11.5" fill="#ffffff" font-weight="bold">límite 50 %</text>
+  <text x="530" y="271" font-size="12" fill="#b35c0e" text-anchor="end" font-weight="bold">−37,5 %</text>
+
+  <!-- fila 7: phi 32 -->
+  <text x="392" y="305" font-size="12" fill="#555" text-anchor="end">φ' = 32° en vez de 30°</text>
+  <rect x="620" y="290" width="18" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="646" y="305" font-size="12" fill="#1a63a8" font-weight="bold">+8 % · FS 1,30</text>
+
+  <!-- fila 8: phi 28 -->
+  <text x="392" y="339" font-size="12" fill="#555" text-anchor="end">φ' = 28° en vez de 30°</text>
+  <rect x="602.6" y="324" width="17.4" height="20" fill="#1a63a8" fill-opacity="0.7"/>
+  <text x="595" y="339" font-size="12" fill="#1a63a8" text-anchor="end" font-weight="bold">−8 % · FS 1,10</text>
+
+  <!-- takeaway -->
+  <rect x="60" y="392" width="820" height="72" rx="6" fill="#f7f6f3" stroke="#8a857c"/>
+  <text x="470" y="416" font-size="13" text-anchor="middle" fill="#222" font-weight="bold">El único parámetro del suelo de la lista es el que menos mueve el resultado.</text>
+  <text x="470" y="438" font-size="12.5" text-anchor="middle" fill="#555">Dos grados de φ' valen un 8 %. Las tres barras más grandes son decisiones de modelación y de clasificación normativa,</text>
+  <text x="470" y="456" font-size="12.5" text-anchor="middle" fill="#555">no propiedades del terreno — el reverso exacto del ejemplo del bloque 1.</text>
+</svg>

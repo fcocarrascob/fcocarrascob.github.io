@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 392" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="cv-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="780" height="392" fill="#ffffff"/>
+
+  <text x="390" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Patrón global vs. patrón local: la diferencia que lo explica todo</text>
+
+  <!-- ── Top: Dense vs Conv ── -->
+  <rect x="20" y="52" width="365" height="140" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="202" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Capa Dense — patrones globales</text>
+  <!-- full grid highlighted -->
+  <g>
+    <rect x="142" y="90" width="120" height="76" fill="#fecaca" stroke="#dc2626"/>
+    <g stroke="#fca5a5" stroke-width="0.8">
+      <line x1="162" y1="90" x2="162" y2="166"/><line x1="182" y1="90" x2="182" y2="166"/>
+      <line x1="202" y1="90" x2="202" y2="166"/><line x1="222" y1="90" x2="222" y2="166"/>
+      <line x1="242" y1="90" x2="242" y2="166"/>
+      <line x1="142" y1="109" x2="262" y2="109"/><line x1="142" y1="128" x2="262" y2="128"/>
+      <line x1="142" y1="147" x2="262" y2="147"/>
+    </g>
+  </g>
+  <text x="202" y="184" text-anchor="middle" font-size="10.5" fill="#991b1b">mira <tspan font-weight="700">todos los píxeles</tspan> a la vez</text>
+
+  <rect x="395" y="52" width="365" height="140" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="577" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">Capa Conv — patrones locales</text>
+  <g>
+    <rect x="517" y="90" width="120" height="76" fill="#ffffff" stroke="#93c5fd"/>
+    <g stroke="#dbeafe" stroke-width="0.8">
+      <line x1="537" y1="90" x2="537" y2="166"/><line x1="557" y1="90" x2="557" y2="166"/>
+      <line x1="577" y1="90" x2="577" y2="166"/><line x1="597" y1="90" x2="597" y2="166"/>
+      <line x1="617" y1="90" x2="617" y2="166"/>
+      <line x1="517" y1="109" x2="637" y2="109"/><line x1="517" y1="128" x2="637" y2="128"/>
+      <line x1="517" y1="147" x2="637" y2="147"/>
+    </g>
+    <rect x="537" y="109" width="60" height="57" fill="#2563eb" fill-opacity="0.75" stroke="#1e3a8a" stroke-width="1.6"/>
+  </g>
+  <text x="577" y="184" text-anchor="middle" font-size="10.5" fill="#2563eb">mira una <tspan font-weight="700">ventana de 3 × 3</tspan>, y la desliza</text>
+
+  <!-- ── Middle: the operation ── -->
+  <text x="390" y="220" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">La operación, paso a paso</text>
+
+  <rect x="30" y="234" width="132" height="52" rx="6" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="96" y="254" text-anchor="middle" font-size="10.5" font-weight="600" fill="#374151">Mapa de entrada</text>
+  <text x="96" y="270" text-anchor="middle" font-size="9.5" fill="#6b7280">(alto, ancho, profundidad)</text>
+
+  <line x1="162" y1="260" x2="186" y2="260" stroke="#2563eb" stroke-width="1.8" marker-end="url(#cv-ar)"/>
+
+  <rect x="188" y="234" width="132" height="52" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="254" y="254" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e3a8a">Extraer parches 3 × 3</text>
+  <text x="254" y="270" text-anchor="middle" font-size="9.5" fill="#1e3a8a">en cada ubicación posible</text>
+
+  <line x1="320" y1="260" x2="344" y2="260" stroke="#2563eb" stroke-width="1.8" marker-end="url(#cv-ar)"/>
+
+  <rect x="346" y="234" width="150" height="52" rx="6" fill="#2563eb"/>
+  <text x="421" y="254" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">Producto con el kernel</text>
+  <text x="421" y="270" text-anchor="middle" font-size="9.5" fill="#dbeafe">el MISMO para todos los parches</text>
+
+  <line x1="496" y1="260" x2="520" y2="260" stroke="#2563eb" stroke-width="1.8" marker-end="url(#cv-ar)"/>
+
+  <rect x="522" y="234" width="228" height="52" rx="6" fill="#bfdbfe" stroke="#3b82f6"/>
+  <text x="636" y="254" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e3a8a">Reensamblar → mapa de salida</text>
+  <text x="636" y="270" text-anchor="middle" font-size="9.5" fill="#1e3a8a">(alto', ancho', nº de filtros)</text>
+
+  <!-- ── Bottom: the two consequences ── -->
+  <rect x="20" y="304" width="365" height="72" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="202" y="326" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">Invarianza a la traslación</text>
+  <text x="202" y="344" text-anchor="middle" font-size="10.5" fill="#374151">Un patrón aprendido en una esquina se reconoce</text>
+  <text x="202" y="358" text-anchor="middle" font-size="10.5" fill="#374151">en cualquier lugar — porque el mundo visual</text>
+  <text x="202" y="371" text-anchor="middle" font-size="10.5" fill="#2563eb">es invariante a la traslación</text>
+
+  <rect x="395" y="304" width="365" height="72" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="577" y="326" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">Jerarquía espacial</text>
+  <text x="577" y="344" text-anchor="middle" font-size="10.5" fill="#374151">Bordes → ojos y orejas → "gato". Cada capa</text>
+  <text x="577" y="358" text-anchor="middle" font-size="10.5" fill="#374151">compone la anterior — porque el mundo visual</text>
+  <text x="577" y="371" text-anchor="middle" font-size="10.5" fill="#2563eb">es jerárquico en el espacio</text>
+</svg>

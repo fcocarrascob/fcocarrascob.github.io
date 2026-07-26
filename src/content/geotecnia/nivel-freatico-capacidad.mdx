@@ -1,0 +1,176 @@
+---
+title: "El agua: entre un 7 % y un 49 % de la capacidad"
+description: "El nivel freático puede llevarse la mitad de la capacidad de soporte sin que cambie nada del suelo. Los tres casos de la norma de cálculo, la curva completa de q_adm según la cota de la napa, y dos reglas exactas que muestran por qué «la napa te quita un tercio» no es una regla sino un caso particular."
+pubDate: 2026-07-27
+tags: ["geotecnia", "capacidad de soporte", "nivel freático", "tensión efectiva", "peso sumergido", "das"]
+subsection: "capacidad-soporte"
+order: 3
+chapter: "Capacidad de soporte"
+source: "Das, 4ª ed. (2015)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Nota 3 · bloque 1. Viene de [Terzaghi vs. la ecuación general](/geotecnia/terzaghi-vs-ecuacion-general).*
+
+El [post 2](/geotecnia/terzaghi-vs-ecuacion-general) cerró con que elegir bien el método vale un
+30 % y estimar bien $\phi'$ vale más. Falta un tercer factor que puede valer todavía más, y que
+no tiene nada que ver con el suelo: **dónde está el agua.**
+
+En el [primer post](/geotecnia/de-donde-sale-q-admisible) calculé un caso —la napa subiendo hasta
+el nivel del sello— y salió un 15 %. Ese número es correcto, pero es **el más benigno de los
+dos sub-casos posibles**. Cuando hice el barrido completo apareció el otro extremo: **48,9 %.**
+Esta nota es ese barrido.
+
+---
+
+## 1. Por qué el agua pesa menos
+
+La razón es el principio de tensión efectiva, el mismo que gobierna todo lo demás en geotecnia.
+Bajo el nivel freático, los granos de suelo están **sumergidos**: el agua los empuja hacia arriba
+con el empuje de Arquímedes, y la tensión que efectivamente aprieta un grano contra otro —la que
+moviliza la fricción— cae. El peso unitario que hay que usar es el **sumergido**:
+
+<Equation label="peso sumergido">
+$$
+\gamma' = \gamma_{sat} - \gamma_w
+$$
+</Equation>
+
+Con valores corrientes —$\gamma = 18$ kN/m³ sobre la napa, $\gamma_{sat} = 19$ kN/m³ bajo
+ella y $\gamma_w = 9{,}81$ kN/m³— resulta
+$\gamma' = 9{,}19$ kN/m³: **apenas el 51 % del peso húmedo.** No es un ajuste fino; es partir a
+la mitad uno de los ingredientes de la ecuación.
+
+---
+
+## 2. Los tres casos
+
+Das (§16.5) distingue tres situaciones según dónde caiga la napa respecto de la zapata:
+
+<Figure
+  src="/geotecnia-nivel-freatico/tres-casos.svg"
+  alt="Tres paneles con la misma zapata y la napa en distintas posiciones. Caso I, napa sobre el sello (0 ≤ D₁ ≤ D_f): la napa corta el terreno por encima del nivel de fundación; la sobrecarga se calcula como q = D₁γ + D₂γ' y además γ pasa a γ' en el tercer término, de modo que se castigan los dos términos; se señala como el caso más severo. Caso II, napa bajo el sello dentro del ancho B (0 ≤ d ≤ B): la sobrecarga q = γD_f no cambia, pero el peso unitario del tercer término se interpola linealmente como γ̄ = γ' + (d/B)(γ − γ') según cuánto del bulbo de falla queda sumergido. Caso III, napa profunda (d ≥ B): ni la sobrecarga ni γ se modifican, el agua queda fuera del bulbo de falla y no afecta la capacidad. Al pie se indica que γ' = γ_sat − γ_w vale 9,19 kN/m³, apenas el 51 % del peso húmedo, y que las tres expresiones suponen que no hay fuerzas de filtración."
+  caption="Las tres reglas del Cap. 16.5. La distinción importante es entre el Caso I —donde el agua castiga los dos términos— y el Caso II, donde solo toca el del peso propio. Esa diferencia es todo el rango entre −49 % y −7 %."
+/>
+
+La clave está en el **Caso I**: cuando la napa está por encima del sello, no solo se aliviana el
+suelo bajo la zapata, sino que **la propia sobrecarga $q$ se calcula con $\gamma'$**. Los dos
+términos caen a la vez.
+
+---
+
+## 3. La curva completa
+
+Con eso, la pregunta natural: para una zapata dada, ¿cómo varía $q_{adm}$ si movemos la napa
+desde la superficie hasta bien abajo?
+
+<Figure
+  src="/geotecnia-nivel-freatico/curva-transicion.svg"
+  alt="A la izquierda, gráfico de q_adm en kPa contra la profundidad de la napa medida desde la superficie, para la zapata de 2,20 × 2,20 m con D_f = 1,5 m en arena de φ' = 26,7°. El fondo está dividido en tres bandas de color correspondientes a los tres casos. La curva parte en 100,5 kPa con la napa en superficie —una pérdida del 48,9 % respecto de los 196,8 kPa sin napa, marcados con una línea de referencia punteada— y sube con pendiente pronunciada hasta el quiebre en z = D_f = 1,5 m, donde vale 168,2 kPa, es decir −14,5 %. A partir de ahí sube con pendiente mucho más suave hasta recuperar el valor completo en z = 3,7 m, que es D_f + B, y queda plana. A la derecha, una tabla con la pendiente de cada tramo: Caso I gana 45,1 kPa por metro porque bajan los dos términos a la vez, Caso II gana solo 13,0 kPa por metro porque solo interviene el término de peso propio, y Caso III cero. Se destaca que bajar la napa un metro cuando está alta vale 3,5 veces más que cuando ya está bajo el sello. Al pie: preguntar si hay napa no basta, hay que preguntar a qué cota y con qué estacionalidad, porque entre la napa en superficie y la napa a 3,7 m hay un factor 2 en la capacidad sin que cambie nada del suelo."
+  caption="Entre los dos extremos hay un factor 2 en la capacidad. Y la curva tiene un quiebre neto en z = D_f: el metro de napa que se gana por encima del sello vale 3,5 veces más que el que se gana por debajo."
+/>
+
+Dos cosas que la curva deja claras y que no son obvias desde las fórmulas:
+
+- **La pendiente cambia de golpe en $z = D_f$.** Por encima del sello, bajar la napa un metro
+  recupera 45 kPa; por debajo, solo 13. Si alguien está evaluando un sistema de drenaje o
+  abatimiento, ahí está el criterio: **lo que paga es sacar el agua de encima del sello**, no
+  seguir bajándola una vez que ya está debajo.
+- **A partir de $z = D_f + B$ el agua deja de importar.** Queda fuera del bulbo de falla.
+
+---
+
+## 4. Dos reglas exactas
+
+Al barrer nueve combinaciones de $B$ y $D_f$ apareció algo más limpio de lo que esperaba: los dos
+sub-casos extremos obedecen a **reglas cerradas**, y solo una de ellas depende de la geometría.
+
+<Figure
+  src="/geotecnia-nivel-freatico/dos-reglas.svg"
+  alt="Dos paneles. El izquierdo, napa en la superficie: la pérdida es exactamente 1 − γ'/γ = 48,9 %, siempre, sea cual sea la zapata, porque con la napa arriba la sobrecarga q también se calcula con γ' y por lo tanto los dos términos escalan por el mismo factor. Se muestran cinco geometrías muy distintas —de 8 × 0,5 m a 1 × 1,5 m— con barras de idéntica altura, todas −48,9 %. El panel derecho, napa en el sello: la pérdida es 48,9 % multiplicado por f₃, la fracción de la capacidad que aporta el término de peso propio. Un gráfico muestra los nueve casos calculados cayendo exactamente sobre la recta teórica, desde −7 % en una zapata angosta y profunda hasta −40 % en una losa ancha y somera. Al pie: «la napa te quita un tercio» no es una regla sino un caso particular, y el rango real va de −7 % a −49 %."
+  caption="Con la napa en superficie todos los términos escalan por γ'/γ, así que la pérdida es geometría-independiente. Con la napa en el sello solo escala el tercer término, y ahí sí manda la proporción en que ese término contribuye."
+/>
+
+**Regla 1 — napa en la superficie** (para arena limpia, $c' = 0$):
+
+$$
+\text{pérdida} = 1 - \frac{\gamma'}{\gamma} = 48{,}9\,\%
+$$
+
+Es independiente de la zapata. La razón es transparente una vez vista: con la napa arriba,
+*todos* los términos de la ecuación llevan $\gamma'$ donde llevaban $\gamma$, así que
+$q_{adm}$ entero se multiplica por $\gamma'/\gamma$.
+
+**Regla 2 — napa en el sello:**
+
+$$
+\text{pérdida} = 48{,}9\,\% \times f_3
+$$
+
+donde $f_3$ es la fracción de la capacidad que aporta el término $\tfrac{1}{2}\gamma B N_\gamma$.
+Los nueve casos caen exactamente sobre esa recta, desde una losa ancha y somera ($f_3 = 82\%$ →
+**−40 %**) hasta una zapata angosta y profunda ($f_3 = 16\%$ → **−8 %**).
+
+<Note type="tip" title="Por qué «un tercio» no es una regla">
+Se repite mucho que la napa se lleva un tercio de la capacidad. El barrido muestra que el rango
+real va de **−7 % a −49 %**, y que un tercio corresponde a una zona intermedia bastante
+particular. La cifra no depende solo del agua: depende de **cuánta de tu capacidad viene del peso
+propio del suelo**, y eso lo fija la geometría. Zapata ancha y somera: el agua duele. Zapata
+angosta y profunda: casi no se nota.
+</Note>
+
+---
+
+## 5. Lo que esta formulación no cubre
+
+Las tres expresiones del Caso I al III suponen explícitamente que **no hay fuerzas de
+filtración**: el agua está quieta.
+
+<Note type="warning" title="Flujo ascendente">
+Si hay filtración hacia arriba —excavación bajo la napa, fondo de una zanja apuntalada, gradiente
+por un estrato permeable en carga— la tensión efectiva baja **más** de lo que predice $\gamma'$,
+y en el límite se anula: el suelo se licúa por sifonamiento. El gradiente crítico es
+$i_c = \gamma'/\gamma_w \approx 0{,}94$, es decir prácticamente 1.
+
+Ese caso no está cubierto por estas ecuaciones y es un problema distinto, con su propia
+verificación. Si el proyecto tiene excavación bajo napa, la capacidad de soporte no es la única
+pregunta que hay que hacerse.
+</Note>
+
+---
+
+## 6. Qué preguntarle al informe
+
+De todo lo anterior, y sumándolo a la lista que quedó abierta en el primer post:
+
+1. **¿A qué cota está la napa?** «Hay napa» no es un dato: la diferencia entre superficie y
+   $D_f + B$ es un factor 2.
+2. **¿Cuándo se midió?** La napa es estacional. En Chile central puede oscilar metros entre
+   invierno y verano, y el sondaje se hizo un día concreto.
+3. **¿Qué cota se usó para calcular $q_{adm}$?** Si el informe midió la napa a 4 m en marzo pero
+   calculó con esa cota, el número no cubre el invierno.
+4. **¿Hay $\gamma_{sat}$ reportado?** Sin él no se puede reconstruir $\gamma'$ ni verificar nada.
+5. **¿Hay filtración esperada?** Excavación bajo napa cambia el problema.
+
+En sitios costeros y en rellenos de borde —donde la napa puede estar a un metro— este factor
+compite de igual a igual con la elección de $\phi'$. Y a diferencia de $\phi'$, **la cota de la
+napa sí se mide directamente**: es de los pocos datos duros que trae un informe. Vale la pena
+usarlo bien.
+
+<Note type="info" title="Reproducibilidad">
+El barrido de la posición de la napa, las pendientes de cada tramo y las nueve combinaciones de
+$B$ y $D_f$ se calcularon con script sobre la ecuación de Terzaghi para zapata cuadrada,
+Ec. (16.4), que aísla limpiamente el efecto del agua —los factores de forma y profundidad de la
+ecuación general dependen también de $D_f/B$ y confundirían el barrido—. Las dos reglas exactas
+se verificaron contra los nueve casos: coinciden dígito a dígito.
+</Note>
+
+---
+
+**Lo que viene:** con esto queda cerrada la rama de la falla por corte. La
+[siguiente nota](/geotecnia/modulo-es-parametro-dominante) cruza al
+otro criterio —el asentamiento— donde el parámetro incierto ya no es $\phi'$ sino $E_s$, y el
+rango no es de dos grados sino de **cinco veces**.

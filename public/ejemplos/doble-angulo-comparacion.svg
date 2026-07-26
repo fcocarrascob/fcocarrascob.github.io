@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 500" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="500" fill="#ffffff"/>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Verificación por verificación, misma demanda: shear tab vs. doble ángulo</text>
+
+  <!-- leyenda -->
+  <rect x="300" y="40" width="16" height="11" fill="#5b8db8"/>
+  <text x="322" y="50" font-size="10.5" fill="#333">shear tab (PL 10, corte simple)</text>
+  <rect x="510" y="40" width="16" height="11" fill="#1f6f4a"/>
+  <text x="532" y="50" font-size="10.5" fill="#333">doble ángulo (2L 10, corte doble)</text>
+
+  <!-- eje x -->
+  <line x1="262" y1="70" x2="262" y2="410" stroke="#333" stroke-width="1.1"/>
+  <g font-size="10" fill="#555" text-anchor="middle">
+    <line x1="345.8" y1="410" x2="345.8" y2="415" stroke="#ccc"/><text x="345.8" y="428">0.25</text>
+    <line x1="428.7" y1="410" x2="428.7" y2="415" stroke="#ccc"/><text x="428.7" y="428">0.50</text>
+    <line x1="512.5" y1="410" x2="512.5" y2="415" stroke="#ccc"/><text x="512.5" y="428">0.75</text>
+    <line x1="595.3" y1="410" x2="595.3" y2="415" stroke="#ccc"/><text x="595.3" y="428">1.00</text>
+  </g>
+  <line x1="262" y1="410" x2="662" y2="410" stroke="#333" stroke-width="1.1"/>
+  <text x="462" y="446" font-size="11.5" text-anchor="middle" fill="#333">uso = demanda / capacidad</text>
+
+  <!-- limite 1.0 -->
+  <line x1="595.3" y1="66" x2="595.3" y2="410" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="7 4"/>
+  <text x="601" y="78" font-size="10.5" fill="#c0392b" font-weight="bold">límite 1.0</text>
+
+  <g font-size="10.5" fill="#333" text-anchor="end">
+    <text x="252" y="88">Pernos a corte (J3-1)</text>
+    <text x="252" y="130">Apoyo en el elemento (J3-6)</text>
+    <text x="252" y="172">Apoyo en el alma de la viga</text>
+    <text x="252" y="214">Fluencia en corte (J4-3)</text>
+    <text x="252" y="256">Rotura en corte (J4-4)</text>
+    <text x="252" y="298">Rotura en bloque (J4-5)</text>
+    <text x="252" y="340">Flexión exc. (área neta)</text>
+    <text x="252" y="382">Perno extremo (excéntrico)</text>
+  </g>
+
+  <!-- barras: tab arriba (y), angulo abajo (y+15) -->
+  <g>
+    <rect x="262" y="80" width="230.0" height="13" fill="#5b8db8"/><text x="498" y="91" font-size="10" fill="#1f4e79">0.69</text>
+    <rect x="262" y="95" width="116.7" height="13" fill="#1f6f4a"/><text x="384" y="106" font-size="10" fill="#1f6f4a">0.35</text>
+
+    <rect x="262" y="122" width="176.7" height="13" fill="#5b8db8"/><text x="444" y="133" font-size="10" fill="#1f4e79">0.53</text>
+    <rect x="262" y="137" width="86.7" height="13" fill="#1f6f4a"/><text x="354" y="148" font-size="10" fill="#1f6f4a">0.26</text>
+
+    <rect x="262" y="164" width="153.3" height="13" fill="#5b8db8"/><text x="421" y="175" font-size="10" fill="#1f4e79">0.46</text>
+    <rect x="262" y="179" width="153.3" height="13" fill="#1f6f4a"/><text x="421" y="190" font-size="10" fill="#1f6f4a">0.46 ← gobierna</text>
+
+    <rect x="262" y="206" width="236.7" height="13" fill="#5b8db8"/><text x="504" y="217" font-size="10" fill="#1f4e79">0.71</text>
+    <rect x="262" y="221" width="116.7" height="13" fill="#1f6f4a"/><text x="384" y="232" font-size="10" fill="#1f6f4a">0.35</text>
+
+    <rect x="262" y="248" width="310.0" height="13" fill="#5b8db8"/><text x="578" y="259" font-size="10" fill="#1f4e79" font-weight="bold">0.93 ← cadena</text>
+    <rect x="262" y="263" width="153.3" height="13" fill="#1f6f4a"/><text x="421" y="274" font-size="10" fill="#1f6f4a">0.46</text>
+
+    <rect x="262" y="290" width="276.7" height="13" fill="#5b8db8"/><text x="544" y="301" font-size="10" fill="#1f4e79">0.83</text>
+    <rect x="262" y="305" width="140.0" height="13" fill="#1f6f4a"/><text x="408" y="316" font-size="10" fill="#1f6f4a">0.42</text>
+
+    <rect x="262" y="332" width="160.0" height="13" fill="#5b8db8"/><text x="428" y="343" font-size="10" fill="#1f4e79">0.48</text>
+    <rect x="262" y="347" width="73.3" height="13" fill="#1f6f4a"/><text x="341" y="358" font-size="10" fill="#1f6f4a">0.22</text>
+
+    <rect x="262" y="374" width="331.7" height="13" fill="#7d1f14"/><text x="600" y="385" font-size="10" fill="#c0392b" font-weight="bold">0.995</text>
+    <rect x="262" y="389" width="160.0" height="13" fill="#1f6f4a"/><text x="428" y="400" font-size="10" fill="#1f6f4a">0.48</text>
+  </g>
+
+  <!-- caja de precio -->
+  <rect x="676" y="96" width="150" height="172" rx="6" fill="#f8fafc" stroke="#9bb0c6"/>
+  <text x="690" y="116" font-size="11" fill="#222" font-weight="bold">El precio</text>
+  <text x="690" y="136" font-size="10" fill="#333">Acero de la conexión</text>
+  <text x="690" y="150" font-size="10" fill="#1f4e79">tab 2.2 kg</text>
+  <text x="690" y="164" font-size="10" fill="#1f6f4a">doble ángulo 8.4 kg</text>
+  <text x="690" y="186" font-size="10" fill="#333">Agujeros en terreno</text>
+  <text x="690" y="200" font-size="10" fill="#1f4e79">tab 4</text>
+  <text x="690" y="214" font-size="10" fill="#1f6f4a">doble ángulo 12</text>
+  <text x="690" y="236" font-size="10" fill="#888">3.8× el acero y 3× los</text>
+  <text x="690" y="250" font-size="10" fill="#888">agujeros — y la mitad</text>
+  <text x="690" y="262" font-size="10" fill="#888">del uso.</text>
+
+  <text x="70" y="474" font-size="10.5" fill="#555">V_u = 30 tonf · 4 Ø22 A325-N · viga W460×74 (t_w = 9 mm) · plancha y ángulos A36 de 10 mm · profundidad 280 mm.</text>
+  <text x="70" y="490" font-size="10" fill="#888">El perno extremo excéntrico se evalúa con el método elástico de vectores (conservador); el centro instantáneo del AISC Manual da más crédito.</text>
+</svg>
