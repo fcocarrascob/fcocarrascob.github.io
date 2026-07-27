@@ -53,22 +53,22 @@
   <rect x="560.0" y="190.0" width="290.0" height="17.4" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.6"/>
   <rect x="560.0" y="190.0" width="58.0" height="17.4" fill="#1a63a8" opacity="0.25" stroke="#1a63a8" stroke-width="1.2"/>
   <rect x="792.0" y="190.0" width="58.0" height="17.4" fill="#1a63a8" opacity="0.25" stroke="#1a63a8" stroke-width="1.2"/>
-  <circle cx="564.1" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="564.1" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="571.2" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="571.2" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="578.3" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="578.3" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="585.4" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="585.4" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="592.6" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="592.6" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="599.7" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="599.7" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="606.8" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="606.8" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="613.9" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="613.9" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="564.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="564.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="571.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="571.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="578.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="578.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="585.5" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="585.5" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="592.5" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="592.5" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="599.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="599.6" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="606.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="606.6" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="613.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="613.6" cy="202.9" r="2.9" fill="#222"/>
   <circle cx="628.9" cy="194.5" r="1.7" fill="#666"/>
   <circle cx="628.9" cy="202.9" r="1.7" fill="#666"/>
   <circle cx="639.8" cy="194.5" r="1.7" fill="#666"/>
@@ -99,22 +99,22 @@
   <circle cx="770.2" cy="202.9" r="1.7" fill="#666"/>
   <circle cx="781.1" cy="194.5" r="1.7" fill="#666"/>
   <circle cx="781.1" cy="202.9" r="1.7" fill="#666"/>
-  <circle cx="796.1" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="796.1" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="803.2" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="803.2" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="810.3" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="810.3" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="817.4" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="817.4" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="824.6" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="824.6" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="831.7" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="831.7" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="838.8" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="838.8" cy="202.9" r="2.9" fill="#222"/>
-  <circle cx="845.9" cy="194.5" r="2.9" fill="#222"/>
-  <circle cx="845.9" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="796.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="796.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="803.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="803.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="810.4" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="810.4" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="817.5" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="817.5" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="824.5" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="824.5" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="831.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="831.6" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="838.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="838.6" cy="202.9" r="2.9" fill="#222"/>
+  <circle cx="845.6" cy="194.5" r="2.9" fill="#222"/>
+  <circle cx="845.6" cy="202.9" r="2.9" fill="#222"/>
   <text x="589.0" y="168.0" font-size="10.5" fill="#222" text-anchor="middle" font-weight="bold">16φ28</text>
   <text x="589.0" y="180.0" font-size="9.5" fill="#1a63a8" text-anchor="middle">ℓ_be = 1,00 m</text>
   <text x="821.0" y="168.0" font-size="10.5" fill="#222" text-anchor="middle" font-weight="bold">16φ28</text>

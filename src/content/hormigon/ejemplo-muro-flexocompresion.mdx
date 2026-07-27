@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — Muro de corte a flexocompresión con elementos de borde (ACI 318-25)"
-description: "Diseño completo del muro de la caja de escalas de un edificio industrial chileno de 5 niveles: diagrama de interacción P–M, el corte amplificado por Ω_v·ω_v del diseño por capacidad, y las tres verificaciones de elementos de borde de la Sec. 18.10.6. El resultado es que la resistencia no dimensiona el muro. Con 30 cm de espesor la flexión cierra en 0.95 y el corte en 0.91; bajando a 25 cm —el espesor chileno de manual— la flexión queda en 0.97 y el corte en 0.96, ambos pasan, y el muro igual se rechaza: la capacidad de deriva de la Ec. (18.10.6.2b) salta a 1.25. El espesor compra deformación, no resistencia."
+description: "Diseño completo del muro de la caja de escalas de un edificio industrial chileno de 5 niveles: diagrama de interacción P–M, el corte amplificado por Ω_v·ω_v del diseño por capacidad, y las tres verificaciones de elementos de borde de la Sec. 18.10.6. El resultado es que la resistencia no dimensiona el muro. Con 30 cm de espesor la flexión cierra en 0.95 y el corte en 0.91; bajando a 25 cm —el espesor chileno de manual— la flexión queda en 0.97 y el corte en 0.96, ambos pasan, y el muro igual se rechaza: el uso de la Ec. (18.10.6.2b) salta a 1.25, y en Chile el DS 60 lo prohíbe además por una línea explícita. El espesor compra deformación, no resistencia."
 pubDate: 2026-07-26
 tags: ["ejemplo", "hormigón", "muros", "elementos de borde", "flexocompresión", "diseño por capacidad", "capacidad de deriva", "aci318", "nch2369"]
 subsection: "ejemplos"
@@ -13,46 +13,48 @@ import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
 
 Los ejemplos anteriores de esta sección terminaban con una tabla demanda–capacidad y una
-resistencia que gobernaba. Este no. Acá las dos resistencias —flexión y corte— cierran
-cómodas y el muro lo termina dimensionando una ecuación que no calcula ninguna
-resistencia: la **capacidad de deriva** de la Ec. (18.10.6.2b), que mide cuánto se puede
-deformar el borde comprimido antes de perder el 20 % de su resistencia lateral.
+resistencia que gobernaba. Este no. Acá las dos resistencias cierran —flexión 0.95, corte
+0.91— y **ninguna de las dos es la que decide el espesor del muro**. Eso lo hace una
+ecuación que no calcula resistencia alguna: la **capacidad de deriva** de la
+Ec. (18.10.6.2b), que estima cuánta **deriva de techo** aguanta el muro antes de perder
+el 20 % de su resistencia lateral. Se ve al bajar el espesor a 25 cm, donde las dos
+resistencias siguen pasando y el muro igual se rechaza.
 
 ## El caso
 
 La caja de escalas de un **edificio de sala eléctrica** de una planta industrial: cinco
-niveles de 4,0 m, muros de hormigón armado como sistema sismorresistente en ambas
-direcciones. Verificamos uno de los muros de 5,00 m en su base.
+niveles de 4.0 m, muros de hormigón armado como sistema sismorresistente en ambas
+direcciones. Verificamos uno de los muros de 5.00 m en su base.
 
 | Dato | Valor |
 |---|---|
-| Largo del muro | $\ell_w = 5{,}00$ m |
+| Largo del muro | $\ell_w = 5.00$ m |
 | Espesor | $b_w = 30$ cm |
-| Altura sobre la sección crítica | $h_{wcs} = h_w = 20{,}00$ m (5 × 4,0 m) |
-| Altura no arriostrada del borde | $h_u = 4{,}00$ m |
-| Hormigón | $f'_c = 300$ kgf/cm² $= 29{,}4$ MPa |
+| Altura sobre la sección crítica | $h_{wcs} = h_w = 20.00$ m (5 × 4.0 m) |
+| Altura no arriostrada del borde | $h_u = 4.00$ m |
+| Hormigón | $f'_c = 300$ kgf/cm² $= 29.4$ MPa |
 | Acero | $f_y = f_{yt} = 4200$ kgf/cm² (A630-420H) |
 | Axial permanente | $P_D = 480$ tonf |
-| Sobrecarga | $P_L = 160$ tonf, con $a = 0{,}25$ (Tabla C-2, zonas de uso normal) |
+| Sobrecarga | $P_L = 160$ tonf, con $a = 0.25$ (Tabla C-2, zonas de uso normal) |
 | Sismo en la base | $V_E = 180$ tonf, $M_E = 2430$ tonf·m |
 | Desplazamiento de techo | $\delta_u = 250$ mm (NCh2369 6.1, espectro elástico de referencia) |
 
 <Figure
   src="/ejemplos/muro-flexocompresion-caso.svg"
-  alt="Elevación del muro de 5 m de largo y 20 m de altura con las cargas en la base (axial, corte y momento sísmico) y la deformada de techo, junto a la sección transversal con los dos elementos de borde confinados y la doble malla del alma"
+  alt="Elevación del muro de 5 m de largo y 20 m de altura con las cargas en la base (axial, corte y momento sísmico) y la deformada de techo, junto a la sección transversal con los dos elementos de borde confinados y las dos cortinas del alma"
   caption="El muro en elevación y su sección. La sección crítica está en la base: el muro es un voladizo continuo desde la fundación, con una sola zona de fluencia esperada. Ese es exactamente el supuesto que habilita el enfoque por desplazamientos de la Sec. 18.10.6.2."
 />
 
-Las combinaciones sísmicas de NCh2369 4.5, método LRFD (el sísmico $E$ entra con factor
-1,0 porque ya viene reducido por $R$):
+Las combinaciones sísmicas de NCh2369 4.5[^nch], método LRFD (el sísmico $E$ entra con factor
+1.0 porque ya viene reducido por $R$):
 
 | Combinación | $P_u$ | $M_u$ | $V_{u,Eh}$ |
 |---|:---:|:---:|:---:|
-| **A** — $1{,}2D + aL + E$ | 616,0 tonf | 2430 tonf·m | 180 tonf |
-| **B** — $0{,}9D + E$ | 432,0 tonf | 2430 tonf·m | 180 tonf |
+| **A** — $1.2D + aL + E$ | 616.0 tonf | 2430 tonf·m | 180 tonf |
+| **B** — $0.9D + E$ | 432.0 tonf | 2430 tonf·m | 180 tonf |
 
-Con $A_g = A_{cv} = 1{,}500$ m², la combinación A deja
-$P_u/(A_g f'_c) = 0{,}137$ — un muro de carga corriente.
+Con $A_g = A_{cv} = 1.500$ m², la combinación A deja
+$P_u/(A_g f'_c) = 0.137$ — un muro de carga corriente.
 
 ---
 
@@ -62,59 +64,59 @@ La Tabla R18.10.1 decide si el elemento es un *muro* o un *pilar de muro*, y a l
 pilares se les aplican requisitos de columna. Se entra con dos razones de aspecto:
 
 $$
-\frac{h_w}{\ell_w} = \frac{20{,}00}{5{,}00} = 4{,}00 \ge 2{,}0,
+\frac{h_w}{\ell_w} = \frac{20.00}{5.00} = 4.00 \ge 2.0,
 \qquad
-\frac{\ell_w}{b_w} = \frac{5{,}00}{0{,}30} = 16{,}67 > 6{,}0
+\frac{\ell_w}{b_w} = \frac{5.00}{0.30} = 16.67 > 6.0
 $$
 
-Fila inferior, columna derecha: **muro**. Aplica la Sec. 18.10 completa.
+Fila inferior, columna derecha: **muro**. Aplica la Sec. 18.10 completa[^aci].
 
 <Note type="warning" title="La puerta chilena que este muro no puede usar">
 NCh2369:2025 **9.1.5** permite diseñar como **muro ordinario** —esto es, saltarse la Sec.
 18.10 entera— a los muros con $H_w/L_w < 3$ cuya resistencia requerida se determine con
-el sísmico amplificado por $0{,}7R_1 \ge 1{,}0$.
+el sísmico amplificado por $0.7R_1 \ge 1.0$.
 
-Acá $H_w/L_w = 4{,}00 \ge 3$: la puerta está cerrada. Vale la pena registrar el costo de
+Acá $H_w/L_w = 4.00 \ge 3$: la puerta está cerrada. Vale la pena registrar el costo de
 oportunidad, porque es una decisión de *layout*, no de cálculo: un muro más largo o un
-edificio más bajo habrían cambiado el régimen normativo completo. Con $L_w = 7{,}0$ m
-este mismo muro tendría $H_w/L_w = 2{,}86$ y calificaría.
+edificio más bajo habrían cambiado el régimen normativo completo. Con $L_w = 7.0$ m
+este mismo muro tendría $H_w/L_w = 2.86$ y calificaría.
 </Note>
 
 ---
 
 ## 2. Armadura mínima (Sec. 18.10.2)
 
-Adoptamos **doble malla φ12@200 vertical y φ12@150 horizontal** en el alma:
+Adoptamos **dos cortinas φ12@200 vertical y φ12@150 horizontal** en el alma:
 
 $$
-\rho_\ell = \frac{2 \cdot 1{,}131}{30 \cdot 20} = 0{,}00377,
+\rho_\ell = \frac{2 \cdot 1.131}{30 \cdot 20} = 0.00377,
 \qquad
-\rho_t = \frac{2 \cdot 1{,}131}{30 \cdot 15} = 0{,}00503
+\rho_t = \frac{2 \cdot 1.131}{30 \cdot 15} = 0.00503
 $$
 
-Ambas superan el mínimo de 0,0025 de la Sec. 18.10.2.1, y los espaciamientos están muy
+Ambas superan el mínimo de 0.0025 de la Sec. 18.10.2.1, y los espaciamientos están muy
 bajo los 450 mm. La Sec. 18.10.4.3 exigiría $\rho_\ell \ge \rho_t$, pero **solo si**
-$h_w/\ell_w \le 2{,}0$; con 4,00 no aplica, y por eso la vertical puede quedar por debajo
+$h_w/\ell_w \le 2.0$; con 4.00 no aplica, y por eso la vertical puede quedar por debajo
 de la horizontal.
 
 Las **dos cortinas** son obligatorias por dos vías independientes (Sec. 18.10.2.2):
-$h_w/\ell_w = 4{,}00 \ge 2{,}0$, y además
-$V_u = 180 > 0{,}17\lambda\sqrt{f'_c}A_{cv} = 141$ tonf.
+$h_w/\ell_w = 4.00 \ge 2.0$, y además
+$V_u = 180 > 0.17\lambda\sqrt{f'_c}A_{cv} = 141$ tonf.
 
 ### El mínimo de los extremos
 
 <Equation label="Sec. 18.10.2.4(a)">
 $$
-\rho \ge \frac{0{,}5\sqrt{f'_c}}{f_y} = \frac{1{,}60\sqrt{300}}{4200} = 0{,}00658
-\qquad \text{en } 0{,}15\,\ell_w = 75 \ \text{cm}
+\rho \ge \frac{0.5\sqrt{f'_c}}{f_y} = \frac{1.60\sqrt{300}}{4200} = 0.00658
+\qquad \text{en } 0.15\,\ell_w = 75 \ \text{cm}
 $$
 </Equation>
 
-(el coeficiente $0{,}5$ de la norma está en MPa; en kgf/cm² es $1{,}60$). Sobre
-$75 \times 30$ cm eso pide $A_s \ge 14{,}8$ cm². La armadura de borde que adoptaremos
-—**16φ28 por borde**, repartidas en $\ell_{be} = 100$ cm— deja 73,9 cm² dentro de esa
+(el coeficiente $0.5$ de la norma está en MPa; en kgf/cm² es $1.60$). Sobre
+$75 \times 30$ cm eso pide $A_s \ge 14.8$ cm². La armadura de borde que adoptaremos
+—**16φ28 por borde**, repartidas en $\ell_{be} = 100$ cm— deja 73.9 cm² dentro de esa
 franja: sobra ampliamente. Esa armadura debe extenderse
-$\max(\ell_w,\, M_u/3V_u) = \max(5{,}00,\, 4{,}50) = 5{,}00$ m arriba y abajo de la
+$\max(\ell_w,\, M_u/3V_u) = \max(5.00,\, 4.50) = 5.00$ m arriba y abajo de la
 sección crítica, y no más del 50 % puede cortarse en una misma sección.
 
 ---
@@ -122,32 +124,32 @@ sección crítica, y no más del 50 % puede cortarse en una misma sección.
 ## 3. Flexocompresión (Sec. 18.10.5)
 
 Un muro a flexocompresión se calcula **exactamente como una columna** (Sec. 22.4):
-compatibilidad de deformaciones con $\varepsilon_{cu} = 0{,}003$, bloque equivalente con
-$\beta_1 = 0{,}840$ y todas las barras —las 32 de borde y las 30 del alma— aportando según
+compatibilidad de deformaciones con $\varepsilon_{cu} = 0.003$, bloque equivalente con
+$\beta_1 = 0.840$ y todas las barras —las 32 de borde y las 30 del alma— aportando según
 su deformación.
 
 <Figure
   src="/ejemplos/muro-flexocompresion-interaccion.svg"
-  alt="Diagrama de interacción P–M del muro con la curva nominal y la de diseño, los puntos de las combinaciones A y B marcados, y un panel lateral con la distribución de deformaciones y tensiones en la sección para la combinación A mostrando la profundidad del eje neutro"
+  alt="Diagrama de interacción P–M del muro con la curva nominal punteada, la curva de diseño truncada en phi-Pn-max, y los puntos de las combinaciones A y B marcados sobre la recta Mu = 2430 tonf·m; a la derecha, la misma sección en planta dibujada dos veces, una por combinación, con la zona comprimida sombreada y la profundidad del eje neutro acotada en 129.3 cm para A y 108.5 cm para B"
   caption="Diagrama de interacción del muro. Los dos puntos de diseño quedan dentro, pero no dicen lo mismo: la combinación B (axial mínimo) gobierna la flexión, y la A (axial máximo) es la que produce el eje neutro más profundo — que es lo que pide la Sec. 18.10.6.2. Cada verificación mira una combinación distinta."
 />
 
 | | $P_u$ | $c$ | $\varepsilon_t$ | $\phi$ | $\phi M_n$ | $M_u/\phi M_n$ |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **A** — $1{,}2D + aL + E$ | 616,0 tonf | **129,4 cm** | 0,0084 | 0,90 | 2815 tonf·m | 0,86 |
-| **B** — $0{,}9D + E$ | 432,0 tonf | 108,6 cm | 0,0106 | 0,90 | 2565 tonf·m | **0,95** |
+| **A** — $1.2D + aL + E$ | 616.0 tonf | **129.3 cm** | 0.0084 | 0.90 | 2815 tonf·m | 0.86 |
+| **B** — $0.9D + E$ | 432.0 tonf | 108.5 cm | 0.0106 | 0.90 | 2565 tonf·m | **0.95** |
 
 Las dos son secciones controladas por tracción ($\varepsilon_t \ge \varepsilon_{ty} +
-0{,}003 = 0{,}0051$), así que $\phi = 0{,}90$ en ambas.
+0.003 = 0.0051$), así que $\phi = 0.90$ en ambas.
 
 <Note type="tip" title="Dos combinaciones, dos verificaciones distintas">
-Gobierna la flexión la combinación de **axial mínimo** ($0{,}9D + E$, uso 0,95): estamos
+Gobierna la flexión la combinación de **axial mínimo** ($0.9D + E$, uso 0.95): estamos
 en la rama baja del diagrama, donde perder compresión acerca el punto a la frontera. Es
 el mismo mecanismo del [ejemplo de la columna](/hormigon/ejemplo-columna-interaccion-esbeltez).
 
 Pero la Sec. 18.10.6.2 no pide *esa* $c$. Pide **la mayor profundidad de eje neutro
 calculada para el axial mayorado y la resistencia nominal a flexión** — y esa la produce
-la combinación de axial **máximo**: $c = 129{,}4$ cm, un 19 % más profunda que la de la
+la combinación de axial **máximo**: $c = 129.3$ cm, un 19 % más profunda que la de la
 combinación que gobierna la resistencia. Usar por descuido la $c$ de la combinación
 crítica a flexión subestimaría todo lo que viene después.
 </Note>
@@ -165,52 +167,52 @@ V_e = \Omega_v\,\omega_v\,V_{u,Eh}
 $$
 </Equation>
 
-Con $h_{wcs}/\ell_w = 4{,}00 \ge 2{,}0$, la Tabla 18.10.3.3.3 da $\Omega_v = 1{,}5$ (la
-sobrerresistencia a flexión, que supone el acero llegando a $1{,}25f_y$) y
+Con $h_{wcs}/\ell_w = 4.00 \ge 2.0$, la Tabla 18.10.3.3.3 da $\Omega_v = 1.5$ (la
+sobrerresistencia a flexión, que supone el acero llegando a $1.25f_y$) y
 
 $$
-\omega_v = 0{,}8 + 0{,}09\,h_n^{1/3} = 0{,}8 + 0{,}09 \cdot (65{,}62)^{1/3} = 1{,}163
+\omega_v = 0.8 + 0.09\,h_n^{1/3} = 0.8 + 0.09 \cdot (65.62)^{1/3} = 1.163
 $$
 
 <Note type="warning" title="h_n va en pies, también en la edición SI">
-El Cap. 2 define $h_n$ como *structural height … of the structure, **ft***. Son los 20,00
-m del edificio expresados en pies: $h_n = 65{,}62$ ft. Metiendo los metros directamente
-saldría $\omega_v = 1{,}04$ en vez de 1,163 — un 11 % de corte de diseño regalado.
+El Cap. 2 define $h_n$ como *structural height … of the structure, **ft***. Son los 20.00
+m del edificio expresados en pies: $h_n = 65.62$ ft. Metiendo los metros directamente
+saldría $\omega_v = 1.04$ en vez de 1.163 — un 11 % de corte de diseño regalado.
 Ésta es además una de las tres disposiciones que **cambiaron en 318-25**: en 318-19,
 $\omega_v$ dependía del número de pisos.
 </Note>
 
 $$
-V_e = 1{,}50 \cdot 1{,}163 \cdot 180 = \mathbf{314{,}0} \ \text{tonf}
-\qquad (\times 1{,}745)
+V_e = 1.50 \cdot 1.163 \cdot 180 = \mathbf{314.0} \ \text{tonf}
+\qquad (\times 1.745)
 $$
 
-La resistencia, con $\alpha_c = 0{,}17$ por ser $h_w/\ell_w \ge 2{,}0$ (en kgf/cm²,
-$0{,}543$):
+La resistencia, con $\alpha_c = 0.17$ por ser $h_w/\ell_w \ge 2.0$ (en kgf/cm²,
+$0.543$):
 
 <Equation label="Ec. 18.10.4.1">
 $$
 V_n = \left(\alpha_c\lambda\sqrt{f'_c} + \rho_t f_{yt}\right)A_{cv}
-= \left(0{,}543\sqrt{300} + 0{,}00503 \cdot 4200\right) \cdot 15000 = 457{,}7 \ \text{tonf}
+= \left(0.543\sqrt{300} + 0.00503 \cdot 4200\right) \cdot 15000 = 457.7 \ \text{tonf}
 $$
 </Equation>
 
-Los topes de la Sec. 18.10.4.4, con $\alpha_{sh} = 1{,}0$ por ser un muro rectangular sin
-ala, dan $0{,}66\sqrt{f'_c}A_{cv} = 548$ tonf y $0{,}83\sqrt{f'_c}A_{cw} = 689$ tonf: no
+Los topes de la Sec. 18.10.4.4, con $\alpha_{sh} = 1.0$ por ser un muro rectangular sin
+ala, dan $0.66\sqrt{f'_c}A_{cv} = 548$ tonf y $0.83\sqrt{f'_c}A_{cw} = 689$ tonf: no
 gobiernan.
 
 ### El φ que viene con la amplificación
 
-La Sec. 21.2.4.1 castigaría con $\phi = 0{,}60$ si el muro fuera **controlado por corte**.
-No lo es: con $h_{ef} = M_u/V_u = 13{,}50$ m, el corte que desarrolla $M_n$ es
-$3128/13{,}50 = 232$ tonf, muy por debajo de $V_n = 458$ tonf. Y aunque lo fuera, la
-misma cláusula exceptúa a los muros con $\Omega_v \ge 1{,}5$, *porque las fuerzas de corte
-de diseño ya fueron amplificadas*. Por los dos caminos, $\phi = 0{,}75$:
+La Sec. 21.2.4.1 castigaría con $\phi = 0.60$ si el muro fuera **controlado por corte**.
+No lo es: con $h_{ef} = M_u/V_u = 13.50$ m, el corte que desarrolla $M_n$ es
+$3128/13.50 = 232$ tonf, muy por debajo de $V_n = 458$ tonf. Y aunque lo fuera, la
+misma cláusula exceptúa a los muros con $\Omega_v \ge 1.5$, *porque las fuerzas de corte
+de diseño ya fueron amplificadas*. Por los dos caminos, $\phi = 0.75$:
 
 $$
-\phi V_n = 0{,}75 \cdot 457{,}7 = 343{,}3 \ \text{tonf}
+\phi V_n = 0.75 \cdot 457.7 = 343.3 \ \text{tonf}
 \qquad
-\frac{V_e}{\phi V_n} = 0{,}91
+\frac{V_e}{\phi V_n} = 0.91
 $$
 
 ---
@@ -221,33 +223,33 @@ El muro es esbelto, continuo desde la fundación y tiene una sola sección crít
 el **enfoque por desplazamientos**. Y ese enfoque no mira tensiones — compara la deriva de
 diseño con la profundidad del eje neutro.
 
-Del análisis, $\delta_u = 250$ mm sobre $h_{wcs} = 20{,}00$ m:
+Del análisis, $\delta_u = 250$ mm sobre $h_{wcs} = 20.00$ m:
 
 $$
-\frac{\delta_u}{h_{wcs}} = \frac{250}{20\,000} = 0{,}0125 \ > \ 0{,}005
+\frac{\delta_u}{h_{wcs}} = \frac{250}{20\,000} = 0.0125 \ > \ 0.005
 $$
 
 El piso normativo no se activa: gobierna el análisis.
 
 <Equation label="Ec. 18.10.6.2a">
 $$
-\frac{1{,}5\,\delta_u}{h_{wcs}} \ge \frac{\ell_w}{600\,c}
+\frac{1.5\,\delta_u}{h_{wcs}} \ge \frac{\ell_w}{600\,c}
 \qquad\Longleftrightarrow\qquad
-c \ge \frac{\ell_w}{600\,(1{,}5\,\delta_u/h_{wcs})}
-= \frac{500}{600 \cdot 0{,}01875} = 44{,}4 \ \text{cm}
+c \ge \frac{\ell_w}{600\,(1.5\,\delta_u/h_{wcs})}
+= \frac{500}{600 \cdot 0.01875} = 44.4 \ \text{cm}
 $$
 </Equation>
 
-Con $c = 129{,}4$ cm, casi el triple del umbral: **se requieren elementos de borde
+Con $c = 129.3$ cm, casi el triple del umbral: **se requieren elementos de borde
 especiales**.
 
-<Note type="info" title="El piso de 0,005 corta en las dos direcciones">
+<Note type="info" title="El piso de 0.005 corta en las dos direcciones">
 La misma verificación en un edificio rígido, con la deriva llevada al piso normativo de
-0,005, daría un umbral de $c \ge 111$ cm. La deriva real de este muro —2,5 veces ese
+0.005, daría un umbral de $c \ge 111$ cm. La deriva real de este muro —2.5 veces ese
 piso— baja el umbral a 44 cm.
 
 Es la aritmética que hace que en Chile industrial esta cláusula muerda: **NCh2369 6.3
-admite hasta $0{,}015\,h$**, tres veces el piso que ACI asume para los edificios rígidos
+admite hasta $0.015\,h$**, tres veces el piso que ACI asume para los edificios rígidos
 a los que el piso está dirigido. Cuanto más deformable es la estructura, más fácil es que
 el borde necesite confinamiento — que es exactamente lo que la física pide.
 </Note>
@@ -261,14 +263,14 @@ Requeridos los elementos de borde, la Sec. 18.10.6.2(b) pide cumplir **(i)** y a
 
 **(i) Extensión vertical.** El refuerzo transversal se extiende arriba y abajo de la
 sección crítica al menos
-$\max(\ell_w,\, M_u/4V_u) = \max(5{,}00,\, 3{,}38) = \mathbf{5{,}00}$ m — es decir, todo
+$\max(\ell_w,\, M_u/4V_u) = \max(5.00,\, 3.38) = \mathbf{5.00}$ m — es decir, todo
 el primer piso y un cuarto del segundo.
 
 **(ii) El atajo geométrico:**
 
 <Equation label="Sec. 18.10.6.2(b)(ii)">
 $$
-b \ge \sqrt{\frac{c\,\ell_w}{40}} = \sqrt{\frac{129{,}4 \cdot 500}{40}} = 40{,}2 \ \text{cm}
+b \ge \sqrt{\frac{c\,\ell_w}{40}} = \sqrt{\frac{129.3 \cdot 500}{40}} = 40.2 \ \text{cm}
 $$
 </Equation>
 
@@ -276,58 +278,58 @@ Con $b = 30$ cm, **no cumple**. El atajo pediría engrosar el muro un 34 %.
 
 **(iii) La ecuación completa.** Antes de aceptar los 40 cm conviene mirar de dónde sale el
 atajo. R18.10.6.2 lo dice: la expresión de (ii) *"se deriva de la Ec. (18.10.6.2b)
-suponiendo valores de $V_u/(0{,}66A_{cv}\sqrt{f'_c})$ y $\delta_u/h_{wcs}$ de
-aproximadamente 1,0 y 0,015"*. Es decir, **(ii) es (iii) evaluada en el peor caso**. Este
-muro no está en el peor caso: su nivel de corte es 0,57, no 1,0.
+suponiendo valores de $V_u/(0.66A_{cv}\sqrt{f'_c})$ y $\delta_u/h_{wcs}$ de
+aproximadamente 1.0 y 0.015"*. Es decir, **(ii) es (iii) evaluada en el peor caso**. Este
+muro no está en el peor caso: su nivel de corte es 0.57, no 1.0.
 
 <Equation label="Ec. 18.10.6.2b">
 $$
-\frac{\delta_c}{h_{wcs}} = \frac{1}{100}\left(4 - \frac{1}{50}\left(\frac{\ell_w}{b}\right)\left(\frac{c}{b}\right) - \frac{V_e}{0{,}66\sqrt{f'_c}\,A_{cv}}\right)
+\frac{\delta_c}{h_{wcs}} = \frac{1}{100}\left(4 - \frac{1}{50}\left(\frac{\ell_w}{b}\right)\left(\frac{c}{b}\right) - \frac{V_e}{0.66\sqrt{f'_c}\,A_{cv}}\right)
 $$
 </Equation>
 
 Término por término:
 
 $$
-\frac{\ell_w}{b} = 16{,}67, \qquad \frac{c}{b} = 4{,}31
+\frac{\ell_w}{b} = 16.67, \qquad \frac{c}{b} = 4.31
 \qquad\Rightarrow\qquad
-\frac{1}{50}\left(16{,}67\right)\left(4{,}31\right) = 1{,}437
+\frac{1}{50}\left(16.67\right)\left(4.31\right) = 1.437
 $$
 
 $$
-\frac{V_e}{0{,}66\sqrt{f'_c}\,A_{cv}} = \frac{314{,}0}{548} = 0{,}574
+\frac{V_e}{0.66\sqrt{f'_c}\,A_{cv}} = \frac{314.0}{548} = 0.574
 $$
 
 $$
-\frac{\delta_c}{h_{wcs}} = \frac{1}{100}\left(4 - 1{,}437 - 0{,}574\right) = 0{,}01989
+\frac{\delta_c}{h_{wcs}} = \frac{1}{100}\left(4 - 1.437 - 0.574\right) = 0.01990
 $$
 
-(por encima del piso de 0,015, así que se usa el valor calculado). Contra la demanda:
+(por encima del piso de 0.015, así que se usa el valor calculado). Contra la demanda:
 
 $$
-1{,}5\,\frac{\delta_u}{h_{wcs}} = 1{,}5 \cdot 0{,}0125 = 0{,}01875
+1.5\,\frac{\delta_u}{h_{wcs}} = 1.5 \cdot 0.0125 = 0.01875
 \qquad
-\frac{0{,}01875}{0{,}01989} = \mathbf{0{,}94} \quad \checkmark
+\frac{0.01875}{0.01990} = \mathbf{0.94} \quad \checkmark
 $$
 
-**El muro de 30 cm cumple.** El atajo pedía 40,2 cm; la ecuación completa dice que 30 cm
+**El muro de 30 cm cumple.** El atajo pedía 40.2 cm; la ecuación completa dice que 30 cm
 alcanzan, con un 6 % de margen.
 
 <Note type="tip" title="Cómo leer la Ec. (18.10.6.2b)">
 No es una fórmula de resistencia: es la **capacidad de deriva de techo con 20 % de pérdida
-de resistencia lateral**, ajustada por Abdullah y Wallace (2019) sobre ensayos de muros.
+de resistencia lateral**, ajustada por Abdullah y Wallace (2019)[^aw] sobre ensayos de muros.
 Sus tres términos son tres castigos físicos:
 
 - el **4** es la capacidad de partida: 4 % de deriva;
 - $\tfrac{1}{50}(\ell_w/b)(c/b)$ castiga la **esbeltez de la zona comprimida**. Nótese que
   el espesor $b$ entra **al cuadrado** — es el término que hace del espesor la variable
   de diseño;
-- $V_e/(0{,}66\sqrt{f'_c}A_{cv})$ castiga el **nivel de corte**: un muro exigido en corte
+- $V_e/(0.66\sqrt{f'_c}A_{cv})$ castiga el **nivel de corte**: un muro exigido en corte
   se degrada antes.
 
 Y el mismo producto $(\ell_w/b)(c/b)$ reaparece en R18.10.6.4, donde la norma señala que
 la inestabilidad lateral fuera del plano se vuelve probable cuando supera
-aproximadamente 40. Acá vale $16{,}67 \times 4{,}31 = 71{,}9$: estamos en ese territorio,
+aproximadamente 40. Acá vale $16.67 \times 4.31 = 71.9$: estamos en ese territorio,
 y por eso el elemento de borde lleva estribos traslapados.
 </Note>
 
@@ -337,26 +339,27 @@ y por eso el elemento de borde lleva estribos traslapados.
 
 | Literal | Requisito | Cálculo | Adoptado |
 |---|---|---|---|
-| **(a)** | $\ell_{be} \ge \max(c - 0{,}1\ell_w,\; c/2)$ | $\max(79{,}4;\ 64{,}7) = 79{,}4$ cm | **100 cm** ✓ |
-| **(b)** | $b \ge h_u/16$ | $400/16 = 25{,}0$ cm | 30 cm ✓ |
-| **(c)** | $b \ge 30$ cm si $c/\ell_w \ge 3/8$ | $c/\ell_w = 0{,}259 < 0{,}375$ | no aplica |
-| **(f)** | $h_x \le \min(350\ \text{mm};\ \tfrac{2}{3}b = 200\ \text{mm})$ | $h_x = 16{,}0$ cm | ✓ |
+| **(a)** | $\ell_{be} \ge \max(c - 0.1\ell_w,\; c/2)$ | $\max(79.3;\ 64.6) = 79.3$ cm | **100 cm** ✓ |
+| **(b)** | $b \ge h_u/16$ | $400/16 = 25.0$ cm | 30 cm ✓ |
+| **(c)** | $b \ge 30$ cm si $c/\ell_w \ge 3/8$ | $c/\ell_w = 0.259 < 0.375$ | no aplica |
+| **(f)** | $h_x \le \min(350\ \text{mm};\ \tfrac{2}{3}b = 200\ \text{mm})$ | $h_x = 15.0$ cm | ✓ |
 
-**(g) Confinamiento.** Con recubrimiento libre de 40 mm y estribo φ16, el núcleo mide
-$b_{c1} \times b_{c2} = 90{,}4 \times 20{,}4$ cm, y $A_g/A_{ch} = 3000/1844 = 1{,}627$:
+**(g) Confinamiento.** Con recubrimiento libre de 45 mm y estribo φ16, el núcleo —medido **a los bordes
+exteriores del refuerzo transversal**, como lo define el Cap. 2— mide
+$b_{c1} \times b_{c2} = 91.0 \times 21.0$ cm, y $A_g/A_{ch} = 3000/1911 = 1.570$:
 
 <Equation label="Tabla 18.10.6.4(g)">
 $$
-\frac{A_{sh}}{s\,b_c} \ge \max\left[0{,}3\left(\frac{A_g}{A_{ch}}-1\right)\frac{f'_c}{f_{yt}};\;\; 0{,}09\frac{f'_c}{f_{yt}}\right]
-= \max\left[0{,}01343;\;\; 0{,}00643\right] = 0{,}01343
+\frac{A_{sh}}{s\,b_c} \ge \max\left[0.3\left(\frac{A_g}{A_{ch}}-1\right)\frac{f'_c}{f_{yt}};\;\; 0.09\frac{f'_c}{f_{yt}}\right]
+= \max\left[0.01221;\;\; 0.00643\right] = 0.01221
 $$
 </Equation>
 
-Gobierna la expresión (a) —la que depende de $A_g/A_{ch}$— por casi el doble. No es
+Gobierna la expresión (a) —la que depende de $A_g/A_{ch}$— por un 90 %. No es
 casualidad: R18.10.6.4 explica que esa expresión se reinstauró en 2014 justamente porque
 en **muros delgados**, donde el recubrimiento es una fracción grande del espesor, la
-expresión (b) sola no confina lo suficiente. Un muro de 30 cm con 4 cm de recubrimiento a
-cada cara pierde el 27 % de su espesor en cáscara.
+expresión (b) sola no confina lo suficiente. Un muro de 30 cm con 4.5 cm de recubrimiento a
+cada cara pierde el 30 % de su espesor en cáscara.
 
 **(e) Espaciamiento vertical**, el menor de cuatro:
 
@@ -364,29 +367,60 @@ cada cara pierde el 27 % de su espesor en cáscara.
 |---|:---:|
 | 18.7.5.3(a) modificado por 18.10.6.4(e): 1/3 de la menor dimensión del borde | **100 mm** |
 | 18.7.5.3(b): $6d_b = 6 \times 28$ | 168 mm |
-| 18.7.5.3(d): $s_o = 100 + (350 - h_x)/3$ | 150 mm |
+| 18.7.5.3(d): $s_o = 100 + (350 - 150)/3 = 167$ mm, acotado por la propia cláusula | 150 mm |
 | Tabla 18.10.6.5(b), Grado 420, zona crítica: $\min(6d_b,\,150)$ | 150 mm |
 
 **$s = 100$ mm.** Con eso:
 
 $$
-A_{sh,\perp b_{c1}} = 0{,}01343 \cdot 10 \cdot 90{,}4 = 12{,}14 \ \text{cm}^2
+A_{sh,\perp b_{c1}} = 0.01221 \cdot 10 \cdot 91.0 = 11.11 \ \text{cm}^2
 \qquad
-A_{sh,\perp b_{c2}} = 0{,}01343 \cdot 10 \cdot 20{,}4 = 2{,}74 \ \text{cm}^2
+A_{sh,\perp b_{c2}} = 0.01221 \cdot 10 \cdot 21.0 = 2.56 \ \text{cm}^2
 $$
 
-Las 8 posiciones de barras del borde permiten estribo perimetral φ16 más 6 trabas φ16:
-8 ramas cruzando el espesor $= 16{,}1$ cm² $\ge 12{,}14$ ✓, y las dos ramas largas del
-estribo dan 4,02 cm² $\ge 2{,}74$ ✓.
+**(f) Estribos traslapados: obligatorios acá.** La segunda mitad del literal (f) es la que
+más se pasa por alto. Dice que la rama del estribo no puede exceder $2b_c$ y que estribos
+adyacentes deben traslaparse, **salvo** que se cumpla (i) o (ii):
 
-**(j) Anclaje en la fundación.** Las barras de borde se desarrollan para $1{,}25f_y$ (Sec.
-18.10.2.3(b)): $\ell_d = 101$ cm pasa a **127 cm** dentro de la zapata, y el refuerzo
-transversal del elemento de borde penetra al menos 30 cm.
+| Salida | Condición | Este muro |
+|---|---|---|
+| **(i)** | $b \ge \sqrt{c\,\ell_w/40}$ **y** $\delta_u/h_{wcs} < 0.012$ | $30 < 40.2$ cm **y** $0.0125 \ge 0.012$ — falla por los dos lados |
+| **(ii)** | Ala dentro de $c$ con ancho $\ge 2b_w$ y espesor $\ge b_w/2$ | muro rectangular: no aplica |
+
+Así que hay que traslapar. Con rama máxima $2b_{c2} = 42$ cm y traslape mínimo
+$\min(150\ \text{mm};\ \tfrac23 b = 200\ \text{mm}) = 15$ cm, cubrir los 91 cm del núcleo
+pide **tres estribos φ16 traslapados de 40.3 cm de rama**. Esos tres aportan 6 ramas
+cruzando el espesor; las 2 barras que quedan sin sujetar por una esquina llevan traba, y el
+total sube a 8:
+
+$$
+A_{sh,\text{prov}} = 8 \cdot 2.01 = 16.1 \ \text{cm}^2 \ \ge \ 11.11 \ \text{cm}^2
+$$
+
+y las dos ramas largas de cada estribo dan 4.02 cm² $\ge 2.56$ ✓.
+
+<Note type="warning" title="Un estribo perimetral único no habría cumplido">
+Es la trampa del literal (f). Un solo estribo abrazando los 91 cm del núcleo satisface de
+sobra el $A_{sh}$ de la Tabla 18.10.6.4(g) —y de hecho 7 ramas ya cubrían los 11.11 cm²—
+pero tiene una rama de 91 cm contra el límite de $2b_c = 42$ cm.
+
+El porqué está en R18.10.6.4: los estribos traslapados *«son más efectivos para restringir
+el pandeo de barras y confinar el hormigón que un estribo único alargado con múltiples
+trabas»*. Y no es casual que la exención (i) sea la misma expresión del atajo del §6: la
+norma está diciendo que **el muro que no se salva por geometría tampoco se salva con un
+detalle barato**.
+</Note>
+
+**(j) Anclaje en la fundación.** Las barras de borde se desarrollan para $1.25f_y$ (Sec.
+18.10.2.3(b)). Ojo con la fila de la Tabla 25.4.2.3: una φ28 es «No. 22 y mayores», así que
+el coeficiente es **1.7** y no el 2.1 de las barras No. 19 y menores —
+$\ell_d = 411.9/(1.7 \cdot 5.42) \cdot 28 = 125$ cm, que pasa a **156 cm** dentro de la
+zapata. El refuerzo transversal del elemento de borde penetra al menos 30 cm.
 
 <Figure
   src="/ejemplos/muro-flexocompresion-borde.svg"
-  alt="Detalle en planta del elemento de borde: 16 barras φ28 en dos cortinas dentro de una longitud de 100 cm, con estribo perimetral φ16 y seis trabas φ16 cada 100 mm, acotando el núcleo confinado y las dimensiones hx"
-  caption="El elemento de borde resuelto. Los 100 mm de espaciamiento no los pide la resistencia sino 18.10.6.4(e): un tercio de la menor dimensión del elemento de borde. Y las 8 ramas que cruzan el espesor salen de la expresión (a) de la Tabla 18.10.6.4(g), la que castiga el recubrimiento perdido en un muro delgado."
+  alt="Detalle en planta del elemento de borde: 16 barras φ28 en dos cortinas dentro de una longitud de 100 cm, confinadas con tres estribos φ16 traslapados de 40.3 cm de rama más dos trabas, cada 100 mm, con el núcleo confinado de 91 por 21 cm y la separación h_x de 150 mm acotados"
+  caption="El elemento de borde resuelto. Los 100 mm de espaciamiento no los pide la resistencia sino 18.10.6.4(e): un tercio de la menor dimensión del borde. Y los tres estribos traslapados tampoco: los pide el límite de 2b_c sobre la rama, que es lo que obliga a no resolver el confinamiento con un solo estribo alargado."
 />
 
 ---
@@ -395,19 +429,22 @@ transversal del elemento de borde penetra al menos 30 cm.
 
 | Verificación | Referencia | Naturaleza | Demanda | Capacidad | Uso |
 |---|---|:---:|:---:|:---:|:---:|
-| Flexocompresión, comb. A | 18.10.5.1 | frontera $P$–$M$ | 2430 tonf·m | 2815 tonf·m | 0,86 |
-| **Flexocompresión, comb. B** | 18.10.5.1 | **gobierna la resistencia** | 2430 tonf·m | 2565 tonf·m | **0,95** |
-| Corte en el plano | 18.10.4.1, $\phi = 0{,}75$ | dúctil (manda $\rho_t$) | $V_e = 314$ tonf | 343 tonf | 0,91 |
-| Tope del alma | 18.10.4.4 | **frágil** | 314 tonf | 548 tonf | 0,57 |
-| ¿Elemento de borde? | 18.10.6.2(a) | umbral geométrico | $c = 129{,}4$ cm | umbral 44,4 cm | **se requiere** |
-| Atajo del espesor | 18.10.6.2(b)(ii) | supuesto conservador | $b_{req} = 40{,}2$ cm | $b = 30$ cm | 1,34 ✗ |
-| **Capacidad de deriva** | 18.10.6.2(b)(iii) | **capacidad de deformación** | 0,01875 | 0,01989 | **0,94** ✓ |
-| Longitud del borde | 18.10.6.4(a) | geometría | 79,4 cm | 100 cm | ✓ |
-| Confinamiento $A_{sh}$ | Tabla 18.10.6.4(g) | evita el aplastamiento | 12,14 cm² | 16,1 cm² | 0,75 |
+| Flexocompresión, comb. A | 18.10.5.1 | frontera $P$–$M$ | 2430 tonf·m | 2815 tonf·m | 0.86 |
+| **Flexocompresión, comb. B** | 18.10.5.1 | **gobierna la resistencia** | 2430 tonf·m | 2565 tonf·m | **0.95** |
+| Corte en el plano | 18.10.4.1, $\phi = 0.75$ | dúctil (manda $\rho_t$) | $V_e = 314$ tonf | 343 tonf | 0.91 |
+| Tope del alma (nominal, sin φ) | 18.10.4.4 | **frágil** | $V_e = 314$ tonf | $V_n \le 548$ tonf | 0.57 |
+| ¿Elemento de borde? | 18.10.6.2(a) | umbral geométrico | $c = 129.3$ cm | umbral 44.4 cm | **se requiere** |
+| Atajo del espesor | 18.10.6.2(b)(ii) | supuesto conservador | $b_{req} = 40.2$ cm | $b = 30$ cm | 1.34 ✗ |
+| **Capacidad de deriva** | 18.10.6.2(b)(iii) | **capacidad de deformación** | 0.01875 | 0.01990 | **0.94** ✓ |
+| Longitud del borde | 18.10.6.4(a) | geometría | 79.3 cm | 100 cm | ✓ |
+| Rama del estribo | 18.10.6.4(f) | **obliga a traslapar** | 91 cm de núcleo | rama ≤ 42 cm | 3 estribos |
+| Confinamiento $A_{sh}$ | Tabla 18.10.6.4(g) | evita el aplastamiento | 11.11 cm² | 16.1 cm² | 0.69 |
+| Anclaje del borde | 25.4.2.3 + 18.10.2.3(b) | continuidad de la rótula | $\ell_d$ para $1.25f_y$ | 156 cm en la zapata | ✓ |
 
-**Solución:** muro de **5,00 × 0,30 m**, doble malla **φ12@200 vertical y φ12@150
-horizontal**, **elementos de borde de 100 cm con 16φ28** confinados con **estribo φ16 + 6
-trabas φ16 @100 mm** en los 5,00 m sobre la fundación.
+**Solución:** muro de **5.00 × 0.30 m**, dos cortinas **φ12@200 vertical y φ12@150
+horizontal**, **elementos de borde de 100 cm con 16φ28** confinados con **tres estribos
+φ16 traslapados más dos trabas φ16, cada 100 mm**, en los 5.00 m sobre la fundación, con
+recubrimiento libre de 45 mm para que $h_x$ no pase de 150 mm.
 
 ---
 
@@ -419,31 +456,46 @@ edificio.
 
 | $b$ | $c$ | $\phi M_n$ (B) | uso flex. | $\phi V_n$ | uso corte | $\delta_c/h_{wcs}$ | uso deriva |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **25 cm** | 148,1 cm | 2512 tonf·m | 0,97 ✓ | 326 tonf | 0,96 ✓ | 0,01500 | **1,25** ✗ |
-| **30 cm** | 129,4 cm | 2565 tonf·m | 0,95 ✓ | 343 tonf | 0,91 ✓ | 0,01989 | 0,94 ✓ |
-| 35 cm | 115,5 cm | 2608 tonf·m | 0,93 | 361 tonf | 0,87 | 0,02566 | 0,73 |
-| 40 cm | 104,4 cm | 2643 tonf·m | 0,92 | 379 tonf | 0,83 | 0,02918 | 0,64 |
-| 45 cm | 95,5 cm | 2674 tonf·m | 0,91 | 396 tonf | 0,79 | 0,03146 | 0,60 |
+| **25 cm** | 148.0 cm | 2512 tonf·m | 0.97 ✓ | 326 tonf | 0.96 ✓ | 0.01500 | **1.25** ✗ |
+| **30 cm** | 129.3 cm | 2565 tonf·m | 0.95 ✓ | 343 tonf | 0.91 ✓ | 0.01990 | 0.94 ✓ |
+| 35 cm | 115.4 cm | 2608 tonf·m | 0.93 | 361 tonf | 0.87 | 0.02566 | 0.73 |
+| 40 cm | 104.3 cm | 2643 tonf·m | 0.92 | 379 tonf | 0.83 | 0.02918 | 0.64 |
+| 45 cm | 95.4 cm | 2673 tonf·m | 0.91 | 396 tonf | 0.79 | 0.03146 | 0.60 |
 
 Léase la primera fila con calma. Con 25 cm de espesor **las dos resistencias pasan**: la
-flexión queda en 0,97 y el corte en 0,96. Tampoco lo salva ninguna regla explícita de
-espesor mínimo: la Sec. 18.10.6.4(b) pide $h_u/16 = 25$ cm, que se cumple justo, y el
-mínimo de 30 cm de la Sec. 18.10.6.4(c) **no aplica** porque $c/\ell_w = 0{,}296$ no llega
-a 3/8. Lo único que rechaza ese muro es la Ec. (18.10.6.2b), que salta a 1,25.
+flexión queda en 0.97 y el corte en 0.96. Y dentro de ACI 318-25 no lo salva ninguna regla
+explícita de espesor mínimo: la Sec. 18.10.6.4(b) pide $h_u/16 = 25$ cm, que se cumple
+justo, y el mínimo de 30 cm de la Sec. 18.10.6.4(c) **no aplica** porque
+$c/\ell_w = 0.296$ no llega a 3/8. Lo único que rechaza ese muro, en ACI, es la
+Ec. (18.10.6.2b), que salta a 1.25.
 
 Y la razón de fondo está en la aritmética de los 5 cm:
 
-- $\phi M_n$ sube apenas de 2512 a 2565 tonf·m: **+2,1 %**. La resistencia a flexión de un
+- $\phi M_n$ sube apenas de 2512 a 2565 tonf·m: **+2.1 %**. La resistencia a flexión de un
   muro la pone el acero de borde y el brazo de palanca, no el espesor.
-- La capacidad de deriva, en cambio, pasa de un valor bruto de **0,00943 a 0,01989**:
+- La capacidad de deriva, en cambio, pasa de un valor bruto de **0.00944 a 0.01990**:
   **+111 %**. Porque el espesor entra al cuadrado en $(\ell_w/b)(c/b)$ — una vez
   directamente, y otra a través de $c$, que se profundiza al reducirse el área comprimida.
 
-<Note type="warning" title="El piso de 0,015 es lo único que salva al muro de 25 cm de ser mucho peor">
-El valor bruto de la Ec. (18.10.6.2b) para 25 cm es 0,00943. La norma permite no tomarlo
-menor que 0,015, y con eso el uso queda en 1,25 en vez de 1,99. El piso está ahí para
+<Note type="warning" title="El piso de 0.015 es lo único que salva al muro de 25 cm de ser mucho peor">
+El valor bruto de la Ec. (18.10.6.2b) para 25 cm es 0.00944. La norma permite no tomarlo
+menor que 0.015, y con eso el uso queda en 1.25 en vez de 1.99. El piso está ahí para
 evitar que la expresión —ajustada sobre un rango finito de ensayos— se extrapole a valores
-sin respaldo, no para indultar muros delgados. Un uso de 1,25 sigue siendo un rechazo.
+sin respaldo, no para indultar muros delgados. Un uso de 1.25 sigue siendo un rechazo.
+</Note>
+
+<Note type="info" title="En Chile ese muro ni siquiera llega a esta verificación">
+Todo lo anterior es ACI. El **DS 60**[^ds60] —que NCh2369 9.1.1 hace obligatorio en Chile—
+resuelve el mismo caso mucho antes y sin ecuación: su cláusula **21.9.6.4, letra (f)**,
+agregada al ACI 318S-08, dice que *«el espesor del elemento de borde deberá ser mayor o
+igual a 300 mm»*, **sin condición**. Donde ACI pide los 300 mm solo si $c/\ell_w \ge 3/8$,
+el DS 60 los pide siempre.
+
+Es decir: el muro de 25 cm está prohibido en Chile por una línea explícita, no por la
+capacidad de deriva. Vale la pena notar que la verificación *chilena* de deformación
+—21.9.5.4, $\varepsilon_c \le 0.008$— **sí lo aprueba**: da 0.00740, uso 0.93. Los dos
+códigos miden la misma física y no coinciden; el que rechaza este muro delgado es el
+mínimo geométrico, no la ecuación.
 </Note>
 
 ### Las otras dos palancas
@@ -453,15 +505,15 @@ armadura):
 
 | $\delta_u/h_{wcs}$ | umbral de $c$ | uso (iii) | | $P_u/A_g f'_c$ | $c$ | uso (iii) |
 |:---:|:---:|:---:|---|:---:|:---:|:---:|
-| 0,005 (piso) | 111 cm | 0,38 | | 0,068 | 95,4 cm | 0,79 |
-| 0,008 | 69 cm | 0,60 | | 0,103 | 112,2 cm | 0,86 |
-| **0,0125** (este muro) | **44 cm** | **0,94** | | **0,137** | **129,4 cm** | **0,94** |
-| 0,015 (límite NCh2369) | 37 cm | **1,13** ✗ | | 0,171 | 147,5 cm | **1,05** ✗ |
+| 0.005 (piso) | 111 cm | 0.38 | | 0.068 | 95.3 cm | 0.79 |
+| 0.008 | 69 cm | 0.60 | | 0.103 | 112.1 cm | 0.86 |
+| **0.0125** (este muro) | **44 cm** | **0.94** | | **0.137** | **129.3 cm** | **0.94** |
+| 0.015 (límite NCh2369) | 37 cm | **1.13** ✗ | | 0.171 | 147.4 cm | **1.05** ✗ |
 
 Las dos columnas dicen lo mismo desde lados opuestos. Si esta estructura fuera algo más
-flexible y llegara al límite de deriva que NCh2369 6.3 permite —$0{,}015\,h$— el muro de
+flexible y llegara al límite de deriva que NCh2369 6.3 permite —$0.015\,h$— el muro de
 30 cm no cumpliría. Y si el mismo muro tomara un 25 % más de carga gravitacional
-($P_u/A_gf'_c$ de 0,137 a 0,171), tampoco. En ambos casos sin que la flexión ni el corte
+($P_u/A_gf'_c$ de 0.137 a 0.171), tampoco. En ambos casos sin que la flexión ni el corte
 se enteren.
 
 ---
@@ -478,7 +530,7 @@ Tres cosas para llevarse:
    resistencia a flexión; el axial máximo gobierna todo lo que depende de $c$ —el
    elemento de borde y su capacidad de deriva—. No hay una "combinación crítica" del muro.
 2. **El atajo (ii) no es una regla independiente.** Es la Ec. (18.10.6.2b) evaluada en el
-   peor caso de corte y deriva. Aplicarlo sin mirar pedía 40,2 cm donde la ecuación
+   peor caso de corte y deriva. Aplicarlo sin mirar pedía 40.2 cm donde la ecuación
    completa admite 30 — un 34 % de hormigón de más en toda la altura del edificio.
 3. **El espesor compra deformación, no resistencia.** Es la inversión del reflejo
    habitual: subir el espesor de un muro es una manera cara e ineficiente de ganar
@@ -486,21 +538,57 @@ Tres cosas para llevarse:
    (+111 %). Cuando un muro no cumple la Sec. 18.10.6.2(b), agregar acero de borde
    **empeora** el resultado, porque profundiza $c$.
 
-Y el marco chileno amplifica todo esto. NCh2369 admite derivas de hasta $0{,}015\,h$,
-tres veces el piso de 0,005 que ACI escribió pensando en edificios rígidos. Un muro
-industrial chileno vive, por diseño, en la parte de la curva donde esta verificación
-manda.
+Y el marco chileno amplifica todo esto. Las estructuras industriales que cubre
+NCh2369[^nch] son bastante más deformables que los edificios rígidos para los que ACI
+escribió el piso de 0.005, así que viven, por diseño, en la parte de la curva donde esta
+verificación manda.
+
+---
+
+## 10. La otra mitad del expediente: el DS 60
+
+En Chile el diseño no termina con ACI. **NCh2369 9.1.1** manda diseñar el hormigón armado
+según NCh430, y su comentario C9.1.1 advierte que el **DS 60 (2011)**[^ds60] la reemplazó.
+El DS 60 modifica ACI 318S-08 cláusula por cláusula, y en muros especiales agrega
+verificaciones que ACI no tiene. El muro adoptado las pasa todas, pero **dos de ellas
+cambiaron el detalle**:
+
+| Cláusula DS 60 | Requisito | Este muro | |
+|---|---|---|:---:|
+| **21.9.2.2** | Dos cortinas siempre, sin condición | dos cortinas | ✓ |
+| **21.9.2.4(a)** | $d_b \le$ (menor dim. del borde)$/9 = 33.3$ mm | φ28 | ✓ |
+| **21.9.2.4(b)** | $d_{estribo} \ge d_b/3 = 9.3$ mm | φ16 | ✓ |
+| **21.9.5.3** | $P_u \le 0.35 f'_c A_g = 1575$ tonf | 616 tonf | 0.39 |
+| **21.9.5.4** | $\varepsilon_c = c \cdot 2\delta_u/(H_t \ell_w) \le 0.008$ | 0.00646 | 0.81 |
+| **21.9.6.2**, Ec. (21-8) | $c \ge \ell_w/(600\,\delta'_u/h'_w) = 66.7$ cm → borde requerido | $c = 129.3$ cm | requerido |
+| **21.9.6.4(a)**, Ec. (21-8a) | $c_c = 62.6$ cm | $\ell_{be} = 100$ cm | ✓ |
+| **21.9.6.4(c)** | $h_x \le \min(200\ \text{mm};\ b/2 = 150\ \text{mm})$ | **150 mm** | ✓ (justo) |
+| **21.9.6.4(f)** | Espesor del borde $\ge 300$ mm **siempre** | 300 mm | ✓ (justo) |
+
+Las dos que mordieron:
+
+- **$h_x \le 150$ mm.** ACI 318-25 admite $\min(350;\ \tfrac23 b) = 200$ mm, y con
+  recubrimiento libre de 40 mm el detalle daba $h_x = 160$ mm — correcto en ACI, rechazado
+  por el DS 60. Por eso el recubrimiento de este ejemplo es de **45 mm**: sube $d_{cc}$ a
+  75 mm y deja $h_x$ en 150 mm exactos.
+- **El espesor de 300 mm sin condición**, que es lo que saca de carrera al muro de 25 cm
+  antes de llegar a ninguna ecuación.
+
+Y una discrepancia que vale registrar: el trigger del elemento de borde del DS 60
+**no lleva el factor 1.5** de ACI ni el piso de 0.005 — R21.9.6.2 declina explícitamente el
+límite inferior que ACI 318S-08 imponía. Su umbral es $c \ge 66.7$ cm contra los 44.4 cm de
+ACI: **ACI dispara antes**. Acá da lo mismo, porque $c = 129.3$ cm supera ambos con holgura,
+pero en un muro más liviano los dos códigos podrían no coincidir.
 
 <Note type="info" title="Qué queda fuera de este ejemplo">
 No se verifican aquí: la flexión fuera del plano del muro, el diseño de la fundación (que
 debe resistir las fuerzas del borde y del alma, R18.10.5.1), la junta de construcción de
-la Sec. 18.10.10, ni el resto de la estructura. Tampoco se aplican los requisitos
-**adicionales** que el DS 60 impone a los muros chilenos por sobre el ACI 318 — que en
-Chile es el documento legalmente vinculante vía NCh2369 9.1.1 (ver la nota al pie).
+la Sec. 18.10.10, el soporte lateral de la armadura vertical del alma que pide
+18.10.6.4(i), ni el resto de la estructura.
 </Note>
 
 Los números de este ejemplo están calculados y verificados en
-`ejemplo_muro_flexocompresion_aci318.py`, cuyo modelo seccional reproduce a 0,000 % dos
+`ejemplo_muro_flexocompresion_aci318.py`, cuyo modelo seccional reproduce a 0.000 % dos
 casos con solución cerrada (flexión pura de una sección simplemente armada y compresión
 pura $P_0$).
 
@@ -510,16 +598,21 @@ pura $P_0$).
 18.10.5 (flexión y axial), 18.10.6.2 y sus Ecs. (18.10.6.2a) y (18.10.6.2b), Tabla
 18.10.6.4(g), Tabla 18.10.6.5(b), Secs. 21.2.2 y 21.2.4.1 ($\phi$), y Sec. 22.4
 (resistencia a flexión y axial). Expresiones de la edición SI; los coeficientes en
-kgf/cm² se obtienen multiplicando por $1/\sqrt{0{,}0980665} = 3{,}193$. Ver la nota
+kgf/cm² se obtienen multiplicando por $1/\sqrt{0.0980665} = 3.193$. Ver la nota
 teórica: [Cap. 18 — Estructuras sismorresistentes](/hormigon/aci318-25-cap18-sismorresistente).
 
 [^nch]: Instituto Nacional de Normalización, *NCh2369:2025 — Diseño sísmico de estructuras
 e instalaciones industriales*, Santiago, 2025 — cláusulas 4.5 (combinaciones de carga y
 Tabla C-2 del factor $a$), 6.1 (cálculo de desplazamientos con el espectro elástico de
-referencia), 6.3 (límite de $0{,}015\,h$) y 9.1.1/9.1.5. El comentario C9.1.1 advierte que
-el **DS 60 (2011)** reemplazó a NCh430 y debe considerarse mientras no sea derogado: en
-Chile el diseño de este muro debe además satisfacer los requisitos propios del DS 60 para
-muros, que no se verifican en este ejemplo.
+referencia), 6.3 (límite de $0.015\,h$) y 9.1.1/9.1.5. El comentario C9.1.1 advierte que
+el DS 60 (2011) reemplazó a NCh430 y debe considerarse mientras no sea derogado.
+
+[^ds60]: Ministerio de Vivienda y Urbanismo de Chile, *Decreto Supremo N° 60 (V. y U.),
+Reglamento que fija los requisitos de diseño y cálculo para el hormigón armado*, 2011 —
+cláusula 21.9, en particular 21.9.2.2, 21.9.2.4, 21.9.5.3, 21.9.5.4, 21.9.6.2 con su
+Ec. (21-8), y 21.9.6.4 letras (a), (c) y (f). El DS 60 **modifica ACI 318S-08 cláusula por
+cláusula** y no es un código autónomo. El PDF oficial del MINVU es un escaneo sin capa de
+texto; las cláusulas de muros están en sus páginas 18 a 21.
 
 [^aw]: Abdullah, S. A., y Wallace, J. W., *"Drift Capacity of Reinforced Concrete
 Structural Walls with Special Boundary Elements"*, ACI Structural Journal, V. 116, No. 1,

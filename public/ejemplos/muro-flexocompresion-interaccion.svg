@@ -36,8 +36,8 @@
   <text x="84.0" y="174.0" font-size="9.5" fill="#555" text-anchor="end">3000</text>
   <line x1="88.0" y1="93.3" x2="92.0" y2="93.3" stroke="#333"/>
   <text x="84.0" y="97.3" font-size="9.5" fill="#555" text-anchor="end">4000</text>
-  <polyline points="316.1,400.0 358.4,383.4 396.0,367.4 429.4,351.4 459.1,334.9 484.2,317.7 503.7,299.8 516.3,280.8 512.3,257.4 489.4,229.9 460.3,202.6 424.7,175.7 380.6,148.8 325.7,121.7 260.6,95.2 180.9,68.1 146.3,57.1 138.8,54.2 132.2,51.6 126.2,49.3 120.9,47.3 116.2,45.5 111.9,43.9 108.0,42.5 104.5,41.2 101.4,40.1 92.0,36.9 92.0,36.9" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
-  <polyline points="293.7,400.0 331.7,385.0 365.6,370.6 395.6,356.3 422.4,341.4 442.9,326.3 422.1,319.7 400.5,313.3 372.1,305.0 350.3,289.4 331.4,271.7 308.3,254.2 279.6,236.7 243.9,219.1 224.4,211.2 92.0,211.2" fill="none" stroke="#1a63a8" stroke-width="2.4"/>
+  <polyline points="316.0,400.0 358.2,383.4 395.9,367.4 429.3,351.4 459.0,334.9 484.1,317.8 503.7,299.9 516.3,281.0 512.4,257.7 489.6,230.1 460.6,202.9 425.1,176.0 381.1,149.1 326.4,122.0 261.5,95.6 182.0,68.5 146.4,57.1 138.9,54.2 132.2,51.6 126.3,49.3 121.0,47.3 116.2,45.5 111.9,43.9 108.1,42.5 104.6,41.3 101.4,40.1 92.0,36.9 92.0,36.9" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <polyline points="293.6,400.0 331.6,385.0 365.5,370.6 395.5,356.3 422.3,341.4 442.8,326.4 422.0,319.7 400.5,313.4 372.2,305.1 350.4,289.6 331.6,271.9 308.5,254.4 279.9,236.9 244.4,219.3 224.4,211.2 92.0,211.2" fill="none" stroke="#1a63a8" stroke-width="2.4"/>
   <line x1="92.0" y1="211.2" x2="252.5" y2="211.2" stroke="#c07a00" stroke-width="1" stroke-dasharray="6 4"/>
   <text x="104.8" y="203.2" font-size="10" fill="#a56a00">φP_n,max = 2463 tonf</text>
   <text x="386.2" y="196.8" font-size="10.5" fill="#999">nominal</text>
@@ -58,14 +58,14 @@
   <line x1="695.0" y1="100.0" x2="695.0" y2="164.0" stroke="#b02a1a" stroke-width="1.8"/>
   <text x="620.0" y="88.0" font-size="11.5" fill="#b02a1a" font-weight="bold">A:  P_u = 616 tonf</text>
   <line x1="620.0" y1="180.0" x2="695.0" y2="180.0" stroke="#b02a1a" stroke-width="1" marker-start="url(#mr)" marker-end="url(#mr)"/>
-  <text x="657.5" y="195.0" font-size="11" fill="#b02a1a" text-anchor="middle" font-weight="bold">c = 129,4 cm</text>
+  <text x="657.5" y="195.0" font-size="11" fill="#b02a1a" text-anchor="middle" font-weight="bold">c = 129,3 cm</text>
   <text x="910.0" y="88.0" font-size="10.5" fill="#222" text-anchor="end">φM_n = 2815 tonf·m</text>
   <text x="910.0" y="195.0" font-size="10.5" fill="#222" text-anchor="end">uso M_u/φM_n = 0,86</text>
   <rect x="620.0" y="260.0" width="290.0" height="44.0" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
-  <rect x="620.0" y="260.0" width="63.0" height="44.0" fill="#2f7a4f" opacity="0.30"/>
-  <line x1="683.0" y1="250.0" x2="683.0" y2="314.0" stroke="#2f7a4f" stroke-width="1.8"/>
+  <rect x="620.0" y="260.0" width="62.9" height="44.0" fill="#2f7a4f" opacity="0.30"/>
+  <line x1="682.9" y1="250.0" x2="682.9" y2="314.0" stroke="#2f7a4f" stroke-width="1.8"/>
   <text x="620.0" y="238.0" font-size="11.5" fill="#2f7a4f" font-weight="bold">B:  P_u = 432 tonf</text>
-  <line x1="620.0" y1="330.0" x2="683.0" y2="330.0" stroke="#2f7a4f" stroke-width="1" marker-start="url(#mv)" marker-end="url(#mv)"/>
+  <line x1="620.0" y1="330.0" x2="682.9" y2="330.0" stroke="#2f7a4f" stroke-width="1" marker-start="url(#mv)" marker-end="url(#mv)"/>
   <text x="651.5" y="345.0" font-size="11" fill="#2f7a4f" text-anchor="middle" font-weight="bold">c = 108,5 cm</text>
   <text x="910.0" y="238.0" font-size="10.5" fill="#222" text-anchor="end">φM_n = 2565 tonf·m</text>
   <text x="910.0" y="345.0" font-size="10.5" fill="#222" text-anchor="end" font-weight="bold">uso M_u/φM_n = 0,95</text>
