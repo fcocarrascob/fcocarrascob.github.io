@@ -91,6 +91,15 @@ del suelo:
 1. **`P_p` se ignora** en muchos casos.
 2. **`φ′₂` y `c′₂` se reducen** a la mitad o dos tercios — Ec. (15.13).
 
+Conviene poner número a lo que se está descartando, porque «se ignora» suena a un residuo y no lo
+es. Sobre el suelo de la puntera, `K_p = tan²(45 + φ′₂/2) = 2,770`, y con `D_f = 1,0` m eso da
+
+$$P_p = \tfrac{1}{2}K_p\,\gamma_2\,D_f^2 + 2c'_2\sqrt{K_p}\,D_f = \mathbf{91{,}5 \ \text{kN/m}}$$
+
+frente a un empuje activo de `P_a = 99,6` kN/m. **El término que se está tirando a la basura es del
+orden del motor que empuja al muro** — por eso pasa de 1,50 a 2,42 cuando se cuenta, y por eso la
+decisión de contarlo o no vale más que cualquier dato del terreno.
+
 Con `φ′₂` y `c′₂` reducidos a 2/3 y sin `P_p`:
 
 $$FS = \frac{302{,}7 \tan(18{,}67°) + 3{,}5 \times 13{,}3}{99{,}6} = \frac{102{,}3 + 46{,}7}{99{,}6} = \mathbf{1{,}50}$$
@@ -181,11 +190,13 @@ Es tentador leer esto como conservadurismo apilado sin justificación. No lo es 
 motivos distintos**, y conviene conocerlos porque determinan cuándo cada uno aplica:
 
 **1. `P_p` exige un desplazamiento que el muro no tolera.** La Tabla 14.1 lo cuantifica: movilizar
-el estado pasivo en arena densa requiere `0,005 H`. En la puntera de este muro, con `D_f = 1,0` m,
-eso son 5 mm de corrimiento horizontal — pero el estado pasivo se moviliza con el
-**desplazamiento de la estructura completa**, y un muro de 6 m que se desplace lo necesario ya
-falló por servicio. Es [el mismo principio](/geotecnia/tres-coeficientes-del-mismo-suelo) que hace
-que la punta de un pilote sea reserva y no capacidad utilizable.
+el estado pasivo en arena densa requiere `0,005 H`. Y acá hay que elegir qué `H`: contra la puntera
+enterrada `D_f = 1,0` m serían **5 mm**, pero el bloque pasivo no se moviliza solo, sino con el
+**desplazamiento de la estructura completa**, que es lo que usa
+[la nota 9](/geotecnia/tres-coeficientes-del-mismo-suelo) con `H = 6` m: **30 mm**. Un factor 6
+entre las dos lecturas, y la buena es la segunda, porque el muro se corre entero. Un muro de 6 m
+que se desplace 30 mm en coronación ya falló por servicio mucho antes de que ese empuje exista. Es
+el mismo principio que hace que la punta de un pilote sea reserva y no capacidad utilizable.
 
 **2. El método simple sobreestima `P_p`.** El §14.7 lo advierte: la hipótesis de superficie de
 falla plana da valores altos, y el error crece con la fricción muro-suelo. Las soluciones con

@@ -226,11 +226,19 @@ En orden de importancia práctica:
 5. **Y dedica el esfuerzo a $\phi'$**, no a la elección del método. Es donde está el error.
 
 <Note type="info" title="Reproducibilidad">
-Todos los números de esta nota se generaron con script, no a mano: los factores salen de las
-formas cerradas de las Ecs. (16.6)–(16.8) y de la Tabla 16.1 para el $N_\gamma$ de Terzaghi
-(Kumbhojkar, 1993), que no tiene forma cerrada. Las tablas del libro se verificaron antes de
-usarlas —240 valores contra las ecuaciones del propio capítulo—, y de ahí salió la errata de
-$\phi' = 18°$.
+Todos los números de esta nota se generaron con script, no a mano. Conviene separar de dónde sale
+cada factor, porque no todos vienen del mismo lado:
+
+- **Ecuación general** — $N_c$, $N_q$ y $N_\gamma$ de las formas cerradas de las Ecs. (16.6)–(16.8).
+- **Terzaghi, $N_\gamma$** — de la Tabla 16.1 (Kumbhojkar, 1993), que no tiene forma cerrada.
+- **Terzaghi, $N_c$ y $N_q$** — de su **propia** forma cerrada, que no es la (16.7) de la ecuación
+  general y que el cuerpo de la nota no muestra:
+
+$$N_q = \frac{a^2}{2\cos^2\!\left(45 + \frac{\phi'}{2}\right)}, \qquad a = e^{\left(\frac{3\pi}{4} - \frac{\phi'}{2}\right)\tan\phi'}, \qquad N_c = (N_q - 1)\cot\phi'$$
+
+Reproduce la Tabla 16.1 al centésimo (7,44 · 12,72 · 22,46 · 41,44 · 81,27 para $\phi'$ de 20° a
+40°). Las tablas del libro se verificaron antes de usarlas —240 valores contra las ecuaciones del
+propio capítulo—, y de ahí salió la errata de $\phi' = 18°$.
 </Note>
 
 ---

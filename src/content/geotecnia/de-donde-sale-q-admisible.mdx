@@ -88,10 +88,20 @@ q_{adm} = \min \big( q_{adm}^{\,\text{corte}} \;,\; q_{adm}^{\,\text{asentamient
 $$
 </Equation>
 
-**Un $q_{adm}$ sin decir cuál de los dos lo limita es un número incompleto**, porque las dos
-respuestas se comportan de forma opuesta: la capacidad al corte *crece* con el ancho de la
-zapata, y el asentamiento *también* crece con el ancho. Ensanchar resuelve un problema y
-agrava el otro.
+**Un $q_{adm}$ sin decir cuál de los dos lo limita es un número incompleto**, porque los dos
+criterios responden de forma **opuesta** a la misma decisión de diseño: al ensanchar la zapata,
+la $q_{adm}$ **por corte sube** (el término $0{,}4\gamma B N_\gamma$ crece con $B$) mientras la
+$q_{adm}$ **por asentamiento baja** (a igual presión de contacto, una zapata más ancha moviliza un
+bulbo más profundo y asienta más). Uno se relaja y el otro se aprieta: por eso el mínimo de los dos
+puede cambiar de dueño al mover $B$, y por eso hay que saber cuál mandaba.
+
+<Note type="tip" title="Ojo con leer esto como «ensanchar empeora el asentamiento»">
+La oposición es exacta entre las dos **$q_{adm}$**, no entre los asentamientos. En la decisión real
+—carga de columna fija— ensanchar mejora las dos cosas a la vez: con $P = 900$ kN, pasar de
+$B = 2{,}2$ a $4{,}4$ m baja la presión de contacto de 186 a 46,5 kPa y el asentamiento cae a la
+mitad, mientras la $q_{adm}$ por asentamiento solo baja un 12 %. Lo que sube con $B$ es la
+*demanda relativa* frente a una presión admisible que se achica, no el asentamiento del edificio.
+</Note>
 
 <Figure
   src="/geotecnia-q-admisible/dos-criterios.svg"
@@ -165,6 +175,17 @@ profundidad de desplante $D_f = 1{,}5$ m. Ese último dato **no aparecía en el 
 
 Con $FS = 3$, la capacidad última necesaria es $q_u = 3 \times 196 = 588$ kPa. Resolviendo
 para $\phi'$:
+
+<Note type="warning" title="El retroanálisis toma el 2,0 como presión BRUTA">
+La ficha de datos de más arriba hereda del ejemplo de hormigón el rótulo *«presión admisible
+neta»*, pero acá el número se usa como **bruta**: $q_u = FS \cdot q_{adm}$ es la Ec. (16.14), que
+va con la presión total al nivel del sello. Con la definición neta —Ec. (16.16), donde hay que
+sumarle $q = \gamma D_f = 27$ kPa— haría falta $q_u = 615{,}4$ kPa y los titulares de esta sección
+cambiarían a $\phi' = 27{,}0°$ y $24{,}7°$, con una brecha de 35,5 % en vez de 34 %. La conclusión
+—que el método vale más que un par de grados— no se mueve, pero el número sí, y como la §7
+pregunta justamente *«¿bruta o neta?»*, corresponde declararlo antes que después. El ejemplo de
+hormigón lo usa como bruta ($A_{req} = P/q_a$), así que ese es el criterio que se sigue acá.
+</Note>
 
 | Método | $\phi'$ necesario |
 |---|---|

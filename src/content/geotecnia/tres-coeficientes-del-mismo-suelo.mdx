@@ -95,7 +95,7 @@ conseguirlo**.
 
 <Figure
   src="/geotecnia-empujes/agua-y-ocr.svg"
-  alt="Dos paneles. El izquierdo trata el relleno saturado sobre el mismo muro de 6 metros con la napa a 3 metros del coronamiento: el diagrama muestra la presión del suelo en ocre y la del agua en azul. Sin napa el empuje activo es 100 kN/m; con napa, el empuje del suelo BAJA a 87 kN/m porque el peso sumergido γ' vale 9,19, pero el agua añade 44 kN/m empujando con K = 1, de modo que el total sube a 131 kN/m, un 32 % más. El panel derecho muestra el OCR apareciendo por tercera vez en la serie y con signo distinto cada vez: en el Cap. 9 reduce el asentamiento por un factor 4 y además es un umbral y no un gradiente; en el Cap. 18 sube la fricción de fuste del pilote mediante K = (1 − sen φ'_R)·√OCR del método beta; y en el Cap. 14 sube el empuje en reposo, con K_o multiplicado por raíz de OCR. Sobre el relleno de este muro, con K_o = 0,470, un OCR de 4 lo lleva a 0,940 y un OCR de 8 a 1,330, mayor que 1, con lo que la tensión horizontal supera a la vertical. Al pie: saturar el relleno reduce el empuje del suelo y aun así sube el total un 32 %, de modo que el drenaje del trasdós no es un detalle; y un suelo sobreconsolidado es mejor para fundar y peor para contener."
+  alt="Dos paneles. El izquierdo trata el relleno saturado sobre el mismo muro de 6 metros con la napa a 3 metros del coronamiento: el diagrama muestra la presión del suelo en ocre y la del agua en azul. Sin napa el empuje activo es 100 kN/m; con napa, el empuje del suelo BAJA a 87 kN/m porque el peso sumergido γ' vale 9,19, pero el agua añade 44 kN/m empujando con K = 1, de modo que el total sube a 131 kN/m, un 32 % más. El panel derecho muestra el OCR apareciendo por tercera vez en la serie y con signo distinto cada vez: en el Cap. 9 reduce el asentamiento por un factor 4 y además es un umbral y no un gradiente; en el Cap. 18 sube la fricción de fuste del pilote mediante K = (1 − sen φ'_R)·√OCR del método beta; y en el Cap. 14 sube el empuje en reposo, con K_o multiplicado por OCR elevado a sen φ' según la Ec. (14.4), que es la que corresponde a un relleno de grano grueso. Sobre el relleno de este muro, con K_o = 0,470, un OCR de 4 lo lleva a 0,980 y un OCR de 8 a 1,415, mayor que 1, con lo que la tensión horizontal supera a la vertical. Al pie: saturar el relleno reduce el empuje del suelo y aun así sube el total un 32 %, de modo que el drenaje del trasdós no es un detalle; y un suelo sobreconsolidado es mejor para fundar y peor para contener."
   caption="El relleno saturado es el caso contraintuitivo: el suelo empuja menos y el total sube igual. Y el OCR completa su tercera aparición en la serie, con su tercer signo."
 />
 
@@ -122,13 +122,23 @@ alcanza a compensarlo.
 
 ### El OCR, por tercera vez y con tercer signo
 
-`K_o` para suelo sobreconsolidado se multiplica por `√OCR` — Ec. (14.7). Sobre este relleno:
+Acá hay que elegir bien la ecuación, porque Das da dos y no son intercambiables. La **Ec. (14.7)**
+—multiplicar por `√OCR`— es explícitamente *«para arcillas sobreconsolidadas»*. Este relleno es
+**arena** con `φ′ = 32°`, y para suelo de grano grueso sobreconsolidado corresponde la
+**Ec. (14.4)** de Mayne y Kulhawy (1982):
+
+$$K_o = (1 - \sin\phi')\,(OCR)^{\sin\phi'}$$
+
+Con `sen 32° = 0,530`, sobre este relleno:
 
 | `OCR` | `K_o` |
 |---|---|
 | 1 | 0,470 |
-| 4 | 0,940 |
-| 8 | **1,330** |
+| 4 | 0,980 |
+| 8 | **1,415** |
+
+(Con la ecuación de arcillas habrían salido 0,940 y 1,330: la de arena castiga **más**, así que la
+conclusión que viene no solo se sostiene, se refuerza.)
 
 Con `OCR = 8` el coeficiente **supera 1**: la tensión horizontal es mayor que la vertical. No es
 un error de cálculo — es un hecho conocido en arcillas fuertemente sobreconsolidadas, donde el
@@ -198,7 +208,7 @@ Para un proyecto de contención, la lista cambia respecto de la de fundaciones:
 1. **¿Qué estado corresponde?** ¿El muro puede girar lo suficiente para desarrollar el activo, o
    está impedido y hay que diseñar con `K_o`? Es la diferencia entre 100 y 152 kN/m.
 2. **¿Hay drenaje en el trasdós, y está garantizado a largo plazo?** Sin él, +32 %.
-3. **¿Cuál es el `OCR` del relleno o del terreno natural?** Puede multiplicar `K_o` por 2,8.
+3. **¿Cuál es el `OCR` del relleno o del terreno natural?** Puede multiplicar `K_o` por 3,0.
 4. **¿Se contó con `P_p`?** Si sí, ¿se verificó que el desplazamiento necesario sea admisible, y
    que la puntera no vaya a excavarse después?
 5. **¿Hay cohesión en el relleno?** Entonces hay grieta de tracción hasta

@@ -86,6 +86,18 @@ en el plazo. Y no es un dato del suelo, es de **la estratigrafía**: un estrato 
 otro abajo dan drenaje doble; roca o arcilla impermeable en el fondo lo dejan en una sola cara.
 </Note>
 
+<Note type="warning" title="Y el caso de esta nota es un buen ejemplo de la trampa">
+La línea de tiempo de más abajo resuelve el **Ejemplo 9.10 de Das**, que supone drenaje por las dos
+caras: $H_{dr} = H/2 = 1{,}5$ m. Pero el perfil que viene siguiendo esta serie
+—[arena 0–6 m, arcilla blanda 6–9 m y **roca debajo**](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos)—
+cae justo del otro lado de la regla que acabo de enunciar: con roca en el fondo el drenaje es por
+**una sola cara**, $H_{dr} = 3$ m. Sobre ese perfil los mismos parámetros dan
+$t_{90} = \mathbf{4{,}84}$ años en vez de 1,21, y una secundaria a 50 años de **33,5 mm** en vez de
+53,3 (menos, porque la secundaria empieza más tarde). Es el factor 4 de esta sección aplicado al
+propio caso, y la razón por la que conviene no importar un ejemplo del libro sin revisarle la
+estratigrafía.
+</Note>
+
 ### La cola
 
 El panel derecho de la figura muestra algo poco intuitivo: la consolidación **nunca termina** en
@@ -190,11 +202,20 @@ transposición de dígitos.
 
 <Note type="info" title="Reproducibilidad">
 La tabla de plazos, la cola y la línea de tiempo se calcularon con script sobre las
-Ecs. (9.42)/(9.43) y (9.28). Los parámetros del caso son internamente coherentes:
-$c_v = 0{,}0005$ cm²/s ≈ 1,6 m²/año, propio de arcilla blanda —no el 0,003 del Ejemplo 9.6, que
-es alto para una arcilla blanda —más propio de un limo o de una arcilla limosa— y drena seis veces más rápido—, y $C'_\alpha = 0{,}011$, que satisface la
-relación $C'_\alpha/C_c \approx 0{,}04$ de Mesri y Godlewski (1977) con el $C_c = 0{,}27$ del
-caso. La consolidación primaria de 28,0 mm es la del Ejemplo 9.10 de Das, verificada.
+Ecs. (9.42)/(9.43) y (9.28), tomando el caso del **Ejemplo 9.10 de Das** tal como el libro lo
+plantea —incluido su drenaje por las dos caras, con la salvedad de la nota de más arriba—.
+
+Los **parámetros de consolidación** son coherentes entre sí: $c_v = 0{,}0005$ cm²/s ≈ 1,6 m²/año es
+propio de una arcilla blanda (el 0,003 del Ejemplo 9.6 es alto para ese material —más de limo o
+arcilla limosa— y drena seis veces más rápido), y $C'_\alpha = 0{,}011$ satisface la relación
+$C'_\alpha/C_c \approx 0{,}04$ de Mesri y Godlewski (1977) con el $C_c = 0{,}27$ del caso. La
+consolidación primaria de 28,0 mm es la del propio Ejemplo 9.10, verificada.
+
+Lo que **no** hay que leer como un solo caso es la mezcla de geometrías: el $\Delta\sigma' = 16{,}5$
+kPa y los 28,0 mm son de la zapata de 1,5 × 1,5 m del ejemplo, mientras que los 25 mm elásticos
+corresponden a una zapata apoyada directamente sobre la arcilla. Se apilan en la figura para
+mostrar el **orden de magnitud relativo** de los tres términos, que es el punto de la nota, no para
+representar una única fundación calculada de punta a cabo.
 </Note>
 
 ---
