@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="800" height="470" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Los dos polos de la abstracción, y el hemisferio que le falta al deep learning</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Abstraer empieza por comparar cosas. Y hay dos formas de comparar, de las que salen dos modos de pensar.</text>
+
+  <!-- value-centric -->
+  <rect x="20" y="66" width="374" height="286" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="207" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">Centrada en valores</text>
+  <text x="207" y="107" text-anchor="middle" font-size="10" fill="#6b7280">percepción e intuición</text>
+
+  <g>
+    <circle cx="96" cy="150" r="9" fill="#2563eb" fill-opacity="0.25" stroke="#2563eb"/>
+    <circle cx="122" cy="138" r="9" fill="#2563eb" fill-opacity="0.25" stroke="#2563eb"/>
+    <circle cx="112" cy="166" r="9" fill="#2563eb" fill-opacity="0.25" stroke="#2563eb"/>
+    <circle cx="140" cy="158" r="9" fill="#2563eb" fill-opacity="0.25" stroke="#2563eb"/>
+  </g>
+  <text x="176" y="154" font-size="18" fill="#9ca3af">→</text>
+  <circle cx="228" cy="152" r="18" fill="#2563eb" fill-opacity="0.5" stroke="#2563eb"/>
+  <text x="228" y="156" text-anchor="middle" font-size="9" font-weight="700" fill="#1e3a8a">proto</text>
+  <text x="286" y="148" font-size="10" fill="#374151">Se promedian las</text>
+  <text x="286" y="161" font-size="10" fill="#374151">instancias similares.</text>
+
+  <text x="40" y="196" font-size="10.5" fill="#374151">Relaciona cosas <tspan font-weight="700">por distancia</tspan>. Es continua, anclada</text>
+  <text x="40" y="210" font-size="10.5" fill="#374151">en la <tspan font-weight="700">geometría</tspan>, y produce abstracciones promediando</text>
+  <text x="40" y="224" font-size="10.5" fill="#374151">instancias en <tspan font-weight="700">prototipos</tspan>.</text>
+
+  <text x="40" y="248" font-size="10.5" fill="#374151">Inmediata, difusa, aproximativa.</text>
+  <text x="40" y="266" font-size="10.5" fill="#991b1b"><tspan font-weight="700">Requiere mucha experiencia</tspan> para resultados confiables.</text>
+
+  <text x="40" y="294" font-size="10" fill="#6b7280">«Si puedes hacer una tarea sin pensar en ella, estás</text>
+  <text x="40" y="307" font-size="10" fill="#6b7280">apoyándote fuertemente en analogías centradas en valores.»</text>
+
+  <text x="40" y="332" font-size="10.5" font-weight="700" fill="#1e40af">Es exactamente lo que hace el machine learning.</text>
+  <text x="40" y="346" font-size="10" fill="#6b7280">Las features de la ConvNet del Cap. 10 eran prototipos visuales.</text>
+
+  <!-- program-centric -->
+  <rect x="410" y="66" width="370" height="286" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="595" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">Centrada en programas</text>
+  <text x="595" y="107" text-anchor="middle" font-size="10" fill="#6b7280">razonamiento y planificación</text>
+
+  <g stroke="#16a34a" fill="#ffffff">
+    <circle cx="452" cy="134" r="7"/><circle cx="486" cy="134" r="7"/><circle cx="469" cy="164" r="7"/>
+    <line x1="452" y1="134" x2="486" y2="134"/><line x1="452" y1="134" x2="469" y2="164"/><line x1="486" y1="134" x2="469" y2="164"/>
+  </g>
+  <g stroke="#16a34a" fill="#ffffff">
+    <circle cx="556" cy="134" r="7"/><circle cx="590" cy="134" r="7"/><circle cx="573" cy="164" r="7"/>
+    <line x1="556" y1="134" x2="590" y2="134"/><line x1="556" y1="134" x2="573" y2="164"/><line x1="590" y1="134" x2="573" y2="164"/>
+  </g>
+  <text x="521" y="154" text-anchor="middle" font-size="16" fill="#16a34a">≡</text>
+  <text x="622" y="140" font-size="10" fill="#374151">La misma estructura,</text>
+  <text x="622" y="153" font-size="10" fill="#374151">exacta. Isomorfismo</text>
+  <text x="622" y="166" font-size="10" fill="#374151">de subgrafos.</text>
+
+  <text x="430" y="196" font-size="10.5" fill="#374151">Relaciona cosas <tspan font-weight="700">por coincidencia estructural exacta</tspan>.</text>
+  <text x="430" y="210" font-size="10.5" fill="#374151">Es discreta, anclada en la <tspan font-weight="700">topología</tspan>, y abstrae aislando</text>
+  <text x="430" y="224" font-size="10.5" fill="#374151"><tspan font-weight="700">subestructuras isomorfas</tspan>.</text>
+
+  <text x="430" y="248" font-size="10.5" fill="#374151">Lenta, exacta, rigurosa.</text>
+  <text x="430" y="266" font-size="10.5" fill="#166534"><tspan font-weight="700">Eficiente en experiencia</tspan>: opera con dos instancias.</text>
+
+  <text x="430" y="294" font-size="10" fill="#6b7280">Se usa constantemente sin notarlo: cada vez que piensas en</text>
+  <text x="430" y="307" font-size="10" fill="#6b7280">objetos conectados por una red discreta de relaciones.</text>
+
+  <text x="430" y="332" font-size="10.5" font-weight="700" fill="#991b1b">El deep learning básicamente no la tiene.</text>
+  <text x="430" y="346" font-size="10" fill="#6b7280">Hasta 2024, todo razonamiento discreto real venía hardcodeado.</text>
+
+  <!-- conclusion -->
+  <rect x="20" y="368" width="760" height="86" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="400" y="392" text-anchor="middle" font-size="11.5" font-weight="700" fill="#374151">No son separables — y ahí está el punto</text>
+  <text x="400" y="414" text-anchor="middle" font-size="10.5" fill="#374151">Reconocer objetos en una escena involucra razonamiento implícito sobre sus relaciones. Y probar un teorema involucra intuición:</text>
+  <text x="400" y="428" text-anchor="middle" font-size="10.5" fill="#374151">cuando un matemático pone la pluma en el papel, <tspan font-weight="700">ya tiene una visión difusa de la dirección en la que va</tspan>.</text>
+  <text x="400" y="446" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">«Es su entrelazamiento el que permite la generalización extrema. Ninguna mente podría estar completa sin ambos.»</text>
+</svg>

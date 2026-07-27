@@ -1,0 +1,391 @@
+---
+title: "Cincuenta mil veces más grande para pasar de 0 % a 10 %"
+description: "El capítulo 19 es el capítulo de autor del libro: no tiene una línea de código y expone la tesis completa de Chollet sobre qué es la inteligencia y por qué el deep learning no la tiene. El argumento arranca en un diagnóstico estructural —una curva paramétrica es una base de datos, y una base de datos congelada solo sirve para recuperar—, sigue con la evidencia de que escalar no lo resuelve —de 2019 a 2025 los LLM base crecieron unas 50 000 veces y su score en ARC-AGI pasó de 0 % a cerca de 10 %, cuando cualquier lector saca más de 95 %— y termina nombrando lo que falta: búsqueda y símbolos. Por el camino desmonta el in-context learning, el prompt engineering y las scaling laws, y propone un reencuadre incómodo: llamar «inteligencia» a esto ha sido un error de categoría. Apuntes del Cap. 19."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "agi", "arc-agi", "generalización", "síntesis de programas", "abstracción", "filosofía de la ia"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 19 — El futuro de la IA"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 19 (PDF 588–618)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Este es el capítulo de autor del libro. No tiene una sola línea de código: Chollet expone
+su tesis completa sobre qué es la inteligencia, por qué el deep learning no la tiene, y qué
+falta. Es también el capítulo que explica de dónde venía el escepticismo dosificado a lo
+largo de los dieciocho anteriores.
+
+## 1. El diagnóstico: una base de datos congelada
+
+> *"Los modelos de deep learning son **grandes curvas paramétricas ajustadas a datasets
+> grandes**. Esa es la fuente de su poder […] **Pero es también fuente de debilidades
+> significativas.**"*
+>
+> *"Primero y principal, **una curva paramétrica solo es capaz de almacenar información** —
+> es una especie de base de datos. […] **Segundo, y crucialmente, esta base de datos es
+> estática.** Los parámetros del modelo se determinan durante una fase distinta de 'tiempo
+> de entrenamiento'. Después, esos parámetros se **congelan**."*
+>
+> *"**Lo único que puedes hacer con una base de datos estática es recuperar información.**
+> […] **La base de datos mira hacia atrás** — ajusta datos pasados pero **no puede manejar
+> un futuro cambiante**."*
+
+Es el mismo objeto del capítulo 15 —el Transformer como base de datos interpolativa— visto
+desde el lado del límite. Y de ahí sale el desmontaje del *in-context learning*:
+
+> *"Pese a los frecuentes reclamos de que los LLM pueden hacer in-context learning para
+> adquirir habilidades nuevas de unos pocos ejemplos, **hay evidencia abrumadora de que lo
+> que realmente hacen es traer funciones vectoriales que memorizaron durante el entrenamiento
+> y reaplicarlas**. […] **Pero muéstrale algo que no tenga equivalente directo en sus datos
+> de entrenamiento, y está indefenso.**"*
+
+Y la formulación más aguda del capítulo, que conviene tener a mano cada vez que un modelo
+sorprende:
+
+> *"**La capacidad de un LLM de resolver un problema dado no tiene nada que ver con la
+> complejidad del problema, y todo que ver con la familiaridad — se romperán los dientes con
+> cualquier problema suficientemente novedoso, no importa qué tan simple sea.**"*
+
+Los tres ejemplos son verificables, y por eso valen: durante meses ChatGPT respondía que
+**10 kilos de acero y un kilo de plumas pesan lo mismo**, porque la versión canónica de la
+pregunta trampa está mil veces en internet y *"repetía la respuesta memorizada **sin prestar
+atención a los números reales de la consulta**"*. Lo mismo con las variantes de Monty Hall.
+Y el acertijo de Alicia —*"tiene N hermanos y M hermanas, ¿cuántas hermanas tiene su
+hermano?"*, cuya respuesta es **M + 1**— acierta con los valores que circulan en internet y
+falla al cambiarlos.
+
+<Note type="warning" title="Cómo se sostiene esto en producción">
+*"Estos prompts específicos fueron parchados después **con casos especiales**. Hoy hay **más
+de 25 000 personas empleadas a tiempo completo** para proveer datos de entrenamiento a LLM
+revisando casos de fallo y sugiriendo mejores respuestas. **El mantenimiento de LLM es un
+juego constante del topo donde los prompts que fallan se parchan uno a la vez, sin abordar
+el problema subyacente más general. ¡Incluso los prompts ya parchados seguirán fallando si
+les haces cambios pequeños!**"*
+
+La cifra de 25 000 no lleva cita en el libro, en un capítulo que sí cita papers cuando los
+tiene. Es plausible —probablemente conservadora si se cuentan las plataformas de anotación—
+pero conviene leerla como estimación del autor.
+</Note>
+
+## 2. El prompt engineering, desmontado
+
+La sección sobre sensibilidad al fraseo es la más filosa, porque no ataca a los modelos sino
+a la práctica que se construyó encima:
+
+> *"El término **prompt engineering** es un encuadre muy optimista del problema subyacente:
+> '¡Tus modelos son mejores de lo que crees! ¡Solo necesitas usarlos bien!' **Un encuadre más
+> negativo señalaría que para cualquier consulta que parece funcionar, hay un rango de
+> cambios menores con el potencial de hundir el rendimiento. ¿Hasta qué punto los LLM
+> entienden algo si puedes romper su entendimiento con simples reformulaciones?**"*
+
+El mecanismo se explica con la misma metáfora de la base de datos. Un prompt es *"una forma
+de direccionar una ubicación particular"*: pedir *"¿cómo ordeno una lista en Python?
+Responde como un pirata"* es un lookup del conocimiento más un lookup del programa de
+transferencia de estilo. Y como todo el espacio es interpolativo, *"bucanero"* en vez de
+*"pirata"* apunta a una ubicación vecina con una respuesta parecida pero distinta.
+
+> *"**No hay razón a priori para que tu primer prompt ingenuo sea óptimo para tu tarea. El
+> LLM no va a entender lo que quisiste decir y luego ejecutarlo de la mejor manera posible —
+> solo va a traer el programa al que tu prompt apunta**, entre muchas ubicaciones posibles
+> donde podrías haber caído."*
+>
+> *"El prompt engineering es **el proceso de buscar a través del espacio latente** […] por
+> ensayo y error. **No es distinto de probar palabras clave distintas al hacer una búsqueda
+> en Google. Si los LLM realmente entendieran lo que les pides, no habría necesidad de este
+> proceso de búsqueda.**"*
+
+Hay un tercer problema, distinto de los dos anteriores y más difícil de ver: **incluso
+sabiendo direccionar el programa correcto, los programas memorizados no generalizan**. El
+caso de prueba es la suma:
+
+> *"Prueba entrenar un Transformer sobre cientos de miles de tales pares de dígitos:
+> alcanzarás una accuracy muy alta. **Muy alta, pero no 100 %** […] **porque el Transformer
+> no logra codificar el algoritmo exacto de la suma**. En cambio, **está adivinando la salida
+> interpolando** entre los puntos de dato que vio."*
+
+Y la razón de fondo, que es un argumento de representabilidad y no de escala:
+
+> *"Es solo una cadena estática de transformaciones geométricas simples y continuas […] un
+> buen ajuste para reconocimiento perceptual de patrones, **pero es un ajuste muy pobre para
+> codificar cualquier tipo de lógica discreta paso a paso**, como los conceptos de valor
+> posicional o de llevar."*
+>
+> *"**Un modelo de deep learning puede interpretarse como una especie de programa, pero
+> inversamente, la mayoría de los programas NO pueden expresarse como modelos de deep
+> learning.**"*
+
+<Note type="info" title="La cifra del 70 % conviene leerla como ilustración, no como medida">
+El libro dice que los LLM del estado del arte suman con *"alrededor de 70 % de accuracy"*, y
+esa cifra no lleva cita. Envejece rápido: depende del modelo, del número de dígitos y de si
+hay acceso a un intérprete de Python. Lo que **no** depende del número es el argumento
+estructural —que la suma se está interpolando en vez de ejecutarse—, y ese se sostiene solo:
+la accuracy *"depende fuertemente de qué dígitos se están sumando, con dígitos más comunes
+llevando a mayor accuracy"*. Un algoritmo real no tendría esa dependencia.
+</Note>
+
+## 3. Escalar no lo resuelve, y hay evidencia
+
+La narrativa de *"escala es todo lo que necesitas"* tuvo su pico a principios de 2023, con
+GPT-4 recién salido como una versión más grande de GPT-3. La refutación de Chollet es
+metodológica, no de fe:
+
+> *"**Lo clave que los entusiastas de las leyes de escalamiento están perdiendo de vista es
+> que los benchmarks que usan para medir 'rendimiento' son efectivamente pruebas de
+> memorización**, del tipo que nos gusta dar a estudiantes universitarios. Los LLM rinden
+> bien en estas pruebas **memorizando las respuestas**."*
+>
+> *"Empecé a señalar estos problemas **en 2017**, y **seguimos luchando con ellos hoy** — con
+> modelos que ahora son **cuatro o cinco órdenes de magnitud más grandes** […] **No hemos
+> hecho ningún progreso en estos problemas porque los modelos que estamos usando siguen siendo
+> los mismos.**"*
+
+### La distinción que el campo confundió siempre
+
+> *"Un sistema de automatización (o **autómata**) es **estático**, hecho para lograr cosas
+> específicas en un contexto específico —'si esto, entonces aquello'— **mientras un agente
+> inteligente puede adaptarse al vuelo a situaciones novedosas e inesperadas.**"*
+>
+> *"**¿Cómo distingues entre un estudiante que ha memorizado los últimos tres años de
+> preguntas de examen pero no tiene entendimiento del tema, y uno que realmente entiende el
+> material? Le das un problema completamente nuevo.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/espectro-generalizacion.svg"
+  alt="Diagrama con una flecha horizontal que ordena cuatro niveles de generalización de menos a más. Nivel uno, Ninguna: un diccionario de Python o un sistema de preguntas y respuestas con if-then-else hardcodeado, incapaz de manejar nada que no se le haya informado por adelantado. Nivel dos, Local, marcado como donde están hoy las redes profundas: generaliza a conocidos desconocidos, porque interpola en el manifold y el factor de variación tiene que estar capturado ahí. Nivel tres, Amplia, señalado como la meta intermedia: manejar desconocidos desconocidos dentro de un dominio amplio, con el ejemplo del test Woz, entrar a una cocina al azar y hacer un café. Nivel cuatro, Extrema, humanos y animales avanzados: adaptarse a lo nunca visto con pocos datos o ninguno, aterrizando un cohete en uno o dos intentos y no en un millón. Debajo, dos paneles. El izquierdo define la inteligencia como ratio de eficiencia: el ratio de conversión entre la información disponible, que es experiencia pasada más conocimiento previo, y el área operativa futura, que es el conjunto de situaciones novedosas que se resuelven bien; menos experiencia para más situaciones significa más inteligente. El derecho, en rojo, muestra la evidencia de ARC-AGI entre 2019 y 2025: el escalamiento de los LLM base fue de aproximadamente 50 000 veces, el score en ARC-AGI pasó de 0 por ciento a alrededor de 10 por ciento, y un humano cualquiera saca más de 95 por ciento. Al pie, en una banda azul, la cita de que si escalas tu sistema 50 000 veces y todavía no estás haciendo progreso significativo, eso es como un gran cartel de advertencia diciéndote que necesitas probar ideas nuevas, con la nota de que los otros benchmarks se saturaron rápido porque se pueden hackear con memorización mientras ARC-AGI está diseñado para resistirla."
+  caption="El deep learning subió un escalón del espectro en setenta años. Quedan dos."
+  width={800}
+/>
+
+Los dos ejemplos que cierran el argumento son concretos y por eso duelen. Para **aterrizar un
+cohete en la luna**, una red necesitaría *"decenas de miles o incluso millones de intentos de
+lanzamiento"*, mientras nosotros *"usamos nuestro poder de abstracción para llegar a modelos
+físicos […] y **derivar una solución exacta que aterrizará el cohete en uno o unos pocos
+intentos**"*. Para **cruzar una calle**, la red *"tendría que morir muchos miles de veces"* y
+*"soltada en una ciudad nueva, tendría que reaprender casi todo lo que sabe"*, mientras
+*"los humanos podemos aprender conductas seguras **sin tener que morir ni una sola vez**"*.
+
+### La inteligencia como respuesta evolutiva a un ambiente impredecible
+
+El desvío por la evolución del cerebro no es adorno: es el que fundamenta la definición.
+
+> *"Si el conjunto de situaciones que un organismo tenía que enfrentar fuera mayormente
+> **estático y conocido por adelantado**, la generación de conducta sería un problema fácil:
+> la evolución simplemente […] **las hardcodearía en el ADN**."*
+>
+> *"Sin embargo […] **un día en tu vida, si lo miras de cerca, es distinto de cualquier día
+> que hayas experimentado y distinto de cualquier día experimentado por cualquiera de tus
+> ancestros evolutivos.** […] **Tiene que generarse al vuelo, cada día.**"*
+>
+> *"El cerebro simplemente se adaptó a esa necesidad. **Optimizó para la adaptabilidad y la
+> generalidad en sí mismas** […] Este cambio probablemente ocurrió **múltiples veces** […]
+> resultando en animales muy inteligentes en ramas evolutivas muy distantes — **simios,
+> pulpos, cuervos**."*
+
+De ahí la definición, que es la contribución técnica del capítulo porque es **medible**:
+
+> *"**La inteligencia puede cuantificarse precisamente como un ratio de eficiencia: el ratio
+> de conversión entre la cantidad de información relevante que tienes disponible sobre el
+> mundo** […] **y tu área operativa futura**, el conjunto de situaciones novedosas donde
+> podrás producir conducta apropiada."*
+>
+> *"Crucialmente, **para evitar hacer trampa, vas a necesitar asegurarte de testear el sistema
+> solo en tareas para las que no fue programado ni entrenado — de hecho, necesitas tareas que
+> los creadores del sistema no podrían haber anticipado.**"*
+
+Ese es exactamente el diseño de **ARC-AGI**: tres o cuatro pares de grillas de ejemplo, una
+grilla nueva, tres intentos. *"Un juego para el que no puedes practicar"*, y que a diferencia
+de un test de IQ **controla el conocimiento previo** asumiendo solo los *Core Knowledge
+priors* con los que nacemos — nunca conocimiento adquirido como oraciones en inglés.
+
+<Note type="warning" title="La regla del atajo, o por qué fijar la tarea elimina la necesidad de inteligencia">
+Este es el mecanismo que explica setenta años de historia del campo, y es un principio de
+diseño de sistemas antes que de IA:
+
+*"Si te enfocas en optimizar una métrica de éxito, **lograrás tu meta, pero a expensas de
+todo en el sistema que no estaba cubierto por tu métrica**. […] **Tus creaciones están
+moldeadas por los incentivos que te das.**"*
+
+Deep Blue le gana a Kasparov en 1997, y *"los investigadores tuvieron que lidiar con el hecho
+de que **crear una IA campeona de ajedrez les había enseñado poco sobre la inteligencia
+humana**. […] **Resultó que era más fácil construir una IA que solo pudiera jugar ajedrez que
+construir una mente artificial — así que ese fue el atajo que los investigadores tomaron.**"*
+
+Y la generalización:
+
+*"**Fijando la tarea, haces posible proveer una descripción arbitrariamente precisa de lo que
+hay que hacer** […] **Haces posible que los ingenieros 'compren' más habilidad para su IA
+simplemente agregando datos**, sin aumentar el poder de generalización. […] **Fijando la
+tarea, eliminas la necesidad de manejar incertidumbre y novedad, y como la naturaleza de la
+inteligencia es la habilidad de manejar incertidumbre y novedad, estás efectivamente
+eliminando la necesidad de inteligencia.**"*
+
+*"**Los humanos pueden usar su inteligencia general para adquirir habilidades en cualquier
+tarea nueva, pero en reverso, no hay camino desde una colección de habilidades específicas
+hacia la inteligencia general.**"*
+</Note>
+
+<Note type="info" title="Los costos de o3: el libro y su propia fundación no coinciden">
+Al contar el salto de diciembre de 2024, el libro dice que o3 alcanzó **76 %** a *"alrededor
+de $200 por tarea"* y **88 %** a *"más de $20 000 por tarea"*. Los scores redondean bien
+(75,7 % y 87,5 %), pero los costos publicados por ARC Prize en su anuncio de entonces son
+**$26** y **$4 560** por tarea.
+
+Vale la salvedad de que aquellos costos eran estimaciones sobre un modelo aún no disponible
+públicamente, y se revisaron durante 2025. Lo que **no** cambia es el argumento: la
+configuración de 88 % usó **172× más cómputo** que la de 76 %, y esa proporción está bien en
+ambas versiones. La tesis de que *"la inteligencia es fundamentalmente eficiencia"* se sostiene
+igual con $4 560 que con $20 000.
+</Note>
+
+Y el reencuadre terminológico, que es la frase que más se cita del capítulo:
+
+> *"El paradigma del deep learning ha permanecido limitado a la **automatización cognitiva**.
+> **La etiqueta 'inteligencia' en 'inteligencia artificial' ha sido un error de categoría.**
+> Sería más preciso llamar a nuestro campo **'cognición artificial'**, con 'automatización
+> cognitiva' e 'inteligencia artificial' siendo dos subcampos **casi independientes** dentro
+> de él. En esta subdivisión, **la IA sería un terreno virgen donde casi todo queda por
+> descubrir.**"*
+
+Sin desmerecer lo logrado, y esto también es textual: *"**la automatización cognitiva es
+increíblemente útil** […] **Hacer esto bien es un cambio de juego para esencialmente toda
+industria.** Pero está todavía muy lejos de la inteligencia humana."*
+
+## 4. Qué es abstraer, y por qué falta la mitad
+
+La hipótesis que hace posible la inteligencia:
+
+> *"La inteligencia funciona **porque nada es nunca verdaderamente sin precedente**. […]
+> Llamo a esto **la hipótesis del caleidoscopio**: nuestra experiencia del mundo parece
+> presentar complejidad increíble y novedad sin fin, **pero todo en este mar de complejidad
+> es similar a todo lo demás. El número de átomos únicos de significado que necesitas para
+> describir el universo en que vives es relativamente pequeño**, y todo a tu alrededor es una
+> **recombinación** de esos átomos: **unas pocas semillas, variación infinita.**"*
+
+Una persona del siglo XVII describiría un avión como *"un pájaro de metal grande y ruidoso
+que no bate las alas"*, y un auto como *"un carruaje sin caballos"*. Y esas analogías no son
+solo psicológicas: *"**la realidad física misma está llena de isomorfismos**"*.
+
+Extraer esos átomos y recombinarlos son **dos operaciones distintas**, y ahí está el
+problema:
+
+> 1. *"**Estos modelos carecen completamente de recombinación al vuelo.** […] **Se comportan
+>    como una base de datos abstracta estática, limitada puramente a la recuperación. Les
+>    falta la mitad del cuadro — la mitad más importante.**"*
+> 2. *"**Son terriblemente ineficientes.** El descenso de gradiente requiere **cantidades
+>    vastas** de datos […] **muchos órdenes de magnitud más datos que los humanos.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/dos-polos-abstraccion.svg"
+  alt="Diagrama en dos paneles con una conclusión al pie. Panel azul izquierdo, abstracción centrada en valores, asociada a percepción e intuición: se dibujan cuatro círculos pequeños que confluyen con una flecha en un círculo más grande rotulado prototipo, con la nota de que se promedian las instancias similares; el texto explica que relaciona cosas por distancia, que es continua y anclada en la geometría, que produce abstracciones promediando instancias en prototipos, que es inmediata, difusa y aproximativa, y que requiere mucha experiencia para dar resultados confiables; cierra con la cita de que si puedes hacer una tarea sin pensar en ella te estás apoyando en analogías centradas en valores, y con la observación de que es exactamente lo que hace el machine learning, ya que las features de la ConvNet del capítulo 10 eran prototipos visuales. Panel verde derecho, abstracción centrada en programas, asociada a razonamiento y planificación: se dibujan dos grafos triangulares idénticos unidos por un signo de equivalencia, con la nota de que es la misma estructura, exacta, un isomorfismo de subgrafos; el texto explica que relaciona cosas por coincidencia estructural exacta, que es discreta y anclada en la topología, que abstrae aislando subestructuras isomorfas, que es lenta, exacta y rigurosa, y que es eficiente en experiencia porque puede operar con dos instancias; cierra señalando que se usa constantemente sin notarlo cada vez que se piensa en objetos conectados por una red discreta de relaciones, y que el deep learning básicamente no la tiene, ya que hasta 2024 todo razonamiento discreto real venía hardcodeado. Al pie, un panel gris: no son separables, porque reconocer objetos en una escena involucra razonamiento implícito sobre sus relaciones y probar un teorema involucra intuición, ya que cuando un matemático pone la pluma en el papel ya tiene una visión difusa de la dirección en la que va; cierra con la cita de que es su entrelazamiento el que permite la generalización extrema y que ninguna mente podría estar completa sin ambos."
+  caption="La tabla 19.1 del libro, que es el resumen más compacto de toda la tesis."
+  width={800}
+/>
+
+Los dos experimentos mentales que muestran dónde cae cada polo son la mejor prueba de que no
+es una dicotomía ideológica sino una cuestión de ajuste. **Ordenar cinco números** con una red
+*"es un ejercicio de frustración […] y si quieres ordenar listas de 10 números, tendrás que
+reentrenar completamente el modelo"*, mientras que en Python son unas pocas líneas que
+*"funcionarán siempre en listas de cualquier tamaño"*. **Clasificar dígitos MNIST** a mano
+*"después de miles de líneas de código, podrías lograr 90 % de accuracy"*, mientras ajustar un
+modelo paramétrico *"es mucho más simple […] y logra resultados mucho más robustos"*.
+
+> *"**Es improbable que veamos surgir un enfoque que reduzca los problemas de razonamiento a
+> interpolación de manifolds, o que reduzca los problemas de percepción a razonamiento
+> discreto. El camino hacia adelante en IA es desarrollar un marco unificado que incorpore
+> ambos tipos de generación de abstracción.**"*
+
+## 5. La pieza que falta: síntesis de programas
+
+<Figure
+  src="/apuntes/deep-learning-with-python/sintesis-de-programas.svg"
+  alt="Diagrama en tres bloques. Arriba, una tabla comparativa entre machine learning y síntesis de programas: el modelo es una función paramétrica diferenciable frente a un grafo de operadores de un lenguaje; el motor es descenso de gradiente frente a búsqueda discreta; y en cuanto a datos, el primero requiere muchísimos mientras el segundo funciona con un par de ejemplos. Al pie de la tabla, la diferencia clave: en vez de aprender los valores de los parámetros de un programa fijo, se genera el código fuente. Abajo a la izquierda, panel rojo sobre el obstáculo de la explosión combinatoria: se dibuja un árbol de búsqueda que se ramifica en tres niveles, con la anotación de que crece más rápido que exponencial; el texto explica que a medida que crece la especificación o el vocabulario de primitivas el espacio de programas posibles explota, que hoy solo sirve para generar programas muy cortos, y cita que no se va a generar un sistema operativo nuevo pronto. Abajo a la derecha, panel verde sobre la salida propuesta, que el deep learning guíe la búsqueda: una caja de intuición aprendida sobre el espacio de programas apunta con una flecha a una caja de poda del árbol donde quedan unos pocos caminos; el texto explica que cada programa concreto es un objeto discreto pero el espacio de todos los programas útiles parece parecerse bastante a un manifold continuo, que es lo mismo que hace un programador, que al abrir el editor no piensa en todos los programas posibles sino en un puñado de enfoques, y concluye que la síntesis no reemplaza al deep learning sino que es su complemento."
+  caption="Aprender parámetros de un programa fijo, o generar el programa. Dos motores para el mismo problema."
+  width={800}
+/>
+
+**Síntesis de programas** es generar programas automáticamente con un algoritmo de búsqueda
+—genética, por ejemplo— sobre un espacio grande de programas posibles, parando cuando uno
+coincide con la especificación, que suele darse como pares entrada-salida. El paralelo con el
+machine learning es exacto, y la diferencia también:
+
+> *"**En vez de aprender valores de parámetros en un programa hardcodeado (una red neuronal),
+> generamos código fuente vía un proceso de búsqueda discreta.** […] **La síntesis de programas
+> es cómo vamos a agregar capacidades de abstracción centrada en programas a nuestros sistemas
+> de IA. Es la pieza faltante del puzzle.**"*
+>
+> *"La síntesis de programas no es su reemplazo; es su complemento. **Es el hemisferio que
+> hasta ahora ha faltado en nuestros cerebros artificiales.**"*
+
+Ya hay sistemas híbridos en producción, aunque con la parte discreta escrita a mano: **AlphaGo**
+—*"la mayor parte de la inteligencia exhibida está diseñada y hardcodeada por programadores
+humanos […] el aprendizaje desde datos ocurre solo en submódulos especializados"*— y **Waymo**,
+que *"mantiene un modelo del mundo a su alrededor —un modelo 3D literal— lleno de suposiciones
+hardcodeadas por ingenieros humanos"* actualizado por módulos de percepción de deep learning.
+
+La imagen que hace concreta la visión usa las RNN como ancestro:
+
+> *"**Las RNN son un poco más que meras transformaciones geométricas: son transformaciones
+> geométricas aplicadas repetidamente dentro de un bucle `for`. El bucle temporal está él mismo
+> hardcodeado por desarrolladores humanos.**"*
+>
+> *"Ahora **imagina una red neuronal aumentada de forma similar con primitivas de programación,
+> pero […] la red incluye un conjunto grande de primitivas que el modelo es libre de
+> manipular**: ramas `if`, sentencias `while`, creación de variables, almacenamiento en disco,
+> operadores de ordenamiento, estructuras de datos avanzadas."*
+
+Pero la síntesis de programas hoy no funciona sola: *"es tremendamente ineficiente […] el
+proceso de búsqueda choca con lo que se conoce como **explosión combinatoria**"*. Y la salida
+propuesta cierra el círculo del capítulo:
+
+> *"Aunque cada programa específico […] podría ser **un objeto fundamentalmente discreto**,
+> **la evidencia hasta ahora indica que el espacio de todos los programas útiles puede
+> parecerse mucho a un manifold continuo**. Eso significa que **un modelo de deep learning
+> entrenado en millones de episodios exitosos de generación de programas podría empezar a
+> desarrollar intuición sólida sobre el camino que el proceso de búsqueda debería tomar** —
+> igual que un ingeniero de software tiene intuición inmediata sobre la arquitectura del script
+> que está por escribir."*
+
+<Note type="tip" title="El giro de 2024, que el capítulo documenta como ya ocurrido">
+*"En 2024, todo cambió. […] La historia prevaleciente de 'escala es todo lo que necesitas',
+que era **dogma fundamental en 2023**, empezó a dar paso a **'en realidad, necesitamos
+recombinación al vuelo'**. Los resultados de la competencia […] fueron iluminadores: **las
+soluciones líderes no emergieron de simplemente escalar arquitecturas existentes. Todas usaron
+alguna forma de adaptación en tiempo de test.**"*
+
+La **adaptación en tiempo de test** viene en dos formas: **test-time training** —el modelo
+ajusta algunos parámetros con los ejemplos de la tarea, por descenso de gradiente— y **métodos
+de búsqueda**, ya sea en lenguaje natural (chain-of-thought) o *"en un espacio de programas
+simbólicos y verificables"*.
+
+Y sobre por qué o3 no cierra el asunto: *"**la inteligencia no es solo capacidad; es
+fundamentalmente eficiencia. Forzar por fuerza bruta el espacio de soluciones dado cómputo
+enorme es un atajo que hace posibles todo tipo de tareas sin requerir inteligencia.**"* En
+ARC-AGI-2, donde el humano promedio tarda cinco minutos por tarea, o3 se desploma *"de vuelta
+a los dos dígitos bajos"* con presupuestos razonables, y los LLM base vuelven a **0 %**.
+</Note>
+
+## Para recordar
+
+- **Una curva paramétrica es una base de datos, y está congelada.** Lo único que se puede
+  hacer con ella es recuperar. Por eso mira hacia atrás.
+- **La dificultad de un problema para un LLM no es su complejidad, es su familiaridad.** Se
+  rompe con cualquier problema suficientemente novedoso, por simple que sea.
+- **El in-context learning es recuperación de funciones memorizadas**, no aprendizaje.
+- **El prompt engineering es búsqueda en el espacio latente por ensayo y error.** Si el modelo
+  entendiera lo que le pides, no haría falta.
+- **Los programas memorizados no generalizan.** El Transformer no aprende el algoritmo de la
+  suma: lo interpola, y por eso su accuracy depende de qué dígitos le tocan.
+- **Escalar 50 000× movió ARC-AGI de 0 % a 10 %**, contra el 95 % de un lector cualquiera.
+  Los demás benchmarks se saturaron porque se hackean con memorización.
+- **Fijar la tarea elimina la necesidad de inteligencia**, y siempre es más fácil que
+  resolverla. Ese es el atajo que el campo tomó el 100 % de las veces.
+- **La inteligencia es un ratio de eficiencia**: cuánta área operativa futura obtienes por
+  unidad de información pasada.
+- **Hay dos polos de abstracción** —por distancia y por coincidencia estructural exacta— y el
+  deep learning solo tiene el primero. Falta el hemisferio del razonamiento.
+- **La síntesis de programas es la pieza faltante**, y hoy choca con la explosión
+  combinatoria. La apuesta es que el deep learning aprenda a guiar esa búsqueda, porque el
+  espacio de programas útiles probablemente sea un manifold.
+
+El **capítulo 20** cierra el libro recapitulando lo que sí se aprendió a construir.
