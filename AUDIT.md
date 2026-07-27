@@ -50,6 +50,33 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+**Pasada de fixes 2026-07-26 (`899bd0c`) — los 6 🔴 que quedaban abiertos en todo el archivo.**
+No es una auditoría nueva: es la aplicación de los rojos pendientes de las tandas del 07-15 y del
+07-26. Con esto **no queda ningún 🔴 abierto**; los cuatro posts que estaban ❌ bloqueados por rojo
+(E3, E6, E7 y el cap. 13 de los apuntes) pasan a ⚠️. Siguen abiertos 91🟠, 387🟡 y 171🔵.
+
+Tres de los seis se resolvieron yendo a la fuente en vez de a la ficha, y dos cambiaron de
+diagnóstico al hacerlo:
+
+- **E3** — el auditor pedía «rehacer el demo con §9.6.3 o cambiar la pregunta a losas». Se corrió el
+  RAG real (`struct_llm`, 254 chunks, `nomic-embed-text` sobre Ollama, `k=4` y umbral 0,70 de
+  fábrica) y resultó que **el post reportaba fielmente lo que la máquina hace**: §10.6.2 (columnas)
+  0,7918 · §7.6.3 (losas) 0,7786 · §9.6.2 (preesforzadas) 0,7642 · Cap. 17 0,7390, y §9.6.3 —la que
+  corresponde— **quinta a 0,7386**, fuera del top-4 por cuatro diezmilésimas. Así que el fix no fue
+  fabricar un demo limpio sino publicar la medición: el umbral protege contra *citar lo que no
+  existe*, no contra *citar lo que no corresponde*, y la segunda sobrevive a la verificación. Causa
+  raíz: tres capítulos tienen una sección titulada exactamente «Refuerzo mínimo de corte» (7.6.3,
+  9.6.3, 10.6.2). La respuesta correcta se tomó del PDF (ACI 318-25 SI, p. 151).
+- **Cap. 13 de los apuntes** — el hallazgo suponía un dígito transpuesto del post. Contra el PDF,
+  **la errata es del libro**: el texto dice 420 551 registros (que es lo que trae el CSV de Jena)
+  pero la salida impresa del *listing* 13.5 da 210 225 + 105 112 + 105 114 = **420 451**. Se
+  conservan ambas cifras y se rompe la derivación implícita con una `Note`.
+- **E7** — los 12,0 y 18 tonf no eran un error: son el equilibrio de un pórtico de **1 vano × 1
+  piso** ($2 \times 6$ y $3 \times 6$), no del 2×2 del round-trip (que da 48, y el post ya lo
+  decía). Confirmado en el constructor (`V{vano}_{piso}`, `n_vanos=1, n_pisos=1` por defecto). El
+  post no declaraba cuál modelo era; ahora sí.
+- **`factor-r-rmu`** ya estaba corregido en `aca98a1` desde el 07-18; solo faltaba marcar la fila.
+
 **Tanda 2026-07-26 (segunda del día) — los 12 posts que faltaban en Cobertura (`/auditar nuevos`).**
 Los dos posts de Hormigón recién escritos (Cap. 18 y el ejemplo del muro), los siete de la serie
 `harness-estructural` y los tres últimos apuntes de *Deep Learning with Python*. **203 hallazgos:
@@ -188,7 +215,7 @@ descarta los glifos griegos).
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | N | L.154 | «la interacción tracción-corte $=0.78$». El ejemplo enlazado publica **0.76** en 8 lugares; recálculo $0.57^{5/3}+0.55^{5/3}=0.7611$, y con ratios sin redondear 0.7689. Ninguna variante da 0.78, y la frase que la enmarca afirma «reproducen los cinco ejemplos, **número a número**» | `0.76` (o 0.77 declarando que la herramienta no redondea los intermedios) | ⬜ |
+| 1 | 🔴 | N | L.154 | «la interacción tracción-corte $=0.78$». El ejemplo enlazado publica **0.76** en 8 lugares; recálculo $0.57^{5/3}+0.55^{5/3}=0.7611$, y con ratios sin redondear 0.7689. Ninguna variante da 0.78, y la frase que la enmarca afirma «reproducen los cinco ejemplos, **número a número**» | `0.76` (o 0.77 declarando que la herramienta no redondea los intermedios) | ✅ aplicado en `899bd0c` |
 | 2 | 🟠 | N/C | L.103–105 | Fila «Tope de biela»: el JSON da demanda 14.25 / capacidad 54.33 / uso 0.262; el ejemplo publica 6.10 / 53.8 / 0.11. Dos diferencias: la capacidad (+1.01 %, la deriva de constantes derivadas que denuncia la Note) y la demanda ($V_s$ provisto vs requerido) | Matizar «número a número» y declarar contra qué $V_s$ se contrasta | ⬜ |
 | 3 | 🟠 | N | SVG `dos-salidas.svg` | El SVG rotula `"uso": 0.99` donde el JSON dice `0.987`, a 40 líneas de distancia | Unificar en 0.987 | ⬜ |
 | 4 | 🟠 | L/U | L.170, 22 | «modelo local de **8 GB**»: los modelos son Qwen3-**8B** y Llama 3.1-**8B** (parámetros), y 8 GB es la VRAM. La misma cadena para dos magnitudes; se propaga a E2 y E4 | «modelo de 8B parámetros» / «que entra en 8 GB de VRAM» | ⬜ |
@@ -248,11 +275,11 @@ relato del rechazo cierra de punta a punta; los args del JSON de anclajes trazab
 publicado; conversión de `E` (factor 10.2, $\lambda_r$ cae $\sqrt{10.2}$). **No verificable:** los
 puntajes por modelo y el dataset.
 
-### 2026-07-26 · `blog/harness-estructural-e3-rag-con-cita` · ❌ bloqueado — 13 (1🔴 · 5🟠 · 4🟡 · 3🔵)
+### 2026-07-26 · `blog/harness-estructural-e3-rag-con-cita` · ⚠️ 13 (1🔴 · 5🟠 · 4🟡 · 3🔵) — 🔴 aplicado en `899bd0c`, desbloqueado
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | N/L/C | L.84–90 | **El demo estrella responde con la sección equivocada.** La pregunta es «¿cuándo obliga ACI 318-25 a poner refuerzo mínimo de corte **en una viga**?» y la respuesta cita `§7.6.3`, que es **Cap. 7, losas unidireccionales**. Para vigas rige **§9.6.3.1** ($V_u > \phi\lambda\sqrt{f'_c}b_wd$, con $V_u>\phi V_c$ solo para los casos de la Tabla 9.6.3.1). Errónea en la sección **y** en el umbral. Es la falla que el post promete haber eliminado, presentada como caso de éxito | Rehacer el demo con §9.6.3 / Tabla 9.6.3.1, o cambiar la pregunta a una sobre losas. **No publicar así** | ⬜ |
+| 1 | 🔴 | N/L/C | L.84–90 | **El demo estrella responde con la sección equivocada.** La pregunta es «¿cuándo obliga ACI 318-25 a poner refuerzo mínimo de corte **en una viga**?» y la respuesta cita `§7.6.3`, que es **Cap. 7, losas unidireccionales**. Para vigas rige **§9.6.3.1** ($V_u > \phi\lambda\sqrt{f'_c}b_wd$, con $V_u>\phi V_c$ solo para los casos de la Tabla 9.6.3.1). Errónea en la sección **y** en el umbral. Es la falla que el post promete haber eliminado, presentada como caso de éxito | Rehacer el demo con §9.6.3 / Tabla 9.6.3.1, o cambiar la pregunta a una sobre losas. **No publicar así** | ✅ aplicado en `899bd0c` — demo rehecho con la recuperación real medida |
 | 2 | 🟠 | N/L | L.91 | La segunda cita, `§9.6.2`, es **«Minimum flexural reinforcement in prestressed beams»** — ni corte ni no pretensado. Dos de dos citas ajenas a la pregunta | Reemplazar por §9.6.3 / §22.5.5.1 | ⬜ |
 | 3 | 🟠 | E/R | L.50–52 vs 67–69, 90–91 | Las secciones que muestra no existen en el corpus que enlaza: el cap. 7 del sitio no tiene encabezado 7.6.3, el cap. 9 no tiene 9.6.2, y `22.5.5.1.3` no aparece en ningún archivo. Solo `AISC 360-22 Cap. B` existe | O el corpus no son esas páginas, o las etiquetas no salen de los encabezados | ⬜ |
 | 4 | 🟠 | N/C | L.52 vs 32–33, 45 | «**cada** fragmento viaja con su sección» contra «254 fragmentos, **168** con sección» → 86 (34 %) sin ella. La tercera línea del bloque lo demuestra sola («AISC 360-22 Cap. B») | «sección cuando el encabezado la trae (168 de 254), capítulo si no» | ⬜ |
@@ -331,11 +358,11 @@ redondeo); **la afirmación sobre $C_w$ verifica textualmente** contra la *User 
 §F2; la viga cae en zona inelástica de LTB; la zapata «NO CUMPLE por desarrollo» tiene el signo
 correcto. **No verificable:** todo lo que sale del modelo real (1435 barras, reacciones, usos).
 
-### 2026-07-26 · `blog/harness-estructural-e6-memoria-word` · ❌ bloqueado — 11 (1🔴 · 3🟠 · 4🟡 · 3🔵)
+### 2026-07-26 · `blog/harness-estructural-e6-memoria-word` · ⚠️ 11 (1🔴 · 3🟠 · 4🟡 · 3🔵) — 🔴 aplicado en `899bd0c`, desbloqueado
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | C | L.93–94 | «Las piezas que faltan —leer y escribir modelos— son **harina de otro costal**» es falso dentro de la serie publicada: E5 ya lee modelos de SAP2000 y E7 los crea. El párrafo está escrito como si la serie terminara en 6 partes | Reescribir el cierre: la lectura ya se entregó y la escritura es la etapa siguiente | ⬜ |
+| 1 | 🔴 | C | L.93–94 | «Las piezas que faltan —leer y escribir modelos— son **harina de otro costal**» es falso dentro de la serie publicada: E5 ya lee modelos de SAP2000 y E7 los crea. El párrafo está escrito como si la serie terminara en 6 partes | Reescribir el cierre: la lectura ya se entregó y la escritura es la etapa siguiente | ✅ aplicado en `899bd0c` |
 | 2 | 🟠 | C | L.17–18 | El intro enumera lo construido «hasta acá» y **omite E5**, la parte inmediatamente anterior y de la que hereda un caso de uso | Agregar el eslabón de E5 | ⬜ |
 | 3 | 🟠 | C | L.89, 96–99 | Cierra la serie dos veces: «Dónde queda el proyecto» y el balance de la tesis son cierre de serie, no de etapa 6 de 7; E7 repite el movimiento | Bajar E6 a cierre de etapa | ⬜ |
 | 4 | 🟠 | N | L.81–83 | La consulta pide memoria de una **viga** y la salida devuelve `memoria_viva.docx`: parece transposición | Confirmar contra la corrida o explicar el nombre | ⬜ |
@@ -354,11 +381,11 @@ bloque, el SVG y la prosa; frontmatter válido y `seriesPart` correlativo. **La 
 aparece en este post.** **No verificable:** el contenido real del `.docx`, el nombre del archivo y
 que el test exista.
 
-### 2026-07-26 · `blog/harness-estructural-e7-crear-modelos` · ❌ bloqueado — 18 (1🔴 · 5🟠 · 10🟡 · 2🔵)
+### 2026-07-26 · `blog/harness-estructural-e7-crear-modelos` · ⚠️ 18 (1🔴 · 5🟠 · 10🟡 · 2🔵) — 🔴 aplicado en `899bd0c`, desbloqueado
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | N | L.119–124 | Los números del contraste no pueden salir del modelo que la prosa dice: «al cambiar la viga el equilibrio cerró en **12.0/12.0**; al subir la muerta a 3 tonf/m pasó a **18 tonf**», y acto seguido «la secuencia: **crear el pórtico**…». Para el pórtico declarado la carga es $2\cdot6\cdot2\cdot2 = 48$ tonf (y 72 a 3 tonf/m); 12 y 18 corresponden a **una sola viga de 6 m** | Decidir el dato: cambiar «pórtico» por «viga», o poner 48 y 72 | ⬜ |
+| 1 | 🔴 | N | L.119–124 | Los números del contraste no pueden salir del modelo que la prosa dice: «al cambiar la viga el equilibrio cerró en **12.0/12.0**; al subir la muerta a 3 tonf/m pasó a **18 tonf**», y acto seguido «la secuencia: **crear el pórtico**…». Para el pórtico declarado la carga es $2\cdot6\cdot2\cdot2 = 48$ tonf (y 72 a 3 tonf/m); 12 y 18 corresponden a **una sola viga de 6 m** | Decidir el dato: cambiar «pórtico» por «viga», o poner 48 y 72 | ✅ aplicado en `899bd0c` — es un pórtico de 1 vano × 1 piso |
 | 2 | 🟠 | N/U | L.55, 121 | **12.0 se usa para dos magnitudes distintas y sin unidades**: momento ($wL^2/8$) y equilibrio de fuerzas. Y $wL^2/8 = 12$ no es reproducible: con la luz y carga del pórtico da 9.0 | Unidades en los tres contrastes y declarar luz y carga de la viga de prueba | ⬜ |
 | 3 | 🟠 | N/R | L.124 | $M_u = 9.64$ tonf·m no se deriva de ningún dato declarado (los candidatos dan 16.2, 23.4 o 7.8). El par $M_u$/uso **sí** es internamente coherente | Declarar modelo, barra y combo | ⬜ |
 | 4 | 🟠 | N | L.76 vs 18–20 | «transcripción perfecta de los **nueve** parámetros»: el pedido citado tiene **ocho** valores | Corregir a ocho o nombrar el noveno | ⬜ |
@@ -409,11 +436,11 @@ calza con el `Reshape`; `signed_sqrt` correcto; los seis textos de los SVG concu
 frontmatter, rango de páginas y estructura válidos. **Cumple la regla editorial**: enseña el
 mecanismo y las cifras son ilustración.
 
-### 2026-07-26 · `apuntes/deep-learning-with-python-cap13-series-de-tiempo` · ❌ bloqueado — 13 (1🔴 · 5🟠 · 6🟡 · 1🔵)
+### 2026-07-26 · `apuntes/deep-learning-with-python-cap13-series-de-tiempo` · ⚠️ 13 (1🔴 · 5🟠 · 6🟡 · 1🔵) — 🔴 aplicado en `899bd0c`, desbloqueado
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | N | L.24 vs 37 | Contradicción interna: **420 551** registros con split del 50 % dan `int(0.5·420 551) = 210 275`, no los **210 225** que declara. Con 420 451 el split da 210 225 exacto (y 105 112 / 105 114 el resto): el dígito transpuesto está en el conteo | Cambiar a **420 451** (o corregir 210 225 → 210 275) contra el PDF | ⬜ |
+| 1 | 🔴 | N | L.24 vs 37 | Contradicción interna: **420 551** registros con split del 50 % dan `int(0.5·420 551) = 210 275`, no los **210 225** que declara. Con 420 451 el split da 210 225 exacto (y 105 112 / 105 114 el resto): el dígito transpuesto está en el conteo | Cambiar a **420 451** (o corregir 210 225 → 210 275) contra el PDF | ✅ aplicado en `899bd0c` — la errata es del libro; se conservan ambas cifras |
 | 2 | 🟠 | N | L.213 vs 229 | Bases de porcentaje mezcladas: «+7 %» es sobre **validación** (6.97 %) y «+8,8 %» sobre **test** (8.78 %); el lector los compara creyendo que son la misma métrica | Unificar en test (6,5 % y 8,8 %) y declarar la base | ⬜ |
 | 3 | 🟠 | N/F | L.117 (`alt`) y SVG | La figura declara su eje como «MAE de **validación**» pero grafica el GRU con su MAE de **test** y deja el bidireccional sin valor: dos de siete filas fuera de la escala del eje | Poner los val MAE, o cambiar el eje a test | ⬜ |
 | 4 | 🟠 | C | L.2 vs 292–293 | El título dice «que **casi nadie** logra superar» y el propio «Para recordar» dice «**la mitad**» — que es lo correcto (3 de 6 lo cruzan) | Ajustar título y rótulo del SVG | ⬜ |
@@ -1975,7 +2002,7 @@ enlaces internos.
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🔴 | N | L.93-94 | **Contradicción interna en la validación del banco**: «el error de SAP contra el integrador queda **bajo 0.35 %** (el peor caso, $-1.5\,\%$…)». Si el peor caso es −1.5 %, la cota no es 0.35 %. Es la frase que sostiene toda la credibilidad del banco | Decidir el dato: o «bajo 0.35 % salvo un caso (−1.5 %, el más rígido con el recorte más suave, midiendo picos de 2 mm)», o corregir la cota al valor real del dataset | ⬜ |
+| 1 | 🔴 | N | L.93-94 | **Contradicción interna en la validación del banco**: «el error de SAP contra el integrador queda **bajo 0.35 %** (el peor caso, $-1.5\,\%$…)». Si el peor caso es −1.5 %, la cota no es 0.35 %. Es la frase que sostiene toda la credibilidad del banco | Decidir el dato: o «bajo 0.35 % salvo un caso (−1.5 %, el más rígido con el recorte más suave, midiendo picos de 2 mm)», o corregir la cota al valor real del dataset | ✅ aplicado en `aca98a1` (ya estaba resuelto; la fila quedó sin marcar) |
 | 2 | 🟠 | N F | L.3 (`description`) | «**63 osciladores elastoplásticos** —**9 períodos × 6 niveles de recorte**—»: 9 × 6 = **54**, no 63. Los 63 son 9 × 7 (1 elástico + 6 niveles de R) y solo 54 son elastoplásticos — el propio post lo dice en L.145 | «63 osciladores en SAP2000 —9 períodos × (1 elástico + 6 niveles de recorte)—» | ⬜ |
 | 3 | 🟠 | N | L.220-221 vs L.151 | La dispersión se declara dos veces con dos magnitudes: «$\delta_u/\delta_e$ va de **0.54 a 1.84**» (−46 %/+84 %) vs «su dispersión (**±50 %**)». El ±50 % no cubre el 1.84 que el propio post destaca | Unificar en «−46 %/+84 %», o declarar que el ±50 % es otra estadística y nombrarla | ⬜ |
 | 4 | 🟡 | N | L.135 (`caption`) | «$\delta_u$ = 0.124 m contra $\delta_e$ = 0.120 m (**+3.6 %**)»: con los valores publicados, 0.124/0.120 − 1 = **+3.3 %**. El +3.6 % solo sale sin redondear. Se repite en `factor-r-cierre` L.40 | Publicar +3.5 % (coherente con δe sin redondear) o dar una cifra más en δe; alinear el cierre | ⬜ |
