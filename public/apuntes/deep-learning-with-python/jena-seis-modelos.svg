@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', system-ui, Arial, sans-serif">
   <rect width="800" height="420" fill="#ffffff"/>
 
-  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Seis modelos sobre el mismo problema, y una línea que casi nadie cruza</text>
-  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Predecir la temperatura a 24 horas en Jena. MAE de validación en °C — menos es mejor</text>
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Seis modelos sobre el mismo problema, y una línea que la mitad no cruza</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Predecir la temperatura a 24 horas en Jena. MAE de validación en °C — menos es mejor. Los % de mejora van sobre test.</text>
 
   <!-- axis -->
   <line x1="250" y1="76" x2="250" y2="356" stroke="#d1d5db" stroke-width="1"/>
@@ -45,16 +45,16 @@
   <!-- 5. LSTM + recurrent dropout 2.27 -->
   <text x="242" y="278" text-anchor="end" font-size="11" font-weight="700" fill="#166534">LSTM(32) + recurrent dropout</text>
   <rect x="250" y="264" width="138" height="20" fill="#bbf7d0" stroke="#16a34a"/>
-  <text x="396" y="279" font-size="10.5" font-weight="700" fill="#166534">2,27 — el mejor (+7 % sobre el baseline)</text>
+  <text x="396" y="279" font-size="10.5" font-weight="700" fill="#166534">2,27 — el mejor (+6,5 % sobre la línea base en test)</text>
 
   <!-- 6. GRU stacked -> test 2.39 -->
   <text x="242" y="322" text-anchor="end" font-size="11" fill="#374151">GRU apilado + dropout</text>
-  <rect x="250" y="308" width="199" height="20" fill="#d1fae5" stroke="#059669"/>
-  <text x="482" y="323" font-size="10.5" fill="#065f46">test 2,39 — +8,8 % sobre el baseline en test</text>
+  <rect x="250" y="308" width="199" height="20" fill="#d1fae5" stroke="#059669" stroke-dasharray="4 3"/>
+  <text x="482" y="323" font-size="10.5" fill="#065f46">test 2,39 (+8,8 %) — el libro no publica su val MAE, barra fuera del eje</text>
 
   <!-- 7. bidireccional -->
   <text x="242" y="352" text-anchor="end" font-size="11" fill="#374151">LSTM bidireccional</text>
-  <text x="256" y="352" font-size="10.5" fill="#b91c1c">peor que el LSTM simple — la mitad anticronológica no aporta y duplica la capacidad</text>
+  <text x="256" y="352" font-size="10.5" fill="#b91c1c">sin valor publicado — peor que el LSTM simple: la mitad anticronológica no aporta y duplica la capacidad</text>
 
   <!-- footer note -->
   <rect x="20" y="386" width="760" height="26" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>

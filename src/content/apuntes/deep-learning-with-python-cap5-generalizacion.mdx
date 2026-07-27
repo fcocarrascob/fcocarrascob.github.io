@@ -229,13 +229,17 @@ queda atascado en 20–40 % de accuracy; bajándolo a `1e-2`, entrena sin proble
 **(2) Entrena, pero no le gana a la línea base.** *"Esta es quizás la peor
 situación en la que puedes estar. Indica que algo está fundamentalmente mal con tu
 enfoque, y puede no ser fácil saber qué."* O los datos no contienen la
-información para predecir el target —el caso de las etiquetas barajadas—, o el
-tipo de modelo no corresponde: **necesitas los priors de arquitectura
-adecuados**.
+información para predecir el target —el caso de las **etiquetas barajadas**, donde
+*"el modelo entrenaría perfectamente bien pero la accuracy de validación se quedaría
+clavada en el 10 %"*—, o el tipo de modelo no corresponde: **necesitas los priors de
+arquitectura adecuados**.
 
 **(3) Entrena y generaliza, pero no logras overfittear.** El síntoma es que la
 validación se estanca en vez de hacer pico y revertir. Es un problema de
-**capacidad**: el modelo no puede almacenar suficiente información. Se arregla
+**capacidad**: el modelo no puede almacenar suficiente información. El ejemplo del
+libro es una regresión logística sobre MNIST: *"la pérdida de validación baja a
+**0,26** y ahí se queda"*; con dos capas de 128 en su lugar, el modelo *"empieza a
+overfittear después de **ocho épocas**"*, que es justo lo que se buscaba. Se arregla
 con más capas, capas más grandes o mejores priors. *(Y también existe demasiada
 capacidad: "sabrás que tu modelo es demasiado grande si empieza a overfittear de
 inmediato".)*

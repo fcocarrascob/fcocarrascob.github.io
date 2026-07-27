@@ -39,6 +39,14 @@ financiamiento. Y el momento en que el campo cambia de método:
 Con la broma de Jelinek en los 90 de remate: *"Cada vez que despido a un lingüista,
 el rendimiento del reconocedor de voz sube."*
 
+<Note type="info" title="Sobre el código de este capítulo">
+Todos los bloques son **Keras 3** —la API multi-backend de la 3ª edición—, con el backend por
+defecto (**TensorFlow**); el libro corre igual sobre PyTorch o JAX cambiando `KERAS_BACKEND`. Vale
+decirlo porque varias de estas llamadas son de Keras 3 y no existen en `tf.keras` — entre ellas
+`output_mode="multi_hot"` de `TextVectorization` y el `embeddings.assign()` con que se cargan los
+pesos preentrenados.
+</Note>
+
 ## 1. Tokenizar son tres cosas, no una
 
 ```
@@ -208,7 +216,7 @@ representación no enmascarada"*.
 
 <Figure
   src="/apuntes/deep-learning-with-python/imdb-parametros-accuracy.svg"
-  alt="Tabla con barras horizontales de cinco modelos sobre IMDb, mostrando parámetros y accuracy de test. Bag-of-words de unigramas, una sola capa Dense sobre multi-hot: 20 001 parámetros, 88,4 %, barra verde. Bigramas, lo mismo pero con el vocabulario admitiendo pares: 30 001 parámetros, 90,1 %, la barra más larga y marcada como el mejor. LSTM bidireccional con one-hot, con la nota de 18 000 000 de floats por review: 15 393 409 parámetros, 84,8 %, barra roja muy corta. LSTM bidireccional con Embedding aprendido, 10 veces más chico y con la misma accuracy: 1 986 177 parámetros, 84,4 %, la barra más corta. LSTM bidireccional con Embedding preentrenado por CBOW, los mismos pesos y otra inicialización: 1 986 177 parámetros, 89,1 %, barra azul. Al pie: no es que el orden no sirva, es que no hay datos suficientes para aprenderlo; el LSTM llega a 99 % en entrenamiento antes de haber aprendido buenos embeddings, y preentrenar sobre texto sin etiquetar recupera casi cinco puntos sin tocar la arquitectura."
+  alt="Tabla con barras horizontales de cinco modelos sobre IMDb, mostrando parámetros y accuracy de test. Bag-of-words de unigramas, una sola capa Dense sobre multi-hot: 20 001 parámetros, 88,4 %, barra verde. Bigramas, lo mismo pero con el vocabulario admitiendo pares: 30 001 parámetros, 90,1 %, la barra más larga y marcada como el mejor. LSTM bidireccional con one-hot, con la nota de 18 000 000 de floats por review: 15 393 409 parámetros, 84,8 %, barra roja muy corta. LSTM bidireccional con Embedding aprendido, casi 8 veces más chico y con la misma accuracy: 1 986 177 parámetros, 84,4 %, la barra más corta. LSTM bidireccional con Embedding preentrenado por CBOW, los mismos pesos y otra inicialización: 1 986 177 parámetros, 89,1 %, barra azul. Al pie: no es que el orden no sirva, es que no hay datos suficientes para aprenderlo; el LSTM llega a 99 % en entrenamiento antes de haber aprendido buenos embeddings, y preentrenar sobre texto sin etiquetar recupera casi cinco puntos sin tocar la arquitectura."
   caption="Las dos barras verdes de arriba no tienen ninguna noción de secuencia. Las tres de abajo sí, y dos de ellas pierden."
   width={800}
 />
@@ -232,8 +240,10 @@ La solución no es más arquitectura, es más datos — **sin necesidad de etiqu
 > generales del lenguaje, **cebando efectivamente el modelo antes de especializarlo**."*
 
 Y aquí vuelve el directorio **`unsup/`** de IMDb, que se había descartado al
-principio: otras **25 000 reviews sin etiquetar**, del mismo tamaño que los datos de
-entrenamiento, ahora perfectamente usables.
+principio: otras **25 000 reviews sin etiquetar**, ahora perfectamente usables. El libro las
+describe como «del mismo tamaño que nuestros datos de entrenamiento», comparándolas con el set
+original de 25 000; después del corte de validación el entrenamiento real son **20 000**, así que
+el `unsup/` es un 25 % más grande que lo que efectivamente se entrena.
 
 **CBOW** (*Continuous Bag of Words*, Mikolov et al., 2013): deslizar una ventana de
 9 tokens y **adivinar la palabra del medio a partir de las 8 vecinas, desordenadas**.

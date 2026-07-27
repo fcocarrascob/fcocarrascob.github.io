@@ -32,6 +32,14 @@ De ahí la regla: **usa detección siempre que no necesites información a nivel
 píxel** — por ejemplo, si todo lo que quieres es contar.
 </Note>
 
+<Note type="info" title="Sobre el código de este capítulo">
+Todos los bloques son **Keras 3** —la API multi-backend de la 3ª edición—, con el backend por
+defecto (**TensorFlow**); el libro corre igual sobre PyTorch o JAX cambiando `KERAS_BACKEND`. Los
+modelos preentrenados vienen de **`keras-hub`**, que se instala aparte (`pip install keras-hub`).
+Vale decirlo porque varias de estas llamadas no existen o se escriben distinto en `tf.keras` y en
+el viejo `keras_cv`.
+</Note>
+
 ## 1. Dos etapas y una etapa
 
 Un **R-CNN** (*region-based ConvNet*) trabaja en dos pasos. Primero produce **unos
@@ -232,5 +240,5 @@ distribución**, y por una razón estructural.
 
 Con esto termina la sección de visión: clasificadores, segmentadores y detectores,
 todos entrenados desde cero. El **capítulo 13** cambia de tipo de dato y arranca
-con series de tiempo — donde, por primera vez en el libro, **un baseline de una
-línea le va a ganar a casi todo**.
+con series de tiempo — donde, por primera vez en el libro, **una línea base de una
+línea deja fuera a la mitad de los modelos que le tiran encima**.
