@@ -126,7 +126,7 @@
   <text x="456" y="182" font-size="11.5" fill="#1a63a8" font-weight="bold">9.5.3 — La zona de protección es el mayor de dos criterios</text>
   <text x="456" y="203" font-size="10" fill="#333">a)  lado menor del pedestal</text>
   <text x="840" y="203" font-size="10.5" text-anchor="end" fill="#1a63a8" font-weight="bold">100 cm  ← gobierna</text>
-  <text x="456" y="222" font-size="10" fill="#333">b)  altura de llave (15) + proyección a 45° hasta la cara (35)</text>
+  <text x="456" y="222" font-size="10" fill="#333">b)  altura embebida de la llave (15) + proyección a 45° (35)</text>
   <text x="840" y="222" font-size="10.5" text-anchor="end" fill="#666">50 cm</text>
   <line x1="456" y1="233" x2="840" y2="233" stroke="#c3d3e6" stroke-width="1"/>
   <text x="456" y="252" font-size="10" fill="#333">Estribos en toda la altura</text>

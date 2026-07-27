@@ -66,18 +66,18 @@
   <path d="M492 260 l16 0 M494 265 l12 0" stroke="#555" stroke-width="1.6"/>
   <path d="M792 260 l16 0 M794 265 l12 0" stroke="#555" stroke-width="1.6"/>
 
-  <text x="548" y="238" font-size="10.5" fill="#c07a00" font-weight="bold">0,3 P_ne = 30,24 tonf</text>
+  <text x="548" y="238" font-size="10.5" fill="#c07a00" font-weight="bold">0,3 P_ne = 59,47 tonf</text>
   <text x="504" y="278" font-size="8.5" fill="#8a6d20">capacidad residual — ya pandeó</text>
-  <text x="768" y="238" font-size="10.5" text-anchor="end" fill="#c0392b" font-weight="bold">T_ye = 125,44 tonf</text>
+  <text x="768" y="238" font-size="10.5" text-anchor="end" fill="#c0392b" font-weight="bold">T_ye = 249,96 tonf</text>
   <text x="796" y="278" font-size="8.5" text-anchor="end" fill="#8a2f24">capacidad esperada — aún no fluye</text>
 
   <!-- resultante vertical -->
   <line x1="650" y1="116" x2="650" y2="174" stroke="#c0392b" stroke-width="4" marker-end="url(#rd)"/>
-  <text x="690" y="148" font-size="12" fill="#c0392b" font-weight="bold">67,32 tonf</text>
+  <text x="690" y="148" font-size="12" fill="#c0392b" font-weight="bold">134,70 tonf</text>
   <text x="690" y="161" font-size="8.5" fill="#8a2f24">= (T_ye − 0,3P_ne) · sen 45°</text>
   <!-- resultante axial -->
   <line x1="655" y1="98" x2="740" y2="98" stroke="#1a63a8" stroke-width="2.4" marker-end="url(#bl)"/>
-  <text x="748" y="102" font-size="9.5" fill="#1a63a8" font-weight="bold">N = 110,08 tonf</text>
+  <text x="748" y="102" font-size="9.5" fill="#1a63a8" font-weight="bold">N = 218,81 tonf</text>
 
   <!-- diagrama de momento, MISMA escala -->
   <text x="460" y="316" font-size="10.5" fill="#333" font-weight="bold">Momento en la viga <tspan font-weight="normal" fill="#666">— misma escala que A</tspan></text>
@@ -85,14 +85,14 @@
   <path d="M500 340 L537 364 L575 387 L612 409 L650 430 L687 409 L725 387 L762 364 L800 340 Z"
         fill="#c0392b" opacity="0.28" stroke="#c0392b" stroke-width="1.4"/>
   <line x1="650" y1="430" x2="712" y2="430" stroke="#c0392b" stroke-width="0.9" stroke-dasharray="3 3"/>
-  <text x="718" y="434" font-size="12.5" fill="#c0392b" font-weight="bold">146,64 tonf·m</text>
+  <text x="718" y="434" font-size="12.5" fill="#c0392b" font-weight="bold">281,39 tonf·m</text>
 
   <rect x="460" y="452" width="340" height="30" rx="4" fill="#fdecea" stroke="#c0392b" stroke-width="1.1"/>
-  <text x="630" y="472" font-size="11" text-anchor="middle" fill="#c0392b" font-weight="bold">Z requerido = 6 440 cm³ — fuera del catálogo ICHA</text>
+  <text x="630" y="472" font-size="11" text-anchor="middle" fill="#c0392b" font-weight="bold">Con el techo de 0,7R₁: M = 70,44 tonf·m</text>
 
   <!-- ================= RAZÓN ================= -->
   <rect x="40" y="500" width="800" height="42" rx="5" fill="#fff8e6" stroke="#c07a00" stroke-width="1.2"/>
-  <text x="60" y="519" font-size="12" fill="#c07a00" font-weight="bold">48,9 ×</text>
-  <text x="118" y="519" font-size="10.5" fill="#5a4a20">es la razón entre los dos momentos. Tan grande porque en un chevron el modelo elástico casi no le pone flexión a la viga:</text>
-  <text x="118" y="534" font-size="10.5" fill="#5a4a20">las diagonales le entregan <tspan font-weight="bold">axial</tspan>, y el apoyo central se lleva la gravedad. La flexión aparece recién cuando ese apoyo desaparece.</text>
+  <text x="60" y="519" font-size="12" fill="#c07a00" font-weight="bold">93,8 ×</text>
+  <text x="118" y="519" font-size="10.5" fill="#5a4a20">es la razón entre los dos momentos —antes de los techos de 8.6.6—. Tan grande porque en un chevron el modelo elástico casi</text>
+  <text x="118" y="534" font-size="10.5" fill="#5a4a20">no le pone flexión a la viga: le entrega <tspan font-weight="bold">axial</tspan>. Con el techo de 0,7R₁ el momento de diseño baja a 70,44 tonf·m y la razón a <tspan font-weight="bold">23,5 ×</tspan>.</text>
 </svg>
