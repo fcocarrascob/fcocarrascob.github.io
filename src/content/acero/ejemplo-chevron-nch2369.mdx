@@ -1,0 +1,484 @@
+---
+title: "Ejemplo — El paño en V invertida: la viga que el análisis elástico no ve (NCh2369 8.6)"
+description: "La viga de un chevron no se diseña con las fuerzas del modelo. NCh2369 8.6.6 la manda diseñar por equilibrio en el instante posterior al pandeo —comprimida en 0,3P_ne, traccionada en T_ye— y sin contar las diagonales como apoyo: el momento pasa de 3,00 a 281,39 tonf·m, casi 94 veces. Con el Ry nacional de 1,3, la exención de 8.6.3 que resulta más cara que cumplir, el techo de 0,7R₁ que baja el momento un 75 %, y la viga que el catálogo ICHA sí tiene —H 600×300×138,5— pero con el alma no compacta bajo el axial."
+pubDate: 2026-07-27
+tags: ["ejemplo", "acero", "nch2369", "marcos arriostrados", "chevron", "diseño por capacidad", "capacidad esperada", "pandeo", "industrial", "sensibilidad"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.3 / 8.6 — Marcos arriostrados"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Toma el paño arriostrado, calcula la viga con las fuerzas del análisis y mira el resultado:
+apoyada en el centro por las dos diagonales, solo flecta por gravedad sobre dos medias luces.
+Un momento ridículo. Cualquier perfil sirve.
+
+Ese resultado es correcto, y es **irrelevante para el diseño**. La cláusula **8.6.6** de
+NCh2369:2025[^nch] ordena diseñar esa viga en un estado que el modelo no puede mostrar —porque
+el modelo es lineal y no sabe que una diagonal pandeó—:
+
+> *«En configuraciones con arriostramiento en V o V invertida, la viga debe ser continua en la
+> conexión con las diagonales y se debe diseñar considerando que las diagonales no constituyen
+> un apoyo vertical para cargas gravitacionales. El efecto sísmico en la viga se debe determinar
+> por equilibrio considerando que la diagonal comprimida presenta su capacidad residual y la
+> diagonal traccionada presenta su capacidad esperada.»*
+
+Es el instante en que **una diagonal ya pandeó** —y cayó a su capacidad residual $0{,}3P_{ne}$—
+y **la otra todavía no fluye** —está en su capacidad esperada $T_{ye}$—. La diferencia entre las
+dos es vertical, cae en el centro de una viga que en ese momento no tiene apoyo ahí, y **no
+aparece en ningún resultado del análisis**.
+
+En este ejemplo el momento pasa de **3,00 a 281,39 tonf·m**: casi noventa y cuatro veces. Pero
+la segunda mitad es igual de importante que la primera, y es la que casi nunca se cuenta: ese
+número crudo no es el de diseño, porque la propia cláusula pone dos techos. Con ellos baja a
+70,44 tonf·m, y ahí sí hay una viga que existe.
+
+<Note type="info" title="Este ejemplo continúa el del pedestal">
+El comentario **C8.3.4**, al definir la «máxima carga que el sistema puede transferir» —el
+segundo techo de 8.6.6—, nombra entre los límites locales el *«estiramiento de pernos de
+anclaje»*. Es decir: el anclaje del
+[ejemplo del pedestal](/hormigon/ejemplo-pedestal-anclaje-nch2369) es uno de los techos de
+**este** cálculo. Los dos posts son las dos mitades del mismo marco.
+</Note>
+
+## El caso
+
+Paño arriostrado en **V invertida** de una nave industrial, **Categoría II**. Las diagonales
+suben desde las bases de las columnas y se juntan en el centro de la viga superior, que forma
+parte de una plataforma de operación.
+
+| Dato | Valor |
+|---|---|
+| Geometría | Luz $L = 8{,}00$ m, entrepiso $H = 4{,}00$ m → diagonal de $5{,}657$ m a **45°** |
+| Acero | ASTM A36: $F_y = 2\,530$ kgf/cm², $E = 2\,039\,000$ kgf/cm² |
+| **Factor de fluencia esperada** | $R_y = \mathbf{1{,}30}$ — el valor **nacional** de C8.3.3[^ry] → $F_{ye} = 3\,289$ kgf/cm² |
+| Sistema sísmico | Tabla 7, línea 5.3: marco arriostrado con anclajes dúctiles → $R = 5$ |
+| Factor efectivo | $R_1 = 4{,}0$ → $\mathbf{0{,}7R_1 = 2{,}80}$ |
+| Del análisis | Axial de la diagonal por $E$ (nivel reducido): $P_E = 36{,}0$ tonf · gravedad sobre la viga $w = 1{,}5$ tonf/m |
+| Arriostramiento lateral | Vigas secundarias de la plataforma cada $2{,}0$ m |
+| Factores | $\phi_c = \phi_b = \phi_t = 0{,}90$ (NCh427/1) |
+
+El corte sísmico de la línea resistente se deduce de esos mismos datos:
+$Q = 2P_E\cos\alpha = 50{,}9$ tonf.
+
+## 1. Antes de la viga: elegir la diagonal, que no es libre
+
+Por resistencia, un cajón conformado en frío **[] 200×200×5,0** del catálogo ICHA (Tabla 2.1.9)
+sobra: $A_g = 38{,}14$ cm², $\phi P_n = 66{,}35$ tonf contra los 36,0 tonf del análisis, uso
+**0,54**. Una diagonal perfectamente normal.
+
+La cláusula 8.6.3 le pide además dos cosas, y la primera la deja fuera.
+
+<Equation label="Tabla 9 — pandeo local">
+$$
+\lambda_{md} = 0{,}76\sqrt{\frac{E}{R_y F_y}} = 0{,}76\sqrt{\frac{2\,039\,000}{1{,}30 \cdot 2\,530}} = 18{,}9
+$$
+</Equation>
+
+Contra $b/t = 35{,}0$: **no cumple**, por $35{,}0/18{,}9 = 1{,}85$ veces el límite. La esbeltez
+global, en cambio, holga:
+
+<Equation label="Sec. 8.6.3 — esbeltez global">
+$$
+\frac{L_c}{r} = \frac{565{,}7}{7{,}91} = 71{,}5 \;\le\; 1{,}5\,\pi\sqrt{\frac{E}{F_y}} = 133{,}8
+$$
+</Equation>
+
+Ese límite es exactamente **1,5 veces la esbeltez de transición de Euler** $\pi\sqrt{E/F_y} =
+89{,}2$: la norma acepta diagonales hasta un 50 % más esbeltas que el punto donde la tensión de
+Euler iguala a la fluencia.
+
+### Las dos puertas de 8.6.3, y las dos cerradas
+
+Ante un $\lambda_{md}$ que no se cumple, la cláusula deja dos salidas.
+
+**Puerta 1 — cambiar la sección.** El catálogo chileno de cajón conformado en frío **se corta en
+6 mm de espesor**, y con ese tope solo pasan las secciones chicas:
+
+| Perfil (ICHA Tabla 2.1.9) | $b/t$ | 8.6.3 |
+|---|:---:|:---:|
+| [] 200×200×5 | 35,0 | ✗ |
+| [] 150×150×5 | 25,0 | ✗ |
+| [] 135×135×6 | 17,5 | ✓ |
+| [] 100×100×6 | 11,7 | ✓ |
+
+**Puerta 2 — la exención.** Quedan exceptuadas *«aquellas diagonales cuya resistencia requerida
+sea determinada utilizando las combinaciones de cargas definidas en 4.5, en las cuales el estado
+de carga sísmico horizontal ha sido amplificado por $0{,}7R_1 \ge 1{,}0$»*. Es la misma
+bifurcación del [pedestal](/hormigon/ejemplo-pedestal-anclaje-nch2369): o la sección es dúctil, o
+se diseña para más carga. **Y hay que verificarla:**
+
+<Equation label="La exención, verificada">
+$$
+P_u = 0{,}7R_1 \cdot P_E = 2{,}80 \cdot 36{,}0 = 100{,}80 \ \text{tonf}
+\;>\;
+\phi P_n = 66{,}35 \ \text{tonf}
+\qquad \text{uso } 1{,}52
+$$
+</Equation>
+
+**Tampoco.** La misma diagonal que con el sismo reducido iba al 0,54 se va a 1,52 cuando hay que
+diseñarla con el sismo amplificado. La exención no es una puerta de escape gratis: es un cambio
+de nivel de carga de 2,80 veces, y muy pocas secciones lo aguantan sin crecer.
+
+Con las dos puertas cerradas, el [] 200×200×5,0 **no es una solución**. Hay que soldar.
+
+**Cajón soldado de cuatro planchas [] 200×200×10:**
+
+| | |
+|---|---|
+| $A_g = 76{,}0$ cm² · $r = 7{,}77$ cm · peso 60 kgf/m | $b/t = 18{,}0 \le 18{,}9$ ✓ · $L_c/r = 72{,}8 \le 133{,}8$ ✓ |
+| Vuelve a ser fusible, así que se diseña con $E$ reducido por $R$ | $36{,}0 / \phi P_n = 36{,}0/130{,}9 =$ **uso 0,28** |
+
+Uso 0,28: **a esta diagonal la dimensiona la ductilidad, no la resistencia.** Es el precio de
+entrada al $R = 5$ con que se calculó todo el marco.
+
+<Note type="tip" title="El R_y nacional tira para lados distintos según la cláusula">
+Con el $R_y = 1{,}5$ de AISC 341-16 el límite de pandeo local bajaría a **17,6**, y ni el cajón
+soldado de 10 mm pasaría. En esta verificación el **1,3 nacional es el menos exigente** de los
+dos. En §8 se verá lo contrario: en el desequilibrio de 8.6.6, el 1,3 es el que da el resultado
+más conservador. El mismo factor, dos direcciones.
+</Note>
+
+## 2. Las capacidades esperadas (8.3.1)
+
+Todo lo que sigue se apoya en tres números que **no son resistencias de diseño**. C8.3.1 insiste
+en eso: son estimaciones de la carga que el elemento traspasa en el instante de plastificar, y se
+usan «*siempre como límites para demandas de diseño, y no son aplicables a la definición de
+resistencias disponibles de los elementos*».
+
+<Equation label="Sec. 8.3.1 — tracción esperada">
+$$
+T_{ye} = F_{ye}A_g = 3\,289 \cdot 76{,}0 = 249{,}96 \ \text{tonf}
+$$
+</Equation>
+
+Para la compresión hay que recorrer la curva de columna **evaluándola con $F_{ye}$ en lugar de
+$F_y$** — eso es lo que significa $F_{cre}$:
+
+<Equation label="Sec. 8.3.1 — compresión esperada">
+$$
+F_e = \frac{\pi^2 E}{(L_c/r)^2} = 3\,794 \ \text{kgf/cm}^2 \quad\Rightarrow\quad
+F_{cre} = 0{,}658^{\,F_{ye}/F_e}F_{ye} = 2\,288 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Sec. 8.3.1 — nominal y residual">
+$$
+P_{ne} = 1{,}14\,F_{cre}A_g = 198{,}25 \ \text{tonf}
+\qquad
+0{,}3\,P_{ne} = 59{,}47 \ \text{tonf}
+$$
+</Equation>
+
+## 3. El desequilibrio que el análisis no ve (8.6.6)
+
+En el ápice concurren las dos diagonales. La traccionada tira del nudo hacia su base; la
+comprimida —ya pandeada— lo empuja alejándolo de la suya. Tomando **positivo hacia arriba**, con
+ambas a 45°:
+
+<Equation label="Equilibrio del nudo — vertical">
+$$
+V = \sin\alpha\,(0{,}3P_{ne} - T_{ye}) = 0{,}7071\,(59{,}47 - 249{,}96) = -134{,}70 \ \text{tonf}
+$$
+</Equation>
+
+<Equation label="Equilibrio del nudo — axial">
+$$
+N = \cos\alpha\,(T_{ye} + 0{,}3P_{ne}) = 0{,}7071 \cdot 309{,}43 = 218{,}81 \ \text{tonf}
+$$
+</Equation>
+
+**134,70 tonf hacia abajo**, en el centro de la viga. Y 218,81 tonf de axial, que C8.6.6 recuerda
+que también hay que considerar porque «*podría producir pandeo*».
+
+<Figure
+  src="/ejemplos/chevron-nch2369-dos-estados.svg"
+  alt="Dos paneles comparando los dos estados del mismo paño arriostrado en V invertida. Panel izquierdo, el análisis elástico: las dos diagonales trabajan y apoyan la viga en su punto medio, de modo que la viga solo flecta por gravedad sobre dos medias luces y su diagrama de momentos, dibujado abajo, alcanza apenas 3,00 tonf·m de momento negativo sobre el apoyo central. Panel derecho, el estado que ordena la cláusula 8.6.6: la diagonal izquierda aparece pandeada con su capacidad residual de 59,47 tonf y la derecha traccionada con su capacidad esperada de 249,96 tonf; la resta de ambas da una fuerza vertical de 134,70 tonf aplicada en el centro de una viga que ya no tiene apoyo ahí, más una resultante axial de 218,81 tonf, y el diagrama de momentos, dibujado a la misma escala que el anterior, llega a 281,39 tonf·m. Al pie, la razón entre ambos, 93,8 veces, y la aclaración de que con el techo de 0,7R1 el momento de diseño baja a 70,44 tonf·m y la razón a 23,5 veces."
+  caption="El mismo paño, los dos estados. El de la izquierda es el que entrega el modelo; el de la derecha, el que manda plantear la norma antes de aplicar sus techos. Los dos diagramas de momento están a la misma escala."
+/>
+
+Con la viga **sin apoyo central**, simplemente apoyada entre columnas:
+
+| | Momento |
+|---|:---:|
+| Gravedad, $wL^2/8$ | 12,00 tonf·m |
+| Desequilibrio, $PL/4$ | 269,39 tonf·m |
+| **Total** | **281,39 tonf·m** |
+| Lo que entregaba el análisis elástico ($wL^2/32$) | 3,00 tonf·m |
+| **Razón** | **93,8 ×** |
+
+<Note type="warning" title="Los dos momentos no están en la misma sección">
+Los 3,00 tonf·m son el momento **negativo sobre el apoyo central** de una viga continua de dos
+tramos de 4 m; los 281,39 son el **positivo en el centro del vano** de 8 m. La razón compara los
+picos de $|M|$ de cada estado, que es lo que dimensiona, pero conviene tener claro que están en
+secciones distintas y con signos opuestos. Y los 3,00 no son una lectura de modelo: son la
+fórmula cerrada de la viga continua con apoyo central **rígido**; en un modelo real la diagonal
+es un resorte y el valor sería algo distinto —más chico aún cuanto más flexible la diagonal—.
+</Note>
+
+## 4. Los dos techos de 8.6.6
+
+La cláusula no termina en el desequilibrio. Sigue con dos límites, y hay que aplicarlos en
+orden, porque no son el mismo techo.
+
+**Techo 1 — sobre la fuerza.** *«La tracción en la diagonal no necesita ser mayor que aquella
+determinada utilizando las combinaciones de cargas definidas en 4.5, en las cuales el estado de
+carga sísmico horizontal ha sido amplificado por $0{,}7R_1 \ge 1{,}0$.»*
+
+<Equation label="Techo 1">
+$$
+T = \min\big(\underbrace{249{,}96}_{T_{ye}};\ \underbrace{2{,}80 \cdot 36{,}0 = 100{,}80}_{4.5 \text{ con } 0{,}7R_1}\big) = 100{,}80 \ \text{tonf}
+$$
+</Equation>
+
+El techo muerde, y fuerte. El desequilibrio baja a $0{,}7071\,(100{,}80 - 59{,}47) = 29{,}22$
+tonf, el axial a 113,33 tonf y el momento a **70,44 tonf·m** — un **75 % menos**, y la razón
+contra el modelo elástico cae de 93,8 a **23,5 ×**. Nótese que el techo aplica **solo a la
+tracción**: la capacidad residual de la comprimida no tiene tope, y eso tendrá consecuencias
+en §8.
+
+**Techo 2 — sobre el elemento.** *«La resistencia requerida de la viga… no necesita ser mayor
+que la máxima carga que el sistema le puede transferir.»* C8.3.4 explica que ese límite lo fijan
+las plastificaciones que ocurren **antes** en el camino de las fuerzas, y enumera: pandeo de
+diagonales y su fluencia en tracción, plastificación flexural de vigas y columnas en marcos de
+momento, **estiramiento de pernos de anclaje**, fallas en uniones y levantamiento de fundaciones.
+Evaluarlo exige metodologías no lineales —*pushover*, THNL— así que acá no se cuantifica; pero
+conviene saber que existe, y que en una nave con anclajes dúctiles bien detallados suele ser
+**el** techo que gobierna.
+
+## 5. La viga
+
+Demanda de diseño: $M_r = 70{,}44$ tonf·m y $N_r = 113{,}33$ tonf **simultáneos**, con
+arriostramiento lateral cada 2,0 m.
+
+**La que uno elegiría por gravedad no da.** El H 400×200×109,5 —el más pesado de la familia que
+un proyectista escogería mirando solo el modelo elástico— queda en:
+
+| H 400×200×109,5 | |
+|---|---|
+| $\phi P_n = 293{,}6$ tonf · $\phi M_n = 52{,}8$ tonf·m | Ala y alma compactas · $L_p = 258 > L_b = 200$ cm |
+| **H1-1a**: $P_r/P_c + \tfrac{8}{9}(M_r/M_c) = 0{,}386 + \tfrac{8}{9}(1{,}333)$ | **uso 1,57 ✗** |
+
+**Pero el catálogo sí la tiene.** La Tabla 2.1.1 del ICHA va de H 1100×600 a H 200×100 —52
+familias—, así que no hay que soldar nada a medida: hay que **subir de familia**.
+
+<Figure
+  src="/ejemplos/chevron-nch2369-viga.svg"
+  alt="Comparación de tres secciones de viga del catálogo ICHA dibujadas a escala una junto a otra sobre una línea de base común. A la izquierda, el H 400 por 200 por 109,5 que uno elegiría mirando solo el modelo elástico, con 400 mm de altura, alas de 28 mm y alma de 8 mm, marcado en rojo con uso 1,57 y la leyenda de que no cumple. Al centro, el H 600 por 300 por 129,4, la más liviana del catálogo que cumple, con 600 mm de altura, alas de 20 mm y alma de 8 mm, uso 0,99. A la derecha, el H 600 por 300 por 138,5 que se adopta, con alas de 22 mm, uso 0,92. Bajo cada sección se listan área, módulo plástico, radio de giro y la razón alma sobre espesor. Una barra horizontal compara los pesos: 109,5, 129,4 y 138,5 kilos por metro. Un recuadro al pie advierte que las tres secciones del catálogo en este rango tienen almas de 8 milímetros y quedan no compactas bajo el axial, de modo que el momento nominal se calcula por la sección F4 con el factor Rpc y no como el momento plástico."
+  caption="No hay salto fuera del catálogo: hay salto de familia. La viga existe en la Tabla 2.1.1 del ICHA, pero pesa un 26 % más que la que sugiere el modelo elástico — y su alma queda no compacta bajo el axial."
+/>
+
+| | $A$ (cm²) | $Z_x$ (cm³) | $h/t_w$ | $\phi P_n$ | $\phi M_n$ | Uso |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| H 400×200×109,5 | 139,5 | 2 320 | 43,0 | 293,6 | 52,8 | **1,57 ✗** |
+| H 600×300×129,4 | 164,8 | 4 107 | 70,0 | 361,1 | 93,1 | 0,99 ✓ |
+| **H 600×300×138,5** | 176,5 | 4 433 | 69,5 | 387,0 | 100,6 | **0,92 ✓** |
+
+Se adopta el **H 600×300×138,5** —un escalón sobre el mínimo, para no cerrar en 0,99—: **+26 %
+de peso** sobre el H 400×200, y 600 mm de altura contra 400.
+
+<Note type="warning" title="El alma queda no compacta, y el catálogo chileno la tiene fina">
+Con $N_r = 113{,}33$ tonf, $C_a = P_r/(\phi_c P_y) = 0{,}282 > 0{,}125$, así que el límite de
+compacidad del alma **no** es el de flexión pura ($3{,}76\sqrt{E/F_y} = 106{,}7$) sino el de
+flexo-compresión:
+
+$$
+\lambda_{pw} = 1{,}12\sqrt{E/F_y}\,(2{,}33 - C_a) = 65{,}1
+$$
+
+y $h/t_w = 69{,}5 > 65{,}1$: **alma no compacta**. Hay que ir por la Sec. F4 con el factor de
+plastificación $R_{pc} = 1{,}088$, que da $M_n = 111{,}7$ tonf·m contra los 112,2 de $M_p$ — un
+0,4 % de castigo, despreciable acá, pero que hay que calcular para saberlo.
+
+No es una casualidad de esta sección: **todas** las H del catálogo en este rango tienen almas de
+8 mm y quedan no compactas bajo este axial (la primera compacta es la H 700×300×237,1, con alma
+de 10 mm). El catálogo chileno de perfiles soldados está optimizado para flexión; un chevron le
+mete axial.
+
+Para el ala rige la fila de elementos **no atiesados** de la Tabla 9 —«alas de perfiles soldados
+o laminados tipos I, H»—, no la de secciones cajón: $0{,}40\sqrt{E/(R_yF_y)} = 9{,}96$, y
+$b/2t_f = 6{,}8$ cumple.
+</Note>
+
+## 6. Lo que 8.6.6 agrega y casi nadie pone
+
+Tres exigencias que viven en la misma cláusula, se leen en diagonal y no aparecen en los planos:
+
+<Equation label="Sec. 8.6.6 — apoyo lateral">
+$$
+F_{transv} = 0{,}02\,P_{ne} = 0{,}02 \cdot 198{,}25 = 3{,}96 \ \text{tonf}
+$$
+</Equation>
+
+aplicada **fuera del plano**, en el punto de unión con la diagonal comprimida. C8.6.6 advierte
+que cuando la viga forma parte de una plataforma el requisito se resuelve solo con las vigas
+secundarias —es nuestro caso—, pero que «*en aquellos casos en que no exista plataforma, este
+requisito podría resultar más exigente y al mismo tiempo más importante*».
+
+**La excentricidad** entre los puntos de trabajo de las diagonales, medida sobre el eje de la
+viga, debe ser $\le 2$ veces la altura de la viga: con la H 600, **1,20 m**.
+
+**La conexión viga-columna** se diseña para los esfuerzos **simultáneos** de la condición que
+controle el diseño de la viga — es decir, los 70,44 tonf·m y los 113,33 tonf a la vez, no cada
+uno por su lado.
+
+## 7. El resto de la cadena
+
+| Cláusula | Verificación | Resultado |
+|---|---|---|
+| **8.6.2** | Las traccionadas dan ≥ 30 % del corte de la línea | $\phi T_n\cos\alpha = 122{,}4$ tonf contra 30 % de 50,9 = 15,3 tonf ✓ |
+| **8.6.5** | Prohibido el arriostramiento en K | No aplica (V invertida) |
+| **8.6.7** | Los puntales, con el mismo par residual/esperada | 59,47 / 100,80 tonf — ver nota |
+| **8.6.8** | La conexión resiste ambas capacidades esperadas | Tracción 249,96 (techo 100,80) y **compresión** 198,25 tonf |
+| **8.6.9** | La conexión resiste el momento del pandeo, o el gusset acomoda el giro | Rótula elíptica, Fig. C-2 |
+
+Sobre 8.6.7 conviene una precisión: la cláusula habla de *«las vigas o puntales horizontales que
+unen los extremos de las diagonales»*, y en este paño de un solo nivel **ese elemento es la
+propia viga**, que ya se diseñó por 8.6.6 con el mismo par de fuerzas. En un paño de varios
+niveles, o en una cepa donde el puntal es un elemento aparte, 8.6.7 es una verificación adicional
+— y C8.6.7 explica por qué importa: los análisis elásticos «*no son capaces de capturar la
+importancia de este elemento, ya que usualmente arrojan solicitaciones de tracción sobre él*»,
+cuando lo crítico es su trabajo **en compresión** después del primer pandeo. Si el puntal falla,
+«*la configuración en X podría comportarse de manera análoga a una configuración en K*» — que
+8.6.5 prohíbe.
+
+## 8. Por qué la diagonal que la norma obliga a usar además aliviana la viga
+
+Vale la pena volver sobre §1 con los números de la viga en la mano. Si el [] 200×200×5,0 hubiera
+sido admisible —no lo es—, sus capacidades esperadas habrían sido $T_{ye} = 125{,}44$ tonf
+(igualmente topada en 100,80) y $0{,}3P_{ne} = 30{,}24$ tonf, y el momento de diseño habría sido
+**111,79 tonf·m** en vez de 70,44.
+
+<Equation label="La resta que decide">
+$$
+V = \sin\alpha\,\big(\underbrace{0{,}3P_{ne}}_{\text{crece con la sección}} - \underbrace{T}_{\text{topada por } 0{,}7R_1}\big)
+$$
+</Equation>
+
+**Un 37 % menos de momento con la diagonal más robusta.** Es lo contrario de lo que dice la
+intuición, y el mecanismo es transparente una vez visto: la tracción ya estaba topada por
+$0{,}7R_1$ y **no crece con la sección**, pero la residual $0{,}3P_{ne}$ sí crece (30,24 → 59,47
+tonf), y el desequilibrio es **la resta de las dos**. Una diagonal comprimida más robusta
+conserva más capacidad después de pandear y descarga menos desbalance en la viga.
+
+La sección que la norma obliga a usar por ductilidad resulta ser, además, la que abarata la viga.
+El acero del paño queda en $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,783$ kg.
+
+<Note type="warning" title="Un límite de este ejemplo">
+Cambiar la sección de la diagonal cambia la rigidez del paño y, estrictamente, obliga a rehacer
+el análisis: $P_E$ se redistribuye. Acá se mantuvo en 36,0 tonf —y con él $R_1 = 4{,}0$ y la
+Categoría II, importados del [ejemplo del pedestal](/hormigon/ejemplo-pedestal-anclaje-nch2369)—
+para aislar el efecto de la cláusula, no para dar por cerrado el diseño. Lo mismo vale para el
+barrido de ángulo de §9. Tampoco se descuenta el axial de gravedad que las diagonales toman en el
+modelo elástico (≈ 5,3 tonf por diagonal, un 15 % de $P_E$).
+</Note>
+
+## 9. Análisis de sensibilidad
+
+**$R_1$ es el parámetro dominante**, porque decide cuánto muerde el techo 1:
+
+| $R_1$ | $0{,}7R_1$ | $T$ gobernante | $M$ |
+|:---:|:---:|:---:|:---:|
+| 2,0 | 1,40 | 50,40 tonf | 24,83 tonf·m |
+| 3,0 | 2,10 | 75,60 tonf | 34,80 tonf·m |
+| **4,0** | **2,80** | **100,80 tonf** | **70,44 tonf·m** |
+| 5,0 | 3,50 | 126,00 tonf | 106,08 tonf·m |
+| 6,0 | 4,20 | 151,20 tonf | 141,72 tonf·m |
+
+Cuanto más dúctil se declara la estructura, más caro sale su chevron. Y el techo solo dejaría de
+morder cuando $0{,}7R_1 P_E$ superara los 249,96 tonf de $T_{ye}$, o sea con $R_1 > 9{,}9$:
+acá siempre gobierna el techo.
+
+**El $R_y$ funciona al revés de lo que uno esperaría**, y por la misma razón del §8:
+
+| $R_y$ | $T_{ye}$ (topada en 100,80) | $0{,}3P_{ne}$ | $M$ | |
+|:---:|:---:|:---:|:---:|---|
+| 1,1 | 211,51 tonf | 53,21 tonf | 79,30 tonf·m | |
+| **1,3** | **249,96 tonf** | **59,47 tonf** | **70,44 tonf·m** | ← nacional (C8.3.3) |
+| 1,5 | 288,42 tonf | 64,90 tonf | 62,77 tonf·m | ← AISC 341-16 |
+
+Subir $R_y$ **baja** el momento un 11 %: la tracción ya está topada, pero la residual crece.
+Usar el 1,3 nacional en vez del 1,5 de AISC es, en esta verificación, la elección conservadora —
+lo contrario de lo que pasa en $\lambda_{md}$ (§1), donde el 1,3 es el límite más holgado.
+**El mismo factor tira para lados distintos según la cláusula.**
+
+**El ángulo** de la diagonal, a luz fija —así que cambiar $\alpha$ cambia también la altura de
+entrepiso, la longitud de la diagonal y con ella $P_{ne}$:
+
+| $\alpha$ | $L_{diag}$ | $L_c/r$ | $0{,}3P_{ne}$ | $M$ |
+|:---:|:---:|:---:|:---:|:---:|
+| 30° | 4,62 m | 59,5 | 67,12 tonf | 45,68 tonf·m |
+| 40° | 5,22 m | 67,2 | 62,75 tonf | 60,91 tonf·m |
+| **45°** | **5,66 m** | **72,8** | **59,47 tonf** | **70,44 tonf·m** |
+| 50° | 6,22 m | 80,1 | 55,11 tonf | 82,00 tonf·m |
+| 60° | 8,00 m | 103,0 | 41,38 tonf | 114,92 tonf·m |
+
+Un chevron tumbado es un chevron barato: bajar de 45° a 30° ahorra un 35 % del momento, por dos
+vías que se suman —menos proyección vertical del desequilibrio y una diagonal más corta, con más
+capacidad residual—. Es la palanca de diseño más limpia del problema.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Demanda | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Diagonal [] 200×200×5 — pandeo local | 8.6.3 / Tabla 9 | $b/t = 35{,}0$ | $\lambda_{md} = 18{,}9$ | **1,85 ✗** |
+| Diagonal [] 200×200×5 — la exención | 8.6.3 | $0{,}7R_1P_E = 100{,}80$ tonf | $\phi P_n = 66{,}35$ tonf | **1,52 ✗** |
+| Diagonal soldada — pandeo local | 8.6.3 / Tabla 9 | $b/t = 18{,}0$ | $\lambda_{md} = 18{,}9$ | 0,95 ✓ |
+| Diagonal soldada — esbeltez global | 8.6.3 | $L_c/r = 72{,}8$ | $1{,}5\pi\sqrt{E/F_y} = 133{,}8$ | 0,54 ✓ |
+| Diagonal soldada — compresión | NCh427/1 E3 | 36,0 tonf | $\phi P_n = 130{,}9$ tonf | 0,28 ✓ |
+| Línea resistente — aporte en tracción | 8.6.2 | 30 % de 50,9 = 15,3 tonf | 122,4 tonf | 0,13 ✓ |
+| Viga H 400×200×109,5 | 8.6.6 + H1-1a | $M = 70{,}44$, $N = 113{,}33$ | $\phi M_n = 52{,}8$ tonf·m | **1,57 ✗** |
+| **Viga H 600×300×138,5** | 8.6.6 + H1-1a | $M = 70{,}44$, $N = 113{,}33$ | $\phi M_n = 100{,}6$ tonf·m | **0,92 ✓** |
+| Viga — compacidad del alma | NCh427/1 B4.1b / F4 | $h/t_w = 69{,}5$ | $\lambda_{pw} = 65{,}1$ | no compacta → $R_{pc}$ |
+| Viga — compacidad del ala | Tabla 9, no atiesados | $b/2t_f = 6{,}8$ | 9,96 | 0,68 ✓ |
+| Viga — apoyo lateral fuera del plano | 8.6.6 | $0{,}02P_{ne} = 3{,}96$ tonf | plataforma | ✓ |
+| Viga — excentricidad de los puntos de trabajo | 8.6.6 | — | $\le 2d = 1{,}20$ m | ✓ |
+| Conexión de la diagonal | 8.6.8 | $T_{ye} = 249{,}96$ (techo 100,80) y $P_{ne} = 198{,}25$ | — | — |
+| Conexión — giro del pandeo | 8.6.9 | — | rótula elíptica (Fig. C-2) | — |
+
+**Solución:** diagonales de **cajón soldado [] 200×200×10** —dimensionadas por $\lambda_{md}$, no
+por resistencia—, viga **H 600×300×138,5** arriostrada lateralmente cada 2,0 m y verificada por
+F4 con el alma no compacta, conexiones diseñadas para las dos capacidades esperadas con el techo
+de 100,80 tonf en tracción, y gusset con geometría que acomode el giro del pandeo.
+
+## Lo que este ejemplo agrega
+
+Los otros ejemplos de acero de este sitio verifican un elemento contra una demanda. Este no
+puede: **la demanda no existe hasta que uno se imagina la estructura después del primer pandeo.**
+
+Esa es la diferencia entre diseñar por resistencia y diseñar por capacidad, y es también la razón
+por la que un modelo bien corrido no basta para esta cláusula. El análisis elástico entrega el
+estado del que la estructura sale; 8.6.6 pide el estado al que llega.
+
+Y deja cuatro cosas que se llevan a cualquier chevron:
+
+1. **La exención de 8.6.3 hay que verificarla.** Acogerse a ella no es una firma: es diseñar el
+   elemento para 2,80 veces el sismo, y en este caso salió más cara que cumplir el
+   $\lambda_{md}$.
+2. **El techo de $0{,}7R_1$ decide casi todo.** Sin él el problema no tiene solución razonable
+   —281 tonf·m—; con él, y con $R_1$ bajo, es perfectamente diseñable.
+3. **La residual de la comprimida juega a favor.** El desequilibrio es una resta, así que las dos
+   palancas —engrosar la diagonal, tumbarla— van en la misma dirección.
+4. **La viga del chevron está en el catálogo, pero no en la familia que uno mira.** Y su alma
+   probablemente quede no compacta bajo el axial, porque el catálogo chileno de perfiles soldados
+   está pensado para flexión.
+
+[^nch]: Instituto Nacional de Normalización, *NCh2369:2025 — Diseño sísmico de estructuras e
+instalaciones industriales*, 3ª edición, 2025. Cláusulas citadas: 4.5 (combinaciones), 5.14 y
+Ec. (14) ($R_1$), Tabla 7, 8.3.1 (capacidades esperadas), 8.3.3 ($R_y$ y $R_t$), C8.3.4 (la
+máxima carga transferible), 8.6.2 a 8.6.9 y Tabla 9. Las propiedades de las secciones provienen
+del *Manual de Diseño para Estructuras de Acero*, ICHA, 2010 (Tabla 2.1.1, secciones H soldadas,
+52 familias de H 1100×600 a H 200×100; Tabla 2.1.9, secciones cajón conformadas en frío, hasta
+6 mm de espesor).
+
+[^ry]: C8.3.3, textual: *«De acuerdo a estudios sobre placas de acero calidad ASTM A36
+(U. de Chile) utilizadas en la construcción de estructuras nacionales el valor de $R_y$ es
+cercano a 1,3, lo que es consistente con lo indicado por ANSI/AISC 341-16.»* La cláusula 8.3.3
+remite, para materiales certificados según ASTM, a la Tabla A3.1 de ANSI/AISC 341-16 —que para
+A36 da 1,5— y permite usar otros valores *«siempre y cuando sean debidamente justificados de
+acuerdo a resultados de los ensayos de control de calidad y certificación de la industria
+manufacturera de origen»*. Acá se adopta el 1,3 nacional; la tabla de sensibilidad de §9 mide
+cuánto depende el resultado de esa elección.

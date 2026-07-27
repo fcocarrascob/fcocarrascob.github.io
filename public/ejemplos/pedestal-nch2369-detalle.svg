@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 600" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="lead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a94a3"/>
+    </marker>
+    <pattern id="grout" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#b9a06a" stroke-width="1.4"/>
+    </pattern>
+  </defs>
+  <rect width="880" height="600" fill="#ffffff"/>
+  <text x="440" y="25" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El pedestal detallado según NCh2369 8.5 y 9.5: cada pieza responde a una cláusula</text>
+
+  <!-- ================= SECCIÓN ================= -->
+  <!-- columna -->
+  <rect x="235" y="105" width="50" height="67" fill="#dfe5ec" stroke="#333" stroke-width="1.4"/>
+  <text x="260" y="98" font-size="9.5" text-anchor="middle" fill="#555">columna de acero</text>
+
+  <!-- placa base -->
+  <rect x="194" y="172" width="132" height="7" fill="#c8d2de" stroke="#333" stroke-width="1.3"/>
+  <!-- mortero de nivelación -->
+  <rect x="194" y="179" width="132" height="11" fill="url(#grout)" stroke="#8a7a4a" stroke-width="1"/>
+
+  <!-- pedestal -->
+  <rect x="150" y="190" width="220" height="264" fill="#f4f7fb" stroke="#333" stroke-width="1.6"/>
+  <!-- zona de protección superior -->
+  <rect x="150" y="190" width="220" height="220" fill="#1a63a8" opacity="0.07"/>
+  <line x1="150" y1="410" x2="370" y2="410" stroke="#1a63a8" stroke-width="1.4" stroke-dasharray="7 4"/>
+
+  <!-- zapata -->
+  <rect x="95" y="454" width="330" height="46" fill="#e8ecf2" stroke="#333" stroke-width="1.4"/>
+  <text x="415" y="480" font-size="9" text-anchor="end" fill="#8a94a3">zapata</text>
+
+  <!-- ===== armadura de anclaje (barras verticales) ===== -->
+  <g stroke="#2c7a4b" stroke-width="2.4" fill="none">
+    <path d="M182 205 q0 -8 8 -8 l10 0"/>
+    <line x1="182" y1="205" x2="182" y2="492"/>
+    <path d="M228 205 q0 -8 -8 -8 l-10 0"/>
+    <line x1="228" y1="205" x2="228" y2="492"/>
+    <path d="M292 205 q0 -8 8 -8 l10 0"/>
+    <line x1="292" y1="205" x2="292" y2="492"/>
+    <path d="M338 205 q0 -8 -8 -8 l-10 0"/>
+    <line x1="338" y1="205" x2="338" y2="492"/>
+  </g>
+
+  <!-- ===== estribos (9.5.3) ===== -->
+  <g stroke="#c0392b" stroke-width="2">
+    <line x1="160" y1="201.0" x2="360" y2="201.0"/>
+    <line x1="160" y1="214.6" x2="360" y2="214.6"/>
+    <line x1="160" y1="228.3" x2="360" y2="228.3"/>
+    <line x1="160" y1="241.9" x2="360" y2="241.9"/>
+    <line x1="160" y1="285.9" x2="360" y2="285.9"/>
+    <line x1="160" y1="329.9" x2="360" y2="329.9"/>
+    <line x1="160" y1="373.9" x2="360" y2="373.9"/>
+    <line x1="160" y1="410.0" x2="360" y2="410.0"/>
+  </g>
+
+  <!-- ===== pernos de anclaje ===== -->
+  <g>
+    <!-- vástagos -->
+    <line x1="205" y1="162" x2="205" y2="280" stroke="#c0392b" stroke-width="3.4"/>
+    <line x1="315" y1="162" x2="315" y2="280" stroke="#c0392b" stroke-width="3.4"/>
+    <!-- tuercas sobre la placa -->
+    <rect x="198" y="160" width="14" height="12" fill="#8a2f24"/>
+    <rect x="308" y="160" width="14" height="12" fill="#8a2f24"/>
+    <!-- planchas de cabeza 80 x 80 -->
+    <rect x="196" y="280" width="18" height="6" fill="#8a2f24" stroke="#5c1f18" stroke-width="0.8"/>
+    <rect x="306" y="280" width="18" height="6" fill="#8a2f24" stroke="#5c1f18" stroke-width="0.8"/>
+    <!-- sillas: vástago libre dentro del hormigón -->
+    <rect x="196" y="190" width="18" height="55" fill="#ffffff" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <rect x="306" y="190" width="18" height="55" fill="#ffffff" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="4 3"/>
+  </g>
+
+  <!-- cono de arrancamiento que no cabe -->
+  <g stroke="#c0392b" stroke-width="1.1" stroke-dasharray="5 4" opacity="0.8">
+    <line x1="196" y1="280" x2="134" y2="190"/>
+    <line x1="324" y1="280" x2="386" y2="190"/>
+  </g>
+
+  <!-- ===== llave de corte ===== -->
+  <rect x="227" y="179" width="66" height="44" fill="#4a5568" stroke="#222" stroke-width="1.2"/>
+  <!-- proyección a 45° desde el pie de la llave -->
+  <line x1="293" y1="223" x2="370" y2="300" stroke="#c07a00" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <path d="M303 223 a10 10 0 0 1 -3 7" fill="none" stroke="#c07a00" stroke-width="1"/>
+  <text x="312" y="240" font-size="8.5" fill="#c07a00">45°</text>
+
+  <!-- ================= COTAS ================= -->
+  <!-- altura del pedestal -->
+  <line x1="75" y1="190" x2="75" y2="454" stroke="#555" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="68" y="326" font-size="10" text-anchor="middle" fill="#555" transform="rotate(-90 68 326)">h = 120 cm</text>
+  <!-- zona de protección -->
+  <line x1="120" y1="190" x2="120" y2="410" stroke="#1a63a8" stroke-width="1.2" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="113" y="300" font-size="10.5" text-anchor="middle" fill="#1a63a8" font-weight="bold" transform="rotate(-90 113 300)">zona de protección = 100 cm</text>
+  <!-- criterio b -->
+  <line x1="392" y1="190" x2="392" y2="300" stroke="#c07a00" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="399" y="248" font-size="9" fill="#c07a00">criterio b) = 50 cm</text>
+  <!-- lado menor -->
+  <line x1="150" y1="520" x2="370" y2="520" stroke="#555" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="260" y="534" font-size="10" text-anchor="middle" fill="#555">b = 100 cm (lado menor)</text>
+
+  <!-- ================= LEYENDAS SOBRE LA SECCIÓN ================= -->
+  <line x1="224" y1="124" x2="204" y2="194" stroke="#8a94a3" stroke-width="0.8" marker-end="url(#lead)"/>
+  <text x="222" y="105" font-size="9.5" text-anchor="end" fill="#c0392b" font-weight="bold">silla: 250 mm de vástago libre</text>
+  <text x="222" y="117" font-size="8.5" text-anchor="end" fill="#666">+ 75 mm de hilo bajo la tuerca (8.5.2)</text>
+
+  <line x1="260" y1="200" x2="440" y2="128" stroke="#8a94a3" stroke-width="0.8" marker-end="url(#lead)"/>
+  <text x="446" y="124" font-size="9.5" fill="#222" font-weight="bold">llave de corte 300 × 30 mm</text>
+  <text x="446" y="135" font-size="8.5" fill="#666">50 mm mortero + 150 mm embebidos · toma el 100 % del corte (8.5.3)</text>
+
+  <line x1="324" y1="283" x2="440" y2="330" stroke="#8a94a3" stroke-width="0.8" marker-end="url(#lead)"/>
+  <text x="446" y="333" font-size="9.5" fill="#8a2f24" font-weight="bold">plancha de cabeza 80 × 80 mm</text>
+  <text x="446" y="344" font-size="8.5" fill="#666">la tuerca hexagonal no da el pullout (§17.6.3)</text>
+
+  <line x1="338" y1="360" x2="440" y2="382" stroke="#8a94a3" stroke-width="0.8" marker-end="url(#lead)"/>
+  <text x="446" y="385" font-size="9.5" fill="#2c7a4b" font-weight="bold">armadura de anclaje 8 φ16 (§17.5.2.1)</text>
+  <text x="446" y="396" font-size="8.5" fill="#666">cose el cono y lo reemplaza; desarrollada a ambos lados</text>
+
+  <line x1="224" y1="158" x2="172" y2="228" stroke="#8a94a3" stroke-width="0.8" marker-end="url(#lead)"/>
+  <text x="222" y="140" font-size="9.5" text-anchor="end" fill="#c0392b" font-weight="bold">el cono de arrancamiento no cabe</text>
+  <text x="222" y="152" font-size="8.5" text-anchor="end" fill="#666">en la sección del pedestal (C9.5.2)</text>
+
+  <!-- ================= PANEL DERECHO ================= -->
+  <rect x="440" y="160" width="425" height="150" rx="5" fill="#f0f5fb" stroke="#1a63a8" stroke-width="1.2"/>
+  <text x="456" y="182" font-size="11.5" fill="#1a63a8" font-weight="bold">9.5.3 — La zona de protección es el mayor de dos criterios</text>
+  <text x="456" y="203" font-size="10" fill="#333">a)  lado menor del pedestal</text>
+  <text x="840" y="203" font-size="10.5" text-anchor="end" fill="#1a63a8" font-weight="bold">100 cm  ← gobierna</text>
+  <text x="456" y="222" font-size="10" fill="#333">b)  altura embebida de la llave (15) + proyección a 45° (35)</text>
+  <text x="840" y="222" font-size="10.5" text-anchor="end" fill="#666">50 cm</text>
+  <line x1="456" y1="233" x2="840" y2="233" stroke="#c3d3e6" stroke-width="1"/>
+  <text x="456" y="252" font-size="10" fill="#333">Estribos en toda la altura</text>
+  <text x="840" y="252" font-size="10" text-anchor="end" fill="#333">≤ 0,4 b = 40 cm</text>
+  <text x="456" y="270" font-size="10" fill="#333">Estribos en la zona de protección</text>
+  <text x="840" y="270" font-size="10" text-anchor="end" fill="#333">≤ 0,2 b = 20 cm</text>
+  <text x="456" y="288" font-size="10" fill="#c0392b" font-weight="bold">Los tres primeros, espaciamiento libre</text>
+  <text x="840" y="288" font-size="10" text-anchor="end" fill="#c0392b" font-weight="bold">≤ 50 mm</text>
+  <text x="456" y="304" font-size="8.5" fill="#666">En un pedestal cuadrado y bajo el criterio a) gana siempre: la «zona singular» es casi todo el elemento.</text>
+
+  <!-- lo que cambia -->
+  <rect x="440" y="418" width="425" height="152" rx="5" fill="#fdf6f5" stroke="#c0392b" stroke-width="1.2"/>
+  <text x="456" y="440" font-size="11.5" fill="#c0392b" font-weight="bold">Lo que ACI 318-25 por sí solo no habría puesto acá</text>
+  <g font-size="9.8" fill="#5a2f2a">
+    <text x="456" y="461">·  La <tspan font-weight="bold">llave de corte</tspan>, obligatoria porque 96,1 kN &gt; 75 kN — y con ella</text>
+    <text x="466" y="475">desaparece la interacción N–V que gobernaba el ejemplo anterior (0,76).</text>
+    <text x="456" y="494">·  El <tspan font-weight="bold">roce bajo la placa</tspan> (7,54 tonf, el 77 % del corte) y el mortero:</text>
+    <text x="466" y="508">existen, pero 8.5.4 prohíbe contarlos.</text>
+    <text x="456" y="527">·  La <tspan font-weight="bold">armadura de anclaje y la plancha de cabeza</tspan>, porque el hormigón</text>
+    <text x="466" y="541">se diseña para la capacidad del perno (49,43 tonf) y no para la demanda (8,00).</text>
+    <text x="456" y="560">·  Los <tspan font-weight="bold">tres primeros estribos a 50 mm</tspan>, que la práctica tradicional no tenía.</text>
+  </g>
+
+  <text x="260" y="560" font-size="8.5" text-anchor="middle" fill="#8a94a3">Sección a escala en la geometría del pedestal;</text>
+  <text x="260" y="572" font-size="8.5" text-anchor="middle" fill="#8a94a3">espesores de placa, tuercas y barras exagerados para lectura.</text>
+</svg>
