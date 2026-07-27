@@ -52,8 +52,8 @@ desplazamiento de techo.
 
 <Figure
   src="/factor-r/fig-curva-respuesta.svg"
-  alt="Curva de corte basal contra desplazamiento de techo: recta elástica hasta el punto A en Ve, curva real en rojo que se separa en el punto B (Vd), alcanza su máximo en Vy y degrada hasta δu; cotas verticales Rμ entre Ve y Vy, Ω₀ entre Vy y Vd, R entre Ve y Vd, y cota horizontal Cd entre δd y δu"
-  caption="La curva de respuesta lateral y sus tres niveles de corte. El punto A es lo que el sismo pediría a un sistema elástico; el punto B es el nivel al que se diseña; Vy es lo que el sistema realmente desarrolla. R = Rμ·Ω₀ es la distancia completa entre A y B."
+  alt="Curva de corte basal contra desplazamiento de techo, en la idealización de los códigos: recta elástica hasta el punto A en Ve, curva real en rojo que se separa de la recta en el punto B (Vd), alcanza su máximo en Vy y degrada hasta δu; cotas verticales Rμ entre Ve y Vy, Ω₀ entre Vy y Vd, R entre Ve y Vd, y cota horizontal Cd entre δd y δu"
+  caption="La curva de respuesta lateral y sus tres niveles de corte. El punto A es lo que el sismo pediría a un sistema elástico; el punto B es el nivel al que se diseña; Vy es lo que el sistema realmente desarrolla. R = Rμ·Ω₀ es la distancia completa entre A y B. Ojo con un detalle del dibujo: acá la curva se separa de la recta justo en B, que es la idealización del libro — en una estructura real el primer evento no lineal ocurre bastante más arriba, y el Post 3 lo midió a 1.44·Vd y 3.4·Vd en los dos marcos gemelos."
 />
 
 La recta es el sistema idealmente elástico: llevado por el sismo de diseño llegaría al
@@ -176,8 +176,17 @@ mismo patrón de la [nota de P-Delta](/blog/pdelta-cuando-confiar-amplificador).
 largos, un oscilador elastoplástico y su gemelo elástico, sometidos al mismo registro,
 terminan desplazándose *prácticamente lo mismo*: $\delta_u \approx \delta_e$. Recortar
 la resistencia no cambia cuánto viaja el sistema — solo cambia cuánta fuerza desarrolla
-en el viaje. Si además se define la **ductilidad** como la capacidad de deformación
-inelástica del sistema,
+en el viaje.
+
+<Note type="warning" title="Qué es exactamente $\delta_u$ de aquí en adelante">
+Conviene fijarlo porque el símbolo se presta: en la curva de más arriba $\delta_u$ nombraba el
+punto donde la **capacidad** se agota, y de acá en adelante nombra la **deformación máxima
+esperada** bajo el sismo de diseño, que es una demanda. Es la única lectura con la que la Ec. 5
+($\delta_u = \delta_d\,C_d$) y la regla de igual desplazamiento tienen sentido. El pacto del
+diseño sísmico es precisamente que esas dos cosas se toquen sin cruzarse: **demanda ≤ capacidad**.
+</Note>
+
+Si además se define la **ductilidad** como la razón entre esa deformación máxima y la de fluencia,
 
 <Equation label="Ec. 7">
 $$\mu = \frac{\delta_u}{\delta_y}$$
@@ -254,8 +263,8 @@ independientes — igual que la descomposición misma:
   elastoplástico bajo un registro chileno: se mide $V_e$ y $\delta_e$ con tiempo-historia
   lineal, se recorta la fluencia a $V_e/R$ para varios $R$, y se mide cuánto viaja y
   cuánta ductilidad consume cada versión. Si la regla de igual desplazamiento es real,
-  debe *emerger* del análisis — y en períodos cortos debe romperse exactamente como la
-  Ec. 8 anticipa.
+  debe *emerger* del análisis — y en períodos cortos debe romperse, con la Ec. 8 marcando el
+  **piso** de ese quiebre y no su tamaño.
 - **¿Cuánto $\Omega_0$ tiene de verdad una estructura diseñada a norma?** Un marco
   arriostrado chevron dimensionado con el espectro NCh2369 reducido, empujado con un
   pushover no lineal hasta dibujar la curva completa. Sobre esa curva se marcan $V_d$,

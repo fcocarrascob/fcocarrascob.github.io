@@ -1,6 +1,6 @@
 ---
 title: "El factor R (2): Rμ en el laboratorio, o ver emerger la regla de Newmark de un tiempo-historia real"
-description: "Un banco de 63 osciladores elastoplásticos en SAP2000 —9 períodos × 6 niveles de recorte— bajo El Centro 1940, validado contra un integrador propio: la regla de igual desplazamiento emerge sola en T ≥ 0.5 s (μ ≈ R), se quiebra en períodos cortos peor que lo que promete igual energía (μ = 126 donde la regla dice 32.5), y en el camino cae una trampa silenciosa de SAP2000: más allá del último punto, la función TH no vale cero."
+description: "Un banco de 63 osciladores en SAP2000 —9 períodos × (1 elástico + 6 niveles de recorte), o sea 54 elastoplásticos— bajo El Centro 1940, validado contra un integrador propio: la regla de igual desplazamiento emerge sola en T ≥ 0.5 s (μ ≈ R), se quiebra en períodos cortos peor que lo que promete igual energía (μ = 126 donde la regla dice 32.5), y en el camino cae una trampa silenciosa de SAP2000: más allá del último punto, la función TH no vale cero."
 pubDate: 2026-07-11
 tags: ["factor R", "ductilidad", "tiempo-historia", "FNA", "SAP2000", "experimento", "NCh2369", "sísmica"]
 norm: "NCh2369"
@@ -218,9 +218,9 @@ más frágil que este modelo, no menos. Los números de aquí son la versión *o
 Traducido a decisiones, con el experimento en la mano:
 
 - **$C_d = R$ es una hipótesis razonable y sin sesgo** para estructuras de período
-  moderado o largo — la mediana medida fue 1.01. Su dispersión (±50 % en una
-  realización) es la de cualquier estimación puntual de respuesta sísmica, no un defecto
-  particular de la regla.
+  moderado o largo — la mediana medida fue 1.01. Su dispersión punto a punto en esta
+  realización es de **−46 %/+84 %** ($\delta_u/\delta_e$ entre 0.54 y 1.84), la de cualquier
+  estimación puntual de respuesta sísmica y no un defecto particular de la regla.
 - **Elegir R es elegir la demanda de ductilidad de los fusibles**, casi uno a uno en la
   meseta. El detallamiento que el Post 1 llamó "la letra chica" no es opcional: es la
   otra mitad del contrato que el análisis reducido no verifica.

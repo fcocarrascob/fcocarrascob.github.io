@@ -148,10 +148,15 @@ plástica clásica del acero— pero con dos sorpresas:
   1.1$): $M_p = 189$ kN·m, no los 172 de $F_y Z_x$ nominal.
 - La normaliza por $P_{CL}$, la **capacidad de pandeo a compresión** (AISC E3, con la
   longitud del miembro)[^aisc360], no por $P_y$ de aplastamiento. Aquí $P_{CL} = 1367$ kN contra
-  $P_y = 1970$: la reducción es **más severa** que la interacción de libro, y **depende de
+  $P_y = 2234$ kN: la reducción es **más severa** que la interacción de libro, y **depende de
   la esbeltez de la columna** —una columna más esbelta tiene $P_{CL}$ más bajo y una
   rótula más débil al mismo axial—. En la base de sotavento (a 511 kN) eso deja la rótula en
   **139 kN·m, un 16 % por debajo de los 165** que daría la interacción por $P_y$.
+
+  Los dos axiales de referencia van con la **misma base**: el $P_y = 2234$ kN es
+  $F_{ye}A_g = 1{,}1 \cdot 345 \cdot 5890$, con la resistencia **esperada** que también usa
+  $P_{CL}$. Si se tomara $F_y$ nominal serían $2031$ kN, y la comparación con $P_{CL}$ dejaría de
+  ser entre iguales — es el tipo de detalle que decide si el 16 % de arriba significa algo.
 
 Ninguna de las dos cosas es obvia desde la GUI. La rótula que uno cree que usa $F_y Z_x$
 con interacción por aplastamiento en realidad usa resistencia esperada e incorpora el
