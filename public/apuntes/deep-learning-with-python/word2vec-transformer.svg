@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 490" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="wv-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+    <marker id="wv-ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="wv-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <rect width="800" height="490" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Word2Vec con esteroides: cómo la correlación se convierte en proximidad</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">El mismo objetivo de 2013, la misma función de distancia, la misma dimensionalidad — y una diferencia de arquitectura</text>
+
+  <!-- Word2Vec -->
+  <rect x="20" y="68" width="228" height="232" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="134" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Word2Vec · 2013</text>
+  <text x="36" y="114" font-size="10.5" fill="#374151">Un vector por palabra del vocabulario.</text>
+  <text x="36" y="133" font-size="10.5" fill="#374151">Se optimiza el producto punto: cerca</text>
+  <text x="36" y="148" font-size="10.5" fill="#374151">de 1 si co-ocurren, cerca de 0 si no.</text>
+  <text x="36" y="169" font-size="10.5" fill="#6b7280">Una sola capa. <tspan font-weight="700">No era una red profunda.</tspan></text>
+
+  <rect x="36" y="184" width="196" height="34" rx="5" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="134" y="205" text-anchor="middle" font-size="10.5" font-family="'Consolas', monospace" fill="#1e40af">king − man + woman ≈ queen</text>
+
+  <text x="36" y="238" font-size="10.5" font-weight="700" fill="#374151">Y nadie lo entrenó para eso.</text>
+  <text x="36" y="256" font-size="10" fill="#6b7280">Aparecieron docenas de vectores mágicos:</text>
+  <text x="36" y="269" font-size="10" fill="#6b7280">uno de género, otro de plural, otro que va</text>
+  <text x="36" y="282" font-size="10" fill="#6b7280">de animal salvaje a su mascota más cercana.</text>
+
+  <line x1="252" y1="174" x2="272" y2="174" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#wv-ar)"/>
+
+  <!-- Transformer -->
+  <rect x="276" y="68" width="228" height="232" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="390" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">Transformer</text>
+  <text x="292" y="114" font-size="10.5" fill="#374151">Mismo objetivo, misma distancia coseno,</text>
+  <text x="292" y="129" font-size="10.5" fill="#374151">dimensionalidad del mismo orden.</text>
+  <text x="292" y="150" font-size="10.5" fill="#374151">Lo que cambia: docenas de capas y</text>
+  <text x="292" y="165" font-size="10.5" fill="#374151">miles de millones de parámetros.</text>
+
+  <rect x="292" y="180" width="196" height="52" rx="5" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="390" y="199" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">El puente es la atención</text>
+  <text x="390" y="215" text-anchor="middle" font-size="10" fill="#374151">recombina linealmente el espacio previo</text>
+  <text x="390" y="228" text-anchor="middle" font-size="10" fill="#374151">ponderando lo que ya está cerca</text>
+
+  <text x="292" y="252" font-size="10.5" fill="#374151">Cada capa es <tspan font-weight="700">un espacio de embedding</tspan></text>
+  <text x="292" y="267" font-size="10.5" font-weight="700" fill="#374151">un poco más refinado que el anterior.</text>
+
+  <line x1="508" y1="174" x2="528" y2="174" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#wv-ar)"/>
+
+  <!-- propiedades -->
+  <rect x="532" y="68" width="248" height="232" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="656" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">Lo que gana el espacio</text>
+
+  <text x="548" y="116" font-size="10.5" font-weight="700" fill="#166534">1 · Semánticamente continuo</text>
+  <text x="548" y="133" font-size="10.5" fill="#374151">Moverse un poco cambia el significado</text>
+  <text x="548" y="148" font-size="10.5" fill="#374151">solo un poco.</text>
+  <text x="548" y="164" font-size="10" fill="#9ca3af">Word2Vec ya lo tenía.</text>
+
+  <text x="548" y="192" font-size="10.5" font-weight="700" fill="#166534">2 · Semánticamente interpolativo</text>
+  <text x="548" y="209" font-size="10.5" fill="#374151">El punto medio entre dos puntos es</text>
+  <text x="548" y="224" font-size="10.5" fill="#374151">el significado intermedio.</text>
+  <text x="548" y="240" font-size="10" fill="#9ca3af">Este viene de construir cada espacio</text>
+  <text x="548" y="253" font-size="10" fill="#9ca3af">interpolando entre vectores del previo.</text>
+  <text x="548" y="271" font-size="10" fill="#6b7280">Es también el principio hebbiano del cerebro.</text>
+
+  <!-- base de datos -->
+  <rect x="180" y="322" width="440" height="52" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="400" y="344" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">Una base de datos continua e interpolativa</text>
+  <text x="400" y="363" text-anchor="middle" font-size="10.5" fill="#374151">Los datos no son entradas discretas: son una curva. Se puede recorrer, y se puede interpolar.</text>
+
+  <path d="M330 376 L250 414" stroke="#16a34a" stroke-width="1.6" fill="none" marker-end="url(#wv-ag)"/>
+  <path d="M470 376 L550 414" stroke="#dc2626" stroke-width="1.6" fill="none" marker-end="url(#wv-arr)"/>
+
+  <rect x="110" y="418" width="280" height="50" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="250" y="440" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">✓ Generalización</text>
+  <text x="250" y="458" text-anchor="middle" font-size="10.5" fill="#374151">Recuperas más de lo que pusiste.</text>
+
+  <rect x="410" y="418" width="280" height="50" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="550" y="440" text-anchor="middle" font-size="11.5" font-weight="700" fill="#991b1b">✗ Alucinación</text>
+  <text x="550" y="458" text-anchor="middle" font-size="10.5" fill="#374151">Y no todo lo que recuperas es cierto.</text>
+
+  <line x1="390" y1="443" x2="410" y2="443" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="400" y="484" text-anchor="middle" font-size="10.5" font-weight="700" fill="#374151">Son la misma propiedad. No hay cómo apagar una sin apagar la otra.</text>
+</svg>

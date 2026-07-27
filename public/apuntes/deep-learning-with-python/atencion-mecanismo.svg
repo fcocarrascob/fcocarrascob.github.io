@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 530" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="at-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="800" height="530" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">La atención en cuatro pasos — y la propiedad que se le escapa</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">self-attention sobre «The train left the station»: query = key = value = la misma secuencia</text>
+
+  <!-- four steps -->
+  <rect x="20" y="66" width="169" height="122" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="104" y="88" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">1 · Puntuar</text>
+  <text x="104" y="111" text-anchor="middle" font-size="11.5" font-family="'Consolas', monospace" fill="#1a1a1a">scores = Q · Kᵀ</text>
+  <text x="104" y="133" text-anchor="middle" font-size="10.5" fill="#374151">Producto punto entre cada</text>
+  <text x="104" y="148" text-anchor="middle" font-size="10.5" fill="#374151">par (destino, origen).</text>
+  <text x="104" y="169" text-anchor="middle" font-size="10" fill="#6b7280">El score más simple</text>
+  <text x="104" y="182" text-anchor="middle" font-size="10" fill="#6b7280">resultó ser el mejor.</text>
+
+  <line x1="192" y1="127" x2="214" y2="127" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#at-ar)"/>
+
+  <rect x="217" y="66" width="169" height="122" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="301" y="88" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">2 · Escalar</text>
+  <text x="301" y="111" text-anchor="middle" font-size="11.5" font-family="'Consolas', monospace" fill="#1a1a1a">scores / √d_k</text>
+  <text x="301" y="133" text-anchor="middle" font-size="10.5" fill="#374151">Con vectores largos los</text>
+  <text x="301" y="148" text-anchor="middle" font-size="10.5" fill="#374151">scores se disparan.</text>
+  <text x="301" y="169" text-anchor="middle" font-size="10" fill="#6b7280">Es estabilidad de los</text>
+  <text x="301" y="182" text-anchor="middle" font-size="10" fill="#6b7280">gradientes del softmax.</text>
+
+  <line x1="389" y1="127" x2="411" y2="127" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#at-ar)"/>
+
+  <rect x="414" y="66" width="169" height="122" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="498" y="88" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">3 · Normalizar</text>
+  <text x="498" y="111" text-anchor="middle" font-size="11.5" font-family="'Consolas', monospace" fill="#1a1a1a">softmax(axis=-1)</text>
+  <text x="498" y="133" text-anchor="middle" font-size="10.5" fill="#374151">Cada fila suma 1.</text>
+  <text x="498" y="148" text-anchor="middle" font-size="10.5" fill="#374151">Sin esto, la suma</text>
+  <text x="498" y="163" text-anchor="middle" font-size="10.5" fill="#374151">ponderada no tendría</text>
+  <text x="498" y="178" text-anchor="middle" font-size="10.5" fill="#374151">magnitud predecible.</text>
+
+  <line x1="586" y1="127" x2="608" y2="127" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#at-ar)"/>
+
+  <rect x="611" y="66" width="169" height="122" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="695" y="88" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">4 · Combinar</text>
+  <text x="695" y="111" text-anchor="middle" font-size="11.5" font-family="'Consolas', monospace" fill="#1a1a1a">Σ scores · V</text>
+  <text x="695" y="133" text-anchor="middle" font-size="10.5" fill="#374151">Cada posición se reescribe</text>
+  <text x="695" y="148" text-anchor="middle" font-size="10.5" fill="#374151">como mezcla de las demás.</text>
+  <text x="695" y="169" text-anchor="middle" font-size="10" fill="#6b7280">Una operación de pooling</text>
+  <text x="695" y="182" text-anchor="middle" font-size="10" fill="#6b7280">muy expresiva — y lineal.</text>
+
+  <!-- concrete row -->
+  <rect x="20" y="206" width="760" height="176" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="40" y="230" font-size="11.5" font-weight="700" fill="#374151">El paso 3, en concreto: la fila de scores del token «station»</text>
+  <text x="40" y="247" font-size="10" fill="#9ca3af">pesos ilustrativos — el libro describe el mecanismo, no publica esta matriz</text>
+
+  <text x="132" y="288" text-anchor="end" font-size="11" font-family="'Consolas', monospace" fill="#6b7280">station →</text>
+
+  <rect x="142" y="264" width="88" height="42" rx="4" fill="#2563eb" fill-opacity="0.07" stroke="#bfdbfe"/>
+  <text x="186" y="290" text-anchor="middle" font-size="12" fill="#374151">0,05</text>
+  <text x="186" y="324" text-anchor="middle" font-size="10.5" fill="#6b7280">the</text>
+
+  <rect x="236" y="264" width="88" height="42" rx="4" fill="#2563eb" fill-opacity="0.5" stroke="#2563eb"/>
+  <text x="280" y="290" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">0,41</text>
+  <text x="280" y="324" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">train</text>
+
+  <rect x="330" y="264" width="88" height="42" rx="4" fill="#2563eb" fill-opacity="0.1" stroke="#bfdbfe"/>
+  <text x="374" y="290" text-anchor="middle" font-size="12" fill="#374151">0,08</text>
+  <text x="374" y="324" text-anchor="middle" font-size="10.5" fill="#6b7280">left</text>
+
+  <rect x="424" y="264" width="88" height="42" rx="4" fill="#2563eb" fill-opacity="0.07" stroke="#bfdbfe"/>
+  <text x="468" y="290" text-anchor="middle" font-size="12" fill="#374151">0,05</text>
+  <text x="468" y="324" text-anchor="middle" font-size="10.5" fill="#6b7280">the</text>
+
+  <rect x="518" y="264" width="88" height="42" rx="4" fill="#2563eb" fill-opacity="0.5" stroke="#2563eb"/>
+  <text x="562" y="290" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">0,41</text>
+  <text x="562" y="324" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">station</text>
+
+  <text x="626" y="272" font-size="10.5" fill="#374151">¿Qué estación? ¿De radio?</text>
+  <text x="626" y="287" font-size="10.5" fill="#374151">¿La Espacial Internacional?</text>
+  <text x="626" y="308" font-size="10.5" fill="#1e40af">El modelo suma el vector de</text>
+  <text x="626" y="323" font-size="10.5" font-weight="700" fill="#1e40af">train</text>
+  <text x="654" y="323" font-size="10.5" fill="#1e40af">dentro del de station.</text>
+
+  <line x1="40" y1="342" x2="760" y2="342" stroke="#e5e7eb"/>
+  <text x="40" y="366" font-size="11" fill="#374151">De <tspan font-weight="700">representar una palabra en el vacío</tspan> a representarla condicionada a todos los otros tokens de la secuencia.</text>
+
+  <!-- the blind spot -->
+  <rect x="20" y="398" width="760" height="112" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="40" y="422" font-size="11.5" font-weight="700" fill="#991b1b">Y sin embargo, reordena la frase y no cambia nada</text>
+
+  <text x="40" y="450" font-size="11" font-family="'Consolas', monospace" fill="#374151">the train left the station</text>
+  <text x="240" y="450" font-size="11" fill="#9ca3af">y</text>
+  <text x="262" y="450" font-size="11" font-family="'Consolas', monospace" fill="#374151">station the left train the</text>
+  <text x="470" y="450" font-size="11" fill="#991b1b">→ los mismos scores por pares → las mismas representaciones.</text>
+
+  <text x="40" y="478" font-size="11" fill="#991b1b"><tspan font-weight="700">La atención es un mecanismo de procesamiento de conjuntos</tspan>: es ciega a si un token está al principio, al final o en el medio.</text>
+  <text x="40" y="497" font-size="10.5" fill="#6b7280">Por eso el Transformer del capítulo, tal como se construye, rinde 58 % — siete puntos por debajo de la GRU a la que venía a reemplazar.</text>
+</svg>

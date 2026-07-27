@@ -1,0 +1,364 @@
+---
+title: "El peor modelo del ensemble fue el que más lo mejoró"
+description: "El capítulo 18 es el único puramente de ingeniería del libro: no agrega ninguna arquitectura, toma los modelos ya construidos y responde dos preguntas separadas —cómo hacerlos mejores y cómo hacerlos rápidos—. La mejor parte es la del ensembling, y va contra la intuición de juntar los mejores modelos: en el desafío del bosón de Higgs de Kaggle, el modelo con peor score del ensemble de Chollet resultó ser el que más lo mejoró, porque era el único que venía de un método distinto. La diversidad es fuerza: si todos tus modelos están sesgados igual, el ensemble hereda el sesgo intacto. Después vienen los números de la parte rápida: 8 GPU dan 7,3× y no 8×, una TPU v2 es 15× una P100, mixed precision baja el cómputo a 16 bits pero deja los pesos en 32, y el loss scaling existe porque los gradientes son proporcionales a la pérdida. Apuntes del Cap. 18."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "ingeniería", "hiperparámetros", "ensembling", "gpu", "tpu", "mixed precision", "cuantización", "keras"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 18 — Buenas prácticas para el mundo real"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 18 (PDF 562–587)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Este es el único capítulo puramente de ingeniería del libro. No introduce ninguna
+arquitectura: toma los modelos ya construidos y responde dos preguntas que no se mezclan —
+**cómo hacerlos mejores** y **cómo hacerlos rápidos**. Y empieza reconociendo el problema:
+
+> *"Tus modelos hasta ahora han sido todos entrenados a pequeña escala […] y **generalmente
+> no han alcanzado el mejor rendimiento posible** en cada dataset que hemos visto. Este es,
+> después de todo, un libro introductorio. Si vas a salir al mundo real y lograr resultados
+> del estado del arte en problemas nuevos, **todavía hay un abismo que necesitarás
+> cruzar.**"*
+
+## 1. Que la máquina elija los hiperparámetros
+
+Los **hiperparámetros** son *"los parámetros a nivel de arquitectura, para distinguirlos de
+los parámetros del modelo, que se entrenan vía backpropagation"*: cuántas capas, cuántas
+unidades, qué activación, cuánto dropout. Y el diagnóstico es directo:
+
+> *"**Tus decisiones iniciales son casi siempre suboptimales, incluso si tienes muy buena
+> intuición.** […] Puedes refinar tus elecciones ajustándolas a mano y reentrenando el
+> modelo repetidamente — **eso es lo que los ingenieros e investigadores de ML pasan la
+> mayor parte de su tiempo haciendo. Pero no debería ser tu trabajo como humano estar
+> jugando con hiperparámetros todo el día.**"*
+
+Automatizarlo, sin embargo, no es como entrenar pesos, y las tres razones explican por qué
+esto es un campo de investigación propio:
+
+1. **El espacio no es diferenciable.** *"Está típicamente hecho de **decisiones discretas**
+   […] De ahí que típicamente **no puedas hacer descenso de gradiente**. En cambio, debes
+   confiar en técnicas de optimización libres de gradiente, que naturalmente son **mucho
+   menos eficientes**."*
+2. **La señal de feedback es carísima**: *"requiere **crear y entrenar un modelo nuevo desde
+   cero** sobre tu dataset."*
+3. **Y es ruidosa**: *"si una corrida rinde 0,2 % mejor, ¿es por una mejor configuración de
+   modelo o **porque tuviste suerte con los valores iniciales de los pesos**?"*
+
+En KerasTuner esto se traduce en cambiar valores hardcodeados por rangos:
+
+```python
+def build_model(hp):
+    units = hp.Int(name="units", min_value=16, max_value=64, step=16)
+    model = keras.Sequential([
+        layers.Dense(units, activation="relu"),
+        layers.Dense(10, activation="softmax"),
+    ])
+    optimizer = hp.Choice(name="optimizer", values=["rmsprop", "adam"])
+    model.compile(optimizer=optimizer, loss="sparse_categorical_crossentropy",
+                  metrics=["accuracy"])
+    return model
+```
+
+Dos argumentos del tuner que se malinterpretan seguido. `objective` debe apuntar **siempre**
+a una métrica de validación, *"ya que la meta del proceso de búsqueda es encontrar modelos
+que generalicen"*. Y `executions_per_trial=2` entrena cada configuración más de una vez y
+promedia: es la respuesta directa al tercer problema, la señal ruidosa.
+
+<Note type="warning" title="El paso que casi todos se saltan: el reentrenamiento final">
+Terminada la búsqueda, tomar el mejor modelo tal cual **deja rendimiento sobre la mesa**,
+porque dos cosas cambiaron.
+
+*"Usualmente, al reentrenar estos modelos, querrás **incluir los datos de validación como
+parte de los datos de entrenamiento**, ya que no vas a hacer más cambios de
+hiperparámetros."*
+
+*"Antes de poder entrenar sobre los datos completos, hay un último parámetro que necesitamos
+fijar: **el número óptimo de épocas**. Típicamente querrás entrenar los modelos nuevos **por
+más tiempo del que lo hiciste durante la búsqueda**: usar un valor agresivo de `patience`
+en `EarlyStopping` ahorra tiempo durante la búsqueda, pero **puede llevar a modelos
+underfitteados.**"*
+
+De ahí el `epochs=int(best_epoch * 1.2)` del listing, que no es un número mágico: es 20 %
+más de épocas porque hay 20 % más de datos.
+</Note>
+
+Y el riesgo estructural, que conviene tener presente cada vez que se corre una búsqueda
+grande:
+
+> *"Porque estás actualizando hiperparámetros en base a una señal computada usando tus datos
+> de validación, **efectivamente los estás entrenando sobre los datos de validación**, y por
+> lo tanto **overfittearán rápidamente a ellos**."*
+
+El argumento histórico con que el libro justifica todo esto es bueno: *"hace un tiempo, la
+gente diseñaba a mano las features que iban a los modelos superficiales. Eso era muy
+suboptimal. […] **De la misma forma, no deberías diseñar a mano tus arquitecturas.**"* Pero
+sin prometer de más:
+
+> *"Los espacios de búsqueda crecen **combinatorialmente** con el número de elecciones, así
+> que sería demasiado caro convertir todo en un hiperparámetro y dejar que el tuner lo
+> resuelva. **El tuning es automatización, no magia.**"*
+
+Lo que sí cambia es el **nivel** de las decisiones: de micro (*¿cuántas unidades pongo?*) a
+arquitectónicas (*¿uso conexiones residuales?*). Y esa es la ganancia real, porque *"mientras
+las micro-decisiones son específicas a un modelo y dataset determinados, **las decisiones de
+más alto nivel generalizan mejor** entre distintas tareas y datasets"*.
+
+<Note type="info" title="Una errata que despista si comparas la salida">
+El `search_space_summary()` que el libro imprime no corresponde al código que muestra: el
+listing define `units` con `min_value=16, max_value=64, step=16`, pero la salida reporta
+`128 / 1024 / 128`. Son los valores de la **2ª edición**, que usaba un espacio mayor; al
+achicar el ejemplo se actualizó el código y no la salida transcrita. No cambia nada
+conceptual, pero si copias el snippet y comparas, no va a coincidir.
+</Note>
+
+## 2. Ensembling: la diversidad es fuerza
+
+Esta es la mejor sección del capítulo, y su tesis va exactamente contra la intuición de
+juntar los mejores modelos disponibles.
+
+> *"El ensembling se apoya en la suposición de que **distintos modelos que rinden bien,
+> entrenados independientemente, probablemente sean buenos por razones distintas**: cada
+> modelo mira aspectos ligeramente distintos de los datos […] capturando parte de la
+> 'verdad' pero no toda."*
+
+La parábola de los ciegos y el elefante no es decorativa — el libro la usa para definir qué
+es un modelo:
+
+> *"**Los ciegos son esencialmente modelos de ML intentando entender el manifold de los
+> datos de entrenamiento, cada uno desde su propia perspectiva, usando sus propias
+> suposiciones** (provistas por la arquitectura única del modelo y la inicialización
+> aleatoria única de sus pesos)."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/ensemble-diversidad.svg"
+  alt="Diagrama en dos paneles con una banda al pie. Panel verde a la izquierda, sesgos distintos que se cancelan: una elipse gris central rotulada el manifold, rodeada por cuatro círculos con nombres de modelos distintos —CNN, GBT, MLP y RGF— cada uno con una flecha verde apuntando a una zona distinta de la elipse; el texto explica que son cuatro perspectivas con cuatro suposiciones distintas, que los errores apuntan en direcciones distintas y se cancelan entre sí al promediar, y que ese es todo el negocio del ensembling. Panel rojo a la derecha, sesgos iguales que se conservan: la misma elipse, pero rodeada por cuatro círculos que dicen todos CNN, con flechas rojas que convergen todas a la misma zona; el texto dice que la misma red con distintas semillas toca siempre la misma parte del elefante, que el ensemble hereda el sesgo intacto y que la mejora es minúscula por mucho más cómputo. Banda azul al pie, Kaggle bosón de Higgs 2014, cuarto lugar: uno de los modelos del ensemble venía de un método distinto a los demás, un regularized greedy forest, y tenía un score significativamente peor; se le asignó un peso pequeño y aun así mejoró el ensemble general por un factor grande, porque era tan distinto de todos los otros que proveía información a la que ninguno tenía acceso. Cierra con la cita de que no es tanto sobre qué tan bueno es tu mejor modelo, es sobre la diversidad de tu conjunto de modelos candidatos."
+  caption="Los cuatro tocan el mismo elefante. La cuestión es si tocan la misma parte."
+  width={800}
+/>
+
+> *"**Si todos tus modelos están sesgados de la misma forma, tu ensemble retendrá ese mismo
+> sesgo. Si tus modelos están sesgados de formas distintas, los sesgos se cancelarán entre
+> sí**, y el ensemble será más robusto y más preciso."*
+>
+> *"**Una cosa que en general no vale la pena hacer es ensamblar la misma red entrenada
+> varias veces independientemente**, desde distintas inicializaciones aleatorias. Si la
+> única diferencia entre tus modelos es su inicialización aleatoria y el orden en que vieron
+> los datos, **tu ensemble será bajo en diversidad y proveerá solo una mejora minúscula.**"*
+
+La evidencia es de primera mano:
+
+> *"En 2014, Andrei Kolev y yo tomamos el cuarto lugar en el desafío de detección del
+> decaimiento del bosón de Higgs en Kaggle […] **uno de los modelos del ensemble venía de un
+> método distinto a los otros** (era un *regularized greedy forest*) **y tenía un score
+> significativamente peor**. Sin sorpresa, se le asignó un peso pequeño. **Pero para nuestra
+> sorpresa, resultó mejorar el ensemble general por un factor grande, porque era tan distinto
+> de todos los demás modelos: proveía información a la que los otros modelos no tenían
+> acceso.**"*
+
+En la mecánica hay un detalle que importa: el promedio simple *"funcionará solo si los
+clasificadores son más o menos igualmente buenos"*. Lo que se usa es un **promedio ponderado
+con pesos optimizados sobre validación** —por búsqueda aleatoria o Nelder-Mead—, que *"provee
+una línea base muy fuerte"*. Y la receta concreta que Chollet dice que le funciona: *"**el
+uso de un ensemble de métodos basados en árboles (random forests o gradient-boosted trees) y
+redes neuronales profundas.**"*
+
+## 3. Escalar: dos paralelismos que no son intercambiables
+
+El marco viene del capítulo 7, y es una defensa del tiempo de iteración:
+
+> *"A medida que desarrollas tu experticia en la API de Keras, **qué tan rápido puedes
+> codear tus experimentos dejará de ser el cuello de botella. El siguiente cuello de botella
+> será la velocidad a la que puedes entrenar tus modelos.** […] **Entrenar más rápido mejora
+> directamente la calidad de tus soluciones.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/paralelismo-datos-modelo.svg"
+  alt="Diagrama en cuatro bloques. Arriba a la izquierda, panel verde de data parallelism para ir más rápido: un batch de 128 se divide en dos sub-batches de 64, cada uno va a una GPU que aloja el modelo completo como réplica, y los resultados confluyen en una caja azul de gradientes promediados; al pie, que es entrenamiento sincrónico y los pesos son idénticos en todo momento. Arriba a la derecha, panel ámbar de model parallelism para que quepa: se explica que un Dense de 64000 unidades sobre 16000 entradas son mil millones de parámetros y no entra en una GPU; se dibuja el kernel de 16000 por 64000 partido en dos mitades, una para gpu cero y otra para gpu uno, con la nota de que el particionado vertical hace que cada GPU tome una parte de cada capa y que como los matmul son paralelizables casi siempre gana, mientras que el particionado horizontal, donde cada GPU toma capas distintas, introduce overhead de comunicación y deja GPU ociosas esperando. Abajo a la izquierda, un gráfico de barras del speedup real, que no es lineal: 2,0 veces con 2 GPU, 3,8 veces con 4 GPU y 7,3 veces con 8 GPU, con la nota de que el overhead es fusionar los deltas de peso entre dispositivos. Abajo a la derecha, el DeviceMesh dibujado como una grilla de dos filas por cuatro columnas de GPU, donde el eje model parte el modelo en cuatro y el eje data hace dos copias; al pie, la regla del pulgar: shardear la última dimensión de cada variable por el eje model y replicar todas las demás."
+  caption="Data parallelism acelera; model parallelism agranda. Mezclarlos es lo que hace la malla de dispositivos."
+  width={800}
+/>
+
+La distinción es la que más se confunde: **data parallelism replica el modelo entero** en
+cada dispositivo y parte los batches — sirve para acelerar, y exige que el modelo quepa en
+un dispositivo. **Model parallelism parte el modelo** — y *"solo se usa en el caso de modelos
+que son demasiado grandes para caber en un solo dispositivo: **no se usa como forma de
+acelerar el entrenamiento de modelos normales, sino como forma de entrenar modelos más
+grandes**"*.
+
+Dentro del segundo hay dos sabores, y uno gana casi siempre: partir **horizontalmente**
+(capas distintas en dispositivos distintos) *"introduce overhead de comunicación […]
+**arriesgas mantener tus GPU ociosas**"*, mientras que partir **verticalmente** (un pedazo
+de cada capa en cada dispositivo) funciona porque *"las capas se implementan típicamente en
+términos de matmul o convolución, **que son altamente paralelizables**"*.
+
+<Note type="tip" title="La recomendación más categórica del libro">
+*"Solo cubriremos el backend **JAX**, ya que es **el más performante y el más escalable** de
+los distintos backends de Keras, **por lejos**. Si estás haciendo cualquier tipo de
+entrenamiento distribuido a gran escala y no estás usando JAX, **estás cometiendo un error —
+y desperdiciando tus dólares quemando mucho más cómputo del que realmente necesitas.**"*
+</Note>
+
+En código, el data parallelism es **una línea** antes de construir el modelo:
+
+```python
+keras.distribution.set_distribution(keras.distribution.DataParallel())
+```
+
+Y el speedup real no es lineal, porque *"**fusionar los deltas de peso originados en
+distintos dispositivos toma tiempo**"*: 2 GPU dan cerca de 2×, 4 dan **3,8×**, 8 dan
+**7,3×**. Con una condición: *"esto asume que estás usando **un batch size global
+suficientemente grande** para mantener cada GPU utilizada a plena capacidad"*.
+
+Para mezclar los dos paralelismos está la **`DeviceMesh`**, que no es más que una grilla de
+dispositivos con **ejes nombrados** — típicamente uno para datos y otro para modelo. El
+`LayoutMap` decide, para **cada dimensión de cada variable**, si se replica (`None`) o se
+shardea (el nombre del eje). Y la regla del pulgar es corta:
+
+> - *"**Shardear la última dimensión** de la variable a lo largo del eje `"model"` de la
+>   malla."*
+> - *"**Dejar todas las otras dimensiones replicadas.**"*
+
+Lo notable es lo que **no** cambia:
+
+> *"Una vez que la configuración de distribución está fijada, puedes crear tu modelo y
+> hacerle `fit()`. **Ninguna otra parte de tu código cambia** […] los pequeños snippets que
+> acabas de ver son suficientes para distribuir el cómputo de cualquier corrida de
+> entrenamiento de un modelo grande de lenguaje."*
+
+<Note type="info" title="TPU: los números, y el cuello de botella que aparece">
+Una **TPU v2** —gratis en Colab— es *"típicamente **15× más rápido** que entrenar en una GPU
+NVIDIA P100"*, y para la mayoría de los modelos termina siendo **3× más costo-efectiva**.
+
+Pero *"porque las TPU pueden procesar batches extremadamente rápido, **la velocidad a la que
+puedes leer datos de Google Cloud Storage puede volverse fácilmente el cuello de
+botella**"*. La respuesta es `dataset.cache()` si el dataset cabe en RAM, y
+`steps_per_execution=8` para *"hacer más trabajo entre dos viajes de ida y vuelta desde la
+memoria de la VM a la TPU"*.
+
+Y un razonamiento que se lleva a cualquier entrenamiento con batches grandes: *"vas a hacer
+**menos** actualizaciones a tus pesos, pero **cada actualización será más precisa** […] de
+ahí que **debas mover los pesos con mayor magnitud en cada actualización**"* — es decir,
+batch más grande pide learning rate más alto.
+</Note>
+
+## 4. Bajar la precisión, que es casi gratis
+
+> *"¿Qué tal si te dijera que hay una técnica simple que podrías usar para acelerar el
+> entrenamiento y la inferencia de casi cualquier modelo **hasta 2×, básicamente gratis**?"*
+
+La analogía de apertura ordena todo lo que sigue: *"**la precisión es a los números lo que la
+resolución es a las imágenes**"*. En matemática siempre se puede hacer zoom entre dos
+números; en un computador no, y hasta dónde se puede depende de cuántos bits hay.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/precision-mixta.svg"
+  alt="Diagrama en tres bloques. Arriba, tres barras segmentadas que comparan el reparto de bits: float32 con 1 bit de signo, 8 de exponente y 23 de mantisa, resolución aproximada 1e-7; float16 con 1, 5 y 10, resolución aproximada 1e-3; y bfloat16 con 1, 8 y 7, que tiene el mismo rango que float32 pero con menos detalle. Al pie de ese bloque, la nota de que los valores representables no están uniformemente distribuidos, que hay tantos entre 2 elevado a N y 2 elevado a N más 1 como entre 1 y 2, y que el error crece con el valor absoluto. Abajo a la izquierda, panel azul sobre mixed precision y sus dos dtypes por capa: el entrenamiento en 16 bits puro falla porque las actualizaciones de peso rondan 1e-5 o 1e-6 y ahí ya no hay resolución; se muestran dos cajas, compute_dtype en float16 con la nota de que el forward pass baja a 16 bits, y variable_dtype en float32 con la nota de que los pesos reciben updates precisos; se aclara que softmax y crossentropy son inestables en 16 bits y se sacan de la política pasando dtype float32 al constructor de esa capa, y se cierra con la cita de que es un buen impulso de velocidad a virtualmente ningún costo. Abajo a la derecha, panel ámbar sobre loss scaling: los gradientes siguen en 16 bits, así que los más chicos se redondean a cero y el modelo deja de aprender; el truco es que los gradientes son proporcionales a la pérdida, así que se multiplica la pérdida por un factor grande y ya no caen bajo el umbral, usando LossScaleOptimizer sobre Adam, porque el factor correcto cambia durante el entrenamiento."
+  caption="El reparto de bits decide qué se pierde: `bfloat16` conserva el rango de `float32` y sacrifica detalle."
+  width={800}
+/>
+
+Un hecho contraintuitivo del recuadro que vale tener presente porque explica la sección
+siguiente:
+
+> *"**Los números representables no están uniformemente distribuidos. Los números más grandes
+> tienen menor precisión: hay el mismo número de valores representables entre `2**N` y
+> `2**(N+1)` que entre 1 y 2, para cualquier N.**"*
+
+Para **inferencia**, bajar a `float16` es un cambio de política y da *"un impulso de
+velocidad de casi 2× en GPU y TPU"*. Para **entrenamiento** no alcanza, y la razón es
+concreta: *"el proceso de descenso de gradiente **no correría suavemente en `float16`**, ya
+que no podríamos representar actualizaciones pequeñas de gradiente de alrededor de **1e-5 o
+1e-6, que son bastante comunes**"*.
+
+De ahí **mixed precision**, que es una política con dos dtypes por capa: `compute_dtype` baja
+a `float16` y `variable_dtype` **se queda en `float32`**. *"Como su `variable_dtype` sigue
+siendo `float32`, sus pesos podrán recibir actualizaciones precisas […] en oposición a
+actualizaciones de media precisión."* Con dos operaciones que hay que sacar de la política a
+mano porque son numéricamente inestables en 16 bits: **softmax y crossentropy**.
+
+Queda un problema residual —los gradientes sí viven en `float16` y los chicos se redondean a
+cero— y la solución es de una elegancia notable: **los gradientes son proporcionales a la
+pérdida**, así que basta multiplicar la pérdida por un factor grande para sacarlos del
+umbral. `LossScaleOptimizer` lo hace solo, *"y usualmente es tu mejor opción: **el valor
+correcto de escalado puede cambiar a lo largo del entrenamiento**"*.
+
+### Y el piso: `float8` casi nunca, `int8` en una línea
+
+> *"Mixed precision usando `float16` en el forward pass es **el último nivel de precisión que
+> 'simplemente funciona'** […] **Esto ya no es cierto si bajas a `float8`: simplemente estás
+> perdiendo demasiada información.**"*
+
+Keras trae `float8` solo para `Dense`, `EinsumDense` y `Embedding` —*"apunta específicamente
+a casos de uso de Transformer"*— y el veredicto es una advertencia:
+
+> *"Este overhead añadido tiene un costo computacional. **Si tu modelo es demasiado chico o
+> si tu GPU no es lo bastante potente, ese costo excederá los beneficios […] y verás una
+> desaceleración en vez de un speedup.** El entrenamiento en `float8` es solo viable para
+> modelos muy grandes (típicamente sobre 5 mil millones de parámetros) y GPU grandes y
+> recientes como la NVIDIA H100. **`float8` raramente se usa en la práctica.**"*
+
+La **cuantización a `int8`**, en cambio, es para inferencia y funciona. La idea es escalar
+los tensores para que entren en `[-127, 127]`, hacer el matmul en enteros, y desescalar al
+final:
+
+```python
+def abs_max_quantize(value):
+    abs_max = ops.max(ops.abs(value), keepdims=True)
+    scale = ops.divide(127, abs_max + 1e-7)
+    scaled_value = value * scale
+    scaled_value = ops.clip(ops.round(scaled_value), -127, 127)  # redondear ANTES de castear
+    scaled_value = ops.cast(scaled_value, dtype="int8")
+    return scaled_value, scale
+```
+
+> *"**Como el matmul es una operación lineal, este desescalado final cancela el escalado
+> inicial** […] **cualquier pérdida de precisión viene solo del redondeo** que ocurre al
+> castear las entradas a `int8`."*
+
+<Note type="warning" title="El error de la cuantización no está repartido parejo">
+Estos son los cuatro valores del ejemplo del libro, contra el mismo matmul en `float32`:
+
+| Coeficiente | `int8` | `float32` | Error |
+|---|---|---|---|
+| `[0,0]` | 0,9843736 | 0,98 | +0,4 % |
+| `[0,1]` | 0,3933239 | 0,41 | **−4,1 %** |
+| `[1,0]` | −1,0151455 | −1,0 | +1,5 % |
+| `[1,1]` | −3,1965137 | −3,2 | −0,1 % |
+
+El libro llama al resultado *"bastante preciso"* y no comenta lo que la tabla muestra: **el
+coeficiente más chico en valor absoluto se lleva diez veces el error del más grande**. Es
+exactamente lo que predice el recuadro sobre la no-uniformidad del punto flotante, y es la
+razón de fondo por la que la cuantización se aplica a inferencia y jamás al gradiente. Vale
+tenerlo presente antes de cuantizar un modelo cuyas salidas útiles sean valores chicos.
+</Note>
+
+Y en la práctica, una línea: `model.quantize("int8")`. *"Por supuesto, no espero que
+implementes cuantización a mano — eso sería tremendamente impráctico."*
+
+## Para recordar
+
+- **Tus elecciones iniciales de arquitectura son casi siempre suboptimales**, incluso con
+  buena intuición. Ajustarlas a mano es lo que consume la mayor parte del tiempo de un
+  ingeniero de ML, y es exactamente lo que conviene automatizar.
+- **El tuning no es descenso de gradiente**: el espacio es discreto, cada evaluación cuesta
+  un entrenamiento completo, y la señal es ruidosa. Por eso `executions_per_trial`.
+- **Después de la búsqueda hay que reentrenar** con los datos de validación adentro y con más
+  épocas de las que la `patience` agresiva permitió.
+- **La búsqueda de hiperparámetros overfittea al conjunto de validación.** No es una
+  metáfora: los hiperparámetros se están entrenando sobre esos datos.
+- **La diversidad es fuerza.** Sesgos distintos se cancelan, sesgos iguales se conservan. Un
+  ensemble de la misma red con distintas semillas casi no aporta.
+- **El peor modelo puede ser el que más suma**, si es el único que viene de una familia
+  distinta. *"No es tanto sobre qué tan bueno es tu mejor modelo."*
+- **Data parallelism acelera; model parallelism agranda.** No son sustitutos, y se combinan
+  con una malla de dispositivos de dos ejes.
+- **8 GPU dan 7,3×, no 8×**, porque fusionar los deltas de peso cuesta. Y solo si el batch
+  global alcanza para mantener a todas ocupadas.
+- **Mixed precision es dos dtypes por capa**: cómputo en 16 bits, pesos en 32. Y el loss
+  scaling existe porque los gradientes son proporcionales a la pérdida.
+- **`float16` es el piso que «simplemente funciona».** Bajar a `float8` solo compensa con
+  modelos de más de cinco mil millones de parámetros y hardware reciente.
+
+El **capítulo 19** deja la ingeniería y vuelve a la pregunta grande: qué le falta a todo
+esto para parecerse a inteligencia.

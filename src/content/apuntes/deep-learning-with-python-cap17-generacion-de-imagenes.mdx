@@ -1,0 +1,371 @@
+---
+title: "Cada cuadrado de ruido blanco tiene una imagen dentro"
+description: "El capítulo 17 construye dos generadores desde cero —un VAE sobre MNIST y un modelo de difusión sobre 8 189 fotos de flores— y termina caminando por el espacio latente de Stable Diffusion 3. Pero tiene una sola tesis, y esta vez se ve a simple vista: las redes profundas son máquinas de interpolación. En el VAE, todo el truco es el epsilon aleatorio que se suma antes de decodificar: obliga a que el vecindario entero de cada imagen decodifique a algo parecido, y por eso el plano latente queda cubierto en vez de lleno de agujeros. En la difusión, el modelo no emite la imagen limpia sino la máscara de ruido, se le dice cuánto ruido sacar, y el schedule es cosenoidal por una sola razón: seno y coseno cumplen Pitágoras, así que la energía se conserva. Y al interpolar entre dos prompts hay que usar slerp y no un promedio, porque la recta entre dos puntos de una esfera pasa por dentro — la hipótesis del manifold, cobrada en código. Apuntes del Cap. 17."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "generación de imágenes", "vae", "difusión", "u-net", "stable diffusion", "espacio latente", "keras"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 17 — Generación de imágenes"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 17 (PDF 532–561)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Este es el último modelo sustantivo del libro, y el libro lo elige a propósito:
+
+> *"Esto puede sentirse como magia la primera vez que lo pruebas, pero **no hay nada
+> mágico** — la interpolación es fundamental a la forma en que las redes neuronales
+> profundas aprenden. […] Las redes neuronales profundas son **máquinas de
+> interpolación**; mapean distribuciones de probabilidad complejas del mundo real a
+> manifolds de baja dimensión."*
+
+Es exactamente la tesis del capítulo 15 sobre el Transformer como base de datos
+interpolativa. La diferencia es que acá **se ve**.
+
+## 1. La idea que vale para los tres tipos de modelo
+
+> *"La idea clave de la generación de imágenes es **desarrollar un espacio latente de
+> representaciones de baja dimensión** […] **donde cualquier punto puede mapearse a una
+> imagen 'válida'**. […] Una vez que tal espacio latente ha sido aprendido, puedes
+> muestrear puntos de él y, mapeándolos de vuelta al espacio de imagen, generar imágenes
+> nunca vistas antes — **los intermedios de las imágenes de entrenamiento**."*
+
+Con text-conditioning encima, eso es un modelo texto-a-imagen: *"¿Un caballo andando en
+bicicleta en la luna? Lo tienes."* Y el mismo ejemplo sirve para marcar el límite, en el
+mismo párrafo:
+
+> *"**El espacio latente no codifica un modelo consistente del mundo físico**, así que
+> ocasionalmente podrías ver manos con dedos extra […]. Pese a haber visto decenas de miles
+> de imágenes de gente andando en bicicleta, **el modelo no entiende en sentido humano qué
+> significa andar en bicicleta** — conceptos como pedalear, dirigir o mantener el
+> equilibrio. Por eso tu caballo ciclista es improbable que aparezca pedaleando con sus
+> patas traseras de manera creíble, **como lo dibujaría un artista humano**."*
+
+<Note type="info" title="Las GAN salieron del libro">
+Las ediciones anteriores dedicaban una sección a las *generative adversarial networks*.
+Esta las elimina: *"han caído gradualmente en desuso en años recientes y han sido
+prácticamente reemplazadas por los modelos de difusión"*. Quedan dos familias — VAE y
+difusión — y el capítulo construye una de cada una.
+</Note>
+
+## 2. El VAE: por qué el autoencoder clásico no sirve
+
+Un autoencoder comprime una imagen a un código y la reconstruye desde ahí, usando **la
+propia entrada como objetivo**. Es el primer modelo no supervisado del libro, o más
+precisamente **auto-supervisado**. Y no funciona para generar:
+
+> *"En la práctica, tales autoencoders clásicos **no llevan a espacios latentes
+> particularmente útiles ni bien estructurados. Tampoco son muy buenos comprimiendo.** Por
+> estas razones han caído en desuso."*
+
+Lo que agrega el VAE es *"un poco de magia estadística"*:
+
+> *"Un VAE, en vez de comprimir su imagen de entrada en un código fijo en el espacio
+> latente, **convierte la imagen en los parámetros de una distribución estadística: una
+> media y una varianza.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/vae-mecanismo.svg"
+  alt="Diagrama en dos filas. Arriba, la tubería del VAE: una imagen de 28 por 28 entra a un encoder que usa strides en vez de pooling y emite dos vectores, z_mean y z_log_var; ambos van a una capa Sampler que suma ruido gaussiano, con una flecha roja que baja desde epsilon distribuido normal de media 0 y varianza 1; de ahí sale z, que pasa por un decoder de Conv2DTranspose y produce la reconstrucción, que es la misma imagen. Debajo, la fórmula: z igual a z_mean más exponencial de 0,5 por z_log_var, todo multiplicado por epsilon. Abajo, tres paneles. Panel rojo, autoencoder clásico: cada imagen va a un punto fijo, y el plano latente se dibuja con nueve puntos rojos aislados y un signo de interrogación en un hueco; entre dos puntos no hay nada garantizado, el espacio queda lleno de agujeros y no sirve para muestrear. Panel verde, VAE: cada imagen va a una nube de probabilidad, y el mismo plano se dibuja con nueve círculos verdes translúcidos que se solapan y cubren la superficie; el epsilon obliga a que todo el vecindario decodifique a algo parecido. Panel gris, las dos pérdidas que lo sostienen: reconstrucción, para que lo decodificado se parezca a la entrada, y regularización por divergencia KL, que empuja la salida del encoder hacia una normal bien redondeada centrada en cero y es la suposición previa sobre la forma del espacio latente; al pie, que continuidad más baja dimensión obligan a que cada dirección codifique un eje de variación con significado."
+  caption="El ruido no es un detalle de implementación: es el mecanismo entero."
+  width={800}
+/>
+
+El razonamiento de por qué eso estructura el espacio es de una línea, y conviene tenerlo
+claro porque es el mismo argumento que aparece en casi toda la literatura de espacios
+latentes:
+
+> *"Porque `epsilon` es aleatorio, el proceso asegura que **todo punto cercano a la
+> ubicación latente donde codificaste `input_img` pueda decodificarse a algo similar a
+> `input_img`**, forzando así al espacio latente a ser continuamente significativo. […] La
+> continuidad, combinada con la **baja dimensionalidad** del espacio latente, fuerza a
+> **cada dirección del espacio latente a codificar un eje significativo de variación de los
+> datos**."*
+
+La capa de sampling son seis líneas:
+
+```python
+class Sampler(keras.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.seed_generator = keras.random.SeedGenerator()   # hace falta en Keras 3
+        self.built = True
+
+    def call(self, z_mean, z_log_var):
+        batch_size = ops.shape(z_mean)[0]
+        z_size = ops.shape(z_mean)[1]
+        epsilon = keras.random.normal((batch_size, z_size), seed=self.seed_generator)
+        return z_mean + ops.exp(0.5 * z_log_var) * epsilon
+```
+
+Un detalle del encoder que se arrastra desde el capítulo de segmentación: **strides, no max
+pooling**. *"En general, **los strides son preferibles al max pooling para cualquier modelo
+al que le importe la ubicación de la información** — y a este le importa, ya que tendrá que
+producir una codificación usable para reconstruir una imagen válida."*
+
+El modelo completo es minúsculo: **69 076 parámetros** de encoder, **65 089** de decoder, y
+un espacio latente de **dos dimensiones**, o sea un plano. Con 30 épocas sobre los 70 000
+dígitos de MNIST, se muestrea una grilla de 30×30 puntos y se decodifica cada uno:
+
+> *"La grilla de dígitos muestreados muestra una **distribución completamente continua** de
+> las distintas clases de dígito, con un dígito transformándose en otro a medida que sigues
+> un camino por el espacio latente. **Direcciones específicas en este espacio tienen un
+> significado**: por ejemplo, hay una dirección para 'cuatridad', 'unidad', y así."*
+
+<Note type="tip" title="`compute_loss()` en vez de `train_step()`, y por qué importa">
+El VAE necesita una pérdida que no encaja en `compile(loss=...)`. El patrón conocido es
+sobrescribir `train_step()`, que el capítulo 7 enseña. El libro propone algo mejor:
+
+*"**Una desventaja de esa técnica es que el contenido de `train_step()` tiene que ser
+específico del backend** — usarías `GradientTape` con TensorFlow, usarías `loss.backward()`
+con PyTorch, y así. **Una forma más simple de personalizar tu lógica de entrenamiento es
+implementar el método `compute_loss()`** y quedarte con el `train_step()` por defecto. […]
+Como no involucra manipulación directa de gradientes, **es fácil mantenerlo agnóstico del
+backend.**"*
+
+La firma es `compute_loss(x, y, y_pred, sample_weight=None, training=True)`, y en este caso
+`y` es `None` porque el dataset no tiene etiquetas. Consecuencia: `compile()` va **sin**
+`loss=` y `fit()` **sin** targets. El modelo de difusión de la segunda mitad usa el mismo
+patrón.
+</Note>
+
+## 3. De limpiar ruido a inventar imágenes
+
+El capítulo llega a la difusión por historia, no por definición. El **denoising** es
+*"la única tarea en la que los autoencoders sobresalen"*, y de ahí salieron los modelos de
+super-resolución que *"vienen en cada app de cámara de smartphone importante"*. Con una
+advertencia que vale la pena leer dos veces:
+
+<Note type="warning" title="El caso de la luna">
+*"Estos modelos **no están recuperando mágicamente detalles perdidos** escondidos en la
+entrada, como en la escena de 'enhance' de Blade Runner. Más bien, están **haciendo
+conjeturas educadas** […] están **alucinando** una versión limpia y de mayor resolución."*
+
+*"Con algunas cámaras mejoradas por IA, puedes tomar una foto de algo que se ve vagamente
+como la luna (por ejemplo, **una impresión de una imagen severamente borrosa de la luna**)
+y obtendrás en tu carrete **una foto nítida de los cráteres**. Un montón de detalle que
+simplemente no estaba presente en la impresión es alucinado directamente por la cámara,
+porque el modelo de super-resolución que usa **está overfitteado a imágenes de fotografía
+lunar**. Así que, a diferencia de Rick Deckard, **definitivamente no uses esta técnica para
+forense.**"*
+</Note>
+
+Y el salto:
+
+> *"**Como puedes usar un autoencoder para remover una pequeña cantidad de ruido de una
+> imagen, seguramente sería posible repetir el proceso muchas veces en un bucle para
+> remover una gran cantidad de ruido. En última instancia, ¿podrías quitarle el ruido a una
+> imagen hecha de ruido puro?** Resulta que sí, puedes."*
+
+Con una precisión terminológica que aclara una confusión frecuente: *"esto debería llamarse
+más precisamente **modelos de difusión inversa**, ya que 'difusión' se refiere al proceso de
+**agregar** ruido gradualmente"*. Y la metáfora que le da título a estos apuntes:
+
+> *"Quizá conozcas esta cita poética de Miguel Ángel: 'Cada bloque de piedra tiene una
+> estatua dentro y es tarea del escultor descubrirla' — bueno, **cada cuadrado de ruido
+> blanco tiene una imagen dentro, y es tarea del modelo de difusión descubrirla.**"*
+
+## 4. El mecanismo, con las dos decisiones que no son obvias
+
+<Figure
+  src="/apuntes/deep-learning-with-python/difusion-bucle.svg"
+  alt="Diagrama en tres bloques. Arriba a la izquierda, el schedule cosenoidal dibujado como un cuarto de circunferencia con un radio azul trazado a un ángulo theta; la proyección horizontal está marcada en verde y rotulada signal_rate igual a coseno de theta, y la vertical en rojo, rotulada noise_rate igual a seno de theta. Al lado, el texto explica que el tiempo de difusión va continuo de 1 a 0, siendo t igual a 1 ruido máximo y t igual a 0 señal pura, y que como seno y coseno cumplen Pitágoras se tiene noise al cuadrado más signal al cuadrado igual a 1, de modo que la energía total se conserva en cada paso, y esa es toda la razón de la elección. Arriba a la derecha, panel ámbar con las dos decisiones que no son obvias: un minidiagrama donde una caja de imagen con ruido más noise_rate entra a una U-Net y sale una máscara de ruido predicha; primero, el modelo no emite la imagen limpia sino el ruido, que después se resta, con la fórmula pred_images igual a noisy menos noise_rate por mask, todo dividido por signal_rate; segundo, se le dice cuánto ruido sacar, porque el mismo modelo se reutiliza en cada iteración y el noise_rate entra como un canal más; y una nota de que la última capa arranca con kernel_initializer igual a zeros, así que antes de entrenar la suposición por defecto es que no hay ruido. Abajo, panel verde con el bucle de generación en cuatro cajas encadenadas: ruido puro con t igual a 1, predecir el ruido y restarlo, recombinar con el schedule del paso siguiente, e imagen con t igual a 0; una flecha de retorno indica repetir num_steps veces. Al pie, el detalle que se pasa por alto: no se salta a la imagen predicha, se la vuelve a mezclar con el ruido predicho según el schedule del paso siguiente, así que cada iteración avanza un tramo hacia la imagen limpia y no de un salto."
+  caption="El schedule cosenoidal no es estético: la identidad pitagórica es la razón entera."
+  width={800}
+/>
+
+**Uno.** El modelo no emite la imagen limpia — emite **la máscara de ruido**, que después se
+resta. **Dos.** Se le pasa `noise_rates` como entrada: *"el mismo modelo de denoising se
+reutiliza en cada iteración del proceso, borrando un poco de ruido cada vez. **Para hacerle
+el trabajo más fácil, le decimos cuánto ruido se supone que debe extraer.**"*
+
+```python
+    def denoise(self, noisy_images, noise_rates, signal_rates):
+        pred_noise_masks = self.denoising_model([noisy_images, noise_rates])
+        pred_images = (noisy_images - noise_rates * pred_noise_masks) / signal_rates
+        return pred_images, pred_noise_masks
+```
+
+La arquitectura es una **U-Net** —de segmentación, capítulo 11— con downsampling de 128×128
+a 16×16, un tramo medio a tamaño constante, y upsampling de vuelta. Lo que la hace
+funcionar son los skips:
+
+> *"El modelo tiene **conexiones residuales concatenativas** que van de cada bloque de
+> downsampling al bloque de upsampling correspondiente. **Estas conexiones ayudan a evitar
+> la pérdida de información de detalle de la imagen** a través de las operaciones sucesivas
+> de downsampling y upsampling."*
+
+Y el **schedule**. El tiempo de difusión es un valor continuo entre 1 (ruido máximo) y 0
+(señal pura), y el schedule dice cuánta señal y cuánto ruido hay en cada instante:
+
+```python
+def diffusion_schedule(diffusion_times, min_signal_rate=0.02, max_signal_rate=0.95):
+    start_angle = ops.cast(ops.arccos(max_signal_rate), "float32")
+    end_angle = ops.cast(ops.arccos(min_signal_rate), "float32")
+    diffusion_angles = start_angle + diffusion_times * (end_angle - start_angle)
+    signal_rates = ops.cos(diffusion_angles)
+    noise_rates = ops.sin(diffusion_angles)
+    return noise_rates, signal_rates
+```
+
+> *"La lógica detrás de usar un schedule cosenoidal es **mantener la relación
+> `noise_rates ** 2 + signal_rates ** 2 == 1`**."*
+
+Es decir: se eligen seno y coseno **porque cumplen Pitágoras**, y eso garantiza que la
+energía total —señal más ruido— se conserve en cada paso. Nada más.
+
+El entrenamiento es lo de siempre con dos vueltas de tuerca: la pérdida es **error absoluto
+medio sobre la máscara de ruido**, no sobre la imagen, y cada batch usa **tiempos de
+difusión aleatorios**, porque *"el modelo de denoising necesita ser entrenado en el espectro
+completo de tiempos de difusión"*.
+
+<Note type="info" title="Tres detalles de operación que el libro deja caer al pasar">
+**El recorte importa.** `crop_to_aspect_ratio=True` al cargar las 8 189 fotos de Oxford
+Flowers, porque *"no queremos distorsionar su relación de aspecto ya que **esto afectaría
+negativamente la calidad de nuestras imágenes generadas**"*.
+
+**Promediado de Polyak.** El optimizador va con `use_ema=True` y
+`ema_overwrite_frequency=100`: *"mantiene un promedio corriente de los pesos del modelo
+durante el entrenamiento. Cada 100 batches sobrescribimos los pesos con este conjunto
+promediado. **Esto ayuda a estabilizar las representaciones en escenarios donde el paisaje
+de pérdida es ruidoso.**"*
+
+**No hay métrica.** *"**No tenemos una métrica apropiada para juzgar la calidad de nuestras
+imágenes generadas**, así que vas a querer visualizarlas tú mismo a lo largo del
+entrenamiento."* La solución es un `Callback` con `on_epoch_end()` que genera una grilla —
+el uso más natural del material del capítulo 7.
+
+El costo: 100 épocas, unos **90 minutos en una T4** gratuita de Colab.
+</Note>
+
+Y en el bucle de generación está el detalle que más se pasa por alto: **no se salta a la
+imagen predicha**. Se la vuelve a mezclar con el ruido predicho según el schedule del paso
+**siguiente**, de modo que cada iteración avanza un tramo en vez de saltar al final.
+
+```python
+            pred_images, pred_noises = self.denoise(noisy_images, noise_rates, signal_rates)
+            next_diffusion_times = diffusion_times - step_size
+            next_noise_rates, next_signal_rates = diffusion_schedule(next_diffusion_times)
+            noisy_images = next_signal_rates * pred_images + next_noise_rates * pred_noises
+```
+
+<Note type="warning" title="Un bug en el listing del `DiffusionModel`">
+Dentro de `DiffusionModel.call()`, la forma del ruido se construye con
+`(batch_size, self.image_size, self.image_size, 3)` — y `batch_size` se lee **del ámbito
+global**, no del tensor de entrada. Lo robusto sería `ops.shape(images)[0]`, que es
+exactamente lo que el propio libro hace en el `Sampler` del VAE veinte páginas antes.
+
+Funciona en el ejemplo porque el dataset se arma con `drop_remainder=True` y todos los
+batches miden 32. Pero deja el modelo atado a una variable global: cambiar `batch_size`
+después de definir la clase, o pasarle un batch de otro tamaño, tira un error de shape.
+</Note>
+
+## 5. Texto a imagen, y la caminata por el manifold
+
+Extender esto a texto-a-imagen es sorprendentemente poco: se toma un encoder de texto
+preentrenado (*"piensa en un encoder transformer como RoBERTa del capítulo 15"*) y **se le
+pasa el prompt embebido al modelo de denoising**. *"En vez de aprender a remover ruido de
+una imagen **sin ninguna información adicional**, el modelo puede usar **una representación
+textual de la imagen final para guiar el proceso**."*
+
+El libro no entrena uno —*"tienes todos los ingredientes que necesitas, pero es bastante
+caro y demorado"*— y usa Stable Diffusion 3 medium vía KerasHub. Con el prompt negativo
+desmitificado como todo lo demás:
+
+> *"El modelo Stable Diffusion agrega un segundo 'prompt negativo', que puede usarse para
+> **alejar el proceso de difusión de ciertas entradas de texto. No hay nada mágico acá.**
+> […] simplemente podrías entrenar un modelo sobre **tripletas: (imagen, prompt_positivo,
+> prompt_negativo)**."*
+
+Al abrir `generate()` en sus partes aparece un detalle de arquitectura que no se ve desde
+afuera: los embeddings de texto son **cuatro tensores**, no uno.
+
+```python
+>>> [x.shape for x in embeddings]
+[(1, 154, 4096), (1, 154, 4096), (1, 2048), (1, 2048)]
+```
+
+> *"En vez de pasar solo el vector final embebido al modelo de denoising, los autores de
+> Stable Diffusion eligieron pasar **tanto el vector de salida final como la última
+> representación de la secuencia completa de tokens**. Esto efectivamente le da al modelo de
+> denoising **más información con la que trabajar**."*
+
+Son la secuencia del prompt positivo, la del negativo, y los dos vectores agregados.
+
+### Y ahora sí: caminar de un prompt a otro
+
+<Figure
+  src="/apuntes/deep-learning-with-python/slerp-esfera.svg"
+  alt="Diagrama en dos paneles. Izquierda, una esfera dibujada como un círculo azul claro con una elipse punteada que sugiere el ecuador; sobre la superficie, dos puntos azules rotulados prompt A y prompt B, unidos de dos maneras: una línea recta roja punteada, rotulada lerp, cuyo punto medio queda dentro de la esfera, y un arco verde grueso que va por la superficie, rotulado slerp, cuyo punto medio queda sobre ella. Debajo se aclara que el manifold de texto es la superficie, no el volumen, y se explica que con lerp el punto medio cae dentro de la esfera, dando un vector de menor magnitud fuera del manifold donde el denoiser no aprendió nada, mientras que con slerp se recorre el arco, la magnitud se mantiene y cada punto intermedio sigue significando algo. Panel derecho: la cita donde el libro admite que el manifold de texto no es realmente esférico, pero que es una superficie suave de números todos con aproximadamente la misma magnitud, de modo que es tipo esfera e interpolar como si lo fuera es mejor aproximación que interpolar como si fuera una línea. Debajo, la conexión con la hipótesis del manifold del capítulo 5, donde se decía que los datos naturales viven sobre un manifold de baja dimensión dentro del espacio de entrada, y que acá hay que respetar su curvatura para moverse por él sin caerse. Al pie, el experimento: de un perro amistoso mirando hacia arriba en un campo de flores a una criatura horrorosa y tentaculada flotando sobre un campo de flores, con zoom en el 10 por ciento central del camino, y todos los puntos intermedios existen y son coherentes."
+  caption="La hipótesis del manifold del capítulo 5, cobrada en código veinte capítulos después."
+  width={800}
+/>
+
+> *"Si imaginamos nuestro manifold de texto como una esfera y nuestros dos prompts como
+> puntos aleatorios en esa esfera, **interpolar linealmente entre esos dos puntos nos
+> dejaría DENTRO de la esfera. Ya no estaríamos en su superficie.** Y queremos quedarnos en
+> la superficie del manifold suave que aprendió nuestro embedding de texto — **ahí es donde
+> los puntos de embedding tienen significado para el modelo de denoising.**"*
+
+Por eso se usa **slerp** (*spherical linear interpolation*), *"una función que se ha usado
+en gráficos por computador por décadas"*. Y el libro es honesto sobre la aproximación:
+
+> *"Por supuesto, el manifold que aprende nuestro modelo de embedding de texto **no es
+> realmente esférico**. Pero es una superficie suave de números todos con aproximadamente la
+> misma magnitud — **es tipo esfera, e interpolar como si estuviéramos en una esfera es
+> mejor aproximación que interpolar como si estuviéramos en una línea.**"*
+
+El experimento final va de *"un perro amistoso mirando hacia arriba en un campo de flores"*
+a *"una criatura horrorosa y tentaculada flotando sobre un campo de flores"*, con zoom en el
+10 % central del camino —`start=0.5, stop=0.6`— justo donde la transformación se vuelve
+visualmente obvia. Y todos los puntos intermedios existen.
+
+<Note type="tip" title="Dos cosas del código de Stable Diffusion que el libro no explica">
+**`guidance_scale=7.0`** aparece en `denoise_with_text_embeddings()` sin comentario. Es el
+parámetro de *classifier-free guidance*: controla cuánto se pondera el prompt positivo
+contra el negativo, y es el mecanismo por el cual el prompt negativo funciona. Subirlo
+aumenta la adherencia al prompt a costa de diversidad. Ese `7.0` no es arbitrario.
+
+**El prompt impreso tiene un typo**: `"A NASA astraunaut riding an origami elephant"`. Es
+`astronaut`. No rompe nada —el tokenizador subword lo procesa igual— pero es parte de la
+explicación de por qué la figura del libro sale con artefactos: se está interpolando desde
+un token mal escrito.
+</Note>
+
+Sobre los artefactos, el libro no esconde los de su propia salida —*"nuestro segundo
+elefante tiene **colmillos duplicados**"*— y separa dos causas que no se arreglan igual.
+Una es de tamaño: se usa el modelo *medium*, de unos 3 mil millones de parámetros, porque
+el de 9 mil millones *"necesita mucha RAM"*. La otra no tiene arreglo:
+
+> *"Descubrir cómo dibujar realmente un humano en traje espacial sentado sobre un elefante
+> hecho de papel requeriría **algún entendimiento de anatomía y física que nuestro modelo no
+> tiene**. El modelo siempre intentará lo mejor para **interpolar** una salida basada en sus
+> datos de entrenamiento, pero **no tiene ningún entendimiento real de los objetos** que
+> intenta representar."*
+
+## Para recordar
+
+- **Generar es muestrear un espacio latente donde todo punto es una imagen válida.** Lo que
+  sale son *"los intermedios de las imágenes de entrenamiento"*.
+- **El autoencoder clásico deja agujeros.** El VAE codifica a una media y una varianza, y
+  el `epsilon` aleatorio obliga a que el vecindario entero de cada imagen decodifique a algo
+  parecido: eso es lo que vuelve el espacio continuo y muestreable.
+- **Dos pérdidas, dos trabajos**: reconstrucción para que se parezca a la entrada, KL para
+  empujar el latente hacia una normal centrada en 0.
+- **`compute_loss()` antes que `train_step()`.** El primero es agnóstico del backend; el
+  segundo te obliga a escribir `GradientTape` o `.backward()`.
+- **Difusión es denoising en bucle**, y el nombre está invertido: difundir es *agregar*
+  ruido.
+- **El modelo predice el ruido, no la imagen**, y se le dice cuánto ruido debe sacar. La
+  última capa arranca en ceros: la suposición previa es «acá no hay ruido».
+- **El schedule es cosenoidal por Pitágoras.** `noise² + signal² = 1` conserva la energía en
+  cada paso; esa es la razón entera.
+- **El bucle da pasos parciales.** Recombina imagen y ruido predichos según el schedule del
+  paso siguiente en vez de saltar al resultado.
+- **Slerp y no lerp.** La recta entre dos puntos de una esfera pasa por dentro, y adentro
+  del manifold el denoiser no aprendió nada. Es la hipótesis del manifold cobrada en código.
+- **No hay entendimiento del mundo físico detrás.** Los dedos de más y los colmillos
+  duplicados son la misma propiedad que hace posible el caballo en bicicleta.
+
+El **capítulo 18** cambia de registro: deja de construir modelos y se ocupa de lo que hace
+falta para que uno sobreviva fuera del notebook.
