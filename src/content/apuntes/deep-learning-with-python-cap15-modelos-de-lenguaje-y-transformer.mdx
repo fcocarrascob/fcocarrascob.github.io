@@ -1,0 +1,539 @@
+---
+title: "Siete puntos por debajo de la RNN: el Transformer que no era un modelo de secuencia"
+description: "El capítulo 15 construye el Transformer desde cero y entrena el mismo traductor inglés→español tres veces. La GRU seq2seq de 34,8 millones de parámetros da 65 %; el Transformer recién armado, con 14,4 millones, da 58 % — siete puntos peor— y el libro se detiene a preguntarle al lector si puede ver por qué. La respuesta es que la atención pondera pares de tokens y es ciega a dónde están: reordena la frase y salen los mismos scores. Con un embedding de posición aprendido —más simple y más efectivo que los cosenos de Vaswani et al.— el mismo modelo llega a 67 % con la mitad de los parámetros y un tercio del tiempo por época. Por el camino: por qué la atención sola es equivalente a una sola multiplicación de matrices, por qué el encoder sí puede ser bidireccional y el decoder no, y la mejor pieza conceptual del libro: el Transformer es Word2Vec con esteroides, y la alucinación es el precio de la propiedad que lo hace generalizar. Apuntes del Cap. 15."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "transformer", "atención", "seq2seq", "bert", "roberta", "word2vec", "keras"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 15 — Modelos de lenguaje y el Transformer"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 15 (PDF 445–488)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El capítulo 14 resolvió **la entrada**: cómo convertir texto en números. Este resuelve
+**la salida**, y lo hace con una estructura pedagógica poco común — entrena el mismo
+traductor inglés→español tres veces, y las dos primeras el resultado es peor de lo que
+uno esperaría. **El fracaso es el que enseña.**
+
+## 1. Por qué no se puede clasificar una frase entera
+
+El enfoque directo sería un clasificador sobre el espacio de todas las secuencias de
+salida posibles. El libro lo mata con aritmética:
+
+> *"Con un vocabulario de 20 000 palabras, hay **20 000⁴, o 160 mil billones** de
+> secuencias posibles de 4 palabras, y **menos átomos en el universo** que secuencias
+> posibles de 20 palabras."*
+
+La salida, entonces, es **un token a la vez**. Un **modelo de lenguaje** aprende una
+distribución *"simple pero profunda"*:
+
+```
+p(token | tokens pasados)
+```
+
+> *"Un vocabulario de 20 000 palabras significa que el modelo solo necesita predecir
+> 20 000 salidas, pero **prediciendo repetidamente el siguiente token**, habremos
+> construido un modelo que puede generar una secuencia larga de texto."*
+
+<Note type="info" title="Sobre el código de este capítulo">
+Todo es **Keras 3**, la API multi-backend de la 3ª edición, sobre TensorFlow por defecto.
+Las capas nuevas (`TransformerEncoder`, `TransformerDecoder`, `PositionalEmbedding`) se
+escriben subclaseando `keras.Layer` y se ensamblan con la API funcional, tal como el
+capítulo 7. Los modelos preentrenados vienen de **KerasHub**.
+</Note>
+
+## 2. Shakespeare, o el modelo de lenguaje más chico que funciona
+
+Datos: la colección abreviada de obras y sonetos de Shakespeare. El preprocesamiento
+reusa el chunking de largo fijo del capítulo de series de tiempo, con las etiquetas
+**desplazadas un carácter**:
+
+```python
+features = list(split_input(shakespeare[:-1], sequence_length))
+labels    = list(split_input(shakespeare[1:],  sequence_length))
+```
+
+```
+x: b"First Citizen:\nBefore we proceed any further, hear"
+y: b"irst Citizen:\nBefore we proceed any further, hear "
+```
+
+La tokenización es **por carácter** —el mismo `TextVectorization` del capítulo anterior
+con `split="character"` y `standardize=None`— y el vocabulario entero son **67
+caracteres**. El modelo, una sola capa recurrente:
+
+```python
+inputs  = layers.Input(shape=(sequence_length,), dtype="int", name="token_ids")
+x       = layers.Embedding(vocabulary_size, embedding_dim)(inputs)
+x       = layers.GRU(hidden_dim, return_sequences=True)(x)
+x       = layers.Dropout(0.1)(x)
+outputs = layers.Dense(vocabulary_size, activation="softmax")(x)
+```
+
+Y la justificación de por qué la RNN es la elección natural acá: *"el estado recurrente
+de cada celda le permite al modelo propagar información sobre los caracteres pasados al
+predecir la etiqueta del carácter actual"*. Con `hidden_dim=1024` son **4 024 131
+parámetros**, y tras 20 épocas el modelo acierta el carácter siguiente **cerca del 70 %
+de las veces**.
+
+Sigue siendo un problema de clasificación, solo que se predice una etiqueta por token:
+*"para nuestro batch de 64 muestras con 100 caracteres cada una, **predeciremos 6 400
+etiquetas individuales**"*.
+
+### La cirugía, y el bucle que solo existe en inferencia
+
+Acá aparece el concepto que el capítulo entero explota: el **modelo autorregresivo**,
+donde *"la salida predicha del modelo en un paso temporal se convierte en la entrada del
+modelo en el paso siguiente"*. Y con él, una operación que vale la pena entender bien.
+
+Durante el entrenamiento la secuencia era de 100 tokens y el estado de la GRU se manejaba
+solo. Para generar se quiere lo contrario: **un token a la vez, con el estado explícito**.
+La solución no es reentrenar nada — es armar un segundo modelo con el mismo cómputo y
+distinta forma de entradas y salidas, y **copiarle los pesos**:
+
+```python
+inputs      = keras.Input(shape=(1,), dtype="int", name="token_ids")
+input_state = keras.Input(shape=(hidden_dim,), name="state")
+x = layers.Embedding(vocabulary_size, embedding_dim)(inputs)
+x, output_state = layers.GRU(hidden_dim, return_state=True)(x, initial_state=input_state)
+outputs = layers.Dense(vocabulary_size, activation="softmax")(x)
+
+generation_model = keras.Model(
+    inputs=(inputs, input_state),
+    outputs=(outputs, output_state),
+)
+generation_model.set_weights(model.get_weights())
+```
+
+Después hay que **primar el estado** con el prompt: alimentarlo carácter por carácter,
+sin usar las predicciones, solo para *"computar el estado exacto de la RNN que el modelo
+vería si este prompt hubiera aparecido durante el entrenamiento"*. Recién ahí empieza el
+bucle greedy de `argmax`.
+
+Lo que el libro subraya de todo esto es una observación sobre la arquitectura del código,
+y es la que distingue el modelado de lenguaje de todo lo anterior en el libro:
+
+> *"No podemos simplemente llamar a `model.predict()` para obtener la salida deseada.
+> **Hay un bucle entero, y una cantidad no trivial de lógica, que existe solo en tiempo
+> de inferencia.** […] **En ningún momento durante el entrenamiento alimentamos las
+> etiquetas predichas del modelo de vuelta a sí mismo como entrada.**"*
+
+<Note type="warning" title="El experimento del bidireccional, que el lector puede correr">
+*"Si quieres, prueba reemplazar la capa GRU con un `Bidirectional(GRU(...))`. **La
+accuracy de entrenamiento se disparará por encima del 99 % inmediatamente, y la
+generación dejará de funcionar por completo.** Durante el entrenamiento, nuestro modelo
+ve la secuencia entera en cada paso. Si 'hacemos trampa' dejando que la información del
+siguiente token afecte la predicción del token actual, **hemos hecho nuestro problema
+trivialmente fácil**."*
+
+Guarda este párrafo: es la semilla de la máscara causal, que aparece treinta páginas
+después para resolver exactamente el mismo problema sobre un mecanismo que **nace**
+bidireccional.
+</Note>
+
+## 3. Traducir obliga a leer todo antes de escribir nada
+
+El problema siguiente es la traducción, y antes de construir nada el libro descarta el
+enfoque ingenuo —una LSTM que emite un token de salida por cada token de entrada— con un
+argumento de una sola frase:
+
+> *"Considera traducir la frase **'I will bring the bag to you.'** En español sería
+> **'Te traeré la bolsa'**, donde 'Te', **la primera palabra de la traducción**,
+> corresponde a 'you' **en el texto inglés de origen**. ¡Simplemente **no hay forma de
+> emitir la primera palabra de la traducción sin haber visto la última palabra del texto
+> origen**!"*
+>
+> *"Si eres un traductor humano, empezarías leyendo la frase origen completa antes de
+> comenzar a traducirla. **Y eso es precisamente lo que hacen los modelos seq2seq
+> estándar.**"*
+
+De ahí la arquitectura **encoder-decoder**: el encoder comprime la secuencia origen en
+una representación intermedia; el decoder se entrena con el setup de modelo de lenguaje
+—predecir el siguiente token destino— mirando además esa representación. En inferencia
+arranca con un token semilla `[start]` y se realimenta hasta emitir `[end]`.
+
+Dos detalles del preprocesamiento que enseñan más de lo que parecen:
+
+- **Dos `TextVectorization` distintos**, y no por prolijidad: hay que preservar los
+  corchetes de `"[start]"` y `"[end]"` (por defecto se eliminarían y no habría cómo
+  distinguir el token `"[start]"` de la palabra `"start"`), y además *"¡la puntuación es
+  distinta de idioma a idioma!"* — en el vectorizador español hay que eliminar el `¿`.
+- **`sample_weights = labels != 0`**. Las traducciones no son todas del mismo largo, así
+  que las etiquetas vienen rellenadas con ceros. *"Solo nos importan las predicciones
+  para etiquetas no-cero que representan texto traducido real."*
+
+Y acá el **bidireccional sí es deseable**, por el argumento exactamente inverso al de
+Shakespeare:
+
+> *"Como en realidad no vamos a predecir tokens en la secuencia del encoder, **no tenemos
+> que preocuparnos de 'hacer trampa'** dejando que el modelo pase información del final de
+> la secuencia a posiciones del principio. De hecho, **esto es una buena idea**, ya que
+> queremos una representación rica de la secuencia origen."*
+
+La GRU seq2seq queda en **34 869 912 parámetros** y, tras 15 épocas, **65 %** de accuracy
+de siguiente palabra. Con una advertencia metodológica que conviene no saltarse:
+
+<Note type="warning" title="La accuracy de siguiente token no es una buena métrica de traducción">
+*"Asume que **los tokens destino correctos de 0 a N ya se conocen** al predecir el token
+N+1. En realidad, durante la inferencia estás generando la frase destino desde cero, y
+**no puedes confiar en que los tokens generados previamente sean 100 % correctos**."* La
+alternativa estándar es **BLEU**, que compara contra traducciones de referencia y tolera
+secuencias ligeramente desalineadas. Las cifras de este capítulo sirven para comparar
+modelos entre sí, no para estimar qué tan bien traduce ninguno.
+</Note>
+
+Las traducciones reales lo confirman: `"You know that."` → `"tú lo sabes"` ✓, pero
+`"The prisoner was set free yesterday."` → `"el plan fue ayer a un atasco"`, sin ninguna
+relación con el original.
+
+Y las dos limitaciones de fondo del enfoque recurrente:
+
+1. *"La representación de la secuencia origen tiene que **sostenerse enteramente en el
+   vector de estado del encoder**"*.
+2. *"Las RNN […] **tienden a olvidar progresivamente el pasado** — para cuando llegaste
+   al token número 100 […] **queda poca información sobre el inicio**."*
+
+Dato de contexto que envejeció rápido: *"Google Translate circa 2017 funcionaba con una
+**pila de siete capas LSTM grandes** en un setup similar al que acabamos de crear."*
+
+## 4. La atención, construida en cuatro pasos
+
+La intuición la da el libro con el libro mismo:
+
+> *"Imagina usar este libro para construir un modelo de predicción del clima. […]
+> Podrías leer el libro entero de tapa a tapa, pero cuando efectivamente implementaras tu
+> modelo, **prestarías atención especial solo al capítulo de series de tiempo**. […] Las
+> RNN, por otro lado, **carecen de cualquier mecanismo para referirse de vuelta a una
+> sección previa de una secuencia directamente**. […] **Es un poco como terminar este
+> libro, cerrarlo, e intentar implementar ese modelo de predicción del clima enteramente
+> de memoria.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/atencion-mecanismo.svg"
+  alt="Diagrama en tres bandas. Arriba, los cuatro pasos de la atención en cajas azules encadenadas: 1 Puntuar, scores igual Q por K traspuesta, producto punto entre cada par destino-origen, el score más simple resultó ser el mejor; 2 Escalar, scores dividido raíz de d_k, con vectores largos los scores se disparan, es estabilidad de los gradientes del softmax; 3 Normalizar, softmax sobre el último eje, cada fila suma 1, sin esto la suma ponderada no tendría magnitud predecible; 4 Combinar, suma de scores por V, cada posición se reescribe como mezcla de las demás, una operación de pooling muy expresiva y lineal. Al medio, un ejemplo concreto con pesos ilustrativos: la fila de scores del token station sobre la frase the train left the station, con valores 0,05 para the, 0,41 para train, 0,08 para left, 0,05 para the y 0,41 para station, y las dos celdas altas resaltadas en azul; al lado, la anotación de qué estación, de radio, la Espacial Internacional, y que el modelo suma el vector de train dentro del de station. Se pasa de representar una palabra en el vacío a representarla condicionada a todos los otros tokens. Abajo, una banda roja: reordena la frase, the train left the station y station the left train the, y salen los mismos scores por pares y las mismas representaciones. La atención es un mecanismo de procesamiento de conjuntos, ciego a si un token está al principio, al final o en el medio. Por eso el Transformer del capítulo rinde 58 por ciento, siete puntos por debajo de la GRU."
+  caption="Los cuatro pasos son el mecanismo completo. La banda roja de abajo es el capítulo entero."
+  width={800}
+/>
+
+Sobre el paso 1, el libro es honesto respecto de cómo se llegó ahí: *"cuando los
+investigadores trabajaron por primera vez con atención, esta pregunta fue un gran tema de
+indagación. Resulta que **uno de los enfoques más directos es el mejor**"* — el producto
+punto.
+
+Después se parametriza proyectando origen y destino con capas `Dense`, *"para que el
+modelo pueda encontrar un buen espacio compartido"*, y ahí aparecen los tres nombres. El
+renombre no es cosmético: `sum(score(target, source) * source)` se reescribe como
+`sum(score(query, key) * value)`, y esa versión de tres argumentos es más general porque
+permite que el vector con que puntúas no sea el mismo con que sumas.
+
+> *"La terminología viene de los motores de búsqueda y sistemas de recomendación. […]
+> **El 'query' es tu término de búsqueda, las 'keys' son las etiquetas de las fotos que
+> usas para hacer match con el query, y los 'values' son las fotos mismas.**"*
+
+Y el **multi-head**, cuyo motivo es un problema concreto de la suma ponderada:
+
+> *"La suma también es tosca: **si el modelo intenta atender a demasiados tokens a la
+> vez, las características interesantes de tokens individuales se 'lavarán'** en la
+> representación combinada. […] Proyectando el query y el key de forma distinta, **una
+> cabeza podría aprender a hacer match con el sujeto de la frase origen, mientras otra
+> cabeza podría atender a la puntuación.**"*
+
+<Note type="warning" title="Dos erratas del capítulo que importan si vas a copiar el código">
+**`head_dim` no existe.** El snippet de 15.3.1 escribe
+`keras.layers.MultiHeadAttention(num_heads=num_heads, head_dim=head_dim)`. La firma real
+de la capa es `MultiHeadAttention(num_heads, key_dim, value_dim=None, dropout=0.0, …)`:
+el argumento se llama **`key_dim`**. El propio libro lo usa bien dos páginas después.
+
+**El pseudocódigo de `multi_head_attention` tiene dos bugs.** Dentro del bucle de cabezas
+usa `target` y `source` —los nombres del ámbito exterior— en vez de las variables
+proyectadas, así que las proyecciones por cabeza no se usarían; y hace
+`query = query_dense[i](query)`, que reasigna el argumento, de modo que la cabeza *i*
+proyectaría la salida de la cabeza *i−1*. Las cabezas quedarían **encadenadas** en vez de
+paralelas, que es justo lo contrario de lo que multi-head significa. El párrafo que lo
+precede describe el mecanismo bien y la llamada a `keras.layers.MultiHeadAttention` que le
+sigue es la implementación real; el pseudocódigo es ilustrativo. Pero no lo copies.
+</Note>
+
+## 5. Por qué la atención sola no alcanza
+
+Con self-attention —`query = key = value = source`— la secuencia se atiende a sí misma, y
+el ejemplo es el mejor del capítulo: en *"The train left the station on time"*, ¿de qué
+estación hablamos? ¿De radio? ¿La Espacial Internacional? *"El modelo podría aprender a
+dar un score de atención alto al par 'station' y 'train', **sumando el vector que
+representa 'train' en la representación de la palabra 'station'**."*
+
+Pero reemplazar la RNN por atención y parar ahí no funciona, y la razón es el argumento
+estructural más importante de la sección:
+
+> *"La capa `MultiHeadAttention` combina **proyecciones lineales** de cada elemento en una
+> secuencia origen, y eso es todo. […] Considera, en el caso extremo, un largo de token de
+> uno. En ese caso la matriz de scores de atención es siempre un único uno, y la capa
+> entera se reduce a una proyección lineal de la secuencia origen, sin no-linealidades.
+> **¡Podrías apilar 100 capas de atención juntas y seguir siendo capaz de simplificar todo
+> el cómputo a una única multiplicación de matrices!**"*
+
+De ahí sale la definición operativa del bloque, que conviene memorizar tal cual:
+
+> **"La atención pasa información a través de la secuencia, y la red feedforward actualiza
+> la representación de los elementos individuales de la secuencia."**
+
+<Figure
+  src="/apuntes/deep-learning-with-python/bloque-transformer.svg"
+  alt="Diagrama del bloque Transformer en tres columnas. Izquierda, el TransformerEncoder: MultiHeadAttention con query igual key igual value igual x; más residual y LayerNormalization; feedforward Dense de 2048 con relu seguida de Dense de 256; más residual y LayerNormalization. Entra y sale la misma shape, así que los bloques se apilan. La máscara acá solo tapa el padding: nada que predecir, nada que ocultar. Centro, el TransformerDecoder: self-attention con use_causal_mask igual True; residual y norm; cross-attention con query igual x y key y value igual a la salida del encoder, marcada con una flecha que llega desde el encoder; residual y norm; feedforward; residual y norm. Acá sí hay que predecir, así que la máscara causal impide leer el futuro. Derecha arriba, panel ámbar: por qué no basta con la atención — la capa combina proyecciones lineales y nada más, con un solo token la matriz de scores es un único 1 y toda la capa colapsa a una proyección lineal, así que 100 capas de atención apiladas equivalen a una multiplicación de matrices. Derecha abajo, la máscara causal dibujada como una matriz triangular inferior de cuatro filas de unos y ceros, cada fila i indicando qué puede mirar el token i, con la nota de que da el mismo efecto que una RNN y que sin ella el modelo copia el token siguiente. Al pie, una banda verde: las dos importaciones del capítulo 9, la conexión residual como atajo sin ruido para el gradiente y la normalización, pero LayerNormalization sobre el último eje dentro de cada secuencia en vez de BatchNormalization sobre ejes que incluyen el batch, porque el BatchNorm crea interacciones entre las muestras del batch, tolerable en imágenes pero no en secuencias de largo distinto."
+  caption="El encoder y el decoder son la misma pieza. Toda la diferencia está en las dos máscaras y en la atención cruzada."
+  width={800}
+/>
+
+El decoder usa la atención **dos veces**: self-attention sobre el destino y luego
+**cross-attention**, con query = destino y key/value = salida del encoder — *"la llamaremos
+cross-attention porque **trae información a través del encoder y el decoder**"*.
+
+Y la máscara causal cierra el círculo abierto con Shakespeare:
+
+> *"**La atención es inherentemente bidireccional**; en self-attention, cualquier posición
+> de token en la secuencia destino puede atender a cualquier otra posición. Sin cuidado
+> especial, nuestro modelo aprenderá a pasar el siguiente token de la secuencia como la
+> etiqueta actual y **no tendrá ninguna capacidad de generar traducciones nuevas**."*
+
+En Keras es un argumento **de la llamada**, no del constructor: `use_causal_mask=True`.
+
+## 6. El fracaso, y la pregunta que el libro le hace al lector
+
+Con encoder, decoder, `hidden_dim=256`, 8 cabezas y una feedforward que escala a 2048, el
+Transformer queda en **14 428 824 parámetros** — menos de la mitad que la GRU. Quince
+épocas después:
+
+> *"Algo está mal acá. El entrenamiento es **peor que el modelo RNN por 7 puntos
+> porcentuales**. O esta arquitectura Transformer no es lo que decían que era, o **nos
+> perdimos algo en nuestra implementación. ¿Puedes ver qué es?"*
+
+La respuesta es la banda roja de la primera figura:
+
+> *"Esta sección es ostensiblemente sobre modelos de secuencia. […] Y sin embargo, **el
+> Transformer que acabamos de construir no era un modelo de secuencia en absoluto**.
+> ¿Lo notaste? […] Podrías cambiar el orden de los tokens en una secuencia y obtendrías
+> scores de atención por pares idénticos y las mismas representaciones conscientes del
+> contexto. **La atención es un mecanismo de procesamiento de conjuntos** […] — es
+> **ciego** a si esos elementos ocurren al principio, al final o en el medio."*
+
+> *"Para las RNN, confiábamos en que **el cómputo de la capa** fuera consciente del orden.
+> En el caso del Transformer, en cambio, **inyectamos la información posicional
+> directamente en la secuencia embebida** misma."*
+
+Las opciones, en orden de sofisticación creciente, y el libro descarta las dos primeras:
+
+1. **Concatenar la posición** (0, 1, 2, …). No: *"las posiciones pueden ser enteros
+   potencialmente muy grandes, lo que romperá el rango de valores del vector de embedding.
+   Como sabes, **a las redes neuronales no les gustan los valores de entrada muy grandes
+   ni las distribuciones de entrada discretas.**"*
+2. **El truco sinusoidal de Vaswani et al.**: un vector en `[-1, 1]` que varía
+   cíclicamente con la posición. *"Es ingenioso…"*
+3. *"…**pero resulta que podemos hacer algo más simple y más efectivo**: aprender los
+   vectores de embedding posicional igual que aprendemos a embeber los índices de
+   palabras."*
+
+Y son once líneas:
+
+```python
+class PositionalEmbedding(keras.Layer):
+    def __init__(self, sequence_length, input_dim, output_dim):
+        super().__init__()
+        self.token_embeddings = layers.Embedding(input_dim, output_dim)
+        self.position_embeddings = layers.Embedding(sequence_length, output_dim)
+
+    def call(self, inputs):
+        positions = ops.cumsum(ops.ones_like(inputs), axis=-1) - 1   # [0, 1, 2, …]
+        embedded_tokens = self.token_embeddings(inputs)
+        embedded_positions = self.position_embeddings(positions)
+        return embedded_tokens + embedded_positions
+```
+
+Dos lookups que se **suman**, y se usa en lugar de la `Embedding` normal. Resultado:
+**67 %**, y tres observaciones que valen tanto como el número:
+
+1. *"Es una mejora notable sobre el modelo GRU, y **eso es aún más impresionante cuando
+   consideras que este modelo tiene la mitad de los parámetros**."*
+2. *"El entrenamiento es notablemente más rápido — **cada época toma alrededor de un
+   tercio del tiempo**. […] Es un efecto colateral de **haberse librado del paso de estado
+   en bucle**. Con atención no hay cómputo en bucle que manejar durante el entrenamiento,
+   lo que significa que en una GPU o TPU **podemos manejar el cómputo entero de la
+   atención de una sola vez**."*
+3. El Transformer **seguía mejorando en validación tras 30 épocas**, mientras la RNN se
+   estancaba tras unas cinco. Ese detalle es el que abre la sección siguiente.
+
+<Note type="warning" title="Dos asteriscos sobre la comparación 58 % → 67 %">
+El 58 % se midió a **15 épocas** y el 67 % a **30**, así que parte de la diferencia es
+simplemente más entrenamiento. Y los listings no usan exactamente la misma capacidad: el
+modelo sin posiciones lleva `intermediate_dim = 2048` y el modelo con posiciones,
+`intermediate_dim = 2056` — ocho unidades sobre 2048, despreciable, pero no idéntico.
+
+Nada de esto tumba el argumento: el modelo sin posiciones se estancaba **por debajo** de
+la GRU y el mecanismo de la ceguera al orden es demostrable sin entrenar nada (reordenas la
+entrada y los scores por pares no cambian). Pero conviene leer el par de números como
+*"la información posicional es lo que faltaba"* y no como *"el positional embedding vale
+exactamente nueve puntos"*.
+</Note>
+
+<Note type="tip" title="El escepticismo que el propio libro se aplica">
+*"Después de ver todos estos detalles de implementación, uno podría razonablemente
+protestar que todo esto parece bastante arbitrario. […] ¿Cómo podríamos saber que esta
+elección y configuración de capas es óptima? **La respuesta es simple — no lo es.** […]
+**Eventualmente, quizá para cuando estés leyendo este libro, algo habrá suplantado al
+Transformer** como la arquitectura dominante. […] El campo del machine learning **se mueve
+empíricamente**. La atención surgió de un intento de aumentar las RNN, y después de años
+de adivinar y verificar por parte de un montón de gente, dio lugar al Transformer. **Hay
+poca razón para pensar que este proceso terminó de desarrollarse.**"*
+</Note>
+
+## 7. El giro: preentrenar en vez de arquitecturar
+
+Dos observaciones —el Transformer entrena rápido y es *"muy hambriento de datos"*—
+llevaron al paradigma actual: *"modelos grandes preentrenados que **pueden costar millones
+de entrenar** pero rinden notablemente mejor en un rango amplio de problemas"*.
+
+**BERT** es, literalmente, *"exactamente la misma estructura que la parte encoder"* del
+traductor recién construido, pero con 100 a 300 millones de parámetros. Como es
+bidireccional, no sirve para generar en bucle — pero sí para computar representaciones
+ricas. Y su tarea de preentrenamiento resuelve el problema de las etiquetas: se enmascara
+**~15 %** de los tokens con `[MASK]` y se predicen los originales.
+
+| Objetivo | Distribución que aprende | Modelo |
+|---|---|---|
+| **Causal** language model | `p(token \| tokens pasados)` | GPT, y el de Shakespeare de arriba |
+| **Masked** language model | `p(token \| tokens circundantes)` | BERT |
+
+> *"Usar word embeddings preentrenados ya era práctica común cuando se publicó BERT — lo
+> vimos nosotros mismos en el capítulo anterior. Pero preentrenar **un Transformer
+> entero** dio algo mucho más poderoso: **la capacidad de computar un word embedding para
+> una palabra en el contexto de las palabras que la rodean.**"*
+
+El capítulo usa **RoBERTa**, que es BERT con la misma arquitectura y **160 GB** de texto de
+toda la web en vez de los 16 GB mayormente de Wikipedia del original — *"unos pocos
+cientos de miles de dólares"* de entrenamiento, *"1 024 GPUs"*, alrededor de un día.
+
+Para usar un modelo preentrenado hacen falta **tres cosas**: un tokenizador que haga match
+(*"si las palabras de nuestras reviews de IMDb mapean a índices distintos de los que
+habrían tenido durante el preentrenamiento, no podemos usar las representaciones
+aprendidas"*), una arquitectura que haga match, y los pesos. En KerasHub son dos líneas:
+
+```python
+tokenizer = keras_hub.models.Tokenizer.from_preset("roberta_base_en")
+backbone  = keras_hub.models.Backbone.from_preset("roberta_base_en")
+```
+
+Un **backbone** es *"cualquier modelo preentrenado que no está todavía especializado para
+una tarea"*: mapea entrada a espacio latente y no está atado a ninguna pérdida. *"Puedes
+pensarlo como acoplar distintas cabezas a un destornillador: **una cabeza Phillips para
+una tarea, una plana para otra.**"*
+
+La cabeza de clasificación tiene una decisión que no es obvia. El backbone devuelve una
+secuencia `(batch, seq_len, 768)` y hay que condensarla a un vector por muestra. Lo
+esperable sería mean o max pooling; lo que se hace es tomar `x[:, 0, :]`, la representación
+del **primer token**:
+
+> *"Esto es por la naturaleza de la atención en nuestro modelo: **la primera posición en
+> la capa encoder final podrá atender a todas las otras posiciones** de la secuencia y
+> extraer información de ellas. Así que en vez de agrupar información con algo tosco, como
+> tomar un promedio, **la atención nos permite agrupar información contextualmente**."*
+
+Con `Adam(5e-5)` —learning rate bajo, el patrón de fine-tuning del capítulo 8—, **una sola
+época** sobre IMDb da **93,7 % de test**, contra el techo de 90 % que el capítulo 14 no
+lograba pasar. Y el libro agrega que con la versión de 300 millones se superaría el 95 %.
+
+## 8. Word2Vec con esteroides
+
+La última sección es la mejor pieza conceptual del libro sobre por qué esto funciona, y
+llega por un camino inesperado: **2013**.
+
+Mikolov y colegas construían un embedding preentrenado similar al CBOW del capítulo
+anterior —producto punto cerca de 1 para palabras que co-ocurren, cerca de 0 si no— y
+encontraron algo que no habían buscado:
+
+> *"Existía un vector en el espacio que podías sumar a muchos sustantivos masculinos para
+> obtener un punto que caería cerca de su equivalente femenino, como en **V(king) − V(man)
+> + V(woman) = V(queen)**, un vector de género. **Esto fue bastante sorprendente; el modelo
+> no había sido entrenado para esto de ninguna manera explícita.**"*
+
+El puente entre eso y un Transformer es directo — mismo objetivo, misma función de
+distancia, dimensionalidad del mismo orden, y una diferencia de arquitectura de varios
+órdenes de magnitud. Pero falta explicar cómo una pérdida de *predecir el token siguiente*
+termina agrupando tokens en un espacio:
+
+> *"**La respuesta es el mecanismo de atención.** […] Es **un mecanismo para aprender un
+> nuevo espacio de embedding de tokens recombinando linealmente embeddings de tokens de
+> algún espacio previo**, en combinaciones ponderadas que dan mayor importancia a tokens
+> que ya están 'más cerca' unos de otros. **Tenderá a juntar los vectores de tokens ya
+> cercanos, resultando con el tiempo en un espacio donde las relaciones de correlación
+> entre tokens se convierten en relaciones de proximidad de embedding.** Los Transformers
+> funcionan **aprendiendo una serie de espacios de embedding incrementalmente
+> refinados**."*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/word2vec-transformer.svg"
+  alt="Diagrama en tres paneles con una conclusión al pie. Panel izquierdo, Word2Vec 2013: un vector por palabra del vocabulario, se optimiza el producto punto cerca de 1 si co-ocurren y cerca de 0 si no, una sola capa, no era una red profunda; en un recuadro azul la ecuación king menos man más woman aproximadamente igual a queen; y la nota de que nadie lo entrenó para eso, aparecieron docenas de vectores mágicos, uno de género, uno de plural, uno de animal salvaje a mascota. Panel central, el Transformer: mismo objetivo, misma distancia coseno, dimensionalidad del mismo orden; lo que cambia son docenas de capas y miles de millones de parámetros; en un recuadro azul, el puente es la atención, que recombina linealmente el espacio previo ponderando lo que ya está cerca, de modo que cada capa es un espacio de embedding un poco más refinado que el anterior. Panel derecho verde, lo que gana el espacio: uno, semánticamente continuo, moverse un poco cambia el significado solo un poco, propiedad que Word2Vec ya tenía; dos, semánticamente interpolativo, el punto medio entre dos puntos es el significado intermedio, propiedad que viene de construir cada espacio interpolando entre vectores del previo, y que es también el principio hebbiano del cerebro. Abajo, un recuadro azul: una base de datos continua e interpolativa, donde los datos no son entradas discretas sino una curva que se puede recorrer e interpolar; de ahí bajan dos flechas, una verde a Generalización, recuperas más de lo que pusiste, y una roja a Alucinación, y no todo lo que recuperas es cierto, unidas por una línea punteada. Al pie: son la misma propiedad, no hay cómo apagar una sin apagar la otra."
+  caption="La misma idea de 2013, con diez años de escala encima. Y con ella, el problema que no tiene arreglo arquitectónico."
+  width={800}
+/>
+
+De ahí las dos propiedades del espacio resultante —**continuo** e **interpolativo**— y una
+analogía con el cerebro que no es decorativa: el aprendizaje hebbiano, *"las neuronas que
+se activan juntas se conectan juntas"*, hace exactamente lo mismo. *"Las relaciones de
+correlación entre eventos de activación neural se convierten en relaciones de proximidad
+en la red cerebral […]. **Ambos son mapas de un espacio de información.**"*
+
+Y el salto de escala compra algo más que precisión:
+
+> *"Word2Vec es muy un modelo de juguete: **es a los modelos de lenguaje de hoy lo que una
+> regresión logística sobre píxeles de MNIST es a los modelos de visión del estado del
+> arte.** […] Ya no estamos confinados a transformaciones lineales como un vector de
+> género o un vector de plural. **Los Transformers pueden almacenar funciones vectoriales
+> arbitrariamente complejas — tan complejas, de hecho, que sería más preciso llamarlas
+> `programas vectoriales` que funciones.** […] Word2Vec te permitía hacer cosas básicas
+> como `plural(cat) → cats`. En cambio, un modelo Transformer grande puede hacer pura
+> magia — cosas como `write_this_in_style_of_shakespeare("...tu poema...")`. **Y un solo
+> modelo puede contener millones de tales programas.**"*
+
+El cierre es el que hay que llevarse:
+
+> *"Puedes ver un Transformer como análogo a una base de datos […] **continua e
+> interpolativa**. En vez de estar almacenados como un conjunto de entradas discretas, tus
+> datos se almacenan como un espacio vectorial — una curva. […] **Puedes recuperar mucho
+> más de tu base de datos de lo que pusiste en ella** — aunque no todo será preciso o
+> significativo. **La interpolación puede llevar a la generalización, pero también puede
+> llevar a alucinaciones.**"*
+>
+> *"Es importante recordar que **estos modelos son fundamentalmente interpolativos**. […]
+> **Vagar por este espacio de embedding puede llevar a generalizaciones interesantes e
+> inesperadas, pero no puede sintetizar algo fundamentalmente nuevo con nada cercano a
+> inteligencia genuina de nivel humano.**"*
+
+## Para recordar
+
+- **Un modelo de lenguaje existe porque clasificar secuencias enteras es imposible**: hay
+  menos átomos en el universo que secuencias de 20 palabras. Se predice un token a la vez.
+- **La generación es un bucle con lógica propia**, que no existe durante el
+  entrenamiento. Ni la cirugía del modelo (`set_weights`) ni el primado del estado se
+  parecen a un `predict()`.
+- **Bidireccional está prohibido donde se predice y es buena idea donde no.** En el
+  generador de Shakespeare mata la tarea; en el encoder del traductor, la mejora.
+- **La atención sola es lineal.** Con una secuencia de un token la matriz de scores es un
+  único 1: cien capas apiladas colapsan a una multiplicación de matrices. Por eso el bloque
+  tiene dos piezas — **la atención mueve información entre posiciones, la feedforward
+  actualiza cada posición**.
+- **La atención procesa conjuntos.** Reordena la entrada y los scores por pares no cambian.
+  Sin información posicional inyectada, un Transformer no es un modelo de secuencia.
+- **El positional embedding es dos lookups sumados**, y le gana al esquema sinusoidal
+  original por ser más simple.
+- **La máscara causal es la unidireccionalidad de la RNN, reimplantada** sobre un
+  mecanismo que nace bidireccional. En Keras, `use_causal_mask=True` al llamar la capa.
+- **`LayerNormalization`, no `BatchNormalization`**: el BatchNorm crea interacciones entre
+  muestras del batch, y eso no calza con secuencias.
+- **El pooling del primer token le gana al promedio** porque esa posición ya atendió a
+  todas las demás: es pooling contextual en vez de pooling tosco.
+- **La generalización y la alucinación son la misma propiedad.** Un espacio interpolativo
+  devuelve más de lo que se le puso, y no hay forma de quedarse solo con la mitad buena.
+
+El **capítulo 16** le saca el encoder a este modelo —decoder-only—, lo escala, y ataca la
+ineficiencia que acá se señala sin resolver: *"reprocesamos la frase origen entera y la
+frase destino generada entera **cada vez que muestreamos una palabra nueva**"*.

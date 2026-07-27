@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <rect width="800" height="380" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Interpolar en línea recta te saca del manifold</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Por qué caminar entre dos prompts usa <tspan font-family="'Consolas', monospace">slerp</tspan> y no un promedio ponderado</text>
+
+  <!-- sphere -->
+  <rect x="20" y="66" width="330" height="290" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+
+  <circle cx="185" cy="196" r="104" fill="#eff6ff" fill-opacity="0.5" stroke="#bfdbfe" stroke-width="1.4"/>
+  <ellipse cx="185" cy="196" rx="104" ry="30" fill="none" stroke="#bfdbfe" stroke-dasharray="3 3"/>
+
+  <path d="M111 123 A104 104 0 0 1 259 123" fill="none" stroke="#16a34a" stroke-width="2.6"/>
+  <line x1="111" y1="123" x2="259" y2="123" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>
+
+  <circle cx="111" cy="123" r="5" fill="#1e40af"/>
+  <circle cx="259" cy="123" r="5" fill="#1e40af"/>
+  <circle cx="185" cy="123" r="4" fill="#dc2626"/>
+  <circle cx="185" cy="92" r="4" fill="#16a34a"/>
+
+  <text x="100" y="112" text-anchor="end" font-size="10" font-weight="700" fill="#1e40af">prompt A</text>
+  <text x="270" y="112" font-size="10" font-weight="700" fill="#1e40af">prompt B</text>
+  <text x="185" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">slerp</text>
+  <text x="185" y="145" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">lerp</text>
+
+  <text x="185" y="228" text-anchor="middle" font-size="10.5" fill="#374151">El manifold de texto</text>
+  <text x="185" y="243" text-anchor="middle" font-size="10.5" fill="#374151">es la <tspan font-weight="700">superficie</tspan>, no el volumen.</text>
+
+  <text x="40" y="292" font-size="10.5" fill="#991b1b"><tspan font-weight="700">lerp</tspan> — el punto medio cae <tspan font-weight="700">dentro</tspan> de la esfera:</text>
+  <text x="40" y="306" font-size="10.5" fill="#991b1b">un vector de menor magnitud, fuera del manifold,</text>
+  <text x="40" y="320" font-size="10.5" fill="#991b1b">donde el denoiser no aprendió nada.</text>
+  <text x="40" y="342" font-size="10.5" fill="#166534"><tspan font-weight="700">slerp</tspan> — se recorre el arco: la magnitud se mantiene</text>
+  <text x="40" y="356" font-size="10.5" fill="#166534">y cada punto intermedio sigue significando algo.</text>
+
+  <!-- explanation -->
+  <rect x="364" y="66" width="416" height="290" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="382" y="90" font-size="12" font-weight="700" fill="#374151">Lo que el libro admite, y por qué igual funciona</text>
+
+  <text x="382" y="116" font-size="10.5" font-style="italic" fill="#374151">«El manifold que aprende nuestro modelo de embedding de texto</text>
+  <text x="382" y="131" font-size="10.5" font-style="italic" fill="#374151">no es realmente esférico. Pero es una superficie suave de números</text>
+  <text x="382" y="146" font-size="10.5" font-style="italic" fill="#374151">todos con aproximadamente la misma magnitud — es tipo esfera, e</text>
+  <text x="382" y="161" font-size="10.5" font-style="italic" fill="#374151">interpolar como si estuviéramos en una esfera es mejor aproximación</text>
+  <text x="382" y="176" font-size="10.5" font-style="italic" fill="#374151">que interpolar como si estuviéramos en una línea.»</text>
+
+  <line x1="382" y1="196" x2="762" y2="196" stroke="#e5e7eb"/>
+
+  <text x="382" y="218" font-size="11" font-weight="700" fill="#1e40af">Es la hipótesis del manifold del Cap. 5, cobrada en código</text>
+  <text x="382" y="236" font-size="10.5" fill="#374151">Ahí se decía que los datos naturales viven sobre un manifold de baja</text>
+  <text x="382" y="251" font-size="10.5" fill="#374151">dimensión dentro del espacio de entrada. Acá hay que <tspan font-weight="700">respetar su</tspan></text>
+  <text x="382" y="266" font-size="10.5" fill="#374151"><tspan font-weight="700">curvatura</tspan> para moverse por él sin caerse.</text>
+
+  <line x1="382" y1="286" x2="762" y2="286" stroke="#e5e7eb"/>
+
+  <text x="382" y="308" font-size="10.5" fill="#374151">El experimento: de «un perro amistoso mirando hacia arriba en un campo</text>
+  <text x="382" y="323" font-size="10.5" fill="#374151">de flores» a «una criatura horrorosa y tentaculada flotando sobre un campo</text>
+  <text x="382" y="338" font-size="10.5" fill="#374151">de flores», con zoom en el <tspan font-weight="700">10 % central</tspan> del camino.</text>
+  <text x="382" y="353" font-size="10.5" font-weight="700" fill="#1e40af">Todos los puntos intermedios existen, y son coherentes.</text>
+</svg>
