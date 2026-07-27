@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="lr-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="800" height="440" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">LoRA: el kernel queda congelado y la actualización pasa por un cuello de rango 8</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Lo que hace caber un fine-tuning de mil millones de parámetros en una GPU de 16 GB no es el modelo — es el estado del optimizador</text>
+
+  <!-- mechanism -->
+  <rect x="20" y="68" width="470" height="196" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="255" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">El mecanismo</text>
+
+  <rect x="40" y="140" width="54" height="34" rx="5" fill="#f3f4f6" stroke="#e5e7eb"/>
+  <text x="67" y="161" text-anchor="middle" font-size="10.5" fill="#374151">inputs</text>
+
+  <line x1="97" y1="157" x2="119" y2="157" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#lr-ar)"/>
+
+  <rect x="122" y="106" width="150" height="38" rx="5" fill="#f3f4f6" stroke="#9ca3af" stroke-dasharray="4 3"/>
+  <text x="197" y="122" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6b7280">kernel · 2048 × 2048</text>
+  <text x="197" y="137" text-anchor="middle" font-size="10" fill="#6b7280">congelado · sin gradientes</text>
+
+  <rect x="122" y="170" width="66" height="38" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="155" y="186" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">α</text>
+  <text x="155" y="201" text-anchor="middle" font-size="9.5" fill="#374151">2048 × 8</text>
+
+  <rect x="206" y="170" width="66" height="38" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="239" y="186" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">β</text>
+  <text x="239" y="201" text-anchor="middle" font-size="9.5" fill="#374151">8 × 2048</text>
+
+  <line x1="191" y1="189" x2="203" y2="189" stroke="#2563eb" stroke-width="1.4" marker-end="url(#lr-ar)"/>
+  <path d="M119 157 L119 125 L119 125" stroke="#9ca3af" stroke-width="1.2" fill="none"/>
+  <path d="M119 157 L119 189 L119 189" stroke="#2563eb" stroke-width="1.2" fill="none"/>
+
+  <text x="197" y="228" text-anchor="middle" font-size="10" fill="#1e40af">todo el aprendizaje pasa por acá</text>
+
+  <line x1="276" y1="125" x2="308" y2="150" stroke="#9ca3af" stroke-width="1.2" fill="none"/>
+  <line x1="276" y1="189" x2="308" y2="164" stroke="#2563eb" stroke-width="1.2" fill="none"/>
+
+  <circle cx="320" cy="157" r="13" fill="#ffffff" stroke="#374151"/>
+  <text x="320" y="162" text-anchor="middle" font-size="14" fill="#374151">+</text>
+
+  <line x1="336" y1="157" x2="358" y2="157" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#lr-ar)"/>
+  <rect x="361" y="140" width="60" height="34" rx="5" fill="#f3f4f6" stroke="#e5e7eb"/>
+  <text x="391" y="161" text-anchor="middle" font-size="10.5" fill="#374151">outputs</text>
+
+  <text x="40" y="252" font-size="10.5" fill="#374151">En el punto medio angosto, <tspan font-weight="700">la actualización de cada token pasa por 8 dimensiones</tspan> antes de volver a subir.</text>
+
+  <!-- arithmetic -->
+  <rect x="510" y="68" width="270" height="196" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="645" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">La aritmética del rango</text>
+
+  <text x="528" y="118" font-size="10.5" fill="#374151">Kernel completo · 2048 × 2048</text>
+  <text x="762" y="118" text-anchor="end" font-size="11.5" font-weight="700" fill="#374151">4 194 304</text>
+  <line x1="528" y1="128" x2="762" y2="128" stroke="#bfdbfe"/>
+
+  <text x="528" y="148" font-size="10.5" fill="#374151">Rango 8 · (2048×8) + (8×2048)</text>
+  <text x="762" y="148" text-anchor="end" font-size="11.5" font-weight="700" fill="#1e40af">32 768</text>
+  <line x1="528" y1="158" x2="762" y2="158" stroke="#bfdbfe"/>
+
+  <text x="645" y="180" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">128 veces menos parámetros</text>
+
+  <text x="528" y="208" font-size="10.5" fill="#374151">Y sobre el modelo Gemma completo:</text>
+  <text x="528" y="228" font-size="10.5" fill="#6b7280">Total</text>
+  <text x="762" y="228" text-anchor="end" font-size="10.5" fill="#6b7280">1 001 190 528 · 3,73 GB</text>
+  <text x="528" y="248" font-size="10.5" font-weight="700" fill="#1e40af">Entrenables</text>
+  <text x="762" y="248" text-anchor="end" font-size="10.5" font-weight="700" fill="#1e40af">1 304 576 · 4,98 MB</text>
+
+  <!-- memory -->
+  <rect x="20" y="282" width="760" height="142" rx="8" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="40" y="306" font-size="12" font-weight="700" fill="#92400e">Por qué el problema era la memoria y no el cómputo</text>
+
+  <text x="40" y="330" font-size="10.5" fill="#374151">El modelo cargado ocupa <tspan font-weight="700">3,7 GB</tspan> y genera texto sin problemas. Pero Adam necesita rastrear <tspan font-weight="700">tres floats extra por parámetro</tspan></text>
+  <text x="40" y="346" font-size="10.5" fill="#374151">—gradiente, velocidad y momento—, y eso son unos <tspan font-weight="700">15 GB</tspan> solo entre pesos y estado del optimizador. En una GPU de 16 GB no queda nada.</text>
+
+  <text x="40" y="372" font-size="10.5" fill="#374151">Congelar un parámetro no ahorra solo cómputo: <tspan font-weight="700">ahorra las tres variables de optimizador que ya no hay que guardar</tspan>.</text>
+  <text x="40" y="388" font-size="10.5" fill="#374151">Con LoRA el estado del optimizador baja de gigabytes a <tspan font-weight="700">megabytes</tspan> — una reducción de mil veces.</text>
+
+  <text x="40" y="414" font-size="10.5" font-style="italic" fill="#92400e">«Durante el fine-tuning de un LLM, ya no necesitas el poder expresivo que necesitabas durante el preentrenamiento.»</text>
+</svg>

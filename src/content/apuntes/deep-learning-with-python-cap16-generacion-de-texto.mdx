@@ -1,0 +1,555 @@
+---
+title: "El bucle no es un bug: es exactamente lo que le pedimos que aprendiera"
+description: "El capítulo 16 entrena un GPT desde cero con presupuesto de lector —41 millones de parámetros, mil millones de tokens, seis horas en una T4 gratuita— y después carga uno de mil millones para mostrar qué cambia con dos mil veces más datos. El modelo chico se atasca repitiendo «get a sense of what you are doing», y el libro es explícito en que eso no es un defecto sino la consecuencia directa del objetivo: si no hay una continuación obvia, adivinar patrones comunes es la estrategia óptima. Lo mismo vale un nivel más arriba: Gemma sin instruction tuning no responde a «¿cómo hago brownies?», genera un hilo de foro, porque es autocompletado de internet. Por el camino: por qué la generación tardaba minutos y bajó a medio segundo con solo fijar la shape, por qué el KV cache es el estado de la RNN reencarnado, la aritmética que hace que LoRA reemplace 15 GB de estado de optimizador con 5 MB, y el presidente número 542 de Estados Unidos, que sigue siendo James A. Garfield después del fine-tuning. Apuntes del Cap. 16."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "gpt", "generación de texto", "lora", "rlhf", "rag", "gemma", "keras"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 16 — Generación de texto"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 16 (PDF 490–530)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Este capítulo hace algo que casi ningún libro de deep learning hace: **entrena un GPT
+desde cero** con el presupuesto de un lector, y después carga un modelo de mil millones
+de parámetros para mostrar qué cambia con dos mil veces más datos. Todo el capítulo es la
+comparación entre esos dos puntos.
+
+Y el hilo que lo atraviesa va contra la lectura ingenua del progreso: **cada mejora de
+calidad es consecuencia del objetivo de entrenamiento, no el arreglo de un bug.**
+
+## 1. Antes: la escalada, y los tres problemas que no se movieron
+
+GPT (OpenAI, 2018) tenía tres ingredientes, y ninguno era nuevo: preentrenamiento no
+supervisado de un modelo de lenguaje, la arquitectura Transformer, y datos de temas
+variados.
+
+> *"GPT no vino con ningún avance de modelado o entrenamiento. Lo interesante de los
+> resultados fue que **un setup de entrenamiento tan general podía superar técnicas más
+> elaboradas** en varias tareas. […] **Solo un montón de datos de preentrenamiento y
+> cómputo.**"*
+
+| Modelo | Año | Parámetros | Tokens |
+|---|---|---|---|
+| GPT-1 | 2018 | 117 M | ~1 000 millones |
+| GPT-2 | 2019 | 1 500 M | >10 000 millones |
+| GPT-3 | 2020 | 175 000 M | ~500 000 millones |
+
+*"La arquitectura del modelo cambió solo ligeramente"* en esos cuatro años. Lo que sí
+cambió fue **cómo se usa**: con GPT-2 aparece el **few-shot learning** —*"intentas
+enseñarle al modelo un problema nuevo con solo un puñado de ejemplos supervisados,
+**demasiado pocos para descenso de gradiente estándar**"*— y con GPT-3 los ejemplos dejan
+de ser necesarios.
+
+Y tres problemas enunciados ya en 2020 que el capítulo va a ir tocando uno por uno:
+
+1. *"Los LLM 'alucinan' seguido — su salida puede irse de precisa a completamente falsa
+   **con cero indicación**."*
+2. *"Son **extremadamente sensibles al fraseo del prompt**."*
+3. *"**No pueden adaptarse a problemas que no estuvieran extensamente representados en sus
+   datos de entrenamiento.**"*
+
+## 2. Decoder-only: qué se rompe a propósito
+
+La simplificación central de GPT respecto del traductor del capítulo 15 es tirar el
+encoder entero. Y eso tiene un costo concreto que el libro no esconde.
+
+<Figure
+  src="/apuntes/deep-learning-with-python/decoder-only.svg"
+  alt="Diagrama en dos paneles con una banda de conclusión. Panel izquierdo, encoder-decoder del capítulo 15: una caja azul de secuencia origen con encoder bidireccional y una caja roja de secuencia destino con decoder causal, unidas por una flecha etiquetada cross-attention; debajo, la nota de que son dos embeddings y dos juegos de parámetros, así que los tokens de la pregunta se procesan distinto de los de la respuesta, y que el precio es tener que curar el dataset porque cada ejemplo debe venir como un par entrada-salida alineado a mano. Panel derecho, decoder-only tipo GPT: la frase Where is the capital of France como una fila de tokens, con el primero resaltado en rojo, y una flecha punteada roja que va desde capital hacia Where cortada por una equis, con la nota de que la máscara causal corta ese camino y que la representación de Where no puede atender a capital ni a France, así que se pierde expresividad; debajo, que hay un solo espacio latente y un solo juego de parámetros, y que la ganancia es que todo texto sirve como dato, incluidos documentos crudos sin pares ni etiquetas. Banda azul al pie: el trade-off que define la era, se sacrifica expresividad a cambio de datos ilimitados, con la cita de que no hace falta curar datasets con pares porque todo puede ser una única secuencia y se puede entrenar con cualquier texto de internet a escala masiva, y la nota de que con el mismo cambio se pierde el límite de documento, que pasa a marcarse con el token endoftext."
+  caption="Una decisión de arquitectura que es, en realidad, una decisión sobre de dónde vienen los datos."
+  width={800}
+/>
+
+> *"Dada una entrada como 'Where is the capital of France?', **la representación aprendida
+> de la palabra 'Where' no puede atender a las palabras 'capital' y 'France'** en la capa
+> de atención. Esto limita la expresividad del modelo, pero **tiene una ventaja masiva en
+> simplicidad de preentrenamiento**. […] **Podemos entrenar con cualquier texto que
+> encontremos en internet, a escala masiva.**"*
+
+El bloque queda siendo el `TransformerDecoder` del capítulo anterior **sin
+cross-attention**, más dropout adentro (*"vamos a apilar bastantes capas, así que agregar
+dropout dentro de cada capa decoder es importante"*).
+
+Los datos son **C4** (*Colossal Clean Crawled Corpus*, 750 GB, del que se usa menos del
+1 %), no BooksCorpus — que *"contenía libros gratuitos autopublicados agregados al dataset
+**sin permiso explícito de los autores**"* y fue bajado por sus editores. Y el pipeline
+copia una decisión de GPT que parece descuidada y no lo es:
+
+> *"Los desarrolladores eligieron mantener las cosas simples y **no hicieron ningún
+> intento de evitar que los límites de documento cayeran en medio de una muestra**. En
+> cambio, marcaron un límite de documento con un token especial `<|endoftext|>`."*
+
+### Weight tying, o la embedding leída al revés
+
+Los dos pesos más grandes de un Transformer son la matriz de token embedding
+`(vocab_size, hidden_dim)` y la proyección de salida `(hidden_dim, vocab_size)`. El truco
+es notar que **son transpuestas la una de la otra**:
+
+> *"Puedes muy bien pensar en nuestra proyección final como **una 'embedding inversa'**:
+> mapea del espacio oculto al espacio de tokens, mientras una embedding mapea del espacio
+> de tokens al oculto."*
+
+Se implementa como una bandera en la misma capa, y el modelo la llama **dos veces, la
+misma instancia**:
+
+```python
+    def call(self, inputs, reverse=False):
+        if reverse:
+            token_embeddings = self.token_embeddings.embeddings
+            return ops.matmul(inputs, ops.transpose(token_embeddings))
+        positions = ops.cumsum(ops.ones_like(inputs), axis=-1) - 1
+        return self.token_embeddings(inputs) + self.position_embeddings(positions)
+```
+
+```python
+embedding = PositionalEmbedding(sequence_length, vocab_size, hidden_dim)
+x = embedding(inputs)
+for i in range(num_layers):
+    x = TransformerDecoder(hidden_dim, intermediate_dim, num_heads)(x)
+outputs = embedding(x, reverse=True)      # la MISMA instancia, invertida
+```
+
+**41 millones de parámetros**: 8 capas, `hidden_dim=512`, 8 cabezas, vocabulario de 32 000
+términos con SentencePiece — *"la misma técnica de byte-pair encoding que construimos
+nosotros mismos en el capítulo 14, pero la librería está escrita en C++ por velocidad"*.
+
+<Note type="info" title="Dos detalles del entrenamiento que se llevan a cualquier Transformer">
+**Warmup del learning rate.** *"Entrenar un Transformer grande es **notoriamente
+quisquilloso** […] Cuando se apilan muchas capas Transformer, **es fácil sufrir gradientes
+explosivos**."* La solución es subir linealmente al learning rate pico (2e-4) a lo largo de
+mil pasos, con una `LearningRateSchedule` de cinco líneas.
+
+**Logits, y dónde va el softmax.** La proyección final no lleva activación: emite
+*"log-probabilidades no normalizadas"*. Keras deja elegir — softmax como última activación
+y salida en probabilidades, o softmax **dentro de la pérdida** con
+`SparseCategoricalCrossentropy(from_logits=True)` y salida en logits. Lo segundo es más
+cómodo para generar.
+</Note>
+
+El dataset son 29 373 batches × 128 muestras × 256 tokens: **algo menos de mil millones de
+tokens**, una sola pasada partida en 8 épocas. Y el libro deja el costo por escrito:
+*"pese a ser dos órdenes de magnitud más barato de entrenar que el GPT más chico, **esta
+llamada a `fit()` será la corrida de entrenamiento más cara computacionalmente de todo el
+libro**"* — unas 6 horas en la T4 gratuita de Colab.
+
+Resultado: **36 %** de accuracy de siguiente token. Con la honestidad de siempre: *"nota
+que **nuestro modelo está sub-entrenado**. Nuestra pérdida de validación seguirá bajando
+después de cada época […] **Entrenar por más tiempo sería una gran idea, pero
+necesitaríamos tiempo y dinero para pagar el cómputo.**"*
+
+## 3. Generar tarda minutos, y la razón no es el modelo
+
+La función de generación ingenua —llamar al modelo, tomar el último logit, hacer `argmax`,
+apendar— tarda **minutos**. Y el libro se detiene en el porqué, porque es un error que se
+comete todo el tiempo:
+
+> *"Predijimos alrededor de **200 000 tokens por segundo** durante el entrenamiento. […]
+> La razón más grande de nuestra lentitud es que **estamos corriendo un cómputo no
+> compilado**. Cada vez que corres `fit()` o `predict()`, **Keras compila el cómputo**.
+> […] Sin embargo, cuando llamamos al modelo directamente, el backend necesita correr el
+> forward pass **en vivo y sin optimizar en cada paso**."*
+
+El gotcha es que **la compilación es por shape de entrada**, y un bucle generativo cambia
+la shape en cada paso — así que recompila siempre. La solución es rellenar al largo final
+desde el principio y escribir el token nuevo en su posición:
+
+```python
+def compiled_generate(prompt, max_length=64):
+    tokens = list(ops.convert_to_numpy(tokenizer(prompt)))
+    prompt_length = len(tokens)
+    tokens = tokens + [0] * (max_length - prompt_length)   # shape fija desde el paso 1
+    for i in range(prompt_length, max_length):
+        prediction = mini_gpt.predict(np.array([tokens]), verbose=0)
+        tokens[i] = np.argmax(prediction[0, i - 1]).item()
+    return tokenizer.detokenize(tokens)
+```
+
+**De minutos a 0,49 s.** Y aún queda un orden de magnitud enorme sobre la mesa:
+
+<Note type="tip" title="El KV cache es el estado de la RNN, reencarnado">
+El libro lo deja como recuadro conceptual y no lo implementa, pero el razonamiento vale
+por sí solo — y es exactamente el mismo problema que en el generador de Shakespeare del
+capítulo 15 se resolvía exponiendo el estado de la GRU a mano.
+
+*"Si repasamos el modelo entero, notarás que **la atención es el único lugar donde el
+modelo pasa información de posición a posición**. Los bloques feedforward solo modifican
+la representación oculta de cada posición **en aislamiento**. […] Dentro de la atención,
+incorporamos información sobre tokens pasados **a través de los vectores key y value**.
+**Estos vectores key y value nunca cambian** para tokens pasados — la entrada pasada es
+fija, y la máscara causal impide que el Transformer 'mire hacia adelante'. Así que si
+cacheamos todos los vectores key y value, en cada capa, **tenemos el equivalente del
+estado de una RNN.**"*
+
+*"Tus entradas al modelo pueden pasar de ser tan largas como el máximo de tu salida **a
+tener un solo token de largo**. Si estás generando una secuencia de miles de tokens, **el
+cacheo puede significar un speedup de mil veces**."*
+</Note>
+
+## 4. El bucle, y por qué no es un defecto
+
+La salida real del mini-GPT:
+
+```
+A piece of advice, and the best way to get a feel for yourself is to get a sense
+of what you are doing.
+If you are a business owner, you can get a sense of what you are doing. You can
+get a sense of what you are doing, and you can get a sense of what
+```
+
+Y el diagnóstico, que es la frase que sostiene el capítulo:
+
+> *"**Esto no es tanto un bug como una consecuencia directa de nuestro objetivo de
+> entrenamiento.** […] Si no hay una elección obvia sobre a dónde debería ir una secuencia
+> de texto, **una estrategia efectiva es adivinar palabras comunes o patrones repetidos de
+> palabras.**"*
+
+Con el corolario extremo: *"si detuvieras el entrenamiento muy temprano, probablemente
+generaría la palabra 'the' incesantemente, ya que **'the' es la palabra más común del
+idioma inglés**"*.
+
+La salida del modelo *"no es solo un token predicho; es una distribución de probabilidad
+sobre los 32 000 tokens del vocabulario"*. Tomar siempre el máximo se llama **greedy
+search**, y es lo que produce el bucle. Los dos controles para no hacerlo se confunden
+seguido:
+
+<Figure
+  src="/apuntes/deep-learning-with-python/sampling-temperatura.svg"
+  alt="Diagrama con tres histogramas arriba y un panel verde abajo. Los tres histogramas muestran la misma distribución de cinco tokens candidatos bajo distintas temperaturas. Con temperature igual a 0,2 la distribución es un pico: 0,90 el primero, 0,09 el segundo, 0,01 el tercero y casi cero los dos últimos; la nota dice que es casi siempre el mismo token y que vuelve al greedy, repitiéndose en bucle. Con temperature igual a 1,0, la distribución cruda: 0,40, 0,25, 0,15, 0,12 y 0,08; se muestrea tal cual, diverso pero salta sin continuidad. Con temperature igual a 2,0 la distribución está aplanada: 0,29, 0,23, 0,18, 0,16 y 0,13, todos casi igual de probables, y la salida deja de parecerse al inglés. Abajo, un panel verde titulado Top-K es otra cosa y conviene no confundirlas: un histograma con k igual a 3 renormalizado, donde los tres primeros valen 0,50, 0,31 y 0,19 y los dos últimos son exactamente cero; al lado, la explicación de que la temperatura hace más probables a los tokens probables pero no descarta ninguno, así que la cola larga sigue viva, mientras el top-K pone en cero todo lo que queda fuera de los K candidatos, y que se pueden combinar, aunque combinarlos con una temperatura baja trae la repetición de vuelta."
+  caption="Los porcentajes son ilustrativos; lo que importa es la forma. La temperatura reescala; el top-K amputa."
+  width={800}
+/>
+
+> *"Pasar un corte top-K **es distinto** de sampling con temperatura. Pasar una temperatura
+> baja **hace más probables a los tokens probables, pero no descarta ningún token**. El
+> top-K sampling **pone en cero la probabilidad de cualquier cosa fuera de los K
+> candidatos.** Puedes combinar los dos."*
+
+En código son dos funciones de tres líneas cada una:
+
+```python
+def greedy_search(preds):
+    return ops.argmax(preds)
+
+def random_sample(preds, temperature=1.0):
+    preds = preds / temperature                       # se divide el LOGIT, no la probabilidad
+    return keras.random.categorical(preds[None, :], num_samples=1)[0]
+
+def top_k(preds, k=5, temperature=1.0):
+    preds = preds / temperature
+    top_preds, top_indices = ops.top_k(preds, k=k, sorted=False)
+    choice = keras.random.categorical(top_preds[None, :], num_samples=1)[0]
+    return ops.take_along_axis(top_indices, choice, axis=-1)
+```
+
+Y la distancia honesta a lo que existe hoy: *"para alcanzar la escala de los LLM
+generativos actuales, necesitaríamos **aumentar nuestro conteo de parámetros al menos
+100× y nuestro conteo de pasos de entrenamiento al menos 1 000×**. […] La receta de
+entrenamiento que usamos arriba **es el plano exacto usado por todos los que entrenan LLM
+hoy**. Las únicas piezas que faltan son un presupuesto de cómputo muy grande y algunos
+trucos para entrenar en múltiples máquinas."*
+
+## 5. Mil millones de parámetros no arreglan la utilidad
+
+El cambio a un modelo preentrenado tiene un argumento que no es económico:
+
+> *"El entrenamiento de modelos generativos está haciendo ahora un gran porcentaje del
+> consumo total de energía de los data centers. […] **Llama 2** […] necesitó unos **1,3
+> millones de kilowatt-hora** de electricidad para entrenar — **el uso diario de energía de
+> unos 45 000 hogares estadounidenses**."*
+
+**Gemma 3 1B** tiene mil millones de parámetros y **~2 billones de tokens** de
+preentrenamiento: dos mil veces los datos del mini-GPT. La salida es mucho más coherente.
+Y sigue sin servir para nada:
+
+```python
+>>> gemma_lm.generate("How can I make brownies?", max_length=40)
+How can I make brownies?
+[User 0001]
+I'm trying to make brownies for my son's birthday party. I've never made
+brownies before.
+```
+
+No responde la pregunta: **continúa el hilo de foro**. Es la misma lección que el bucle
+del mini-GPT, un nivel más arriba.
+
+> *"La salida sigue sin ser útil. El modelo generará texto vagamente plausible, pero **no
+> está claro qué podrías hacer con él**."* Es *"efectivamente **un autocompletado
+> sofisticado de internet**"*.
+
+El truco conocido es reescribir el prompt para que la respuesta sea la continuación
+probable —*"The following brownie recipe is easy to make in just a few steps. You can
+start by"*— y ahí sí sale una receta. Pero el libro lo desmitifica de inmediato:
+
+> *"Aunque es tentador imaginarlo interpretando nuestro prompt de alguna manera humana y
+> conversacional, **nada de eso está ocurriendo acá**. Simplemente construimos un prompt
+> para el cual **una receta de brownies real es una continuación más probable** que imitar
+> a alguien posteando en un foro. […] **Predecir cómo responderá un modelo a un prompt dado
+> es muy difícil.**"*
+
+Y el ejemplo que va a atravesar el resto del capítulo:
+
+```python
+>>> gemma_lm.generate("Tell me about the 542nd president of the United States.")
+The 542nd president of the United States was James A. Garfield.
+```
+
+> *"Un modelo **siempre dirá algo** — siempre hay un siguiente token más probable para una
+> secuencia dada. […] Por supuesto, esto es un disparate total, pero **el modelo no pudo
+> encontrar una forma más probable de completar este prompt**."*
+
+## 6. Instruction tuning: doblar la salida, no reaprender el idioma
+
+La distinción es importante porque explica por qué esta etapa es barata:
+
+> *"Al hacer más entrenamiento con ejemplos que contienen las respuestas deseadas,
+> **estamos esencialmente doblando la salida del modelo en la dirección que queremos. No
+> vamos a aprender un espacio latente para el lenguaje acá; eso ya se hizo sobre billones
+> de tokens de preentrenamiento. Simplemente estamos empujando un poco la representación
+> aprendida** para controlar el tono y el contenido de la salida."*
+
+El dataset es **databricks-dolly-15k**: 15 000 instrucciones y respuestas escritas a mano.
+Todo entra como **una sola secuencia** con marcadores —*"el markup preciso no importará
+mucho **siempre que sea consistente**"*—, y el `sample_weight` hace el trabajo fino:
+*"nos permite **computar un valor de pérdida solo para nuestros tokens de respuesta**. No
+nos importa realmente la pérdida del prompt del usuario; es fijo."*
+
+### Por qué `fit()` no cabía en la GPU
+
+Y acá está la aritmética que vale el capítulo:
+
+> *"Ya cargamos el modelo y corrimos generación, ¿por qué nos quedaríamos sin memoria
+> ahora? Nuestro modelo de mil millones de parámetros ocupa alrededor de **3,7 GB**. El
+> optimizador Adam necesitará rastrear **tres números de punto flotante extra por cada
+> parámetro** […] **En total, sale unos 15 GB solo para los pesos y el estado del
+> optimizador.** […] **Porque estos modelos tienen conteos grandes de parámetros, el
+> throughput de tus GPU y CPU es una preocupación secundaria frente a hacer caber el
+> modelo en la memoria del acelerador.**"*
+
+Congelar pesos, entonces, no ahorra solo cómputo: *"**no necesitamos rastrear ninguna
+variable de optimizador para parámetros congelados** — nunca se actualizarán"*. Pero
+congelar todo menos la atención sigue dejando cientos de millones de parámetros vivos. De
+ahí **LoRA**:
+
+```python
+class LoraLinear(keras.Layer):
+    def __init__(self, input_dim, output_dim, rank):
+        super().__init__()
+        self.kernel = self.add_weight(shape=(input_dim, output_dim), trainable=False)
+        self.alpha = self.add_weight(shape=(input_dim, rank))     # baja al rango interno
+        self.beta = self.add_weight(shape=(rank, output_dim))     # vuelve a subir
+
+    def call(self, inputs):
+        frozen = ops.matmul(inputs, self.kernel)
+        update = ops.matmul(ops.matmul(inputs, self.alpha), self.beta)
+        return frozen + update
+```
+
+<Figure
+  src="/apuntes/deep-learning-with-python/lora-aritmetica.svg"
+  alt="Diagrama en tres bloques. Izquierda, el mecanismo: una caja de inputs se bifurca en dos caminos que después se suman en un nodo con signo más y salen como outputs. El camino de arriba pasa por un kernel de 2048 por 2048 dibujado con borde punteado gris y rotulado congelado, sin gradientes. El camino de abajo pasa por dos cajas azules encadenadas, alfa de 2048 por 8 y beta de 8 por 2048, con la nota de que todo el aprendizaje pasa por ahí y que en el punto medio angosto la actualización de cada token pasa por 8 dimensiones antes de volver a subir. Derecha arriba, panel azul con la aritmética del rango: el kernel completo de 2048 por 2048 son 4 194 304 parámetros, la descomposición de rango 8 son 32 768, es decir 128 veces menos; y sobre el modelo Gemma completo, un total de 1 001 190 528 parámetros que ocupan 3,73 gigabytes frente a 1 304 576 entrenables que ocupan 4,98 megabytes. Abajo, panel ámbar sobre por qué el problema era la memoria y no el cómputo: el modelo cargado ocupa 3,7 gigabytes y genera texto sin problemas, pero Adam necesita rastrear tres floats extra por parámetro —gradiente, velocidad y momento— y eso son unos 15 gigabytes solo entre pesos y estado del optimizador, así que en una GPU de 16 gigabytes no queda nada; congelar un parámetro ahorra las tres variables de optimizador que ya no hay que guardar, y con LoRA el estado del optimizador baja de gigabytes a megabytes, una reducción de mil veces. Cierra con la cita de que durante el fine-tuning de un LLM ya no se necesita el poder expresivo que se necesitaba durante el preentrenamiento."
+  caption="La cifra que justifica todo: 1 304 576 parámetros entrenables sobre 1 001 190 528."
+  width={800}
+/>
+
+En KerasHub es **una línea** —`gemma_lm.backbone.enable_lora(rank=8)`— y el `summary()`
+pasa a mostrar 1 304 576 parámetros entrenables sobre 1 001 190 528 totales: **5 MB en vez
+de 3,73 GB**.
+
+<Note type="warning" title="Tres cosas que conviene ajustar del texto impreso">
+**LoRA se aplica a query y *value*, no a query y *key*.** El libro dice que *"los autores
+de LoRA sugieren […] agregar pesos LoRA solo a las proyecciones query y key"*, y el snippet
+habilita `query_dense` y `key_dense`. La ablación del paper original (Hu et al., 2021,
+§7.1) concluye lo contrario: con un presupuesto fijo de parámetros, adaptar **W_q y W_v**
+rinde mejor que cualquier otra combinación. El código del libro entrena igual, pero si
+replicas el ejemplo vale probar `value_dense`.
+
+**«Ocho floats» es una figura, no una cuenta.** El libro dice que en el cuello angosto
+*"toda la actualización debe representarse con ocho floats"*. La matriz de actualización
+tiene 32 768 parámetros y rango a lo más 8: lo que pasa por 8 dimensiones es la
+actualización **de cada token**, no la matriz entera. La intuición es correcta; el número,
+leído literal, no.
+
+**Y una comilla de más.** El `PROMPT_TEMPLATE` del Listing 16.12 está impreso con cuatro
+comillas de apertura, lo que mete un carácter `"` literal al principio del string. La
+salida que el propio libro imprime dos párrafos después no lo tiene.
+</Note>
+
+Una época con `Adam(5e-5)` y el modelo pasa a responder preguntas en vez de continuarlas.
+El libro reporta **55 %** de accuracy al adivinar la siguiente palabra de la respuesta.
+
+<Note type="info" title="Ese 55 % no se compara con el 36 % del mini-GPT">
+El libro los pone uno al lado del otro (*"un salto enorme desde el 35 % del modelo
+mini-GPT"* — el 35 % es un desliz, antes había reportado 36 %). Pero son **métricas
+distintas sobre datasets distintos**: el 36 % es siguiente token sobre validación de C4,
+texto abierto de la web; el 55 % es siguiente token sobre respuestas de Dolly, que son
+cortas, formulaicas y mucho más predecibles. El salto de calidad entre los dos modelos es
+real y se ve en las salidas — pero no es lo que mide esa diferencia de 19 puntos.
+</Note>
+
+Y sobre lo que **no** arregló el instruction tuning:
+
+```python
+>>> gemma_lm.generate("[instruction]\nWho is the 542nd president of the United States?[end]\n[response]\n")
+The 542nd president of the United States was James A. Garfield.[end]
+```
+
+> *"**Para nada.** Sin embargo, todavía podríamos usar instruction tuning para avanzar algo
+> acá. Una técnica común es **entrenar el modelo con muchos pares instrucción/respuesta
+> donde la respuesta deseada es 'No sé'**."*
+
+## 7. RLHF, y por qué las respuestas escritas a mano tienen techo
+
+El instruction tuning de la sección anterior es **supervised fine-tuning** (SFT), y su
+límite es estructural:
+
+> *"Cualquier necesidad de escribir manualmente ejemplos de texto **casi siempre se
+> volverá un cuello de botella**. […] Además, este enfoque estará limitado por **el techo
+> del rendimiento humano** en la tarea. […] El problema real que intentamos optimizar es
+> **nuestra preferencia** por ciertas respuestas sobre otras."*
+
+El pipeline en tres etapas: SFT para llegar a una base decente; un **modelo de recompensa**
+—*"usualmente otro Transformer más chico. En vez de predecir el siguiente token, **lee una
+secuencia completa y emite un único float**"*— entrenado con rankings humanos, que son
+caros pero *"igual más rápidos que escribir todas las respuestas deseadas a mano"*; y
+después RL. Con el término desmitificado:
+
+> *"**No te intimides por el término**: se refiere a cualquier setup de entrenamiento donde
+> un modelo aprende **haciendo predicciones (llamadas acciones) y recibiendo feedback sobre
+> esa salida (llamado recompensas)**. En corto, **las predicciones propias del modelo se
+> vuelven sus datos de entrenamiento.**"*
+
+El pseudocódigo del libro filtra las respuestas malas y reentrena con las buenas, pero
+aclara que en la práctica *"usualmente **no descartarás tus respuestas malas** […]. Después
+de todo, **una respuesta mala da buena señal sobre qué no hacer.**"*
+
+<Note type="warning" title="El presidente 542, tercer intento — y por qué esto es jugar al topo">
+Gemma 3 4B instruct —14 billones de tokens de preentrenamiento, más SFT, más RLHF, más
+distillation desde un modelo más grande— responde:
+
+*"This is a trick question! As of today, **November 2, 2023**, the United States has only
+had 46 presidents. There hasn't been a 542nd president yet."*
+
+*"Este modelo más capaz **se niega a morder el anzuelo**. Esto no es el resultado de una
+técnica nueva de modelado, sino **el resultado de entrenamiento extensivo con preguntas
+trampa como esta**. De hecho, acá puedes ver claramente por qué **quitar alucinaciones
+puede ser un poco como jugar al topo — aunque se negó a alucinar un presidente de EE.UU.,
+el modelo ahora logra inventarse la fecha de hoy.**"*
+
+Tres modelos, tres escalas, y la alucinación no desaparece: **se muda**. Es la
+consecuencia directa del espacio interpolativo que el capítulo 15 describió.
+</Note>
+
+## 8. Multimodal, RAG y «razonamiento», en tres párrafos
+
+**Multimodal.** *"El Transformer no es un modelo específico de texto; es un modelo muy
+efectivo para aprender patrones en datos de secuencia. Si podemos descubrir cómo **forzar
+otros tipos de dato a una representación de secuencia**, podemos alimentar esa secuencia a
+un Transformer."* Gemma 3 4B lo hace con un encoder de imagen separado de 420 millones de
+parámetros que corta la imagen en **256 patches** y codifica cada uno con la dimensión
+oculta del Transformer (2 560). Cada imagen queda como 256 **soft tokens**, empalmados en
+la secuencia de texto después del embedding: *"a diferencia de nuestros 'hard tokens',
+donde cada token ID solo puede tomar un número fijo de vectores posibles, **estos soft
+tokens de imagen pueden tomar cualquier valor vectorial que emita el encoder de visión**"*.
+Entrenar es el mismo *adivina la próxima palabra* de siempre, *"simplemente poniendo la
+pérdida en cero en esas ubicaciones"*.
+
+**RAG.** Las dos fallas del LLM como buscador son que inventa hechos y que tiene **fecha de
+corte** — *"en algún punto arbitrario del tiempo, el conocimiento del mundo de un LLM
+simplemente se detiene"*. La respuesta es dejar de pensarlo como base de conocimiento y
+pensarlo como *"software conversacional"*: se recupera el contexto por búsqueda tradicional
+y se pega en el prompt. Con una observación que cierra un círculo: la base de datos
+vectorial *"podría sonar mucho al mecanismo de atención mismo — **recuerda que los términos
+'query', 'key' y 'value' vinieron efectivamente de sistemas de bases de datos**"*.
+
+**Razonamiento.** El problema estaba bien identificado: *"un modelo podía dar una respuesta
+perfecta a un problema que estaba directamente en sus datos de entrenamiento, pero
+**sustituye unos pocos nombres o números en el prompt y se volvía evidente que el modelo no
+tenía ningún control sobre lo que intentaba resolver**"*. El **chain-of-thought** —escribir
+los pasos intermedios— mejora las cosas porque el modelo *"atiende a su propia salida"*. Y
+la receta para entrenarlo es, dice el libro, RL sin más: generar varias respuestas, quedarse
+con las correctas **por parsing de string** (de ahí el marcador `ANSWER:`), hacer SFT sobre
+ellas incluyendo todo el trabajo intermedio, y repetir. *"Nuestro chequeo de respuestas
+actúa como el entorno."*
+
+<Note type="tip" title="El problema de Judy, y qué tipo de error es">
+El mismo prompt, dos corridas. Judy escribió una carta de 2 páginas a 3 amigos, dos veces
+por semana, durante 3 meses.
+
+```
+* Letters per week:  3 × 2 = 6
+* Letters per month: 6 × 4 = 24
+* Letters in 3 months: 24 × 3 = 72
+* Total letters: 72 × 2 = 144        ← el paso de más
+ANSWER: 144
+```
+
+```
+* Letters per week:  3 × 2 = 6
+* Letters per month: 6 × 4 = 24
+* Total letters: 24 × 3 = 72
+ANSWER: 72
+```
+
+*"En el primer intento, **nuestro modelo se quedó colgado del detalle superfluo de que
+cada carta tiene dos páginas**."* Los tres primeros pasos son **idénticos y correctos** en
+ambas corridas. El modelo no falló en la aritmética: falló en decidir **qué dato del
+enunciado era relevante** — el modo de falla exacto que hace inútil revisar una cadena de
+razonamiento por encima. Se ve bien formada porque **lo está**.
+</Note>
+
+## 9. Hacia dónde va esto
+
+Con presupuesto fijo de preentrenamiento hay que elegir entre más datos y más parámetros, y
+la respuesta cambió: *"**GPT-3, con 175 mil millones de parámetros, era demasiado grande
+para su presupuesto de cómputo**. Entrenar un modelo más chico con más datos habría llevado
+a mejor rendimiento. Así que recientemente **los tamaños de modelo han tendido a aplanarse
+mientras los tamaños de datos han tendido a subir.**"* Con dos aclaraciones: no es una
+asíntota (*"todavía no hemos visto señales"* de que el rendimiento se aplane con más
+cómputo), y buena parte del aplanamiento es práctico — *"un modelo realmente bueno no
+ayudará mucho si es prohibitivamente caro de correr"*.
+
+Y el muro del que se habla poco:
+
+> *"¡Estamos empezando a quedarnos sin datos de preentrenamiento! […] **Los modelos están
+> incluso empezando a 'comerse su propia cola'** entrenando con una porción significativa
+> de contenido creado por otros LLM. […] **Esta es una de las razones por las que el
+> reinforcement learning está recibiendo mucha atención recientemente.** Si puedes crear un
+> entorno difícil y autocontenido que genere problemas nuevos, **habrás encontrado una
+> forma de continuar el entrenamiento usando la salida propia del modelo.**"*
+
+> *"Al final del día, el problema fundamental sigue siendo que **los LLM son salvajemente
+> ineficientes al aprender comparados con los humanos**. Las capacidades del modelo solo
+> vienen de entrenar con **muchos órdenes de magnitud más texto del que la gente leerá en
+> su vida.**"*
+
+## Para recordar
+
+- **Decoder-only cambia expresividad por datos.** Al meter todo en una sola secuencia
+  causal, «Where» deja de poder atender a «France» — y a cambio cualquier texto de internet
+  sirve como dato de entrenamiento sin curar nada.
+- **Weight tying**: la proyección de salida es la transpuesta del token embedding. Las dos
+  matrices más grandes del modelo pasan a ser una.
+- **Warmup del learning rate** para no explotar al apilar capas Transformer, y **logits**
+  (sin softmax) para poder muestrear cómodo.
+- **La generación lenta casi nunca es el modelo.** Llamar al modelo directamente corre el
+  forward pass sin compilar, y la compilación es **por shape**: rellenar al largo final
+  bajó una generación de minutos a medio segundo.
+- **El KV cache es el estado de la RNN.** La atención es lo único que mueve información
+  entre posiciones, y las keys/values del pasado nunca cambian. Guardarlas puede valer
+  1 000× en secuencias largas.
+- **El bucle repetitivo no es un bug**: sin una continuación obvia, adivinar patrones
+  comunes es la estrategia óptima bajo la pérdida que entrenamos.
+- **Temperatura y top-K no son lo mismo.** La temperatura reescala los logits y deja viva
+  la cola; el top-K la amputa. Combinar top-K con temperatura baja devuelve la repetición.
+- **Un modelo preentrenado de mil millones sigue siendo autocompletado de internet.** El
+  instruction tuning no le enseña el idioma —eso ya está—, solo dobla la salida.
+- **El cuello de botella al fine-tunear un LLM es la memoria, no el cómputo**: Adam pide
+  tres floats extra por parámetro. LoRA congela el kernel y aprende una actualización de
+  rango bajo: 5 MB de estado de optimizador en vez de gigabytes.
+- **La alucinación se muda, no se va.** El modelo más entrenado del capítulo rechaza al
+  presidente 542 y se inventa la fecha de hoy.
+
+El **capítulo 17** aplica la misma pregunta —cómo se muestrea de un espacio latente— a las
+imágenes.

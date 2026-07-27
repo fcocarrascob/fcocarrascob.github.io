@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="pr-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="800" height="450" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">La precisión es a los números lo que la resolución es a las imágenes</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">Y el reparto de bits entre exponente y mantisa decide si lo que pierdes es <tspan font-style="italic">rango</tspan> o <tspan font-style="italic">detalle</tspan>.</text>
+
+  <!-- bit layouts -->
+  <rect x="20" y="66" width="760" height="146" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+
+  <text x="112" y="98" text-anchor="end" font-size="11" font-weight="700" font-family="'Consolas', monospace" fill="#374151">float32</text>
+  <rect x="124" y="84" width="14" height="20" fill="#6b7280"/>
+  <rect x="140" y="84" width="112" height="20" fill="#2563eb" fill-opacity="0.5"/>
+  <rect x="254" y="84" width="322" height="20" fill="#16a34a" fill-opacity="0.35"/>
+  <text x="131" y="98" text-anchor="middle" font-size="8" fill="#ffffff">s</text>
+  <text x="196" y="98" text-anchor="middle" font-size="9" fill="#1e3a8a">exponente · 8</text>
+  <text x="415" y="98" text-anchor="middle" font-size="9" fill="#166534">mantisa · 23</text>
+  <text x="600" y="98" font-size="10" fill="#6b7280">resolución ≈ 1e-7</text>
+
+  <text x="112" y="134" text-anchor="end" font-size="11" font-weight="700" font-family="'Consolas', monospace" fill="#374151">float16</text>
+  <rect x="124" y="120" width="14" height="20" fill="#6b7280"/>
+  <rect x="140" y="120" width="70" height="20" fill="#2563eb" fill-opacity="0.5"/>
+  <rect x="212" y="120" width="140" height="20" fill="#16a34a" fill-opacity="0.35"/>
+  <text x="131" y="134" text-anchor="middle" font-size="8" fill="#ffffff">s</text>
+  <text x="175" y="134" text-anchor="middle" font-size="9" fill="#1e3a8a">exp · 5</text>
+  <text x="282" y="134" text-anchor="middle" font-size="9" fill="#166534">mantisa · 10</text>
+  <text x="600" y="134" font-size="10" fill="#6b7280">resolución ≈ 1e-3</text>
+
+  <text x="112" y="170" text-anchor="end" font-size="11" font-weight="700" font-family="'Consolas', monospace" fill="#374151">bfloat16</text>
+  <rect x="124" y="156" width="14" height="20" fill="#6b7280"/>
+  <rect x="140" y="156" width="112" height="20" fill="#2563eb" fill-opacity="0.5"/>
+  <rect x="254" y="156" width="98" height="20" fill="#16a34a" fill-opacity="0.35"/>
+  <text x="131" y="170" text-anchor="middle" font-size="8" fill="#ffffff">s</text>
+  <text x="196" y="170" text-anchor="middle" font-size="9" fill="#1e3a8a">exponente · 8</text>
+  <text x="303" y="170" text-anchor="middle" font-size="9" fill="#166534">mantisa · 7</text>
+  <text x="600" y="170" font-size="10" fill="#6b7280">el <tspan font-weight="700">mismo rango</tspan> que float32,</text>
+  <text x="600" y="184" font-size="10" fill="#6b7280">con menos detalle</text>
+
+  <text x="40" y="200" font-size="10" fill="#374151">Los valores representables <tspan font-weight="700">no están uniformemente distribuidos</tspan>: hay tantos entre 2ᴺ y 2ᴺ⁺¹ como entre 1 y 2. El error crece con el valor absoluto.</text>
+
+  <!-- mixed precision -->
+  <rect x="20" y="228" width="470" height="204" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="40" y="252" font-size="12" font-weight="700" fill="#1e40af">Mixed precision: dos dtypes por capa</text>
+  <text x="40" y="269" font-size="10" fill="#6b7280">El entrenamiento en 16 bits puro falla porque las actualizaciones de peso</text>
+  <text x="40" y="282" font-size="10" fill="#6b7280">rondan 1e-5 o 1e-6, y ahí ya no hay resolución.</text>
+
+  <rect x="40" y="294" width="200" height="52" rx="5" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="140" y="313" text-anchor="middle" font-size="10.5" font-family="'Consolas', monospace" fill="#374151">compute_dtype</text>
+  <text x="140" y="333" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">float16</text>
+
+  <rect x="268" y="294" width="200" height="52" rx="5" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="368" y="313" text-anchor="middle" font-size="10.5" font-family="'Consolas', monospace" fill="#374151">variable_dtype</text>
+  <text x="368" y="333" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">float32</text>
+
+  <text x="140" y="364" text-anchor="middle" font-size="9.5" fill="#6b7280">el forward pass baja a 16 bits</text>
+  <text x="368" y="364" text-anchor="middle" font-size="9.5" fill="#6b7280">los pesos reciben updates precisos</text>
+
+  <text x="40" y="392" font-size="10" fill="#374151">Excepciones: <tspan font-weight="700">softmax y crossentropy</tspan> son inestables en 16 bits. Se sacan</text>
+  <text x="40" y="405" font-size="10" fill="#374151">de la política con <tspan font-family="'Consolas', monospace">dtype="float32"</tspan> en el constructor de esa capa.</text>
+  <text x="40" y="424" font-size="10.5" font-weight="700" fill="#1e40af">«Un buen impulso de velocidad a virtualmente ningún costo.»</text>
+
+  <!-- loss scaling -->
+  <rect x="506" y="228" width="274" height="204" rx="8" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="526" y="252" font-size="12" font-weight="700" fill="#92400e">Loss scaling</text>
+  <text x="526" y="272" font-size="10" fill="#374151">Los gradientes siguen en 16 bits, así</text>
+  <text x="526" y="285" font-size="10" fill="#374151">que los más chicos <tspan font-weight="700">se redondean a cero</tspan></text>
+  <text x="526" y="298" font-size="10" fill="#374151">y el modelo deja de aprender.</text>
+
+  <text x="526" y="326" font-size="10.5" fill="#374151">El truco: los gradientes son</text>
+  <text x="526" y="340" font-size="10.5" font-weight="700" fill="#92400e">proporcionales a la pérdida.</text>
+  <text x="526" y="356" font-size="10.5" fill="#374151">Se multiplica la pérdida por un factor</text>
+  <text x="526" y="369" font-size="10.5" fill="#374151">grande y ya no caen bajo el umbral.</text>
+
+  <rect x="526" y="382" width="234" height="34" rx="5" fill="#ffffff" stroke="#fde68a"/>
+  <text x="643" y="403" text-anchor="middle" font-size="10" font-family="'Consolas', monospace" fill="#92400e">LossScaleOptimizer(Adam(1e-3))</text>
+
+  <text x="526" y="428" font-size="9.5" fill="#6b7280">El factor correcto cambia durante el entrenamiento.</text>
+</svg>

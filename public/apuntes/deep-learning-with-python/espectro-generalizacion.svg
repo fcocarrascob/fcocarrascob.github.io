@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="eg-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+  <rect width="800" height="450" fill="#ffffff"/>
+
+  <text x="400" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">El espectro de la generalización, y dónde se quedó el deep learning</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11.5" fill="#6b7280">«¿Cómo distingues a un estudiante que memorizó tres años de exámenes de uno que entiende? Le das un problema nuevo.»</text>
+
+  <!-- spectrum -->
+  <line x1="40" y1="82" x2="760" y2="82" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#eg-ar)"/>
+
+  <rect x="34" y="94" width="166" height="128" rx="8" fill="#f3f4f6" stroke="#e5e7eb"/>
+  <text x="117" y="116" text-anchor="middle" font-size="11.5" font-weight="700" fill="#374151">Ninguna</text>
+  <text x="117" y="136" text-anchor="middle" font-size="10" fill="#6b7280">un dict de Python</text>
+  <text x="117" y="150" text-anchor="middle" font-size="10" fill="#6b7280">un QA con if-then-else</text>
+  <line x1="52" y1="162" x2="182" y2="162" stroke="#e5e7eb"/>
+  <text x="117" y="180" text-anchor="middle" font-size="10" fill="#374151">Incapaz de manejar</text>
+  <text x="117" y="194" text-anchor="middle" font-size="10" fill="#374151">nada que no se le haya</text>
+  <text x="117" y="208" text-anchor="middle" font-size="10" fill="#374151">informado por adelantado.</text>
+
+  <rect x="216" y="94" width="166" height="128" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="299" y="116" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">Local</text>
+  <text x="299" y="136" text-anchor="middle" font-size="10" fill="#1e40af">redes profundas · hoy</text>
+  <line x1="234" y1="148" x2="364" y2="148" stroke="#bfdbfe"/>
+  <text x="299" y="166" text-anchor="middle" font-size="10" fill="#374151">Generaliza a <tspan font-weight="700">conocidos</tspan></text>
+  <text x="299" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="#374151">desconocidos</text>
+  <text x="299" y="196" text-anchor="middle" font-size="10" fill="#6b7280">Interpolación en el manifold:</text>
+  <text x="299" y="210" text-anchor="middle" font-size="10" fill="#6b7280">el factor tiene que estar ahí.</text>
+
+  <rect x="398" y="94" width="166" height="128" rx="8" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="481" y="116" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">Amplia</text>
+  <text x="481" y="136" text-anchor="middle" font-size="10" fill="#92400e">la meta intermedia</text>
+  <line x1="416" y1="148" x2="546" y2="148" stroke="#fde68a"/>
+  <text x="481" y="166" text-anchor="middle" font-size="10" fill="#374151"><tspan font-weight="700">Desconocidos desconocidos</tspan></text>
+  <text x="481" y="180" text-anchor="middle" font-size="10" fill="#374151">dentro de un dominio amplio.</text>
+  <text x="481" y="196" text-anchor="middle" font-size="10" fill="#6b7280">El test Woz: entrar a una cocina</text>
+  <text x="481" y="210" text-anchor="middle" font-size="10" fill="#6b7280">al azar y hacer un café.</text>
+
+  <rect x="580" y="94" width="186" height="128" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="673" y="116" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">Extrema</text>
+  <text x="673" y="136" text-anchor="middle" font-size="10" fill="#166534">humanos y animales avanzados</text>
+  <line x1="598" y1="148" x2="748" y2="148" stroke="#bbf7d0"/>
+  <text x="673" y="166" text-anchor="middle" font-size="10" fill="#374151">Adaptarse a lo nunca visto</text>
+  <text x="673" y="180" text-anchor="middle" font-size="10" fill="#374151">con pocos datos o ninguno.</text>
+  <text x="673" y="196" text-anchor="middle" font-size="10" fill="#6b7280">Aterrizamos un cohete en uno o</text>
+  <text x="673" y="210" text-anchor="middle" font-size="10" fill="#6b7280">dos intentos, no en un millón.</text>
+
+  <!-- definition -->
+  <rect x="20" y="240" width="374" height="112" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="40" y="264" font-size="11.5" font-weight="700" fill="#374151">La inteligencia como ratio de eficiencia</text>
+  <text x="40" y="288" font-size="10.5" fill="#374151">Es el ratio de conversión entre <tspan font-weight="700">la información</tspan></text>
+  <text x="40" y="302" font-size="10.5" fill="#374151"><tspan font-weight="700">disponible</tspan> —experiencia pasada más conocimiento</text>
+  <text x="40" y="316" font-size="10.5" fill="#374151">previo— y <tspan font-weight="700">el área operativa futura</tspan>: el conjunto de</text>
+  <text x="40" y="330" font-size="10.5" fill="#374151">situaciones novedosas que se resuelven bien.</text>
+  <text x="40" y="346" font-size="10" fill="#6b7280">Menos experiencia para más situaciones = más inteligente.</text>
+
+  <!-- ARC evidence -->
+  <rect x="410" y="240" width="370" height="112" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="430" y="264" font-size="11.5" font-weight="700" fill="#991b1b">La evidencia: ARC-AGI, 2019 → 2025</text>
+
+  <text x="430" y="290" font-size="10.5" fill="#374151">Escalamiento de los LLM base</text>
+  <text x="760" y="290" text-anchor="end" font-size="13" font-weight="700" fill="#991b1b">≈ 50 000×</text>
+
+  <text x="430" y="314" font-size="10.5" fill="#374151">Score en ARC-AGI</text>
+  <text x="760" y="314" text-anchor="end" font-size="13" font-weight="700" fill="#991b1b">0 % → ~10 %</text>
+
+  <text x="430" y="338" font-size="10.5" fill="#374151">Un humano cualquiera</text>
+  <text x="760" y="338" text-anchor="end" font-size="13" font-weight="700" fill="#166534">&gt; 95 %</text>
+
+  <!-- conclusion -->
+  <rect x="20" y="368" width="760" height="66" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="400" y="393" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">«Si escalas tu sistema 50 000× y todavía no estás haciendo progreso significativo, eso es como un gran cartel</text>
+  <text x="400" y="410" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">de advertencia diciéndote que necesitas probar ideas nuevas.»</text>
+  <text x="400" y="428" text-anchor="middle" font-size="10" fill="#6b7280">Los otros benchmarks se saturaron rápido porque se pueden hackear con memorización. ARC-AGI está diseñado para resistirla.</text>
+</svg>

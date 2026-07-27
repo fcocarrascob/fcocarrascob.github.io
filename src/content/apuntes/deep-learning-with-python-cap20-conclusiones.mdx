@@ -1,0 +1,210 @@
+---
+title: "Ni neuronales ni redes"
+description: "El capítulo 20 cierra el libro y es explícitamente una hoja de referencia: la tabla que dice qué arquitectura corresponde a qué modalidad de datos, y las cuatro combinaciones canónicas de última capa, activación y pérdida. Pero también resuelve algo que el capítulo 1 había dejado abierto, y es la razón del título: «red neuronal» es un nombre extremadamente engañoso porque no son ni neuronales ni redes. Un nombre mejor habría sido transformaciones geométricas encadenadas, que es literalmente lo que son —desarrugar una bola de papel, capa por capa, con la restricción de que cada movimiento sea suave y continuo—. De ahí salen todos los límites del capítulo anterior. Y la síntesis final, con Feynman de por medio: lo más sorprendente del deep learning es lo simple que es. Apuntes del Cap. 20, el último del libro."
+pubDate: 2026-07-27
+tags: ["deep learning", "chollet", "resumen", "arquitecturas", "keras", "workflow", "hoja de referencia"]
+subsection: "deep-learning-with-python"
+chapter: "Cap. 20 — Conclusiones"
+source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 20 (PDF 619–632)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El último capítulo declara su función sin rodeos: *"esta sección sintetiza brevemente los
+puntos clave del libro. **Si alguna vez necesitas un repaso rápido** para ayudarte a recordar
+lo que has aprendido, puedes leer estas pocas páginas."* Es una hoja de referencia.
+
+Pero también cierra algo que el capítulo 1 había dejado abierto, y que da la medida de todo
+lo demás.
+
+## 1. Por qué el nombre está mal
+
+> *"Hoy en día, **el nombre 'red neuronal' existe puramente por razones históricas — es un
+> nombre extremadamente engañoso porque no son ni neuronales ni redes**. En particular, **las
+> redes neuronales tienen apenas algo que ver con el cerebro**. Un nombre más apropiado habría
+> sido **aprendizaje de representaciones por capas** o **aprendizaje de representaciones
+> jerárquicas**, o quizá incluso **modelos diferenciables profundos** o **transformaciones
+> geométricas encadenadas**, para enfatizar el hecho de que **la manipulación de espacios
+> geométricos continuos está en su núcleo.**"*
+
+<Figure
+  src="/apuntes/deep-learning-with-python/ni-neuronales-ni-redes.svg"
+  alt="Diagrama en tres bloques. Arriba a la izquierda, la metáfora de desarrugar una bola de papel: una forma roja muy irregular rotulada el manifold de entrada, arrugado y enredado, se transforma en una forma ámbar menos irregular, luego en una verde casi rectangular y finalmente en un rectángulo limpio rotulado plano y separable; cada paso está unido por una flecha etiquetada capa. Arriba a la derecha, panel azul titulado todo pende de dos ideas: primero, que el significado se deriva de la relación por pares entre las cosas, entre palabras o entre píxeles; segundo, que esas relaciones pueden capturarse mediante una función de distancia; con la salvedad de que si el cerebro implementa el significado así es otra pregunta, y que se pueden concebir otras estructuras, como grafos. En el medio, una banda a todo el ancho: cada movimiento del que desarruga es una transformación geométrica simple operada por una capa, la secuencia completa es la transformación del modelo entero, y tiene que ser diferenciable, es decir que la deformación de entradas a salidas debe ser suave y continua, una restricción significativa y la raíz de todos los límites que enumera el capítulo 19. Abajo, panel verde con cuatro factores habilitantes en vez de una invención: algoritmos, con dos décadas de mejoras incrementales desde el backpropagation aceleradas después de 2012 y el salto mayor del Transformer en 2017; datos, como subproducto del internet de consumo y de la ley de Moore sobre el almacenamiento, hasta el punto de entrenar hoy sobre una fracción grande de internet; hardware, primero GPU de gaming y después chips diseñados desde cero para deep learning, con NVIDIA apostando la compañía a ello; y software, con CUDA abajo, TensorFlow, JAX y PyTorch haciendo diferenciación automática, y Keras arriba para hacerlo accesible."
+  caption="La metáfora del capítulo 2, cobrada en el 20. Y la restricción de suavidad que explica el 19."
+  width={800}
+/>
+
+> *"El proceso entero puede visualizarse en 3D imaginando a una persona tratando de
+> **desarrugar una bola de papel**: la bola arrugada es el manifold de los datos de entrada
+> con el que el modelo empieza. **Cada movimiento** operado por la persona es similar a **una
+> transformación geométrica simple operada por una capa**. […] **Los modelos de deep learning
+> son máquinas matemáticas para desarrugar manifolds complicados de datos de alta
+> dimensión.**"*
+
+Y la restricción que esto impone, que es exactamente la raíz de todo lo que el capítulo 19
+enumera como límite:
+
+> *"Una característica clave de esta transformación geométrica es que **debe ser
+> diferenciable** […] Intuitivamente, esto significa que **la deformación geométrica de
+> entradas a salidas debe ser suave y continua — una restricción significativa.**"*
+
+Todo pende de dos ideas: *"**que el significado se deriva de la relación por pares entre las
+cosas** […] **y que esas relaciones pueden capturarse mediante una función de distancia**"*.
+Con una salvedad epistemológica que conviene no saltarse:
+
+> *"Nota que **si el cerebro implementa el significado vía espacios geométricos es una
+> pregunta enteramente separada. Los espacios vectoriales son eficientes de trabajar desde un
+> punto de vista computacional, pero pueden concebirse fácilmente estructuras de datos
+> distintas para la inteligencia — en particular, grafos.**"*
+
+Y la revolución no vino de una invención sino de cuatro cosas acumulándose: **algoritmos**
+(dos décadas de mejoras incrementales desde el backpropagation, con el Transformer de 2017
+como salto mayor), **datos** (subproducto del internet de consumo), **hardware** (GPU de
+gaming primero, chips dedicados después) y **software** (CUDA abajo, diferenciación automática
+al medio, Keras arriba). *"Como cualquier otra revolución, es el producto de una vasta
+acumulación de factores habilitantes — **lentamente al principio, y luego de repente.**"*
+
+## 2. La hoja de referencia
+
+<Figure
+  src="/apuntes/deep-learning-with-python/hoja-de-referencia.svg"
+  alt="Diagrama de referencia en tres bloques. Arriba a la izquierda, tabla de modalidad de datos a arquitectura: vectores a clase o valor con una red Dense; series de tiempo a clase o valor con RNN o Transformer; imágenes a clase o valor con ConvNet; texto a clase o valor con Transformer; texto e imágenes a texto con Transformer; y texto e imágenes a imágenes con VAE o modelo de difusión; con la nota de que las capas se combinan como ladrillos LEGO para modelos multimodales. Arriba a la derecha, panel azul con cómo termina el modelo según la tarea: clasificación binaria con Dense de una unidad, activación sigmoid y pérdida binary_crossentropy; clasificación categórica de una etiqueta con Dense de n unidades, softmax y categorical_crossentropy, o sparse_categorical_crossentropy si las etiquetas son enteros; clasificación multi-etiqueta con Dense de n unidades, sigmoid y binary_crossentropy; y regresión con Dense de n unidades, sin activación y mse; con la advertencia de que binaria y multi-etiqueta comparten pérdida y activación, y que solo cambia n. Abajo, panel verde con qué suposición hace cada arquitectura: Dense supone que cualquier feature puede relacionarse con cualquier otra y no supone nada sobre la estructura; ConvNet supone que los patrones son locales y que la misma transformación sirve en cualquier posición, lo que da invariancia a la traslación; Transformer mira un conjunto de vectores y reescribe cada uno según el contexto de los demás, y con codificación posicional además toma en cuenta el orden; y RNN supone que el orden temporal importa y no es invariante por traslación, es decir que el pasado reciente pesa más que el distante, y ese es el criterio para preferirla a una ConvNet 1D."
+  caption="Las dos tablas que uno vuelve a mirar cada vez que empieza un modelo desde cero."
+  width={800}
+/>
+
+El principio que une la tabla de arriba es la formulación más limpia del libro entero:
+
+> *"**Una arquitectura de red codifica suposiciones sobre la estructura de los datos — un
+> espacio de hipótesis dentro del cual procederá la búsqueda de un buen modelo.** Que una
+> arquitectura dada funcione en un problema dado **depende enteramente de la coincidencia
+> entre la estructura de los datos y las suposiciones de la arquitectura.**"*
+>
+> *"Estos distintos tipos de red pueden combinarse fácilmente […] **igual que combinas
+> ladrillos LEGO. En cierto sentido, las capas de deep learning son ladrillos LEGO para el
+> procesamiento de información.**"*
+
+Sobre la tabla de la derecha hay un par que se confunde seguido: **binaria y multi-etiqueta
+comparten pérdida y activación** (`binary_crossentropy` y `sigmoid`); lo único que cambia es
+el número de unidades. La categórica de una etiqueta es la única que usa `softmax`.
+
+<Note type="warning" title="Dos deslices del capítulo, y uno importa">
+**Los snippets de RNN «para clasificación binaria» terminan en `Dense(num_classes)`.** Los
+dos ejemplos están introducidos como *"para clasificación binaria de secuencias de
+vectores"*, pero rematan con `layers.Dense(num_classes, activation="sigmoid")` y
+`binary_crossentropy`. Eso es **clasificación multi-etiqueta**, no binaria — corre sin error
+pero no hace lo que el texto dice. Para binaria va `Dense(1)`, que es exactamente lo que el
+propio capítulo indica dos páginas antes. El snippet equivalente de Transformers sí lo tiene
+bien, lo que confirma que es un desliz de esos dos ejemplos.
+
+**Y el dataset del capítulo 4 es California Housing, no Boston Housing.** El texto lo cita
+como *"el dataset Boston Housing Price usado en el capítulo 4"*: es un residuo de la 2ª
+edición. Boston fue retirado de scikit-learn y de las utilidades de Keras.
+</Note>
+
+<Note type="info" title="El workflow universal, como checklist">
+1. **Definir el problema.** Qué datos hay, qué se quiere predecir, si hará falta recolectar o
+   etiquetar más.
+2. **Fijar cómo se mide el éxito** — *"en muchos casos requerirá métricas sofisticadas y
+   específicas del dominio"*.
+3. **Preparar la validación**, cuidando que las etiquetas no se filtren: con series de
+   tiempo, validación y test **posteriores** al entrenamiento.
+4. **Vectorizar y preprocesar.**
+5. **Ganarle a una línea base trivial de sentido común**, demostrando así que el ML sirve
+   para el problema. *"**¡Puede que no siempre sea el caso!**"*
+6. **Refinar**, mirando solo validación. Y en este orden: *"**debes hacer que tu modelo
+   overfittee** […] **y solo entonces empezar a agregar regularización**"*.
+7. **Desplegar y seguir midiendo** con datos reales.
+
+Con la advertencia de siempre: *"**cuidado con el overfitting al conjunto de validación** al
+ajustar hiperparámetros — **¡evitar eso es el propósito de tener un conjunto de test
+separado!**"*
+</Note>
+
+## 3. Lo que el libro concluye sobre los límites
+
+La metáfora LEGO viene con condición, y la condición es todo:
+
+> *"Las capas pueden conectarse para mapear esencialmente cualquier cosa a cualquier cosa,
+> **dado que tengas datos de entrenamiento apropiados y que el mapeo sea alcanzable vía una
+> transformación geométrica continua de complejidad razonable.**"*
+>
+> *"**Acá está el truco, sin embargo — ese mapeo a menudo no es aprendible de una forma que
+> generalice.** Los modelos operan como **vastas bases de datos interpolativas de patrones. Su
+> fortaleza de pattern-matching es también su debilidad central.**"*
+
+Los tres límites, en la versión condensada: **les cuesta adaptarse a la novedad** porque los
+parámetros son fijos; **son muy sensibles al fraseo**, lo que *"indica una falta de
+entendimiento robusto tipo humano"*; y **no pueden aprender algoritmos generalizables**,
+porque su naturaleza continua y geométrica los hace *"fundamentalmente inadecuados para
+aprender algoritmos exactos, discretos, paso a paso"* — los aproximan por interpolación.
+
+> *"**Siempre deberías resistir la tentación de antropomorfizar** los modelos de deep
+> learning."*
+>
+> *"**Cinco años de escalamiento exponencial de los LLM base no han superado esas
+> restricciones porque el enfoque subyacente permanece sin cambios.** […] **La adaptación
+> eficiente y tipo humana sigue siendo un problema completamente abierto.**"*
+
+<Note type="tip" title="Cómo mantenerse al día, y las contras de cada vía">
+**Kaggle.** *"La única forma real de aprender es a través de la práctica"* — y lo que se
+practica ahí es específicamente *"el tuning de hiperparámetros, evitar el overfitting al
+conjunto de validación, y el ensembling"*.
+
+**arXiv.** *"La investigación en deep learning, **en contraste con otros campos científicos,
+ocurre completamente en abierto**"*, lo que permite *"plantar una bandera"* sin esperar meses.
+La contra es honesta: *"**el hecho de que no sean revisados por pares hace difícil identificar
+los que son importantes Y de alta calidad. Es desafiante, y cada vez más, encontrar la señal
+en el ruido.**"*
+
+**El ecosistema Keras**, con sus guías y ejemplos.
+</Note>
+
+## 4. El cierre
+
+> *"**Lo más sorprendente del deep learning es lo simple que es.** Hace quince años nadie
+> esperaba que lográramos resultados tan asombrosos en problemas de percepción y NLP **usando
+> modelos paramétricos simples entrenados con descenso de gradiente**. […] **Como Feynman dijo
+> una vez sobre el universo: 'No es complicado, simplemente hay mucho de él.'**"*
+
+Y sobre el momento que estamos viviendo, con una comparación que ordena las expectativas:
+
+> *"**El deep learning podría ser análogo a internet: puede estar excesivamente hypeado por
+> unos años, pero a más largo plazo seguirá siendo una revolución mayor.** […] Una razón por
+> la que soy particularmente optimista es que **incluso si no hiciéramos ningún progreso
+> tecnológico más en la próxima década, desplegar los algoritmos existentes a todo problema
+> aplicable sería un cambio de juego para la mayoría de las industrias.** […] **desplegar el
+> deep learning a todo su potencial tomará probablemente múltiples décadas.**"*
+
+Y la última línea del libro:
+
+> *"Aprender es un viaje de por vida, especialmente en el campo de la IA, donde tenemos muchas
+> más incógnitas que certezas. Así que por favor sigue aprendiendo, cuestionando e
+> investigando. **Nunca pares. Porque incluso dado el progreso hecho hasta ahora, la mayoría
+> de las preguntas fundamentales en IA siguen sin respuesta. Muchas no han sido ni siquiera
+> formuladas apropiadamente todavía.**"*
+
+## Para recordar
+
+- **«Red neuronal» es un mal nombre.** No son neuronales ni redes: son cadenas de
+  transformaciones geométricas. El nombre honesto sería *aprendizaje de representaciones por
+  capas*.
+- **La restricción es la diferenciabilidad**, y de ella salen todos los límites: la
+  deformación de entradas a salidas tiene que ser suave y continua.
+- **Todo pende de dos ideas**: el significado sale de las relaciones por pares, y esas
+  relaciones se capturan con una función de distancia. Que el cerebro funcione así es otra
+  pregunta.
+- **Una arquitectura es un conjunto de suposiciones sobre los datos.** Que funcione depende
+  únicamente de si esas suposiciones calzan con la estructura real.
+- **Cuatro combinaciones canónicas de salida**, y la trampa está en que binaria y
+  multi-etiqueta comparten `sigmoid` y `binary_crossentropy`.
+- **En el workflow, primero overfittear y después regularizar.** Y el conjunto de test existe
+  precisamente porque el de validación se contamina al ajustar hiperparámetros.
+- **La revolución fue acumulación, no invención**: algoritmos, datos, hardware y software,
+  lentamente y después de golpe.
+- **Lo más sorprendente es lo simple que es.** *"No es complicado, simplemente hay mucho de
+  él."*
+
+Con esto se cierra la serie de los veinte capítulos de *Deep Learning with Python*. El
+capítulo 19 —el de los límites— es el que conviene releer primero.
