@@ -132,6 +132,15 @@ function fixSubscripts(tex: string): string {
   return tex.replace(/\\_([\p{L}\p{N}]+)/gu, '_{$1}');
 }
 
+/**
+ * `10^{+5}` → `10^{5}`. La notación científica de mathjs.toTex() conserva el
+ * signo del exponente positivo, que no se escribe. (En el lado del resultado no
+ * pasa: `numToTex()` lo normaliza con parseInt.) Los negativos se preservan.
+ */
+function fixPlusExponent(tex: string): string {
+  return tex.replace(/10\^\{\+(\d+)\}/g, '10^{$1}');
+}
+
 const GREEK = new Set([
   'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota',
   'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau',
@@ -164,7 +173,7 @@ function exprToTex(expr: string, vars: ReadonlySet<string>): string {
       return undefined;
     },
   });
-  return fixSubscripts(tex.trim());
+  return fixPlusExponent(fixSubscripts(tex.trim()));
 }
 
 /** Notación "2.0947e+5" → "2.0947\cdot 10^{5}". */
