@@ -1,0 +1,471 @@
+---
+title: "Ejemplo — El pedestal según NCh2369: el hormigón no se diseña para la carga, se diseña para el perno"
+description: "El mismo pedestal del ejemplo del Cap. 17 de ACI, ahora con la capa chilena. NCh2369:2025 amplifica el sismo por 0,7R₁ = 2,80 y la tracción del perno se multiplica por 5,00; obliga a llave de corte (96 kN > 75 kN) y con eso desaparece la interacción N–V que gobernaba; prohíbe contar el roce que habría aportado el 77 % del corte; y manda diseñar el hormigón para la capacidad esperada del perno, no para la demanda: el breakout pasa de uso 0,57 a 3,52. El pedestal deja de verificarse y pasa a detallarse."
+pubDate: 2026-07-27
+tags: ["ejemplo", "hormigón", "pedestal", "anclajes", "nch2369", "llave de corte", "diseño por capacidad", "industrial", "aci318", "sensibilidad"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.5 / 9.5 — Anclajes y pedestales"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [ejemplo del Cap. 17](/hormigon/ejemplo-anclajes-pedestal) verificó un grupo de 4 pernos de
+anclaje contra ACI 318-25 y cerró bien: cada modo del hormigón holgaba y gobernaba la
+interacción tracción–corte con uso 0.76. Ese ejemplo tomó las fuerzas del perno **como dato** y
+preguntó lo único que ACI pregunta: *¿resiste el hormigón?*
+
+**NCh2369:2025**[^nch] hace otra pregunta. No pregunta si resiste; pregunta **quién tiene
+permitido fallar**. Y en una base de columna industrial la respuesta está decidida de antemano:
+falla el perno, estirándose, y no falla nada más. Todo lo que rodea al perno —la llave de corte,
+el hormigón del pedestal, sus estribos— deja de dimensionarse contra una carga y pasa a
+dimensionarse contra **la capacidad del perno**.
+
+Este ejemplo toma el mismo pedestal, los mismos 4 pernos y la misma columna, y les aplica las
+cláusulas **8.5** (anclajes) y **9.5** (pedestales). Se rehacen cinco decisiones, y el resultado
+es que el diseño que ACI aprobó con holgura no sobrevive: el breakout pasa de uso 0.57 a
+**3.52**, aparecen una llave de corte y una plancha de cabeza que no existían, y el pedestal
+termina con la mitad superior armada como una zona de confinamiento.
+
+<Note type="info" title="Qué se toma como dado y qué se rehace">
+Se conservan del ejemplo anterior la geometría, los materiales y las capacidades de hormigón ya
+calculadas ($\phi\Psi_a N_{cbg} = 14.0$ tonf, $\phi\Psi_a N_{pn} = 10.7$ tonf/perno,
+$\phi N_{sa} = 15.4$ tonf/perno). Lo que se rehace es **el nivel de carga con que se compara
+cada una** —que es exactamente lo que NCh2369 cambia—. El equilibrio de la placa base se
+resuelve con el modelo rígido de bloque de aplastamiento más fila traccionada; el método está
+en el [ejemplo de placa base](/blog/placa-base-ejemplo-trabajado).
+</Note>
+
+## El caso
+
+Base de la columna de un **marco arriostrado concéntricamente (MAC)** de una nave industrial,
+**Categoría II** ($I = 1.00$, la clasificación a la que apunta la norma según C4.3.2).
+
+| Dato | Valor |
+|---|---|
+| Pedestal | $b = 100$ cm (lado menor), $h = 120$ cm, $f'_c = 250$ kgf/cm² |
+| Placa base | $60 \times 60$ cm; pernos a $\pm 25$ cm del centro |
+| Pernos | 4 × φ1″ ASTM F1554 **Gr. 55** ($F_y = 55$ ksi $= 3\,867$ kgf/cm², $f_{uta} = 5\,270$ kgf/cm², $A_{se} = 3.91$ cm²), *cast-in*, $h_{ef} = 40$ cm |
+| Sistema sísmico | Tabla 7, línea **5.3**: marcos arriostrados **con anclajes dúctiles** → $R = 5$, $\xi = 0.02$ |
+| Factor efectivo | $R_1 = 4.0$ (Ec. 14: el análisis quedó bajo el corte basal mínimo) → $\mathbf{0{,}7R_1 = 2{,}80}$ |
+| Estados de carga en la base | $D$: $P = 20.0$ tonf · $E$: $P = -14.0$ tonf (levantamiento), $M = 5.55$ tonf·m, $V = 3.50$ tonf |
+
+<Note type="warning" title="El R de la tabla ya presupone el detalle">
+La Tabla 7 asigna $R = 5$ a un marco arriostrado **con** anclajes dúctiles y $R = 3$ **sin**
+ellos. Es decir: la demanda sísmica con la que se calculó todo el marco —y de la que salen los
+4.0 tonf del perno— ya está apostando a que el perno se va a detallar según 8.5.2. El detalle no
+es un acabado que se decide al final; es una **hipótesis del análisis**. Volveremos sobre esto
+en §2.
+</Note>
+
+## 1. La pregunta que ACI no hace: ¿a qué nivel de carga?
+
+En ACI 318-25 hay un solo nivel de demanda: el de las combinaciones mayoradas. En NCh2369 hay
+**dos**, y cuál aplica depende de si el elemento es un fusible o no. La regla, repetida unas
+quince veces en las cláusulas 8, 9 y 10, es que todo elemento que **no** debe plastificar se
+diseña con las combinaciones de **4.5** en las que el estado de carga sísmico horizontal se
+amplificó por $0{,}7R_1 \ge 1{,}0$.
+
+Aplicado a esta base, el reparto queda así:
+
+| Elemento | Cláusula | Nivel de carga |
+|---|---|---|
+| Perno de anclaje (fusible) | 8.5.2 | $E$ **sin amplificar**, *si* se detalla dúctil |
+| Llave de corte | 8.5.3 | $E \times 0{,}7R_1$ |
+| Hormigón del pedestal | 8.5.5 → 9.5.2 | $E \times 0{,}7R_1$, con techo en la capacidad del perno |
+| Columna de acero | 8.3.4 | $E \times 0{,}7R_1$ |
+
+La combinación que gobierna el levantamiento es la segunda de 4.5 en formato LRFD:
+
+<Equation label="NCh2369 4.5">
+$$
+0{,}9\,D + SA + E
+$$
+</Equation>
+
+Con el bloque rígido de aplastamiento bajo la placa ($f_{p,\max} = \phi\,0{,}85 f'_c \sqrt{A_2/A_1}
+= 0.65 \cdot 0.85 \cdot 250 \cdot 1.667 = 230$ kgf/cm², es decir $q_{\max} = 13.81$ tonf/cm), el
+equilibrio da:
+
+| | $P$ (tonf) | $M$ (tonf·m) | $V$ (tonf) | $Y$ (cm) | $C$ (tonf) | $T$ por perno |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| $E$ sin amplificar | $+4.00$ | 5.55 | 3.50 | 0.87 | 12.00 | **4.00 tonf** |
+| $E \times 2{,}80$ | $-21.20$ | 15.54 | 9.80 | 1.37 | 18.85 | **20.03 tonf** |
+
+La primera fila reproduce exactamente los 4.0 tonf/perno y los 3.5 tonf de corte del ejemplo de
+ACI: ese ejemplo estaba trabajando, sin decirlo, al nivel de carga del **fusible**.
+
+Y aparece el efecto que ningún factor de carga anticipa:
+
+<Equation label="Amplificación">
+$$
+\frac{20.03}{4.00} = 5{,}00 \qquad \text{para una amplificación de la carga de} \ 2{,}80
+$$
+</Equation>
+
+La tracción del perno crece **5,00 veces** cuando el sismo crece 2,80. La razón es que el perno
+no toma la carga: toma el **desbalance** entre el momento y el peso que lo equilibra. Al
+amplificar solo el sismo, el peso estabilizador se queda quieto y todo el incremento se lo lleva
+el perno. Es el mismo mecanismo que multiplicaba por 13,5 la tracción del anclaje en
+[la fundación anclada](/geotecnia/ejemplo-fundacion-anclada-nch2369), y es la razón por la que
+$0{,}7R_1$ no se puede estimar de memoria.
+
+<Figure
+  src="/ejemplos/pedestal-nch2369-niveles.svg"
+  alt="Dos paneles comparando el equilibrio de la misma placa base bajo los dos niveles de carga de NCh2369. Panel A, con el estado sísmico sin amplificar: P = +4,00 tonf de compresión, M = 5,55 tonf·m, V = 3,50 tonf, bloque de aplastamiento de Y = 0,87 cm con C = 12,00 tonf y una fila traccionada de T = 8,00 tonf, que dan 4,00 tonf por perno y uso 0,26. Panel B, con el estado sísmico amplificado por 0,7R1 = 2,80: P = −21,20 tonf de levantamiento neto, M = 15,54 tonf·m, V = 9,80 tonf, bloque de Y = 1,37 cm con C = 18,85 tonf y una fila traccionada de T = 40,05 tonf, que dan 20,03 tonf por perno y uso 1,30, que no cumple. Al pie, un recuadro explica que amplificar la carga 2,80 veces multiplica la tracción por 5,00 porque el perno toma el desbalance entre el momento que vuelca y el peso que estabiliza, que no se amplifica; y cuatro fichas indican a qué nivel se diseña cada pieza: el perno con E sin amplificar por 8.5.2, y la llave de corte, el hormigón del pedestal y la columna con E por 0,7R1 según 8.5.3, 9.5.2 y 8.3.4."
+  caption="El mismo detalle, dos niveles de carga. La amplificación de 2,80 sobre el estado sísmico se convierte en 5,00 sobre la tracción del perno, porque el peso estabilizador de la combinación 0,9D no se amplifica con ella."
+/>
+
+## 2. El perno: la bifurcación de 8.5.2
+
+La cláusula 8.5.2 no obliga a amplificar la tracción del perno. Ofrece **dos caminos
+excluyentes**, y hay que elegir uno:
+
+> *«Los pernos de anclaje dúctiles se deben detallar considerando silla […]. El hilo del perno
+> bajo la tuerca no debe ser inferior a 75 mm […]. La longitud expuesta de los pernos no debe
+> ser inferior a 250 mm ni a ocho veces su diámetro nominal.*
+>
+> *Se pueden exceptuar de esta exigencia aquellos anclajes diseñados para una tracción
+> determinada utilizando las combinaciones de cargas definidas en 4.5, en las cuales el estado
+> de carga sísmico horizontal ha sido amplificado por $0{,}7R_1 \ge 1{,}0$.»*
+
+**Vía (a) — detallar el perno dúctil.** Se diseña con la combinación sin amplificar:
+
+<Equation label="Vía (a)">
+$$
+T = 4.00 \ \text{tonf} \;\le\; \phi N_{sa} = 15.4 \ \text{tonf} \qquad \text{uso } 0.26
+$$
+</Equation>
+
+y el detalle exigido es geométrico, no resistente: longitud expuesta $\ge \max(250\ \text{mm};\,
+8d = 203\ \text{mm}) = 250$ mm, hilo bajo la tuerca $\ge 75$ mm, y silla —o un perno reemplazable
+con longitud libre equivalente—.
+
+**Vía (b) — saltarse el detalle.** Se diseña con la combinación amplificada:
+
+<Equation label="Vía (b)">
+$$
+T = 20.03 \ \text{tonf} \;>\; \phi N_{sa} = 15.4 \ \text{tonf} \qquad \text{uso } 1.30
+$$
+</Equation>
+
+El perno φ1″ no da. Habría que subir a **φ1¼″** ($A_{se} = 6.25$ cm², $\phi N_{sa} = 24.7$ tonf,
+uso 0.81). Pero el costo real no es el diámetro: **es que sin anclajes dúctiles la Tabla 7 baja
+el sistema de $R = 5$ a $R = 3$**, y toda la demanda sísmica del marco sube un 67 %. Con esa
+demanda mayor y sin amplificar, el mismo perno φ1″ queda en 9.93 tonf (uso 0.65) — y ahora hay
+que rehacer las diagonales, las columnas y las fundaciones del marco completo.
+
+<Note type="warning" title="El círculo vicioso que advierte C8.5.3">
+Hay una tercera trampa, más sutil, que el comentario C8.5.3 nombra explícitamente. La excepción
+que permite prescindir de la llave de corte obliga a tomar el corte con los pernos usando las
+fórmulas de interacción corte–tracción; eso «*puede conducir a un aumento del diámetro que
+dificulte la posterior fluencia en tracción pura (solo 2 resisten corte)*».
+
+Es decir: engordar el perno para que aguante corte **mata el mecanismo de disipación** —el
+estiramiento en tracción— que justificaba el $R = 5$ con el que se calculó la estructura. Se
+ahorra una llave de corte y se pierde el 40 % de reducción de la demanda sísmica.
+</Note>
+
+**Se adopta la vía (a)**: perno φ1″ F1554 Gr. 55 con silla, 250 mm expuestos y 75 mm de hilo.
+Ese es el fusible. Todo lo que sigue existe para protegerlo.
+
+## 3. La llave de corte (8.5.3) y lo que 8.5.4 prohíbe contar
+
+El corte del apoyo se determina **siempre** con el sismo amplificado, sin excepción de detalle:
+
+<Equation label="Sec. 8.5.3">
+$$
+V = 0{,}7R_1 \cdot V_E = 2{,}80 \cdot 3.50 = 9.80 \ \text{tonf} = 96{,}1 \ \text{kN}
+$$
+</Equation>
+
+La cláusula exime del uso de llave de corte a los apoyos con corte inferior a **75 kN (LRFD)**.
+Acá 96,1 > 75, y el grupo tiene 4 pernos (la otra excepción pide 9 o más). **La llave de corte es
+obligatoria.**
+
+Y con eso desaparece la verificación que gobernaba el ejemplo de ACI: si la llave transmite *el
+total* del corte, los pernos quedan en tracción pura y la **interacción tracción–corte de la Ec.
+17.8.3 —uso 0.76, la más exigente de aquel ejemplo— deja de aplicar**. No porque se haya vuelto
+holgada: porque el corte se sacó del perno a propósito.
+
+<Equation label="Sec. 8.5.4">
+$$
+\text{Roce disponible} = \mu\,C = 0{,}40 \cdot 18.85 = 7.54 \ \text{tonf} = 77\ \%\ \text{de } V
+$$
+</Equation>
+
+Ese roce —que existe, porque el equilibrio de la placa entrega una compresión $C = 18.85$ tonf
+bajo el bloque— **la norma prohíbe contarlo**, igual que la resistencia del mortero de
+nivelación. C8.5.4 lo reconoce sin rodeos: en bases resistentes a momento la compresión de
+equilibrio «*en ocasiones resulta suficiente para equilibrar el corte solicitante mediante el
+mecanismo de roce*», y aun así «*se ha optado por mantener el requisito histórico*», por las
+incertidumbres de retracción, pérdida de pretensión y variación de las cargas verticales. Es la
+misma decisión que en fundaciones prohíbe contar el empuje pasivo (10.1.3).
+
+**Llave adoptada**: plancha de 300 × 30 mm bajo la placa base, 200 mm de altura total, de los
+cuales 50 mm son mortero de nivelación y **150 mm quedan embebidos** en el hormigón.
+
+| Verificación | Referencia | Demanda | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Aplastamiento del hormigón | ACI 318-25 §22.8 | 9.80 tonf | $\phi P_n = 62.2$ tonf | 0.16 |
+| Flexión de la plancha | Voladizo $50 + 150/2 = 125$ mm | 122.5 tonf·cm | $\phi M_n = 153.7$ tonf·cm | 0.80 |
+
+El aplastamiento sobra por lejos; lo que dimensiona la llave es **la flexión de su propia
+plancha**, y el brazo de esa flexión lo fija el espesor del mortero de nivelación: la llave
+flecta como un voladizo desde la cara del hormigón, no desde la placa base. Pasar el mortero de
+25 a 50 mm alarga el brazo de 100 a 125 mm y sube el momento un **25 %** — un detalle de terreno
+que se paga en el espesor de la plancha.
+
+## 4. El hormigón se diseña para el perno, no para la carga
+
+Acá está el giro. La cláusula 8.5.5 remite los pedestales a la cláusula 9, y 9.5.2 fija la
+resistencia requerida con $0{,}7R_1$ — pero con el techo de C8.3.4: **la resistencia requerida no
+necesita ser mayor que la máxima carga que el sistema puede transferir**. Y lo que el sistema
+puede transferirle al hormigón está limitado por el perno, que fluye antes.
+
+Con las capacidades esperadas de 8.3.1 ($F_{ye} = R_y F_y$, con $R_y = 1{,}10$ adoptado como dato
+de proyecto[^ry]):
+
+<Equation label="Sec. 8.3.1">
+$$
+T_{ye} = R_y F_y A_{se} = 1{,}10 \cdot 3\,867 \cdot 3.91 = 16.62 \ \text{tonf/perno}
+$$
+</Equation>
+
+<Equation label="C8.3.4 — techo">
+$$
+\min\big(\underbrace{40.05}_{\text{demanda con } 0{,}7R_1};\ \underbrace{2 \times 16.62 = 33.25}_{\text{capacidad esperada}}\big) = 33.25 \ \text{tonf}
+$$
+</Equation>
+
+El techo lo pone el perno. Y eso no es una casualidad aritmética: es lo que C8.5.2 pide
+explícitamente cuando dice que *«tanto el hormigón de pedestales como las placas de silla y
+atiesadores deban diseñarse para la capacidad de fluencia esperada de los pernos»*.
+
+<Note type="tip" title="ACI llega al mismo lugar por su propio camino">
+La ruta sísmica dúctil de **ACI 318-25 §17.10.5.3(a)** —la que corresponde a un perno con
+longitud de estiramiento $\ge 8d_a$, que es justo lo que 8.5.2 provee— exige que los modos de
+hormigón resistan $1{,}2\,N_{sa}$:
+
+$N_{sa} = A_{se}f_{uta} = 20.60$ tonf/perno → $1{,}2 \cdot 20.60 \cdot 2 = \mathbf{49{,}43}$ tonf.
+
+Es más exigente que NCh2369 (49.43 vs. 33.25) porque ACI pide la **rotura** del perno amplificada
+por 1,2, y NCh2369 su **fluencia esperada**. En Chile aplican las dos —9.1.1 manda a NCh430/DS 60
+para el hormigón y 8.1.3 dice que en caso de contradicción prevalece NCh2369— así que el hormigón
+se diseña para **49,43 tonf**. Es 6,2 veces la demanda con que ACI aprobó el ejemplo anterior.
+</Note>
+
+Rehaciendo los dos modos de tracción del hormigón contra los tres niveles de demanda:
+
+| Modo | Capacidad | Demanda ACI original | NCh2369 ($T_{ye}$) | ACI §17.10.5.3(a) |
+|---|:---:|:---:|:---:|:---:|
+| Breakout del grupo (§17.6.2) | $\phi\Psi_a N_{cbg} = 14.0$ tonf | 8.00 → **0.57** ✓ | 33.25 → **2.37** ✗ | 49.43 → **3.52** ✗ |
+| Pullout por perno (§17.6.3) | $\phi\Psi_a N_{pn} = 10.7$ tonf | 4.00 → **0.37** ✓ | 16.62 → **1.56** ✗ | 24.71 → **2.31** ✗ |
+
+Los dos fallan, y por márgenes que ningún ajuste de dimensiones cierra. Las salidas son
+distintas para cada uno:
+
+**Pullout → plancha de cabeza.** Es una falla local de aplastamiento bajo la cabeza del perno, y
+la armadura de anclaje no la resuelve. Se necesita $A_{brg} \ge 17.3$ cm² contra los 7.50 cm² que
+da una tuerca hexagonal pesada. Se adopta una **plancha de cabeza de 80 × 80 mm** ($A_{brg} =
+57.7$ cm², $\phi\Psi_a N_{pn} = 82.2$ tonf, uso 0.30). El *side-face blowout* sigue sin aplicar:
+$c_a = 25 > 0{,}4h_{ef} = 16$ cm.
+
+**Breakout → armadura de anclaje.** Con barras desarrolladas a ambos lados del plano de falla,
+§17.5.2.1 permite ignorar el cono por completo y diseñar la armadura para la demanda total con
+$\phi = 0.75$:
+
+<Equation label="Ec. 17.5.2.1">
+$$
+A_s = \frac{49.43 \times 10^3}{0.75 \cdot 4\,200} = 15.69 \ \text{cm}^2 \quad\Rightarrow\quad 8\,\phi16 = 16.08 \ \text{cm}^2
+$$
+</Equation>
+
+Es exactamente el mecanismo que describe C9.5.2: *«la solución común consiste en extender la
+longitud de anclaje (empotramiento) de los pernos hacia el interior del pedestal, de manera que
+las barras de refuerzo longitudinales que cruzan la grieta potencial logren desarrollar su
+capacidad dentro del sólido de falla»*. La armadura de anclaje deja de ser el plan B que el
+ejemplo anterior mencionaba al pie: **es el diseño**.
+
+## 5. El pedestal se detalla (9.5)
+
+Primero, ¿es un pedestal? La definición de C9.5 es geométrica:
+
+<Equation label="C9.5 — definición">
+$$
+\frac{h}{b} = \frac{120}{100} = 1{,}20 \;\le\; 3
+$$
+</Equation>
+
+Sí lo es. Por sobre 300 cm de altura dejaría de serlo, y 9.5.1 obligaría además a cumplir los requisitos de
+**columna de marco ordinario resistente a momento**.
+
+**Zona de protección superior (9.5.3).** Su profundidad es el mayor de dos criterios:
+
+| Criterio | Valor |
+|---|:---:|
+| a) Lado menor del pedestal | **100 cm** |
+| b) Altura de la llave + proyección de un plano a 45° desde su pie hasta la cara | $15 + 35 = 50$ cm |
+
+Gobierna el lado menor: **100 cm de zona de protección en un pedestal de 120 cm** — el 83 % de su
+altura. En un pedestal cuadrado y bajo, como casi todos los industriales, el criterio (a) gana
+siempre y la «zona singular» termina siendo el elemento entero.
+
+**Espaciamiento de estribos.** Las tres reglas de 9.5.3, con $b = 100$ cm:
+
+| Zona | Regla | Valor |
+|---|---|:---:|
+| Toda la altura | $\le 0{,}4\,b$ | 40 cm |
+| Zona de protección | $\le 0{,}2\,b$ | 20 cm |
+| Los tres primeros (espaciamiento **libre**) | $\le 50$ mm | 5 cm libre |
+
+Con estribos φ12 el espaciamiento libre de 5 cm son 6,2 cm entre ejes, y la disposición resultante
+—medida desde el tope de hormigón— es:
+
+<Equation label="Disposición de estribos — cm desde el tope">
+$$
+5{,}0 \;\vert\; 11{,}2 \;\vert\; 17{,}4 \;\vert\; 23{,}6 \;\vert\; 43{,}6 \;\vert\; 63{,}6 \;\vert\; 83{,}6 \;\vert\; 100{,}0
+$$
+</Equation>
+
+Ocho estribos, cuatro de ellos apretados en los primeros 24 cm. Bajo la cota 100 el pedestal solo
+tiene 20 cm hasta la zapata, menos que el máximo de 40 cm, así que no requiere más.
+
+<Figure
+  src="/ejemplos/pedestal-nch2369-detalle.svg"
+  alt="Sección del pedestal de 100 cm de lado y 120 cm de alto con todo el detalle exigido por NCh2369. De arriba abajo: columna de acero, placa base, mortero de nivelación de 50 mm, y el pedestal. Los dos pernos de anclaje llevan tuerca sobre la placa, una silla que deja 250 mm de vástago libre dentro del hormigón más 75 mm de hilo bajo la tuerca según 8.5.2, y una plancha de cabeza de 80 por 80 mm a h_ef = 40 cm. Al centro, la llave de corte de 300 por 30 mm con 50 mm de mortero y 150 mm embebidos, y desde su pie una línea a 45 grados hasta la cara del pedestal que define el criterio b de la zona de protección en 50 cm. La zona de protección superior queda en 100 cm, gobernada por el criterio a (el lado menor), y aparece sombreada; dentro de ella se dibujan ocho estribos, cuatro apretados en los primeros 24 cm. Cuatro barras verticales de armadura de anclaje con gancho superior atraviesan el pedestal hasta la zapata. Dos líneas de trazos muestran el cono de arrancamiento saliéndose de las caras del pedestal. A la derecha, un panel resume los dos criterios de la zona de protección y los tres espaciamientos de estribos, y otro lista las cuatro piezas que ACI por sí solo no habría puesto: la llave de corte, la prohibición de contar el roce, la armadura de anclaje con la plancha de cabeza, y los tres primeros estribos a 50 mm."
+  caption="El resultado del ejemplo no es una tabla de usos: es un detalle. Cada pieza —silla, plancha de cabeza, llave de corte, armadura de anclaje, estribos apretados en el tope— responde a una línea de 8.5 o 9.5."
+/>
+
+<Note type="info" title="La regla nueva es proporcional, y eso la vuelve menos estricta en pedestales grandes">
+C9.5.3 documenta la práctica nacional tradicional: 200 mm de separación en toda la altura y
+100 mm en la zona de protección — números **absolutos**. Las reglas de 9.5.3 son **relativas al
+lado menor**, y las dos coinciden exactamente en $b = 500$ mm:
+
+| $b$ | Zona de protección ($0{,}2b$) | Resto ($0{,}4b$) | vs. práctica tradicional |
+|:---:|:---:|:---:|---|
+| 400 mm | 80 mm | 160 mm | **más estricta** |
+| **500 mm** | **100 mm** | **200 mm** | idéntica |
+| 1 000 mm | 200 mm | 400 mm | más holgada |
+| 2 000 mm | 400 mm | 800 mm | más holgada |
+
+En este pedestal de 1 000 mm la norma pide 8 estribos donde la práctica tradicional ponía ~12. No
+es una rebaja: la norma cambió *dónde* pone el material. Lo que agrega —y la práctica no tenía—
+son los **tres primeros estribos a 50 mm libres**, que es donde efectivamente se concentran las
+cargas de pernos y llave, y una **zona de protección definida por cálculo** en vez de por
+costumbre. Además, con $b \ge 700$ mm C9.5.3 recomienda incorporar **malla superior**.
+</Note>
+
+<Note type="warning" title="Dónde termina este ejemplo">
+Queda fuera el diseño de la sección del pedestal como elemento de hormigón armado bajo el axial
+de tracción y el momento amplificados ($N = 21.2$ tonf, $M = 15.5$ tonf·m), que es un problema de
+flexocompresión como el de la [columna con diagrama de interacción](/hormigon/ejemplo-columna-interaccion-esbeltez),
+y las cuantías longitudinales mínimas que NCh430/DS 60 exige según el tipo de elemento adoptado.
+Lo que este ejemplo resuelve es la capa que NCh2369 agrega: **el nivel de carga, la jerarquía de
+falla y el detallamiento de la zona superior**.
+</Note>
+
+## 6. Análisis de sensibilidad
+
+**El multiplicador $0{,}7R_1$** es el parámetro que mueve todo. Nótese que el umbral de la llave
+de corte se cruza entre $R_1 = 3$ y $R_1 = 4$:
+
+| $R_1$ | $0{,}7R_1$ | $T$ por perno | $V$ | ¿Llave obligatoria? |
+|:---:|:---:|:---:|:---:|:---:|
+| 1,43 | 1,00 | 4.01 tonf | 34,4 kN | no |
+| 2,00 | 1,40 | 7.56 tonf | 48,1 kN | no |
+| 3,00 | 2,10 | 13.79 tonf | 72,1 kN | no (por 3 kN) |
+| **4,00** | **2,80** | **20.03 tonf** | **96,1 kN** | **sí** |
+| 5,00 | 3,50 | 26.27 tonf | 120,1 kN | sí |
+
+Usar $R$ de tabla en lugar de $R_1$ es el error caro de esta cláusula: con $R = 5$ el
+multiplicador sería 3,50 en vez de 2,80 y la tracción del perno subiría un 31 % de más. $R_1$
+solo se conoce **después** del análisis, porque incorpora el escalamiento por corte basal mínimo
+(Ec. 14).
+
+**El $R_y$ del perno** casi no mueve el resultado, y por una razón estructural: mientras la ruta
+sísmica de ACI (49,43 tonf) sea más exigente que la capacidad esperada, la armadura de anclaje no
+cambia.
+
+| $R_y$ | $T_{ye}$/perno | Techo NCh2369 | $A_s$ solo NCh2369 | $A_s$ gobernante |
+|:---:|:---:|:---:|:---:|:---:|
+| 1,0 | 15.11 tonf | 30.22 tonf | 9.59 cm² | 15.69 cm² |
+| 1,1 | 16.62 tonf | 33.25 tonf | 10.56 cm² | 15.69 cm² |
+| 1,2 | 18.13 tonf | 36.27 tonf | 11.51 cm² | 15.69 cm² |
+| 1,3 | 19.65 tonf | 39.29 tonf | 12.47 cm² | 15.69 cm² |
+
+**La categoría de la instalación** cambia el estatus de todo lo anterior:
+
+- **Cat. II** (este caso): 9.5.2 pide diseñar con $0{,}7R_1$, con el techo de la capacidad del perno.
+- **Cat. III y IV**: 9.5.2 exige, además y de forma mandatoria, que el pedestal tenga resistencia
+  **≥ la capacidad esperada en tracción y corte de los dispositivos de anclaje**. Acá los dos
+  criterios ya convergían en 33,25 tonf, pero solo porque $0{,}7R_1 = 2{,}80$ fue suficiente para
+  pasarse de la fluencia del perno. Con $R_1 = 2$ no habría convergido.
+- **Cat. IV**: 8.3.5 **prohíbe** usar cualquiera de las alternativas por cargas amplificadas de
+  8.4, 8.5, 8.6 y 8.7. La bifurcación de §2 desaparece: el detalle dúctil del perno deja de ser
+  una opción y pasa a ser obligatorio. En una sala de bombas contra incendio o una sala de
+  baterías, la vía (b) no existe.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Nivel de carga | Demanda | Capacidad | Uso |
+|---|---|---|:---:|:---:|:---:|
+| Perno en tracción | 8.5.2 vía (a) | $E$ sin amplificar | 4.00 tonf | $\phi N_{sa} = 15.4$ | 0.26 |
+| Detalle dúctil del perno | 8.5.2 | — | 250 mm expuestos, 75 mm de hilo, silla | prescriptivo | ✓ |
+| Llave de corte — obligatoriedad | 8.5.3 | $E \times 2{,}80$ | 96,1 kN | umbral 75 kN | obligatoria |
+| Llave — aplastamiento | ACI §22.8 | $E \times 2{,}80$ | 9.80 tonf | 62.2 tonf | 0.16 |
+| Llave — flexión de la plancha | — | $E \times 2{,}80$ | 122.5 tonf·cm | 153.7 tonf·cm | 0.80 |
+| Roce y mortero | 8.5.4 | — | — | **prohibido contar** (7.54 tonf) | — |
+| Breakout del grupo | §17.6.2 | capacidad del perno | 49.43 tonf | 14.0 tonf | **3.52 ✗** |
+| → con armadura de anclaje | §17.5.2.1 | capacidad del perno | 49.43 tonf | $8\phi16 = 16.08$ cm² | 0.98 |
+| Pullout | §17.6.3 | capacidad del perno | 24.71 tonf | 10.7 tonf (tuerca) | **2.31 ✗** |
+| → con plancha de cabeza 80×80 | §17.6.3 | capacidad del perno | 24.71 tonf | 82.2 tonf | 0.30 |
+| Interacción N–V del perno | §17.8.3 | — | **no aplica** (la llave toma el corte) | — | — |
+| Clasificación como pedestal | 9.5 | — | $h/b = 1{,}20$ | $\le 3$ | ✓ |
+| Zona de protección superior | 9.5.3 | — | 100 cm | $\ge \max(100;\,50)$ | ✓ |
+| Estribos — zona de protección | 9.5.3 | — | 20 cm | $\le 0{,}2b = 20$ cm | ✓ |
+| Estribos — 3 primeros | 9.5.3 | — | 50 mm libres | $\le 50$ mm | ✓ |
+
+**Solución:** perno φ1″ F1554 Gr. 55 con silla, 250 mm de longitud expuesta y plancha de cabeza
+de 80 × 80 mm; llave de corte de 300 × 30 mm con 150 mm embebidos; armadura de anclaje de 8φ16
+desarrollada a ambos lados del plano de falla; y estribos φ12 con los tres primeros a 50 mm
+libres y el resto a 20 cm en los 100 cm superiores del pedestal.
+
+## Lo que NCh2369 le agrega al Cap. 17
+
+El ejemplo de ACI y este resuelven el mismo detalle constructivo y llegan a piezas distintas.
+No porque uno esté mal, sino porque responden preguntas distintas:
+
+| | ACI 318-25 solo | + NCh2369:2025 |
+|---|---|---|
+| Pregunta | ¿Resiste el hormigón la demanda? | ¿Quién tiene permitido fallar? |
+| Nivel de carga | Uno solo, el mayorado | Dos: fusible sin amplificar, todo lo demás × $0{,}7R_1$ |
+| Corte | Lo toman los pernos; interacción N–V gobierna (0.76) | Lo toma la llave; la interacción **desaparece** |
+| Roce bajo la placa | Se puede contar | **Prohibido** (8.5.4), aunque valga el 77 % del corte |
+| Hormigón del pedestal | Se verifica contra la demanda | Se **diseña** contra la capacidad del perno |
+| Estribos del pedestal | Los de columna | Zona de protección de 9.5.3, con los tres primeros a 50 mm |
+| Resultado | Todo verifica, uso máximo 0.76 | Dos modos fallan; aparecen llave, plancha de cabeza y armadura de anclaje |
+
+Cada elemento «raro» del detalle chileno clásico —el perno largo con silla, la planchuela
+inferior, la llave de corte, los estribos apretados en el tope del pedestal— es la respuesta a
+una línea de estas dos cláusulas. Ninguno de ellos aparece si se verifica solo por resistencia.
+La diferencia entre las dos columnas de la tabla no es de rigor de cálculo: es que la norma
+chilena escribió de antemano cuál es el eslabón que debe ceder, y después obligó a que todo lo
+demás lo respete.
+
+[^nch]: Instituto Nacional de Normalización, *NCh2369:2025 — Diseño sísmico de estructuras e
+instalaciones industriales*, 3ª edición, 2025. Las cláusulas citadas son 4.5 (combinaciones),
+5.14 y Ec. (14) ($R_1$), Tabla 7 ($R$ y $\xi$), 8.3.1 (capacidades esperadas), 8.3.5
+(restricciones por categoría), 8.5.2 a 8.5.5 (anclajes) y 9.5.1 a 9.5.3 (pedestales). El diseño
+del hormigón se rige por NCh430 —reemplazada en la práctica por el DS 60 (2011), como advierte
+C9.1.1—, que oficializa el ACI 318; 8.1.3 establece que en caso de contradicción prevalece
+NCh2369.
+
+[^ry]: La cláusula 8.3.3 remite a la Tabla A3.1 de ANSI/AISC 341-16 para los factores $R_y$ y
+$R_t$ de materiales ASTM certificados, y permite expresamente «*usar otros valores justificados
+por ensayos de control de calidad y certificación del fabricante*». Ese es el camino que
+corresponde para una barra de anclaje F1554: acá se adopta $R_y = 1{,}10$ como dato de proyecto,
+y la tabla de sensibilidad de §6 muestra que el resultado no depende del valor elegido en el
+rango 1,0–1,3. La capacidad esperada se evalúa sobre el área efectiva $A_{se}$ y no sobre $A_g$,
+porque en una barra roscada la sección que plastifica es la del hilo.
