@@ -52,10 +52,28 @@ malos con toda la disciplina del mundo. Por eso **ningún modelo se devuelve sin
 contra una solución que se conoce de antemano**:
 
 - La viga simplemente apoyada se corre y su momento máximo bajo la carga muerta se compara con
-  **wL²/8**. En vivo: 12.000000000000002 contra 12.0.
+  **wL²/8**. Para la viga de prueba —6 m de luz, W12X26, muerta 2 tonf/m— eso son
+  $2 \cdot 6^2 / 8 = 9.0$ tonf·m.
 - El pórtico se corre y se verifica el **equilibrio global**: la suma de reacciones verticales
-  debe ser exactamente la carga aplicada (w · luz · vanos · pisos) y la horizontal, cero. En
-  vivo: 48.0 contra 48, delta 0.0 %.
+  debe ser exactamente la carga aplicada (w · luz · vanos · pisos) y la horizontal, cero. Para el
+  pórtico del demo —2 vanos, 2 pisos, 6 m, muerta 2 tonf/m— eso son $2 \cdot 6 \cdot 2 \cdot 2 =
+  48$ tonf.
+
+El contraste no es un `assert` escondido: viaja en el resultado, para que quien reciba el modelo
+pueda mirarlo.
+
+```json
+"contraste_estatica": {
+  "caso": "D", "w_tonf_m": 2.0,
+  "M3_leido_tonfm": 9.0, "M_esperado_wL2_8_tonfm": 9.0, "delta_pct": 0.0
+}
+
+"contraste_equilibrio": {
+  "caso": "D", "w_tonf_m": 2.0,
+  "suma_F3_tonf": 48.0, "carga_aplicada_tonf": 48.0,
+  "suma_F1_tonf": 0.0, "delta_pct": 0.0
+}
+```
 
 Si el contraste no cierra dentro del 0.1 %, la herramienta **se niega y pide no usar el modelo**.
 Es el mismo principio de las etapas anteriores — negarse antes que entregar un número que el
@@ -73,11 +91,14 @@ con `--sap` a secas sigue siendo de solo lectura.
 ## El round-trip, en vivo
 
 La secuencia completa con el motor local, sin tocar el teclado de SAP2000: el pedido en lenguaje
-natural crea el pórtico (transcripción perfecta de los nueve parámetros, equilibrio exacto);
+natural crea el pórtico (transcripción perfecta de los ocho parámetros —vanos, pisos, luz, altura,
+perfil de columna, perfil de viga, muerta y viva—, equilibrio exacto);
 el segundo pedido — *"verifica a compresión la barra C0_1 del modelo con el combo LRFD"* — usa
 las herramientas de la etapa anterior **sobre el modelo recién creado**: lee Pu = 23.77 tonf del
 análisis, verifica con AISC 360-22 (φPn = 228.8 tonf, uso 0.104, gobierna pandeo por flexión) y
-narra con cada número citado. De ahí a la memoria Word es el camino ya pavimentado en E6. Al
+narra con cada número citado. El criterio de pandeo lo pone el ingeniero, como en E5: aquí
+$K = 1$ y $L_c = 3.00$ m —la altura de piso, porque las vigas arriostran la columna en cada
+nivel—, y con esos dos datos el $\phi P_n$ reproduce a mano dentro del 0.1 %. De ahí a la memoria Word es el camino ya pavimentado en E6. Al
 final, el modelo original del usuario vuelve a estar abierto, como si nada hubiera pasado.
 
 Lo que sí pasó en el camino — y vale más que el caso feliz — fueron tres sorpresas:

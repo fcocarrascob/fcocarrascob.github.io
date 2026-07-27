@@ -15,7 +15,8 @@ import Figure from '../../components/content/Figure.astro';
 ## Del cálculo al documento
 
 Todo lo construido hasta acá —herramientas que calculan, un modelo que las opera, un RAG que
-responde— desemboca en algo muy concreto que un ingeniero necesita todos los días: **una memoria de
+responde, un harness que decide cuál de los dos toca y un lector que saca los datos de un modelo de
+SAP2000— desemboca en algo muy concreto que un ingeniero necesita todos los días: **una memoria de
 cálculo**. Un documento con los datos de entrada, las verificaciones, la sección de norma de cada
 una, y el veredicto. Algo para revisar, firmar y archivar.
 
@@ -80,7 +81,7 @@ calcula, y de ahí sale la memoria:
 ```
 > memoria de una viga 30×60, d=54, G25, As=14.73, estribos φ10@25, Mu=27, Vu=14.76
 
-memoria: memoria_viva.docx  (CUMPLE · gobierna Flexión · uso 0.987)
+memoria: memoria-viga_hormigon_flexion_corte.docx  (CUMPLE · gobierna Flexión · uso 0.987)
 ```
 
 El modelo entendió el pedido y eligió la herramienta de viga; el `0.987` —y todo el documento— lo
@@ -100,9 +101,11 @@ ahí. Queda la mitad peligrosa: **escribir** modelos. Crear geometría, asignar 
 `.sdb` sin que el LLM toque una sola coordenada, y sin pisar el trabajo abierto del usuario. Esa es
 la etapa 7, y con ella la serie cierra.
 
-La tesis que arrancó esta serie, repetida en cada etapa, terminó siendo el hilo que la sostiene: al
-LLM se le da lo que hace bien —entender, elegir, narrar— y se le quita lo que no debe tocar. Los
-números los calcula el código; las citas salen del corpus; el documento se arma desde el JSON. Lo
-que queda para el modelo es, precisamente, lo que un modelo de lenguaje sabe hacer.
+De todas las etapas, esta es donde la tesis del proyecto se pone más incómoda de sostener y más
+fácil de verificar: un documento firmable es exactamente el lugar donde un número inventado hace
+daño, y también el lugar donde es trivial comprobar si el número vino del cálculo o de la prosa
+—se relee el `.docx` y se compara—. Que el test de ida y vuelta pase es el entregable de E6; que
+siga pasando cuando la fuente de los datos sea un modelo de SAP2000 es asunto de la etapa que
+viene.
 
 *La plantilla de la memoria y el test de trazabilidad viven en el repositorio del proyecto.*

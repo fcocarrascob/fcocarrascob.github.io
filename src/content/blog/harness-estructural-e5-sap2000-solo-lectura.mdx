@@ -43,17 +43,23 @@ procedencia escrita: de qué archivo de modelo salió cada dato, de qué barra, 
 
 <Figure
   src="/harness-estructural-e5/composicion.svg"
-  alt="Diagrama del flujo de composición. A la izquierda, SAP2000 con el modelo abierto. Un lector de solo lectura extrae fuerzas, secciones y reacciones, cada una con su procedencia. Esos datos entran por Python directamente a la herramienta de verificación de E1, que produce el resultado JSON con citas, y de ahí la memoria Word. Arriba, el modelo de lenguaje solo aporta nombres —barra, combo— y criterio de ingeniería —K, longitudes de pandeo—; una flecha tachada indica que los números nunca pasan por él."
+  alt="Diagrama del flujo de composición. Arriba, el LLM local (llama3.1:8b) elige la herramienta y pasa solo NOMBRES —barra «8», combo «LRFD_1»— más el criterio de ingeniería Ky y Ly = 164 cm; una flecha tachada indica que los números nunca pasan por él. A la izquierda, SAP2000 con el modelo Modelo_Prueba_MCP.sdb abierto, una nave real de 1435 barras y 42 combos LRFD/ASD, alcanzado por el puente COM de Skills_SAP importado tal cual y en modo solo lectura. Al centro, la función compuesta verificar_columna_desde_sap(barra, combo, K, L) lee con procedencia y unidades fijadas: sección Ag = 112.48 cm² y Fy = 2531 kgf/cm², demanda Pu = 12.98 tonf bajo LRFD_1; un nombre de combo inválido produce un rechazo reparable con la lista de combos del modelo. Esos datos entran de Python a Python a la herramienta de E1, que devuelve el JSON: φPn = 155.59 tonf, uso 0.083, CUMPLE, cita AISC E3 Ec. E3-2, y la procedencia del .sdb, la barra 8 y el combo LRFD_1, de ahí a la memoria Word de E6. Al pie, el mismo patrón tres veces: columna desde fuerzas de barra, zapata desde reacciones del apoyo bajo D y L de servicio, y viga con pandeo lateral-torsional desde el perfil y el M3 del combo."
   caption="La composición de E5: el LLM elige nombres y criterio; el lector lee con procedencia; los números viajan de SAP2000 a la herramienta por Python. El puente COM es el de Skills_SAP, importado tal cual."
 />
 
 <Note type="info" title="Lo que SAP2000 no sabe, no se inventa">
 El modelo de análisis conoce el largo del objeto barra, pero **no las longitudes de pandeo** — eso
 depende de arriostramientos que son criterio del ingeniero. La columna de prueba mide 17.9 m entre
-nudos extremos; verificarla con ese largo da esbeltez 439 y la herramienta de E1 **se niega**
-(límite 200). Ese rechazo es el comportamiento correcto: antes que calcular con una longitud
-irreal, pide el dato que falta. Con las longitudes reales (arriostrada cada 1.64 m por las
-costaneras en el eje débil), verifica: φPn = 155.6 tonf, uso 0.083, cada línea con su cita AISC.
+nudos extremos; verificarla con ese largo **en el eje débil** da esbeltez 439 y la herramienta de
+E1 **se niega** (límite 200). Ese rechazo es el comportamiento correcto: antes que calcular con una
+longitud irreal, pide el dato que falta.
+
+El criterio que aporta el ingeniero son **dos** longitudes, no una: las costaneras arriostran el
+eje débil cada 1.64 m, pero en el eje fuerte la columna sigue corriendo los 17.9 m completos. Y es
+el eje fuerte el que gobierna — $KL/r_x = 1790/18.37 = 97.4$ contra $KL/r_y = 164/4.07 = 40.3$—,
+así que el $\phi P_n = 155.6$ tonf que devuelve (uso 0.083, cada línea con su cita AISC) sale de
+los 17.9 m. Con el eje débil solo se llegaría a 235 tonf. Dar una sola longitud, la más corta, es
+la forma más fácil de verificar de más.
 </Note>
 
 ## Leer con procedencia, negarse con opciones
@@ -84,9 +90,12 @@ La lección metodológica de E2 —*medir destapa bugs del propio instrumento*�
 El primer intento en vivo con el motor local terminó en un stack trace, y los siguientes en fallas
 más sutiles. Cinco arreglos, cada uno con su test de regresión:
 
-1. **División por cero en la herramienta de columna.** El motor rellenó `Ky=0` (su modo de falla
-   conocido: sobre-especificar opcionales) y la guarda de entrada no validaba K. Ahora K ≤ 0 es un
-   rechazo reparable: *"K = 0 no es una condición de apoyo; omítelo para usar 1.0"*.
+1. **División por cero en la herramienta de columna.** El motor rellenó `Ky=0` y la guarda de
+   entrada no validaba K. Ahora K ≤ 0 es un rechazo reparable: *"K = 0 no es una condición de
+   apoyo; omítelo para usar 1.0"*. Anoto el detalle porque contradice el benchmark: rellenar
+   opcionales con valores inventados era el modo de falla de **Qwen3** en E2, no de Llama 3.1,
+   cuyas dos fallas medidas fueron otras (una `E` en MPa y un obligatorio olvidado). En vivo, el
+   motor elegido mostró un vicio que doce tareas de laboratorio no le habían visto.
 2. **El harness descartaba evidencia.** Si el turno de reparación respondía en prosa en vez de
    re-llamar, el bucle devolvía "no pude mapear tu consulta" y tiraba los pasos ya ejecutados —
    incluido el rechazo que explicaba qué pasó. Ahora ese rechazo se narra.
@@ -120,13 +129,27 @@ Con el patrón probado en la columna, las otras dos salieron como copy-paste dis
   ingeniero aporta Lb y Cb. La W24X55 de la plataforma, con Lb = 1.93 m: cumple, gobierna el
   pandeo lateral-torsional con uso 0.375.
 
+<Note type="info" title="El montaje">
+Modelo `Modelo_Prueba_MCP.sdb` —nave industrial real, 1435 barras, 42 combinaciones LRFD/ASD—,
+abierto en SAP2000 y alcanzado por el puente COM de [`Skills_SAP`](https://github.com/fcocarrascob/Skills_SAP),
+importado tal cual. Motor `llama3.1:8b` por Ollama, el mismo de E2. Verificaciones contra **AISC
+360-22**, y la columna de los ejemplos es la barra `8` bajo el combo `LRFD_1`. Lo que **no** quedó
+registrado, y debería: el build exacto de SAP2000 con el que se corrió. La API COM de CSI es
+estable entre versiones para lo que usa el lector (`FrameObj`, `PropFrame`, `Results`), pero
+"estable" no es "declarado", y si algún día esto no reproduce, ese es el primer sospechoso.
+</Note>
+
 ## Del modelo a la memoria
 
-El cierre junta E5 con E6: la verificación de la columna —con su demanda leída del modelo— pasa
+El cierre junta E5 con E6 —y sí, E6 es la etapa *siguiente* en el orden de lectura: la memoria en
+Word se construyó antes que el lector de SAP2000, así que cuando llegó esta etapa ya estaba
+disponible para engancharla. El orden de construcción y el de la serie no coincidieron acá.
+
+La verificación de la columna —con su demanda leída del modelo— pasa
 por `python-docx` y sale una **memoria de cálculo Word** cuyo pie declara la procedencia completa.
-El test de ida y vuelta de E6 se repite acá: se relee el .docx y ahí están el Pu = 12.9782 que
-leyó el lector, el φPn = 155.5944 que calculó la herramienta, la cita E3-2, y la ruta del archivo
-.sdb de donde salió todo.
+El test de ida y vuelta de E6 se repite acá: se relee el `.docx` y ahí están el Pu = 12.9782 que
+leyó el lector, el φPn = 155.5944 que calculó la herramienta, la cita **AISC 360-22 Ec. E3-2**, y
+la ruta del archivo `.sdb` de donde salió todo.
 
 Un modelo de SAP2000 abierto, una consulta en lenguaje natural, y un documento donde cada número
 tiene un origen rastreable que no incluye a ningún generador de texto. Eso era E5.

@@ -1,6 +1,6 @@
 ---
 title: "Harness estructural (2): tres modelos locales, tres formas de fallar"
-description: "Con las cinco herramientas listas, la pregunta del segundo peldaño es cuál modelo local de 8 GB sabe operarlas. Armé un benchmark de function calling —12 tareas, cuatro dimensiones de puntaje— y medí Qwen3-8B, Llama 3.1-8B y Llama 3.2-3B. Los tres eligen la herramienta correcta el 100 % de las veces; toda la diferencia está aguas abajo, y cada modelo falla de una manera distinta. En el camino, medir con método destapó un bug de mi propio instrumento que en el papel era invisible."
+description: "Con las cinco herramientas listas, la pregunta del segundo peldaño es cuál modelo local —de los que entran en una GPU de 8 GB— sabe operarlas. Armé un benchmark de function calling —12 tareas, cuatro dimensiones de puntaje— y medí Qwen3-8B, Llama 3.1-8B y Llama 3.2-3B. Los tres eligen la herramienta correcta el 100 % de las veces; toda la diferencia está aguas abajo, y cada modelo tiene su modo de falla dominante —aunque los dos de 8B comparten uno—. En el camino, medir con método destapó un bug de mi propio instrumento que en el papel era invisible."
 pubDate: 2026-07-24
 draft: false
 tags: ["LLM local", "function calling", "benchmark", "Ollama", "Qwen3", "Llama 3.1", "evaluación", "harness", "agentes"]
@@ -20,7 +20,7 @@ dependencia que recién ahora se puede pagar: **no se puede medir si un modelo s
 herramientas sin tener herramientas que llamar.** E1 construyó el objeto de medición; E2 lo usa
 para responder una sola pregunta:
 
-> ¿Qué modelo local de 8 GB —de los que corren en mi GPU— sabe leer un enunciado en lenguaje
+> ¿Qué modelo local —de los que corren en mi GPU de 8 GB— sabe leer un enunciado en lenguaje
 > natural y traducirlo a la llamada correcta, con los datos correctos, en las unidades correctas?
 
 La respuesta importa porque ese modelo es el motor del harness que viene después. Y quería
@@ -41,7 +41,7 @@ Cada respuesta se puntúa en cuatro dimensiones, que se leen como un **embudo**:
 |---|---|
 | formato | ¿emitió una llamada bien formada? |
 | tool | ¿eligió la herramienta correcta? |
-| args | ¿le pasó los datos correctos? |
+| args | ¿le pasó los datos **clave** correctos? (los que definen el caso; los opcionales no puntúan) |
 | **task success** | ¿ejecutar su llamada reproduce el resultado de referencia? |
 
 `task success` es la métrica que decide; las otras tres dicen *dónde* se rompe. Y hay un control
@@ -51,6 +51,16 @@ no llega, el que está mal es el instrumento, no el modelo. (Guardá esta frase 
 ## Tres modelos, tres formas de fallar
 
 Medí Qwen3-8B, Llama 3.1-8B y Llama 3.2-3B, todos por Ollama, a temperatura 0. El resultado:
+
+<Note type="info" title="El montaje, para que se pueda repetir">
+Tags exactos de Ollama `qwen3:8b` (8.2B), `llama3.1:8b` (8.0B) y `llama3.2:3b` (3.2B), los tres en
+cuantización **Q4_K_M** — que es lo que hace que un 8B entre en 8 GB de VRAM: el archivo pesa
+~4.9 GB, no 8—. Temperatura 0, `tool_choice: "auto"`, sin `num_ctx` explícito (se usa el de la
+plantilla del modelo) y **sin semilla fijada**: a temperatura 0 las corridas repetidas dieron el
+mismo puntaje, pero no es un determinismo garantizado. En Qwen3 —el único de los tres con modo
+razonamiento— el benchmark lo deja **apagado**, agregando `/no_think` al prompt de sistema: la
+cadena de razonamiento larga no mejora la elección de herramienta y provoca timeouts.
+</Note>
 
 | Modelo | formato | tool | args | **task success** |
 |---|---:|---:|---:|---:|
@@ -66,7 +76,7 @@ cada modelo se cae de una manera propia.
 <Figure
   src="/harness-estructural-e2/embudo.svg"
   alt="Gráfico de embudo con cuatro etapas en el eje horizontal (formato, tool, args, task success) y porcentaje en el vertical. Las tres líneas —Llama 3.1, Qwen3 y Llama 3.2-3B— arrancan juntas en 100 % en formato y tool: los tres eligen la herramienta correcta siempre. Recién en args y task success divergen: Llama 3.1 baja a 83 y se mantiene en 83 (motor elegido); Qwen3 tiene args alto 92 pero cae a 67 en éxito; Llama 3.2-3B comparte args 83 con Llama 3.1 pero se desploma a 8 en éxito."
-  caption="Los tres coinciden en las dos primeras etapas: elegir la herramienta no es el problema. La caída ocurre entre 'args' y 'task success', y su forma distingue a cada modelo —sobre todo el desplome del 3B, que pasa los datos clave pero produce un resultado equivocado."
+  caption="Los tres coinciden en las dos primeras etapas: elegir la herramienta no es el problema. La caída ocurre entre 'args' y 'task success', y su forma distingue a cada modelo —sobre todo el desplome del 3B, que pasa los datos clave correctos pero como strings, de modo que la herramienta ni siquiera llega a ejecutarse."
 />
 
 ### Qwen3 falla hacia el cálculo
@@ -74,7 +84,7 @@ cada modelo se cae de una manera propia.
 Qwen3 tiene el `args` más alto (92 %) pero un `task success` de 67 %. Esa brecha es reveladora:
 acierta los datos *clave* pero **rellena los argumentos opcionales con valores inventados** en vez
 de omitirlos y dejar que la herramienta use su valor por defecto. El caso típico es el módulo de
-elasticidad del acero. En vez de omitirlo —la herramienta ya sabe que son 2.040.000 kgf/cm²—,
+elasticidad del acero. En vez de omitirlo —la herramienta ya sabe que son $2.04 \times 10^6$ kgf/cm²—,
 Qwen lo pasa explícitamente… en las unidades equivocadas:
 
 ```
@@ -96,14 +106,30 @@ placas se desploma, y la herramienta **no calcula una columna mal**: se planta.
 Un error de unidades del modelo se convirtió en un rechazo trazable, no en una viga firmada con un
 número malo. La guarda de E1 salvó la medición de E2.
 
-### Llama 3.2-3B falla hacia el vacío
+### Llama 3.2-3B falla en el tipo, no en el número
 
 El modelo de 3B es el caso más instructivo de todos. Miren la brecha: `args` 83 %, `task success`
-**8 %**. Emite la llamada perfectamente —la herramienta correcta, la estructura correcta— y después
-**botcha los números**. Sabe la *forma* del pedido y no puede cargar el *contenido*. Es
-exactamente el fracaso que el principio "los números no pasan por el LLM" anticipa: un modelo chico
-es un excelente enrutador y un pésimo calculista. Como motor queda descartado; a lo sumo serviría
-para elegir la herramienta y dejar los datos a otra capa.
+**8 %** — una sola tarea de doce. Y el motivo no es el que yo esperaba. Esta es su llamada para la
+viga canónica:
+
+```json
+{"tool": "viga_hormigon_flexion_corte",
+ "args": {"b": "30", "h": "60", "d": "54", "fc": "250",
+          "fy": "4200", "As": "14.73", "Mu": "27", "Vu": "14.76"}}
+```
+
+**Todos los valores están bien. Todos son strings.** Por eso `args` le da alto —el puntaje compara
+los valores, y los valores son correctos— y `task success` se desploma: la herramienta recibe
+`"60"` donde espera `60` y se cae al primer `<=`. Nueve de las doce tareas mueren con el mismo
+`'<=' not supported between instances of 'str' and 'int'`.
+
+Es una distinción que vale la pena tener clara, porque cambia el diagnóstico. El 3B **no botcha los
+números**: sabe la forma del pedido *y* el contenido, y falla en la **codificación**. Un modelo
+chico no es necesariamente un mal lector de enunciados; es un mal ciudadano de un contrato de
+tipos. Como motor queda descartado igual —doce tareas, once caídas—, pero la lección no es "no
+sabe", es "no serializa". Volveremos a esto en la última etapa, donde el motor elegido comete una
+versión más leve del mismo pecado y hay que repararlo **por tipo, guiándose por la firma de la
+herramienta**.
 
 ### Llama 3.1 gana… pero el número escondía un bug
 
@@ -151,7 +177,8 @@ no solo rankea modelos: **te obliga a arreglar tu propia regla de medir.** El ra
 cuando duda, calla; cuando llama, no yerra un dato. Qwen3 queda como alternativa fuerte —su falla
 es sobre-especificar, que se corrige con un mejor prompt de sistema y endureciendo las herramientas
 para que detecten una `E` que "parece MPa"—. Ese endurecimiento, que recupera la única falla
-compartida por los dos modelos de 8 GB, es lo primero de la lista para la etapa siguiente.
+compartida por los dos modelos de 8B, queda pendiente para cuando el motor entre al bucle del
+harness: no hace falta en E3, que es un RAG y no llama herramientas, así que aterriza en E4.
 
 Con el motor elegido, el próximo peldaño es darle **memoria de la norma**: un sistema de
 recuperación (RAG) sobre el corpus normativo, para que las respuestas en lenguaje natural lleguen

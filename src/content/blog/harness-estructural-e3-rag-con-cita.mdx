@@ -30,9 +30,10 @@ etapa 3 es un RAG (retrieval-augmented generation) 100 % local que ataca exactam
 
 <Note type="warning" title="La cita es un dato, no una redacción">
 **Regla 1: la cita sale del retrieval, no del modelo.** El sistema recupera fragmentos del corpus,
-y cada fragmento ya viaja con su sección (`§9.6.1`) extraída de su encabezado. Las citas que
-acompañan la respuesta son esas —las de los fragmentos recuperados—, no las que el modelo escriba
-en su prosa. La procedencia es del sistema; el modelo solo redacta.
+y cada fragmento viaja con la cita **extraída de su encabezado**: la sección (`§9.6.1`) cuando el
+encabezado la trae, y el capítulo si no. Las citas que acompañan la respuesta son esas —las de los
+fragmentos recuperados—, no las que el modelo escriba en su prosa. La procedencia es del sistema;
+el modelo solo redacta.
 
 **Regla 2: sin respaldo, no hay respuesta.** Si ningún fragmento supera un umbral de similitud, el
 sistema **se niega** —igual que una herramienta de E1 se niega cuando la norma no aplica—. No
@@ -47,15 +48,22 @@ improvisa. Prefiere un "no lo sé con respaldo" a una cita inventada.
 
 ## Cómo está armado, y por qué tan liviano
 
-El corpus son las [páginas de referencia normativa](/hormigon/) que ya había extraído de ACI
-318-25 y AISC 360-22: una por capítulo, con la sección en cada encabezado. Se trocea por sección
-—254 fragmentos, 168 con número de sección explícito—, y de ahí sale la cita.
+El corpus son las fichas de referencia normativa que ya había extraído de ACI 318-25 y AISC 360-22
+—una por capítulo, con la sección normativa en cada encabezado (`#### 9.6.1 — …` en ACI, `### E3 —
+…` en AISC)—. Son las mismas de las que salen las [páginas de norma de este blog](/hormigon/),
+aunque el RAG lee las fichas y no las páginas publicadas. Se trocea por encabezado: **254
+fragmentos, y solo 168 traen número de sección explícito**. Los otros 86 —resúmenes de capítulo,
+glosarios, tablas sueltas— se citan por capítulo (`AISC 360-22 Cap. B`), que es menos preciso pero
+sigue siendo verificable. De ahí sale la cita, y por eso la Regla 1 dice *la cita del encabezado* y
+no *la sección*: un tercio del corpus no tiene sección que dar.
 
 Todo corre local y sin dependencias pesadas: los embeddings los da un modelo chico
-(`nomic-embed-text`) servido por el mismo Ollama, y la búsqueda es similitud coseno en memoria.
-Nada de bases vectoriales ni servicios externos —el corpus es de cientos de fragmentos, no de
-millones—. La restricción real del proyecto es la memoria de la GPU (8 GB), así que menos piezas es
-mejor.
+(`nomic-embed-text`, 137M, F16) servido por el mismo Ollama, la búsqueda es similitud coseno en
+memoria sobre un índice JSON, se recuperan los **4** mejores fragmentos por consulta, y quien
+redacta la respuesta a partir de ellos es **`llama3.1:8b`**, el motor que ganó
+[el benchmark de E2](/blog/harness-estructural-e2-elegir-motor/). Nada de bases vectoriales ni
+servicios externos —el corpus es de cientos de fragmentos, no de millones—. La restricción real del
+proyecto es la memoria de la GPU (8 GB), así que menos piezas es mejor.
 
 ## El hallazgo que casi rompe la garantía
 
@@ -73,8 +81,15 @@ El modelo de embeddings encuentra "parecido" **en todas partes**: hasta *"la cap
 saca 0.63 contra un capítulo de acero. Con el umbral en 0.5, esa pregunta habría pasado el filtro
 y el sistema habría intentado responderla con una sección normativa —exactamente la cita inventada
 que quería evitar—. Lo pertinente ronda 0.72–0.76 y lo ajeno ~0.63, así que **subí el umbral a
-0.70**, que separa limpio el respaldo del ruido. La lección: un RAG sin calibrar su umbral contra
-preguntas *fuera* de dominio es un generador de citas falsas con pasos extra.
+0.70**, que deja el respaldo de un lado y el ruido del otro. La lección: un RAG sin calibrar su
+umbral contra preguntas *fuera* de dominio es un generador de citas falsas con pasos extra.
+
+Con la honestidad que corresponde: esa calibración se apoya en **una sola** pregunta fuera de
+dominio contra dos de dominio. Tres puntos no son una distribución, y el 0.70 está puesto a ojo en
+medio del hueco que dejan —no derivado de nada—. Sirve para lo que se necesita acá (el 0.63 y el
+0.75 no se tocan) pero una pregunta ajena que casualmente comparta vocabulario técnico podría
+subir de 0.63 y colarse. Calibrar esto en serio pide un set de veinte o treinta preguntas fuera de
+dominio, y no lo tengo.
 
 ## Funcionando
 
