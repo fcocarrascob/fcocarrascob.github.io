@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:sap-scripts": "node scripts/sync-sap-scripts.mjs"
+    "sync:sap-scripts": "node scripts/sync-sap-scripts.mjs",
+    "verify:planilla": "node scripts/verify-planilla.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
@@ -27,5 +28,8 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.7"
   }
 }
