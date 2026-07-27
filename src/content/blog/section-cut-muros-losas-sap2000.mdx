@@ -115,7 +115,9 @@ $$V = P = 10\ \text{tonf} \qquad M = P \cdot (3 - 2) = 10\ \text{tonf·m}$$
 
 El cortante `F1 = 10` cuadra de inmediato. Pero el momento sale **10, no 30**, con la ubicación
 por defecto. No es un error: SAP reporta el momento respecto al **centroide de los nudos del
-grupo**, que está a $z = 2$ m (el centro del muro). El momento de $P$ (a $z = 3$) respecto a
+grupo**, que está a $z = 2$ m. Ojo con leer eso como «el centro del muro»: el centro geométrico de
+un muro de 3 m está a $1{,}5$ m. El $z = 2$ sale de que el grupo **excluye los nudos de apoyo de la
+base**, así que promedia los nudos en $z = 1, 2, 3$. El momento de $P$ (a $z = 3$) respecto a
 $z = 2$ es $10 \cdot 1 = 10$ — exactamente lo que devuelve.
 
 <Figure

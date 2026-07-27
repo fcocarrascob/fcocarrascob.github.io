@@ -1,6 +1,6 @@
 ---
 title: "Harness estructural (3): un RAG que se niega a inventar secciones"
-description: "El asistente ya verifica con herramientas; ahora necesita responder preguntas conceptuales sobre la norma —y hacerlo con cita verificable, no con secciones inventadas—. Construyo un RAG 100 % local sobre el corpus normativo, con dos reglas que sostienen la garantía: la cita es un dato del retrieval (no la escribe el modelo) y, sin respaldo suficiente, el sistema se niega. Incluye el hallazgo de calibración que casi rompe todo: el modelo de embeddings encuentra 'parecido' hasta donde no lo hay."
+description: "El asistente ya verifica con herramientas; ahora necesita responder preguntas conceptuales sobre la norma —y hacerlo con cita verificable, no con secciones inventadas—. Construyo un RAG 100 % local sobre el corpus normativo, con dos reglas que sostienen la garantía: la cita es un dato del retrieval (no la escribe el modelo) y, sin respaldo suficiente, el sistema se niega. Dos hallazgos: el umbral hay que calibrarlo contra preguntas fuera de dominio, y —el incómodo— citar sin inventar no es lo mismo que citar la sección que corresponde."
 pubDate: 2026-07-24
 draft: false
 tags: ["LLM local", "RAG", "embeddings", "Ollama", "ACI 318-25", "AISC 360-22", "cita", "harness"]
@@ -30,9 +30,10 @@ etapa 3 es un RAG (retrieval-augmented generation) 100 % local que ataca exactam
 
 <Note type="warning" title="La cita es un dato, no una redacción">
 **Regla 1: la cita sale del retrieval, no del modelo.** El sistema recupera fragmentos del corpus,
-y cada fragmento ya viaja con su sección (`§9.6.1`) extraída de su encabezado. Las citas que
-acompañan la respuesta son esas —las de los fragmentos recuperados—, no las que el modelo escriba
-en su prosa. La procedencia es del sistema; el modelo solo redacta.
+y cada fragmento viaja con la cita **extraída de su encabezado**: la sección (`§9.6.1`) cuando el
+encabezado la trae, y el capítulo si no. Las citas que acompañan la respuesta son esas —las de los
+fragmentos recuperados—, no las que el modelo escriba en su prosa. La procedencia es del sistema;
+el modelo solo redacta.
 
 **Regla 2: sin respaldo, no hay respuesta.** Si ningún fragmento supera un umbral de similitud, el
 sistema **se niega** —igual que una herramienta de E1 se niega cuando la norma no aplica—. No
@@ -47,15 +48,22 @@ improvisa. Prefiere un "no lo sé con respaldo" a una cita inventada.
 
 ## Cómo está armado, y por qué tan liviano
 
-El corpus son las [páginas de referencia normativa](/hormigon/) que ya había extraído de ACI
-318-25 y AISC 360-22: una por capítulo, con la sección en cada encabezado. Se trocea por sección
-—254 fragmentos, 168 con número de sección explícito—, y de ahí sale la cita.
+El corpus son las fichas de referencia normativa que ya había extraído de ACI 318-25 y AISC 360-22
+—una por capítulo, con la sección normativa en cada encabezado (`#### 9.6.1 — …` en ACI, `### E3 —
+…` en AISC)—. Son las mismas de las que salen las [páginas de norma de este blog](/hormigon/),
+aunque el RAG lee las fichas y no las páginas publicadas. Se trocea por encabezado: **254
+fragmentos, y solo 168 traen número de sección explícito**. Los otros 86 —resúmenes de capítulo,
+glosarios, tablas sueltas— se citan por capítulo (`AISC 360-22 Cap. B`), que es menos preciso pero
+sigue siendo verificable. De ahí sale la cita, y por eso la Regla 1 dice *la cita del encabezado* y
+no *la sección*: un tercio del corpus no tiene sección que dar.
 
 Todo corre local y sin dependencias pesadas: los embeddings los da un modelo chico
-(`nomic-embed-text`) servido por el mismo Ollama, y la búsqueda es similitud coseno en memoria.
-Nada de bases vectoriales ni servicios externos —el corpus es de cientos de fragmentos, no de
-millones—. La restricción real del proyecto es la memoria de la GPU (8 GB), así que menos piezas es
-mejor.
+(`nomic-embed-text`, 137M, F16) servido por el mismo Ollama, la búsqueda es similitud coseno en
+memoria sobre un índice JSON, se recuperan los **4** mejores fragmentos por consulta, y quien
+redacta la respuesta a partir de ellos es **`llama3.1:8b`**, el motor que ganó
+[el benchmark de E2](/blog/harness-estructural-e2-elegir-motor/). Nada de bases vectoriales ni
+servicios externos —el corpus es de cientos de fragmentos, no de millones—. La restricción real del
+proyecto es la memoria de la GPU (8 GB), así que menos piezas es mejor.
 
 ## El hallazgo que casi rompe la garantía
 
@@ -73,25 +81,19 @@ El modelo de embeddings encuentra "parecido" **en todas partes**: hasta *"la cap
 saca 0.63 contra un capítulo de acero. Con el umbral en 0.5, esa pregunta habría pasado el filtro
 y el sistema habría intentado responderla con una sección normativa —exactamente la cita inventada
 que quería evitar—. Lo pertinente ronda 0.72–0.76 y lo ajeno ~0.63, así que **subí el umbral a
-0.70**, que separa limpio el respaldo del ruido. La lección: un RAG sin calibrar su umbral contra
-preguntas *fuera* de dominio es un generador de citas falsas con pasos extra.
+0.70**, que deja el respaldo de un lado y el ruido del otro. La lección: un RAG sin calibrar su
+umbral contra preguntas *fuera* de dominio es un generador de citas falsas con pasos extra.
+
+Con la honestidad que corresponde: esa calibración se apoya en **una sola** pregunta fuera de
+dominio contra dos de dominio. Tres puntos no son una distribución, y el 0.70 está puesto a ojo en
+medio del hueco que dejan —no derivado de nada—. Sirve para lo que se necesita acá (el 0.63 y el
+0.75 no se tocan) pero una pregunta ajena que casualmente comparta vocabulario técnico podría
+subir de 0.63 y colarse. Calibrar esto en serio pide un set de veinte o treinta preguntas fuera de
+dominio, y no lo tengo.
 
 ## Funcionando
 
-Una pregunta del dominio devuelve la respuesta con su cita y los fragmentos que la respaldan:
-
-```
-> ¿cuándo obliga ACI 318-25 a colocar refuerzo mínimo de corte en una viga?
-
-Según [ACI 318-25 §7.6.3], el refuerzo mínimo de corte debe proveerse en toda
-región donde Vu > φVc.
-
-citas (del retrieval, verificables):
-  · ACI 318-25 §7.6.3   [0.78]
-  · ACI 318-25 §9.6.2   [0.76]
-```
-
-Y una pregunta ajena al corpus recibe la única respuesta honesta:
+Una pregunta ajena al corpus recibe la única respuesta honesta:
 
 ```
 > ¿cuál es la capital de Francia y cómo hago un buen risotto?
@@ -100,16 +102,68 @@ No encontré respaldo en el corpus normativo (ACI 318-25 / AISC 360-22) para
 responder eso con cita. Prefiero no improvisar.
 ```
 
-Ese "prefiero no improvisar" es el entregable de la etapa. Un asistente normativo que puede decir
-*no* es más útil que uno que siempre responde: el que siempre responde te obliga a verificar cada
-cita a mano, y entonces no te ahorró nada.
+Ningún fragmento pasa el umbral —el mejor saca 0.59— y el sistema se planta. Ese "prefiero no
+improvisar" es el entregable de la etapa. Un asistente normativo que puede decir *no* es más útil
+que uno que siempre responde: el que siempre responde te obliga a verificar cada cita a mano, y
+entonces no te ahorró nada.
+
+## El segundo hallazgo: citar bien no es citar lo que corresponde
+
+Con las preguntas del dominio esperaba el trámite. Salió otra cosa. Esta es la recuperación real
+para una pregunta de manual, con los parámetros que el sistema trae de fábrica (`k = 4`, umbral
+0.70):
+
+```
+> ¿cuándo obliga ACI 318-25 a colocar refuerzo mínimo de corte en una viga?
+
+  0.7918  ACI 318-25 §10.6.2   Refuerzo mínimo de corte      (Cap. 10 — columnas)
+  0.7786  ACI 318-25 §7.6.3    Refuerzo mínimo de corte      (Cap.  7 — losas unidireccionales)
+  0.7642  ACI 318-25 §9.6.2    Refuerzo mínimo a flexión, vigas preesforzadas
+  0.7390  ACI 318-25 Cap. 17   (resumen ejecutivo)
+ ---------------------------------------------------------- corte del top-4
+  0.7386  ACI 318-25 §9.6.3    Refuerzo mínimo de corte      (Cap.  9 — vigas)  ← la que corresponde
+```
+
+Las cuatro citas que sobreviven son **reales y verificables**: la garantía del post se cumple, no
+hay ni una sección inventada. Y aun así la respuesta sale mal, porque la sección que de verdad
+gobierna el caso —**§9.6.3**, refuerzo mínimo de corte en vigas no preesforzadas— queda **quinta,
+fuera del top-4 por cuatro diezmilésimas**. El sistema redacta con lo que le quedó: columnas, losas
+y vigas preesforzadas.
+
+Lo que ACI 318-25 sí dice para una viga no preesforzada está en **§9.6.3.1**: hay que proveer
+$A_{v,\min}$ en toda región donde $V_u > \phi\lambda\sqrt{f'_c}\,b_w d$ —equivalente a
+$\approx 0.5\,\phi V_c$—, salvo en los casos de la **Tabla 9.6.3.1** (viga de poca altura, integral
+con losa, hormigón con fibras), donde el disparador sube a $V_u > \phi V_c$. Justamente el umbral
+que pide §7.6.3 para losas: **el doble**. Responder con la sección vecina no es un detalle de
+etiqueta, cambia el número.
+
+El motivo es incómodo de lo simple: **tres capítulos distintos tienen una sección titulada
+exactamente "Refuerzo mínimo de corte"** —7.6.3 en losas, 9.6.3 en vigas, 10.6.2 en columnas—, y
+los tres dicen casi lo mismo con casi las mismas palabras. La palabra *viga* de la pregunta no
+alcanza para desempatar: aparece en los tres, porque los tres se comparan con vigas. El corpus está
+bien troceado y bien etiquetado; el que no discrimina es el embedding.
+
+<Note type="warning" title="Son dos fallas distintas, y sólo una está resuelta">
+El umbral protege contra **citar lo que no existe**. No protege contra **citar lo que no
+corresponde**. Y la segunda es la peligrosa, porque *sobrevive a la verificación*: el lector va a
+§7.6.3, la sección existe, se titula "Refuerzo mínimo de corte", habla de $A_{v,\min}$ y de $V_u$ —
+y no tiene cómo saber que el capítulo era otro. Una cita falsa se cae sola al primer chequeo; una
+cita real de la sección equivocada, no.
+</Note>
+
+Así que la etapa 3 entrega la mitad que prometía —cero secciones inventadas, y un *no* honesto
+cuando no hay respaldo— y deja destapada la otra: **la pertinencia del retrieval**. Los dos caminos
+obvios son filtrar por capítulo según el tipo de elemento que menciona la pregunta (viga, columna,
+losa, zapata), o reordenar los candidatos con el modelo antes de redactar. Ninguno está hecho, y
+hasta que lo esté, este RAG responde conceptos con respaldo pero **no es un sustituto de abrir la
+norma**.
 
 ## Lo que viene
 
 Ya tengo las dos mitades del asistente: las herramientas que **calculan con cita** (E1) y el RAG
-que **responde con cita** (E3). Falta unirlas en un solo punto de entrada que decida, ante cada
-consulta, si toca calcular o si toca responder —y que lo haga sin que yo le diga cuál es cuál—. Ese
-es el harness, la etapa 4.
+que **responde con cita** (E3) —con la pertinencia todavía en deuda—. Falta unirlas en un solo
+punto de entrada que decida, ante cada consulta, si toca calcular o si toca responder —y que lo
+haga sin que yo le diga cuál es cuál—. Ese es el harness, la etapa 4.
 
 *El RAG, el troceo del corpus y la calibración del umbral viven en el repositorio del proyecto. El
 corpus normativo son las páginas de referencia enlazadas arriba.*

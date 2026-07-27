@@ -367,10 +367,10 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 | F-H2 | **Viga T** (ancho efectivo 6.3.2.1, M⁺ ala vs M⁻ alma, la T "verdadera") | 9 / 6 | [x] | ◻ | ✅ 2026-07-25 (1🔴 2🟠 4🟡 2🔵 aplicados) | a mano (Python) ✅ · 2 SVG (sección con los dos signos + barras) · tesis: la misma sección es **dos vigas según el signo** — en positivo a=1.7 cm y la T se calcula rectangular (ε_t=0.076); en negativo el bloque se hunde 15 cm en el alma, gobierna (0.87 vs 0.82) y apilar barras castiga: 6Ø25 saca la sección de controlada por tracción (φ 0.90→0.82, +29 % acero para +13 % capacidad); la T con eje neutro bajo el ala pediría 104.7 cm² (ρ_w=6.5 %) — no existe en pisos · complementa F-H1 |
 | F-H3 | **Columna: diagrama de interacción P–M + esbeltez** (barrido del eje neutro, P₀ y tope, balanceado, flexión pura, todas las combinaciones, esbeltez arriostrada) | 10 | [x] | ◻ (P–M pide programa) | ✅ 2026-07-23 (1🟡 2🔵 aplicados) | a mano (Python, iterando c) ✅ · 2 SVG (sección+compatibilidad y diagrama P–M) · tesis: gobierna la combinación sísmica de axial mínimo (0.9D+E), no la de gravedad con axial máximo, porque en la rama baja perder compresión acerca el punto a la frontera |
 | F-H4 | Muro de corte a flexocompresión + elementos de borde | 11 | [ ] | ◻ | — | — |
-| F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | — sin auditar | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
-| F-H6 | **Grupo de anclajes en pedestal** (breakout, pullout, blowout, corte, pryout, interacción) | 17 | [x] | ◻ | — sin auditar | a mano (port del motor `placaBaseAnchorage.ts`) ✅ · pedestal industrial; tesis: modos individuales holgan pero la interacción N–V gobierna · engancha /herramientas/placa-base + ejemplo B1 |
+| F-H5 | **Zapata aislada** (dimensionamiento, corte 1-dir con efecto de tamaño, punzonamiento, flexión, desarrollo) | 13 | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (3🟠 aplicados; 10🟡/🔵 abiertos) | a mano (script) ✅ · tesis: el corte 1-dir con λ_s de ACI 318-25 gobierna el canto (no el punzonamiento) · engancha /herramientas/zapata-biaxial |
+| F-H6 | **Grupo de anclajes en pedestal** (breakout, pullout, blowout, corte, pryout, interacción) | 17 | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (3🔴 4🟠 aplicados; 6 abiertos) | a mano (port del motor `placaBaseAnchorage.ts`) ✅ · pedestal industrial; tesis: modos individuales holgan pero la interacción N–V gobierna · engancha /herramientas/placa-base + ejemplo B1 |
 | F-H7 | **Ménsula / corbel por puntal-tensor** (tirante, puntal, nodos, N_uc, anclaje) | 23 / 16.5 | [x] | ◻ | ✅ 2026-07-25 (1🟠 5🟡 3🔵 aplicados) | a mano (Python) ✅ · 2 SVG (geometría+modelo STM y barras de usos) · estrena Cap. 23 · tesis: con a_v/d=0.375 no hay flexión ni corte — hay un triángulo; gobierna el **tirante** (0.91, dúctil) con el puntal detrás (0.86), la jerarquía que el STM busca; N_uc=0.2V_u es **un tercio del tirante** (olvidarla = acero 32 % corto); el cierre es el anclaje (horquilla 16.5.6.3) · engancha F-A4 (recibe la carrilera) |
-| F-H8 | Cabezal de pilotes (pile cap) por puntal-tensor | 23 | [ ] | ◻ | — | |
+| F-H8 | **Cabezal de 9 pilotes por puntal-tensor** (recibe el cabezal de la nota 16 de Geotecnia) | 23 / 13.4 | [ ] | ◻ | — | **próximo** — ver «Los tres próximos ejemplos» |
 | F-H9 | Longitud de desarrollo y empalme | 25 | [ ] | ◻ | — | |
 | F-H10 | Losa unidireccional continua (coeficientes ACI) | 7 | [ ] | ◻ | — | |
 
@@ -378,11 +378,11 @@ nuevo (p.ej. `Pn_euler`, `shearLagU`, áreas de barras).
 
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
-| F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 6, soldadura de filete, bloque de corte) | D | [x] | ◻ | — sin auditar | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) |
+| F-A1 | **Diagonal HSS a tracción** (fluencia bruta, rotura + retraso de cortante Caso 5, soldadura de filete, bloque de corte) | D | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (2🔴 4🟠 aplicados; 6 abiertos) | a mano (script) ✅ · HSS soldado > ángulo (elección de Francisco: práctica chilena actual) · la 2.ª auditoría corrigió el caso de la Tabla D3.1 (6→**5** en 360-22, con la x̄ que incluye el espesor) y la cota de J4-5 |
 | F-A2 | **Columna de galpón a compresión** (longitud efectiva por eje: cantilever K=2 en el plano vs. arriostrada K=1 fuera, esbeltez gobernante, pandeo local E7, curva de columna E3) | E | [x] | ◻ | ✅ 2026-07-23 (1🟡 1🔵 aplicados) | a mano (Python) ✅ · 2 SVG (elevación + curva de columna con los 2 ejes) · tesis: gobierna el eje fuerte pese a r_x>r_y porque la longitud efectiva pesa más; palanca = bajar L_c/r (arriostrar K=1 casi triplica), no subir F_y (elástico) · gancho a D9 (pandeo lineal SAP) |
 | F-A3 | **Viga laminada con pandeo lateral-torsional** (Lb, Lp, Lr, Cb; tres zonas; dos esquemas de arriostramiento) | F | [x] | ◻ | ✅ 2026-07-23 (1🟡 aplicado) | a mano (Python) ✅ · 2 SVG (esquema+barras y curva Mn–Lb con los 2 puntos) · tesis: la misma viga W460×74 falla arriostrada solo en apoyos (Lb=8m, elástico, φMn=19.1<Mu=20) y sobra con un arriostre a media luz (Lb=4m, inelástico, φMn=51.0); el LTB se compra con arriostramiento y Cb, no con perfil mayor (φMp=52.4 ya sobra) · cierra la trilogía de flexión en acero (F pura → LTB → carrilera) |
-| F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | — sin auditar | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
-| F-A5 | Alma a corte + rigidizadores | G | [ ] | ◻ | — | |
+| F-A4 | **Viga carrilera de puente grúa** (cargas de grúa ASCE 7 §4.9, carga móvil, LTB, flexión biaxial, corte, J10, deflexiones, fatiga) | F/G/H/J | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (1🔴 4🟠 aplicados; 17 abiertos) | a mano (script) ✅ · cierra posts de puente grúa · tesis: la flexión pura sobra; gobiernan LTB (8 m sin arriostrar) y flexión biaxial, con el canal como palanca; la fatiga no manda en Clase C pero toma el control en servicio pesado |
+| F-A5 | **Viga armada: corte, campo de tracción y rigidizadores** | G | [ ] | ◻ | — | **próximo** — único capítulo de acero sin ejemplo |
 | F-A6 | **Viga-columna** (fuerzas combinadas H1-1a/b, amplificación B1 P-δ, C_m, C_b) | H / Ap. 8 | [x] | ◻ | ✅ 2026-07-25 (1🔴 1🟠 6🟡 4🔵 aplicados) | a mano (Python) ✅ · 2 SVG (esquema+momentos 1.er/2.º orden y frontera H1-1 con el viaje del punto) · síntesis de E+F · tesis: por separado la columna sobra (0.55 compresión, 0.33 flexión) y combinada queda al **0.94** — diez puntos los pone B1=1.34 (P-δ) invisible al primer orden; la suma ingenua (0.99) tampoco es la norma (crédito 8/9); sin puntales de media altura uso 2.0 (el arriostramiento trabaja para los dos sumandos) · engancha F-A2, F-A3 y post P-Delta (B1 ≡ amplificador) |
 | F-A7 | **Conexión apernada a corte simple** (shear tab: corte de pernos, aplastamiento/desgarre, corte fluencia/rotura de la plancha, rotura en bloque, geometría) | J | [x] | ◻ | ✅ 2026-07-23 (2🟠 2🟡 aplicados) | a mano (Python) ✅ · 2 SVG (esquema+modos de falla y cadena en barras) · tesis: la conexión es una cadena y gobierna la plancha (rotura por corte área neta, uso 0.89), no los pernos (0.69); la palanca es el espesor/geometría de la plancha · engancha /herramientas/placa-base + F-H6 |
 
@@ -394,10 +394,10 @@ lo completan:
 
 | ID | Ejemplo | Cap. | Post | Planilla | Audit. | Verif. |
 |----|---------|------|:----:|:--------:|:------:|--------|
-| F-A8 | **Placa de extremo extendida 4E** (par T–C, pernos a tracción, efecto palanca por T-stub, placa en corte, soldadura del ala, J10 del lado columna) | J / Manual P.9 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema+detalle T-stub y curva T_disp–t_p) · tesis: la resistencia del perno **no es una constante, es una curva del espesor de la placa** — con t_p=18 mm la palanca se come el 42 % y falla (1.15), con 22 mm queda al 0.83, y solo en t_c=31.1 mm desaparece; 4 mm de plancha = pasar o no pasar, con los mismos pernos; k_ds=1.5 (J2-5) es lo que salva el filete de 10 mm (0.83 vs 1.24) · engancha F-A7 (la hermana rígida) y F-A9 |
-| F-A9 | **Placas de ala (BFP) + zona panel** (pernos, placas, F13.1 del ala perforada; J10-1/J10-2/J10-4/J10-10 de la columna; rigidizadores y doubler) | J / F13 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con zona panel+refuerzos y barras conexión vs columna) · tesis: **la conexión pasa (≤0.74) y la columna no** (ala 1.43, alma 1.12, zona panel 1.07); el detalle fino es el término axial de J10-10: sin él la zona panel daba 1.00 **exacto** y el P_u de gravedad se lleva ese 6 % (la columna no puede usar dos veces el mismo acero); el crédito J10-11 (×1.156) salva pero **exige** modelar la deformación del panel · engancha F-A8 |
-| F-A10 | **Doble ángulo apernado vs shear tab** (misma demanda y mismos pernos; corte doble, apoyo, J4, y la excentricidad) | J | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (planta comparada 1 vs 2 planos y barras enfrentadas) · tesis: duplicar plano de corte y espesor de apoyo **muda el eslabón débil desde la conexión hasta el alma de la viga** (0.89 → 0.46); y la excentricidad, que la cadena de resistencia esconde, lleva el perno extremo de la tab al **0.99** (método elástico) contra 0.48 del doble ángulo — a cambio de 3.8× el acero y 3× los agujeros · complementa F-A7 |
-| F-A11 | **Empalme apernado de viga** (reparto M a las alas / V al alma, cubreplacas, J3.9 deslizamiento crítico, F13.1) | J / J6 | [x] | ◻ | — sin auditar | a mano (Python) ✅ · 2 SVG (esquema con el reparto y barras rotura vs deslizamiento) · tesis doble: **el empalme copia las fuerzas, no la sección** (cubreplaca 26.6 cm² < ala 27.55 y pasa, porque la demanda son 45.2 tonf y no las 87 del ala); y **pretensar no agrega resistencia, agrega una verificación** — el mismo perno vale 10.8 tonf a rotura y 6.1 a fricción, y el grupo pasa de 0.52 a 0.93; salidas: pernos, Clase B o n_s=2 |
+| F-A8 | **Placa de extremo extendida 4E** (par T–C, pernos a tracción, efecto palanca por T-stub, placa en corte, soldadura del ala, J10 del lado columna) | J / Manual P.9 | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (2🟠 aplicados; 14 abiertos) | a mano (Python) ✅ · 2 SVG (esquema+detalle T-stub y curva T_disp–t_p) · tesis: la resistencia del perno **no es una constante, es una curva del espesor de la placa** — con t_p=18 mm la palanca se come el 42 % y falla (1.15), con 22 mm queda al 0.83, y solo en t_c=31.1 mm desaparece; 4 mm de plancha = pasar o no pasar, con los mismos pernos; k_ds=1.5 (J2-5) es lo que salva el filete de 10 mm (0.83 vs 1.24) · engancha F-A7 (la hermana rígida) y F-A9 |
+| F-A9 | **Placas de ala (BFP) + zona panel** (pernos, placas, F13.1 del ala perforada; J10-1/J10-2/J10-4/J10-10 de la columna; rigidizadores y doubler) | J / F13 | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (4🟠 aplicados; 11 abiertos) | a mano (Python) ✅ · 2 SVG (esquema con zona panel+refuerzos y barras conexión vs columna) · tesis: **la conexión pasa (≤0.74) y la columna no** (ala 1.43, alma 1.12, zona panel 1.07); el detalle fino es el término axial de J10-10: sin él la zona panel daba 1.00 **exacto** y el P_u de gravedad se lleva ese 6 % (la columna no puede usar dos veces el mismo acero); el crédito J10-11 (×1.156) salva pero **exige** modelar la deformación del panel · engancha F-A8 |
+| F-A10 | **Doble ángulo apernado vs shear tab** (misma demanda y mismos pernos; corte doble, apoyo, J4, y la excentricidad) | J | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (1🔴 2🟠 aplicados; 7 abiertos) | a mano (Python) ✅ · 2 SVG (planta comparada 1 vs 2 planos y barras enfrentadas) · tesis: duplicar plano de corte y espesor de apoyo **saca el eslabón débil de la conexión** (0.93 → 0.46, quedando en empate técnico con el alma de la viga a 0.8 %); y la excentricidad, que la cadena de resistencia esconde, lleva el perno extremo de la tab al **0.995** (método elástico) contra 0.48 del doble ángulo — a cambio de 3.8× el acero y 3× los agujeros · complementa F-A7 |
+| F-A11 | **Empalme apernado de viga** (reparto M a las alas / V al alma, cubreplacas, J3.9 deslizamiento crítico, F13.1) | J / J6 | [x] | ◻ | ⚠️ 2.ª pasada 2026-07-26 (3🟠 aplicados; 14 abiertos) | a mano (Python) ✅ · 2 SVG (esquema con el reparto y barras rotura vs deslizamiento) · tesis doble: **el empalme copia las fuerzas, no la sección** (cubreplaca 26.6 cm² < ala 27.55 y pasa, porque la demanda son 45.2 tonf y no las 87 del ala); y **pretensar no agrega resistencia, agrega una verificación** — el mismo perno vale 10.8 tonf a rotura y 6.1 a fricción, y el grupo pasa de 0.52 a 0.93; salidas: pernos, Clase B o n_s=2 |
 
 **Infraestructura de Acero:** hecha con F-A1 (2026-07-23) — subsección `ejemplos` en
 `src/lib/acero.ts` + `src/pages/acero/ejemplos/index.astro` (espejo de Hormigón).
@@ -414,11 +414,12 @@ F-H7 ✅ (ménsula STM, estrena el Cap. 23 y engancha con la carrilera F-A4).** 
 palanca), F-A9 ✅ (BFP + zona panel), F-A10 ✅ (doble ángulo vs shear tab) y F-A11 ✅
 (empalme, deslizamiento crítico).** Con F-A7 y F-H6 el Cap. J queda cubierto de punta a
 punta: corte simple, momento apernado (dos familias), comparación de anatomías, empalme y
-anclaje al hormigón. Siguientes candidatos: **F-A5** (alma a corte + rigidizadores, el único
-capítulo de acero sin ejemplo), **F-H4** (muro de corte) o **F-H8** (cabezal de pilotes STM).
+anclaje al hormigón. Siguientes candidatos, ya decididos más abajo: **F-H8** (cabezal de pilotes STM),
+**F-A5** (alma a corte + rigidizadores) y **F-G1** (grupo de pilotes, en Geotecnia).
 
 **Cierre de la tanda de conexiones (2026-07-25, tarde):**
-- **Las cinco auditadas** (F-A7 a F-A11, 74 hallazgos, ver AUDIT.md). Hallazgo transversal:
+- **Las cinco auditadas** (F-A7 a F-A11, 74 hallazgos, ver AUDIT.md; reauditadas en la segunda
+  pasada del 2026-07-26, ver más abajo). Hallazgo transversal:
   las áreas netas iban sin el **sobreancho de 2 mm de B4.3b** —no conservador ~3 %—; corregido
   en los cinco posts con propagación a prosa, tablas, `description`, `alt` y SVG.
 - **F-A7 ampliado con la sección de excentricidad** y reauditado: el perno extremo llega a
@@ -430,6 +431,92 @@ capítulo de acero sin ejemplo), **F-H4** (muro de corte) o **F-H8** (cabezal de
   $L_{eh} \ge 2d_b$, y el valor SI exacto de $F_{nv}$ en la Tabla J3.2 (372 vs 370 MPa).
 - Pendiente opcional en F-H3: planilla del canvas con región `program` que reproduzca el
   diagrama P–M (◻).
+
+### Segunda pasada de auditoría (2026-07-26): los ocho ejemplos «sin auditar» sí lo estaban
+
+La columna **Audit.** de este ROADMAP marcaba «— sin auditar» a F-H5, F-H6, F-A1, F-A4 y
+F-A8–F-A11, pero `AUDIT.md` ya registraba auditorías suyas del 23 y 25 de julio: **la columna
+estaba desactualizada, no el registro**. Se corrió igual una segunda pasada, más profunda —los
+auditores fueron al **texto crudo de las normas** (PDF de ACI 318-25 SI y de AISC 360-22, no solo
+a las fichas de `material_teorico`) y cruzaron posts hermanos—, y encontró **137 hallazgos:
+7🔴 · 26🟠 · 66🟡 · 38🔵**. Se aplicaron los **33 bloqueantes**; los ocho posts quedan en ⚠️ sin
+🔴 ni 🟠 abiertos. Build verde, 144 páginas.
+
+**Los tres hallazgos que cambiaron números publicados:**
+
+1. **F-H6 · el φ de anclajes no existe en 318-25.** El post minoraba los modos de hormigón con
+   **φ = 0.70**, que es la Tabla 17.5.3 Condición B de **318-19**. Verificado en el PDF: 318-25
+   consolidó los φ en la **Tabla 21.2.1** —(l) tracción no redundante 0.65, (m) redundante 0.75,
+   (n) corte 0.75— y estrenó la **Tabla 17.5.4.1** con el factor **Ψ_a = 0.95** (*cast-in* sin
+   armadura suplementaria), que el post no tenía. Adoptado $\phi\Psi_a = 0.7125$: breakout N
+   0.58→**0.57**, pullout 0.38→**0.37**, breakout V 0.56→**0.55**, interacción 0.78→**0.76**.
+2. **F-A1 · el Caso 6 de la Tabla D3.1 es otro caso en 360-22.** Verificado en el PDF: el
+   **Caso 5** es el HSS con una plancha pasante por ranuras (con una $ar{x}$ que **incluye el
+   espesor**) y el **Caso 6** pasó a ser el tubo con dos planchas laterales. El post usaba la
+   numeración y la fórmula de 360-16 → $ar{x}$ 3.81→**3.59**, $U$ 0.746→**0.760**, capacidad
+   47.5→**48.4** tonf. Y su **Ec. J4-5 estaba incompleta**: sin la cota $\le 0.60F_yA_{gv}$
+   sobreestimaba el bloque de corte un **24 %** hacia el lado inseguro (69.5→**56.1** tonf).
+   La nota teórica del Cap. D arrastraba la misma numeración y se corrigió en el mismo commit.
+3. **F-A10 · el veredicto publicado no era el que da su propia tabla.** «El eslabón débil se
+   muda al alma de la viga» es falso por 0.8 %: la rotura en corte de los ángulos da 64.63 tonf
+   (0.464) contra 65.15 del apoyo en el alma (0.461). Reescrito como **empate técnico**, que es
+   una tesis mejor: la conexión deja de ser el eslabón débil y queda al nivel del miembro.
+
+**Además:** F-A4 corrigió su modelo de flexión lateral (usaba el $S_y$ de la **sección completa**
+donde el apunte teórico y la DG 7 piden **ala superior + canal**) → H1 0.89→**0.96**, y su
+afirmación de que la fatiga gobierna «en servicio pesado», que su propia tabla desmiente (Clase D
+da 0.76). F-H5 dejó de atribuir al **efecto de tamaño** una caída que aporta sobre todo el
+término de cuantía (63.6 → 33.2 con $\lambda_s=1$ → 27.9).
+
+**Deuda que abre esta tanda:** `src/lib/placaBaseAnchorage.ts` sigue en φ = 0.70 y en la regla
+lineal ≤ 1.2 de 318-19. F-H6 ahora lo advierte en el post, pero **el motor de la herramienta de
+placa base no se tocó** — es el próximo ítem de la sección A.
+
+### Los tres próximos ejemplos (decididos 2026-07-26)
+
+Los tres tienen la fuente ya procesada en `material_teorico`, así que ninguno se bloquea por
+documentación. **F-G1 y F-H8 se publican como par**; F-A5 es independiente.
+
+- [ ] **F-H8. Cabezal de 9 pilotes por puntal-tensor** (ACI 318-25 Cap. 23 + 13.4) — el de mayor
+  retorno, porque **el caso ya está publicado y verificado**: recibe literalmente el cabezal con
+  que cierra la nota 16 de Geotecnia (torre de traspaso, D = 360 / L = 95 tonf, V = 60 tonf con
+  brazo 4,0 m, 9 pilotes Ø0,60 a s = 1,80 m, arrastre de 61,43 tonf por pilote). Aquel post
+  entrega la reacción por pilote y dice explícitamente que dimensionarlo estructuralmente es otro
+  problema; este lo convierte en armadura. **Tesis candidata**: el cabezal es una región D y el
+  modelo de viga miente en los dos sentidos — la pirámide de puntales concentra el tirante en las
+  bandas sobre los pilotes en vez de distribuirlo, y en punzonamiento los perímetros críticos
+  **se traslapan** a s = 3D (13.4 remite a la envolvente menor), que es exactamente este caso.
+  Más el arrastre: la carga de diseño del cabezal no es la de la superestructura. **Fuente**:
+  `cap23-puntal-tensor.md` (ya ejercitado en F-H7) y `cap13-fundaciones.md` §13.4. **Verif.**: a
+  mano en Python, reusando el motor de nodos/puntales de la ménsula. **Cierra** la cadena suelo →
+  pilote → cabezal → columna, hoy publicada solo por tramos.
+- [ ] **F-A5. Viga armada de alma esbelta: corte, campo de tracción y rigidizadores** (AISC
+  Cap. G) — el **único capítulo de acero con nota y sin ejemplo**. La propia nota `capG-corte.md`
+  ya plantea el ejercicio de síntesis que sería la tesis. **Tesis candidata**:
+  $V_n = 0.6F_yA_wC_v$ tiene tres palancas y solo una cuesta acero — engrosar el alma sube $A_w$;
+  rigidizar activa el **campo de tracción** (G2.2) y recupera resistencia post-pandeo sin agregar
+  sección; bajar $a$ sube $k_v$; y el panel **extremo** no puede usar campo de tracción (G2.3) y
+  suele ser el que gobierna, que es el detalle que se olvida. Cierre: el rigidizador se dimensiona
+  por **rigidez** ($I_{st}$, G2-19), no por resistencia. **Caso**: viga armada de galpón o
+  carrilera pesada, en continuidad con F-A3 y F-A4. **Bonus**: aritmética cerrada y sin iteración
+  → primer candidato real a **planilla del canvas en Acero**, donde tampoco hay ninguna.
+- [ ] **F-G1. El grupo: cuándo 9 pilotes no valen 9 veces uno** (Das §18.16–18.18, sección
+  Geotecnia) — la pregunta que las dos notas de fundaciones profundas dejan abierta a propósito.
+  El post 11 dice que en grupo «la penalización se acumula» y da el rango 2/3–3/4 para perforados,
+  pero no lo calcula; el post 16 anota que a s = 1,80 m (3D) «el grupo interactúa» y luego aclara
+  que **para el arrastre** no aplica reducción, dejando la capacidad sin resolver. **Tesis
+  candidata**: la eficiencia de grupo no es un factor de tabla, es la competencia entre dos
+  mecanismos —la suma de pilotes individuales y la falla en **bloque**—; y el asentamiento del
+  grupo (§18.17–18.18) no escala con η, porque el bulbo de tensiones del conjunto es mucho más
+  profundo. Con el caso del post 16 se puede medir si los 9 pilotes que la fricción negativa
+  obligó a poner realmente rinden 9. **Verif.**: script `postNN_*.py` en `material_teorico`, como
+  los 15 anteriores. **Alternativa**: G-12 (pozos perforados, Das cap. 19) también está listo de
+  fuente y es la deuda *declarada*; se pospone porque no engancha con nada nuevo, mientras que el
+  grupo alimenta directamente a F-H8.
+
+**Descartados por falta de fuente** (verificado): **F-H4** con elementos de borde exige el
+**Cap. 18** de ACI 318-25, que **no está procesado** (solo el Cap. 11, sin detallamiento sísmico);
+y un ejemplo de muro sísmico sigue bloqueado por Mononobe-Okabe, que no está ni en Das ni en Sáez.
 
 ## G. Geotecnia (Das 4ª ed. + NCh2369:2025 Cap. 10)
 
@@ -523,6 +610,12 @@ decisiones de modelación y de clasificación normativa son la señal.
   `getCollection` directo): es código muerto. El riesgo es que quien agregue una página tome el
   wrapper de nombre más obvio. Decidir entre borrarlo, renombrarlo a algo que declare el orden
   (`getGeotecniaPostsByDate`) o alinear las fechas.
+- [ ] **G-F1. El grupo de pilotes: cuándo 9 no valen 9 veces uno** (Das §18.16–18.18) — el
+  próximo ejemplo de la sección, decidido el 2026-07-26 y descrito en detalle en la sección F
+  («Los tres próximos ejemplos»). Reusa el caso de la nota 16 y se publica **como par con F-H8**
+  (el cabezal del mismo grupo, ahora desde el hormigón): el suelo entrega la reacción por pilote,
+  el hormigón la convierte en armadura. Es también el mejor candidato a estrenar **G-C**, porque
+  su aritmética es cerrada y sin iteración.
 - [ ] **G-C. Ninguna planilla del canvas.** Los ejemplos de Hormigón/Acero declaran planilla
   interactiva como parte del formato (`ejemplos-calculo-workflow`); en geotecnia no hay ninguna.
   Candidatos naturales: capacidad de soporte por la ecuación general (post 2/7) y el arrastre

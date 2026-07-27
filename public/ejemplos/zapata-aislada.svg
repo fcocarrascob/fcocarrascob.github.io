@@ -84,11 +84,12 @@
   <text x="738" y="207" font-size="10" fill="#4a5b6c">0.86</text>
 
   <!-- caja del giro -->
-  <rect x="470" y="300" width="340" height="128" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
-  <text x="482" y="322" font-size="11.5" fill="#222" font-weight="bold">El giro de ACI 318-25: el efecto de tamaño</text>
+  <rect x="470" y="300" width="340" height="146" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="482" y="322" font-size="11.5" fill="#222" font-weight="bold">El giro de ACI 318-25: la nueva expresión de V_c</text>
   <text x="482" y="342" font-size="11" fill="#333">El corte en una dirección de una zapata (sin</text>
   <text x="482" y="358" font-size="11" fill="#333">estribos, poco armada) usa V_c = 2.11·λ_s·(ρ_w)^⅓·√f'c·b·d:</text>
   <text x="482" y="380" font-size="11" fill="#888">  código antiguo (0.53√f'c):  φV_c = 63.6 tonf → uso 0.38</text>
-  <text x="482" y="398" font-size="11" fill="#c0392b" font-weight="bold">  ACI 318-25 (efecto tamaño):  φV_c = 27.9 tonf → uso 0.86</text>
-  <text x="482" y="418" font-size="10" fill="#555">Antes gobernaba el punzonamiento; ahora manda el corte 1-dir.</text>
+  <text x="482" y="398" font-size="11" fill="#c0392b" font-weight="bold">  ACI 318-25 (2.11·ρw^1/3, λ_s=1):  φV_c = 33.2 → uso 0.72</text>
+  <text x="482" y="414" font-size="11" fill="#c0392b" font-weight="bold">  × λ_s = 0.839 (efecto tamaño):  φV_c = 27.9 → uso 0.86</text>
+  <text x="482" y="436" font-size="10" fill="#555">Antes gobernaba el punzonamiento; ahora manda el corte 1-dir.</text>
 </svg>

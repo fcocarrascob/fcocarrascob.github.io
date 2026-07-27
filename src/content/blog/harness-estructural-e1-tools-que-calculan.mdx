@@ -149,31 +149,54 @@ El criterio normativo correcto queda **codificado, no comentado**.
 
 ## Cómo sé que están bien
 
-Las cinco herramientas reproducen los cinco ejemplos publicados, número a número: $\phi M_n = 27.4$
-tonf·m y $\varepsilon_t = 0.0112$ en la viga; $\lambda_s = 0.839$ y $\phi V_c = 27.9$ tonf en la
-zapata; $F_e = 1083$, $F_n = 950$ kgf/cm² en la columna; la interacción tracción-corte $= 0.78$ que
-gobierna los anclajes. Son **57 tests automatizados** que asertan contra el valor publicado y
-revisado. Los ejemplos del blog dejaron de ser solo ilustraciones: se volvieron el banco de pruebas
-del proyecto.
+Las cinco herramientas se contrastan contra los cinco ejemplos publicados: $\phi M_n = 27.4$
+tonf·m y $\varepsilon_t = 0.0112$ en la viga; $\lambda_s = 0.839$ en la zapata; $F_e = 1083$,
+$F_n = 950$ kgf/cm² en la columna; la interacción tracción-corte $= 0.76$ que gobierna los
+anclajes. Son **57 tests automatizados** que asertan contra el valor publicado y revisado. Los
+ejemplos del blog dejaron de ser solo ilustraciones: se volvieron el banco de pruebas del proyecto.
 
-<Note type="info" title="Un detalle de implementación que me llevó tiempo">
-Las herramientas **derivan** sus constantes desde la edición oficial de cada norma en vez de
-copiarlas de una tabla, y las validan contra los ejemplos. Suena burocrático, pero destapó una
-inconsistencia menor en cómo se convierten los coeficientes de ACI a las unidades de uso local
-—diferencias del orden del 1 %, irrelevantes en ingeniería, pero que dejan de ser un número copiado
-y pasan a ser un número con procedencia—. AISC, en cambio, publica ecuaciones homogéneas y no
-sufre nada de eso. Es material para una nota aparte; acá basta con que cada constante sea trazable.
-</Note>
+Pero *contrastar* no es *coincidir en todo*, y las dos diferencias que quedaron son más
+interesantes que el acuerdo. Vale la pena mirarlas, porque las dos son el mismo tipo de cosa: la
+herramienta y yo tomamos decisiones distintas, y el banco de pruebas las hizo visibles.
+
+**Un coeficiente convertido de dos maneras.** ACI publica sus ecuaciones de corte con coeficientes
+distintos según la edición, y ninguna de las dos está en kgf/cm², que es como se trabaja acá. El
+tope de biela es $8\sqrt{f'_c}$ en pulgada-libra y $0{,}66\sqrt{f'_c}$ en SI; convertidos dan
+**2.1213** y **2.1075**, un 0,65 % de diferencia entre sí. Los ejemplos del blog los escribieron
+redondeados (2.1 en la viga, 2.11 en la zapata); las herramientas **derivan** el suyo de la edición
+pulgada-libra, que es la que gobierna. De ahí salen las dos discrepancias del banco, ambas del
+orden del 1 %:
+
+| | Ejemplo publicado | Herramienta | |
+|---|---|---|---|
+| Tope de biela de la viga | $53.8$ tonf | $54.33$ tonf | +1.01 % |
+| $\phi V_c$ de la zapata | $27.9$ tonf | $28.05$ tonf | +0.54 % |
+
+Es irrelevante en ingeniería y no cambia ningún veredicto, pero **deja de ser un número copiado y
+pasa a ser un número con procedencia** — y por eso la herramienta es la que manda. (Si en las
+etapas siguientes se ve un $\phi V_c$ de 28.05 donde el ejemplo dice 27.9, es esto.) AISC, en
+cambio, publica ecuaciones homogéneas y no sufre nada de eso.
+
+**Un $V_s$ que no es el mismo $V_s$.** La fila "Tope de biela" del JSON de más arriba dice demanda
+14.25 y el ejemplo publica 6.10. No es un error de ninguno de los dos: el ejemplo contrasta el tope
+contra el $V_s$ **requerido** ($V_u/\phi - V_c = 6.10$ tonf) y la herramienta lo contrasta contra
+el $V_s$ **provisto** por los estribos que efectivamente se pusieron —los mismos φ10@25 del
+ejemplo, que dan 14.25 tonf, y que el ejemplo también calcula—. La lectura de la herramienta es la
+estricta: la Sec. 22.5.1.2 acota el $V_s$ que uno *usa*, así que sobre-armar de estribos tampoco
+te deja pasarte del tope. Con cualquiera de los dos la viga cumple con enorme margen (0.26 contra
+0.11), pero son magnitudes distintas y conviene decir cuál se está mirando.
 
 ## Lo que viene
 
 Con las herramientas listas ya existe el objeto de medición del próximo peldaño: **¿qué modelo
-local de 8 GB sabe operarlas bien?** Tiene que leer el enunciado, elegir la herramienta correcta,
+local de 8B parámetros —de los que entran en mi GPU— sabe operarlas bien?** Tiene que leer el
+enunciado, elegir la herramienta correcta,
 pasarle los datos correctos en las unidades correctas, y transmitir el rechazo cuando la
 herramienta se niega —en vez de inventar un número—. Eso se puede medir con método, no con
-sensaciones. Es la etapa 2, y ahí aparece un resultado que no esperaba: dos modelos del mismo
-tamaño que empatan en el puntaje pero fallan de maneras **opuestas**, y un bug del propio
-instrumento de medición que solo se ve cuando lo enfrentás a un modelo real.
+sensaciones. Es la etapa 2, y ahí aparece un resultado que no esperaba: los tres modelos medidos
+eligen la herramienta correcta el **100 %** de las veces, así que toda la diferencia entre ellos
+—de 83 % a 8 % de éxito— ocurre *después* de esa elección, y cada uno se cae de una manera propia.
+Más un bug del propio instrumento de medición que solo se ve cuando lo enfrentás a un modelo real.
 
 *Las herramientas y el servidor MCP viven en un repositorio aparte; este post documenta el diseño,
 no el código. Los ejemplos que sirven de banco de pruebas están enlazados arriba.*

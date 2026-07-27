@@ -80,8 +80,18 @@ Una verificación —los números salen de la herramienta, y el modelo los narra
   Corte en una dirección   uso=0.856  24.0 / 28.05 tonf   · ACI 318-25 Tabla 22.5.5.1 Ec. (c)
   Punzonamiento            uso=0.609  101.7 / 167.0 tonf  · ACI 318-25 Tabla 22.6.5.2 Ec. (a)
   ...
-  gobierna: Refuerzo mínimo · uso máximo: 0.951
+  gobierna: Presión de contacto (servicio) · uso 0.93
+  uso máximo: 0.951  (Refuerzo mínimo — piso de detallado, no estado de resistencia)
 ```
+
+Dos detalles de esa salida que no son cosméticos. El primero: **"gobierna" y "uso máximo" son dos
+cosas distintas y la herramienta las separa a propósito**. `gobierna` es el estado de *resistencia*
+más exigido; `uso máximo` barre además los pisos de detallado —refuerzo mínimo, espaciamientos—,
+que pueden dar un cociente más alto sin ser un modo de falla. Confundirlos lleva a reforzar lo que
+no toca. El segundo: los 28.05 tonf de $\phi V_c$ son 0.5 % más que los 27.9 del
+[ejemplo publicado](/hormigon/ejemplo-zapata-aislada/), y no es un error de ninguno de los dos —es
+el coeficiente de corte derivado de la edición pulgada-libra en vez de copiado del SI redondeado,
+que [E1 explica en detalle](/blog/harness-estructural-e1-tools-que-calculan/)—.
 
 Y una consulta normativa —la misma interfaz, pero enrutada al RAG—:
 
@@ -92,8 +102,14 @@ Y una consulta normativa —la misma interfaz, pero enrutada al RAG—:
 Para una sección controlada por tracción, el factor de reducción φ es 0.90.
 
 citas (del corpus, verificables):
-  · ACI 318-25 §21.2.1
+  · ACI 318-25 Cap. 21 — Tabla 21.2.2 (φ según la deformación neta de tracción)
 ```
+
+Vale la pena mirar esa cita, porque acá el retrieval **acertó** y se ve por qué importa: el 0.90 de
+las secciones controladas por tracción está en la **Tabla 21.2.2**, no en la 21.2.1, cuya fila (a)
+solo dice *"0.65 a 0.90 según 21.2.2"*. Son vecinas y la equivocada habría sonado igual de bien.
+[El RAG de E3](/blog/harness-estructural-e3-rag-con-cita/) no siempre gana esa pulseada —ahí conté
+un caso donde la pierde— así que cuando la gana conviene señalarlo.
 
 Misma caja de texto, dos comportamientos, y en ambos cada número o afirmación llega con su
 procedencia. Ese es el harness: no un modelo más grande, sino un **andamiaje** que pone al modelo a
@@ -102,9 +118,12 @@ números, las citas).
 
 ## Lo que viene
 
-El asistente ya responde y verifica. El siguiente entregable tangible es el **documento**: que una
-verificación se convierta en una memoria de cálculo en Word, con cada número trazable —y sin que el
-modelo escriba ninguno—. Esa es la etapa 6.
+El asistente ya responde y verifica, pero todo lo que sabe se lo tengo que dictar yo en el
+enunciado. El siguiente peldaño le da una fuente de datos propia: **leer un modelo de SAP2000** —
+secciones, fuerzas, reacciones— y verificar sobre lo que lee, con la misma exigencia de
+procedencia. Esa es la etapa 5. Después viene el **documento**: que una verificación se convierta
+en una memoria de cálculo en Word, con cada número trazable y sin que el modelo escriba ninguno,
+que es la etapa 6.
 
 *El harness, el router y el bucle de reparación viven en el repositorio del proyecto. Las etapas
 anteriores están enlazadas arriba.*

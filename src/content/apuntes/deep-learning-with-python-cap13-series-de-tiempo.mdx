@@ -1,8 +1,8 @@
 ---
-title: "El baseline de una línea que casi nadie logra superar"
+title: "La línea base de una línea que la mitad de los modelos no logra superar"
 description: "El capítulo 13 usa una sola tarea —predecir la temperatura a 24 horas— y le tira encima seis modelos. La heurística de sentido común (la temperatura de mañana será la de hoy) da 2,44 °C de error y la red densa no la supera; la ConvNet 1D empeora las cosas. De ahí sale el mejor argumento del libro: que una solución exista en tu espacio de hipótesis no significa que el descenso de gradiente vaya a encontrarla, y por eso los priors arquitectónicos deciden. Después: la RNN como un bucle for con estado, el LSTM como una cinta transportadora, y el recurrent dropout que no puede usar la máscara de siempre. Apuntes del Cap. 13."
 pubDate: 2026-07-26
-tags: ["deep learning", "chollet", "series de tiempo", "rnn", "lstm", "gru", "baseline", "keras"]
+tags: ["deep learning", "chollet", "series de tiempo", "rnn", "lstm", "gru", "línea base", "keras"]
 subsection: "deep-learning-with-python"
 chapter: "Cap. 13 — Pronóstico de series de tiempo"
 source: "François Chollet & Matthew Watson, Deep Learning with Python (Manning, 3ª ed., 2025), Cap. 13 (PDF 375–404)"
@@ -24,6 +24,14 @@ dados cinco días de mediciones horarias de 14 variables meteorológicas de la
 estación de Jena — 420 551 registros cada 10 minutos entre 2009 y 2016. Y el
 capítulo entero consiste en tirarle seis modelos encima.
 
+<Note type="info" title="Sobre el código de este capítulo">
+Todos los bloques son **Keras 3** —la API multi-backend de la 3ª edición—, con el backend por
+defecto (**TensorFlow**); el libro corre igual sobre PyTorch o JAX cambiando `KERAS_BACKEND`. Vale
+decirlo porque varias de estas llamadas no existen o se comportan distinto en `tf.keras`: en
+particular `recurrent_dropout`, que decide si la capa puede usar el kernel rápido de cuDNN o cae a
+la implementación genérica.
+</Note>
+
 ## 1. Antes de modelar: dos decisiones que ya son la mitad del trabajo
 
 **El split no se baraja.**
@@ -34,8 +42,17 @@ capítulo entero consiste en tirarle seis modelos encima.
 > considerablemente más simples si inviertes el eje del tiempo!**"*
 
 50 % / 25 % / 25 %, en orden cronológico. Y la normalización usa **media y
-desviación solo de los 210 225 timesteps de entrenamiento** — si usara todo, el
-futuro se filtraría en la escala.
+desviación solo de los timesteps de entrenamiento** —210 225 según la salida que
+imprime el libro— porque si usara todo, el futuro se filtraría en la escala.
+
+<Note type="warning" title="Las dos cifras del libro no reconcilian">
+El texto dice **420 551** registros (que es lo que trae el CSV de Jena), pero la salida impresa del
+*listing* 13.5 da `num_train_samples: 210225`, `num_val_samples: 105112` y `num_test_samples:
+105114`, que suman **420 451**. Con 420 551 el `int(0.5 * len(raw_data))` daría 210 275, no
+210 225. Es una errata que el libro arrastra desde la 2ª edición: la cifra del corpus y la de la
+salida difieren en 100 registros. Nada del capítulo depende de esos 100 —ni el orden de los
+modelos ni el argumento— pero conviene no leer una cifra como si se derivara de la otra.
+</Note>
 
 **Las muestras no se guardan.** Las ventanas se solapan casi por completo, así que
 materializarlas sería un derroche de memoria. `keras.utils.timeseries_dataset_from_array()`
@@ -47,7 +64,7 @@ las genera al vuelo. Los tres parámetros codifican literalmente el enunciado:
 | `sequence_length = 120` | 120 horas | la entrada cubre **cinco días** |
 | `delay = 6 * (120 + 24 - 1)` | | el objetivo es la temperatura **24 h después del final** |
 
-## 2. El baseline, y por qué es el protagonista
+## 2. La línea base, y por qué es el protagonista
 
 Antes de tocar deep learning: la serie es continua y tiene período diario, así que
 **la temperatura en 24 horas será igual a la de ahora**.
@@ -57,7 +74,7 @@ en dos grados y medio en promedio. No está tan mal, pero probablemente no lance
 servicio meteorológico con esa heurística."*
 
 Entonces entra el deep learning. Un `Flatten` y dos `Dense`. Y no gana: *"algunas
-de las pérdidas de validación se acercan al baseline, pero **no de forma
+de las pérdidas de validación se acercan a la línea base, pero **no de forma
 confiable**"*.
 
 <Note type="warning" title="El argumento central del capítulo">
@@ -86,7 +103,7 @@ Y todo lo que sigue es la aplicación de esa frase.
 modelo convolucional funcione?"* Ventana inicial de 24 (un ciclo), y se reduce al
 submuestrear.
 
-**Val MAE ≈ 2,9 °C. Peor que la red densa, y muy lejos del baseline.** Dos razones,
+**Val MAE ≈ 2,9 °C. Peor que la red densa, y muy lejos de la línea base.** Dos razones,
 y ambas son sobre supuestos:
 
 1. *"Los datos meteorológicos **no respetan del todo el supuesto de invarianza a la
@@ -109,12 +126,12 @@ x = layers.LSTM(16)(inputs)
 ```
 
 **Val MAE 2,39 °C. Test 2,55 °C.** *"El modelo basado en LSTM finalmente puede
-superar el baseline (aunque apenas, por ahora), demostrando el valor del machine
+superar la línea base (aunque apenas, por ahora), demostrando el valor del machine
 learning en esta tarea."*
 
 <Figure
   src="/apuntes/deep-learning-with-python/jena-seis-modelos.svg"
-  alt="Gráfico de barras horizontales comparando seis modelos sobre el problema de Jena, con el MAE de validación en grados Celsius (menos es mejor). Una línea roja vertical punteada marca el baseline de sentido común en 2,44 °C. De arriba abajo: baseline de sentido común 2,44 (barra roja); red densa con Flatten y Dense, barra gris punteada que llega aproximadamente al baseline con la nota 'no de forma confiable'; ConvNet 1D con la barra más larga, cerca de 2,9, claramente peor; LSTM de 16 unidades en 2,39, apenas cruzando la línea; LSTM de 32 unidades con recurrent dropout en 2,27, la barra más corta y en verde, marcada como el mejor con +7 % sobre el baseline; GRU apilado con dropout, test 2,39 con +8,8 % sobre el baseline en test; y LSTM bidireccional, sin barra, con la nota de que es peor que el LSTM simple porque la mitad anticronológica no aporta y duplica la capacidad. Al pie: mejorar el baseline en un 10 % es el techo del dataset, porque con una sola estación el clima de mañana depende de lo que pasa en las estaciones vecinas."
+  alt="Gráfico de barras horizontales comparando seis modelos sobre el problema de Jena, con el MAE de validación en grados Celsius (menos es mejor); los porcentajes de mejora, en cambio, van medidos sobre test. Una línea roja vertical punteada marca la línea base de sentido común en 2,44 °C. De arriba abajo: línea base de sentido común 2,44 (barra roja); red densa con Flatten y Dense, barra gris punteada que llega aproximadamente a la línea base con la nota 'no de forma confiable'; ConvNet 1D con la barra más larga, cerca de 2,9, claramente peor; LSTM de 16 unidades en 2,39, apenas cruzando la línea; LSTM de 32 unidades con recurrent dropout en 2,27, la barra más corta y en verde, marcada como el mejor con +6,5 % sobre la línea base en test; GRU apilado con dropout, cuya barra va con borde discontinuo porque el libro no publica su val MAE y el valor mostrado es el de test, 2,39, un +8,8 %; y LSTM bidireccional, sin barra ni valor publicado, con la nota de que es peor que el LSTM simple porque la mitad anticronológica no aporta y duplica la capacidad. Al pie: mejorar la línea base en un 10 % es el techo del dataset, porque con una sola estación el clima de mañana depende de lo que pasa en las estaciones vecinas."
   caption="Seis intentos y una línea roja. Los dos modelos que no la cruzan son los que destruyen el orden; los que la cruzan son los que lo respetan."
   width={800}
 />
@@ -210,7 +227,9 @@ x = layers.Dropout(0.5)(x)
 ```
 
 **50 épocas** —*"las redes regularizadas con dropout siempre tardan mucho más en
-converger"*— y **val MAE 2,27 °C, test 2,45 °C**: +7 % sobre el baseline.
+converger"*— y **val MAE 2,27 °C, test 2,45 °C**: una mejora del **6,5 % sobre la línea base en
+test** (2,62 → 2,45). Medido en validación serían 7,0 %, y de acá en adelante todos los
+porcentajes de esta nota van **sobre test**, para que se puedan comparar entre sí.
 
 <Note type="tip" title="El costo escondido del recurrent dropout">
 *"Al usar una capa LSTM o GRU en GPU con argumentos por defecto, tu capa usará un
@@ -226,18 +245,18 @@ solo involucran multiplicaciones de matrices pequeñas, y la cadena **no es bien
 paralelizable por la presencia de un bucle `for`**."*
 </Note>
 
-Apilar dos GRU con dropout lleva el test a **2,39 °C (+8,8 %)** — *"mejora un poco,
+Apilar dos GRU con dropout lleva el test a **2,39 °C (+8,8 % sobre la línea base en test)** — *"mejora un poco,
 aunque no dramáticamente. Puede que estés viendo **rendimientos decrecientes**"*.
 
 ## 7. La bidireccionalidad que falla (y por qué eso enseña)
 
 Antes de probarla, el libro se pregunta si el orden cronológico fue una decisión
 arbitraria. Invierte las secuencias y entrena: **el LSTM invertido rinde muy por
-debajo del baseline**.
+debajo de la línea base**.
 
 > *"Tiene todo el sentido: la capa LSTM típicamente será mejor recordando el pasado
 > reciente que el distante y, naturalmente, los datos meteorológicos más recientes
-> son más predictivos (eso es justo lo que hace fuerte al baseline)."*
+> son más predictivos (eso es justo lo que hace fuerte a la línea base)."*
 >
 > *"Sin embargo, esto no es cierto para muchos otros problemas, incluido el lenguaje
 > natural: **la importancia de una palabra para entender una frase no depende
@@ -262,7 +281,7 @@ si el orden que uses importa o no. El capítulo siguiente lo va a usar.
 
 ## 8. El techo, y una advertencia sobre mercados
 
-> *"En nuestra experiencia, **mejorar el baseline en un 10 % es probablemente lo
+> *"En nuestra experiencia, **mejorar la línea base en un 10 % es probablemente lo
 > mejor que puedes hacer con este dataset**. No es tan bueno, pero tiene sentido:
 > **si bien el clima cercano es altamente predecible cuando tienes datos de una
 > grilla amplia de ubicaciones, no es muy predecible si solo tienes mediciones de
@@ -289,7 +308,7 @@ de información frente a todos los demás.**"*
 
 ## Para recordar
 
-- **Calcula el baseline de sentido común primero.** Aquí son 2,44 °C, y la mitad de
+- **Calcula la línea base de sentido común primero.** Aquí son 2,44 °C, y la mitad de
   los modelos del capítulo no lo superan.
 - **Que la solución exista en tu espacio de hipótesis no implica que el gradiente la
   encuentre.** Por eso los priors arquitectónicos deciden.

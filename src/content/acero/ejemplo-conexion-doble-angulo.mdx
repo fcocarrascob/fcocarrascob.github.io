@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — Conexión de corte con doble ángulo, comparada con la shear tab (AISC 360-22)"
-description: "Misma viga, misma reacción de 30 tonf, mismos cuatro pernos Ø22: se verifican en paralelo una conexión de doble ángulo apernado y una shear tab. Duplicar el plano de corte y el espesor de apoyo baja el uso máximo de la cadena de resistencia de 0.93 a 0.46 y muda el eslabón débil desde la plancha hasta el alma de la viga. Y aparece la variable que la cadena esconde: la excentricidad, que en la shear tab deja el perno extremo justo en el límite (0.995 por el método elástico) y en el doble ángulo en 0.48."
+description: "Misma viga, misma reacción de 30 tonf, mismos cuatro pernos Ø22: se verifican en paralelo una conexión de doble ángulo apernado y una shear tab. Duplicar el plano de corte y el espesor de apoyo baja el uso máximo de la cadena de resistencia de 0.93 a 0.46, y con eso la conexión deja de ser el eslabón débil: queda empatada con el alma de la viga. Y aparece la variable que la cadena esconde: la excentricidad, que en la shear tab deja el perno extremo justo en el límite (0.995 por el método elástico) y en el doble ángulo en 0.48."
 pubDate: 2026-07-25
 tags: ["ejemplo", "acero", "conexiones", "corte", "doble ángulo", "excentricidad", "aisc360"]
 subsection: "ejemplos"
@@ -19,9 +19,10 @@ distinto.
 
 Este ejemplo las pone lado a lado con **todo idéntico**: la misma viga, la misma reacción de
 30 tonf, los mismos cuatro pernos Ø22 A325-N con la misma separación, y las mismas ecuaciones
-del Cap. J[^aisc360]. Lo único que cambia es la anatomía. El resultado: el uso máximo **de la cadena de resistencia** cae de 0.93 a 0.46, el
-eslabón débil se muda de la plancha al alma de la viga, y una variable que la cadena no muestra
-—la **excentricidad**— separa a las dos con más claridad que cualquier estado límite.
+del Cap. J[^aisc360]. Lo único que cambia es la anatomía. El resultado: el uso máximo **de la cadena de resistencia** cae de 0.93 a 0.46 y la conexión
+deja de ser el eslabón débil —queda empatada con el alma de la viga—; y una variable que la
+cadena no muestra —la **excentricidad**— separa a las dos con más claridad que cualquier estado
+límite.
 
 ## El caso
 
@@ -42,7 +43,7 @@ eslabón débil se muda de la plancha al alma de la viga, y una variable que la 
 
 <Figure
   src="/ejemplos/doble-angulo-esquema.svg"
-  alt="Comparación en vista en planta de las dos conexiones. A la izquierda, la shear tab: una plancha de 10 mm soldada al ala de la columna, apernada a un solo lado del alma de la viga con cuatro pernos Ø22 en corte simple; el corte de 30 tonf viaja por un único plano y el brazo en el plano, entre la cara de la columna y la línea de pernos, es a = 60 mm. A la derecha, el doble ángulo: dos ángulos 2L 100×100×10 que abrazan el alma de la viga por sus dos caras y se apernan al ala de la columna, con los cuatro pernos del alma trabajando en corte doble y el paquete de apoyo de 20 mm; el brazo en el plano baja a 55 mm. Bajo cada esquema, dos barras: el estado límite que gobierna la cadena —rotura por corte de la plancha con uso 0.93 en la shear tab, aplastamiento en el alma de la viga con uso 0.46 en el doble ángulo— y el perno extremo con la excentricidad, 0.995 contra 0.48."
+  alt="Comparación en vista en planta de las dos conexiones. A la izquierda, la shear tab: una plancha de 10 mm soldada al ala de la columna, apernada a un solo lado del alma de la viga con cuatro pernos Ø22 en corte simple; el corte de 30 tonf viaja por un único plano y el brazo en el plano, entre la cara de la columna y la línea de pernos, es a = 60 mm. A la derecha, el doble ángulo: dos ángulos 2L 100×100×10 que abrazan el alma de la viga por sus dos caras y se apernan al ala de la columna, con los cuatro pernos del alma trabajando en corte doble y el paquete de apoyo de 20 mm; el brazo en el plano baja a 55 mm. Bajo cada esquema, dos barras: el estado límite que gobierna la cadena —rotura por corte de la plancha con uso 0.93 en la shear tab, rotura en corte de los ángulos con uso 0.46 en el doble ángulo, empatada con el alma de la viga— y el perno extremo con la excentricidad, 0.995 contra 0.48."
   caption="Las dos anatomías. La shear tab concentra el corte en un plano y el apoyo en 10 mm de plancha a un solo lado del alma; el doble ángulo duplica ambos, abraza el alma por sus dos caras y acorta el brazo en el plano de 60 a 55 mm."
 />
 
@@ -84,11 +85,15 @@ $$
 </Equation>
 
 **Uso 0.46** —el tope de aplastamiento gobierna a los cuatro pernos porque el alma no tiene
-destaje ni borde cercano en la dirección de la fuerza—, y este es el estado límite que **gobierna
-la cadena de la conexión de doble ángulo**. Que el
-eslabón débil se mude desde la conexión hacia el miembro conectado es exactamente el objetivo del
-Cap. J: *la conexión debe ser más fuerte que lo que conecta*. La shear tab no lo logra —la
-plancha se queda de eslabón débil, uso 0.93—; el doble ángulo sí.
+destaje ni borde cercano en la dirección de la fuerza—. Este valor es común a las dos anatomías,
+porque el alma de la viga es la misma; lo que cambia es **quién queda por debajo de él**.
+
+En la shear tab, no: la plancha se rompe antes (0.93) y es ella el eslabón débil. En el doble
+ángulo la conexión baja hasta el nivel del alma y las dos quedan en **empate técnico**: la
+rotura en corte de los ángulos da 64.6 tonf (uso 0.464) contra 65.1 tonf del apoyo en el alma
+(uso 0.461) —**0.8 % de diferencia**, dentro del ruido de cualquier hipótesis de la
+verificación—. Y ese empate es exactamente el objetivo del Cap. J: *la conexión debe ser al
+menos tan fuerte como lo que conecta*. La shear tab no lo logra; el doble ángulo sí.
 
 ## 3. Los elementos de conexión: corte y bloque (J4)
 
@@ -101,7 +106,12 @@ Todo lo que la plancha hacía sola, los ángulos lo hacen de a dos. Cada verific
 | Rotura en bloque (J4-5, $\phi = 0.75$) | 36.2 tonf · 0.83 | 72.3 tonf · 0.42 |
 
 La rotura en corte del área neta —el estado que gobernaba la cadena de la shear tab con 0.93—
-pasa a 0.46 sin cambiar el espesor, solo por tener dos planchas en vez de una. Las áreas netas
+pasa a 0.46 sin cambiar el espesor, solo por tener dos planchas en vez de una, y con eso pasa a
+ser el estado que gobierna la conexión de doble ángulo, en empate con el alma de la viga.
+El **bloque del ángulo se calcula con la geometría de la plancha** ($L_{eh} = 40$ mm) y no con el
+borde libre real del ala de 100 mm (45 mm): es el lado conservador —con 45 mm daría 75.4 tonf y
+uso 0.40—, y evita hacer depender la comparación de un gramil que no es el mismo en las dos
+anatomías. Las áreas netas
 llevan el agujero de 26 mm que exige B4.3b (2 mm más que el nominal). En el bloque de corte
 gobierna el tope de fluencia de la Ec. J4-5 en ambos casos ($0.60F_yA_{gv} = 37\,191 <
 0.60F_uA_{nv} = 37\,699$ kgf por plancha), como en el ejemplo anterior.
@@ -157,8 +167,8 @@ verificar explícitamente el grupo excéntrico, la flexión de la plancha y su p
 
 <Figure
   src="/ejemplos/doble-angulo-comparacion.svg"
-  alt="Barras de uso enfrentadas para las dos conexiones bajo la misma reacción de 30 tonf. Para cada verificación aparecen dos barras: pernos a corte 0.69 en la shear tab contra 0.35 en el doble ángulo; apoyo en el elemento de conexión 0.53 contra 0.26; apoyo en el alma de la viga 0.46 en ambos casos pero gobernante solo en el doble ángulo; fluencia en corte 0.71 contra 0.35; rotura en corte 0.93 contra 0.46; rotura en bloque 0.83 contra 0.42; flexión por excentricidad en área neta 0.48 contra 0.22; y perno extremo con excentricidad por el método elástico 0.995 contra 0.48. El máximo de la shear tab, 0.995, se marca en rojo pegado al límite 1.0; el máximo del doble ángulo es 0.48. Una caja al pie compara el acero: 2.2 kg la shear tab contra 8.4 kg el doble ángulo, y 4 agujeros de terreno contra 12."
-  caption="Verificación por verificación, la misma demanda. El doble ángulo divide casi todos los usos por dos —salvo el apoyo en el alma de la viga, que es común—, a cambio de casi cuatro veces el acero y el triple de agujeros. Ninguna de las dos es «mejor»: son puntos distintos del mismo intercambio."
+  alt="Barras de uso enfrentadas para las dos conexiones bajo la misma reacción de 30 tonf. Para cada verificación aparecen dos barras: pernos a corte 0.69 en la shear tab contra 0.35 en el doble ángulo; apoyo en el elemento de conexión 0.53 contra 0.26; apoyo en el alma de la viga 0.46 en ambos casos, que en el doble ángulo queda empatado con la rotura en corte; fluencia en corte 0.71 contra 0.35; rotura en corte 0.93 contra 0.46; rotura en bloque 0.83 contra 0.42; flexión por excentricidad en área neta 0.48 contra 0.22; y perno extremo con excentricidad por el método elástico 0.995 contra 0.48. El máximo de la shear tab, 0.995, se marca en rojo pegado al límite 1.0; el máximo del doble ángulo es 0.48. Una caja al pie compara el acero: 2.2 kg la shear tab contra 8.4 kg el doble ángulo, y 4 agujeros de terreno contra 12."
+  caption="Verificación por verificación, la misma demanda. El doble ángulo divide casi todos los usos por dos —salvo el apoyo en el alma de la viga, que es común y con el que termina empatando—, a cambio de casi cuatro veces el acero y el triple de agujeros. Ninguna de las dos es «mejor»: son puntos distintos del mismo intercambio."
 />
 
 ## 5. El precio
@@ -168,7 +178,7 @@ Nada de esto es gratis:
 | | Shear tab | Doble ángulo |
 |---|:---:|:---:|
 | Uso máximo | **0.995** (perno extremo, excentricidad) | **0.48** |
-| Estado límite que gobierna la cadena | rotura en corte de la plancha (0.93) | apoyo en el alma de la viga (0.46) |
+| Estado límite que gobierna la cadena | rotura en corte de la plancha (0.93) | rotura en corte de los ángulos (0.464), en empate con el alma (0.461) |
 | Acero de la conexión | 2.2 kg | 8.4 kg |
 | Agujeros en terreno | 4 | 12 (4 al alma + 8 al soporte) |
 | Soldadura | sí (al soporte, en taller) | no (apernada a ambos lados) |
@@ -186,9 +196,9 @@ una sola plancha.
 |---|---|:---:|:---:|
 | Pernos a corte | Ec. J3-1 | 43.2 tonf · 0.69 | 86.5 tonf · **0.35** |
 | Apoyo en el elemento de conexión | Ecs. J3-6a/c | 56.9 tonf · 0.53 | 113.8 tonf · 0.26 |
-| Apoyo en el alma de la viga | Ec. J3-6a | 65.1 tonf · 0.46 | 65.1 tonf · **0.46 ← gobierna** |
+| Apoyo en el alma de la viga | Ec. J3-6a | 65.1 tonf · 0.46 | 65.1 tonf · **0.461** |
 | Fluencia en corte | Ec. J4-3 | 42.5 tonf · 0.71 | 85.0 tonf · 0.35 |
-| Rotura en corte | Ec. J4-4 | 32.3 tonf · **0.93 ← gobierna la cadena** | 64.6 tonf · 0.46 |
+| Rotura en corte | Ec. J4-4 | 32.3 tonf · **0.93 ← gobierna la cadena** | 64.6 tonf · **0.464 ← gobierna** |
 | Rotura en bloque | Ec. J4-5 | 36.2 tonf · 0.83 | 72.3 tonf · 0.42 |
 | Flexión por excentricidad (rotura neta) | J4 | 3.77 tonf·m · 0.48 | 7.54 tonf·m · 0.22 |
 | Perno extremo con excentricidad | método elástico | 10.81 tonf · **0.995** | 21.6 tonf · 0.48 |
@@ -196,8 +206,8 @@ una sola plancha.
 **Solución:** las dos conexiones resisten $V_u = 30$ tonf. La **shear tab PL 10×100 con 4 Ø22**
 queda al 0.93 en la cadena de resistencia y al 0.995 en el perno extremo si la excentricidad se
 trata por el método elástico —admisible, pero sin margen—. El **doble ángulo 2L 100×100×10 con
-los mismos 4 Ø22** queda al 0.46, gobernado por el aplastamiento en el alma de la viga, a costa
-de 3.8 veces el acero y el triple de agujeros. La lección no es cuál elegir, sino **de qué
+los mismos 4 Ø22** queda al 0.46, con la rotura en corte de los ángulos y el aplastamiento en el
+alma de la viga empatados a 0.8 %, a costa de 3.8 veces el acero y el triple de agujeros. La lección no es cuál elegir, sino **de qué
 depende la elección**: duplicar el plano de corte y el espesor de apoyo divide casi todos los
 usos por dos,
 y acortar el brazo de la excentricidad hace el resto. Cuando una shear tab no da, agregar pernos

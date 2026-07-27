@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 520" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="940" height="520" fill="#ffffff"/>
+  <defs>
+    <marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b02a1a"/>
+    </marker>
+    <marker id="mv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f7a4f"/>
+    </marker>
+  </defs>
+  <text x="470.0" y="26.0" font-size="15" fill="#222" text-anchor="middle" font-weight="bold">Diagrama de interacción: cada verificación mira una combinación distinta</text>
+  <line x1="92.0" y1="66.0" x2="92.0" y2="400.0" stroke="#333" stroke-width="1.2"/>
+  <line x1="92.0" y1="400.0" x2="550.0" y2="400.0" stroke="#333" stroke-width="1.2"/>
+  <text x="82.0" y="62.0" font-size="11" fill="#333" text-anchor="end">P (tonf)</text>
+  <text x="550.0" y="434.0" font-size="11" fill="#333" text-anchor="end">M (tonf·m)</text>
+  <line x1="92.0" y1="400.0" x2="92.0" y2="404.0" stroke="#333"/>
+  <text x="92.0" y="416.0" font-size="9.5" fill="#555" text-anchor="middle">0</text>
+  <line x1="199.0" y1="400.0" x2="199.0" y2="404.0" stroke="#333"/>
+  <text x="199.0" y="416.0" font-size="9.5" fill="#555" text-anchor="middle">1000</text>
+  <line x1="306.0" y1="400.0" x2="306.0" y2="404.0" stroke="#333"/>
+  <text x="306.0" y="416.0" font-size="9.5" fill="#555" text-anchor="middle">2000</text>
+  <line x1="413.0" y1="400.0" x2="413.0" y2="404.0" stroke="#333"/>
+  <text x="413.0" y="416.0" font-size="9.5" fill="#555" text-anchor="middle">3000</text>
+  <line x1="520.0" y1="400.0" x2="520.0" y2="404.0" stroke="#333"/>
+  <text x="520.0" y="416.0" font-size="9.5" fill="#555" text-anchor="middle">4000</text>
+  <line x1="88.0" y1="400.0" x2="92.0" y2="400.0" stroke="#333"/>
+  <text x="84.0" y="404.0" font-size="9.5" fill="#555" text-anchor="end">0</text>
+  <line x1="88.0" y1="323.3" x2="92.0" y2="323.3" stroke="#333"/>
+  <text x="84.0" y="327.3" font-size="9.5" fill="#555" text-anchor="end">1000</text>
+  <line x1="88.0" y1="246.7" x2="92.0" y2="246.7" stroke="#333"/>
+  <text x="84.0" y="250.7" font-size="9.5" fill="#555" text-anchor="end">2000</text>
+  <line x1="88.0" y1="170.0" x2="92.0" y2="170.0" stroke="#333"/>
+  <text x="84.0" y="174.0" font-size="9.5" fill="#555" text-anchor="end">3000</text>
+  <line x1="88.0" y1="93.3" x2="92.0" y2="93.3" stroke="#333"/>
+  <text x="84.0" y="97.3" font-size="9.5" fill="#555" text-anchor="end">4000</text>
+  <polyline points="316.0,400.0 358.2,383.4 395.9,367.4 429.3,351.4 459.0,334.9 484.1,317.8 503.7,299.9 516.3,281.0 512.4,257.7 489.6,230.1 460.6,202.9 425.1,176.0 381.1,149.1 326.4,122.0 261.5,95.6 182.0,68.5 146.4,57.1 138.9,54.2 132.2,51.6 126.3,49.3 121.0,47.3 116.2,45.5 111.9,43.9 108.1,42.5 104.6,41.3 101.4,40.1 92.0,36.9 92.0,36.9" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <polyline points="293.6,400.0 331.6,385.0 365.5,370.6 395.5,356.3 422.3,341.4 442.8,326.4 422.0,319.7 400.5,313.4 372.2,305.1 350.4,289.6 331.6,271.9 308.5,254.4 279.9,236.9 244.4,219.3 224.4,211.2 92.0,211.2" fill="none" stroke="#1a63a8" stroke-width="2.4"/>
+  <line x1="92.0" y1="211.2" x2="252.5" y2="211.2" stroke="#c07a00" stroke-width="1" stroke-dasharray="6 4"/>
+  <text x="104.8" y="203.2" font-size="10" fill="#a56a00">φP_n,max = 2463 tonf</text>
+  <text x="386.2" y="196.8" font-size="10.5" fill="#999">nominal</text>
+  <text x="386.2" y="209.8" font-size="10.5" fill="#999">P_n – M_n</text>
+  <text x="252.5" y="265.8" font-size="10.5" fill="#1a63a8" font-weight="bold">diseño</text>
+  <text x="252.5" y="278.8" font-size="10.5" fill="#1a63a8" font-weight="bold">φP_n – φM_n</text>
+  <line x1="352.0" y1="352.8" x2="393.2" y2="352.8" stroke="#b02a1a" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <circle cx="352.0" cy="352.8" r="5" fill="#b02a1a"/>
+  <text x="342.0" y="356.8" font-size="11" fill="#b02a1a" text-anchor="end" font-weight="bold">A</text>
+  <line x1="352.0" y1="366.9" x2="366.5" y2="366.9" stroke="#2f7a4f" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <circle cx="352.0" cy="366.9" r="5" fill="#2f7a4f"/>
+  <text x="342.0" y="370.9" font-size="11" fill="#2f7a4f" text-anchor="end" font-weight="bold">B</text>
+  <line x1="352.0" y1="400.0" x2="352.0" y2="346.8" stroke="#666" stroke-width="0.8" stroke-dasharray="2 3"/>
+  <text x="352.0" y="430.0" font-size="9.5" fill="#666" text-anchor="middle">M_u = 2430</text>
+  <text x="765.0" y="70.0" font-size="12.5" fill="#666" text-anchor="middle" font-weight="bold">La misma sección, dos combinaciones</text>
+  <rect x="620.0" y="110.0" width="290.0" height="44.0" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
+  <rect x="620.0" y="110.0" width="75.0" height="44.0" fill="#b02a1a" opacity="0.30"/>
+  <line x1="695.0" y1="100.0" x2="695.0" y2="164.0" stroke="#b02a1a" stroke-width="1.8"/>
+  <text x="620.0" y="88.0" font-size="11.5" fill="#b02a1a" font-weight="bold">A:  P_u = 616 tonf</text>
+  <line x1="620.0" y1="180.0" x2="695.0" y2="180.0" stroke="#b02a1a" stroke-width="1" marker-start="url(#mr)" marker-end="url(#mr)"/>
+  <text x="657.5" y="195.0" font-size="11" fill="#b02a1a" text-anchor="middle" font-weight="bold">c = 129,3 cm</text>
+  <text x="910.0" y="88.0" font-size="10.5" fill="#222" text-anchor="end">φM_n = 2815 tonf·m</text>
+  <text x="910.0" y="195.0" font-size="10.5" fill="#222" text-anchor="end">uso M_u/φM_n = 0,86</text>
+  <rect x="620.0" y="260.0" width="290.0" height="44.0" fill="#dcd8d0" stroke="#8a857c" stroke-width="1.4"/>
+  <rect x="620.0" y="260.0" width="62.9" height="44.0" fill="#2f7a4f" opacity="0.30"/>
+  <line x1="682.9" y1="250.0" x2="682.9" y2="314.0" stroke="#2f7a4f" stroke-width="1.8"/>
+  <text x="620.0" y="238.0" font-size="11.5" fill="#2f7a4f" font-weight="bold">B:  P_u = 432 tonf</text>
+  <line x1="620.0" y1="330.0" x2="682.9" y2="330.0" stroke="#2f7a4f" stroke-width="1" marker-start="url(#mv)" marker-end="url(#mv)"/>
+  <text x="651.5" y="345.0" font-size="11" fill="#2f7a4f" text-anchor="middle" font-weight="bold">c = 108,5 cm</text>
+  <text x="910.0" y="238.0" font-size="10.5" fill="#222" text-anchor="end">φM_n = 2565 tonf·m</text>
+  <text x="910.0" y="345.0" font-size="10.5" fill="#222" text-anchor="end" font-weight="bold">uso M_u/φM_n = 0,95</text>
+  <rect x="612.0" y="410.0" width="330.0" height="62" rx="5" fill="#f2f0ec" stroke="#8a857c" stroke-width="0.8"/>
+  <text x="620.0" y="430.0" font-size="10.5" fill="#2f7a4f" font-weight="bold">B gobierna la resistencia (uso 0,95).</text>
+  <text x="620.0" y="446.0" font-size="10.5" fill="#b02a1a" font-weight="bold">A da el eje neutro más profundo: es esa c</text>
+  <text x="620.0" y="460.0" font-size="10.5" fill="#b02a1a" font-weight="bold">la que entra en la Sec. 18.10.6.2.</text>
+  <text x="92.0" y="498.0" font-size="11" fill="#666">Bajar el axial acerca el punto a la frontera (gobierna B); subirlo profundiza el eje neutro (gobierna A).</text>
+</svg>

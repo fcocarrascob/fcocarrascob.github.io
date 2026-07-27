@@ -51,6 +51,21 @@ La Tabla 17.6 de Das da los rangos recomendados cuando no hay ensayos. Apliqué 
 zapata que viene siguiendo esta serie —$2{,}20 \times 2{,}20$ m con $q_o = 196$ kPa— y calculé
 el asentamiento en los dos extremos:
 
+<Note type="warning" title="Dos convenciones que conviene declarar antes de leer la tabla">
+**$q_o$ es acá la presión de contacto bruta, y Das pide la neta.** La Ec. (17.2) define $q_o$ como
+*«presión neta aplicada sobre la cimentación»*, que para esta zapata son
+$196{,}1 - \gamma D_f = 169{,}1$ kPa. Tomar la bruta infla todos los asentamientos de esta tabla en
+un **+16 %** (equivalente: los valores netos son un 13,7 % menores), de forma pareja, porque
+$S_e \propto q_o$. Los uso así como cota superior, pero hay que decirlo, sobre todo porque
+[la nota 7 de esta misma serie](/geotecnia/ejemplo-zapata-los-dos-criterios) sí aplica la neta: las
+dos notas usan la misma ecuación con criterios distintos, y esta es la que se aparta del libro.
+
+**$I_f$ sale siempre de la fila $\mu_s = 0{,}3$** de la Tabla 17.5, aunque a la arcilla blanda se
+le asigne $\mu_s = 0{,}45$ y a la media 0,40. Interpolar también en $\mu_s$ subiría el caso base
+alrededor de un **8 %**. Va en el sentido contrario al punto anterior, así que en arcilla blanda
+los dos sesgos se cancelan en buena medida — pero son dos simplificaciones, no una precisión.
+</Note>
+
 <Figure
   src="/geotecnia-modulo-es/rango-es.svg"
   alt="Tabla-gráfico con ocho tipos de suelo. Para cada uno se indica el rango de E_s de la Tabla 17.6 de Das, la razón entre sus extremos, y una barra horizontal con el rango de asentamiento que produce sobre la zapata de referencia de 2,20 × 2,20 m con q_o = 196 kPa. Arcilla blanda: E_s de 4 a 20 MN/m², razón 5,0×, asentamiento de 12,5 a 62,4 mm — la barra más larga con diferencia, y la única que cruza ampliamente la línea punteada de los 25 mm. Arena limosa: 10 a 20, razón 2,0×, de 14,1 a 28,1 mm. Arena suelta: 10 a 25, razón 2,5×, de 11,2 a 28,1 mm. Arena semi-densa: 15 a 30, de 9,3 a 18,5 mm. Arcilla media: 20 a 40, de 6,5 a 13,1 mm. Arena densa: 35 a 55, razón 1,6× —la menor dispersión—, de 4,9 a 7,8 mm. Arcilla dura: 40 a 100, de 2,7 a 6,8 mm. Arena y grava: 70 a 170, de 1,7 a 4,1 mm. Una línea vertical punteada roja marca los 25 mm con que se calibran las fórmulas de q_adm por asentamiento. Al pie: en arcilla blanda la misma zapata asienta 12,5 mm o 62,4 mm según qué extremo del rango se tome; uno es un diseño correcto y el otro dos veces y media el límite admisible, y ambos salen de la misma tabla del libro."
@@ -63,9 +78,17 @@ y media el límite de 25 mm con el que el propio capítulo calibra sus fórmulas
 asentamiento.
 
 Y hay un detalle que ordena todo lo anterior de la serie: para las tres primeras filas de la
-tabla —arcilla blanda, arena limosa, arena suelta— **el asentamiento supera los 25 mm** con la
-$q_{adm}$ que salió del criterio de corte. Es decir: sobre esos suelos, los 196 kPa que
-calculamos en las notas 1 a 3 **no sirven**. Manda el asentamiento, y por bastante.
+tabla —arcilla blanda, arena limosa, arena suelta— **el asentamiento puede superar los 25 mm** con
+la $q_{adm}$ que salió del criterio de corte. El «puede» es la palabra importante: eso ocurre
+tomando $E_s$ en el **extremo bajo** de su rango. Con el extremo alto, las tres dan 12,5 / 14,1 /
+11,2 mm y no hay problema alguno.
+
+Y conviene separar los tres casos, porque no son el mismo problema. Arena limosa y arena suelta
+llegan a 28,1 mm: un **12 % por encima** del umbral, del orden de las simplificaciones declaradas
+más arriba, y que se resuelve con un poco más de zapata. Arcilla blanda llega a **62,4 mm, dos
+veces y media el límite**, y ahí sí *manda el asentamiento por bastante*: ninguna corrección de
+criterio salva ese número. Sobre arcilla blanda, los 196 kPa que calculamos en las notas 1 a 3 **no
+sirven**.
 
 ---
 

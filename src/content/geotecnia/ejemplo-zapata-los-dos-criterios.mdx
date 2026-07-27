@@ -87,9 +87,21 @@ Los dos métodos difieren **+31 %**, coherente con lo medido en la
 
 Con $E_s = 20$ MN/m² (arena media-densa; Tabla 17.6: 15–30) y $\mu_s = 0{,}32$. En el centro,
 $m' = 1{,}00$ y $n' = 6{,}82$ dan $F_1 = 0{,}469$ y $F_2 = 0{,}023$, luego $I_s = 0{,}525$;
-$I_f = 0{,}74$ de la Tabla 17.5:
+$I_f = 0{,}74$ de la Tabla 17.5.
 
-$$S_e = \mathbf{11{,}1 \ \text{mm}} \quad \text{(rígida, con el factor 0,93)}$$
+**El $q_o$ que entra acá es la presión NETA**, $q_o = 182{,}4 - \gamma D_f = 155$ kPa, no la bruta.
+Lo dice el propio Das al definir la Ec. (17.2) —*«$q_o$ = presión neta aplicada sobre la
+cimentación»*— y la razón física es directa: el suelo bajo el sello ya estaba cargado con el peso
+de la tierra que se excavó, así que solo el **incremento** produce asentamiento. Con la bruta
+saldrían 13,0 mm en vez de 11,1, un 17 % de más. Sustituyendo:
+
+$$S_e = q_o\,(\alpha B')\,\frac{1-\mu_s^2}{E_s}\,I_s\,I_f
+= 155 \cdot 4{,}40 \cdot \frac{1-0{,}32^2}{20\,000} \cdot 0{,}525 \cdot 0{,}74
+= 11{,}9 \ \text{mm}$$
+
+con $\alpha B' = 4 \cdot (B/2) = 4{,}40$ m para el centro de la zapata.
+
+$$S_e = 11{,}9 \times 0{,}93 = \mathbf{11{,}1 \ \text{mm}} \quad \text{(rígida, con el factor 0,93)}$$
 
 ### 3b. Consolidación primaria en la arcilla, Ec. (9.16)
 
@@ -113,9 +125,10 @@ $$S_p = \frac{0{,}270 \times 3000}{1+1{,}0} \log\frac{117{,}6}{106{,}0} = \mathb
 
 <Note type="tip" title="El umbral del OCR, aplicado">
 El $OCR$ umbral de este caso es $1 + 11{,}58/106{,}0 = \mathbf{1{,}11}$. Si la arcilla estuviera
-apenas sobreconsolidada —basta $OCR > 1{,}11$— el resultado caería a **4,6 mm**, un cuarto. Es
-exactamente el acantilado de la [nota 6](/geotecnia/ocr-historia-de-tensiones), y por eso
-$\sigma'_c$ es el primer dato que hay que exigirle al informe.
+apenas sobreconsolidada —basta $OCR > 1{,}11$— el resultado caería a **4,6 mm**, un cuarto. Es el
+mismo acantilado de la [nota 6](/geotecnia/ocr-historia-de-tensiones), acá en 1,11 en vez del 1,17
+de allá: el umbral no es una constante, sale de $1 + \Delta\sigma'/\sigma'_0$ y por lo tanto
+depende del caso. Por eso $\sigma'_c$ es el primer dato que hay que exigirle al informe.
 </Note>
 
 <Note type="info" title="El método 2:1 contra la solución rigurosa">
@@ -170,6 +183,11 @@ de corte**, y es el que fija el diseño.
 Aquel ejemplo de hormigón usó $q_a = 2{,}0$ kgf/cm². Sobre **este** perfil el valor honesto es
 1,62: el 2,0 queda un **23 % del lado inseguro** — no por un error de cálculo, sino porque nadie
 miró la capa de arcilla enterrada. Que es exactamente el punto de esta sección.
+
+Los dos números se comparan como **presión de contacto bruta**, que es como el ejemplo de hormigón
+realmente usa el suyo ($A_{req} = P/q_a$), aunque su ficha de datos lo rotule «neta». Si se tomara
+esa etiqueta al pie de la letra, la bruta equivalente sería 2,28 y la brecha subiría a +40 %; el
+1,62 no cambia en ningún caso. Es una inconsistencia de rótulo que hay que arreglar allá, no acá.
 </Note>
 
 ### Un límite del método, que aparece al final
@@ -229,9 +247,11 @@ Siete notas para desarmar un número que aparecía como dato. El recorrido, en u
    esté el agua.
 4. [**$E_s$**](/geotecnia/modulo-es-parametro-dominante) — factor 5 dentro del rango tabulado.
 5. [**El tiempo**](/geotecnia/cuanto-y-cuando-consolidacion) — de 25 a 106 mm entre la entrega y
-   los 50 años.
-6. [**El OCR**](/geotecnia/ocr-historia-de-tensiones) — factor 4, y es un umbral, no un gradiente.
-7. **Este ejemplo** — todo junto, sobre una zapata real.
+   los 50 años (en el Ejemplo 9.10 de Das; acá, de 11,1 a 81,7 mm).
+6. [**El OCR**](/geotecnia/ocr-historia-de-tensiones) — factor 4 allá, un cuarto acá; en los dos
+   casos es un umbral, no un gradiente.
+7. **Este ejemplo** — todo junto, sobre una zapata real: $S_e = 11{,}1$ mm elásticos más
+   $S_p = 18{,}2$ mm de consolidación primaria, 81,7 mm a los 50 años, y un umbral de OCR de 1,11.
 
 Si algo queda de las siete, que sea esto: **$q_{adm}$ no es una propiedad del suelo.** Es el
 resultado de una cadena de decisiones —método, parámetros, criterio, plazo— y cada eslabón mueve

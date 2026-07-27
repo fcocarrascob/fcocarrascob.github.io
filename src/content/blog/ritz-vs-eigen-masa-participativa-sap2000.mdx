@@ -23,8 +23,8 @@ apéndice blando, una losa de gran luz— esos modos son los **primeros** que Ei
 o —peor— corres "los que siempre corro" y el corte basal del espectro te sale corto **sin un
 solo aviso**.
 
-La técnica que lo resuelve son los **vectores Ritz dependientes de la carga** (LDR, *Load-
-Dependent Ritz*)[^ritz]: en vez de resolver el problema de valores propios completo, SAP construye
+La técnica que lo resuelve son los **vectores Ritz dependientes de la carga**
+(LDR, *Load-Dependent Ritz*)[^ritz]: en vez de resolver el problema de valores propios completo, SAP construye
 una base *a la medida del vector de carga* que le des (la aceleración de base `Accel UX`).
 Esa base ignora por completo lo que no responde a esa carga y captura la masa participativa
 con una fracción de los vectores. Este post arma el caso donde el contraste es brutal, lo
@@ -58,7 +58,8 @@ en doble curvatura y masa por piso $m_f$, la rigidez de piso es $k = 2\cdot 12EI
 $$T_1 = \frac{2\pi}{\omega_1}, \qquad \omega_1 = 2\sqrt{\tfrac{k}{m_f}}\,\sin\!\frac{\pi}{2(2N+1)}$$
 </Equation>
 
-que da $T_1 = 0.517$ s con flexión pura. SAP entrega $0.5293$ s, un +2.4 %… hasta que se
+con $N = 8$ pisos, $m_f = 90$ tonf/g por piso, columnas cuadradas de **0.5 × 0.5 m**,
+altura de piso $h = 4.0$ m, $E = 200$ GPa y $\nu = 0.3$, que da $T_1 = 0.517$ s con flexión pura. SAP entrega $0.5293$ s, un +2.4 %… hasta que se
 agrega la **deformación por corte** de las columnas (rectangulares, $A_s = \tfrac{5}{6}A$)[^cortante]:
 la fórmula sube a $0.5293$ s y el gap se cierra a **0.0 %**. Los modos laterales
 $T_2,T_3,T_4 = 0.178 / 0.110 / 0.081$ s calzan a cuatro decimales. El sistema lateral está
@@ -92,7 +93,9 @@ limpio y controlable, cada una con su equivalente en la GUI y su llamada de API:
    lo que baja los modos verticales a $T \approx 0.90$ s: los más blandos de la estructura.
 4. **Toda la masa concentrada.** Densidad de material en cero
    (`PropMaterial.SetWeightAndMass`) y `PointObj.SetMass` en los nudos → $M_\text{total}$
-   exacta y verificable, sin masa propia difusa que ensucie el balance.
+   exacta y verificable, sin masa propia difusa que ensucie el balance. El balance por piso son
+   las **cinco masas de equipo de 12 tonf** de la viga más **30 tonf repartidas en los nudos de
+   columna**: $8 \times (5 \times 12 + 30) = 720$ tonf, que es el $W$ de la Ec. 1.
 
 <Figure
   src="/ritz-vs-eigen-masa-participativa-sap2000/gui-dof-plano.png"
@@ -154,8 +157,9 @@ nunca entran.
 <Note type="tip">
 Ambas curvas convergen al 100 % de la misma $M_\text{total}$ conocida (Ec. 1): Eigen a 40
 modos, Ritz a 8. El teorema de completitud no se viola —Eigen *llegaría* al 90 %—, pero te
-cobra el triple de vectores por el camino, y con el número de modos que uno suele poner por
-costumbre, no llega.
+cobra **cinco veces** los vectores por el camino (40 contra 8), y con el número de modos que
+uno suele poner por costumbre, no llega. Medido en el hito del 90 %, que es el que exige la norma,
+la brecha es todavía peor: 18 modos Eigen contra 2 Ritz.
 </Note>
 
 ## Traducido a fuerza: el corte basal que se va a cero

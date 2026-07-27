@@ -22,9 +22,15 @@ con una fórmula cerrada. NCh2369 usa[^nch2369]
 $$f_\xi = \left(\frac{0{,}05}{\xi}\right)^{0.4}$$
 </Equation>
 
-Eurocode 8 usa $\eta = \sqrt{10/(5+\xi_\%)}$[^ec8], y las tablas clásicas de Newmark-Hall[^newmark] otra
-expresión más. Las tres discrepan fuerte donde más se usan — para el ξ = 2–3 % del acero
-industrial chileno, la Ec. 1 amplifica un 22–44 % mientras EC8 dice 12–20 %:
+Eurocode 8 usa $\eta = \sqrt{10/(5+\xi_\%)}$[^ec8]. Hay una tercera vía —las tablas clásicas de
+Newmark-Hall[^newmark]—, pero es de otra naturaleza: no es una razón cerrada como las dos
+anteriores, sino un juego de **factores de amplificación tabulados por rango espectral**
+(aceleración, velocidad, desplazamiento), lineales en $\ln\xi$. Como el factor a aplicar depende de
+en qué tramo del espectro se esté, no admite una columna única y **no entra en la tabla**; aparece
+en la figura de más abajo como curva de referencia y lo trato de forma cualitativa.
+
+Las dos que sí son comparables directamente discrepan fuerte donde más se usan — para el ξ = 2–3 %
+del acero industrial chileno, la Ec. 1 amplifica un 22–44 % mientras EC8 dice 12–20 %:
 
 | ξ | NCh2369 $(0.05/\xi)^{0.4}$ | EC8 $\sqrt{10/(5+\xi_\%)}$ |
 |---|---|---|
@@ -121,7 +127,7 @@ se dibuja entero:
 <Figure
   src="/amortiguamiento/error_mapa.png"
   alt="Mapa del error de la fórmula de NCh2369 contra lo medido en el plano período-amortiguamiento: zona azul conservadora en amortiguamientos bajos especialmente en período corto, y zona roja insegura en amortiguamientos altos con período corto donde la fórmula entrega hasta 37 por ciento menos espectro"
-  caption="El error de (0.05/ξ)^0.4 contra la corrección medida, en el plano (T, ξ). Azul: la fórmula da más espectro que lo real (conservador — ξ bajo, y extremo en T corto). Rojo: da menos (inseguro) — y el rincón oscuro es T ≤ 0.1 s con ξ = 15–20 %: la fórmula reduce el espectro un 43 % donde la respuesta real solo baja un 5–25 %."
+  caption="El error de (0.05/ξ)^0.4 contra la corrección medida, en el plano (T, ξ). Azul: la fórmula da más espectro que lo real (conservador — ξ bajo, y extremo en T corto). Rojo: da menos (inseguro) — y el rincón oscuro es T ≤ 0.1 s con ξ = 15–20 %: ahí la fórmula reduce el espectro entre 36 % (en ξ = 15 %) y 43 % (en ξ = 20 %), donde la respuesta real solo baja un 5–25 %."
 />
 
 Los dos rincones del mapa son las dos morales de la nota:

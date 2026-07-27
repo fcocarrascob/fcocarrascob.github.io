@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — Conexión de momento con placas de ala y zona panel (AISC 360-22)"
-description: "Verificación de una conexión de momento apernada con placas de ala (BFP) viga-columna: pernos, placas a tracción y compresión, y rotura del ala perforada de la viga (F13.1). Todo eso pasa con usos entre 0.49 y 0.76 — y la columna no: flexión local del ala 1.43, fluencia local del alma 1.12 y zona panel 1.07, donde el axial de la columna (término 1.4 − Pr/Pc de J10-10) se lleva el margen que faltaba. La solución no está en la conexión sino en rigidizadores de continuidad y una plancha de refuerzo del alma."
+description: "Verificación de una conexión de momento apernada con placas de ala (BFP) viga-columna: pernos, placas a tracción y compresión, y rotura del ala perforada de la viga (F13.1). Todo eso pasa con usos entre 0.49 y 0.76 (0.69 el grupo de pernos cerrado por J3.7) — y la columna no: flexión local del ala 1.43, fluencia local del alma 1.12 y zona panel 1.07, donde el axial de la columna (término 1.4 − Pr/Pc de J10-10) se lleva el margen que faltaba. La solución no está en la conexión sino en rigidizadores de continuidad y una plancha de refuerzo del alma."
 pubDate: 2026-07-25
 tags: ["ejemplo", "acero", "conexiones", "conexión de momento", "zona panel", "rigidizadores", "aisc360"]
 subsection: "ejemplos"
@@ -32,10 +32,10 @@ plancha de corte independiente.
 
 | Dato | Valor |
 |---|---|
-| Viga | W460×74 (A992): $d = 457$, $b_f = 190$, $t_f = 14.5$ mm; $S_x = 1457$, $Z_x = 1655$ cm³ |
+| Viga | W460×74 (A992, $F_y = 3520$, $F_u = 4570$ kgf/cm²): $d = 457$, $b_f = 190$, $t_f = 14.5$ mm; $S_x = 1457$, $Z_x = 1655$ cm³ |
 | Columna | W310×97 (A992): $d = 308$, $b_f = 305$, $t_f = 15.4$, $t_w = 9.9$ mm, $k = 30.5$ mm, $A_g = 123$ cm²; $E = 2.04\times10^6$ kgf/cm² |
-| Placas de ala | A36, 200 × 20 mm, CJP a la columna, apernadas a la viga |
-| Pernos | 6 × Ø24 A490-N por placa (2 líneas × 3 filas), $s = 70$, $L_e = 40$ mm, $d_h = 26$ mm (28 mm para áreas netas, B4.3b) |
+| Placas de ala | A36 ($F_y = 2530$, $F_u = 4080$ kgf/cm²), 200 × 20 mm, CJP a la columna, apernadas a la viga |
+| Pernos | 6 × Ø24 A490-N por placa (2 líneas × 3 filas), $s = 70$, gramil $g = 100$, $L_e = 40$ mm, $d_h = 26$ mm (28 mm para áreas netas, B4.3b) |
 | Solicitación (LRFD) | $M_u = 32$ tonf·m, $V_u = 15$ tonf |
 | Columna | $P_u = 200$ tonf, altura de entrepiso $H = 3.5$ m |
 
@@ -76,6 +76,22 @@ $$
 $t_f = 14.5$ mm, A992) se verifica con J3-6a/c; acá el desgarre gobierna a los seis pernos
 —$1.2\,l_c t F_u$ con $l_c = 2.7$ cm en los de borde y $4.4$ cm en los interiores— y suma
 $\phi R_n = 137.2$ tonf, **uso 0.49**.
+
+Esas dos filas no se leen por separado. La **Sec. J3.7** manda cerrarlas: la resistencia
+efectiva de cada perno es **la menor** entre su corte y su apoyo/desgarre, y la del grupo es la
+suma de esas menores. Acá los dos pernos de borde los limita el desgarre (21 470 kgf cada uno) y
+los cuatro interiores el corte (21 678 kgf), así que:
+
+<Equation label="Sec. J3.7 (resistencia efectiva del grupo)">
+$$
+\phi R_n = 0.75\,(2 \cdot 21\,470 + 4 \cdot 21\,678) = 97.2 \ \text{tonf}
+\;\ge\; F_f = 67.1 \ \text{tonf}
+$$
+</Equation>
+
+**Uso 0.69** —prácticamente el mismo que el corte puro, porque el desgarre de borde queda a un
+1 % del corte—. Es el número que hay que llevar a la tabla resumen: el 0.49 del apoyo, tomado
+solo, exagera el margen.
 
 ## 2. Las placas: tracción y compresión (J4)
 
@@ -122,7 +138,7 @@ $$
 **Uso 0.76.** Pasa, pero es un recordatorio útil: los agujeros de la conexión bajan la capacidad
 de la viga un 19 % respecto de su $\phi M_p = 0.90 F_y Z_x = 52.4$ tonf·m.
 
-Hasta acá, cinco verificaciones y la peor da 0.76. La conexión está bien. Ahora cruzamos al otro
+Hasta acá, seis verificaciones y la peor da 0.76. La conexión está bien. Ahora cruzamos al otro
 lado del nudo.
 
 ## 4. La columna: fuerzas concentradas (J10.1 a J10.3)
@@ -193,7 +209,13 @@ $$
 = 58.0 \cdot 1.156 = 67.0 \ \text{tonf} \quad (\text{uso } 0.87)
 $$
 
-De fallar a pasar con un factor de 1.156. Pero el crédito **no es gratis**: exige un modelo que
+De fallar a pasar con un factor de 1.156. Y ojo con algo que parece una contradicción y no lo
+es: unos párrafos más arriba el axial obligó a pasar de J10-9 a J10-10 porque
+$P_r/P_c = 0.462 > 0.40$, y acá J10-11 se aplica **sin** degradar. Es correcto: en la rama (b)
+de J10.6 el umbral no es $0.4P_c$ sino $0.75P_c$ —la versión degradada es la Ec. J10-12—, y
+$0.462 < 0.75$. Cada rama tiene su propio quiebre.
+
+Pero el crédito **no es gratis**: exige un modelo que
 represente la flexibilidad del panel (elementos de zona panel, resortes rotacionales o el modelo
 de Krawinkler), no el modelo de barras centro a centro de la oficina promedio. Si el análisis no
 lo hace, la ecuación aplicable es J10-10 y la conexión no pasa. Usar J10-11 con un modelo que no
@@ -233,7 +255,7 @@ principio**: la misma W310 en su versión de 158 kg/m tiene $t_w = 15.5$ mm y no
 <Figure
   src="/ejemplos/bfp-verificaciones.svg"
   alt="Dos grupos de barras de uso comparados contra el límite 1.0. Grupo de la izquierda, la conexión y la viga: apoyo en el ala de la viga 0.49, pernos a corte 0.69, placa de ala en fluencia 0.74, placa en rotura neta 0.76 y viga con el ala perforada según F13.1 0.76 — todas holgadas. Grupo de la derecha, la columna: aplastamiento del alma 0.98, zona panel según J10-10 con 1.07, fluencia local del alma 1.12 y flexión local del ala 1.43 — las tres últimas cruzan el límite. Sobre la barra de la zona panel se marca el tramo que aporta el término axial 1.4 menos Pr sobre Pc, que lleva el uso de 1.00 a 1.07, y una flecha muestra el efecto del doubler de 6 mm que la baja a 0.66."
-  caption="Las cinco verificaciones del lado de la conexión y la viga, todas bajo 0.80; las cuatro de la columna, tres de ellas sobre 1.0. El eslabón débil no está en la conexión que se dibuja, sino en el nudo que la recibe."
+  caption="Las verificaciones del lado de la conexión y la viga, todas bajo 0.80; las cuatro de la columna, tres de ellas sobre 1.0. El eslabón débil no está en la conexión que se dibuja, sino en el nudo que la recibe."
 />
 
 ## Resumen: demanda vs. capacidad
@@ -242,6 +264,7 @@ principio**: la misma W310 en su versión de 158 kg/m tiene $t_w = 15.5$ mm y no
 |---|---|:---:|:---:|:---:|
 | Apoyo en el ala de la viga | Ecs. J3-6a/c | conexión | 137.2 tonf | 0.49 |
 | Pernos a corte | Ec. J3-1 | conexión | 97.5 tonf | 0.69 |
+| **Grupo — resistencia efectiva** | **Sec. J3.7** | conexión | 97.2 tonf | **0.69** |
 | Placa de ala — fluencia | Ec. J4-1 | conexión | 91.1 tonf | 0.74 |
 | Placa de ala — rotura neta | Ec. J4-2 | conexión | 88.1 tonf | 0.76 |
 | Viga — ala perforada | Ec. F13-1 | viga | 42.3 tonf·m | 0.76 |

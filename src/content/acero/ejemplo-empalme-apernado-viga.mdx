@@ -30,9 +30,9 @@ son moderadas. Todo apernado, con cubreplacas exteriores en las alas y dos planc
 
 | Dato | Valor |
 |---|---|
-| Viga | W460×74 (A992): $d = 457$, $b_f = 190$, $t_f = 14.5$, $t_w = 9.0$ mm; $I_x = 33\,300$ cm⁴, $S_x = 1457$, $Z_x = 1655$ cm³ |
-| Cubreplacas de ala | A36, 190 × 14 mm, una por ala (exterior) |
-| Planchas de alma | A36, 2 × 8 × 280 mm (una a cada lado) |
+| Viga | W460×74 (A992, $F_y = 3520$, $F_u = 4570$ kgf/cm²): $d = 457$, $b_f = 190$, $t_f = 14.5$, $t_w = 9.0$ mm; $I_x = 33\,300$ cm⁴, $S_x = 1457$, $Z_x = 1655$ cm³ |
+| Cubreplacas de ala | A36 ($F_y = 2530$, $F_u = 4080$ kgf/cm²), 190 × 14 mm, una por ala (exterior) |
+| Planchas de alma | A36 (mismo acero), 2 × 8 × 280 mm (una a cada lado) |
 | Pernos | Ø22 A325 pretensados, agujeros estándar; 8 por ala y 4 en el alma a cada lado de la junta |
 | Geometría | $s = 70$, $g = 100$ mm; borde $L_e = 40$ mm en las cubreplacas y $L_{ev} = 35$ mm en las planchas de alma; $d_h = 24$ mm (26 mm para áreas netas, B4.3b) |
 | Superficie de contacto | Clase A ($\mu = 0.30$), $T_b = 176$ kN $= 17.9$ tonf (Tabla J3.1M) |
@@ -73,9 +73,9 @@ de agujero para área neta lleva los 2 mm extra de B4.3b—:
 
 <Equation label="Ecs. J4-1 y J4-2">
 $$
-\phi R_n = 0.90\,F_y A_g = 60.6 \ \text{tonf} \ (0.75)
+\phi R_n = 0.90\,F_y A_g = 0.90 \cdot 2530 \cdot 26.6 = 60.6 \ \text{tonf} \ (0.75)
 \qquad
-\phi R_n = 0.75\,F_u A_n = 59.1 \ \text{tonf} \ (0.76)
+\phi R_n = 0.75\,F_u A_n = 0.75 \cdot 4080 \cdot 19.32 = 59.1 \ \text{tonf} \ (0.76)
 $$
 </Equation>
 
@@ -234,8 +234,9 @@ una verificación** —por eso los mismos pernos pasan de 0.52 a 0.93 sin que ca
 la conexión—.
 
 <Note type="info" title="Los dos estados que no aparecen">
-También se verificaron y **no gobiernan**: la **rotura en bloque** de la cubreplaca (Ec. J4-5,
-$\phi R_n = 112.3$ tonf, uso 0.40) y la cubreplaca **comprimida** (J4.4, con $L_c/r = 11.3 < 25$,
+También se verificaron y **no gobiernan**: la **rotura en bloque** de la cubreplaca (Ec. J4-5, con
+$L_v = 3s + L_e = 250$ mm en dos planos de corte y el agujero de 26 mm de B4.3b: gobierna el tope
+$0.60F_yA_{gv} + F_uA_{nt}$ y da $\phi R_n = 111.4$ tonf, uso 0.41) y la cubreplaca **comprimida** (J4.4, con $L_c/r = 11.3 < 25$,
 de modo que $P_n = F_y A_g$ y el valor coincide con la fluencia ya calculada). Queda fuera del
 alcance el empalme del **ala comprimida** en su detalle de contacto, que en un empalme apernado
 se diseña igual que el traccionado.

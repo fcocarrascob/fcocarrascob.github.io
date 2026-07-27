@@ -21,7 +21,7 @@
   <text x="326" y="107" font-size="11" text-anchor="middle" fill="#555">eficiencia del martillo</text>
   <text x="326" y="124" font-size="11" text-anchor="middle" fill="#555">η_H de 45 % a 78 %</text>
   <text x="326" y="152" font-size="12" text-anchor="middle" fill="#b02a1a" font-weight="bold">N₆₀ de 11,2 a 19,5</text>
-  <text x="326" y="168" font-size="11" text-anchor="middle" fill="#888">5 opciones · factor 1,55</text>
+  <text x="326" y="168" font-size="11" text-anchor="middle" fill="#888">5 opciones · ×1,55 en q_adm</text>
 
   <!-- eslabon 2 -->
   <line x1="412" y1="103" x2="446" y2="103" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
@@ -30,7 +30,7 @@
   <text x="532" y="107" font-size="11" text-anchor="middle" fill="#555">corrección por confinamiento</text>
   <text x="532" y="124" font-size="11" text-anchor="middle" fill="#555">SIETE fórmulas de C_N</text>
   <text x="532" y="152" font-size="12" text-anchor="middle" fill="#b35c0e" font-weight="bold">(N₁)₆₀ de 17,6 a 20,4</text>
-  <text x="532" y="168" font-size="11" text-anchor="middle" fill="#888">7 opciones · factor 1,11</text>
+  <text x="532" y="168" font-size="11" text-anchor="middle" fill="#888">7 opciones · ×1,11 en q_adm</text>
 
   <!-- eslabon 3 -->
   <line x1="618" y1="103" x2="652" y2="103" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
@@ -39,7 +39,7 @@
   <text x="738" y="107" font-size="11" text-anchor="middle" fill="#555">correlación a φ'</text>
   <text x="738" y="124" font-size="11" text-anchor="middle" fill="#555">TRES publicadas</text>
   <text x="738" y="152" font-size="12" text-anchor="middle" fill="#1a63a8" font-weight="bold">φ' de 32,9° a 40,7°</text>
-  <text x="738" y="168" font-size="11" text-anchor="middle" fill="#1a63a8" font-weight="bold">3 opciones · factor 3,32</text>
+  <text x="738" y="168" font-size="11" text-anchor="middle" fill="#1a63a8" font-weight="bold">3 opciones · ×3,32 en q_adm</text>
 
   <!-- eslabon 4 -->
   <line x1="738" y1="180" x2="738" y2="212" stroke="#8a857c" stroke-width="1.6" marker-end="url(#ia)"/>
