@@ -50,6 +50,428 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+**Tanda 2026-07-26 (segunda del día) — los 12 posts que faltaban en Cobertura (`/auditar nuevos`).**
+Los dos posts de Hormigón recién escritos (Cap. 18 y el ejemplo del muro), los siete de la serie
+`harness-estructural` y los tres últimos apuntes de *Deep Learning with Python*. **203 hallazgos:
+12🔴 · 58🟠 · 100🟡 · 33🔵.** Cuatro posts quedan ❌ bloqueados.
+
+Esta tanda estrenó una fuente: el **DS 60 (2011)**, el reglamento chileno que reemplazó a NCh430 y
+que NCh2369 9.1.1 hace obligatorio para hormigón armado. Se descargó del MINVU y resultó ser un
+**escaneo sin capa de texto** (`pdftotext` devuelve 0 caracteres); se leyó visualmente extrayendo la
+imagen embebida de cada página con `pypdf`. Su cláusula 21.9 quedó fichada en
+`material_teorico/referencias/DS60-2011/muros-cap21.md`.
+
+Los 12🔴 se reparten en dos familias limpias:
+
+- **Precisión normativa** (los dos posts de Hormigón, 7🔴). El exponente de la Ec. (18.10.4.4) va
+  fuera del paréntesis y no sobre $t_{cf}$ — lo confirman el orden del content-stream de la p. 355 y
+  el análisis dimensional; 18.2.8.1 prohíbe los empalmes soldados **sin acotar a zonas de fluencia**;
+  $\ell_d$ de una φ28 usa el coeficiente 1,7 y no el 2,1 de las barras No. 19 y menores; el detalle
+  del elemento de borde incumple 18.10.6.4(f) porque necesita estribos traslapados; y dos cláusulas
+  del DS 60 rechazan cosas que los posts dan por cerradas. Ninguno es aritmético: la cadena numérica
+  del muro —unos 60 valores, tres figuras y dos tablas de sensibilidad— cuadró exacta contra el
+  script, y su validación contra dos casos cerrados dio 0,000 %.
+- **Promesas más fuertes que la evidencia** (la serie del harness, 4🔴, y 1🔴 en los apuntes). E1
+  afirma reproducir los ejemplos «número a número» y publica 0.78 donde el ejemplo dice 0.76; E3
+  presenta como demo de éxito una respuesta que cita §7.6.3 (losas unidireccionales) para una
+  pregunta sobre vigas, que es exactamente la falla que promete haber eliminado; E6 declara que leer
+  modelos «es harina de otro costal» cuando E5 ya lo entregó; E7 contrasta el equilibrio de un
+  pórtico con los números de una viga aislada. En los apuntes, el cap. 13 tiene un dígito
+  transpuesto (420 551 vs 420 451) que rompe su propio split del 50 %.
+
+**Hallazgo fuera de alcance que conviene mirar antes:** la nota `aci318-25-cap9-vigas` (nunca
+auditada) afirma en dos lugares que se requiere estribo mínimo cuando $V_u > 0{,}5\,\phi V_c$. En
+ACI 318-25 ese es el umbral de vigas **pretensadas** (9.6.3.2); para no pretensadas, 9.6.3.1 usa
+$V_u > \phi\lambda\sqrt{f'_c}\,b_w d$. Si el corpus del RAG de E3 son estas páginas, el sistema está
+indexando una regla incorrecta — lo que agrava su 🔴.
+
+**Defecto compartido por los dos posts nuevos:** las tres notas al pie de bibliografía nunca se
+referencian en el cuerpo, y `remark-gfm` descarta en silencio las definiciones huérfanas. Verificado
+en el build: `dist/hormigon/ejemplo-muro-flexocompresion/index.html` tiene **cero** ocurrencias de
+`data-footnotes`, contra 1 en `ejemplo-viga-t`. Toda la bibliografía —incluida la advertencia sobre
+el DS 60— es invisible en la página publicada.
+
+> **Nota de formato:** por volumen, esta tanda registra las **tablas completas de hallazgos** de los
+> doce reportes (los 203, con su fix propuesto) y condensa a un párrafo las secciones «Verificado y
+> correcto» y «No verificable» de cada auditor. Las tandas anteriores conservan el bloque íntegro.
+
+### 2026-07-26 · `hormigon/ejemplo-muro-flexocompresion` · ❌ bloqueado — 25 (5🔴 · 4🟠 · 11🟡 · 5🔵)
+
+**Commit:** `75ab2fd` · **Cat.:** N U L F E C R · **Recalculado:** sí (script corrido; ACI 318-25, NCh2369:2025 y DS 60 contra sus PDF)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | F/E | L.507, 516, 524 | Las tres notas al pie nunca se referencian en el cuerpo; `remark-gfm` descarta las definiciones huérfanas. Verificado: 0 `data-footnotes` en el HTML. La bibliografía completa no se publica, y la `Note` final dice «ver la nota al pie» apuntando a nada | Insertar `[^aci]`, `[^nch]`, `[^aw]` en el cuerpo | ⬜ |
+| 2 | 🔴 | N | L.382–384 | $\ell_d$ con el coeficiente 2,1 (Tabla 25.4.2.3, «No. 19 y menores»). Una φ28 va con **1,7**: $411{,}88/(1{,}7\cdot5{,}424)\cdot28 = 1250{,}7$ mm = **125 cm**, y **156 cm** con $1{,}25f_y$ — no 101/127 | Corregir script y post | ⬜ |
+| 3 | 🔴 | N/C | L.343, 378–380, 409–410 | El detalle incumple **18.10.6.4(f)**: exige estribos traslapados con rama ≤ $2b_c$ salvo que (i) $b \ge \sqrt{c\ell_w/40}$ **y** $\delta_u/h_{wcs} < 0{,}012$; acá $b=300<402$ **y** $0{,}0125\ge0{,}012$. Se dibujó un estribo perimetral único de 904 mm de rama. Y L.331 ya afirma «lleva estribos traslapados» | Rehacer el detalle con ≥3 estribos traslapados; actualizar SVG, `alt`, §8 y la fila (f) | ⬜ |
+| 4 | 🔴 | C/N | L.429–432 | «Tampoco lo salva ninguna regla explícita de espesor mínimo» es falso en Chile: **DS 60 21.9.6.4(f)** exige espesor del elemento de borde ≥ 300 mm **sin condición** | Acotar la frase a ACI y agregar el contraste con DS 60 | ⬜ |
+| 5 | 🔴 | C/R | L.494–500, 520–522 | La declaración «no se aplican los requisitos del DS 60» quedó obsoleta: **21.9.6.4(c)** pide $h_x \le \min(200; b/2) = 150$ mm y el detalle tiene **160 mm**. Cumple ACI (200), incumple DS 60 | Reducir $h_x$ (recub. libre 45 mm) o agregar verificación DS 60 explícita | ⬜ |
+| 6 | 🟠 | N/L | L.345–353, 373–375, 406 | El Cap. 2 define $b_c$ **a los bordes exteriores** del refuerzo transversal: 920×220, no 904×204. $A_g/A_{ch} = 1{,}482$ (no 1,627), expresión (a) = 0,01033, $A_{sh} = 9{,}51$ cm² (no 12,14). Desviación conservadora pero presentada como resultado de la norma | Alinear script, post y SVG con la definición del Cap. 2 | ⬜ |
+| 7 | 🟠 | F/E | L.131 (`alt`) | El `alt` promete «distribución de deformaciones y tensiones»; el SVG tiene dos plantas de sección con la zona comprimida sombreada | Reescribir el `alt` | ⬜ |
+| 8 | 🟠 | C | L.16–17 vs 399/404 | «las dos resistencias cierran **cómodas**» pero la flexión (0,95) es el uso más alto del post, por encima del 0,94 de la deriva | Reformular: ninguna de las dos decide el espesor | ⬜ |
+| 9 | 🟠 | N | L.138 vs SVG | $c$ de la comb. B: 108,6 cm en el post, 108,5 en el SVG. El modelo da 1085,47 mm → **108,5** | Unificar en 108,5 | ⬜ |
+| 10 | 🟡 | N | L.108 | $1{,}60\sqrt{300}/4200 = 0{,}00660$, no 0,00658 (que sale del coeficiente sin redondear, 1,5966) | Escribir 1,597, o dejar 0,00660 | ⬜ |
+| 11 | 🟡 | N | L.367 | $s_o = 100+(350-160)/3 = 163{,}3$ mm; el 150 es el **tope** de 18.7.5.3, que el post no menciona | Mostrar 163 mm acotado a 150 | ⬜ |
+| 12 | 🟡 | F | L.8 | `norm:` no existe en el schema Zod de `hormigon`; Zod lo descarta y la página toma la norma de `SUBSECTIONS` | Eliminar la línea | ⬜ |
+| 13 | 🟡 | N/L | L.3, 432 | «la **capacidad** de deriva salta a 1,25»: 1,25 es el **uso**; la capacidad baja | «el uso … salta a 1,25» | ⬜ |
+| 14 | 🟡 | L/C | L.18–19 vs 317–318 | La intro define la Ec. (18.10.6.2b) como deformación del borde comprimido; R18.10.6.2 dice **deriva de techo** | Alinear la intro | ⬜ |
+| 15 | 🟡 | N | L.484–486 | «+2 % por cada 5 cm» y «+111 %» son los saltos del paso **25→30 cm**; los siguientes son +1,7/+1,3/+1,2 % y +29/+14/+8 % | Anclar al primer escalón o dar el rango | ⬜ |
+| 16 | 🟡 | N/C | L.389 (`caption`) | La 8ª rama no sale del $A_{sh}$ de (g) —7 ramas ya cubren 12,14 cm²— sino del soporte lateral de (f) | Corregir el `caption` | ⬜ |
+| 17 | 🟡 | U/N | L.400–401 | La columna «Capacidad» mezcla $\phi V_n = 343$ con $V_n = 548$ **sin φ**; el 0,57 es el nivel de corte normalizado, no un uso comparable | Rotular la fila o mover el 0,57 | ⬜ |
+| 18 | 🟡 | U/F | L.191, 232, 283, 218 | `label` sin paréntesis (`Ec. 18.10.4.1`) contra la prosa con paréntesis; el heading del §5 mezcla la cláusula 18.10.6.2(a) con la ecuación (18.10.6.2a) | Unificar | ⬜ |
+| 19 | 🟡 | U | L.227 vs 194/206/346 | `20\,000` con espacio fino contra `15000`, `4200`, `3128` sin él | Elegir una convención | ⬜ |
+| 20 | 🟡 | U | L.175 | El `title` de `Note` es texto plano: se renderiza `h_n` con guion bajo visible | «hₙ» o reformular | ⬜ |
+| 21 | 🔵 | C | L.179–180 | «una de las **tres** disposiciones que cambiaron» — las tres están en la nota del Cap. 18, cuyo enlace vive en la nota al pie que no renderiza | Enlazar en línea | ⬜ |
+| 22 | 🔵 | N/L | L.278–280 | El comentario usa $V_u$ y la ecuación del código $V_e$; el post reproduce ambos sin avisar | Nota de una línea | ⬜ |
+| 23 | 🔵 | E | SVG interacción | El recuadro llega a x=942 en un `viewBox` de 940: se recortan 2 px | `width="328"` | ⬜ |
+| 24 | 🔵 | R | L.494–500 | La lista «qué queda fuera» omite 18.10.6.4(i), que sí aplica a este muro | Agregarlo o verificarlo | ⬜ |
+| 25 | 🔵 | R | L.37–38 | $V_E$, $M_E$ y $\delta_u$ se declaran «del análisis» sin modelo, espectro, $R$ ni masa | Declararlos como dato de entrada | ⬜ |
+
+**Verificado y correcto (resumen):** la cadena numérica completa —unos 60 valores— cuadra exacta
+entre prosa, tablas, ecuaciones, `caption`, `alt`, los tres SVG y la salida del script; la validación
+del modelo seccional da **0,000 %** en flexión pura y en $P_0$. Contra el PDF de ACI 318-25: Tabla
+R18.10.1, 18.10.2.1/.2/.3(b)/.4, 18.10.4.1/.3/.4, Tabla 18.10.3.3.3 (incluido $h_n$ en **pies**,
+confirmado en el Cap. 2), 18.10.6.2(a)(b) con sus pisos 0,005 y 0,015, 18.10.6.4(a)(b)(c)(e)(g)(j)(k),
+Tabla 18.10.6.5(b), 18.7.5.3 y 21.2.4.1. Contra NCh2369:2025: 4.5 + Tabla C-2, 6.1, 6.3, 9.1.1/C9.1.1
+y 9.1.5 (texto literal). Contra el DS 60, el muro **sí pasa** 21.9.5.3 ($P_u/0{,}35f'_cA_g = 0{,}39$),
+21.9.5.4 ($\varepsilon_c = 0{,}00647 \le 0{,}008$), 21.9.6.2, 21.9.6.4(a), 21.9.2.2 y 21.9.2.4.
+**No verificable:** las tres acciones del análisis; el reparto exacto de las 30 barras del alma en el
+modelo seccional.
+
+### 2026-07-26 · `hormigon/aci318-25-cap18-sismorresistente` · ⚠️ 26 (2🔴 · 10🟠 · 13🟡 · 1🔵)
+
+**Commit:** `75ab2fd` · **Cat.:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.236–240 | El exponente de la Ec. (18.10.4.4) está en el símbolo equivocado. Orden del content-stream (p. 355): `0.7(1+` `(bw+bcf)tcf` `___` `Acx` `)` `2` → el `2` va **fuera del paréntesis**. Confirmado por dimensiones: $(b_w+b_{cf})t_{cf}^2/A_{cx}$ da mm; sin el cuadrado, adimensional. Y con la forma del post cualquier muro con ala saturaría el tope de 1,2 | $\alpha_{sh} = 0{,}7\left(1 + (b_w+b_{cf})t_{cf}/A_{cx}\right)^2 \le 1{,}2$ | ⬜ |
+| 2 | 🔴 | C | L.97 | 18.2.8.1 dice literalmente «*Welded splices are not permitted in special moment frames or in special structural walls, including coupling beams*» — prohibición **absoluta**. El post la acota a «donde se espera fluencia», que es la regla de los sistemas ordinarios e intermedios (25.5.7.3(c)). R18.2.8.1 agrega que alcanza al refuerzo transversal | Reescribir sin la acotación | ⬜ |
+| 3 | 🟠 | E/F | L.443–459 | Las tres notas al pie no se referencian: la bibliografía no se publica (0 coincidencias de «Farmington Hills» en el HTML) | Insertar las referencias en el cuerpo | ⬜ |
+| 4 | 🟠 | F | L.226, 236 | Etiquetas de `Equation` intercambiadas: la norma numera **Ec. (18.10.4.4)** a $\alpha_{sh}$; los topes son texto de código sin número de ecuación | Intercambiar los `label` | ⬜ |
+| 5 | 🟠 | C/R | L.395–401 | De las «tres novedades», solo la del límite de 85 MPa está respaldada por R18.10.4. Las de $\omega_v$ y $\alpha_{sh}$ son comparación contra 318-19, documento ausente de la bibliografía | Agregar ACI 318-19 a las fuentes y marcar cuál afirma el propio comentario | ⬜ |
+| 6 | 🟠 | C/N | L.296–298 | Se equipara la deriva de NCh2369 6.3 (**entrepiso**, $h$ = altura del nivel) con $\delta_u/h_{wcs}$ de ACI (**techo**). Y se salta del límite normativo a «su deriva real» | Distinguir ambas y usar la deriva real del análisis | ⬜ |
+| 7 | 🟠 | C | L.450–455 | La nota sobre el DS 60 es cierta pero demasiado suave: cinco de sus cláusulas contradicen o endurecen números que la nota presenta como el criterio | Tabla breve «qué cambia el DS 60» en el cuerpo | ⬜ |
+| 8 | 🟠 | U | 91 ocurrencias | Coma decimal contra los 10 apuntes de capítulo de `hormigon` y los 17 de `acero`, que usan punto sin excepción | Decisión de colección (afecta también al ejemplo del muro) | ⬜ |
+| 9 | 🟠 | L | L.124, 410, 427 | «dos cortinas» vs «dos mallas»/«dos capas» de `cap11-muros` vs «doble malla» del ejemplo | Elegir un término y alinear los tres | ⬜ |
+| 10 | 🟠 | F/R | todo | $h_{wcs}$ nunca se define, y el post alterna $h_w/\ell_w$ con $h_{wcs}/\ell_w$ sin avisar. La alternancia **es fiel al código**, pero sin la definición parece descuido | Definir ambos símbolos una vez | ⬜ |
+| 11 | 🟠 | F/R | L.236–240, 354, 358 | Símbolos sin definir: $b_{cf}$, $t_{cf}$, $A_{cx}$, $A_{cw}$, $\ell_{be}$, $b_{c1}$, $b_{c2}$, $b_c$, $\delta_u$, $\delta_c$ | Definirlos bajo cada ecuación | ⬜ |
+| 12 | 🟠 | C | L.3 | La `description` dice que los elementos de borde «no se piden por tensión», pero §6.1 presenta 18.10.6.3 como uno de los **dos** caminos vigentes | «no se piden **solo** por tensiones» | ⬜ |
+| 13 | 🟡 | F | L.13 | `import Figure` sin ningún `<Figure>` en el post | Eliminar el import | ⬜ |
+| 14 | 🟡 | F | L.8 | `norm:` no existe en el schema Zod de `hormigon` | Eliminar la línea | ⬜ |
+| 15 | 🟡 | L/U | L.294, 298 | «el umbral baja **a** 2,5 veces» dice lo contrario de lo que se quiere decir | «cae a 1/2,5» | ⬜ |
+| 16 | 🟡 | C | L.286, 296 | «El piso corta en dos direcciones»: el piso de 0,005 solo actúa hacia arriba; en el caso chileno está inactivo | Reformular | ⬜ |
+| 17 | 🟡 | N | L.64, 75–84 | La fila del muro ordinario omite «unless required by 18.2.1.3 or 18.2.1.4» | Agregar la salvedad | ⬜ |
+| 18 | 🟡 | C | L.79–84, 409 | NCh2369 9.1.5 manda a NCh430 = DS 60, cuyo 21.9.2.2 exige dos capas siempre. La puerta es más angosta de lo que el post y el mermaid presentan | «se sale del 18.10 **y entra al DS 60**» | ⬜ |
+| 19 | 🟡 | F | L.59–68 | La tabla de 18.2.1.6 omite (f) marcos especiales prefabricados → 18.9 y (h) muros prefabricados → 18.11 | Agregar las dos filas | ⬜ |
+| 20 | 🟡 | F | L.129–130 | 18.10.4.3 se discute bajo el encabezado de 18.10.2 | Mover a §5 o renombrar §3 | ⬜ |
+| 21 | 🟡 | C | L.39–42 | «recorre su estructura completa»: 18.13 (fundaciones) no aparece en ninguna parte | Ajustar el alcance declarado | ⬜ |
+| 22 | 🟡 | N | L.400, §5 | El tope de 85 MPa aplica a 18.10.4.1, **18.10.4.4 y 18.10.4.5**, y no se menciona en §5 | Ampliar y llevarlo al §5 | ⬜ |
+| 23 | 🟡 | F | L.352 | La fila (e) omite la segunda mitad: «y además ≤ Tabla 18.10.6.5(b)» | Agregar | ⬜ |
+| 24 | 🟡 | E | L.41, 90, 441 | Único apunte de capítulo con enlaces salientes; el de nota→nota (Cap. 17) rompe la autocontención | Quitar el de Cap. 17 o declarar la excepción | ⬜ |
+| 25 | 🟡 | F | L.409 | En el mermaid, el nodo de decisión B tiene una sola salida etiquetada; la rama «sí» queda colgando | Agregar el nodo del muro ordinario | ⬜ |
+| 26 | 🔵 | F | todo | Único apunte de capítulo con cero `<Figure>` (cap9: 3, cap17: 4, cap23: 3…) | Un SVG del borde confinado con la nomenclatura acotada | ⬜ |
+
+**Verificado y correcto (resumen):** todas las cláusulas citadas verificadas contra el PDF, una por
+una — tabla SDC, 18.2.1.6, Tabla R18.10.1 completa, 18.10.2.1/.2/.3/.4, Tabla 18.10.3.3.3 (con $h_n$
+en pies confirmado en el Cap. 2: 65,617 ft → $\omega_v = 1{,}1630$, y 1,0443 con metros), 21.2.4.1 con
+su excepción, Ec. (18.10.4.1) y sus conversiones a kgf/cm² (0,80 y 0,543), 18.10.4.4,
+18.10.6.1/.2/.3/.4/.5 y sus tablas, 18.7.5.3, y las secciones de §7. **La derivación del atajo (ii)
+es correcta:** con los supuestos de R18.10.6.2 da $\ell_w c/b^2 = 37{,}5 \approx 40$. Contra
+NCh2369: 9.1.5, 9.1.1/C9.1.1 y 6.3 textuales. **No verificable:** la columna «ACI 318-19» de la tabla
+de novedades (no hay PDF de esa edición); la presencia de $\lambda$ en tres expresiones (pdftotext
+descarta los glifos griegos).
+
+
+### 2026-07-26 · `blog/harness-estructural-e1-tools-que-calculan` · ⚠️ 24 (1🔴 · 4🟠 · 14🟡 · 5🔵)
+
+**Commit:** `75ab2fd` · **Cat.:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.154 | «la interacción tracción-corte $=0.78$». El ejemplo enlazado publica **0.76** en 8 lugares; recálculo $0.57^{5/3}+0.55^{5/3}=0.7611$, y con ratios sin redondear 0.7689. Ninguna variante da 0.78, y la frase que la enmarca afirma «reproducen los cinco ejemplos, **número a número**» | `0.76` (o 0.77 declarando que la herramienta no redondea los intermedios) | ⬜ |
+| 2 | 🟠 | N/C | L.103–105 | Fila «Tope de biela»: el JSON da demanda 14.25 / capacidad 54.33 / uso 0.262; el ejemplo publica 6.10 / 53.8 / 0.11. Dos diferencias: la capacidad (+1.01 %, la deriva de constantes derivadas que denuncia la Note) y la demanda ($V_s$ provisto vs requerido) | Matizar «número a número» y declarar contra qué $V_s$ se contrasta | ⬜ |
+| 3 | 🟠 | N | SVG `dos-salidas.svg` | El SVG rotula `"uso": 0.99` donde el JSON dice `0.987`, a 40 líneas de distancia | Unificar en 0.987 | ⬜ |
+| 4 | 🟠 | L/U | L.170, 22 | «modelo local de **8 GB**»: los modelos son Qwen3-**8B** y Llama 3.1-**8B** (parámetros), y 8 GB es la VRAM. La misma cadena para dos magnitudes; se propaga a E2 y E4 | «modelo de 8B parámetros» / «que entra en 8 GB de VRAM» | ⬜ |
+| 5 | 🟠 | N | L.153 vs E4 L.80 | $\phi V_c$ de la zapata: 27.9 tonf en E1, 28.05 en E4. Misma herramienta, mismo caso, +0.54 % | Unificar y declarar el criterio de constantes | ⬜ |
+| 6 | 🟡 | N | L.102 | `capacidad 20.88`; recálculo $0.75\cdot(13.576+14.250)=20.869$ → **20.87** (el ejemplo publica 20.9) | 20.87 | ⬜ |
+| 7 | 🟡 | N | L.99 | `27.0/27.37 = 0.98648` → 0.986, pero imprime 0.987 (correcto sobre el valor sin redondear) | Imprimir 27.365 o declarar el criterio | ⬜ |
+| 8 | 🟡 | F | L.13 | `import Equation` sin uso | Borrar | ⬜ |
+| 9 | 🟡 | E | L.65 | «ejemplos en este blog» enlaza a `/hormigon/`, pero dos de los cinco viven en `/acero/`; existen índices dedicados | Enlazar `/hormigon/ejemplos/` y `/acero/ejemplos/` | ⬜ |
+| 10 | 🟡 | L | L.176 | «enfrentás»: voseo rioplatense, contra el español de Chile del resto del repo | «enfrentas» | ⬜ |
+| 11 | 🟡 | L | L.51 | «La **salida** no es prohibir» (= escape) 31 líneas antes de «La **salida** lleva su cita» (= output) | «El camino no es prohibir» | ⬜ |
+| 12 | 🟡 | L | L.78, 130 | Anglicismos sin cursiva: *harness*, *feature*, *bug* | Cursiva la primera vez | ⬜ |
+| 13 | 🟡 | L | L.33, 112 | **RAG** sin expandir; la sigla solo se desarrolla en E3 | Expandir en L.33 | ⬜ |
+| 14 | 🟡 | U/L | L.73 | «viga W460»: designación incompleta, el ejemplo es **W460×74** | `W460×74` | ⬜ |
+| 15 | 🟡 | F | L.6 | Tags `"ACI 318-25"` y `"AISC 360-22"` contra `"AISC 360"` del resto del blog: crea grupos separados | Alinear la convención | ⬜ |
+| 16 | 🟡 | C | L.3, 42 vs 59 | La `description` dice «sin que el LLM **toque** un número» y la Note «nunca pasan por sus manos», pero el `caption` corrige: «el modelo **ve** el número… pero nunca lo produce» | Usar el verbo preciso en los tres lugares | ⬜ |
+| 17 | 🟡 | C | L.34 | «ninguno tiene sentido sin el primero»: E4 anuncia la etapa 6 y E6 se construyó sin E5 | «se apoya en los anteriores» | ⬜ |
+| 18 | 🟡 | F | L.140 | El `alt` lista entradas «(b, h, d, f'c, fy, As, Mu, Vu)» pero la figura muestra además `Av, s` — justo los que disparan el rechazo que ilustra | Alinear el `alt` con el SVG | ⬜ |
+| 19 | 🟡 | R | L.178–179 | «las herramientas viven en un repositorio aparte» sin nombrarlo ni enlazarlo, y sin versión de Ollama ni del SDK MCP | Nombrar el repo y declarar versiones | ⬜ |
+| 20 | 🔵 | F/L | slug | `e1-**tools**-que-calculan` en inglés, contra el resto de slugs en español y contra su propio título | Renombrar (E2–E4 enlazan al slug actual) | ⬜ |
+| 21 | 🔵 | F | L.7 | `section` es inerte: `getPostGroups()` agrupa por `series` cuando existe, y además no coincide con `series` | Unificar ambos nombres | ⬜ |
+| 22 | 🔵 | F | frontmatter | Sin `norm`, pese a que ACI 318-25 y AISC 360-22 son protagonistas | `norm: "ACI 318-25 / AISC 360-22"` | ⬜ |
+| 23 | 🔵 | L | L.76 | «MCP, **el** protocolo estándar»: el artículo definido sugiere que está normalizado | «un protocolo abierto, hoy el más extendido» | ⬜ |
+| 24 | 🔵 | E | L.28, 65, 70–74 | Los 7 enlaces internos llevan barra final; el resto del blog la omite en 50 de 71 | Elegir una convención | ⬜ |
+
+**Verificado y correcto (resumen):** toda la aritmética de la viga (a, c, $\varepsilon_t$, $\phi M_n$,
+usos y `gobierna`); $\lambda_s = 0.839$ y $\phi V_c = 27.9$ contra el ejemplo de la zapata; $F_e$ y
+$F_n$ de la columna contra el ejemplo del galpón; las citas normativas (Tabla 22.5.5.1 Ec. (a),
+Sec. 22.5.1.2, Sec. 22.2/9.3.2); los 7 enlaces resuelven y ninguno es draft; ambas imágenes existen;
+frontmatter válido y `seriesPart` correlativo en los 7 posts. **No verificable:** los «57 tests»; que
+los JSON sean transcripciones literales; el espaciamiento del caso de rechazo.
+
+### 2026-07-26 · `blog/harness-estructural-e2-elegir-motor` · ⚠️ 15 (0🔴 · 7🟠 · 6🟡 · 2🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | U/L | L.154, 23, `description` | «los dos modelos **de 8 GB**» son Qwen3-8B y Llama 3.1-8B; un 8B cuantizado ocupa ~4.7 GB y el 3B no ocupa 8 GB en ningún caso | «los dos modelos de 8B» | ⬜ |
+| 2 | 🟠 | N/C | L.40–45 vs 101–103 | `args` se define como «¿le pasó los datos correctos?»; con esa definición el 3B (83 %) contradice «botcha los números». Y con `args` idéntico, un modelo saca 83 % de éxito y el otro 8 %: la dimensión no explica nada | Definir `args` como «argumentos **clave**» y reescribir el mecanismo | ⬜ |
+| 3 | 🟠 | U | L.77 | `2.040.000 kgf/cm²` con punto de miles, única ocurrencia en todo `src/content/`; el resto escribe `2.04\times10^6` | `2.04 × 10⁶` o espacio fino | ⬜ |
+| 4 | 🟠 | C | título y `description` vs L.112, 153 | Promete «tres formas de fallar **distintas**» pero el cuerpo dice «una `E` en MPa, **como Qwen**» y «la única falla compartida» | «dos formas de fallar y un bug del instrumento» | ⬜ |
+| 5 | 🟠 | C | continuidad E1→E2 | E1 anuncia «dos modelos que **empatan en el puntaje**»; E2 da 83 % vs 67 %, sin empate en ninguna dimensión | Corregir el gancho de E1 | ⬜ |
+| 6 | 🟠 | C | L.150–159 | El endurecimiento contra la `E` en MPa se anuncia «para la etapa siguiente» (E3) pero ocurre en E4 | «para cuando el motor entre al bucle» | ⬜ |
+| 7 | 🟠 | R | L.53 | Benchmark de *function calling* sin tags de Ollama, cuantización, versión, `num_ctx` ni semilla; en Qwen3 tampoco se dice si el modo razonamiento estaba activo | Una línea de configuración | ⬜ |
+| 8 | 🟡 | F | L.119–125 | Bloque marcado ` ```json ` con literales de **Python** (`None`, `False`) — y el post lo dice dos líneas después | Cambiar a ` ```text ` | ⬜ |
+| 9 | 🟡 | U | L.32 | «muerta 60, viva 30, G25» sin unidades; el mismo caso aparece con tres redacciones en E1/E2/E4 | Unificar el enunciado canónico | ⬜ |
+| 10 | 🟡 | L | L.49, 101, 129 | «**Guardá**» (voseo) conviviendo con «Miren» y «fíjense» | Unificar en tuteo/ustedes chileno | ⬜ |
+| 11 | 🟡 | L | L.102 | «**botcha** los números»: calco de *to botch*, inexistente en español y sin uso en el repo | «estropea» / «transcribe mal» | ⬜ |
+| 12 | 🟡 | L | L.31, 130–131, 152 | *benchmark*, *fallback*, *parser*, *prompt* sin cursiva, mientras E7 sí marca *string* | Cursiva la primera vez | ⬜ |
+| 13 | 🟡 | F | L.6 | Los tags nombran Qwen3 y Llama 3.1 pero no **Llama 3.2**, que sostiene la sección más larga | Agregar el tag | ⬜ |
+| 14 | 🔵 | R | L.55–59, 114–132 | Puntajes, bug de Ollama y control del oráculo dependen del repo del proyecto, no público | Enlazar el repo o el CSV | ⬜ |
+| 15 | 🔵 | F | L.7–9 | `section` inerte para los 7 posts | Sin acción; se registra | ⬜ |
+
+**Verificado y correcto (resumen):** toda la aritmética sobre $n=12$ (83 %=10/12, 92 %=11/12,
+67 %=8/12, 8 %=1/12); la cadena del bug cierra exacta (8 impecables + 4 no emitidas; 2 de las 4
+recuperadas siguen fallando); la composición del dataset (5+4+2+1=12); **$\lambda_r = 4.22$
+recalculado contra AISC 360-22 Tabla B4.1a** con la `E` mal pasada, y 13.5 con la correcta — el
+relato del rechazo cierra de punta a punta; los args del JSON de anclajes trazables al ejemplo
+publicado; conversión de `E` (factor 10.2, $\lambda_r$ cae $\sqrt{10.2}$). **No verificable:** los
+puntajes por modelo y el dataset.
+
+### 2026-07-26 · `blog/harness-estructural-e3-rag-con-cita` · ❌ bloqueado — 13 (1🔴 · 5🟠 · 4🟡 · 3🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/L/C | L.84–90 | **El demo estrella responde con la sección equivocada.** La pregunta es «¿cuándo obliga ACI 318-25 a poner refuerzo mínimo de corte **en una viga**?» y la respuesta cita `§7.6.3`, que es **Cap. 7, losas unidireccionales**. Para vigas rige **§9.6.3.1** ($V_u > \phi\lambda\sqrt{f'_c}b_wd$, con $V_u>\phi V_c$ solo para los casos de la Tabla 9.6.3.1). Errónea en la sección **y** en el umbral. Es la falla que el post promete haber eliminado, presentada como caso de éxito | Rehacer el demo con §9.6.3 / Tabla 9.6.3.1, o cambiar la pregunta a una sobre losas. **No publicar así** | ⬜ |
+| 2 | 🟠 | N/L | L.91 | La segunda cita, `§9.6.2`, es **«Minimum flexural reinforcement in prestressed beams»** — ni corte ni no pretensado. Dos de dos citas ajenas a la pregunta | Reemplazar por §9.6.3 / §22.5.5.1 | ⬜ |
+| 3 | 🟠 | E/R | L.50–52 vs 67–69, 90–91 | Las secciones que muestra no existen en el corpus que enlaza: el cap. 7 del sitio no tiene encabezado 7.6.3, el cap. 9 no tiene 9.6.2, y `22.5.5.1.3` no aparece en ningún archivo. Solo `AISC 360-22 Cap. B` existe | O el corpus no son esas páginas, o las etiquetas no salen de los encabezados | ⬜ |
+| 4 | 🟠 | N/C | L.52 vs 32–33, 45 | «**cada** fragmento viaja con su sección» contra «254 fragmentos, **168** con sección» → 86 (34 %) sin ella. La tercera línea del bloque lo demuestra sola («AISC 360-22 Cap. B») | «sección cuando el encabezado la trae (168 de 254), capítulo si no» | ⬜ |
+| 5 | 🟠 | R | L.62–77 | La calibración se apoya en **una sola** pregunta fuera de dominio: 2 puntajes pertinentes y 1 ajeno, y de ahí se generaliza a un rango 0.72–0.76 más ancho que sus dos datos | Declarar cuántas preguntas por grupo y moderar «separa limpio» | ⬜ |
+| 6 | 🟠 | R | L.54–55 | No se declara **qué modelo redacta**; E2 dedica un post entero a elegir el motor y E3 nunca dice que sea el redactor. Tampoco hay tag de `nomic-embed-text`, troceo ni `top-k` | Una línea de configuración | ⬜ |
+| 7 | 🟡 | N | L.67 vs 90 | §7.6.3 con 0.755 en la calibración y 0.78 en el demo; las preguntas difieren, pero el post no lo dice | Anotarlo o usar la misma pregunta | ⬜ |
+| 8 | 🟡 | E | L.50, 115 | Corpus «de ACI **y AISC**» con un solo enlace a `/hormigon/`; las páginas de AISC viven en `/acero/`. El cierre dice «enlazadas arriba», en plural | Enlazar también `/acero/` | ⬜ |
+| 9 | 🟡 | F | L.66–70 | Bloque monoespaciado desalineado (la flecha cae en col. 45 y 46) y solo dos de las tres líneas llevan anotación | Alinear y anotar las tres | ⬜ |
+| 10 | 🟡 | C | L.20–21 vs 83–101 | El intro plantea dos preguntas y el post solo responde la primera; la segunda llega en E4 | Responder ambas o presentarla como adelanto | ⬜ |
+| 11 | 🟡 | L | L.27, 32, 54, 89 | *retrieval*, *embeddings*, *retrieval-augmented generation* sin cursiva | Cursiva la primera vez | ⬜ |
+| 12 | 🔵 | L | L.26 | El ejemplo de cita inventada usa `§9.7.2`, que **sí existe** («Reinforcement spacing»); el «—o no existe—» lo cubre, pero pierde filo | Usar una sección realmente inexistente | ⬜ |
+| 13 | 🔵 | R | L.52, 67–69, 90–91 | Fragmentos, puntajes y rechazo dependen del repo, no público | Enlazar el repo o publicar el índice | ⬜ |
+
+**Verificado y correcto (resumen):** la aritmética del umbral (0.631 ≥ 0.5; 0.631 < 0.70 < 0.747);
+254−168 = 86; `§22.5.5.1.3` **sí** es el factor de efecto de tamaño $\lambda_s$ (confirmado en el
+PDF); `AISC 360-22 Cap. B` = *Design Requirements* y existe como página del corpus; «una por
+capítulo» verificado en disco (11 + 7); frontmatter, enlaces e imágenes correctos; continuidad
+E2→E3→E4 salvo la costura del hallazgo 6 de E2. **No verificable:** el conteo de fragmentos, los
+puntajes y el texto de rechazo.
+
+
+### 2026-07-26 · `blog/harness-estructural-e4-el-harness` · ⚠️ 14 (0🔴 · 4🟠 · 7🟡 · 3🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.80 | Corte en una dirección `24.0 / 28.05` contra los **27.9** que publican E1 y el ejemplo. Recalculado da 27.90 (o 27.87 con el coeficiente derivado exacto); ninguno da 28.05. No es redondeo: la consola es autoconsistente (uso 0.856) y con 27.9 sería 0.860, que es el 0.86 del ejemplo | Decidir cuál es el dato duro y explicar el +0.5 % | ⬜ |
+| 2 | 🟠 | L | L.95 | La respuesta cita `§21.2.1` para «φ = 0.90 [controlada por tracción]». La Tabla 21.2.1(a) solo dice «0.65 to 0.90 **in accordance with 21.2.2**»; el 0.90 está en la **Tabla 21.2.2**. El propio sitio cita 21.2.2 para esto | `Tabla 21.2.2`; si el corpus lo etiqueta 21.2.1, es hallazgo del troceo y merece decirse | ⬜ |
+| 3 | 🟠 | C | L.105–107 | «El siguiente entregable es el documento… Esa es la etapa 6» salta E5, mientras el layout renderiza «Parte 5 ›» hacia SAP2000 | Redirigir el cierre a E5 o declarar que el orden de construcción difirió | ⬜ |
+| 4 | 🟠 | C | L.83 | `gobierna: Refuerzo mínimo · uso 0.951` contra la conclusión del ejemplo («gobierna el corte en una dirección, 0.86»). El 0.951 es exacto pero es un cociente de detallado, no un estado límite | Separar «uso máximo» de «estado límite que gobierna» | ⬜ |
+| 5 | 🟡 | N | L.81 | Punzonamiento `167.0` contra 166.9 del ejemplo; recalculado 166.92 | Unificar o declarar 3 c.s. | ⬜ |
+| 6 | 🟡 | R | L.50–57 | La anécdota de la alucinación —el hallazgo central— no declara modelo, versión ni temperatura | Nombrarlos como hace E2 | ⬜ |
+| 7 | 🟡 | C | L.55–63 | Traza con excepción sin capturar descrita en presente como el comportamiento deseado | Etiquetarla «antes del arreglo» | ⬜ |
+| 8 | 🟡 | R | L.37–46 | El bucle de reparación es lo único que el título promete y no tiene artefacto: las dos vías felices sí muestran consola | Agregar la traza de las dos llamadas | ⬜ |
+| 9 | 🟡 | E | L.106–107 | «Esa es la etapa 6» sin enlace, aunque E6 existe y no es draft | Enlazar E5 y E6 | ⬜ |
+| 10 | 🟡 | L | L.31–32, 61 | «router» aparece primero dentro del `alt`, nunca en prosa ni en cursiva; el SVG rotula «tool» donde el post dice «herramienta» | Presentarlo en prosa y unificar el SVG | ⬜ |
+| 11 | 🟡 | F | L.3 | La `description` menciona «sobre 8 GB», dato ausente del cuerpo | Mencionarlo o sacarlo | ⬜ |
+| 12 | 🔵 | R | L.109–110 | El repositorio no se nombra en ninguno de los siete posts | Nombrarlo o decir que es privado | ⬜ |
+| 13 | 🔵 | C | L.41–46 | E2 promete el endurecimiento «para la etapa siguiente» y llega en E4 | Ajustar la promesa de E2 | ⬜ |
+| 14 | 🔵 | U | L.21, 51 | φ suelto fuera de math mode, contra el uso de E1; atenuante: son citas de lo que teclea el usuario | Opcional | ⬜ |
+
+**Verificado y correcto (resumen):** la consola reproduce el ejemplo ($q_u = 24.8$; $V_u$ corte 24.0;
+$V_u$ punz. 101.7) y las tres razones cierran, incluido el 0.951 exacto; **las dos citas normativas
+de la vía de verificación son correctas contra el PDF** (Tabla 22.5.5.1 fila $A_v<A_{v,min}$ = Ec. (c)
+con $\lambda_s$; Tabla 22.6.5.2 «least of (a),(b),(c)» con (a) gobernando para columna cuadrada); el
+valor φ = 0.90 es correcto, solo falla la sección citada. **No verificable:** que las trazas provengan
+de una corrida real.
+
+### 2026-07-26 · `blog/harness-estructural-e5-sap2000-solo-lectura` · ⚠️ 18 (0🔴 · 6🟠 · 10🟡 · 2🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | R | L.52–56 | La Note declara **una sola** longitud de pandeo (1.64 m, eje débil) y con esa no se llega a los 155.6 tonf: eso sale del **eje fuerte con los 17.9 m completos** ($KL/r_x = 97.4$ → 155.5 tonf, 0.06 %). El post nunca dice cuál gobierna | Agregar «en el eje fuerte sigue con los 17.9 m, que es el que gobierna» | ⬜ |
+| 2 | 🟠 | L | L.87–89 | «su modo de falla conocido: sobre-especificar opcionales» es el de **Qwen3** según E2, no el del motor elegido, cuyas fallas fueron otra `E` en MPa y un obligatorio olvidado | Corregir la atribución, o decir que en vivo mostró un modo que el benchmark no le vio | ⬜ |
+| 3 | 🟠 | L | L.128 | «la cita **E3-2**» se lee como una etapa de la serie; la figura lo escribe bien («AISC E3, Ec. E3-2») | `AISC 360-22 Ec. E3-2` | ⬜ |
+| 4 | 🟠 | F | L.46 | El `alt` omite **todos** los datos de la figura: `llama3.1:8b`, el `.sdb`, la barra, el combo, $A_g$, $F_y$, $P_u$, $\phi P_n$, el uso y la cita | Incorporarlos al `alt` | ⬜ |
+| 5 | 🟠 | C | L.125–137 | Trata E6 como ya entregado mientras el nav renderiza «Parte 6 ›» hacia él y E6 cierra diciendo que leer modelos «son harina de otro costal». El orden 5→6 queda roto en las dos direcciones | Nota sobre el orden de construcción, o reordenar `seriesPart` | ⬜ |
+| 6 | 🟠 | R | todo | Post entero sobre una API COM sin versión de SAP2000, ni del LLM en prosa, ni edición del manual AISC, ni nombre del `.sdb` | Una línea de montaje | ⬜ |
+| 7 | 🟡 | L | L.56, 75, 118–124 | «tablas AISC» sin nombrar la edición, mientras E1, E3 y E7 dicen AISC 360-22 | Nombrarla la primera vez | ⬜ |
+| 8 | 🟡 | U | L.73, 76, 120 | `W24X55` con equis mayúscula junto a `H460×191×16×12` con `×` en el mismo bullet | `W24×55` (y alinear E7) | ⬜ |
+| 9 | 🟡 | U | L.61 | «tonf·m para fuerzas»: tonf·m es un momento; lo que se fija es el sistema fuerza–longitud | «el sistema tonf–m para fuerzas y esfuerzos» | ⬜ |
+| 10 | 🟡 | N | L.56, 128, figura | El mismo valor con tres precisiones: 155.6 / 155.59 / 155.5944 | Fijar una precisión de presentación | ⬜ |
+| 11 | 🟡 | N | L.53 | «esbeltez 439»: $1790/4.0711 = 439.7$ → 440 (439 es truncamiento) | 440 | ⬜ |
+| 12 | 🟡 | U | todo | Variables fuera de math mode (`Zx`, `rts`, `Cw = Iy·ho²/4`, `φPn`…), contra el uso de E1 | Math mode inline | ⬜ |
+| 13 | 🟡 | E | todo | **Cero enlaces internos**, pese a referirse a E1 siete veces, y sin enlazar `Skills_SAP`, que es público y este mismo sitio vendoriza | Enlazar E1, E2, E6, el repo y `/herramientas/sap-scripts/` | ⬜ |
+| 14 | 🟡 | L | L.83–116 | *uplift*, *copy-paste*, *stack trace*, *prompt* sin cursiva; «entradas» e «inputs» a dos palabras en la misma frase | Cursiva y una sola forma | ⬜ |
+| 15 | 🟡 | F | L.109–121 | El encabezado dice «**Tres** verificaciones compuestas» y siguen **dos** bullets | Ajustar el encabezado | ⬜ |
+| 16 | 🟡 | L | L.15 | «la etapa que esperaba al **notebook**»: en un post de LLM/Python dispara *Jupyter* | «al portátil» | ⬜ |
+| 17 | 🔵 | R | L.23–24 | «es un servidor MCP funcional» y «un singleton»: el único código de `Skills_SAP` en este árbol dice «COM directo **sin MCP**» y su clase no es singleton. **No lo marco como error**: el submódulo no está clonado y el repo real puede tener ambos | Clonar el submódulo o precisar la frase | ⬜ |
+| 18 | 🔵 | L | serie | El motor se nombra de cuatro formas entre E2, E4, E5 y E7 | «Llama 3.1-8B» en prosa; el tag solo cuando es literal | ⬜ |
+
+**Verificado y correcto (resumen):** la cadena de la columna cierra al 0.06 % ($A_g = 112.48$ cm²
+exacto; A36 = 2531.1 kgf/cm²; $\phi P_n = 155.5$ contra 155.5944; uso 0.083); la **Ec. E3-2 es la
+aplicable** ($97.4 < 4.71\sqrt{E/F_y} = 133.7$) y el perfil no tiene elementos esbeltos, coherente con
+que la herramienta no rechace; W24×55 verificado contra tabla ($Z_x$, $J$, $r_{ts}$ dentro del
+redondeo); **la afirmación sobre $C_w$ verifica textualmente** contra la *User Note* de AISC 360-22
+§F2; la viga cae en zona inelástica de LTB; la zapata «NO CUMPLE por desarrollo» tiene el signo
+correcto. **No verificable:** todo lo que sale del modelo real (1435 barras, reacciones, usos).
+
+### 2026-07-26 · `blog/harness-estructural-e6-memoria-word` · ❌ bloqueado — 11 (1🔴 · 3🟠 · 4🟡 · 3🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | C | L.93–94 | «Las piezas que faltan —leer y escribir modelos— son **harina de otro costal**» es falso dentro de la serie publicada: E5 ya lee modelos de SAP2000 y E7 los crea. El párrafo está escrito como si la serie terminara en 6 partes | Reescribir el cierre: la lectura ya se entregó y la escritura es la etapa siguiente | ⬜ |
+| 2 | 🟠 | C | L.17–18 | El intro enumera lo construido «hasta acá» y **omite E5**, la parte inmediatamente anterior y de la que hereda un caso de uso | Agregar el eslabón de E5 | ⬜ |
+| 3 | 🟠 | C | L.89, 96–99 | Cierra la serie dos veces: «Dónde queda el proyecto» y el balance de la tesis son cierre de serie, no de etapa 6 de 7; E7 repite el movimiento | Bajar E6 a cierre de etapa | ⬜ |
+| 4 | 🟠 | N | L.81–83 | La consulta pide memoria de una **viga** y la salida devuelve `memoria_viva.docx`: parece transposición | Confirmar contra la corrida o explicar el nombre | ⬜ |
+| 5 | 🟡 | F | L.43–46 vs SVG | La prosa y el `alt` dicen que la tabla lleva **referencia** y **cumple en verde o rojo**; la figura tiene cuatro columnas sin ninguna de las dos | Agregarlas al SVG o ajustar prosa y `alt` | ⬜ |
+| 6 | 🟡 | F | L.48–50 vs SVG | El pie del `.docx` se cita dos veces entrecomillado con **texto distinto**, siendo una cadena literal de la plantilla | Unificar | ⬜ |
+| 7 | 🟡 | E | todo | Cero enlaces internos: menciona «los ejemplos del blog» sin enlazar el que usa el demo, ni E1/E4/E5 | Enlazar | ⬜ |
+| 8 | 🟡 | F | L.7–8 | `section` ≠ `series` y queda inerte (verificado en `posts.ts`, `PostCard.astro`, `BlogPost.astro`) | Borrar `section` o igualarla | ⬜ |
+| 9 | 🔵 | R | L.61–67 | El test usa `assert str(v.demanda) in texto`: contención de substring, puede pasar por coincidencia (`"27.0"` en `"127.05"`) y mezcla criterios de formato | Precisar si el test real usa celdas | ⬜ |
+| 10 | 🔵 | R | L.101 | El repositorio no se nombra; sin versión de `python-docx` ni de la plantilla | Nombrarlo y fijar versión | ⬜ |
+| 11 | 🔵 | U | L.81 | La consola omite unidades (tonf·m, tonf, cm², cm) | Una frase antes del bloque | ⬜ |
+
+**Verificado y correcto (resumen):** la cadena del demo cierra en todas sus apariciones
+($27.0/27.37 = 0.987$; $14.76/20.88 = 0.707$; gobierna Flexión) y coincide con el JSON de E1 **y** con
+el ejemplo `ejemplo-viga-flexion-corte`; el `f"{v.uso:.3f}"` produce literalmente el `0.987` del
+bloque, el SVG y la prosa; frontmatter válido y `seriesPart` correlativo. **La confusión «8 GB» no
+aparece en este post.** **No verificable:** el contenido real del `.docx`, el nombre del archivo y
+que el test exista.
+
+### 2026-07-26 · `blog/harness-estructural-e7-crear-modelos` · ❌ bloqueado — 18 (1🔴 · 5🟠 · 10🟡 · 2🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.119–124 | Los números del contraste no pueden salir del modelo que la prosa dice: «al cambiar la viga el equilibrio cerró en **12.0/12.0**; al subir la muerta a 3 tonf/m pasó a **18 tonf**», y acto seguido «la secuencia: **crear el pórtico**…». Para el pórtico declarado la carga es $2\cdot6\cdot2\cdot2 = 48$ tonf (y 72 a 3 tonf/m); 12 y 18 corresponden a **una sola viga de 6 m** | Decidir el dato: cambiar «pórtico» por «viga», o poner 48 y 72 | ⬜ |
+| 2 | 🟠 | N/U | L.55, 121 | **12.0 se usa para dos magnitudes distintas y sin unidades**: momento ($wL^2/8$) y equilibrio de fuerzas. Y $wL^2/8 = 12$ no es reproducible: con la luz y carga del pórtico da 9.0 | Unidades en los tres contrastes y declarar luz y carga de la viga de prueba | ⬜ |
+| 3 | 🟠 | N/R | L.124 | $M_u = 9.64$ tonf·m no se deriva de ningún dato declarado (los candidatos dan 16.2, 23.4 o 7.8). El par $M_u$/uso **sí** es internamente coherente | Declarar modelo, barra y combo | ⬜ |
+| 4 | 🟠 | N | L.76 vs 18–20 | «transcripción perfecta de los **nueve** parámetros»: el pedido citado tiene **ocho** valores | Corregir a ocho o nombrar el noveno | ⬜ |
+| 5 | 🟠 | R/C | L.77–79 | La verificación a compresión sale sin declarar K ni longitudes de pandeo, justo lo que E5 estableció como criterio del ingeniero. Reproducido con K=1 y L=3.00 m da 228.6 vs 228.8 (0.1 %) | Declarar el supuesto y quién lo puso | ⬜ |
+| 6 | 🟠 | R | todo | Único post de los siete **sin un solo bloque de consola**, siendo el de mayor carga numérica | Pegar al menos dos transcripciones | ⬜ |
+| 7 | 🟡 | R | L.56–58 | «la suma de reacciones debe ser **exactamente** la carga aplicada» solo si el peso propio no participa, y la figura muestra tres patrones | Declarar que el contraste corre sobre D con PP en 0 | ⬜ |
+| 8 | 🟡 | U/L | L.20–109 | Perfiles con `X` (`W12X50`, `W18X50`…) contra el `×` del resto del blog | Unificar en `×` o declarar que es el identificador del catálogo | ⬜ |
+| 9 | 🟡 | L | L.86 | «llama3.1» donde la serie fijó **Llama 3.1-8B** | Corregir o marcar que es el tag | ⬜ |
+| 10 | 🟡 | L | L.97 | «la **Sección E7** de AISC» colisiona con la etiqueta de la propia etapa, usada en la misma página | `AISC 360-22 §E7` | ⬜ |
+| 11 | 🟡 | L | L.96 | «acero **grado 50**» sin especificación, mientras E5 sí nombra el A36 | `A992 Gr. 50 (F_y = 50 ksi)` | ⬜ |
+| 12 | 🟡 | U | L.96 vs 101–102 | La misma magnitud como `h/tw` y `(d−2t_f)/t_w` en párrafos contiguos, con subíndices fuera de math mode; y dos criterios de raya | Una sola notación | ⬜ |
+| 13 | 🟡 | F/E | SVG `roundtrip.svg` | La figura pierde las tildes en casi todas las etiquetas («portico», «parametros», «analisis», «geometria»…) mientras su propio título sí las lleva; y «2x2» con `x` | Corregir tildes y el `×` | ⬜ |
+| 14 | 🟡 | F | L.3 | `description` de 763 caracteres: la más larga del blog contra una mediana de 375 | Recortar a dos frases | ⬜ |
+| 15 | 🟡 | E | todo | Cero enlaces internos siendo el cierre de la serie: no enlaza E5, E6, `Skills_SAP` ni la nota del Cap. E | Agregarlos | ⬜ |
+| 16 | 🟡 | F | L.7–8 | Mismo desajuste `section` ≠ `series` que E6 | Igual que E6 | ⬜ |
+| 17 | 🔵 | R | L.20, 39–40 | Sin versión de SAP2000, sin archivo de propiedades de perfiles (AISC15/16 difieren) y sin definir el «combo LRFD» | Declararlos | ⬜ |
+| 18 | 🔵 | N | L.78 | $P_u = 23.77$ tonf no es verificable sin el modelo, pero queda **dentro de las cotas** (18.0–24.0 tonf) y a −1.0 % de la superior, coherente con columnas mucho más rígidas que las vigas | Nada que corregir | ⬜ |
+
+**Verificado y correcto (resumen):** toda la aritmética de acero cierra. $\lambda_r = 1.49\sqrt{29000/50}
+= 35.9$ ✓ (Tabla B4.1a caso 5); **el rechazo del W12X26 es genuino** (su $h/t_w$ real de tabla, 47.2,
+también supera 35.9) y el del W12X40 es **conservador y no inseguro** (derivado 37.0 vs tabla 33.6),
+tal como afirma el post; $\phi P_n$ del W12X50 recalculado desde cero da 228.6 contra 228.8 (0.1 %) y
+gobierna el eje débil; el par $M_u$/uso implica $\phi M_n = 52.4$ tonf·m, exactamente la capacidad
+plástica del W18X50; el equilibrio $2\cdot6\cdot2\cdot2 = 48$ ✓; truncamiento 1.5→1 correctamente
+descrito. **El cierre de la serie es correcto** contra el mapa de E1. **No verificable:** $P_u$, $M_u$
+y las salidas en vivo.
+
+### 2026-07-26 · `apuntes/deep-learning-with-python-cap12-deteccion-de-objetos` · ⚠️ 12 (0🔴 · 2🟠 · 8🟡 · 2🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | L.234–236 | Promete que en el cap. 13 un baseline de una línea «le va a ganar a **casi todo**»; allí lo superan **3 de 6** modelos | «donde la mitad no logra superarlo» | ⬜ |
+| 2 | 🟠 | R | L.135–138, 185–191 | Dos bloques Keras 3 / KerasHub (`ops.sign`, `keras_hub.models.ObjectDetector.from_preset`) sin declarar versión; la API cambió respecto de `keras_cv`/tf.keras | Línea de setup en el intro o en `source` | ⬜ |
+| 3 | 🟡 | N | L.58–60 | «alrededor de **2015**… RetinaNet, SSD y YOLO»: RetinaNet es de **2017** | Separar las fechas | ⬜ |
+| 4 | 🟡 | C/N | L.91, 226–227 | Los tres escalados de la pérdida y los 77 850 336 parámetros existen **solo** dentro de los `alt` | Llevarlos a la prosa | ⬜ |
+| 5 | 🟡 | N | L.79, 91, 221 | «91 clases» es el tamaño del espacio de IDs de COCO; las categorías efectivas son **80** | «91 IDs (80 clases efectivas)» | ⬜ |
+| 6 | 🟡 | N | L.91 (`alt`) | «0 en las otras **35** celdas» solo vale si la imagen trae una caja, y el dataset se filtró a **hasta cuatro** | «(35 si trae una sola caja)» | ⬜ |
+| 7 | 🟡 | U | L.91, 226–227 | `×` pegado (`448×448×3`) contra el SVG que ilustra y contra los caps. 8 y 11, que lo espacian | Espaciar | ⬜ |
+| 8 | 🟡 | N/L | L.92 (`caption`) | «ResNet-50 **justamente porque** submuestrea con strides»: su *stem* incluye un `MaxPooling2D`, y la causalidad no está atribuida | Matizar y atribuir | ⬜ |
+| 9 | 🟡 | L | L.58, 79 | **YOLO** se usa 6 veces sin expandir, lo que deja sin explicar el chiste del meme | Expandir la primera vez | ⬜ |
+| 10 | 🟡 | E | L.40, 92, 120, 166 | Cero enlaces internos, pese a citar «el capítulo anterior» cuatro veces; los caps. 1–11 sí enlazan | Enlazar el cap. 11 | ⬜ |
+| 11 | 🔵 | N | L.91 (`alt`) | Los 77 850 336 parámetros no se reproducen desde la arquitectura dibujada (da 77 857 536, +7 200). Probablemente sale de un `model.summary()` del libro | Cerrar contra el notebook | ⬜ |
+| 12 | 🔵 | R | L.79–83, 145 | Cifras del libro no verificables sin el PDF (117 266 imágenes, 18 GB, 4 épocas…) | Verificar y atribuir | ⬜ |
+
+**Verificado y correcto (resumen):** 5+91 = 96 números por celda (coincide en cinco lugares); grilla
+6×6 = 36; 448/32 = 14 → 401 408 floats; la conv 3×3 stride 2 da 6 y 6·6·512 = 18 432; 6·6·96 = 3456
+calza con el `Reshape`; `signed_sqrt` correcto; los seis textos de los SVG concuerdan con sus `alt`;
+frontmatter, rango de páginas y estructura válidos. **Cumple la regla editorial**: enseña el
+mecanismo y las cifras son ilustración.
+
+### 2026-07-26 · `apuntes/deep-learning-with-python-cap13-series-de-tiempo` · ❌ bloqueado — 13 (1🔴 · 5🟠 · 6🟡 · 1🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.24 vs 37 | Contradicción interna: **420 551** registros con split del 50 % dan `int(0.5·420 551) = 210 275`, no los **210 225** que declara. Con 420 451 el split da 210 225 exacto (y 105 112 / 105 114 el resto): el dígito transpuesto está en el conteo | Cambiar a **420 451** (o corregir 210 225 → 210 275) contra el PDF | ⬜ |
+| 2 | 🟠 | N | L.213 vs 229 | Bases de porcentaje mezcladas: «+7 %» es sobre **validación** (6.97 %) y «+8,8 %» sobre **test** (8.78 %); el lector los compara creyendo que son la misma métrica | Unificar en test (6,5 % y 8,8 %) y declarar la base | ⬜ |
+| 3 | 🟠 | N/F | L.117 (`alt`) y SVG | La figura declara su eje como «MAE de **validación**» pero grafica el GRU con su MAE de **test** y deja el bidireccional sin valor: dos de siete filas fuera de la escala del eje | Poner los val MAE, o cambiar el eje a test | ⬜ |
+| 4 | 🟠 | C | L.2 vs 292–293 | El título dice «que **casi nadie** logra superar» y el propio «Para recordar» dice «**la mitad**» — que es lo correcto (3 de 6 lo cruzan) | Ajustar título y rótulo del SVG | ⬜ |
+| 5 | 🟠 | L | 17 usos + tag + título | «**baseline**» contra «**línea base**», ya fijado en los caps. 4, 5 y 6 | «línea base» (o migrar los caps. 4–6) | ⬜ |
+| 6 | 🟠 | R | L.107–109, 135–140, 207–210 | Tres bloques Keras sin versión; `recurrent_dropout` y el fallback de cuDNN dependen del backend | Declarar Keras 3.x + backend | ⬜ |
+| 7 | 🟡 | N/F | L.48 | La celda «Valor» de la fila `delay` está **vacía**, y ahí está el número que cierra el enunciado (858 pasos = 24 h) | Rellenarla | ⬜ |
+| 8 | 🟡 | N/L | L.41–43 | «los tres **parámetros**» incluye `delay`, que **no** es argumento de `timeseries_dataset_from_array()` | «dos parámetros más el desfase `delay`» | ⬜ |
+| 9 | 🟡 | C | L.3, 25, §7 | «seis modelos», pero §7 entrena además un LSTM sobre secuencias invertidas que no se cuenta ni grafica y del que sí se da veredicto | «seis modelos y un experimento de control» | ⬜ |
+| 10 | 🟡 | L | L.108–229 | **LSTM**, **GRU** y **RNN** se usan 21, 3 y 8 veces sin expandirse, en el capítulo donde se introducen | Expandir la primera vez | ⬜ |
+| 11 | 🟡 | E | L.101, 160 | «el capítulo 11» y «el capítulo 9» sin enlazar, contra la convención de los caps. 1–11 | Enlazar ambos | ⬜ |
+| 12 | 🟡 | C | L.311–313 | El cierre dice que el cap. 14 reutiliza el bidireccional «esta vez sí, del lado correcto de la línea»; allí saca 84,4 % y pierde contra el bag-of-words | Reformular | ⬜ |
+| 13 | 🔵 | N | L.55–229 | Los MAE salen de corridas del libro y no se pueden reproducir | Atribuir explícitamente | ⬜ |
+
+**Verificado y correcto (resumen):** `delay = 6·(120+24−1) = 858` y el desfase resultante es
+exactamente **24 h**; `sampling_rate = 6` = 1 punto/hora; `sequence_length = 120` h = 5 días,
+coherente con el intro; split 50/25/25 cronológico y normalización solo sobre entrenamiento; las
+cinco cifras de MAE idénticas en prosa, `alt` y SVG; +8,8 % recalculado = 8.78 %; Gal 2015 correcto.
+**Cumple la regla editorial**: el argumento es mecánico. **No verificable:** todos los MAE y cuál de
+las dos cifras del hallazgo 1 imprime el libro.
+
+### 2026-07-26 · `apuntes/deep-learning-with-python-cap14-clasificacion-de-texto` · ⚠️ 14 (0🔴 · 3🟠 · 7🟡 · 4🔵)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.211 (`alt`) y SVG | «**10 veces** más chico»: $15\,393\,409/1\,986\,177 = 7{,}75\times$, y la prosa dice «de 15 M a 2 M» = 7,5× | «casi 8 veces» | ⬜ |
+| 2 | 🟠 | N | L.235–236 vs 222 | «25 000 reviews sin etiquetar, **del mismo tamaño que los datos de entrenamiento**», pero el entrenamiento son **20 000** | Corregir la cifra o quitar la aposición | ⬜ |
+| 3 | 🟠 | R | 5 bloques | Cinco bloques Keras sin versión; `embeddings.assign` y `output_mode="multi_hot"` son API de Keras 3 | Declarar Keras 3.x + backend | ⬜ |
+| 4 | 🟡 | L/N | L.211 (`alt`) | «**los mismos pesos** y otra inicialización» es autocontradictorio; lo que se repite es la arquitectura | «la misma arquitectura, otra inicialización» | ⬜ |
+| 5 | 🟡 | N/R | L.126 vs 194 | `max_tokens` vale **20 000** en §4 y **30 000** en §5 y §7 sin avisar; el snippet solo cuadra con 30 000 | Anotar el cambio de vocabulario | ⬜ |
+| 6 | 🟡 | C | L.2–3, 211–213 | Único punto donde la regla editorial roza el límite: título, `description` y figura son un leaderboard de métricas, y el mecanismo llega recién en §6 como cita | Subir el diagnóstico al intro | ⬜ |
+| 7 | 🟡 | C | L.212 (`caption`) | «dos de ellas pierden» depende de una base que no se declara (las tres pierden contra la mejor) | «quedan por debajo de las dos» | ⬜ |
+| 8 | 🟡 | N/L | L.39–40 | «la broma de Jelinek **en los 90**»: se data habitualmente en **1985** | Fechar 1985 tras contrastar | ⬜ |
+| 9 | 🟡 | N | L.29–31 | Georgetown–IBM con «~200 entradas de tabla»; la cifra histórica es **250 palabras** | Verificar contra el PDF | ⬜ |
+| 10 | 🟡 | E | L.316–320 | Cero enlaces internos: no enlaza el cap. 13, del que toma el LSTM bidireccional | Enlazarlo | ⬜ |
+| 11 | 🔵 | N | L.235–236 | El `unsup/` de aclImdb tiene **50 000** documentos, no 25 000; el libro pudo submuestrear | Contrastar con el PDF | ⬜ |
+| 12 | 🔵 | N | L.250 | CBOW con `Dense(max_tokens, activation="sigmoid")` para elegir una palabra entre 30 000: lo esperable es `softmax` | Verificar el código del libro | ⬜ |
+| 13 | 🔵 | N | L.81 (`alt`) | «la frase da **13 tokens**» no se reproduce sin el `split` del `WordTokenizer` (10/11/14 según criterio). El «63 caracteres» **sí** es exacto | Mostrar el `split` o atribuirlo | ⬜ |
+| 14 | 🔵 | F | L.44–52 | Bloque de código sin lenguaje declarado; el cap. 11 usa el mismo patrón, así que es convención de la serie | Estandarizar a ```text | ⬜ |
+
+**Verificado y correcto (resumen):** **los cinco conteos de parámetros son exactos** — 20 001,
+30 001, 15 393 409, 1 986 177 y los 1 920 000 del embedding; 600×30 000 = 18 000 000 floats;
+89,1−84,4 = 4,7 **puntos** (y usa «puntos», no «por ciento»); ventana CBOW de 9; el par BPE más
+frecuente es (o,w) con 4 ocurrencias, verificado contando todos los pares; la frase tiene exactamente
+63 caracteres; BPE = Gage 1994 y CBOW = Mikolov 2013; las cinco accuracies idénticas en cinco
+lugares. **No verificable:** los valores de accuracy, el 12 % de CBOW y las cifras históricas.
+
+### Transversal a los tres apuntes (no computado por post)
+
+| # | Sev | Cat | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|----------|---------------|--------|
+| T1 | 🔵 | U | El separador decimal de toda la serie `apuntes` es **coma**, contra el punto del resto del blog. Uniforme y consciente en los 14 capítulos | Decisión editorial de sección; si se migra, en una sola pasada | ⬜ |
+| T2 | 🔵 | U | El separador de miles es espacio simple U+0020, no espacio fino. Uniforme en los 14 | Igual que T1 | ⬜ |
+| T3 | 🔵 | L | Los anglicismos van casi siempre sin cursiva; es el patrón dominante de la serie | Fijar la regla para `apuntes` | ⬜ |
+| T4 | 🔵 | R | Ninguno declara versión de Keras en el cuerpo; la única mención vive en `SUBSECTIONS[...].description` | Extender el campo `source` con la versión, en los 14 de una vez | ⬜ |
+
+
+---
+
 **Tanda 2026-07-26 — segunda pasada sobre los ocho ejemplos de Hormigón y Acero.** Los ocho ya
 tenían auditoría registrada (23 y 25 de julio); la columna «sin auditar» que los marcaba estaba
 en el ROADMAP, no acá. Esta segunda pasada fue más profunda —fue al **texto crudo de las normas**
@@ -1661,6 +2083,13 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `harness-estructural-e1-tools-que-calculan` | 2026-07-26 | ⚠️ | 24 (1🔴 4🟠 · 14🟡 5🔵) |
+| `harness-estructural-e2-elegir-motor` | 2026-07-26 | ⚠️ | 15 (0🔴 7🟠 · 6🟡 2🔵) |
+| `harness-estructural-e3-rag-con-cita` | 2026-07-26 | ❌ | 13 (1🔴 5🟠 · 4🟡 3🔵) |
+| `harness-estructural-e4-el-harness` | 2026-07-26 | ⚠️ | 14 (0🔴 4🟠 · 7🟡 3🔵) |
+| `harness-estructural-e5-sap2000-solo-lectura` | 2026-07-26 | ⚠️ | 18 (0🔴 6🟠 · 10🟡 2🔵) |
+| `harness-estructural-e6-memoria-word` | 2026-07-26 | ❌ | 11 (1🔴 3🟠 · 4🟡 3🔵) |
+| `harness-estructural-e7-crear-modelos` | 2026-07-26 | ❌ | 18 (1🔴 5🟠 · 10🟡 2🔵) |
 | `amortiguamiento-exponente` | 2026-07-15 | ⚠️ | 10 (2🔴 2🟠) |
 | `cuando-confiar-formula-rigida` | — | — | — |
 | `estimador-t1` | — | — | — |
@@ -1691,10 +2120,12 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (16)
+### `hormigon` — hormigon (ACI 318-25) (18)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-muro-flexocompresion` | 2026-07-26 | ❌ | 25 (5🔴 4🟠 · 11🟡 5🔵) |
+| `aci318-25-cap18-sismorresistente` | 2026-07-26 | ⚠️ | 26 (2🔴 10🟠 · 13🟡 1🔵) |
 | `ejemplo-mensula-puntal-tensor` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🟠 5🟡 3🔵 · numeración §16.5 por confirmar en 318-25) |
 | `ejemplo-viga-t` | 2026-07-25 | ✅ | 0 (9 aplicados: 1🔴 2🟠 4🟡 2🔵 · 24.3.4 por confirmar en 318-25) |
 | `ejemplo-columna-interaccion-esbeltez` | 2026-07-23 | ✅ | 0 (3 aplicados: 1🟡 2🔵) |
@@ -1758,6 +2189,9 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `deep-learning-with-python-cap12-deteccion-de-objetos` | 2026-07-26 | ⚠️ | 12 (0🔴 2🟠 · 8🟡 2🔵) |
+| `deep-learning-with-python-cap13-series-de-tiempo` | 2026-07-26 | ❌ | 13 (1🔴 5🟠 · 6🟡 1🔵) |
+| `deep-learning-with-python-cap14-clasificacion-de-texto` | 2026-07-26 | ⚠️ | 14 (0🔴 3🟠 · 7🟡 4🔵) |
 | `deep-learning-with-python-cap11-segmentacion` | 2026-07-25 | ⚠️ | 7 abiertos (0🔴 0🟠 · 6🟡 1🔵) · 2 aplicados en 62c4e2f+ |
 | `deep-learning-with-python-cap10-interpretar-convnets` | 2026-07-25 | ⚠️ | 9 abiertos (0🔴 0🟠 · 6🟡 3🔵) · 6 aplicados en 62c4e2f+ |
 | `deep-learning-with-python-cap9-patrones-arquitectura` | 2026-07-25 | ⚠️ | 11 abiertos (0🔴 0🟠 · 6🟡 5🔵) · 3 aplicados en 62c4e2f+ |
