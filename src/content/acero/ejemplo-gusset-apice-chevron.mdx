@@ -1,0 +1,492 @@
+---
+title: "Ejemplo — El gusset del ápice: el piso de 8.4.1 que sube la demanda 24 %, y las dos bandas de Whitmore que se traslapan"
+description: "La plancha de nudo que el ejemplo del chevron dejó pendiente. Cuatro resultados que no se ven venir: el techo de 0,7R₁ no sirve porque el piso de ½T_ye de la cláusula 8.4.1 queda 24 % más arriba (124,98 contra 100,80 tonf); a capacidad esperada plena la rotura de la sección ranurada sería aritméticamente imposible (A_e requerida 81,69 cm² contra A_g 76,0); el canto del tubo regala una holgura de rótula de 3,75t donde la norma pide 2t; y las dos bandas de Whitmore se traslapan 3,28 cm, el 13,4 % de cada una. Con planilla del canvas verificada de 23 comprobaciones."
+pubDate: 2026-07-29
+tags: ["ejemplo", "acero", "gusset", "conexiones", "nch2369", "whitmore", "marcos arriostrados", "chevron", "diseño por capacidad", "aisc360", "aisc341", "sensibilidad"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.4.1 / 8.6.6 / 8.6.8 — Conexión de diagonales"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [ejemplo del paño en V invertida](/acero/ejemplo-chevron-nch2369) diseñó la viga de un chevron
+industrial y terminó con una lista de tareas. La última decía: *«gusset con geometría que acomode
+el giro del pandeo»*. Una línea, al pie, sin números.
+
+Ésta es esa plancha. Y lo que aparece al calcularla no es una confirmación del ejemplo anterior:
+son cuatro resultados que corrigen o completan lo que ese post dejó dicho, empezando por la
+demanda misma.
+
+Los fenómenos y los estados límite están explicados en la nota
+[teoría del gusset](/acero/gusset-teoria-estados-limite); acá se ejercitan con números.
+
+## El caso
+
+Se hereda el paño completo del ejemplo anterior, sin cambiar nada.
+
+| Dato | Valor |
+|---|---|
+| Configuración | V invertida, luz $L = 8{,}00$ m, entrepiso $H = 4{,}00$ m, diagonales a **45°** |
+| Diagonal | Cajón soldado **[] 200×200×10** en A36, $A_g = 76{,}0$ cm², $r = 7{,}77$ cm, $L_c/r = 72{,}8$ |
+| Acero | A36: $F_y = 2\,530$ kgf/cm², $F_u = 4\,080$ kgf/cm², $E = 2\,039\,000$ kgf/cm² |
+| Fluencia esperada | $R_y = 1{,}30$ (C8.3.3, valor nacional) → $F_{ye} = 3\,289$ kgf/cm² |
+| Del análisis | $P_E = 36{,}0$ tonf por diagonal · factor $0{,}7R_1 = \mathbf{2{,}80}$ |
+| Viga | **H 600×300×138,5** (ICHA Tabla 2.1.1[^icha]): $t_w = 8$ mm, $t_f = 22$ mm, $b_f = 300$ mm |
+| Gusset | Plancha **A36 de 20 mm**, $R_{yg} = 1{,}30$ (fila *planchas* de la Tabla A3.2) |
+| Soldadura | Electrodo **E70XX**, $F_{EXX} = 4\,920$ kgf/cm² · LRFD, $\alpha_s = 1{,}0$ |
+
+Las capacidades esperadas de 8.3.1 son las del post anterior:
+
+<Equation label="Sec. 8.3.1">
+$$
+T_{ye} = F_{ye}A_g = 249{,}96 \ \text{tonf}
+\qquad
+P_{ne} = 1{,}14\,F_{cre}A_g = 198{,}30 \ \text{tonf}
+\qquad
+0{,}3P_{ne} = 59{,}49 \ \text{tonf}
+$$
+</Equation>
+
+<Note type="info" title="Una diferencia de 0,03 % con el post anterior, declarada">
+Ese post publica $P_{ne} = 198{,}25$ tonf porque redondea $F_{cre}$ a $2\,288$ kgf/cm² antes de
+multiplicar; acá el valor entra sin redondear ($2\,289$) y da $198{,}30$. La diferencia es
+$0{,}03$ % y no cambia ninguna verificación, pero conviene decirlo antes de que el lector
+compare las dos tablas. En la misma línea: con $L_c/r = 72{,}8$ la ecuación de Euler da
+$F_e = 3\,797$ kgf/cm² y el post anterior publica $3\,794$ — de ahí arrastra la diferencia.
+</Note>
+
+## 1. La demanda no es el techo: es el piso
+
+Acá está el primer resultado, y es el que cambia todo lo que sigue. La cláusula **8.6.8** de
+NCh2369:2025[^nch] manda diseñar la conexión de una diagonal para *«tanto la capacidad esperada en tracción como la
+esperada en compresión»*. La **8.4.1** dice cómo se cuantifica eso, y tiene **tres** niveles, no
+dos:
+
+1. Se parte de las combinaciones de 4.5 con el sismo amplificado por $0{,}7R_1 \ge 1{,}0$.
+2. *«No necesita ser mayor»* que el menor entre (a) la capacidad esperada del elemento y (b) la
+   máxima carga que el sistema puede transferir.
+3. Y —éste es el que se pasa por alto— *«la resistencia requerida **no debe ser menor que la
+   mitad de la capacidad esperada** del elemento»*. Un **piso**. La única excepción que la
+   cláusula concede es para los anclajes de bases de columna.
+
+<Equation label="Sec. 8.4.1 — tracción">
+$$
+T_r = \max\Big(\underbrace{\min(T_{ye};\ 0{,}7R_1 P_E)}_{\min(249{,}96;\ 100{,}80)\,=\,100{,}80};\
+\underbrace{\tfrac{1}{2}T_{ye}}_{124{,}98}\Big) = \mathbf{124{,}98} \ \text{tonf}
+$$
+</Equation>
+
+El techo de $0{,}7R_1$ deja la demanda en 100,80 tonf, y el piso la vuelve a subir a **124,98**:
+un **24,0 % más**. En este paño, *el techo de 8.4.1 no sirve de nada* — queda por debajo del piso
+de la misma cláusula, así que la conexión se diseña con el piso.
+
+En compresión el reparto es distinto, y por poco:
+
+<Equation label="Sec. 8.4.1 — compresión">
+$$
+C_r = \max\big(\min(198{,}30;\ 100{,}80);\ \tfrac{1}{2}P_{ne} = 99{,}15\big) = \mathbf{100{,}80} \ \text{tonf}
+$$
+</Equation>
+
+Acá el piso queda 1,6 tonf *por debajo* del nivel amplificado y no muerde. **La misma cláusula
+gobierna por una vía en tracción y por otra en compresión**, y con la diagonal cargada al 0,28
+del ejemplo anterior eso no era previsible.
+
+<Figure
+  src="/gusset/apice-demandas.svg"
+  alt="Dos paneles. Panel A, los tres niveles de la cláusula 8.4.1 dibujados como barras horizontales a escala: la primera, gris, es el techo de 0,7R1 por P_E con 100,80 tonf y la leyenda de que es el nivel del análisis amplificado; la segunda, roja y destacada, es el piso de media capacidad esperada con 124,98 tonf y la leyenda de que gobierna, un 24,0 % sobre el techo; la tercera, gris y la más larga, es la capacidad esperada plena T_ye con 249,96 tonf y la leyenda de que a ese nivel la sección neta es imposible. Bajo las barras, el texto explica que 8.4.1 admite bajar del nivel amplificado pero no por debajo de la mitad de la capacidad esperada, y que como el piso queda por encima del techo, el techo no sirve de nada. Panel B, siete verificaciones como barras de demanda contra capacidad de diseño, ordenadas de mayor a menor factor de uso: interfaz corte del borde en el estado B con 0,939, tubo bloque de corte 0,915, tubo soldadura de cuatro filetes 0,832, gusset Whitmore fluencia 0,792, tubo rotura de la sección ranurada 0,750, gusset pandeo con K igual a 1,2 con 0,672, y viga fluencia local del alma 0,352. Al pie se indica que gobierna el corte del borde del gusset con 0,939 y que la interacción de von Mises del mismo borde da 0,882."
+  caption="La escalera de 8.4.1 y el resultado. El nivel de diseño no lo fija el análisis amplificado sino el piso de la cláusula, y de ahí en adelante todo el dimensionamiento cambia."
+/>
+
+## 2. El largo de la conexión lo fija el bloque de corte del tubo
+
+El tubo se ranura en dos paredes y recibe el gusset pasante, con cuatro cordones de filete
+longitudinales. El reflejo es dimensionar ese largo por la soldadura; no es la soldadura.
+
+Las dos mitades del cajón se arrancan sobre **cuatro planos de corte** y siguen unidas más allá
+de la ranura, de modo que en J4-5 no hay plano de tracción ($A_{nt} = 0$) y gobierna el
+acotamiento por fluencia:
+
+<Equation label="Ec. J4-5, despejando el largo">
+$$
+l \ \ge \ \frac{T_r}{\phi \cdot 0{,}6F_y \cdot 4t} = \frac{124{,}98}{0{,}75 \cdot 0{,}6 \cdot 2{,}530 \cdot 4 \cdot 1{,}0} = 27{,}44 \ \text{cm}
+$$
+</Equation>
+
+Se adopta $l = 30$ cm. Con ese largo:
+
+| Estado límite | Ec. | Capacidad | Uso |
+|---|:---:|:---:|:---:|
+| Bloque de corte del tubo | J4-5 | 136,62 tonf | **0,915** |
+| Rotura de la sección ranurada | D2-2 | 166,55 tonf | 0,750 |
+| Soldadura, 4 filetes de 8 mm | J2-4 | 150,27 tonf | 0,832 |
+
+El retraso de corte sale del **caso 5 de la Tabla D3.1** de AISC 360-22[^aisc360] —cajón
+rectangular con un gusset concéntrico pasante por ranuras—, que da la excentricidad en forma
+cerrada:
+
+<Equation label="Tabla D3.1, caso 5">
+$$
+\bar{x} = b - \frac{2b^2 + tH - 2t^2}{2H + 4b - 4t} = 7{,}13 \ \text{cm}
+\qquad
+U = 1 - \frac{\bar{x}}{l} = 0{,}762
+$$
+</Equation>
+
+con $b = B/2 = 10$ cm. El área neta descuenta el ancho completo de la ranura ($t_g + 3$ mm) en
+dos ubicaciones: $A_n = 71{,}40$ cm², y $A_e = A_n U = 54{,}43$ cm².
+
+<Note type="tip" title="Control independiente de x̄">
+Ese $7{,}13$ cm se verificó calculando a mano el centroide de media sección —una pared completa
+de $200 \times 10$ más dos medias paredes— que da $7{,}19$ cm. La fórmula de la tabla y la
+geometría concuerdan dentro del 1 %; la diferencia es cómo la tabla trata las esquinas.
+</Note>
+
+## 3. El contraste: a capacidad plena esto no tendría solución
+
+Vale la pena detenerse en lo que habría pasado sin la vía de 8.4.1, diseñando la conexión para la
+capacidad esperada plena $T_{ye} = 249{,}96$ tonf. El área efectiva necesaria para no romper por
+sección neta sería:
+
+<Equation label="El área que haría falta">
+$$
+A_{e,\text{req}} = \frac{T_{ye}}{\phi F_u} = \frac{249{,}96}{0{,}75 \cdot 4{,}080} = 81{,}69 \ \text{cm}^2
+\qquad \text{contra} \qquad
+A_g = 76{,}0 \ \text{cm}^2
+$$
+</Equation>
+
+**Se necesitaría un área efectiva mayor que el área bruta del tubo**, que es imposible por
+construcción: la ranura solo puede quitar material. La razón no depende de ninguna geometría:
+
+<Equation label="El cociente que lo decide">
+$$
+\frac{A_{e,\text{req}}}{A_g} = \frac{R_y F_y}{\phi F_u} = \frac{1{,}30 \cdot 2\,530}{0{,}75 \cdot 4\,080} = \mathbf{1{,}075}
+$$
+</Equation>
+
+A capacidad plena habría que **reforzar la sección neta** —lo que AISC 341-22 §F2.5b(c) exige
+literalmente para diagonales con ranuras—, y el post sería otro. Con la demanda de 8.4.1 el mismo
+cociente da $124{,}98/(0{,}75 \cdot 4{,}080 \cdot 76{,}0) = 0{,}538$ y sobra área de sobra. **Ese
+salto —de imposible a uso 0,75— es lo que compra el piso de 8.4.1**, y es exactamente la frontera
+entre diseñar por capacidad plena y diseñar por resistencia amplificada.
+
+## 4. La geometría: el canto del tubo regala la rótula
+
+Acá aparece el tercer resultado, y es de los que solo se ven dibujando. La cláusula **8.6.9**
+pide que la conexión resista el momento del pandeo **o** que el gusset acomode el giro plástico.
+Se toma la segunda vía, con la holgura lineal $2t$ del Comentario de AISC 341-22[^aisc341]
+§F2.6c.3.
+
+Pero antes que la cláusula hay un problema de encaje: el tubo tiene **20 cm de canto**, llega a
+45°, y sus esquinas no pueden chocar con el ala inferior de la viga. Dejando 3 cm de holgura de
+montaje, el extremo del tubo no puede acercarse al punto de trabajo más de
+
+<Equation label="Lo que exige el canto del tubo">
+$$
+s_e \ \ge \ \frac{\text{gap} + (H/2)\sin\alpha}{\sin\alpha} = \frac{3{,}0 + 10{,}0 \cdot 0{,}7071}{0{,}7071} = 14{,}24 \ \text{cm}
+$$
+</Equation>
+
+Se adopta $s_e = 15$ cm. Y con el ala como línea de restricción y la diagonal a 45°, la holgura
+de rótula —medida como manda el Comentario, sobre la perpendicular al eje trazada desde el punto
+restringido más cercano— vale exactamente $s_e/2$:
+
+<Equation label="La holgura que resulta">
+$$
+c = \tfrac{1}{2}s_e = 7{,}50 \ \text{cm} = \mathbf{3{,}75\,t_g}
+\qquad \text{contra el mínimo} \qquad
+2t_g = 4{,}00 \ \text{cm}
+$$
+</Equation>
+
+**La holgura la da el canto del tubo, no la cláusula.** Se cumple con casi el doble del mínimo sin
+que nadie la haya buscado. Es un caso en que el detalle geométrico es más exigente que el
+requisito sísmico, y conviene saberlo antes de gastar tiempo optimizando la holgura: acá no es la
+variable de diseño.
+
+<Figure
+  src="/gusset/apice-nudo.svg"
+  alt="Elevación del nudo del ápice de un chevron. Arriba, el ala inferior de la viga H 600 por 300 por 138,5, con la cota del largo soldado de 50 centímetros. Bajo ella, la plancha de nudo dibujada como un trapecio más ancho abajo, con las dos diagonales de cajón 200 por 200 por 10 llegando a 45 grados desde abajo a la izquierda y desde abajo a la derecha, cada una con su eje en línea discontinua y su largo de conexión de 30 centímetros acotado. Desde el extremo de cada diagonal, marcado con un punto rojo, se abre en azul su banda de Whitmore hacia el ala, y las dos bandas se cruzan en el centro: la zona común aparece destacada en rojo con la anotación de que el traslape es de 3,28 centímetros, el 13,4 por ciento de cada banda. Una flecha verde va del extremo de la diagonal izquierda al punto de trabajo y rotula la holgura de rótula de 7,50 centímetros, igual a 3,75 espesores, con la nota de que el exigido es 2t igual a 4,00 centímetros y que la holgura la da el canto del tubo. Al pie del trapecio se acota el borde libre de 63,64 centímetros, equivalente a 31,8 espesores. Abajo, dos recuadros comparan los dos estados simultáneos que la interfaz debe resistir: el estado A, desbalance de la cláusula 8.6.6 con una diagonal pandeada, con T igual a 124,98 tonf y 0,3P_ne igual a 59,49 tonf, que da H igual a 130,44, V igual a 46,31 y resultante 138,42 tonf; y el estado B, amplificado simétrico sin ninguna pandeada, con ambas diagonales en 100,80 tonf, que da H igual a 142,55, V igual a cero y resultante 142,55 tonf. Una línea final aclara que el estado B gobierna el corte del borde y el A la componente normal, y que hay que verificar ambos."
+  caption="El nudo a escala. La holgura de rótula no la pidió la norma: la impuso el canto del tubo. Y las dos bandas de Whitmore, que se calculan por separado, comparten plancha en el medio."
+/>
+
+## 5. Whitmore, y el traslape que nadie descuenta
+
+Cada diagonal tiene su banda de Whitmore, con la dispersión de 30° que usa el Comentario J4.4
+para compresión:
+
+<Equation label="Sección de Whitmore">
+$$
+b_w = 2\,l\tan 30° = 34{,}64 \ \text{cm}
+\qquad
+A_w = b_w t_g = 69{,}28 \ \text{cm}^2
+$$
+$$
+\phi R_n\big|_{\text{fluencia, J4-1}} = 0{,}90 F_y A_w = 157{,}76 \ \text{tonf}
+\qquad
+\phi R_n\big|_{\text{rotura, J4-2}} = 0{,}75 F_u A_w = 212{,}00 \ \text{tonf}
+$$
+</Equation>
+
+Usos de **0,792** y 0,590. Las dos pasan, y si la verificación terminara ahí quedaría una
+tranquilidad falsa.
+
+Porque las dos bandas nacen en extremos de diagonal separados apenas $2 s_e \cos\alpha = 21{,}21$
+cm sobre el ala, y cada una proyecta $b_w\cos\alpha = 24{,}49$ cm de huella horizontal. La suma no
+cabe:
+
+<Equation label="El traslape">
+$$
+\text{traslape} = b_w\cos\alpha - 2s_e\cos\alpha = 24{,}49 - 21{,}21 = \mathbf{3{,}28} \ \text{cm}
+$$
+</Equation>
+
+**3,28 cm de plancha —el 13,4 % de cada banda— se están contando dos veces**, una para cada
+diagonal. Verificar cada banda por separado es lo que hace la práctica, y en ese traslape es
+optimista.
+
+<Note type="warning" title="Por qué el traslape no invalida el resultado, y qué lo cubre">
+El traslape importa menos de lo que parece, por una razón física: en la zona común las dos
+fuerzas están parcialmente en equilibrio entre sí —sus componentes horizontales se suman pero las
+verticales se restan—, así que no es cierto que la plancha deba tomar $2 \times 124{,}98$ tonf
+ahí. Lo que sí hace falta es una verificación que mire **la sección completa con la resultante
+completa**, y ésa existe: es la interfaz de la §7, sobre los 50 cm de borde soldado, con la
+resultante de las dos diagonales a la vez. El traslape es la razón por la que esa verificación no
+es redundante con las dos de Whitmore.
+
+Si se quisiera eliminar el traslape habría que separar los extremos de las diagonales hasta
+$b_w/2$ = 17,3 cm de cada lado del punto de trabajo, o sea $s_e \ge 24{,}5$ cm — un gusset
+sensiblemente más grande y una excentricidad que 8.6.6 limita a dos veces la altura de la viga.
+No conviene: sale más caro que el conservadurismo que compra.
+</Note>
+
+## 6. El pandeo del gusset, y el supuesto que no alcanza a decidir
+
+La banda comprimida se verifica como columna equivalente. Su radio de giro **no depende del
+ancho** —se cancela—, así que lo fijan solo el espesor y la longitud de pandeo:
+
+<Equation label="Radio de giro de la banda">
+$$
+r = \frac{t_g}{\sqrt{12}} = 0{,}577 \ \text{cm}
+\qquad\Rightarrow\qquad
+L_c \le 25r = 7{,}22\,t_g = 14{,}43 \ \text{cm} \ \text{ para la rama fácil de J4.4}
+$$
+</Equation>
+
+La longitud de pandeo, medida del extremo de la diagonal al borde soldado, vale $L = s_e = 15{,}0$
+cm. Con el ala horizontal y el eje a 45°, las tres longitudes de Thornton coinciden. Y **15,0 cm
+supera los 14,43 por un 3,9 %**: el gusset se queda afuera de $L_c/r \le 25$ por cuatro por ciento
+y hay que ir al Capítulo E.
+
+Eso obliga a fijar $K$, que es justamente lo que el Comentario J4.4 admite que es difícil de
+establecer y remite a la Design Guide 29. En vez de adoptar un valor sin fuente, se barre el rango
+completo:
+
+| $K$ | $L_c/r$ | $\phi P_n$ | Uso ($C_r = 100{,}80$) | Rama |
+|:---:|:---:|:---:|:---:|---|
+| 0,65 | 16,9 | 157,76 tonf | 0,639 | J4-6, fluencia plena |
+| 1,00 | 26,0 | 152,25 tonf | 0,662 | Cap. E |
+| **1,20** | 31,2 | **149,89 tonf** | **0,672** | Cap. E |
+| 1,50 | 39,0 | 145,64 tonf | 0,692 | Cap. E |
+| 2,00 | 52,0 | 136,86 tonf | 0,737 | Cap. E |
+
+**El supuesto que no tiene fuente no decide nada**: el uso va de 0,639 a 0,737 y el gusset pasa en
+todo el rango. Es el mejor desenlace posible para un supuesto declarado — se puede reportar la
+verificación sin que el resultado dependa de él. La causa es que un radio de giro de 0,577 cm
+sobre 15 cm de longitud deja al gusset en la parte plana de la curva de columna: es una plancha
+rechoncha, no una columna esbelta.
+
+## 7. La interfaz: dos estados simultáneos y siete largos mínimos
+
+El gusset entrega su carga al ala inferior de la viga por un cordón horizontal. Y acá hay que
+decidir **qué estado simultáneo** se verifica, porque no hay uno solo:
+
+| | Estado | $H$ (∥ al cordón) | $V$ (⊥) | Resultante |
+|---|---|:---:|:---:|:---:|
+| **A** | Desbalance de 8.6.6: una diagonal en $T_r$, la otra pandeada en $0{,}3P_{ne}$ | 130,44 | **46,31** | 138,42 |
+| **B** | Amplificado simétrico: ambas en $0{,}7R_1P_E$, una en tracción y otra en compresión | **142,55** | 0,00 | 142,55 |
+
+Las componentes salen del equilibrio del nudo, con las horizontales sumándose y las verticales
+restándose:
+
+<Equation label="Equilibrio del nudo">
+$$
+H = \sin\alpha\,(T + C)
+\qquad
+V = \sin\alpha\,(T - C)
+$$
+</Equation>
+
+**El estado B gobierna el corte y el A la componente normal.** Ninguno domina al otro, así que
+hay que llevar los dos.
+
+### 7a · La pierna del filete la fija la plancha, no la carga
+
+AISC 341-22 **§F2.6c.4** no pide que la soldadura resista la fuerza de la diagonal: pide que
+**desarrolle el gusset**, con resistencia de corte por unidad de longitud igual a
+$0{,}6R_yF_yt_p/\alpha_s$, donde $F_y$, $R_y$ y $t_p$ son **de la plancha**.
+
+<Equation label="Sec. F2.6c.4">
+$$
+q_{req} = 0{,}6 R_{yg} F_y t_g = 0{,}6 \cdot 1{,}30 \cdot 2{,}530 \cdot 2{,}0 = 3{,}947 \ \text{tonf/cm}
+\qquad\Rightarrow\qquad
+w_{req} = 12{,}61 \ \text{mm}
+$$
+</Equation>
+
+El *User Note* de la misma cláusula da el atajo tabulado $0{,}62\,t_p$ para A36 con E70, que aquí
+son **12,40 mm**: queda **1,6 % del lado inseguro** frente al cálculo explícito, porque la norma
+tabula con $F_y = 36$ ksi y acá se usó 2 530 kgf/cm². Se adopta **13 mm**, bajo el máximo de
+J2.2b ($t_g - 2$ mm = 18 mm).
+
+Nótese la desproporción: **13 mm contra el ala de la viga y 8 mm en la ranura del tubo**. No es
+que haya más fuerza —hay menos, repartida en dos componentes—: es que el criterio es distinto. En
+la ranura se resiste una fuerza; acá se desarrolla una plancha.
+
+### 7b · Siete mínimos compiten por el largo
+
+| Criterio | Estado | Largo mínimo |
+|---|:---:|:---:|
+| Corte del borde del gusset, J4-3 ($\phi = 1{,}00$) | B | **46,95 cm** |
+| Interacción de von Mises del borde | B | **46,95 cm** |
+| Que quepan las dos bandas de Whitmore | — | 45,71 cm |
+| Interacción de von Mises del borde | A | 44,15 cm |
+| Resistencia del cordón | B | 35,03 cm |
+| Resistencia del cordón ($k_{ds} = 1{,}097$) | A | 31,01 cm |
+| Normal al borde, J4-1 ($\phi = 0{,}90$) | A | 10,17 cm |
+
+Se adopta $L = 50$ cm. El criterio de interacción tiene una propiedad que conviene recordar: al
+despejar el largo con ambas resistencias proporcionales a él, sale la suma pitagórica de los dos
+largos individuales, $L = \sqrt{L_V^2 + L_N^2}$. En el estado B, con $V = 0$, colapsa al largo de
+corte — que es por qué los dos primeros renglones empatan.
+
+Con $L = 50$ cm:
+
+| Verificación | Demanda | Capacidad | Uso |
+|---|:---:|:---:|:---:|
+| Corte del borde (J4-3, $\phi = 1{,}00$) | 142,55 | 151,80 tonf | **0,939** |
+| Normal al borde (J4-1, $\phi = 0{,}90$) | 46,31 | 227,70 tonf | 0,203 |
+| Interacción, estado A | — | $\le 1$ | 0,780 |
+| Interacción, estado B | — | $\le 1$ | **0,882** |
+
+## 8. La viga que lo recibe
+
+El gusset le entrega al ala inferior 142,55 tonf de corte rasante y, en el estado A, 46,31 tonf
+**tirando hacia abajo**. Que la componente normal sea de tracción cambia qué estados límite de
+J10 aplican:
+
+- **J10.1, flexión local del ala** — el gusset llega **de canto**, así que la longitud de carga a
+  través del ancho del ala es $t_g = 2{,}0$ cm, menor que $0{,}15 b_f = 4{,}50$ cm.
+  **Exenta por cláusula.**
+- **J10.2, fluencia local del alma** ($\phi = \mathbf{1{,}00}$) — aplica a tracción y a
+  compresión: $R_n = F_{yw}t_w(5k + l_b) = 131{,}56$ tonf con $l_b = L = 50$ cm. Uso **0,352**.
+- **J10.3, aplastamiento del alma** — solo compresión. **No aplica**: acá la componente normal
+  tira del ala hacia afuera.
+
+<Note type="warning" title="Un mismo nudo, dos fuerzas de diseño distintas">
+El post anterior diseñó la viga con un axial de 113,33 tonf, calculado con la tracción topada en
+100,80 por 8.6.6. Acá la interfaz entrega **142,55 tonf**. No es una contradicción: **8.6.6 rige
+el diseño de la viga y 8.4.1 el de la conexión**, y solo la segunda tiene piso. El mismo nudo
+tiene dos fuerzas de diseño según qué elemento se esté verificando, y eso hay que decirlo en la
+memoria de cálculo. Lo que sí queda pendiente es revisar si el axial de la viga debería
+recalcularse con la fuerza que la conexión es capaz de transmitir.
+</Note>
+
+## Resultado
+
+| Verificación | Demanda | Capacidad | Uso | |
+|---|:---:|:---:|:---:|:---:|
+| Interfaz — corte del borde del gusset (estado B) | 142,55 | 151,80 | **0,939** | ✓ |
+| Tubo — bloque de corte | 124,98 | 136,62 | 0,915 | ✓ |
+| Interfaz — interacción de von Mises (estado B) | — | 1,00 | 0,882 | ✓ |
+| Tubo — soldadura de 4 filetes de 8 mm | 124,98 | 150,27 | 0,832 | ✓ |
+| Gusset — Whitmore, fluencia | 124,98 | 157,76 | 0,792 | ✓ |
+| Interfaz — pierna del filete | 12,61 mm | 13 mm | 0,970 | ✓ |
+| Tubo — rotura de la sección ranurada | 124,98 | 166,55 | 0,750 | ✓ |
+| Gusset — pandeo ($K = 1{,}2$) | 100,80 | 149,89 | 0,672 | ✓ |
+| Gusset — Whitmore, rotura | 124,98 | 212,00 | 0,590 | ✓ |
+| Viga — fluencia local del alma (J10.2) | 46,31 | 131,56 | 0,352 | ✓ |
+| Gusset — holgura de rótula | 4,00 cm | 7,50 cm | 0,533 | ✓ |
+| Viga — flexión local del ala (J10.1) | — | — | exenta | ✓ |
+
+**Solución:** gusset de **plancha A36 de 20 mm**, soldado al ala inferior de la viga con
+**filetes de 13 mm sobre 50 cm** de cordón; diagonales ranuradas con **30 cm de conexión** y
+cuatro filetes de 8 mm; extremos de las diagonales retranqueados **15 cm** del punto de trabajo.
+
+**Gobierna el corte del borde del gusset contra el ala** con 0,939, seguido del bloque de corte
+del tubo con 0,915. Los dos estados límite que uno mira primero —la soldadura de la diagonal y el
+retraso de corte— quedan en 0,83 y 0,75.
+
+## Lectura
+
+Lo que este ejemplo enseña no es el dimensionamiento, que es rutinario, sino **dónde estaba
+escondida la decisión**. Cuatro veces el resultado vino de un lugar distinto al esperado:
+
+1. **La demanda** no la fijó el análisis amplificado sino el piso de ½$T_{ye}$ de 8.4.1, un 24 %
+   más arriba. Leer 8.4.1 hasta el final es la diferencia entre 100,80 y 124,98 tonf.
+2. **El largo de la conexión** no lo fijó la soldadura ni el retraso de corte, sino el bloque de
+   corte del tubo.
+3. **La holgura de rótula** no la fijó la cláusula, sino el canto del tubo — y por eso sobra.
+4. **El largo del cordón** no lo fijó la resistencia de la soldadura sino el corte del borde de la
+   plancha, con el $\phi = 1{,}00$ que es fácil confundir con 0,75.
+
+Y hay un quinto, que es de método: **el supuesto que no tenía fuente resultó no decidir nada.**
+El $K$ del pandeo del gusset, la única variable de este cálculo que no se puede citar, mueve el
+uso entre 0,639 y 0,737. Cuando eso pasa conviene reportarlo así, con el barrido a la vista: es
+más convincente que elegir un valor y defenderlo.
+
+## ¿Dónde falla esto?
+
+- **El borde libre inferior mide 63,64 cm, o 31,8 espesores, y no se verificó.** Es la deuda
+  abierta del ejemplo: el criterio de estabilidad del borde libre de un gusset es práctica de la
+  **Design Guide 29**, que no está entre las fuentes de este blog. Un borde de esa longitud
+  normalmente se ahúsa o se rigidiza con una platabanda de borde. Mientras la fuente no esté,
+  esto queda declarado y no resuelto.
+- **El traslape de las bandas de Whitmore se aceptó, no se descontó.** El argumento de que la
+  interfaz sobre los 50 cm lo cubre es razonable y está sostenido en el equilibrio del nudo, pero
+  no es una cláusula. Un revisor puede pedir separar los extremos de las diagonales.
+- **La interacción de von Mises del borde no es normativa.** AISC 360-22 da J4-1 y J4-3 por
+  separado. Acá no cambió el resultado porque en el estado B la componente normal es nula y la
+  interacción colapsa al corte, pero en un nudo con la diagonal más tendida sí gobernaría.
+- **$k = 3{,}0$ cm en J10.2 es un supuesto.** Para un perfil soldado se tomó $t_f$ más la pierna
+  del cordón de fabricación. Con el uso en 0,352 hay margen de sobra, pero en una viga de alma más
+  delgada habría que precisarlo.
+- **El estado B supone que ambas diagonales llegan a $0{,}7R_1P_E$ simultáneamente**, una en
+  tracción y otra en compresión. Es el estado del análisis amplificado y es el que da el máximo
+  corte rasante, pero no está prescrito por una cláusula: 8.6.6 prescribe el estado A.
+- **No se verificó la conexión viga-columna** ni el efecto de estos 142,55 tonf sobre el axial de
+  la viga, que el post anterior fijó en 113,33. Es el cabo suelto más concreto que deja este
+  ejemplo.
+
+## Reproducir esto con tus datos
+
+La planilla del canvas trae los 102 pasos y las 23 verificaciones de este ejemplo, con todos los
+datos de entrada arriba y a la vista:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-apice-chevron)** ·
+[descargar el JSON](/planillas/gusset-apice-chevron.json)
+
+Cambia el espesor del gusset, el largo de la conexión, el $R_y$ o el ángulo de la diagonal y toda
+la hoja se recalcula, veredictos ✓/✗ incluidos. Para verificarla fuera del navegador:
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/gusset-apice-chevron.json --md
+```
+
+Dos verificaciones aparecen en rojo **a propósito** y están declaradas como tales: el atajo del
+*User Note* frente al cálculo explícito de la pierna, y el área efectiva requerida a capacidad
+plena frente al área bruta. Las dos son hallazgos del ejemplo, no defectos de la hoja.
+
+## Bibliografía
+
+[^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas 8.3.1 (capacidades esperadas), **8.4.1** (resistencia requerida de conexiones, con su techo y su piso), 8.4.3, 8.6.6 (desbalance en configuraciones en V), 8.6.8 y 8.6.9.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. Tabla D3.1 caso 5 (retraso de corte en cajón con gusset pasante), D2-2, J2-4 y J2.2b (soldadura de filete), §J4 completo (J4-1, J4-3, J4-5, J4.4) y §J10 (J10.1 a J10.3).
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. Tabla A3.2 ($R_y$ del A36 en plancha), §F2.5b(c) (refuerzo de la sección neta), §F2.6c.3 y su Comentario (holguras $2t$ / $8t$ / $6t$) y §F2.6c.4 con su *User Note*.
+
+[^icha]: Manual ICHA 2010, Tabla 2.1.1 (secciones H soldadas) — de donde sale la viga H 600×300×138,5 del ejemplo anterior.
