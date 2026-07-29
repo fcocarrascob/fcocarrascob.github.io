@@ -117,6 +117,27 @@ presente como resultado:
 - Los supuestos que limitan el resultado están declarados.
 - Si hay una captura de GUI, el post dice de qué modelo salió.
 
+## Detección de planilla (no es un hallazgo)
+
+Además del reporte, **dictamina si el post es candidato a planilla del canvas**. No es
+una categoría ni genera severidad: es un insumo para quien te invocó, que decidirá si
+la genera. Un post es candidato cuando **la cadena numérica es cerrada y reproducible**:
+parte de datos de entrada declarados y llega a los resultados por operaciones que están
+todas escritas en el post. Los posts de experimento SAP2000 normalmente **no** lo son,
+porque su dato duro sale del modelo y no de una fórmula.
+
+Reporta tres cosas:
+
+1. **Candidatura** — sí / no / parcial, y por qué en una línea.
+2. **¿Ya tiene planilla?** — busca con `Grep` un enlace a
+   `/herramientas/canvas?planilla=` o `?plantilla=` en el post, y comprueba con `Glob`
+   si existe `public/planillas/<slug>.json`.
+3. **Qué cubriría** — cuántas verificaciones demanda–capacidad tiene el post y cuáles
+   de sus números quedarían como veredicto ✓/✗ o factor de uso. Si detectas números
+   que la planilla **no** podría reproducir (los que vienen de un modelo, de una tabla
+   de catálogo o de una decisión de proyecto), nómbralos: son los que hay que declarar
+   como dato de entrada.
+
 ## Severidad
 
 | | Nivel | Criterio |
@@ -155,6 +176,10 @@ ni cierre conversacional alrededor.
 tan valioso como los hallazgos, porque delimita el alcance de la auditoría>
 
 **No verificable:** <valores que dependen del modelo SAP2000 u otra fuente externa>
+
+**Planilla del canvas:** <sí | no | parcial> · <¿ya tiene? sí/no> · <N verificaciones
+demanda–capacidad> — <una línea de por qué, y qué números habría que declarar como
+dato de entrada porque no se pueden derivar>
 ```
 
 Si el post está limpio, entrega el bloque igual con la tabla vacía y el veredicto
