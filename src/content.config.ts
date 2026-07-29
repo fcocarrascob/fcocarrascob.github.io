@@ -89,4 +89,34 @@ const apuntes = defineCollection({
   }),
 });
 
-export const collections = { blog, hormigon, acero, geotecnia, apuntes };
+// Lab: la bitácora didáctica de los productos que se construyen en `struct_llm`
+// (una entrada por etapa cerrada: teoría del libro + cláusula + medición + el
+// camino falso). **El contenido vive fuera de este repo, a propósito**: este
+// repo es público, y `draft: true` esconde la página del sitio pero no el
+// archivo del repo. Apuntando `base` al repo privado, el contenido no puede
+// filtrarse — no se puede commitear un archivo que no está en este árbol.
+// Las rutas de /lab además están guardadas con `import.meta.env.DEV`.
+// Si la carpeta no existe (CI, otra máquina), la colección queda vacía y no
+// pasa nada.
+const lab = defineCollection({
+  loader: glob({
+    base: '../struct_llm/lab',
+    pattern: ['**/*.{md,mdx}', '!_*', '!README.md'],
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    // Etapa del roadmap que la entrada documenta (O1, E5, D2…) y el producto al
+    // que pertenece: son los dos ejes por los que se agrupa el listado.
+    etapa: z.string(),
+    producto: z.string(),
+    libro: z.string().optional(),
+    norma: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, hormigon, acero, geotecnia, apuntes, lab };

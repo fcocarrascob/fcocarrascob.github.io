@@ -1,0 +1,92 @@
+---
+// Lab — la bitácora didáctica privada (contenido en ../struct_llm/lab).
+//
+// Index y entradas viven en la MISMA ruta dinámica a propósito: es la forma de
+// que el guard sea total. `getStaticPaths` devolviendo [] fuera de desarrollo
+// hace que el build de producción no emita NADA bajo /lab — ni el listado ni las
+// entradas. Con un `index.astro` aparte no habría cómo garantizarlo, porque una
+// página estática sin `getStaticPaths` siempre se emite.
+import { getCollection, render } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import BlogPost from '../../layouts/BlogPost.astro';
+import PostCard from '../../components/ui/PostCard.astro';
+
+export async function getStaticPaths() {
+  if (!import.meta.env.DEV) return [];
+
+  const entries = (await getCollection('lab', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  return [
+    { params: { slug: undefined }, props: { entry: null, entries } },
+    ...entries.map((entry) => ({ params: { slug: entry.id }, props: { entry, entries } })),
+  ];
+}
+
+const { entry, entries } = Astro.props;
+const { Content } = entry ? await render(entry) : { Content: null };
+
+// Agrupa por producto; el producto con la entrada más reciente va arriba.
+const productos = [...new Set(entries.map((e) => e.data.producto))].sort(
+  (a, b) =>
+    Math.max(...entries.filter((e) => e.data.producto === b).map((e) => e.data.pubDate.valueOf())) -
+    Math.max(...entries.filter((e) => e.data.producto === a).map((e) => e.data.pubDate.valueOf()))
+);
+---
+{
+  entry && Content ? (
+    <BlogPost
+      frontmatter={{ ...entry.data, norm: entry.data.norma, section: `${entry.data.etapa} · ${entry.data.producto}` }}
+      breadcrumb={{ href: '/lab', label: 'Lab' }}
+    >
+      {entry.data.libro && (
+        <p class="not-prose mb-8 rounded border border-border bg-surface px-4 py-3 text-sm text-muted">
+          <span class="font-medium text-ink">Teoría:</span> {entry.data.libro}
+        </p>
+      )}
+      <Content />
+    </BlogPost>
+  ) : (
+    <PageLayout title="Lab" description="Bitácora didáctica de los productos de struct_llm">
+      <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-ink mb-2">Lab</h1>
+        <p class="text-muted text-sm">
+          Una entrada por etapa cerrada: qué decía el libro, qué exige la norma, qué se midió
+          y qué salió mal. {entries.length} entrada{entries.length !== 1 ? 's' : ''}.
+        </p>
+        <p class="mt-3 rounded border border-accent/30 bg-accent/5 px-3 py-2 text-xs text-muted">
+          <span class="font-medium text-accent">Privado.</span> El contenido vive en el repo
+          privado <code>struct_llm/lab/</code> y estas rutas solo existen en desarrollo: el
+          build de producción no las emite.
+        </p>
+      </div>
+
+      {entries.length === 0 ? (
+        <p class="text-muted">
+          No hay entradas todavía. Copiá <code>struct_llm/lab/_plantilla.md</code>.
+        </p>
+      ) : (
+        productos.map((producto) => (
+          <section class="mb-12 last:mb-0">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+              {producto}
+            </h2>
+            {entries
+              .filter((e) => e.data.producto === producto)
+              .map((e) => (
+                <PostCard
+                  title={e.data.title}
+                  description={e.data.description}
+                  pubDate={e.data.pubDate}
+                  href={`/lab/${e.id}`}
+                  tags={e.data.tags}
+                  norm={e.data.etapa}
+                />
+              ))}
+          </section>
+        ))
+      )}
+    </PageLayout>
+  )
+}
