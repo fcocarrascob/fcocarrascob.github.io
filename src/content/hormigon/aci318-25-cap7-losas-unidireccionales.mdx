@@ -86,29 +86,45 @@ a = \frac{A_s \cdot f_y}{0.85 \cdot f'_c \cdot b}
 $$
 </Equation>
 
-con $\phi = 0.90$ para secciones controladas por tracción ($\varepsilon_t \geq \varepsilon_{ty} + 0.003$; para Grado 420, $0.005$ —
-en losas, con sus cuantías bajas, prácticamente siempre). Para $M_u$ y $V_u$ se admiten
-los **coeficientes simplificados** de la Sec. 6.5 cuando se cumplen sus condiciones
-(cargas uniformes, dos vanos mínimo, luces similares, $L \leq 3D$).
+con $\phi = 0.90$ para secciones controladas por tracción ($\varepsilon_t \geq \varepsilon_{ty} + 0.003$; para Grado 420, $0.005$). Y esto
+no es una opción sino un requisito: la Sec. 7.3.3.1 **exige** que las losas sean controladas por
+tracción — con las cuantías bajas de una losa, se cumple prácticamente siempre. Para $M_u$ y
+$V_u$ se admiten los **coeficientes simplificados** de la Sec. 6.5 cuando se cumplen sus cinco
+condiciones (prismático, cargas uniformes, $L \leq 3D$, dos vanos mínimo, luces que no difieran
+más de 20 %); los momentos así obtenidos **no se redistribuyen** (Sec. 6.5.3).
 
-En cortante, la losa rara vez necesita nada: $\phi V_c$ con el espesor de tabla suele
-sobrar, y de hecho no hay dónde poner estribos cómodamente en 15 cm.
+En cortante, la losa rara vez necesita nada: sin estribos ($A_v < A_{v,\min}$) rige la fila (c)
+de la Tabla 22.5.5.1, con el factor de tamaño $\lambda_s$ y la cuantía longitudinal, y el
+espesor de tabla suele sobrar — de hecho no hay dónde poner estribos cómodamente en 15 cm. Pero
+ojo: esa expresión, introducida en 318-19, entrega en una losa de cuantía mínima cerca de la
+**mitad** del $0.17\lambda\sqrt{f'_c}\,b_w d$ de las ediciones anteriores.
 
 ---
 
-## 3. Refuerzo mínimo de flexión (Tabla 7.6.1.1)
+## 3. Refuerzo mínimo de flexión (Sec. 7.6.1.1)
 
-| Acero | $f_y$ (MPa) | $A_{s,\min}$ |
-|-------|:-----------:|:-------------|
-| ASTM A615 Gr 280 | 280 | $0.0020 \cdot b \cdot h$ |
-| ASTM A615/A706 Gr 420 | 420 | $0.0018 \cdot b \cdot h$ |
-| ASTM A615 Gr 550 | 550 | $\dfrac{0.0018 \times 420}{f_y} \cdot b \cdot h \geq 0.0014\,bh$ |
+Un valor único, sin tabla:
 
-<Note type="warning" title="$h$ vs $d$ en refuerzo mínimo">
+<Equation label="Sec. 7.6.1.1">
+$$
+A_{s,\min} = 0.0018\,A_g
+$$
+</Equation>
+
+<Note type="warning" title="h vs d en refuerzo mínimo">
 $A_{s,\min}$ se calcula con el espesor total $h$, **no** con el peralte efectivo $d$ —
 el punto clásico de confusión al venir de vigas (donde el mínimo usa $b_w d$). La razón:
 este mínimo no viene del argumento de flexión sino directamente de las cuantías de
-retracción y temperatura, que trabajan sobre la sección completa.
+retracción y temperatura de la Sec. 24.4.3.2, que trabajan sobre la sección completa
+(R7.6.1.1 lo dice explícitamente).
+</Note>
+
+<Note type="info" title="Qué cambió en 318-25">
+Ediciones anteriores daban este mínimo en una **tabla por grado de acero**, que permitía
+reducir la cuantía para $f_y > 420$ MPa. ACI 318-25 la eliminó, en flexión (7.6.1.1) y en
+retracción y temperatura (24.4.3.2). El comentario R24.4.3.2 explica el porqué: *«la mecánica
+de la fisuración sugiere que una mayor tensión de fluencia no aporta ningún beneficio al
+control de la fisuración»*. Con acero de grado alto ya no se ahorra malla.
 </Note>
 
 ---
@@ -119,9 +135,9 @@ El hormigón se acorta al secarse y con los ciclos térmicos, y la losa **no est
 muros, vigas y columnas la sujetan. Acortamiento impedido = tracción = fisuras — que
 aparecen perpendiculares a la dirección larga, justamente donde el análisis de flexión
 dice que "no pasa nada". El refuerzo de temperatura y retracción, perpendicular al
-principal y con las mismas cuantías mínimas de la Tabla 7.6.1.1, no resiste cargas: 
-**reparte esa fisuración inevitable** en muchas fisuras capilares en vez de pocas
-grietas visibles. No requiere cálculo de resistencia; requiere no olvidarse de él.
+principal y con la misma cuantía de $0.0018$ (Sec. 24.4.3.2, a la que remite 7.6.4.1), no
+resiste cargas: **reparte esa fisuración inevitable** en muchas fisuras capilares en vez de
+pocas grietas visibles. No requiere cálculo de resistencia; requiere no olvidarse de él.
 
 <Note type="tip" title="Losas unidireccionales apoyadas en los cuatro bordes">
 En losas que trabajan en una dirección por relación de luces ($\ell_2/\ell_1 > 2$) pero
@@ -134,16 +150,30 @@ ignora) — otra razón para respetar su espaciamiento máximo.
 
 ## 5. Espaciamientos máximos (Sec. 7.7.2) y recubrimiento
 
-<Equation label="Sec. 7.7.2.1 / 7.7.2.3">
+Acá conviene no ir de memoria. En losas **no pretensadas**, el espaciamiento del acero de
+flexión **no** es el $3h$ que uno recuerda: la Sec. 7.7.2.2 lo remite a la Tabla 24.3.2, es
+decir al control de fisuración, que depende de la tensión de servicio del acero $f_s$ (se
+permite tomar $f_s = \tfrac{2}{3}f_y$, Sec. 24.3.2.1) y del recubrimiento $c_c$:
+
+<Equation label="Tabla 24.3.2">
 $$
-s_{\text{flexión}} \leq \min(3h,\; 450\,\text{mm})
-\qquad
+s_{\text{flexión}} \leq \min\left[380\left(\frac{280}{f_s}\right) - 2.5\,c_c,\;\; 300\left(\frac{280}{f_s}\right)\right]
+$$
+</Equation>
+
+Para Grado 420 con $f_s = 280$ MPa y $c_c = 20$ mm eso da **300 mm**. El $\min(3h, 450)$ existe,
+pero es la Sec. 7.7.2.3 y aplica a losas pretensadas con tendones no adheridos.
+
+El de retracción y temperatura vive en el Cap. 24:
+
+<Equation label="Sec. 24.4.3.3">
+$$
 s_{\text{temperatura}} \leq \min(5h,\; 450\,\text{mm})
 $$
 </Equation>
 
 Los límites de espaciamiento son control de fisuración y de carga concentrada: una barra
-cada 3 espesores garantiza que cualquier fisura (o rueda, o pie) encuentre acero cerca.
+cada pocos centímetros garantiza que cualquier fisura (o rueda, o pie) encuentre acero cerca.
 
 **Recubrimiento** (Tabla 20.6.1.3): 20 mm para barras hasta No. 11 en losas no expuestas
 a la intemperie ni en contacto con el suelo, medido a la cara de la barra más cercana.
@@ -169,11 +199,19 @@ flowchart TD
 | Verificación | Requisito | Naturaleza |
 |--------------|-----------|:---:|
 | Dirección de trabajo | $\ell_2/\ell_1 > 2$ → este capítulo | clasificación |
-| Espesor mínimo | Tabla 7.3.1.1 o cálculo de deflexión (Cap. 24) | servicio |
+| Espesor mínimo | Tabla 7.3.1.1 **solo** si no soporta elementos dañables; si no, deflexión calculada (7.3.2.1 → 24.2) | servicio |
 | Resistencia a flexión | $\phi M_n \geq M_u$ con $\phi = 0.90$ | dúctil ✅ |
-| Refuerzo mínimo | Tabla 7.6.1.1 (con $b \cdot h$) | protege lo dúctil |
-| Temperatura y retracción | Ídem mínimo, dirección perpendicular | fisuración impedida |
-| Espaciamiento flexión | $s \leq \min(3h,\, 450\,\text{mm})$ | fisuración |
-| Espaciamiento temperatura | $s \leq \min(5h,\, 450\,\text{mm})$ | fisuración |
-| Cortante | $\phi V_c \geq V_u$ (sin estribos) | rara vez controla |
+| Sección controlada por tracción | $\varepsilon_t \geq 0.005$ (7.3.3.1) | exigido, no opcional |
+| Refuerzo mínimo | $0.0018\,A_g$ (7.6.1.1, con $b \cdot h$) | protege lo dúctil |
+| Temperatura y retracción | Ídem $0.0018$ (24.4.3.2), dirección perpendicular | fisuración impedida |
+| Espaciamiento flexión | Tabla 24.3.2 (300 mm para Gr 420 y $c_c$ = 20 mm) | fisuración |
+| Espaciamiento temperatura | $s \leq \min(5h,\, 450\,\text{mm})$ (24.4.3.3) | fisuración |
+| Cortante | $\phi V_c \geq V_u$, Tabla 22.5.5.1(c) sin estribos | rara vez controla |
 | Recubrimiento | 20 mm para barras ≤ No. 11 en ambiente interior | durabilidad |
+
+<Note type="tip" title="Un ejemplo trabajado de este capítulo">
+El [ejemplo de losa unidireccional continua](/hormigon/ejemplo-losa-unidireccional) recorre esta
+tabla completa sobre tres tramos de 4,50 m, y muestra que en una losa de oficinas corriente el
+espesor no lo fija ninguna de las verificaciones de resistencia sino la deflexión — y que las
+cinco secciones críticas terminan armadas con el mínimo.
+</Note>

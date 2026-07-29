@@ -50,6 +50,39 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-29 · `hormigon/ejemplo-losa-unidireccional` · ⚠️ 20 (1🔴 · 5🟠 · 10🟡 · 4🔵) — **19 aplicados**, queda 1🔵 de alcance de repo
+
+**Commit:** `93dac8a` (post nuevo, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | `Equation` "Sec. 5.3.1(b)" y §8 | La aritmética no cierra con los valores declarados: $1{,}2 \times 0{,}625 + 1{,}6 \times 0{,}250 = 1{,}150$ tonf/m², no 1,173. Ídem en $h = 210$: 1,270 y no 1,295. Causa: las cifras en tonf eran conversión *blanda* (1 tonf = 10 kN) de los valores SI que sí se calculan, mientras $w_u$ estaba convertido *duro*. El resultado SI es correcto; lo que estaba mal era la ecuación tal como se leía | Escribir toda la cadena de cargas en kN/m² como el script y dejar el tonf como paréntesis informativo | ✅ aplicado |
+| 2 | 🟠 | U | §6 | `$E_c = 23{,}500$ MPa` se lee **23,5 MPa** en un post de coma decimal | `23\,500` MPa | ✅ aplicado |
+| 3 | 🟠 | C | §7, "La luz" | «Bajar la luz a 4,00 m **resuelve el problema**» y «50 cm de luz valen más que 4 cm de losa» contradicen al propio post: con $\ell_n = 4{,}00$ y $h = 170$ el uso es 0,95 por 24.2.3.7 pero **1,20 por 24.2.3.6**, o sea reprueba bajo el mismo criterio de dos rutas que hizo descartar $h = 200$ | Añadir la columna 24.2.3.6 y reformular: la luz es la palanca de mayor *sensibilidad*, no la que llega primero | ✅ aplicado |
+| 4 | 🟠 | N | Resumen | Fila «Flexión, 1.er apoyo interior»: $375/393 = 0{,}95$, no 0,96 (el 0,96 es el cociente de la fila siguiente) | Poner 0,95 | ✅ aplicado |
+| 5 | 🟠 | N | §6, `Note` | «lo que reprueba es la **diferida del peso propio**, que vale 21,19 mm ella sola»: los 21,19 son $\lambda_\Delta \times$ la flecha de la carga **sostenida completa**. La diferida del peso propio sola vale 13,10 mm | «la diferida de la carga sostenida», y dar los 13,10 aparte | ✅ aplicado |
+| 6 | 🟠 | L | §1, `Equation` Tabla 7.3.1.1 | La Tabla 7.3.1.1 dice $\ell$ (luz del elemento), no $\ell_n$; la Tabla 6.5.2 sí pide $\ell_n$. Con la luz entre ejes el mínimo de tabla sería 200 mm — no cambia la conclusión, la refuerza | Declarar la adopción $\ell = \ell_n$ y cuánto cambiaría | ✅ aplicado — **y al medirlo apareció más grande de lo que el hallazgo suponía**: con $\ell = 4{,}80$ m entre ejes en la Tabla 24.2.2, $h = 210$ **reprueba** (1,13 por 24.2.3.7 y 1,34 por 24.2.3.6), porque la flecha crece por $\ell^4$ *y* porque el mayor $M_a$ deja la sección más fisurada. Se agregó a §7 la tabla 2×2 (dos luces × dos rutas de $I_e$), se declaró el criterio adoptado y se dejó explícito que **22 cm cumple por los cuatro caminos** y sigue armándose con el mínimo. El veredicto del tanteo es robusto (2,5–3,7 con cualquier combinación); el espesor final no |
+| 7 | 🟡 | N | §7 | «una viga intermedia más en la planta» no da $\ell_n = 4{,}00$ m: con 14,40 m de ancho total, un cuarto vano deja $\ell_n = 3{,}30$ m | Calcular el caso real de 3,30 m | ✅ aplicado |
+| 8 | 🟡 | U | Tabla "El caso" | Los datos en unidades chilenas son designaciones nominales, no los valores usados (250 kgf/cm² vs 25 MPa = 255; 0,250 tonf/m² vs 2,50 kN/m²). Diferencias del 2 % | Columna SI explícita y nota de que el cálculo corre en SI | ✅ aplicado |
+| 9 | 🟡 | L | Tabla "El caso" | La tabla de recubrimiento es la **20.5.1.3.1** y para losas no expuestas pide **19 mm**; los 20 son elección de proyecto | Declararlo como adoptado | ✅ aplicado |
+| 10 | 🟡 | F | dos `Note` | Los `title` de `Note` con LaTeX se imprimen literales (verificado en el `dist/`). Se repite en `factor-r-anatomia`, `presiones-contacto-winkler`, cap7 y cap8 | Texto plano en el `title`, o slot de título en `Note.astro` | ✅ aplicado (aquí y en la nota del Cap. 7; **queda abierto en los otros 3 posts**) |
+| 11 | 🟡 | U | los dos SVG | Las figuras usaban punto decimal mientras el cuerpo usa coma, y el panel decía «a la 18 %» | Helper de coma en `ejemplo_losa_uni_figuras.py` que respete los números de cláusula; «al 18 %» | ✅ aplicado |
+| 12 | 🟡 | C | §3 | El título «el acero lo pone el mínimo» encabeza la tabla de $h = 170$, donde la flexión gobierna en **3 de 5**. El «5 de 5» es de $h = 210$ | Titular §3 con el resultado del tanteo | ✅ aplicado |
+| 13 | 🟡 | N | Lectura del resultado | «subir 2 cm baja la flecha un 40 %»: desde 170 mm la caída es **49 %**; el −43 % es del salto 150 → 170, mientras el «4 cm → quinta parte» sí parte de 170 | Fijar la base en 170 mm | ✅ aplicado |
+| 14 | 🟡 | L | §7 | La Sec. 24.2.4.1.2 exige $\rho'$ **en el centro del tramo**; «dejarla como acero comprimido en los apoyos» no es ese $\rho'$. Los números de la tabla son correctos | Redactar sobre el $\rho'$ del centro y citar 24.2.4.1.2 | ✅ aplicado |
+| 15 | 🟡 | L | `caption` fig. 2 | Conviven «momento de fisuración» y «momento de agrietamiento» para $M_{cr}$ | Unificar | ✅ aplicado |
+| 16 | 🟡 | C | `description` | «Con 17 cm la flexión y el corte pasan **cómodos**»: a 17 cm la flexión gobierna 3 de 5 y el apoyo queda en 0,98. Cómodo es el corte | Reformular | ✅ aplicado |
+| 17 | 🔵 | F | frontmatter | `pubDate: 2026-07-30` era futura | Confirmar o corregir | ✅ aplicado (2026-07-29) |
+| 18 | 🔵 | U | todo el post | Separador decimal: este post usa coma como `ejemplo-losa-punzonamiento-momento`, pero `ejemplo-viga-flexion-corte` y `ejemplo-zapata-aislada` usan punto al 100 %, y la nota del Cap. 7 escribe `$0.0018$`. El repo está partido | Decidir la convención y anotarla en `CLAUDE.md` — no es un error de este post | ⬜ |
+| 19 | 🔵 | L | §4 | 7.3.3.1 dice «tension-controlled **in accordance with Table 21.2.2**»; el 0,005 sale de esa tabla | Citar «7.3.3.1 vía Tabla 21.2.2» | ✅ aplicado |
+| 20 | 🔵 | R | docstring del script | El post cita R13.4.4.1.1 para el $f_r = 0{,}62$ (correcto, verificado); el docstring del script citaba 13.3.5.4 | Alinear el docstring | ✅ aplicado |
+
+**Verificado y correcto** (recálculo independiente, sin reusar el script): los cinco momentos de la Tabla 6.5.2 con $w_u = 11{,}50$ y $12{,}70$ kN/m²; las diez $A_s$ requeridas por bloque rectangular; $A_{s,min}$ y los espaciamientos 257 y 208 mm; la Tabla 24.3.2 con $f_s = 280$ → mín(330; 300); $\varepsilon_t$; el corte completo ($\lambda_s = 1{,}00$ en el tope, $v_c = 0{,}4809$ contra piso 0,415 y techo 2,10, usos 0,54 y 0,52, y las razones 57 % y 50 % contra la fórmula pre-318-19); toda la cadena de deflexión ($I_g$, $f_r$, $M_{cr}$, $\tfrac{2}{3}M_{cr}$, $M_a$, $kd$, $I_{cr}$, $I_e$ de Bischoff por las dos rutas, $\lambda_\Delta$, las cinco componentes de flecha y los tres límites); **las once filas del barrido de espesores**, incluido el 1,06 de $h = 200$ por 24.2.3.6; las tres sensibilidades; y los coeficientes elásticos de la viga de tres tramos **por integración numérica propia** ($M^+ = 0{,}0800$, $M^- = 0{,}100$, $\delta = 0{,}006884\,w\ell^4/EI$ — el 0,0069 del post es 0,2 % conservador). **Cláusulas contrastadas contra el texto del PDF**: 6.5.1(a)-(e), los cinco coeficientes de la Tabla 6.5.2 con sus condiciones, 6.5.3, Tabla 6.5.4, 7.3.1.1 (solo exime a losas que **no** soportan elementos dañables), 7.3.2.1, 7.3.3.1, 7.4.3.2, 7.6.1.1 = $0{,}0018A_g$ valor único, R7.6.1.1, 7.7.2.2 → 24.3 (y el $3h$ de 7.7.2.3 solo para tendones no adheridos: la tesis «ninguno es el $3h$ de memoria» es correcta en 318-25), Tabla 22.5.5.1(c) con 22.5.5.1.1 y 22.5.5.1.3, Tabla 24.2.2, 24.2.3.5–24.2.3.7, 24.2.4.1.1, Tabla 24.3.2, 24.3.2.1, 24.4.3.2 y 24.4.3.3. **La errata del $f_r$ es real**: 19.2.3.1 se imprime `0,062λ√f'c` en la edición SI y R13.4.4.1.1 usa 0,62. Enlaces recíprocos con la nota del Cap. 7 y sin contradicción entre ambas; frontmatter válido; las seis validaciones internas del script pasan (equilibrio de la sección fisurada con residuo $1{,}16\times10^{-10}$).
+
+**No verificable:** la sobrecarga de 250 kgf/m² atribuida a NCh1537.Of2009 (la norma chilena no está en disco); las cargas de proyecto y la fracción sostenida del 25 %, que el post declara como criterio del proyectista; y la atribución a **ACI PRC-435** de mantener el mismo $I_e$ para todos los niveles de carga (el documento no está en `raw/normas/`).
+
+---
+
 ### 2026-07-29 · `hormigon/ejemplo-losa-punzonamiento-momento` · ❌ bloqueado — 22 (1🔴 · 4🟠 · 13🟡 · 4🔵) — **🔴 y 🟠 aplicados**, desbloqueado
 
 **Commit:** `68c8b69` (post sin commitear, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -2338,10 +2371,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (19)
+### `hormigon` — hormigon (ACI 318-25) (20)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-losa-unidireccional` | 2026-07-29 | ⚠️ | 1 abierto (0🔴 0🟠 · 0🟡 1🔵, convención decimal del repo) · 19 aplicados (1🔴 5🟠 10🟡 3🔵) |
 | `ejemplo-losa-punzonamiento-momento` | 2026-07-29 | ⚠️ | 17 abiertos (0🔴 0🟠 · 13🟡 4🔵) · 5 aplicados en `cfee396` |
 | `ejemplo-pedestal-anclaje-nch2369` | 2026-07-27 | ⚠️ | 2 abiertos (0🔴 0🟠 · 2🟡) · 15 aplicados en `4b0bb1c` |
 | `ejemplo-muro-flexocompresion` | 2026-07-26 | ⚠️ | 16 abiertos (0🔴 0🟠 · 11🟡 5🔵) · 9 aplicados en 7248347 |
