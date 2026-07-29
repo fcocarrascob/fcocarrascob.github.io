@@ -34,6 +34,21 @@ function loadInitial(): Region[] {
 
 const newId = () => `r${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
+/**
+ * ¿Hay trabajo guardado que un deep-link estaría a punto de pisar? Se consulta
+ * el `localStorage` y no el estado, porque los deep-links corren en el primer
+ * render, antes de que el usuario haya tocado nada.
+ */
+function hasStoredWork(): boolean {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    return Array.isArray(data?.regions) && data.regions.some((r: Region) => r.src?.trim());
+  } catch {
+    return false;
+  }
+}
+
 const toolBtn =
   'rounded border border-border bg-white px-2.5 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent';
 
@@ -59,18 +74,44 @@ export default function MathCanvas() {
     if (!id) return;
     const tpl = TEMPLATES.find((t) => t.id === id);
     if (!tpl) return;
-    let hasWork = false;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const data = raw ? JSON.parse(raw) : null;
-      hasWork = Array.isArray(data?.regions) && data.regions.some((r: Region) => r.src?.trim());
-    } catch {
-      hasWork = false;
-    }
-    if (hasWork && !confirm(`¿Abrir la plantilla «${tpl.titulo}» y reemplazar tu hoja actual?`)) return;
+    if (hasStoredWork() && !confirm(`¿Abrir la plantilla «${tpl.titulo}» y reemplazar tu hoja actual?`))
+      return;
     setRegions(tpl.regions.map((r) => ({ ...r })));
     setSelected(new Set());
     setActiveId(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Deep-link: /herramientas/canvas?planilla=<slug> importa `/planillas/<slug>.json`.
+  //
+  // Es la vía para las planillas publicadas junto a los posts. A diferencia de
+  // `?plantilla=`, que sirve la galería compilada en `worksheet-templates.ts`,
+  // estas viven como archivo suelto en `public/planillas/`: se acumulan sin
+  // tocar el bundle, se descargan como JSON y se verifican fuera del navegador
+  // con `npm run verify:planilla`. El slug se valida contra [a-z0-9-] para que
+  // el parámetro no pueda apuntar a otra ruta.
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get('planilla');
+    if (!slug || !/^[a-z0-9-]+$/.test(slug)) return;
+    let cancelled = false;
+    fetch(`/planillas/${slug}.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((data) => {
+        if (cancelled) return;
+        if (!Array.isArray(data?.regions)) throw new Error('formato inválido');
+        const titulo = typeof data?.meta?.titulo === 'string' ? data.meta.titulo : slug;
+        if (hasStoredWork() && !confirm(`¿Abrir la planilla «${titulo}» y reemplazar tu hoja actual?`))
+          return;
+        setRegions((data.regions as Region[]).map((r) => ({ ...r })));
+        setSelected(new Set());
+        setActiveId(null);
+      })
+      .catch(() => {
+        if (!cancelled) alert(`No se pudo cargar la planilla «${slug}».`);
+      });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
