@@ -50,6 +50,87 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-07-29 · `hormigon/ejemplo-losa-punzonamiento-momento` · ❌ bloqueado — 22 (1🔴 · 4🟠 · 13🟡 · 4🔵) — **🔴 y 🟠 aplicados**, desbloqueado
+
+**Commit:** `68c8b69` (post sin commitear, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.302-303 | «$A_s = 12{,}27$ cm² —muy por encima del **mínimo** de $0{,}0018A_g = 4{,}59$ cm²». Ese no es el mínimo aplicable: como $v_{uv} = 9{,}87 > 0{,}17\lambda_s\lambda\sqrt{f'_c} = 8{,}58$ kgf/cm², gobierna la **Ec. (8.6.1.2)**. El veredicto de detallamiento no cambia (7φ16 alcanzan) pero el margen cae, y 8.6.1.2 es justamente la cláusula escrita para conexiones con $v_{uv}$ alto — el tema del post | Reemplazar el mínimo por 8.6.1.2, mencionar 8.6.1.1 solo como piso general; actualizar la fila del resumen | ⬜ |
+| 2 | 🟠 | N/R | L.304-309 | «$M$ negativo en la cara $= 30{,}42$ tonf·m» sale de reducir el momento del eje con **la mitad de la reacción total** ($V/2 = 25{,}82$ tonf). El corte que corresponde a esa cara es el del vano largo: $V_r = qL/2 + (M_i{+}M_j)/L = 30{,}46$ tonf (verificado por rigidez independiente). Con él: $M_{cara} = 29{,}26$ tonf·m (−3,8 %) → $A_{s,franja} = 32{,}60$ cm², uniforme en $b_{slab}$ = **11,64 cm²** (no 12,13) y **concentración = 1,05×** (no 1,01×). Las 17φ16 y las 7φ16 no cambian, pero el titular «apenas 1,01×» y «un pelo por debajo» sí | Recalcular con el corte del vano largo o declarar explícitamente el atajo | ⬜ |
+| 3 | 🟠 | N/R | L.328 | «Con $v_{uv}/v_c = 0{,}592$ el umbral queda en 0,54 %». §18.14.5.1 dice literal: *«The load combinations to be evaluated for $v_{uv}$ shall only include those with E»*. El 9,87 kgf/cm² usado viene de $1{,}2D+1{,}6L$; con una combinación sísmica $v_{uv}$ baja y el umbral **sube** (conservador, pero no es el de la cláusula) | Declarar que se usa el $v_{uv}$ de gravedad como cota conservadora, o rehacer con la combinación con E | ⬜ |
+| 4 | 🟠 | U/N | L.128-135, L.208 | Las tres expresiones de la Tabla 22.6.5.2 se muestran en SI ($\sqrt{f'_c}$ en MPa) pero los valores están en kgf/cm². Un lector que sustituya $f'_c = 250$ kgf/cm² obtiene $0{,}33\sqrt{250} = 5{,}22$, no 16,66. La cadena real es $0{,}33\sqrt{24{,}52} = 1{,}634$ MPa $\times\,10{,}1972$. El post nunca lo dice | Agregar «las expresiones son SI; se evalúan con $f'_c = 24{,}5$ MPa y se convierten con 1 MPa = 10,1972 kgf/cm²» | ⬜ |
+| 5 | 🟡 | N | L.174 | $1\,020\,403 + 76\,192 + 3\,061\,210 = 4\,157\,\mathbf{805}$, y el post escribe $4\,157\,806$ (el exacto es 4 157 805,99, pero los sumandos redondeados no lo dan) | Poner 4 157 805 o redondear los términos | ⬜ |
+| 6 | 🟡 | N | L.267, L.345 | Sección exterior del ábaco: $v_u = 2{,}50$ es la suma de los redondeados; sin redondear es $2{,}2043+0{,}3026 = 2{,}507 \to 2{,}51$ | Unificar en 2,51 (el uso 0,29 no cambia) | ⬜ |
+| 7 | 🟠 | N/U | L.46 y `losa-punzonamiento-planta.svg` vs L.124 | La figura y su `alt` dicen «$b_o = 275$ cm»; el cuerpo dice $275{,}2$ cm y con ese valor se calcula $v_{uv}$ | Poner 275,2 en la figura (`ejemplo_losa_figuras.py`) y regenerar | ⬜ |
+| 8 | 🟡 | U/E | ambos SVG | Las figuras usan **punto** decimal (`0.79`, `1.15`, `42.25 m²`) mientras el cuerpo y los `alt`/`caption` usan coma. Las figuras recientes del repo (`pedestal-nch2369-*`, `chevron-nch2369-*`, `muro-flexocompresion-*`) ya usan coma | Formatear con coma en el generador y regenerar | ⬜ |
+| 9 | 🟡 | N/R | L.61-62 vs L.302-310 | $d = 18{,}80$ cm se deriva de barras **φ12**, pero el refuerzo que se detalla es **φ16**. Con φ16, $d = 18{,}40$ cm y $A_s$ sube a $12{,}57$ cm² (+2,5 %); 7φ16 sigue alcanzando | Declarar el supuesto o rehacer el paso 9 con $d = 18{,}4$ | ⬜ |
+| 10 | 🟡 | U/L | L.101 vs L.138 | $V_u$ vale **51,64 tonf** en el paso 3 (reacción del marco) y **51,05 tonf** en el paso 4 (neto en la sección crítica). Está explicado, pero es el mismo símbolo con dos valores | Usar $V$ o $R$ para la reacción y reservar $V_u$ para el neto | ⬜ |
+| 11 | 🟡 | F | L.286, L.375 | «3,1 veces más hormigón» compara **1,95 m³/paño** contra **0,625 m³/columna** — bases distintas. En los paños de 5,50 × 6,50 el engrosado cuesta 1,43 m³ y la razón baja a 2,3× | Declarar la base o normalizar por m² de planta | ⬜ |
+| 12 | 🟡 | U | L.225, L.263-267, L.341-345 | $v_M$ aparece en tres tablas y nunca se define en prosa. Las columnas de tensión tampoco llevan unidad en el encabezado | Definir $v_M \equiv \gamma_v M_{sc}c_{AB}/J_c$ y poner «(kgf/cm²)» en los encabezados | ⬜ |
+| 13 | 🟡 | F | L.140, L.167, L.181, L.68-70, L.173-175 | `Equation` con prefijos heterogéneos y **label repetido** («R8.4.4.2.3» dos veces); dos display equivalentes fuera del componente; el label «Sec. 8.4.4.2.1» sobre $v_{uv}$ es impreciso (la sección crítica y $v_{uv}$ vienen de 8.4.4.1.1 + 22.6.4.1) | Unificar prefijos, desduplicar labels, encapsular las display sueltas, corregir la cita | ⬜ |
+| 14 | 🟡 | L | L.216-217 | «condiciones de **sobrestress**» no es español (original: *overstress*). Además el primer entrecomillado argumenta por qué **existe** la concesión, no por qué está cerrada | «sobretensión»; reordenar para apoyarse en la segunda cita | ⬜ |
+| 15 | 🟡 | L/C | L.110-111 | «al agrietar la losa **y no la columna**»: la Tabla 6.6.3.1.1(a) también reduce la columna (0,70 $I_g$); lo que ocurre es que reduce **más** la losa | «al reducir más la losa (0,25 $I_g$) que la columna (0,70 $I_g$)» | ⬜ |
+| 16 | 🟡 | U | L.311-312, L.347 | $\min(2h;\,450) = 44$ cm mezcla mm (450) y cm (44) en la misma expresión | $\min(2h;\,45\text{ cm}) = 44$ cm | ⬜ |
+| 17 | 🟡 | F | L.46-47 | El `alt` describe «planta de dos por dos vanos», pero el marco analizado tiene **cuatro** vanos — la figura muestra un fragmento y ni el `alt` ni el `caption` lo dicen | Agregar «fragmento de la planta; el marco analizado tiene cuatro vanos» al `caption` | ⬜ |
+| 18 | 🟡 | U | L.42 vs L.52 | La Tabla 8.3.1.1 se invoca por la fila $f_y = 420$ MPa, pero el dato declarado es $4200$ kgf/cm² $= 411{,}9$ MPa | Declarar la equivalencia | ⬜ |
+| 19 | 🔵 | R | L.88-91 | El resorte $K = \sum 4EI_c/L_c$ **no incluye el elemento torsional** ($K_t$) del marco equivalente, cuya flexibilidad reduciría el momento que llega a la columna. Es la hipótesis que fija $M_{sc}$ y está declarada a medias | Una línea en el `Note`: «omitir $K_t$ rigidiza el apoyo y da un $M_{sc}$ del lado conservador» | ⬜ |
+| 20 | 🔵 | R/L | L.318-319 | §18.14.1.1 acota todo el §18.14 a estructuras de **SDC D, E o F**. La aplicabilidad en Chile vía NCh433/DS 60 es razonable pero no está declarada | Nota breve sobre la equivalencia de categoría sísmica | ⬜ |
+| 21 | 🔵 | R | L.258-268 | En la sección crítica exterior se **suma** el peso del ábaco a $V$ pero solo se descuenta $q_u$ (losa) sobre el área interior; el peso extra del ábaco queda dentro del perímetro sin descontar. Conservador (~0,3 %) pero asimétrico | Declararlo o descontarlo | ⬜ |
+| 22 | 🔵 | R | todo el post | Ninguna cifra nombra su fuente. Salen de `ejemplo_losa_punzonamiento_aci318.py` (10 validaciones cerradas que pasan) y las figuras de `ejemplo_losa_figuras.py`, que lo importa como módulo | Opcional: línea de trazabilidad al final, como en `ejemplo-pedestal-anclaje-nch2369` | ⬜ |
+
+**Verificado y correcto:**
+
+*Cadena numérica completa* — recalculada contra el script fuente y, en el paso crítico,
+**contra una solución de rigidez independiente escrita desde cero** (ensamblaje 5×5 con
+resortes rotacionales): $\theta$, $M_{izq} = +22{,}9039$, $M_{der} = -36{,}6237$,
+$M_{sc} = 13{,}7197$ tonf·m, $V = 51{,}6415$ tonf y equilibrio vertical
+$\sum R = 209{,}56 = qL$ — todos coinciden dígito a dígito con el post.
+
+- Espesor, cargas y marco: $\ell_n = 7{,}00$ m; $700/33 = 21{,}21$; $d = 18{,}80$;
+  $\lambda_s = 1{,}00$; $q_u = 1{,}240$; $L/D = 0{,}357 \le 0{,}75$; gap marco/tributaria
+  −1,43 % → «1,4 %» ✓; control de vanos iguales 1,26 y $12{,}46/13{,}72 = 90{,}8\,\%$ →
+  «91 %» ✓; sensibilidad bruta −29,0 % ✓.
+- Punzonamiento: $b_o = 275{,}2$; $v_c$ (a) 16,662 / (b) 25,246 / (c) 20,033;
+  $\phi v_c = 12{,}50$; $V_u = 51{,}05$; $v_{uv} = 9{,}867$; uso 0,790.
+- Transferencia: $\gamma_f = 0{,}600$ exacto; $J_c$ idéntico a R8.4.4.2.3 (el script lo
+  valida contra integración numérica); tercer término 73,6 % → «74 %» ✓; $v_M = 4{,}540$;
+  $v_M/v_{uv} = 46{,}0\,\%$ ✓; uso 1,153. Caso bruto uso 1,034 ✓.
+- Salida barata, barrido de espesores, ábaco (ambas secciones y la sensibilidad ×1,2/1,4/1,6),
+  flexión, costos y deriva: **todos coinciden exactamente** con la salida del script,
+  incluida la caída de $\phi v_c$ a 12,28 en $h = 30$ por $\lambda_s = 0{,}982$.
+- *Citas normativas contra el PDF de ACI 318-25 SI* (verificadas en el texto original, no en
+  fichas): 6.2.4.1, R6.2.4.1, 6.4.3.2, Tabla 6.6.3.1.1(a), 8.2.4(a)(b), Tabla 8.3.1.1,
+  8.4.1.5, 8.4.2.2.2, 8.4.2.2.3, Tabla 8.4.2.2.4 (condición doble bien enunciada),
+  8.4.4.2.2, R8.4.4.2.3 (ecuación literal), 8.5.1.1(d), 8.7.2.2, 18.14.5.1(a) y 18.14.5.2(a),
+  22.5.5.1.3, 22.6.4.1, Tabla 22.6.5.2, 22.6.5.3. Las tres citas textuales traducidas
+  (R8.4.2.2.4 ×2 y R6.2.4.1) son fieles.
+- *Estructura y activos*: `npm run build` completa (155 páginas); frontmatter válido contra
+  el schema Zod; sin H1; jerarquía H2 sin saltos; los tres componentes importados y usados;
+  los dos SVG existen; el enlace a la nota del Cap. 8 resuelve y la cita «frágil — suele
+  decidir» está literal en su tabla de cierre. Cada promesa de la `description` se cumple en
+  el cuerpo y se repite sin contradicción en el resumen y en «La lectura».
+
+**No verificable:** nada depende de SAP2000 ni de fuentes externas. Los únicos supuestos no
+cerrables desde el post son de **modelo**: (i) el marco prismático sin elemento torsional
+(hallazgo 19); (ii) la magnitud real del aumento de $M_{sc}$ por el ábaco, que el `Note` acota
+con una sensibilidad ±60 % en vez de modelarlo — decisión editorial declarada.
+
+**Nota de consolidación (2026-07-29, no del auditor).** El hallazgo 1 es correcto en el
+fondo pero su cifra no: el auditor evaluó la Ec. (8.6.1.2) **sin el $\phi$ del denominador**
+y obtuvo 9,19 cm². La ecuación se reconstruyó del PDF por posiciones de caracteres (pág. PDF
+123; el numerador y el denominador se pierden en `pdftotext` porque las griegas son glifos
+aparte) y es
+
+$$A_{s,min} = \frac{5\,v_{uv}\,b_{slab}\,b_o}{\phi\,\alpha_s\,f_y}$$
+
+— sin $\lambda_s$, que solo aparece en el gatillo. Con $v_{uv} = 0{,}9677$ MPa,
+$b_{slab} = 1160$ mm, $b_o = 2752$ mm, $\phi = 0{,}75$, $\alpha_s = 40$ y
+$f_y = 411{,}88$ MPa da **$A_{s,min} = 12{,}50$ cm²**, que **gobierna sobre** los 12,27 cm²
+de la flexión (1,02×). Las 7φ16 = 14,07 cm² siguen alcanzando (uso 0,89), así que el
+detallamiento no cambia — pero el mínimo pasa de ser una nota al pie a ser la condición que
+manda, que es exactamente el punto del hallazgo.
+
 ### 2026-07-27 · `acero/ejemplo-chevron-nch2369` · ❌ bloqueado — 18 (2🔴 · 4🟠 · 9🟡 · 3🔵) — **todos aplicados en `4b0bb1c`**, desbloqueado
 
 **Commit:** `0b468d6` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -2257,10 +2338,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
 
-### `hormigon` — hormigon (ACI 318-25) (18)
+### `hormigon` — hormigon (ACI 318-25) (19)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-losa-punzonamiento-momento` | 2026-07-29 | ❌ | 22 (1🔴 5🟠 · 12🟡 4🔵) |
 | `ejemplo-pedestal-anclaje-nch2369` | 2026-07-27 | ⚠️ | 2 abiertos (0🔴 0🟠 · 2🟡) · 15 aplicados en `4b0bb1c` |
 | `ejemplo-muro-flexocompresion` | 2026-07-26 | ⚠️ | 16 abiertos (0🔴 0🟠 · 11🟡 5🔵) · 9 aplicados en 7248347 |
 | `aci318-25-cap18-sismorresistente` | 2026-07-26 | ⚠️ | 14 abiertos (0🔴 0🟠 · 13🟡 1🔵) · 12 aplicados en 7248347 |
