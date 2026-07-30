@@ -320,6 +320,16 @@ Los valores calibrados para geometrías típicas están en el Apéndice C de la 
 
 Todos los números de este post salen de un solo script, `ejemplo_gusset_simple.py`, que también genera los del post soldado para que la comparación no dependa de copiar cifras a mano. Cierra con 26 validaciones, cuatro de ellas contra casos cerrados: la banda con largo de transferencia cero devuelve el ancho de entrada, la dispersión sobre un largo unitario da $2\tan\theta$, el $\min$ de J4-5 se activa cuando el área neta de corte es grande, y la razón entre las dos bandas es exactamente $\sqrt{3}$.
 
+Y el cálculo completo está además como planilla del canvas, encabezada por el esquema del nudo: 92 pasos y 23 verificaciones ✓/✗. Entre las verificaciones van las **condiciones geométricas** que este post derivó —la banda de tracción cabe sobre el ala, la sección de Whitmore queda antes de la esquina del contorno, la razón $\sqrt{3}$ entre las partes dispersadas—, de modo que si cambias la geometría y alguna deja de cumplirse, la hoja te lo dice sola:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-simple-apernado)** ·
+[descargar el JSON](/planillas/gusset-simple-apernado.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/gusset-simple-apernado.json --md
+```
+
 ## Bibliografía
 
 [^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas **8.3.3** (remite a AISC 341-16 Tabla A3.1 para $R_y$ y $R_t$, y su Comentario sobre la plancha A36 nacional), **8.4.1** (los tres niveles de la demanda), **8.4.6** (uniones de terreno: preferentemente apernadas, con pretensión controlada, y la prohibición de combinar soldadura y pernos en la misma resistencia), **8.6.8** (capacidad esperada en tracción y compresión) y la **Tabla 9** ($\lambda_{md}$ de paredes de tubos usados como arriostramiento).

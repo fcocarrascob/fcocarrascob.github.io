@@ -226,6 +226,16 @@ Eso tiene una consecuencia práctica incómoda: si uno verifica solo el gusset �
 
 Los números de los dos posts del par salen del mismo script, `ejemplo_gusset_simple.py`, precisamente para que la tabla comparativa no dependa de copiar cifras de un post al otro. Cierra con 26 validaciones, cuatro de ellas contra casos cerrados — una es la razón $\sqrt{3}$ entre las partes dispersadas, y corre sobre las bandas de la variante apernada, porque en la soldada el tope de la plancha la rompe.
 
+Y el cálculo completo está además como planilla del canvas, encabezada por el esquema del nudo: 71 pasos y 18 verificaciones ✓/✗. Una de ellas comprueba en ✓ que **el tope de plancha efectivamente muerde** —la fórmula pide más banda de la que el contorno tiene—, que es la tesis de este post: si agrandas el gusset y el tope deja de morder, la hoja lo acusa sola:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-simple-soldado)** ·
+[descargar el JSON](/planillas/gusset-simple-soldado.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/gusset-simple-soldado.json --md
+```
+
 ## Bibliografía
 
 [^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas **8.3.3** (remite a ANSI/AISC 341-16 Tabla A3.1 para $R_y$ y $R_t$; en la edición 22 esos factores están en la Tabla A3.2), **8.4.1** (los tres niveles de la demanda), **8.6.8** (capacidad esperada en tracción y en compresión) y la **Tabla 9** ($\lambda_{md}$ de paredes de tubos usados como arriostramiento).
