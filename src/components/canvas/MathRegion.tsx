@@ -5,6 +5,9 @@ import type { Region, RegionResult } from '../../lib/worksheet';
 export const GRID = 16;
 export const snap = (v: number) => Math.max(0, Math.round(v / GRID) * GRID);
 
+/** Ancho mínimo de una imagen al redimensionar (px). */
+const MIN_IMAGE_W = GRID * 3;
+
 interface Props {
   region: Region;
   result?: RegionResult;
@@ -17,6 +20,8 @@ interface Props {
   onActivate: () => void;
   onSelect: (additive: boolean) => void;
   onMove: (x: number, y: number) => void;
+  /** Solo `image`: nuevo tamaño tras arrastrar el tirador de la esquina. */
+  onResize: (w: number, h: number) => void;
   /** Registra el input/textarea activo para que la paleta inserte símbolos. */
   registerInput: (el: HTMLInputElement | HTMLTextAreaElement | null) => void;
 }
@@ -40,9 +45,11 @@ export default function MathRegion({
   onActivate,
   onSelect,
   onMove,
+  onResize,
   registerInput,
 }: Props) {
   const drag = useRef<{ px: number; py: number; rx: number; ry: number; moved: boolean } | null>(null);
+  const resize = useRef<{ px: number; w0: number; ratio: number } | null>(null);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (active) return; // en edición no se arrastra
@@ -65,8 +72,29 @@ export default function MathRegion({
     if (d && !d.moved) onSelect(e.ctrlKey || e.shiftKey);
   };
 
+  // Redimensión de una imagen desde la esquina, con el aspecto bloqueado: solo
+  // se sigue el desplazamiento horizontal y el alto se deriva de la proporción.
+  const onResizeDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    const w0 = region.w ?? MIN_IMAGE_W;
+    resize.current = { px: e.clientX, w0, ratio: (region.h ?? w0) / w0 };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onResizeMove = (e: React.PointerEvent) => {
+    const r = resize.current;
+    if (!r) return;
+    e.stopPropagation();
+    const w = Math.max(MIN_IMAGE_W, snap(r.w0 + (e.clientX - r.px)));
+    onResize(w, Math.max(1, Math.round(w * r.ratio)));
+  };
+  const onResizeUp = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    resize.current = null;
+  };
+
   const isText = region.kind === 'text';
   const isProgram = region.kind === 'program';
+  const isImage = region.kind === 'image';
   const hasError = Boolean(result?.error) && !active;
 
   const lines = region.src.split('\n');
@@ -75,7 +103,7 @@ export default function MathRegion({
 
   return (
     <div
-      className={`absolute select-none rounded px-1.5 py-0.5 ${
+      className={`group absolute select-none rounded ${isImage ? 'p-0' : 'px-1.5 py-0.5'} ${
         active
           ? 'z-20 ring-1 ring-accent bg-white shadow-sm'
           : selected
@@ -88,10 +116,31 @@ export default function MathRegion({
       onPointerUp={onPointerUp}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        onActivate();
+        if (!isImage) onActivate(); // una imagen no tiene modo edición
       }}
     >
-      {active && isProgram ? (
+      {isImage ? (
+        <>
+          <img
+            src={region.src}
+            alt=""
+            draggable={false}
+            className="block max-w-none rounded-sm"
+            style={{ width: region.w, height: region.h }}
+          />
+          {/* Tirador de esquina: siempre visible si la región está seleccionada,
+              y al pasar el cursor por encima para que se descubra sin clic. */}
+          <span
+            className={`absolute -bottom-1 -right-1 h-3 w-3 cursor-nwse-resize rounded-sm border border-accent bg-white ${
+              selected ? '' : 'hidden group-hover:block'
+            }`}
+            title="Arrastra para redimensionar (mantiene la proporción)"
+            onPointerDown={onResizeDown}
+            onPointerMove={onResizeMove}
+            onPointerUp={onResizeUp}
+          />
+        </>
+      ) : active && isProgram ? (
         <textarea
           ref={registerInput}
           autoFocus

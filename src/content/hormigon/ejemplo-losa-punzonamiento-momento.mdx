@@ -1,0 +1,428 @@
+---
+title: "Ejemplo — Punzonamiento con momento desbalanceado: la losa que pasaba y dejó de pasar"
+description: "Losa plana de 22 cm sobre una columna interior con vanos de 5,50 y 7,50 m. Por carga vertical el punzonamiento da uso 0,79 y sobra. Cuando entra el momento desbalanceado —que no viene de una hipótesis de carga alternada sino de la geometría— la tensión sube 46 % y el uso se va a 1,15. La salida barata de transferir más momento por flexión está cerrada justamente porque el corte directo es alto; engrosar toda la losa es una palanca mala porque se realimenta; y el ábaco local resuelve con 3,1 veces menos hormigón."
+pubDate: 2026-07-29
+tags: ["ejemplo", "hormigón", "losas", "punzonamiento", "momento desbalanceado", "ábaco", "marco equivalente", "aci318", "sensibilidad"]
+subsection: "ejemplos"
+chapter: "Cap. 8 — Losas Bidireccionales"
+tema: Losas
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+La [nota del Cap. 8](/hormigon/aci318-25-cap8-losas-bidireccionales) cierra con una afirmación
+sin número: la transferencia de momento losa-columna es *«frágil — suele decidir»*. Este
+ejemplo la cobra[^aci]. Una losa plana de 22 cm sobre una columna **interior** —el caso que la
+intuición considera cómodo, porque el perímetro crítico tiene cuatro caras y $\alpha_s = 40$ es
+el valor más favorable— pasa el punzonamiento por carga vertical con **uso 0,79** y falla con
+**uso 1,15** cuando entra el momento desbalanceado.
+
+Lo que hace interesante al caso es de dónde sale ese momento. No de una hipótesis de carga
+alternada ni de sismo: sale de que **los dos vanos contiguos miden distinto**. Bajo la misma
+carga uniforme, el vano de 7,50 m empotra más que el de 5,50 m, y la diferencia se la come la
+columna. Es un momento que la planta arquitectónica ya fijó, y que ningún ajuste de cargas
+elimina.
+
+## El caso
+
+Losa plana sin vigas ni ábacos, edificio de oficinas arriostrado con muros —o sea, el marco
+losa-columna toma **solo gravedad**—. Materiales de uso corriente en Chile: hormigón G25 y
+acero A630-420H.
+
+| Dato | Valor |
+|---|---|
+| Luces, dirección de análisis | $5{,}50$ – $7{,}50$ – $7{,}50$ – $5{,}50$ m |
+| Luces, dirección transversal | $6{,}50$ m |
+| Columna analizada | interior, $50 \times 50$ cm, entre el vano de 5,50 y el de 7,50 |
+| Altura de entrepiso | $3{,}20$ m (columnas arriba y abajo) |
+| Sobrelosa + tabiquería | $0{,}15$ tonf/m² |
+| Sobrecarga de uso (oficinas) | $L = 0{,}25$ tonf/m² |
+| Hormigón | $f'_c = 250$ kgf/cm² |
+| Acero | $f_y = 4200$ kgf/cm² |
+
+<Figure
+  src="/ejemplos/losa-punzonamiento-planta.svg"
+  alt="Panel izquierdo: fragmento de la planta —dos por dos vanos (5,50 y 7,50 m en la dirección de análisis, 6,50 y 6,50 m en la otra) del marco de cuatro vanos analizado— con la columna interior de 50x50 cm en el cruce de los ejes intermedios, el área tributaria de 42,25 m² sombreada y el perímetro crítico a d/2 marcado en rojo con b_o = 275,2 cm. Debajo, dos barras enfrentadas que muestran el momento de empotramiento del vano corto (22,90 tonf·m) contra el del vano largo (36,62 tonf·m), cuya diferencia es M_sc = 13,72 tonf·m. Panel derecho: la distribución lineal de tensión de corte sobre el perímetro crítico, con v_u,CD = 5,33 en un extremo, v_uv = 9,87 como línea media punteada, v_u,AB = 14,41 en el otro extremo, y la línea de capacidad φ·v_c = 12,50 con el triángulo de exceso sombreado en rojo."
+  caption="La planta es un fragmento: el marco analizado tiene cuatro vanos (5,50 – 7,50 – 7,50 – 5,50). El momento desbalanceado nace de la desigualdad de vanos (izquierda) y se convierte en una rampa de tensión de corte sobre el perímetro crítico (derecha). La cara AB se pasa de la capacidad; la cara CD queda holgada. La verificación se hace en la peor, no en el promedio."
+/>
+
+## 1. El espesor: la losa parte en el mínimo del código
+
+La Tabla 8.3.1.1, para paño interior sin ábacos y $f_y = 420$ MPa, pide $\ell_n/33$ con la luz
+libre del vano largo:
+
+<Equation label="Tabla 8.3.1.1">
+$$
+h_{min} = \frac{\ell_n}{33} = \frac{700}{33} = 21{,}2 \text{ cm} \;\Rightarrow\; h = 22 \text{ cm}
+$$
+</Equation>
+
+Con recubrimiento de 2 cm y barras $\phi$12 en dos capas ortogonales, la altura útil promedio es
+$d = 18{,}80$ cm. Este dato importa dos veces más adelante: $d$ define el perímetro crítico, y
+como $d = 188$ mm $< 250$ mm, el factor de tamaño **no penaliza** ($\lambda_s = 1{,}00$). La losa
+está en el mínimo del código, que es exactamente donde el punzonamiento se pone interesante.
+
+## 2. Cargas: y por qué no hay que alternar la sobrecarga
+
+$$
+q_u = 1{,}2\,(0{,}550 + 0{,}150) + 1{,}6\,(0{,}250) = 1{,}240 \text{ tonf/m}^2
+$$
+
+La razón $L/D = 0{,}250/0{,}700 = 0{,}357$ no llega a $0{,}75$, así que la Sec. 6.4.3.2 permite
+**suponer la sobrecarga simultánea en todos los paños**: no hay que armar patrones alternados.
+Vale la pena subrayarlo, porque refuerza la tesis — el momento desbalanceado que va a aparecer
+no es un artificio de la hipótesis de carga, es puramente geométrico.
+
+## 3. El análisis: de dónde sale $M_{sc}$
+
+<Note type="warning" title="El método directo ya no está en el código">
+ACI 318-19 **removió del cuerpo del código** el método directo de diseño y el del marco
+equivalente. Hoy la Sec. 6.2.4.1 los sigue permitiendo, pero el comentario R6.2.4.1 aclara que
+las disposiciones *«fueron removidas del Código porque se consideran solo dos de varios métodos
+de análisis»*, y que los del **Código de 2014** pueden seguir usándose. Es decir: la fórmula que
+antes daba $M_{sc}$ en una línea hay que ir a buscarla a una edición anterior. Este ejemplo toma
+el otro camino, el que hace el software que uno tiene abierto: **un análisis elástico**.
+</Note>
+
+La franja de ancho $\ell_2 = 6{,}50$ m se modela como viga continua sobre los ejes de columnas,
+con un resorte rotacional en cada nudo que representa las columnas de arriba y de abajo
+($K = \sum 4EI_c/L_c$). Las rigideces son las de la Tabla 6.6.3.1.1(a) para análisis elástico a
+nivel de carga mayorada: **$0{,}25 I_g$ en la losa y $0{,}70 I_g$ en las columnas**.
+
+Bajo carga uniforme, los momentos que llegan al nudo desde cada lado no son iguales:
+
+| Lado del nudo | Momento en el extremo |
+|---|---|
+| Vano de 5,50 m | $22{,}90$ tonf·m |
+| Vano de 7,50 m | $36{,}62$ tonf·m |
+| **Desbalance $M_{sc}$** | $\mathbf{13{,}72}$ **tonf·m** |
+
+Y la reacción del marco en esa columna es $V_u = 51{,}64$ tonf, un 1,4 % menos que la que daría
+el área tributaria ($52{,}39$ tonf) — el análisis y la regla de bolsillo coinciden.
+
+**¿Cuánto de esos 13,72 tonf·m es realmente por vanos desiguales?** El mismo marco con los
+cuatro vanos iguales a 7,50 m deja $1{,}26$ tonf·m de puro efecto de borde. Los otros
+$12{,}46$ —el **91 %**— los pone la desigualdad de luces.
+
+<Note type="tip" title="Sensibilidad a la rigidez supuesta">
+Con secciones brutas ($1{,}0 I_g$ en todo, la práctica clásica del marco equivalente) el
+desbalance baja a $9{,}74$ tonf·m, un **29 % menos**: al agrietar la losa y no la columna, la
+Tabla 6.6.3.1.1(a) hace las columnas relativamente más rígidas y les entrega más momento. Es la
+hipótesis con más peso de todo el ejemplo — pero, como se ve al final del paso 5, **el veredicto
+no cambia con ninguna de las dos**.
+</Note>
+
+## 4. Punzonamiento por carga vertical: pasa cómoda
+
+Perímetro crítico a $d/2$ de la cara de la columna (Sec. 22.6.4.1):
+
+<Equation label="Sec. 22.6.4.1">
+$$
+b_1 = b_2 = c_1 + d = 50 + 18{,}80 = 68{,}80 \text{ cm}
+\qquad
+b_o = 2\,(b_1 + b_2) = 275{,}2 \text{ cm}
+$$
+</Equation>
+
+La resistencia es la **menor** de las tres expresiones de la Tabla 22.6.5.2. Con $\beta = 1$
+(columna cuadrada) y $\alpha_s = 40$ (interior):
+
+| Expresión | Valor |
+|---|---|
+| (a) $0{,}33\,\lambda_s\lambda\sqrt{f'_c}$ | $16{,}66$ kgf/cm² ← **gobierna** |
+| (b) $\left(0{,}17 + 0{,}33/\beta\right)\lambda_s\lambda\sqrt{f'_c}$ | $25{,}25$ kgf/cm² |
+| (c) $\left(0{,}17 + 0{,}083\,\alpha_s d/b_o\right)\lambda_s\lambda\sqrt{f'_c}$ | $20{,}03$ kgf/cm² |
+
+<Note type="warning" title="Las expresiones del código son SI; los resultados de acá, no">
+Las tres fórmulas de la Tabla 22.6.5.2 están escritas en **SI**: $f'_c$ va en MPa y devuelven
+MPa. Sustituir $f'_c = 250$ kgf/cm² directamente da $0{,}33\sqrt{250} = 5{,}22$, que no
+significa nada. La cadena correcta es $f'_c = 250/10{,}1972 = 24{,}52$ MPa →
+$0{,}33\sqrt{24{,}52} = 1{,}634$ MPa → $\times\,10{,}1972 = 16{,}66$ kgf/cm². Todos los valores
+de tensión de este ejemplo están en kgf/cm² tras esa conversión.
+</Note>
+
+Con $\phi = 0{,}75$ queda $\phi v_c = 12{,}50$ kgf/cm². Descontando la carga que cae dentro del
+perímetro, $V_u = 51{,}05$ tonf:
+
+<Equation label="Sec. 8.4.4.2.1">
+$$
+v_{uv} = \frac{V_u}{b_o\,d} = \frac{51\,050}{275{,}2 \times 18{,}80} = 9{,}87 \text{ kgf/cm}^2
+\qquad \frac{v_{uv}}{\phi v_c} = 0{,}79
+$$
+</Equation>
+
+Uso 0,79. Si el diseño terminara acá, la losa de 22 cm estaría bien y sobraría un 21 %.
+
+## 5. Entra el momento: el 40 % que viaja como corte
+
+El momento desbalanceado se reparte por dos caminos. La fracción $\gamma_f$ va por flexión, en
+un ancho efectivo; la fracción $\gamma_v$ va por **excentricidad del corte**, sumándose a la
+tensión del perímetro crítico:
+
+<Equation label="Ec. 8.4.2.2.2 y 8.4.4.2.2">
+$$
+\gamma_f = \frac{1}{1 + \tfrac{2}{3}\sqrt{b_1/b_2}} = 0{,}600
+\qquad
+\gamma_v = 1 - \gamma_f = 0{,}400
+$$
+</Equation>
+
+En columna cuadrada el reparto es el clásico 60/40 exacto. Ese 40 % se convierte en tensión a
+través de $J_c$, la propiedad de la sección crítica análoga a un momento polar de inercia
+(R8.4.4.2.3). Para columna interior:
+
+<Equation label="R8.4.4.2.3">
+$$
+J_c = \frac{d\,(c_1+d)^3}{6} + \frac{(c_1+d)\,d^3}{6} + \frac{d\,(c_2+d)(c_1+d)^2}{2}
+$$
+</Equation>
+
+$$
+J_c = 1\,020\,403 + 76\,192 + 3\,061\,210 = 4\,157\,806 \text{ cm}^4
+$$
+
+El tercer término —las dos caras perpendiculares al momento, que trabajan con todo el brazo
+$b_1/2$— aporta el **74 %** del total: son ellas las que sostienen la transferencia. Con
+$c_{AB} = b_1/2 = 34{,}40$ cm:
+
+<Equation label="R8.4.4.2.3">
+$$
+v_{u,AB} = v_{uv} + \frac{\gamma_v\,M_{sc}\,c_{AB}}{J_c}
+= 9{,}87 + 4{,}54 = 14{,}41 \text{ kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Sec. 8.5.1.1">
+$$
+\frac{v_{u,AB}}{\phi v_c} = \frac{14{,}41}{12{,}50} = 1{,}15 \;>\; 1 \quad \text{(no cumple)}
+$$
+</Equation>
+
+El momento agrega **46 %** sobre la tensión de la carga vertical y se lleva por delante el 21 %
+de holgura. Y el veredicto es robusto: **con secciones brutas** —el supuesto que reduce
+$M_{sc}$ en 29 %— la tensión queda en $9{,}70 + 3{,}22 = 12{,}92$ kgf/cm² y el uso en **1,03**.
+Sigue sin cumplir.
+
+## 6. La salida barata está cerrada
+
+El reparto 60/40 no es intocable: la Tabla 8.4.2.2.4 permite **subir $\gamma_f$** —y bajar en
+la misma medida el $\gamma_v$ que hace daño— si la conexión tiene ductilidad flexural. Para
+columna interior la condición es doble: $\varepsilon_t \ge \varepsilon_{ty} + 0{,}008$ en el
+ancho efectivo, y sobre todo
+
+<Equation label="Tabla 8.4.2.2.4">
+$$
+v_{uv} \le 0{,}4\,v_c = 0{,}4 \times 16{,}66 = 6{,}66 \text{ kgf/cm}^2
+$$
+</Equation>
+
+Nuestro $v_{uv} = 9{,}87$ kgf/cm² es **1,48 veces** ese límite. La puerta está cerrada, y la
+lógica de la norma es transparente: la concesión existe solo donde el corte directo es bajo,
+porque ahí la conexión aún puede plastificar en flexión antes de punzonar. Donde el corte
+directo ya es alto —justo donde uno querría la concesión— la falla sería frágil y el código no
+la da. El comentario R8.4.2.2.4 lo dice sin rodeos: usar la ecuación sin la modificación
+*«generalmente indicará condiciones de sobrestress en la conexión»*, y forzarla igual
+*«puede llevar a comportamiento frágil»*.
+
+## 7. Solución A: engrosar toda la losa (la palanca mala)
+
+Lo primero que uno prueba. Pero engrosar tiene una realimentación desagradable: **el peso propio
+sube con el espesor**, así que crecen a la vez $V_u$ y $M_{sc}$.
+
+| $h$ (cm) | $q_u$ (tonf/m²) | $M_{sc}$ (tonf·m) | $v_{uv}$ | $v_M$ | $v_u$ | $\phi v_c$ | Uso |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 22 | 1,240 | 13,72 | 9,87 | 4,54 | 14,41 | 12,50 | **1,15** |
+| 24 | 1,300 | 13,50 | 9,05 | 3,80 | 12,85 | 12,50 | 1,03 |
+| 26 | 1,360 | 13,15 | 8,36 | 3,19 | 11,55 | 12,50 | **0,92** |
+| 28 | 1,420 | 12,69 | 7,77 | 2,67 | 10,44 | 12,50 | 0,84 |
+| 30 | 1,480 | 12,16 | 7,27 | 2,24 | 9,51 | 12,28 | 0,77 |
+
+Hay que llegar a **26 cm** —un 18 % más de hormigón en toda la planta— para volver a cumplir. Y
+fíjese en la columna de $M_{sc}$: entre 22 y 26 cm baja apenas de 13,72 a 13,15, un **4 %**. Casi
+todo lo que se gana viene de $d$ y de $b_o$, no de reducir la demanda: la demanda se defiende
+sola, porque el hormigón que uno agrega se lo cobra en peso.
+
+Y en el extremo de la tabla asoma el otro castigo: en $h = 30$ cm la altura útil pasa los 250 mm
+y aparece el factor de tamaño ($\lambda_s = 0{,}98$), que empieza a comerse la capacidad que el
+espesor acaba de comprar.
+
+## 8. Solución B: el ábaco local
+
+Un ábaco actúa donde está el problema. Para calificar como tal —y no como simple capitel de
+corte— la Sec. 8.2.4 pide proyección $\ge h/4$ y extensión $\ge \ell/6$ desde el eje del apoyo
+en cada dirección:
+
+| Requisito | Exigido | Provisto |
+|---|:---:|:---:|
+| Proyección bajo la losa (8.2.4a) | $h/4 = 5{,}5$ cm | $10$ cm ✓ |
+| Extensión desde el eje, dirección 1 (8.2.4b) | $7{,}50/6 = 1{,}25$ m | $1{,}25$ m ✓ |
+| Extensión desde el eje, dirección 2 (8.2.4b) | $6{,}50/6 = 1{,}08$ m | $1{,}25$ m ✓ |
+
+Ábaco de $2{,}50 \times 2{,}50$ m con 10 cm de proyección. Ahora hay que verificar **dos**
+secciones críticas (Sec. 8.4.4.1.1 y 22.6.4.1): una a $d/2$ de la columna, con el canto
+engrosado, y otra a $d/2$ del borde del ábaco, con el canto de la losa.
+
+| | Interior (a $d/2$ de la columna) | Exterior (a $d/2$ del ábaco) |
+|---|:---:|:---:|
+| $d$ | $28{,}80$ cm | $18{,}80$ cm |
+| $b_o$ | $315$ cm | $1075$ cm |
+| $\lambda_s$ | $0{,}964$ | $1{,}000$ |
+| Expresión que gobierna $v_c$ | (a) $0{,}33$ | **(c) $\alpha_s$** |
+| $\phi v_c$ | $12{,}05$ kgf/cm² | $8{,}64$ kgf/cm² |
+| $v_{uv}$ | $5{,}81$ | $2{,}20$ |
+| $v_M$ | $2{,}23$ | $0{,}30$ |
+| $v_u$ | $8{,}04$ | $2{,}50$ |
+| **Uso** | **0,67** | **0,29** |
+
+Dos cosas que conviene no pasar por alto. En la sección **interior** aparece el efecto de tamaño
+($d = 288$ mm $> 250$ mm) y baja la capacidad un 3,6 %. En la sección **exterior** la que gobierna
+ya no es la expresión (a) sino la **(c)**: con $b_o = 1075$ cm el término $\alpha_s d/b_o$ se
+hace chico y la capacidad cae a $8{,}64$ kgf/cm², un 28 % menos que en la sección interior. Aun
+así el uso es 0,29, porque el perímetro creció mucho más de lo que cayó la capacidad.
+
+<Note type="info" title="El ábaco rigidiza, y eso sube el momento">
+El modelo de franja prismática no captura que el ábaco aumenta la rigidez de la losa sobre la
+columna, lo que en la realidad **incrementa** $M_{sc}$. Sensibilidad: con $M_{sc}$ mayorado en
+20 / 40 / 60 %, el uso de la sección interior pasa a 0,70 / 0,74 / **0,78** y el de la exterior a
+0,30 / 0,30 / 0,31. La solución aguanta el efecto con margen.
+</Note>
+
+<Figure
+  src="/ejemplos/losa-punzonamiento-soluciones.svg"
+  alt="Panel superior: barras de uso demanda/capacidad —solo carga vertical 0,79; h de 22 cm con momento 1,15 que no cumple; h de 24 cm 1,03; h de 26 cm 0,92 como primer espesor que cumple; ábaco sección interior 0,67; ábaco sección exterior 0,29— contra una línea vertical de uso igual a 1,00. Panel inferior: tres cortes esquemáticos de losa y columna —22 cm que falla, 26 cm en toda la planta con más 1,95 m³ por paño, y 22 cm con ábaco local de 2,50 por 2,50 m y 10 cm de proyección con más 0,62 m³ por columna."
+  caption="Las dos soluciones puestas lado a lado. Engrosar toda la planta gasta 3,1 veces más hormigón que el ábaco local y deja un uso peor (0,92 contra 0,67), porque el espesor global se cobra en peso propio lo que aporta en canto."
+/>
+
+## 9. El otro 60 %: la flexión dentro de $b_{slab}$
+
+La fracción que no viaja como corte tiene que transferirse por flexión, y no en cualquier parte:
+la Sec. 8.4.2.2.3 la confina a un ancho efectivo de la columna más $1{,}5h$ a cada lado.
+
+<Equation label="Sec. 8.4.2.2.3">
+$$
+b_{slab} = c_2 + 3h = 50 + 66 = 116 \text{ cm}
+\qquad
+\gamma_f M_{sc} = 0{,}600 \times 13{,}72 = 8{,}23 \text{ tonf·m}
+$$
+</Equation>
+
+Esos 8,23 tonf·m piden $A_s = 12{,}27$ cm² dentro de los 116 cm. Pero antes de comparar contra
+el acero disponible hay que preguntarse **cuál es el mínimo aplicable**, y acá el código tiene
+una trampa: el $0{,}0018 A_g = 4{,}59$ cm² de la Sec. 8.6.1.1 es solo el piso general. Cuando la
+tensión de punzonamiento es alta se activa un segundo mínimo, escrito exactamente para
+conexiones como ésta:
+
+<Equation label="Sec. 8.6.1.2">
+$$
+v_{uv} = 9{,}87 \;>\; 0{,}17\,\lambda_s\lambda\sqrt{f'_c} = 8{,}58 \text{ kgf/cm}^2
+\;\Rightarrow\;
+A_{s,min} = \frac{5\,v_{uv}\,b_{slab}\,b_o}{\phi\,\alpha_s\,f_y} = 12{,}50 \text{ cm}^2
+$$
+</Equation>
+
+**El mínimo gobierna sobre la flexión**, por un 2 %. No es casualidad: la Ec. (8.6.1.2) entró al
+código porque los ensayos de conexiones interiores *débilmente armadas a flexión* mostraron que
+la fluencia del acero cerca de la columna abre la fisura inclinada y dispara un punzonamiento
+**gobernado por flexión** (R8.6.1.2). Es decir, la norma exige acero mínimo ahí no para resistir
+el momento, sino para que la losa no se vuelva frágil justo donde el corte ya aprieta.
+
+La pregunta práctica es si el acero de momento negativo que ya va ahí alcanza. El momento
+negativo en la cara de la columna es $29{,}26$ tonf·m en la franja de $\ell_2$ —reduciendo el
+momento del eje con el corte del **vano largo**, $30{,}46$ tonf, y no con la mitad de la reacción
+total—; con el 75 % clásico a la franja de columna (325 cm) resultan $32{,}60$ cm², o
+**17$\phi$16**. De repartirse uniforme, dentro de $b_{slab}$ caerían $11{,}64$ cm², por debajo de
+los 12,50 que manda 8.6.1.2.
+
+La **concentración necesaria es de 1,07×** — basta correr las barras. Poniendo
+**7$\phi$16 dentro de $b_{slab}$** ($14{,}07$ cm², uso 0,89) a 16,6 cm y las 10 restantes a
+20,9 cm en el resto de la franja, ambos espaciamientos quedan bajo el máximo de
+$\min(2h;\,450\text{ mm}) = 44$ cm de la Sec. 8.7.2.2. Es el paso más fácil de todo el ejemplo, y
+por eso mismo el que más se olvida: ni la fracción $\gamma_f$ ni el mínimo de 8.6.1.2 son
+refuerzo adicional, son condiciones de **dónde** poner el que ya se calculó.
+
+## 10. Y si el edificio se mueve: Sec. 18.14.5
+
+Todo lo anterior es gravedad. Como la conexión losa-columna no forma parte del sistema
+sismorresistente, la Sec. 18.14.5.1 no le pide resistencia sísmica, pero sí le pone un umbral de
+**deriva**: hay que colocar armadura de corte en la losa si
+
+<Equation label="Sec. 18.14.5.1(a)">
+$$
+\frac{\Delta_x}{h_{sx}} \ge 0{,}035 - \frac{1}{20}\,\frac{v_{uv}}{v_c}
+$$
+</Equation>
+
+Con $v_{uv}/v_c = 0{,}592$, el umbral queda en **0,54 %** de deriva de diseño. Y la Sec.
+18.14.5.2(a) exime del requisito bajo 0,50 %.
+
+<Note type="info" title="Un matiz sobre el v_uv de este chequeo">
+La cláusula pide evaluar $v_{uv}$ **solo con las combinaciones que incluyen $E$**. Acá se usó el
+$v_{uv} = 9{,}87$ kgf/cm² de $1{,}2D + 1{,}6L$, que es mayor que el de una combinación sísmica y
+por lo tanto deja el umbral **más bajo** —del lado seguro—. Con la combinación que corresponde,
+la ventana de deriva se ensancha; el orden de magnitud, no.
+</Note>
+
+Dicho de otro modo: esta conexión, cargada como está, tolera una ventana de deriva estrechísima
+antes de que los conectores de corte pasen de opcionales a obligatorios. En un edificio chileno arriostrado con muros eso normalmente se
+cumple, pero es un chequeo que hay que hacer con el **desplazamiento de diseño** —no con la
+deriva de las fuerzas reducidas— y que castiga precisamente a las conexiones con $v_{uv}$ alto,
+que son las de este ejemplo.
+
+## Resumen: demanda vs. capacidad
+
+| Verificación | Referencia | Demanda | Capacidad | Uso |
+|---|---|:---:|:---:|:---:|
+| Espesor mínimo | Tabla 8.3.1.1 | $\ell_n/33 = 21{,}2$ cm | $h = 22$ cm | ✓ |
+| Punzonamiento, solo carga vertical | Tabla 22.6.5.2 | $v_{uv} = 9{,}87$ | $\phi v_c = 12{,}50$ | 0,79 |
+| **Punzonamiento con $M_{sc}$, $h = 22$ cm** | Sec. 8.4.4.2 | $v_{u,AB} = \mathbf{14{,}41}$ | $\phi v_c = 12{,}50$ | **1,15 ✗** |
+| Aumento de $\gamma_f$ (salida barata) | Tabla 8.4.2.2.4 | $v_{uv} = 9{,}87$ | $0{,}4v_c = 6{,}66$ | no aplica |
+| Punzonamiento con ábaco, sección interior | Sec. 22.6.4.1 | $v_u = 8{,}04$ | $\phi v_c = 12{,}05$ | **0,67** |
+| Punzonamiento con ábaco, sección exterior | Sec. 22.6.4.1 | $v_u = 2{,}50$ | $\phi v_c = 8{,}64$ | 0,29 |
+| Flexión de $\gamma_f M_{sc}$ en $b_{slab}$ | Sec. 8.4.2.2.3 | $A_s = 12{,}27$ cm² | $7\phi16 = 14{,}07$ cm² | 0,87 |
+| **Armadura mínima en $b_{slab}$** | Sec. 8.6.1.2 | $A_{s,min} = \mathbf{12{,}50}$ cm² | $7\phi16 = 14{,}07$ cm² | **0,89 ← gobierna** |
+| Espaciamiento en sección crítica | Sec. 8.7.2.2 | $s = 16{,}6$ cm | $\min(2h; 450\text{ mm}) = 44$ cm | ✓ |
+| Umbral de deriva de la conexión | Sec. 18.14.5.1 | — | $0{,}54$ % | verificar |
+
+**Solución:** losa plana de **22 cm** con **ábaco de $2{,}50 \times 2{,}50$ m y 10 cm de
+proyección** sobre la columna interior, y el acero negativo de la franja de columna corrido de
+modo que **7$\phi$16 queden dentro de los 116 cm de $b_{slab}$**.
+
+## La lectura
+
+Tres cosas que este caso deja, y que se generalizan mal si uno se queda con el titular.
+
+**Primera: el momento desbalanceado no es un caso de carga, es una consecuencia de la planta.**
+El 91 % de los 13,72 tonf·m viene de que un vano mide 7,50 y el otro 5,50. No hay hipótesis de
+carga que lo evite ni combinación que lo perdone; está en el plano de arquitectura. La regla
+práctica que sale de acá es que **toda columna con vanos contiguos desiguales es sospechosa de
+punzonamiento**, aunque sea interior y aunque la carga vertical sobre.
+
+**Segunda: la norma cierra la salida barata justo donde uno la buscaría.** Subir $\gamma_f$ es
+gratis en papel y la Tabla 8.4.2.2.4 lo permite —pero solo si $v_{uv} \le 0{,}4v_c$, es decir,
+solo si el corte directo es bajo. En una conexión holgada la concesión está disponible y no hace
+falta; en una apretada hace falta y no está disponible. No es una inconsistencia: es el código
+diciendo que la redistribución supone ductilidad, y que una conexión con corte directo alto no
+la tiene.
+
+**Tercera, y la más transferible: engrosar toda la losa es una palanca mala.** No porque no
+funcione —a los 26 cm funciona— sino porque **se realimenta**: el hormigón que uno agrega vuelve
+como peso propio, deja $M_{sc}$ casi intacto (–4 % entre 22 y 26 cm) y, pasados los 25 cm de
+altura útil, empieza a devolver capacidad por el factor de tamaño. El ábaco actúa sobre $d$ y
+sobre $b_o$ exactamente donde se necesita, sin tocar la carga: **3,1 veces menos hormigón y un
+uso 28 % mejor**. Cuando una verificación local falla, la respuesta local casi siempre gana — y
+acá se puede medir cuánto.
+
+[^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
+(ACI 318-25) and Commentary*, edición SI, Farmington Hills, MI, 2025 — Sec. 6.2.4.1 y R6.2.4.1
+(métodos de análisis permitidos para losas bidireccionales), Sec. 6.4.3.2 (disposición de la
+sobrecarga), Tabla 6.6.3.1.1(a) (momentos de inercia para análisis elástico), Sec. 8.2.4
+(ábacos), Tabla 8.3.1.1 (espesor mínimo), Sec. 8.4.2.2 y Tabla 8.4.2.2.4 ($\gamma_f$ y sus
+valores modificados), Sec. 8.4.4.2 y R8.4.4.2.3 ($\gamma_v$, $J_c$ y la distribución de
+tensiones), Sec. 8.6.1.1 y 8.6.1.2 con su comentario R8.6.1.2 (armadura mínima a flexión y el
+mínimo adicional cuando $v_{uv}$ es alto), Sec. 8.7.2.2 (espaciamiento), Sec. 18.14.5
+(conexiones losa-columna), Tabla 21.2.1
+($\phi$), Sec. 22.5.5.1.3 ($\lambda_s$), Sec. 22.6.4.1 (sección crítica) y Tabla 22.6.5.2
+($v_c$). En Chile el diseño en hormigón armado se rige por la NCh430, que adopta el ACI 318 con
+modificaciones introducidas por el DS 60 (2011).

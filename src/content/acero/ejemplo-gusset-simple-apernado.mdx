@@ -1,0 +1,341 @@
+---
+title: "Ejemplo — El gusset apernado de un solo borde: dos anchos efectivos para la misma plancha, y gobierna el de compresión"
+description: "El nudo más simple que existe con un gusset de verdad: una diagonal tubular a 45° que muere en el ala inferior de una viga, apernada con dos filas de tres pernos. Una sola interfaz y el punto de trabajo en su centroide, así que el reparto no es indeterminado y no hace falta el UFM. Con el estorbo fuera, los cuatro estados límite del gusset se ven solos — y aparece lo que los ejemplos complejos tapaban: el mismo gusset tiene DOS anchos efectivos, 45° en tracción por el Comentario J4.1 y 30° en compresión por el J4.4. La parte dispersada de la banda es √3 veces más angosta en compresión, y la banda entera 1,51 veces. Gobierna el gusset con uso 0,940, y lo decide la compresión aunque la demanda sea la misma en los dos sentidos. Al cierre, por qué la rama compacta de J4.4(a) es casi inalcanzable en un gusset de un solo borde: exige un largo libre corto, y la banda de tracción exige que la conexión esté lejos del apoyo — juntas piden una plancha de 37 mm para una banda de 45."
+pubDate: 2026-07-29
+tags: ["ejemplo", "acero", "gusset", "conexiones", "apernado", "whitmore", "nch2369", "aisc360", "marcos arriostrados", "diseño por capacidad", "pandeo", "sensibilidad"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.4.1 / 8.4.6 — Gusset de un solo borde"
+tema: Gussets
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Los dos gussets que ya están en esta sección —[el del ápice de un chevron](/acero/ejemplo-gusset-apice-chevron) y [el de esquina](/acero/ejemplo-gusset-esquina-apernado)— tienen un problema pedagógico: son difíciles por razones que **no son del gusset**. En el del ápice pelean dos diagonales y dos bandas de Whitmore que se traslapan. En el de esquina el reparto entre viga y columna es indeterminado y hay que elegir un cierre, que es de lo que trata el UFM. En los dos, cuando por fin se llega a verificar la plancha, el lector ya gastó su atención en otra cosa.
+
+Este ejemplo saca el estorbo. El nudo es el más simple que existe con un gusset de verdad: **una** diagonal, **una** interfaz, y el punto de trabajo en el centroide de la soldadura, así que la interfaz no ve momento y el reparto no hay que elegirlo. Con eso fuera del camino, los cuatro estados límite del gusset se ven solos.
+
+Y aparece algo que los otros dos tapaban.
+
+<Figure
+  src="/gusset/nudo-simple.svg"
+  alt="Dos paneles del mismo nudo. En los dos, el ala inferior de una viga en la parte superior, un gusset de un solo borde soldado a esa cara, y una diagonal de tubo cuadrado de 150 por 150 por 8 milímetros que llega a 45 grados desde abajo a la izquierda; el punto de trabajo, en rojo, está sobre la cara del ala en el centroide de la soldadura, y desde ahí baja el eje de la diagonal en línea discontinua. Sobre el gusset se dibujan dos bandas de Whitmore concéntricas al eje: la rellena en azul se abre 30 grados y corresponde a compresión según el Comentario J4.4; la punteada se abre 45 grados y corresponde a tracción según el Comentario J4.1, y va recortada contra el borde del gusset cuando lo excede. Las dos son angostas en el extremo profundo y anchas junto al ala, con una flecha que indica que la carga entra abajo y se dispersa hacia el apoyo, donde se evalúa la sección. El panel A, soldado, muestra el tubo ranurado calzado sobre el gusset con cordones de filete longitudinales en rojo, cuatro en total, dos por cada cara del gusset dentro de la ranura; sus bandas miden 67,1 centímetros en tracción, ya recortada contra el borde, y 55,4 en compresión. El panel B, apernado, muestra dos planchas soldadas en taller a las caras opuestas del tubo, dibujadas con un pequeño desfase para indicar que son dos, que abrazan el gusset y se apernan en terreno con dos filas de tres pernos; el tubo no se ranura y los cordones de taller van sobre sus paredes; sus bandas miden 45,0 centímetros en tracción y 29,8 en compresión. Al pie, dos recuadros listan los cuatro estados límite del gusset, iguales en las dos variantes, y una nota indica que lo único que cambia es el ancho que cada unión alcanza a movilizar, que ese ancho lo fija el largo de transferencia y no los agujeros, y que en el panel B la parte dispersada va raíz de tres y la banda entera 1,51, mientras que en el A el tope de la plancha rompe las dos razones. Una última línea recuerda que los dos ángulos de dispersión y la columna equivalente no están en el cuerpo de AISC 360-22 sino en los Comentarios a J4.1 y J4.4."
+  caption="El nudo, en sus dos variantes. Este post resuelve la B, la apernada; la A queda para el siguiente. Nótese que las bandas de Whitmore son dos y no una: el ángulo de dispersión no es el mismo en tracción que en compresión."
+/>
+
+## El caso
+
+Un arriostramiento vertical de un galpón industrial. La diagonal muere en el ala inferior de una viga, lejos de cualquier columna, así que el gusset está soldado a **un solo borde**.
+
+| Dato | Valor |
+|---|---|
+| Diagonal | □150×150×8, A500 Gr. C ($F_y = 3\,520$, $F_u = 4\,360$ kgf/cm²), $A_g$ = 45,44 cm² |
+| Ángulo | 45° |
+| Gusset | plancha A36 de **20 mm** ($F_y = 2\,530$, $F_u = 4\,080$ kgf/cm²) |
+| Contorno del gusset | borde soldado al ala 960 mm · borde inferior 655 mm ⊥ al eje · profundidad 743 mm sobre el eje |
+| Planchas de la diagonal | 2 de 12 mm × 240 mm, A36, soldadas en taller a las caras del tubo |
+| Pernos | 6 × M24, Grupo 120, **corte doble**, 2 filas de 3; gramil 90 mm, paso 90 mm, distancia al borde 55 mm |
+| Cordón plancha–tubo | 200 mm por lado, E70XX |
+| Borde soldado al ala | filete de 8 mm, dos cordones |
+| Pandeo del gusset | $K$ = 1,2 (declarado) · $L_{libre}$ **derivado del contorno**: 239 mm (§6) |
+| Del análisis | $P_E$ = 40,0 tonf por diagonal · factor $0{,}7R_1 = \mathbf{2{,}80}$ ($R$ = 5, $R_1$ = 4,0) |
+
+El **contorno** va declarado a propósito, y no como adorno: de él salen **dos** números que el cálculo necesita y que no se derivan de nada más. El primero es el ancho de plancha disponible en la sección de Whitmore, medido perpendicular a la línea de acción; el segundo es el largo libre para el pandeo. Los dos dependen de **a qué profundidad cae la sección de Whitmore**, que acá son 23,9 cm —la primera fila de pernos— y a esa profundidad el contorno da **57,2 cm** de plancha. Aparecen en §4 y §6.
+
+El máximo que este contorno alcanza es 67,1 cm, pero ocurre a 33,9 cm de profundidad, no acá. Es una distinción que parece pedante y no lo es: en la primera versión de este ejemplo el ancho disponible y el largo libre se declararon por separado, y no eran consistentes entre sí ni con el contorno.
+
+<Note type="info" title="Por qué dos planchas y no una lengüeta">
+Un tubo cuadrado no se aperna a un gusset. La solución habitual es agregarle al tubo un elemento intermedio soldado en taller, que en terreno se aperna — y es el precio que **8.4.6** cobra por preferir junta apernada en obra.
+
+Con **dos filas de tres pernos** la cuenta obliga a un detalle específico: en corte simple, 6 pernos no alcanzan la demanda, y una lengüeta única pasante por la ranura de un □150 no tiene ancho para dos líneas de pernos con sus distancias al borde. Dos planchas soldadas a las **caras opuestas** del tubo resuelven las dos cosas: dan corte doble, y su ancho no lo limita la ranura porque no hay ranura.
+
+Y esto **no** viola la prohibición de 8.4.6 de que *«la resistencia dependa de una combinación de soldaduras y pernos»*: las dos interfaces están **en serie** —tubo/planchas soldada en taller, planchas/gusset apernada en terreno—, no repartiendo la misma resistencia en un mismo plano.
+</Note>
+
+## 1. La demanda, y el tubo que casi no cabe en la Tabla 9
+
+La cláusula **8.6.8** de NCh2369:2025[^nch] manda diseñar la conexión de una diagonal para la capacidad esperada en tracción y en compresión, y la **8.4.1** dice cómo se cuantifica, con tres niveles. El desarrollo completo de esa escalera está en [el ejemplo del ápice](/acero/ejemplo-gusset-apice-chevron); acá va comprimido, porque el interés está en otra parte.
+
+<Equation label="Sec. 8.4.1">
+$$
+T_r = \max\Big(\min\big(\underbrace{T_{ye}}_{207{,}93};\ \underbrace{0{,}7R_1P_E}_{112{,}00}\big);\ \underbrace{\tfrac{1}{2}T_{ye}}_{103{,}97}\Big) = \mathbf{112{,}00}\ \text{tonf}
+$$
+</Equation>
+
+con $T_{ye} = R_yF_yA_g = 1{,}30 \cdot 3\,520 \cdot 45{,}44 = 207{,}93$ tonf.
+
+Acá gobierna el **nivel amplificado**, y eso es lo contrario de lo que pasaba en el ápice. Allá el piso de media capacidad esperada mordía y subía la demanda un 24 %; acá la diagonal está más aprovechada, el piso queda en 103,97 y el nivel amplificado lo pasa por un 7,7 %. **El mismo artículo gobierna por la otra rama**, y conviene haber visto las dos.
+
+Antes de seguir, un chequeo que decide la sección y que es fácil saltarse. La **Tabla 9** limita la esbeltez de las paredes de tubos conformados en frío usados como arriostramiento:
+
+<Equation label="Tabla 9">
+$$
+\frac{b}{t} = \frac{150 - 3(8)}{8} = 15{,}75
+\;\le\;
+\lambda_{md} = 0{,}76\sqrt{\frac{E}{R_yF_y}} = 0{,}76\sqrt{\frac{2{,}039\times10^6}{1{,}30 \cdot 3\,520}} = 16{,}04
+$$
+</Equation>
+
+Pasa, pero al **98,2 %**. Y ojo con qué $R_yF_y$ entra ahí: es el **del tubo**, no el del A36 del gusset. Con los valores del A36 el límite daría 18,9 y uno creería que hay holgura de sobra; con A500 Gr. C baja a 16,04 y eso **descarta el □200×200×10**, que con b/t = 17,0 pasaba con el límite del A36 y no pasa con el del tubo. (El □150×150×6 también queda fuera, pero por su cuenta: con b/t = 22,0 no cumplía ninguno de los dos.) Es un límite que descarta secciones que parecen razonables.
+
+<Note type="warning" title="De dónde sale el R_y del tubo">
+NCh2369 **8.3.3** no trae tabla propia de $R_y$: manda usar *«los valores definidos en ANSI/AISC 341-16, Tabla A3.1»*[^aisc341] para materiales certificados según ASTM. Ahí, A500 Gr. C da $R_y$ = 1,30 y $R_t$ = 1,20, y el Gr. B daría 1,40 y 1,30. Confundirlos mueve menos de lo que parece: el Gr. B tiene además otro $F_y$ ($3\,234$ contra $3\,520$ kgf/cm²), así que el producto $R_yF_y$ —que es lo que entra en las fórmulas— cambia apenas un 1 %. Y en este ejemplo la demanda **no cambia nada**, porque gobierna el nivel amplificado y no la capacidad esperada. El comentario C8.3.3 agrega que para **plancha** A36 nacional el valor está cerca de 1,3, y de ahí sale el del gusset.
+
+Estos valores se verificaron en la edición **341-22**, donde viven en la **Tabla A3.2** (en la 16, a la que apunta NCh2369, son la A3.1).
+</Note>
+
+Sobre la interfaz, con el punto de trabajo en el centroide de la soldadura, la resultante se descompone sin momento:
+
+<Equation label="Estática de la interfaz">
+$$
+N = T_r\sin 45^\circ = 79{,}20 \ \text{tonf}, \qquad
+V = T_r\cos 45^\circ = 79{,}20 \ \text{tonf}, \qquad
+M = 0
+$$
+</Equation>
+
+Ese $M = 0$ es todo lo que hace simple a este nudo. En el gusset de esquina hay cuatro incógnitas y tres ecuaciones, y de ahí nace la necesidad del UFM. Acá hay una interfaz y la resultante pasa por su centroide: el reparto no se elige, se lee.
+
+## 2. Los pernos, de pasada
+
+Grupo 120 — el A325 de siempre, que en 360-22[^aisc360] pasó a nombrarse por su resistencia y ya no como «Grupo A». Se toma $F_{nv}$ con **hilos incluidos** en el plano de corte, 370 MPa por la columna métrica de la Tabla J3.2, que es el supuesto seguro: excluirlos daría 515 pero exige controlar el largo de agarre.
+
+Y el grupo **se suma perno a perno**, no tomando el peor caso seis veces. La *User Note* de §J3.7 lo dice: *«the strength of the bolt group is taken as the sum of the effective strengths of the individual fasteners»*. Para cada perno manda el menor de tres estados —corte, aplastamiento (J3-6a) y desgarre (J3-6c), que en 360-22 van escindidos—, y los de la fila de borde no valen lo mismo que los interiores porque tienen menos distancia libre:
+
+| Perno | Corte doble | Aplastamiento | Desgarre | Manda |
+|---|---|---|---|---|
+| 2 de la fila de borde ($l_c$ = 41,5 mm) | 25,60 | 31,73 | 27,43 | **25,60** |
+| 4 interiores ($l_c$ = 63 mm) | 25,60 | 31,73 | 41,64 | **25,60** |
+
+<Equation label="Sec. J3.7 · Tabla J3.2 · §J3.11">
+$$
+\phi R_n = 2(25{,}60) + 4(25{,}60) = \mathbf{153{,}62}\ \text{tonf} \quad (\text{uso } 0{,}729)
+$$
+</Equation>
+
+En este nudo el **corte gobierna todos los pernos**, así que el desglose no cambia el número. Pero conviene armarlo así de todos modos: con una distancia al borde menor —o con la plancha más delgada— el desgarre pasaría a mandar en la fila de borde y no en las interiores, y el grupo dejaría de ser un múltiplo. La distancia libre $l_c$ se deriva de la distancia **centro–borde** de 55 mm declarada en «El caso», restándole medio agujero: $l_c = 55 - 27/2 = 41{,}5$ mm.
+
+<Note type="tip" title="8.4.6 pide pretensión, no deslizamiento crítico">
+La cláusula exige *«metodologías de apriete y control que aseguren que los pernos queden con la pretensión requerida»*. Eso es un requisito de **montaje y control de calidad**, y se confunde seguido con diseñar la unión por **deslizamiento crítico**, que es otra cosa (§J3.9) y da capacidades bastante menores. La norma manda lo primero; lo segundo se agrega si el proyecto lo pide por control de deformaciones. Acá la unión se diseña por aplastamiento, con pernos pretensados.
+</Note>
+
+## 3. La diagonal y sus planchas, de pasada
+
+Con **dos planchas laterales** el retraso de cortante del tubo es el **Caso 6** de la Tabla D3.1, no el Caso 5 del tubo ranurado. Y es una diferencia a favor: acá el tubo **no se corta**, así que no hay área que descontar.
+
+<Equation label="Caso 6, Tabla D3.1">
+$$
+U = \frac{3l^2}{3l^2 + B^2} = \frac{3(20)^2}{3(20)^2 + (15)^2} = 0{,}842
+\qquad (B = H \text{ en un tubo cuadrado})
+$$
+</Equation>
+
+<Equation label="Ecs. D2-1 y D2-2">
+$$
+\phi_t P_n = 0{,}90 \cdot 3\,520 \cdot 45{,}44 = 143{,}95 \ \text{tonf}
+\qquad
+\phi_t P_n = 0{,}75 \cdot 4\,360 \cdot (45{,}44 \cdot 0{,}842) = \mathbf{125{,}13}\ \text{tonf}
+$$
+</Equation>
+
+Uso 0,895 en la rotura, y 0,778 en la fluencia. Las dos planchas, entre fluencia del área bruta y rotura con dos agujeros cada una, dan 131,16 tonf (uso 0,854) — gobierna la fluencia, porque los agujeros descuentan poco sobre 240 mm de ancho.
+
+## 4. El gusset: dos anchos efectivos, no uno
+
+Acá está el punto del post.
+
+El gusset no trabaja con todo su ancho: la carga entra por la conexión y se **dispersa** al viajar hacia el apoyo. El ancho que efectivamente resiste es la **sección de Whitmore**, y se evalúa en el extremo de la conexión más cercano al apoyo, que es donde la carga completa ya tuvo todo el largo para abrirse.
+
+Lo que casi nadie aplica es que **el ángulo de dispersión no es el mismo en los dos sentidos**:
+
+- **En tracción, 45°.** Comentario **J4.1**: *«Due to the large inelastic deformation capacity of gusset plates and similar elements subjected to tensile loads, the effective width can be calculated with a 45° dispersion angle.»*
+- **En compresión, 30°.** Comentario **J4.4**: la práctica calcula el ancho de la columna equivalente con 30°, y —esto es lo que amarra el ángulo— *«the effective length recommendations were calibrated for use with a 30° dispersion angle»*. No se puede mezclar un $K$ publicado con otro ángulo.
+
+La razón entre las dos partes dispersadas es exacta:
+
+<Equation label="La razón entre los dos anchos">
+$$
+\frac{\tan 45^\circ}{\tan 30^\circ} = \frac{1}{1/\sqrt{3}} = \sqrt{3} = 1{,}732
+$$
+</Equation>
+
+Con el gramil de 90 mm como ancho de entrada —la banda **no arranca en punta**, porque son dos líneas de pernos y no una— y 180 mm de largo de transferencia entre la primera y la tercera fila:
+
+<Equation label="Las dos bandas">
+$$
+w_t = 9{,}0 + 2(18{,}0)\tan 45^\circ = \mathbf{45{,}0}\ \text{cm}
+\qquad
+w_c = 9{,}0 + 2(18{,}0)\tan 30^\circ = \mathbf{29{,}8}\ \text{cm}
+$$
+</Equation>
+
+Sobre la banda de **tracción**, los dos estados de J4:
+
+<Equation label="Ecs. J4-1 y J4-2">
+$$
+\phi R_n = 0{,}90 \cdot 2\,530 \cdot (45{,}0 \cdot 2{,}0) = \mathbf{204{,}93}\ \text{tonf}
+\qquad
+\phi R_n = 0{,}75 \cdot 4\,080 \cdot \underbrace{(45{,}0 - 2 \cdot 2{,}9)2{,}0}_{78{,}40\ \text{cm}^2} = \mathbf{239{,}90}\ \text{tonf}
+$$
+</Equation>
+
+Usos 0,547 y 0,467. **La tracción no es el problema.** Y nótese que la rotura queda *por encima* de la fluencia, al revés que en un miembro a tracción: acá el salto de $F_y$ a $F_u$ (un 61 %) le gana al doble peaje del área neta y del $\phi$ más estricto, porque dos agujeros sobre 45 cm de banda descuentan poco.
+
+Ese **2,9 cm** por agujero no es el agujero que se taladra. La Tabla J3.3M da el agujero estándar de un M24 en $d + 3 = 27$ mm, y §B4.3b manda tomarlo **2 mm mayor** al calcular área neta: *«the width of a bolt hole shall be taken as 2 mm greater than the nominal dimension of the hole»*. Son 29 mm para el cálculo y 27 mm en el plano — y confundirlos va del lado inseguro.
+
+<Note type="warning" title="El ancho no puede ser mayor que la plancha">
+La fórmula de la banda puede dar un ancho **mayor que el gusset que existe**, y en ese caso el ancho efectivo es el que hay, no el que da la fórmula. Acá los 45,0 cm caben dentro de los 57,2 cm que el contorno da a esa profundidad, así que el tope no muerde.
+
+En [la variante soldada del mismo nudo](/acero/ejemplo-gusset-simple-soldado) sí muerde: con 350 mm de cordón la banda de tracción pide 85,0 cm sobre los 67,1 que hay a **su** sección, y no acotarla sobrestimaría la capacidad en un 26 %. Es un tope que rara vez se menciona y que aparece justo cuando la conexión es larga.
+</Note>
+
+## 5. Bloque de corte, ahora en U
+
+Con dos líneas de pernos el bloque de corte toma su forma normal: **dos planos de corte** por fuera de las líneas y un **plano de tracción** entre ellas, en la última fila. Con una sola línea era el caso degenerado.
+
+<Equation label="Ec. J4-5">
+$$
+\phi R_n = 0{,}75\Big[\min\big(0{,}60F_uA_{nv};\ 0{,}60F_yA_{gv}\big) + U_{bs}F_uA_{nt}\Big]
+$$
+</Equation>
+
+Con $L_v$ = 23,5 cm (los 18,0 del grupo más los **5,5 centro–borde**, que es la cota del plano, no la distancia libre), $A_{gv}$ = 94,0 cm², $A_{nv}$ = 65,0 cm² y $A_{nt}$ = 12,20 cm²:
+
+$$
+0{,}60 \cdot 4\,080 \cdot 65{,}0 = 159\,120 \ \text{kgf}
+\qquad
+0{,}60 \cdot 2\,530 \cdot 94{,}0 = 142\,692 \ \text{kgf}
+$$
+
+El tope de la ecuación **muerde**: la fluencia de corte sobre el área bruta queda por debajo de la rotura sobre la neta, así que gobierna ella. Es exactamente lo que el Comentario a J4.3 explica que hace ese $\min$ — *«gross yielding on the shear plane can occur when tearing on the tensile plane commences»* —, y con un paso de 90 mm sobre agujeros de 27 mm queda tanto material entre perno y perno que la rotura pierde la carrera.
+
+$$
+\phi R_n = 0{,}75\big[142\,692 + 1{,}0 \cdot 4\,080 \cdot 12{,}20\big] = \mathbf{144{,}35}\ \text{tonf}
+\qquad (\text{uso } 0{,}776)
+$$
+
+## 6. El pandeo del gusset, que es el que gobierna
+
+Ahora la compresión, con la banda **angosta**, la de 30°. La sección de Whitmore se trata como una columna: ancho $w_c$, espesor $t$, y radio de giro respecto del eje débil de la plancha.
+
+Y acá hay que ser cuidadoso con **de dónde sale $L$**, porque es el punto donde este ejemplo se equivocó en su primera versión. $L$ es el largo libre de esa columna: la distancia **desde la sección de Whitmore hasta el apoyo**, medida sobre la línea de acción. No es un dato que se elija — sale del contorno declarado en «El caso». La sección de Whitmore está en la primera fila de pernos, a **23,9 cm** del ala sobre el eje, y ése es el largo libre.
+
+<Equation label="La columna equivalente">
+$$
+r = \frac{t}{\sqrt{12}} = \frac{2{,}0}{\sqrt{12}} = 0{,}5774 \ \text{cm}
+\qquad
+\frac{L_c}{r} = \frac{K L}{r} = \frac{1{,}2 \cdot 23{,}9}{0{,}5774} = 49{,}7
+$$
+</Equation>
+
+$L_c/r$ = 49,7 **supera el umbral de 25**, así que no aplica la rama compacta de §J4.4(a) y hay que ir al **Capítulo E**:
+
+<Equation label="Sec. J4.4(b) → Cap. E, Ec. E3-2">
+$$
+F_e = \frac{\pi^2 E}{(L_c/r)^2} = 8\,157 \ \text{kgf/cm}^2
+\qquad
+F_{cr} = \left[0{,}658^{\,F_y/F_e}\right]F_y = 2\,222 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Capacidad de pandeo">
+$$
+\phi P_n = 0{,}90\,F_{cr}A_g = 0{,}90 \cdot 2\,222 \cdot (29{,}78 \cdot 2{,}0) = \mathbf{119{,}12}\ \text{tonf}
+$$
+</Equation>
+
+Uso **0,940**, y es el que **gobierna todo el diseño**.
+
+<Note type="warning" title="La rama compacta de J4.4(a) es casi inalcanzable acá, y no por casualidad">
+El Comentario a J4.4 justifica la rama de $L_c/r \le 25$ en que los elementos de conexión *«have lower residual stresses and higher shape factors than main members»*, así que por debajo de esa esbeltez la norma deja usar $F_y$ directo y ahorrarse el Capítulo E. Suena como un atajo cómodo. En un gusset de un solo borde es casi inalcanzable, y la razón es que **dos requisitos geométricos pelean entre sí**:
+
+- La rama compacta exige $L \le 25r/K = 6{,}01\,t$ (con $K$ = 1,2). Pide la conexión **cerca** del apoyo.
+- La banda de tracción exige $L \ge w_t/2$: como la línea del ala corta el plano a 45°, una banda de semiancho $w_t/2$ solo cabe si la sección está al menos a esa profundidad. Pide la conexión **lejos** del apoyo.
+
+Juntas dan $t \ge w_t/12$. Con la banda de tracción de 45,0 cm de este ejemplo, harían falta **37 mm de plancha** para que J4-6 aplicara. Acá hay 20.
+
+Dicho de otro modo: el mismo ancho que uno necesita para que la banda de Whitmore quepa es el que empuja el largo libre fuera del rango compacto. **No es que el gusset sea esbelto por estar mal dimensionado: lo es porque tiene que estar donde está.**
+</Note>
+
+Fíjate en el resultado: la fluencia de tracción da 204,93 tonf y el pandeo 119,12 sobre **la misma plancha y el mismo acero**. Dos cosas distintas explican esa brecha, y conviene separarlas: la banda de compresión es más angosta que la de tracción (29,78 contra 45,0 cm, un factor 1,51), y encima el pandeo entra con $F_{cr}$ = 2 222 en vez de $F_y$ = 2 530, un 12 % menos. **El gusset lo decide la compresión** aunque la demanda sea idéntica en los dos sentidos.
+
+## 7. La interfaz con el ala
+
+La resultante de $N$ y $V$ es $T_r$ = 112,00 tonf, porque el punto de trabajo está en el centroide y no hay momento que repartir. Dos cordones de filete de 8 mm sobre los 960 mm del borde soldado:
+
+<Equation label="Sec. J2.4">
+$$
+\phi R_n = 0{,}75 \cdot 0{,}60 \cdot 4\,920 \cdot \frac{0{,}8}{\sqrt{2}} \cdot 96{,}0 \cdot 2 = \mathbf{240{,}47}\ \text{tonf}
+\qquad (\text{uso } 0{,}466)
+$$
+</Equation>
+
+Y la soldadura no es lo único que hay que verificar ahí: **la plancha misma** tiene que resistir $N$ y $V$ sobre su sección de borde. Con $A = 96{,}0 \cdot 2{,}0 = 192{,}0$ cm², la fluencia de corte de la Ec. J4-3 (§J4.2, $\phi = 1{,}00$) da 291,46 tonf contra los 79,20 tonf de la componente tangencial, uso **0,272**, y la interacción de von Mises sobre el borde queda en 0,363. No es un chequeo decorativo: en [el gusset del ápice](/acero/ejemplo-gusset-apice-chevron) era **el estado que gobernaba**, con 0,939. Acá sobra, porque el borde es largo.
+
+## Resultado
+
+| Verificación | Demanda | Capacidad | Uso | |
+|---|---|---|---|---|
+| **Gusset — pandeo, columna equivalente (J4.4 → Cap. E)** | 112,00 | **119,12** | **0,940** | ✓ |
+| Diagonal — rotura, Caso 6 (D2-2) | 112,00 | 125,13 | 0,895 | ✓ |
+| Planchas — fluencia del área bruta | 112,00 | 131,16 | 0,854 | ✓ |
+| Diagonal — fluencia del área bruta (D2-1) | 112,00 | 143,95 | 0,778 | ✓ |
+| Gusset — bloque de corte en U (J4-5) | 112,00 | 144,35 | 0,776 | ✓ |
+| Pernos — grupo, perno a perno (J3.7 + J3.11) | 112,00 | 153,62 | 0,729 | ✓ |
+| Gusset — Whitmore, fluencia (J4-1) | 112,00 | 204,93 | 0,547 | ✓ |
+| Gusset — Whitmore, rotura (J4-2) | 112,00 | 239,90 | 0,467 | ✓ |
+| Interfaz — soldadura del borde (J2.4) | 112,00 | 240,47 | 0,466 | ✓ |
+| Interfaz — borde del gusset en corte (Ec. J4-3) | 79,20 | 291,46 | 0,272 | ✓ |
+
+## Lectura
+
+**Gobierna el gusset, y por compresión.** Los dos primeros usos —0,940 y 0,895— están a un 5 % entre sí, así que el nudo está razonablemente equilibrado. Pero el primero es de la plancha de nudo, la única pieza de la conexión cuya geometría suele dibujar el detallador sin que nadie la calcule. Eso es justo lo que advierte [la nota teórica del gusset](/acero/gusset-teoria-estados-limite).
+
+**Los dos anchos efectivos no son un detalle.** Usar 30° también en tracción da 135,64 tonf en vez de 204,93 para la fluencia, un 34 % menos. Y hay que ser preciso con cómo se califica eso, porque [la nota teórica](/acero/gusset-teoria-estados-limite) lo deja claro: **no es un error** —es conservador, y es lo que hace casi toda la práctica—. Lo que sí es un problema es lo que esconde: con los dos anchos iguales, la tracción quedaría en 0,826 y la compresión en 0,940, casi empatadas, y el post concluiría que el gusset está al límite por los dos lados. Con los ángulos correctos se ve que la tracción tiene un 45 % de margen y que **lo único que decide es la compresión**. El conservadurismo no cuesta acero acá; cuesta saber de qué depende el diseño.
+
+**El ancho lo compra el largo de la conexión, no el tamaño de la plancha.** Los 29,8 cm de la banda de compresión salen de 9,0 cm de gramil más 20,8 cm que aportan los 18,0 cm de largo del grupo de pernos. Agrandar el gusset no cambia nada; agregar una cuarta fila de pernos sí — aunque eso alejaría la conexión del apoyo y empeoraría el pandeo, que es la pinza del §6. Ese es el hilo que tira [el post soldado](/acero/ejemplo-gusset-simple-soldado): la misma plancha, con un cordón soldado más largo que el grupo apernado, abre una banda un 86 % más ancha en compresión.
+
+## ¿Dónde falla esto?
+
+**Acá $K$ sí importa, y bastante.** En el §6 quedó claro que la rama compacta de J4.4(a) no aplica, así que estamos en el Capítulo E — donde $K$ entra de lleno en el resultado, al revés de lo que pasaría si $L_c/r$ fuera menor que 25. El $K$ = 1,2 de este ejemplo es una **elección declarada**: supone que el borde libre del gusset puede desplazarse lateralmente, que es el lado conservador.
+
+| $K$ | $L_c/r$ | $\phi P_n$ (tonf) | Uso | |
+|---|---|---|---|---|
+| 0,65 | 26,9 | 130,57 | 0,858 | ✓ |
+| 1,00 | 41,4 | 123,94 | 0,904 | ✓ |
+| **1,20** *(adoptado)* | 49,7 | 119,12 | **0,940** | ✓ |
+| 1,40 | 58,0 | 113,67 | 0,985 | ✓ |
+| 2,00 | 82,8 | 94,57 | 1,184 | **✗** |
+
+De 0,65 a 2,00 la capacidad cae un 28 %, y el uso pasa de 0,858 a 1,184: **el extremo superior no pasa**. La elección del factor de longitud efectiva deja de ser un detalle y se vuelve la decisión que define si la conexión cumple. En el [gusset de esquina](/acero/ejemplo-gusset-esquina-apernado) esa misma discusión movía un 6,7 % porque el gusset era más compacto; acá mueve cuatro veces más.
+
+Los valores calibrados para geometrías típicas están en el Apéndice C de la **AISC Design Guide 29**[^dg29], que no se consultó para este ejemplo. Mientras no se consulte, el 1,2 es un supuesto explícito y esta tabla es el precio de no tenerlo.
+
+**Y el largo libre no es un dato de proyecto: es una consecuencia del detallamiento.** Los 23,9 cm salen de donde queda la primera fila de pernos, que a su vez está donde está porque más cerca del ala la banda de tracción no cabría. Si el detallador corre el grupo 3 cm hacia abajo para ganar holgura de montaje, $L$ sube a 26,9, $L_c/r$ a 55,9 y el uso a 0,973. **Nadie recalcula el gusset cuando mueve un grupo de pernos tres centímetros**, y en este nudo eso consume todo el margen.
+
+**El tubo pasa la Tabla 9 al 98,2 %.** No hay margen para cambiar el perfil por otro de pared más delgada. Y ojo con el grado: el A500 Gr. B tiene $R_y$ = 1,40, pero también otro $F_y$ (3\,234 en vez de 3\,520 kgf/cm²), así que el producto $R_yF_y$ que entra en el límite cambia apenas un 1 % y el tubo **sigue cumpliendo** con 16,13. Lo que sí depende del certificado es la capacidad esperada, y con ella la demanda de toda la conexión.
+
+## Reproducir esto con tus datos
+
+Todos los números de este post salen de un solo script, `ejemplo_gusset_simple.py`, que también genera los del post soldado para que la comparación no dependa de copiar cifras a mano. Cierra con 26 validaciones, cuatro de ellas contra casos cerrados: la banda con largo de transferencia cero devuelve el ancho de entrada, la dispersión sobre un largo unitario da $2\tan\theta$, el $\min$ de J4-5 se activa cuando el área neta de corte es grande, y la razón entre las dos bandas es exactamente $\sqrt{3}$.
+
+Y el cálculo completo está además como planilla del canvas, encabezada por el esquema del nudo: 92 pasos y 23 verificaciones ✓/✗. Entre las verificaciones van las **condiciones geométricas** que este post derivó —la banda de tracción cabe sobre el ala, la sección de Whitmore queda antes de la esquina del contorno, la razón $\sqrt{3}$ entre las partes dispersadas—, de modo que si cambias la geometría y alguna deja de cumplirse, la hoja te lo dice sola:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-simple-apernado)** ·
+[descargar el JSON](/planillas/gusset-simple-apernado.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/gusset-simple-apernado.json --md
+```
+
+## Bibliografía
+
+[^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas **8.3.3** (remite a AISC 341-16 Tabla A3.1 para $R_y$ y $R_t$, y su Comentario sobre la plancha A36 nacional), **8.4.1** (los tres niveles de la demanda), **8.4.6** (uniones de terreno: preferentemente apernadas, con pretensión controlada, y la prohibición de combinar soldadura y pernos en la misma resistencia), **8.6.8** (capacidad esperada en tracción y compresión) y la **Tabla 9** ($\lambda_{md}$ de paredes de tubos usados como arriostramiento).
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. **Tabla D3.1** Caso 6 (HSS rectangular con dos planchas laterales), **Tabla J3.2** (nótese que los grupos de pernos se renombraron por resistencia: Grupo 120 es el A325), **§J3.11** (aplastamiento y desgarre, ahora escindidos en J3-6a y J3-6c), **§J2.4**, y **§J4** completo con sus Comentarios: **J4.1** para el ángulo de dispersión de 45° en tracción, **J4.3** para el tope de la Ec. J4-5, y **J4.4** para el de 30° en compresión, la calibración de $K$ con ese ángulo y la rama de $L_c/r \le 25$.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. **Tabla A3.2** para $R_y$ y $R_t$ del A500 Gr. B y Gr. C y de la plancha A36 — en la edición 22 la A3.1 es la lista de materiales permitidos, y los factores pasaron a la A3.2. NCh2369 8.3.3 apunta a la edición **16**, donde sí son la A3.1; los valores se verificaron en la 22, que los mantiene.
+
+[^dg29]: Muir, L. y Thornton, W. (2014). *Vertical Bracing Connections — Analysis and Design*. AISC Design Guide 29. Es la fuente de los factores de longitud efectiva calibrados para geometrías típicas de gusset. **No consultada**: el $K$ = 1,2 de este ejemplo va declarado como supuesto, y la sensibilidad al valor queda medida arriba.

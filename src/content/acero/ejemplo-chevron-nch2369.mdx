@@ -5,6 +5,7 @@ pubDate: 2026-07-27
 tags: ["ejemplo", "acero", "nch2369", "marcos arriostrados", "chevron", "diseño por capacidad", "capacidad esperada", "pandeo", "industrial", "sensibilidad"]
 subsection: "ejemplos"
 chapter: "NCh2369 8.3 / 8.6 — Marcos arriostrados"
+tema: 'Marcos arriostrados'
 ---
 
 import Note from '../../components/content/Note.astro';
@@ -443,6 +444,13 @@ capacidad residual—. Es la palanca de diseño más limpia del problema.
 por resistencia—, viga **H 600×300×138,5** arriostrada lateralmente cada 2,0 m y verificada por
 F4 con el alma no compacta, conexiones diseñadas para las dos capacidades esperadas con el techo
 de 100,80 tonf en tracción, y gusset con geometría que acomode el giro del pandeo.
+
+Ese gusset ya está calculado: es el
+[ejemplo del gusset del ápice](/acero/ejemplo-gusset-apice-chevron), que hereda este paño completo.
+Y trae una corrección a lo que acaba de decir este párrafo: para la **conexión** la demanda no son
+los 100,80 tonf del techo de $0{,}7R_1$ sino **124,98**, porque la cláusula 8.4.1 —la que rige las
+conexiones, mientras 8.6.6 rige la viga— fija además un piso en la mitad de la capacidad esperada,
+y ese piso queda un 24 % por encima del nivel amplificado.
 
 ## Lo que este ejemplo agrega
 

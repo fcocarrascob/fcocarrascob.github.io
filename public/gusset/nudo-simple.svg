@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 608" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="bl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a63a8"/>
+    </marker>
+    <clipPath id="clipA"><polygon points="131.2,96 412.8,96 185.7,318 50,182.3"/></clipPath>
+    <clipPath id="clipB"><polygon points="541.2,96 822.8,96 595.7,318 460,182.3"/></clipPath>
+  </defs>
+  <rect width="880" height="608" fill="#ffffff"/>
+  <text x="440" y="24" font-size="15" fill="#222" text-anchor="middle" font-weight="bold">El nudo simple: gusset de un solo borde, diagonal tubular a 45° — una sola interfaz, sin UFM</text>
+  <text x="272" y="44" font-size="11.5" fill="#1a63a8" text-anchor="middle" font-weight="bold">A · SOLDADO — el detalle chileno típico</text>
+  <rect x="58" y="50" width="370" height="46" fill="#dcd8d0" stroke="#666" stroke-width="1.2"/>
+  <text x="66" y="68" font-size="10" fill="#555">viga — ala inferior</text>
+  <polygon points="131.2,96 412.8,96 185.7,318 50,182.3" fill="#eef2f7" stroke="#333" stroke-width="1.6"/>
+  <line x1="272" y1="96" x2="51.4" y2="316.6" stroke="#888" stroke-width="0.8" stroke-dasharray="6 4"/>
+  <circle cx="272" cy="96" r="4" fill="#c0392b"/>
+  <text x="682" y="44" font-size="11.5" fill="#2c7a4b" text-anchor="middle" font-weight="bold">B · APERNADO — junta de terreno (NCh2369 8.4.6)</text>
+  <rect x="468" y="50" width="370" height="46" fill="#dcd8d0" stroke="#666" stroke-width="1.2"/>
+  <text x="476" y="68" font-size="10" fill="#555">viga — ala inferior</text>
+  <polygon points="541.2,96 822.8,96 595.7,318 460,182.3" fill="#eef2f7" stroke="#333" stroke-width="1.6"/>
+  <line x1="682" y1="96" x2="461.4" y2="316.6" stroke="#888" stroke-width="0.8" stroke-dasharray="6 4"/>
+  <circle cx="682" cy="96" r="4" fill="#c0392b"/>
+  <polygon points="185.7,151.2 216.8,182.3 71.2,327.9 40.1,296.8" fill="#dfe5ec" fill-opacity="0.55" stroke="#333" stroke-width="1.6"/>
+  <g clip-path="url(#clipA)">
+  <polygon points="113.1,223.8 144.2,254.9 289.4,254.9 113.1,78.6" fill="none" stroke="#1a63a8" stroke-width="1.1" stroke-dasharray="5 3"/>
+  <line x1="113.1" y1="78.6" x2="289.4" y2="254.9" stroke="#1a63a8" stroke-width="1.8" stroke-dasharray="5 3"/>
+  </g>
+  <polygon points="113.1,223.8 144.2,254.9 258.8,224.2 143.8,109.2" fill="#1a63a8" fill-opacity="0.20" stroke="#1a63a8" stroke-width="1.3"/>
+  <line x1="143.8" y1="109.2" x2="258.8" y2="224.2" stroke="#1a63a8" stroke-width="3.4"/>
+  <line x1="128.7" y1="239.3" x2="197" y2="171" stroke="#1a63a8" stroke-width="1.4" marker-end="url(#bl)"/>
+  <line x1="185.7" y1="151.2" x2="113.1" y2="223.8" stroke="#c0392b" stroke-width="2.6"/>
+  <line x1="216.8" y1="182.3" x2="144.2" y2="254.9" stroke="#c0392b" stroke-width="2.6"/>
+  <polygon points="642.2,112.7 673.3,143.8 519.1,298 488,266.9" fill="#f3e9d8" stroke="#a07a2c" stroke-width="1.5"/>
+  <polygon points="638.2,108.7 669.3,139.8 515.1,294 484,262.9" fill="#f3e9d8" stroke="#a07a2c" stroke-width="1.5"/>
+  <polygon points="532.1,214.8 563.2,245.9 471.3,337.8 440.2,306.7" fill="#dfe5ec" fill-opacity="0.55" stroke="#333" stroke-width="1.6"/>
+  <line x1="526.4" y1="220.5" x2="485" y2="261.9" stroke="#c0392b" stroke-width="2.6"/>
+  <line x1="557.5" y1="251.6" x2="516.1" y2="293" stroke="#c0392b" stroke-width="2.6"/>
+  <g clip-path="url(#clipB)">
+  <polygon points="585.8,173.5 604.5,192.2 679.2,192.2 585.8,98.8" fill="none" stroke="#1a63a8" stroke-width="1.1" stroke-dasharray="5 3"/>
+  <line x1="585.8" y1="98.8" x2="679.2" y2="192.2" stroke="#1a63a8" stroke-width="1.8" stroke-dasharray="5 3"/>
+  </g>
+  <polygon points="585.8,173.5 604.5,192.2 663.4,176.4 601.6,114.6" fill="#1a63a8" fill-opacity="0.20" stroke="#1a63a8" stroke-width="1.3"/>
+  <line x1="601.6" y1="114.6" x2="663.4" y2="176.4" stroke="#1a63a8" stroke-width="3.4"/>
+  <line x1="595.2" y1="182.8" x2="628.3" y2="149.7" stroke="#1a63a8" stroke-width="1.4" marker-end="url(#bl)"/>
+  <circle cx="623.2" cy="136.2" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <circle cx="641.8" cy="154.8" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <circle cx="604.5" cy="154.8" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <circle cx="623.2" cy="173.5" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <circle cx="585.8" cy="173.5" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <circle cx="604.5" cy="192.2" r="4.4" fill="#ffffff" stroke="#2c7a4b" stroke-width="1.9"/>
+  <line x1="185" y1="214.1" x2="241.9" y2="294.3" stroke="#c0392b" stroke-width="0.8"/>
+  <text x="246" y="300" font-size="9.8" fill="#c0392b" font-weight="bold">filetes longitudinales</text>
+  <line x1="204.5" y1="215.2" x2="243.5" y2="317.5" stroke="#1a63a8" stroke-width="0.8"/>
+  <text x="246" y="324" font-size="10" fill="#1a63a8" font-weight="bold">dos bandas, no una</text>
+  <text x="246" y="338" font-size="9.5" fill="#1a63a8">llena 30° → compresión (Com. J4.4)</text>
+  <text x="246" y="351" font-size="9.5" fill="#1a63a8">punteada 45° → tracción (Com. J4.1)</text>
+  <text x="246" y="364" font-size="9.5" fill="#c0392b">acá la de tracción se sale: el gusset la recorta</text>
+  <line x1="86" y1="313.1" x2="61.8" y2="350.1" stroke="#222" stroke-width="0.8"/>
+  <text x="58" y="356" font-size="9.8" fill="#222" font-weight="bold">□ 150×150×8 ranurado</text>
+  <line x1="272" y1="96" x2="310" y2="118.4" stroke="#c0392b" stroke-width="0.8"/>
+  <text x="316" y="122" font-size="9.8" fill="#c0392b" font-weight="bold">PT sin excentricidad</text>
+  <line x1="639.5" y1="169.4" x2="686.8" y2="261.8" stroke="#1a63a8" stroke-width="0.8"/>
+  <text x="690" y="268" font-size="9.8" fill="#1a63a8" font-weight="bold">entra con el gramil,</text>
+  <text x="690" y="281" font-size="9.8" fill="#1a63a8" font-weight="bold">no en punta · acá las dos caben</text>
+  <line x1="626.7" y1="177" x2="686.9" y2="299.7" stroke="#2c7a4b" stroke-width="0.8"/>
+  <text x="690" y="306" font-size="9.8" fill="#2c7a4b" font-weight="bold">2 filas de 3 pernos, en terreno</text>
+  <line x1="527.9" y1="289.7" x2="683.3" y2="337.9" stroke="#a07a2c" stroke-width="0.8"/>
+  <text x="690" y="340" font-size="9.8" fill="#a07a2c" font-weight="bold">2 planchas a las caras del tubo</text>
+  <text x="690" y="353" font-size="9.5" fill="#a07a2c">soldadas en taller → corte doble, sin ranura</text>
+  <line x1="485.4" y1="323.7" x2="471.3" y2="349.8" stroke="#222" stroke-width="0.8"/>
+  <text x="468" y="356" font-size="9.8" fill="#222" font-weight="bold">□ 150×150×8</text>
+  <line x1="40" y1="384" x2="840" y2="384" stroke="#dcd8d0" stroke-width="1"/>
+  <text x="40" y="402" font-size="11" fill="#222" font-weight="bold">Cuatro estados límite del gusset, idénticos en las dos variantes — y ahí está la lección</text>
+  <rect x="40" y="412" width="390" height="104" fill="#1a63a8" fill-opacity="0.07" stroke="#1a63a8" stroke-width="1.2"/>
+  <text x="52" y="430" font-size="10.5" fill="#1a63a8" font-weight="bold">A · soldado — 67,1 cm en tracción (recortada), 55,4 en compresión</text>
+  <text x="52" y="448" font-size="9.8" fill="#222">Whitmore: fluencia J4-1 · rotura J4-2 con Aₙ = A_g</text>
+  <text x="52" y="463" font-size="9.8" fill="#222">Bloque de corte J4-5: los planos son los cordones</text>
+  <text x="52" y="478" font-size="9.8" fill="#222">Pandeo J4.4: L_c/r = 70,9 → Capítulo E, no la rama J4-6</text>
+  <text x="52" y="493" font-size="9.8" fill="#222">De pasada: filetes §J2.4 y Caso 5 de la Tabla D3.1</text>
+  <rect x="450" y="412" width="390" height="104" fill="#2c7a4b" fill-opacity="0.07" stroke="#2c7a4b" stroke-width="1.2"/>
+  <text x="462" y="430" font-size="10.5" fill="#2c7a4b" font-weight="bold">B · apernado — 45,0 cm en tracción, 29,8 en compresión</text>
+  <text x="462" y="448" font-size="9.8" fill="#222">Whitmore: acá la rotura J4-2 sí compite (dos agujeros)</text>
+  <text x="462" y="463" font-size="9.8" fill="#222">Bloque de corte J4-5 en U: dos planos, tracción al medio</text>
+  <text x="462" y="478" font-size="9.8" fill="#222">Pandeo J4.4: L_c/r = 49,7 → Capítulo E. GOBIERNA</text>
+  <text x="462" y="493" font-size="9.8" fill="#222">De pasada: pernos §J3.11 y las planchas (fluencia y rotura)</text>
+  <text x="40" y="547" font-size="9.8" fill="#666">Los cuatro estados son los mismos, y sobre la misma plancha: lo único que cambia es el ancho que cada unión alcanza a movilizar. Ese ancho lo fija el</text>
+  <text x="40" y="561" font-size="9.8" fill="#666">largo de transferencia, no los agujeros. En el panel B la parte dispersada va √3 y la banda entera 1,51; en el A el tope de la plancha rompe las dos razones.</text>
+  <text x="40" y="578" font-size="9.8" fill="#c0392b" font-weight="bold">La rama compacta de J4.4(a) exige L ≤ 6,01·t y la banda de tracción exige L ≥ w/2: juntas piden t ≥ w/12, o sea 37 mm acá. Por eso J4-6 no aplica.</text>
+  <text x="40" y="592" font-size="9.8" fill="#1a63a8" font-weight="bold">Los dos ángulos y la columna equivalente no están en el cuerpo de AISC 360-22: viven en los Comentarios a J4.1 y J4.4.</text>
+</svg>

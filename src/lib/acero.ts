@@ -13,6 +13,12 @@ export const SUBSECTIONS = {
     description:
       'Ejemplos trabajados paso a paso: diseño de elementos de acero según AISC 360-22, con la referencia normativa de cada ecuación y la verificación completa demanda–capacidad.',
   },
+  teoria: {
+    label: 'Teoría y fenómenos',
+    norm: 'Fenómenos y estados límite',
+    description:
+      'Cómo funciona lo que la norma prescribe: el fenómeno físico detrás de cada estado límite, con esquemas. Incluye lo que no es cláusula sino práctica del Manual, declarado como tal.',
+  },
 } as const;
 
 export type SubsectionKey = keyof typeof SUBSECTIONS;

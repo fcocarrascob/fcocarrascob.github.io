@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 548" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="rr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+    <marker id="gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2c7a4b"/>
+    </marker>
+    <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#8a857c" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="880" height="548" fill="#ffffff"/>
+  <text x="440.0" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La demanda de la conexión no es el nivel amplificado: la levanta el piso de 8.4.1</text>
+  <text x="40" y="56" font-size="12" fill="#1a63a8" font-weight="bold">A · Los tres niveles de 8.4.1</text>
+  <rect x="60" y="76" width="189.5" height="30" fill="#666" fill-opacity="0.20" stroke="#666" stroke-width="1.4"/>
+  <text x="68" y="95" font-size="11" fill="#222" font-weight="bold">0,7R₁ · P_E — el nivel AMPLIFICADO</text>
+  <text x="259.5" y="95" font-size="12" fill="#666" font-weight="bold">100,80 tonf</text>
+  <text x="68" y="120" font-size="9.5" fill="#666">es la BASE de 8.4.1, no su techo</text>
+  <rect x="60" y="136" width="235.0" height="30" fill="#c0392b" fill-opacity="0.20" stroke="#c0392b" stroke-width="1.4"/>
+  <text x="68" y="155" font-size="11" fill="#222" font-weight="bold">½ T_ye — el PISO de 8.4.1</text>
+  <text x="305.0" y="155" font-size="12" fill="#c0392b" font-weight="bold">124,98 tonf</text>
+  <text x="68" y="180" font-size="9.5" fill="#666">gobierna: +24,0 % sobre el nivel amplificado</text>
+  <rect x="60" y="196" width="470.0" height="30" fill="#8a857c" fill-opacity="0.20" stroke="#8a857c" stroke-width="1.4"/>
+  <text x="68" y="215" font-size="11" fill="#222" font-weight="bold">T_ye — el TECHO de 8.4.1(a)</text>
+  <text x="540.0" y="215" font-size="12" fill="#8a857c" font-weight="bold">249,96 tonf</text>
+  <text x="68" y="240" font-size="9.5" fill="#666">nunca muerde acá; a este nivel la sección neta es imposible</text>
+  <text x="40" y="262" font-size="9.5" fill="#666">8.4.1 parte del nivel amplificado, lo acota por arriba con la capacidad esperada, y <tspan font-weight="bold">no deja bajar de la mitad</tspan></text>
+  <text x="40" y="275" font-size="9.5" fill="#666">de ella. Acá el piso (124,98) queda por encima del nivel amplificado (100,80): la vía de 0,7R₁ no sirve de nada.</text>
+  <line x1="40" y1="290" x2="840" y2="290" stroke="#dcd8d0" stroke-width="1"/>
+  <text x="40" y="312" font-size="12" fill="#1a63a8" font-weight="bold">B · Verificaciones: demanda contra capacidad de diseño</text>
+  <text x="240" y="338" font-size="9.5" text-anchor="end" fill="#222">Interfaz — corte del borde (est. B)</text>
+  <rect x="250" y="326" width="382.8" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="326" width="359.5" height="17" fill="#c0392b" fill-opacity="0.55"/>
+  <text x="640.8" y="338" font-size="9.5" fill="#c0392b" font-weight="bold">0,939</text>
+  <text x="240" y="362" font-size="9.5" text-anchor="end" fill="#222">Tubo — bloque de corte</text>
+  <rect x="250" y="350" width="344.5" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="350" width="315.2" height="17" fill="#c0392b" fill-opacity="0.55"/>
+  <text x="602.5" y="362" font-size="9.5" fill="#c0392b" font-weight="bold">0,915</text>
+  <text x="240" y="386" font-size="9.5" text-anchor="end" fill="#222">Tubo — soldadura de 4 filetes</text>
+  <rect x="250" y="374" width="379.0" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="374" width="315.2" height="17" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="637.0" y="386" font-size="9.5" fill="#c07a00" font-weight="bold">0,832</text>
+  <text x="240" y="410" font-size="9.5" text-anchor="end" fill="#222">Gusset — Whitmore, fluencia</text>
+  <rect x="250" y="398" width="397.8" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="398" width="315.2" height="17" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="655.8" y="410" font-size="9.5" fill="#c07a00" font-weight="bold">0,792</text>
+  <text x="240" y="434" font-size="9.5" text-anchor="end" fill="#222">Tubo — rotura sección ranurada</text>
+  <rect x="250" y="422" width="420.0" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="422" width="315.2" height="17" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="678.0" y="434" font-size="9.5" fill="#c07a00" font-weight="bold">0,750</text>
+  <text x="240" y="458" font-size="9.5" text-anchor="end" fill="#222">Gusset — pandeo (K = 1,2)</text>
+  <rect x="250" y="446" width="378.0" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="446" width="254.2" height="17" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="636.0" y="458" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,672</text>
+  <text x="240" y="482" font-size="9.5" text-anchor="end" fill="#222">Viga — fluencia local del alma</text>
+  <rect x="250" y="470" width="331.8" height="17" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="250" y="470" width="116.8" height="17" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="589.8" y="482" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,352</text>
+  <text x="250" y="508" font-size="9.5" fill="#666">Barra clara = capacidad de diseño · barra sólida = demanda · el número es el factor de uso</text>
+  <text x="250" y="522" font-size="10" fill="#c0392b" font-weight="bold">Gobierna el corte del borde del gusset con 0,939; la interacción de von Mises del mismo borde da 0,882.</text>
+</svg>

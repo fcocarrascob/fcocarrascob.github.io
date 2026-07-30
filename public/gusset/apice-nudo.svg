@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 472" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="rr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+    <marker id="gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2c7a4b"/>
+    </marker>
+    <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#8a857c" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="880" height="472" fill="#ffffff"/>
+  <text x="440.0" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El gusset del ápice: el canto del tubo fija la holgura, y las dos bandas de Whitmore se traslapan</text>
+  <rect x="255.0" y="46" width="370.0" height="46" fill="#dcd8d0" stroke="#666" stroke-width="1.2"/>
+  <text x="265.0" y="64" font-size="10" fill="#555">viga H 600×300×138,5 — ala inferior</text>
+  <polygon points="325.0,92.0 293.6,238.4 586.4,238.4 555.0,92.0" fill="#eef2f7" stroke="#333" stroke-width="1.6"/>
+  <polygon points="423.7,173.3 326.2,270.9 261.1,205.8 358.7,108.3" fill="#dfe5ec" fill-opacity="0.92" stroke="#333" stroke-width="1.6"/>
+  <line x1="440.0" y1="92.0" x2="293.6" y2="238.4" stroke="#888" stroke-width="0.8" stroke-dasharray="6 4"/>
+  <polygon points="456.3,173.3 553.8,270.9 618.9,205.8 521.3,108.3" fill="#dfe5ec" fill-opacity="0.92" stroke="#333" stroke-width="1.6"/>
+  <line x1="440.0" y1="92.0" x2="586.4" y2="238.4" stroke="#888" stroke-width="0.8" stroke-dasharray="6 4"/>
+  <polygon points="391.2,140.8 334.9,92.0 447.5,92.0" fill="#1a63a8" fill-opacity="0.30" stroke="#1a63a8" stroke-width="1.3"/>
+  <line x1="334.9" y1="92.0" x2="447.5" y2="92.0" stroke="#1a63a8" stroke-width="3"/>
+  <polygon points="488.8,140.8 432.5,92.0 545.1,92.0" fill="#1a63a8" fill-opacity="0.30" stroke="#1a63a8" stroke-width="1.3"/>
+  <line x1="432.5" y1="92.0" x2="545.1" y2="92.0" stroke="#1a63a8" stroke-width="3"/>
+  <rect x="432.5" y="92.0" width="15.1" height="48.8" fill="#c0392b" fill-opacity="0.35" stroke="#c0392b" stroke-width="1.2"/>
+  <line x1="432.5" y1="116.4" x2="262.0" y2="134.0" stroke="#c0392b" stroke-width="0.8"/>
+  <text x="118.0" y="132.0" font-size="10.5" fill="#c0392b" font-weight="bold">traslape 3,28 cm</text>
+  <text x="118.0" y="145.0" font-size="9.5" fill="#c0392b">13,4 % de cada banda</text>
+  <text x="283.6" y="276.0" font-size="10.5" fill="#222" font-weight="bold">[] 200×200×10</text>
+  <text x="532.0" y="276.0" font-size="10.5" fill="#222" font-weight="bold">[] 200×200×10</text>
+  <circle cx="391.2" cy="140.8" r="3.6" fill="#c0392b"/>
+  <circle cx="488.8" cy="140.8" r="3.6" fill="#c0392b"/>
+  <line x1="391.2" y1="140.8" x2="437.0" y2="95.0" stroke="#2c7a4b" stroke-width="2" marker-end="url(#gr)"/>
+  <text x="88.0" y="242.0" font-size="10.5" fill="#2c7a4b" font-weight="bold">holgura de rótula = 7,50 cm = 3,75 t</text>
+  <text x="88.0" y="256.0" font-size="9.5" fill="#2c7a4b">exigido 2t = 4,00 cm ✓ — la da el canto del tubo</text>
+  <line x1="332.0" y1="238.0" x2="385.2" y2="148.8" stroke="#2c7a4b" stroke-width="0.8"/>
+  <line x1="325.0" y1="84" x2="555.0" y2="84" stroke="#666" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="440.0" y="78" font-size="10.5" text-anchor="middle" fill="#666">L = 50 cm — largo soldado al ala</text>
+  <line x1="293.6" y1="268.3711037056153" x2="586.4" y2="268.3711037056153" stroke="#666" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="440.0" y="262.3711037056153" font-size="10.5" text-anchor="middle" fill="#666">borde libre = 63,64 cm  (31,8 t)</text>
+  <line x1="532.6" y1="96.9" x2="630.2" y2="194.5" stroke="#666" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="589.4" y="139.7" font-size="10.5" fill="#666">l = 30 cm</text>
+  <line x1="40" y1="314" x2="840" y2="314" stroke="#dcd8d0" stroke-width="1"/>
+  <text x="40" y="330" font-size="11" fill="#1a63a8" font-weight="bold">Los dos estados simultáneos que la interfaz debe resistir</text>
+  <rect x="40" y="340" width="390" height="62" fill="#c07a00" fill-opacity="0.08" stroke="#c07a00" stroke-width="1.2"/>
+  <text x="52" y="358" font-size="10.5" fill="#c07a00" font-weight="bold">A · Desbalance de 8.6.6 (una pandeada)</text>
+  <text x="52" y="374" font-size="10.5" fill="#222">T = 124,98 tonf  y  0,3P_ne = 59,49 tonf</text>
+  <text x="52" y="390" font-size="10.5" fill="#222" font-weight="bold">H = 130,44   V = 46,31   R = 138,42 tonf</text>
+  <rect x="450" y="340" width="390" height="62" fill="#1a63a8" fill-opacity="0.08" stroke="#1a63a8" stroke-width="1.2"/>
+  <text x="462" y="358" font-size="10.5" fill="#1a63a8" font-weight="bold">B · Amplificado simétrico (ninguna pandeada)</text>
+  <text x="462" y="374" font-size="10.5" fill="#222">ambas en 0,7R₁·P_E = 100,80 tonf</text>
+  <text x="462" y="390" font-size="10.5" fill="#222" font-weight="bold">H = 142,55   V = 0,00   R = 142,55 tonf</text>
+  <text x="40" y="422" font-size="9.5" fill="#666">El estado B gobierna el corte del borde; el A, la componente normal. Ninguno de los dos domina al otro: hay que verificar ambos.</text>
+</svg>

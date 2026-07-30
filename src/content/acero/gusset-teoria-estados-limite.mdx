@@ -1,0 +1,377 @@
+---
+title: "El gusset: el elemento que nadie verifica (Whitmore, la columna equivalente y la rótula que no hay que robustecer)"
+description: "La plancha de nudo es la única pieza de una conexión cuya geometría la dibuja el detallador y no la calcula nadie. Esta nota explica sus estados límite: por qué hace falta un ancho efectivo, por qué el mismo gusset tiene dos —45° en tracción por el Comentario J4.1 y 30° en compresión por el J4.4, con una razón exacta de √3—, por qué el radio de giro de la banda no depende de su ancho y el umbral de esbeltez 25 de J4.4 cae en apenas 7,2 espesores, y por qué una holgura mayor produce una plancha más delgada con más capacidad inelástica. Con la lista explícita de qué es cláusula y qué es práctica del Manual."
+pubDate: 2026-07-29
+tags: ["gusset", "conexiones", "acero", "whitmore", "pandeo", "aisc360", "aisc341", "nch2369", "estados límite", "diseño por capacidad", "teoría"]
+subsection: "teoria"
+chapter: "AISC 360-22 J4 · AISC 341-22 F2.6c — Planchas de nudo"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En una conexión de acero hay tres familias de piezas: el **miembro afectado** —la viga, la
+columna, la diagonal—, los **conectores** —pernos y soldaduras— y los **elementos de conexión**,
+que es todo lo que se agrega en el medio. La plancha de nudo, el *gusset*, pertenece a la tercera.
+
+Y es la única de las tres que suele quedar sin verificar. Tiene una explicación: no aparece en el
+modelo de análisis, no tiene un capítulo propio en la norma, y su geometría la fija el detallador
+resolviendo un problema de encaje —que la diagonal llegue al punto de trabajo, que los pernos
+quepan, que se pueda soldar—. Nadie le pide un factor de uso.
+
+Este blog no era la excepción. Había **seis** ejemplos de conexiones publicados y ninguno
+verificaba el gusset; dos dejaban la deuda escrita: el de la
+[diagonal HSS ranurada](/acero/ejemplo-diagonal-hss-traccion), pidiendo «que el gusset resista el
+momento de pandeo de la diagonal o acomode su giro plástico», y el del
+[paño en V invertida](/acero/ejemplo-chevron-nch2369) —que no es de conexión sino de paño, pero
+deja el mismo cabo suelto—, «gusset con geometría que acomode el giro del pandeo». Esta nota es lo
+que hacía falta antes de poder cerrar esas dos frases.
+
+## 1. Por qué hace falta un ancho efectivo
+
+El problema es que la plancha es más ancha que el camino de la carga. La diagonal entrega su
+fuerza en una zona acotada —el largo de la soldadura, el grupo de pernos— y esa fuerza se abre en
+abanico dentro de una plancha que sigue mucho más allá. Si se tomara todo el ancho de la plancha
+como resistente, se sobrestimaría la capacidad: las fibras lejanas no llegan a enterarse. Si se
+tomara solo el ancho del conector, se subestimaría groseramente.
+
+La respuesta de la práctica es un **ancho efectivo**: la fuerza se supone repartida
+uniformemente sobre una banda que se abre con un ángulo fijo desde el primer punto de
+transferencia hasta el último. **Robert Whitmore** midió esas trayectorias en 1952[^whitmore] con
+extensometría sobre modelos elásticos de planchas de nudo, y de ahí sale el ángulo que todo el
+mundo usa. La banda resultante se llama, por eso, **sección de Whitmore**.
+
+<Equation label="Ancho de la banda">
+$$
+b_w = g + 2\,l\,\tan\theta
+$$
+</Equation>
+
+donde $l$ es el largo de la transferencia —del primer al último punto— y $g$ el ancho con que
+la carga entra (el gramil del grupo de pernos; cero, o casi, si la plancha llega de canto a una
+ranura soldada).
+
+## 2. El mismo gusset tiene dos anchos efectivos
+
+Acá está lo que casi nunca se cuenta, y es lo que ordena toda la nota. **El ángulo de dispersión
+no es una constante universal.** El Comentario de AISC 360-22[^aisc360] lo dice en dos lugares
+distintos, con dos valores distintos, y no es una contradicción.
+
+El **Comentario J4.1**, sobre elementos en tracción, es explícito: el ángulo de dispersión
+depende de la geometría del elemento, del grado de restricción y de la **capacidad de deformación
+inelástica**; y *«debido a la gran capacidad de deformación inelástica de las planchas de nudo y
+elementos similares sometidos a cargas de tracción, el ancho efectivo puede calcularse con un
+ángulo de dispersión de 45°»*.
+
+El **Comentario J4.4**, sobre elementos en compresión, usa otro: el ancho de la columna
+equivalente *«generalmente se calcula con un ángulo de dispersión constante de 30°, que se basó
+en las trayectorias de tensión experimentales en planchas de nudo elásticas»* — es decir, en el
+ensayo de Whitmore.
+
+La razón de fondo es física y vale la pena tenerla clara. En tracción la plancha puede fluir y
+redistribuir: la zona sobrecargada plastifica, deja de tomar más carga y le pasa el exceso a sus
+vecinas, de modo que la distribución real se acerca a la uniforme sobre una banda ancha. En
+compresión no hay tal cortesía — lo que limita no es la fluencia sino la **inestabilidad**, y una
+franja que se está por pandear no redistribuye nada. Se queda con el reparto elástico, que es más
+angosto.
+
+<Figure
+  src="/gusset/whitmore-30-45.svg"
+  alt="Dos paneles sobre la sección efectiva de una plancha de nudo. Panel A, conexión soldada: la diagonal llega a la plancha y desde el extremo de la diagonal se abren dos conos, uno de 30 grados sombreado en azul y otro de 45 grados en ámbar con línea discontinua, hasta el borde de la plancha donde se marcan los dos anchos efectivos resultantes; abajo se acota el largo de la conexión l. Panel B, conexión apernada: un grupo de ocho pernos en dos líneas separadas por el gramil g, con los conos naciendo en la primera fila de pernos en lugar de en un punto, de modo que el ancho arranca valiendo g; la banda de 30 grados cabe dentro de la plancha pero la de 45 grados se sale por arriba y por abajo, y las dos zonas que sobresalen aparecen marcadas en rojo con la indicación de que hay que recortarlas al borde real. Una franja inferior recuerda que el Comentario J4.1 permite 45 grados en tracción por la gran capacidad de deformación inelástica, que el Comentario J4.4 usa 30 grados en compresión por las trayectorias elásticas de Whitmore de 1952, y que la razón entre ambos anchos es exactamente la tangente de 45 sobre la tangente de 30, o sea raíz de 3, igual a 1,73."
+  caption="El mismo gusset, dos anchos efectivos. El ángulo lo decide el estado límite que se está verificando, no la geometría de la plancha."
+/>
+
+La diferencia no es menor, y tiene un valor exacto:
+
+<Equation label="La razón entre las dos bandas">
+$$
+\frac{b_w(45°)}{b_w(30°)} = \frac{\tan 45°}{\tan 30°} = \sqrt{3} = 1{,}73
+$$
+</Equation>
+
+(exacto cuando $g = 0$; con gramil la razón baja algo, porque el término $g$ es común a las dos).
+**La banda de tracción es un 73 % más ancha que la de compresión.** Verificar fluencia en
+tracción sobre la banda de 30° no es un error —es conservador y es lo que hace casi toda la
+práctica—, pero conviene saber que se está dejando ese margen sobre la mesa, y que la norma
+autoriza recuperarlo.
+
+<Note type="tip" title="Por qué la práctica usa 30° para todo">
+Hay una razón buena, y está en el mismo Comentario J4.4: las longitudes efectivas $L_c = KL$
+tabuladas para geometrías comunes de gusset *«fueron calibradas para usarse con un ángulo de
+dispersión de 30°»*. Es decir: el 30° no es solo un ancho, es **la mitad de un par calibrado**.
+Si se usa 45° para el ancho y se conservan los $K$ de la literatura, se está mezclando las
+mitades de dos recetas distintas. Usar 30° en todo mantiene la coherencia; usar 45° solo en
+tracción también, porque ahí no hay $K$ de que preocuparse.
+</Note>
+
+### Cuándo la banda no cabe
+
+En el panel B de la figura aparece un caso que en la práctica es la regla y no la excepción: la
+banda **se sale de la plancha**. Con conexiones apernadas largas y gussets de esquina, la sección
+de Whitmore cruza el borde libre, o el borde soldado a la viga, o entra en el alma de la columna.
+
+No hay cláusula que diga qué hacer. El criterio de la práctica es recortar la banda al material
+que efectivamente existe, y hay una razón para no ser creativo acá: la parte que se sale no está
+ahí para tomar carga. Recortarla es simplemente contar lo que hay.
+
+## 3. Los estados límite sobre la banda
+
+Con el ancho definido, la banda se verifica como cualquier sección: es el **§J4** de AISC 360-22,
+*Affected Elements of Members and Connecting Elements*, y es un capítulo corto que se lee en cinco
+minutos. Lo que no se lee en cinco minutos es la tabla de factores de resistencia, porque **no se
+repiten**.
+
+| Estado límite | Ec. | $\phi$ | Sobre qué área |
+|---|:---:|:---:|---|
+| Fluencia en tracción | J4-1 | 0,90 | bruta, $A_g$ |
+| Rotura en tracción | J4-2 | 0,75 | neta efectiva, $A_e$ (¡con retraso de corte!) |
+| Fluencia por corte | J4-3 | **1,00** | bruta, $A_{gv}$ |
+| Rotura por corte | J4-4 | 0,75 | neta, $A_{nv}$ |
+| Bloque de corte | J4-5 | 0,75 | mixta |
+| Compresión | J4-6 / Cap. E | 0,90 | bruta, $A_g$ |
+
+El **1,00 de la fluencia por corte** es el que sorprende, y no es un error de tipeo. El
+Comentario J4.2 cuenta el origen: hasta la edición 2005 el factor era 0,90, equivalente a un
+factor de seguridad de 1,67; pero el ASD de 1989 admitía una tensión de corte de $0{,}40F_y$, que
+equivale a 1,50. Para que el LRFD quedara consistente con las ediciones ASD anteriores, los
+factores pasaron a 1,00 y 1,50 — y el Comentario justifica el aumento de aproximadamente 10 % en
+la resistencia de diseño *«por la larga historia de desempeño satisfactorio del uso del ASD»*.
+
+Aplicarle a la fluencia por corte el 0,75 genérico que uno asocia a «conexiones» es un error de
+un factor **1,33**, y en la dirección conservadora — que en un gusset suele significar una plancha
+más gruesa de la que conviene, por razones que se ven en la sección 5.
+
+<Note type="warning" title="La rotura en tracción del gusset también lleva retraso de corte">
+J4-2 remite a $A_e$ *según la Sección D3*, y D3 es el capítulo del retraso de corte. Es fácil
+pasarlo por alto: uno asocia el $U$ a la diagonal y no a la plancha. En un gusset apernado con
+pocas filas, el $U$ de la plancha puede ser el que gobierna.
+</Note>
+
+## 4. El gusset en compresión: una columna equivalente
+
+Cuando la diagonal comprime, la banda de Whitmore se comporta como una columna: una franja de
+ancho $b_w$ y espesor $t$ que puede pandear fuera del plano de la plancha. **§J4.4** la trata con
+dos ramas.
+
+<Equation label="Sec. J4.4">
+$$
+\frac{L_c}{r} \le 25 \;\Rightarrow\; P_n = F_y A_g
+\qquad\qquad
+\frac{L_c}{r} > 25 \;\Rightarrow\; \text{Capítulo E}
+$$
+</Equation>
+
+El umbral de 25 no es arbitrario. El Comentario explica que las ecuaciones del Capítulo E se
+desarrollaron para miembros principales, y que los **elementos de conexión tienen tensiones
+residuales menores y factores de forma mayores**, de modo que su resistencia al pandeo en el
+rango inelástico es *mayor* que la que predice el Capítulo E (Dowswell, 2016). Por debajo de
+$L_c/r = 25$ se reconoce eso y se permite la fluencia completa.
+
+<Figure
+  src="/gusset/gusset-columna-equivalente.svg"
+  alt="Tres paneles sobre el gusset en compresión. Panel A: un gusset de esquina triangular soldado a la cara de una columna y al ala superior de una viga, con la diagonal llegando a 45 grados; la banda de Whitmore aparece sombreada en azul y desde el extremo de la diagonal y desde los dos bordes de la banda se dibujan tres flechas verdes paralelas al eje, rotuladas L1, L2 y L3, que llegan a los bordes soldados; una nota indica que la práctica toma el promedio o el máximo de las tres y que el Comentario J4.4 admite que en un gusset de esquina es difícil establecer L y K, remitiendo a Dowswell 2006. Panel B: vista de canto de la plancha, con el borde inferior soldado a la viga rayado, la carga P entrando por arriba y una curva roja discontinua que muestra la plancha arqueándose fuera del plano, con la cota de la longitud efectiva Lc igual a K por L. Panel C: las dos ramas de J4.4 en dos cajas, esbeltez menor o igual a 25 con Pn igual a Fy por Ag y factor 0,90, y esbeltez mayor que 25 con el Capítulo E; y debajo una caja que muestra que el radio de giro de la franja vale t partido por raíz de 12, o sea 0,289 t, de modo que el umbral de 25 corresponde a una longitud de pandeo de 7,2 espesores, apenas 115 milímetros para una plancha de 16."
+  caption="El gusset comprimido como columna equivalente. La geometría de la longitud de pandeo es la parte incómoda: el propio Comentario admite que en un gusset de esquina K y L son difíciles de establecer."
+/>
+
+Y acá aparece un resultado que conviene tener a mano, porque se deduce en dos líneas y ahorra
+discusiones. La banda es una franja rectangular de ancho $b_w$ y espesor $t$; su inercia fuera
+del plano es $b_w t^3/12$ y su área $b_w t$, de modo que
+
+<Equation label="El radio de giro de la banda">
+$$
+r = \sqrt{\frac{I}{A}} = \sqrt{\frac{b_w t^3/12}{b_w t}} = \frac{t}{\sqrt{12}} = 0{,}2887\,t
+$$
+</Equation>
+
+**El radio de giro no depende del ancho de la banda.** Se cancela. Eso tiene dos consecuencias
+prácticas inmediatas:
+
+1. **La tensión crítica del gusset comprimido la fijan solo el espesor y la longitud de pandeo.**
+   Alargar la conexión ensancha la banda y sube la capacidad $P_n = F_{cr}b_w t$ de forma
+   estrictamente proporcional al ancho, pero no mejora en nada la esbeltez. Si el gusset pandea,
+   alargar la soldadura no lo arregla: hay que engrosar la plancha o acortar la longitud libre.
+2. **El umbral de 25 cae mucho más abajo de lo que uno cree.** Sustituyendo,
+
+<Equation label="Dónde vale la rama fácil">
+$$
+\frac{L_c}{r} \le 25
+\quad\Longleftrightarrow\quad
+L_c \le 25 \cdot 0{,}2887\,t = 7{,}2\,t
+$$
+</Equation>
+
+Para una plancha de 16 mm eso son **115 mm** de longitud de pandeo. Casi ningún gusset real cae
+ahí, y por eso la rama cómoda de J4.4 se usa mucho menos de lo que su redacción sugiere.
+
+### La parte que la norma no resuelve
+
+Queda el problema de qué son $L$ y $K$. El Comentario J4.4 es inusualmente franco:
+
+> *Como una plancha de nudo de esquina está restringida a lo largo de dos bordes, es difícil
+> establecer tanto $L$, la longitud no arriostrada del elemento, como $K$, el factor de longitud
+> efectiva.*
+
+Y ofrece dos salidas: la guía empírica de Dowswell (2006), y una puerta trasera muy útil —
+*«cuando se encuentra que el gusset es compacto, se puede suponer que la razón de esbeltez es
+menor o igual a 25»*. Para el detalle de la longitud efectiva el Comentario remite al Apéndice C
+de la **AISC Design Guide 29**, *Vertical Bracing Connections*[^dg29], que es donde vive el
+método de la columna equivalente con todo su recetario.
+
+Esa guía no está entre las fuentes de este blog todavía, así que acá el método se presenta como
+lo que es: **práctica documentada, no cláusula.** La sección 7 lo deja anotado.
+
+## 5. La rótula, y por qué no hay que robustecer el gusset
+
+Todo lo anterior es resistencia. Pero en un marco arriostrado sísmico el gusset tiene un segundo
+trabajo, y es el que decide su geometría: **tiene que dejar pandear la diagonal sin romperse**.
+
+Cuando la diagonal pandea fuera del plano, su extremo rota. Ese giro tiene que ir a alguna parte.
+Tanto AISC 341-22 §F2.6c.3[^aisc341] como NCh2369:2025 8.6.9[^nch] plantean la misma disyuntiva
+con las mismas dos alternativas:
+
+| | Alternativa | Qué exige |
+|---|---|---|
+| a) | **Resistencia flexural** | La conexión resiste la capacidad esperada en flexión del elemento, consistente con la dirección de pandeo |
+| b) | **Capacidad de rotación** | La geometría del gusset acomoda el giro plástico sin fallar |
+
+La vía (b) es la que produce el detalle clásico: **una plancha única con la diagonal terminando
+antes de la línea de restricción**, de modo que la franja de plancha libre entre ambas pueda
+formar una rótula plástica. El *User Note* de §F2.6c.3 lo nombra así textualmente.
+
+<Figure
+  src="/gusset/gusset-rotula-holguras.svg"
+  alt="Dos paneles sobre la rótula del gusset. Panel A: gusset de esquina con la diagonal llegando a 45 grados y terminando antes de llegar al nudo; se marca en verde el punto restringido más cercano sobre el borde soldado a la viga y la línea de restricción que pasa por él perpendicular al eje de la diagonal, la cota de la holgura 2t entre esa línea y el extremo de la diagonal, la rótula plástica en rojo sobre la franja intermedia, y un contorno discontinuo rojo que muestra la diagonal girada al pandear con una flecha curva que indica el giro fuera del plano; una nota advierte que si el extremo llega hasta la línea de restricción el giro no tiene dónde ocurrir y la conexión se fractura antes de que la diagonal trabaje. Panel B: los tres modelos de holgura en tres filas con su icono, lineal 2t de Astaneh-Asl 1986 y 1998, elíptica 8t de Roeder y otros 2011 para gussets de esquina, y horizontal 6t de los mismos autores para gussets de vano medio; debajo una caja destacada dice que más holgura da plancha más delgada y por lo tanto más capacidad inelástica, y advierte que con el modelo 2t el pandeo del propio gusset puede controlar el diseño; y una última caja cita el comentario C8.6.9 de NCh2369 pidiendo cuidar que la geometría de la placa sea capaz de producir el giro plástico estable en lugar de robustecerla y trasladar la plastificación al elemento. Una franja al pie recuerda que el gusset completo es zona protegida por el párrafo F2.5c b, y una nota indica que la práctica toma el promedio o el máximo de las tres longitudes."
+  caption="La holgura del gusset. Cómo se mide es el detalle que más se equivoca, y el modelo que se elige cambia el espesor de la plancha en la dirección contraria a la intuición."
+/>
+
+### Cómo se mide, exactamente
+
+Es el detalle que más se equivoca, y el Comentario de §F2.6c.3 lo define con una precisión que
+vale la pena leer despacio: la distancia libre se mide
+
+> *desde el extremo de la diagonal hasta una línea que es perpendicular al eje de la diagonal,
+> trazada desde el punto de la plancha de nudo más cercano al extremo de la diagonal **que esté
+> restringido de rotación fuera del plano***.
+
+Tres cosas que eso descarta: no es la distancia al borde de la plancha, no es la distancia al
+punto de trabajo, y no se mide a lo largo del borde. Es una perpendicular al eje de la diagonal
+trazada desde un punto que hay que **identificar** —el más cercano que esté restringido—, y en un
+gusset con rigidizadores ese punto se muda.
+
+### Los tres modelos, y el que conviene no es el más antiguo
+
+El Comentario entrega tres reglas de detallamiento, de tres cuerpos de investigación distintos:
+
+| Modelo | Holgura | Fuente | Para qué |
+|---|:---:|---|---|
+| Lineal | $2t$ | Astaneh-Asl (1986, 1998) | El clásico; muy efectivo con gussets ahusados |
+| Elíptica | $8t$ | Roeder et al. (2011) | Gussets de esquina |
+| Horizontal | $6t$ | Roeder et al. (2011) | Gussets de vano medio (el ápice de un chevron) |
+
+Y acá está el resultado contraintuitivo, que es el que le da título a esta sección. El Comentario
+advierte que con el modelo $2t$ **el pandeo del propio gusset puede controlar el diseño**, porque
+la plancha debe impedir su pandeo antes que el del miembro que está protegiendo. Los modelos
+$8t$ y $6t$, más recientes, *«resultan en planchas de gusset más delgadas, que rara vez son
+controladas por pandeo del gusset, y la investigación muestra que esto puede resultar en mayor
+capacidad de deformación inelástica»*.
+
+Léase de nuevo: **más holgura → plancha más delgada → más capacidad de deformación inelástica.**
+La holgura no es una tolerancia que uno quisiera reducir. Es el mecanismo.
+
+El comentario **C8.6.9** de NCh2369 dice lo mismo, y con una advertencia directa contra el
+reflejo natural del proyectista: hay que
+
+> *cuidar que la geometría de la placa gusset sea capaz de producir el giro plástico estable **en
+> lugar de robustecerla** y trasladar la plastificación al elemento.*
+
+Un gusset más grueso y más rígido no es un gusset más seguro. Es un gusset que devuelve el
+problema a la diagonal, y que se lo devuelve en forma de flexión concentrada en el extremo justo
+donde la diagonal ya está pandeando.
+
+<Note type="warning" title="El gusset completo es zona protegida">
+AISC 341-22 §F2.5c(b) declara zona protegida a *los elementos que conectan las diagonales a
+vigas y columnas* — es decir, al gusset entero. Sin perforaciones, sin fijaciones de
+instalaciones, sin soldaduras ajenas, y §A4.2(g) obliga a acotarlo en los planos. Es coherente
+con todo lo anterior: si la plancha es la pieza que debe plastificar de forma estable, cualquier
+agujero que alguien haga después cambia el mecanismo que se diseñó.
+</Note>
+
+## 6. La interacción del borde: el estado límite sin cláusula
+
+Queda un estado límite que en la práctica gobierna a menudo y que **no tiene ecuación en la
+norma**. En el borde donde el gusset se une a la viga o a la columna, la fuerza de la diagonal
+llega descompuesta en dos: una componente paralela al borde, que es corte, y una perpendicular,
+que es tracción o compresión.
+
+AISC 360-22 da J4-1 para la normal y J4-3 para el corte, cada una con su $\phi$ —0,90 y 1,00— y
+**por separado**. No hay fórmula de interacción para elementos de conexión. Pero las dos
+componentes no actúan por turnos: actúan a la vez sobre la misma sección de plancha.
+
+El criterio que usa la práctica es la elipse de von Mises,
+
+<Equation label="Práctica del Manual — no es cláusula">
+$$
+\left(\frac{V_u}{\phi V_n}\right)^{2} + \left(\frac{N_u}{\phi N_n}\right)^{2} \le 1
+$$
+</Equation>
+
+y tiene una propiedad algebraica agradable: si se despeja el largo de borde requerido, con ambas
+resistencias proporcionales a ese largo, sale la **suma pitagórica** de los dos largos que cada
+componente pediría por separado, $L_{req} = \sqrt{L_V^2 + L_N^2}$. Es fácil de recordar y explica
+por qué el criterio muerde: dos componentes que individualmente pasan holgadas pueden no pasar
+juntas.
+
+Conviene decirlo en la memoria de cálculo antes de que lo pregunte un revisor: **es un criterio
+de práctica, no una cláusula.**
+
+## 7. Qué es cláusula y qué es práctica
+
+Ésta es la tabla que conviene tener presente al escribir una memoria de cálculo de gusset, porque
+la mitad de lo que se hace no está en la norma que se cita al pie.
+
+| Lo que se verifica | Estatus | Fuente |
+|---|---|---|
+| Fluencia y rotura en tracción de la banda | **Cláusula** | AISC 360-22 J4-1, J4-2 |
+| Fluencia y rotura por corte | **Cláusula** | J4-3, J4-4 |
+| Bloque de corte | **Cláusula** | J4-5 |
+| Marco del gusset comprimido (umbral 25, Cap. E) | **Cláusula** | J4.4, J4-6 |
+| Ángulo de dispersión 45° en tracción | **Comentario** | Coment. J4.1 |
+| Ángulo de dispersión 30° / sección de Whitmore | **Comentario + práctica** | Coment. J4.4; Whitmore (1952) |
+| $K$ y $L$ de la columna equivalente | **Práctica** ⚠️ | DG 29 Ap. C; Dowswell (2006) |
+| Recorte de la banda al borde real de la plancha | **Práctica** ⚠️ | — |
+| Interacción corte + normal en el borde | **Práctica** ⚠️ | Manual / DG 29 (von Mises) |
+| Holguras $2t$ / $8t$ / $6t$ | **Comentario** | Coment. AISC 341-22 F2.6c.3 |
+| Soldadura gusset–ala: el corte por unidad de longitud $0{,}6R_yF_yt_p/\alpha_s$ | **Cláusula** | AISC 341-22 §F2.6c.4 |
+| La pierna de filete tabulada que lo entrega ($0{,}62\,t_p$ en A36, $0{,}74\,t_p$ en A572 Gr. 50) | ***User Note*** | AISC 341-22 §F2.6c.4 |
+| Zona protegida = el gusset completo | **Cláusula** | AISC 341-22 §F2.5c(b) |
+| Diagonal: acomodar el giro o resistir el momento | **Cláusula** | AISC 341-22 §F2.6c.3; NCh2369 8.6.9 |
+
+Las tres filas marcadas ⚠️ son las que hay que declarar como supuestos. Y no son detalles
+marginales: son, respectivamente, la que fija la capacidad a compresión, la que fija el área
+resistente cuando la banda se sale, y la que fija el largo del borde soldado.
+
+<Note type="info" title="Dónde se ejercita esto con números">
+Dos ejemplos de cálculo cuelgan de esta nota, cada uno con su planilla del canvas verificada:
+
+- El [**gusset soldado del ápice de un chevron**](/acero/ejemplo-gusset-apice-chevron), donde las
+  dos diagonales concurren bajo el ala de la viga y la demanda de la conexión **la fija el piso de
+  ½$T_{ye}$ de la cláusula 8.4.1**, que queda un 24 % por encima del nivel amplificado por
+  $0{,}7R_1$. Ahí las dos bandas de Whitmore se traslapan.
+- El [**gusset apernado de esquina**](/acero/ejemplo-gusset-esquina-apernado), donde la plancha
+  toca viga y columna y hay que repartir la fuerza entre las dos interfaces. Ahí resulta que el
+  reparto es **estáticamente indeterminado**, y que el Método de la Fuerza Uniforme es una
+  elección de cómo cerrar ese grado de libertad, no una consecuencia del equilibrio.
+</Note>
+
+## Bibliografía
+
+[^whitmore]: Whitmore, R. E. (1952). *Experimental Investigation of Stresses in Gusset Plates*. Bulletin No. 16, Engineering Experiment Station, University of Tennessee. Es la fuente del ángulo de 30°, citada en las referencias de AISC 360-22.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. Capítulo J §J4 (*Affected Elements of Members and Connecting Elements*) y su Comentario, secciones J4.1, J4.2 y J4.4.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. §F2.6c (*Brace Connections*) y su Comentario, en particular F2.6c.3 (holguras) y F2.6c.4 (soldadura del gusset al ala).
+
+[^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas 8.6.8 y 8.6.9, y el comentario C8.6.9.
+
+[^dg29]: Muir, L. y Thornton, W. (2014). *Vertical Bracing Connections — Analysis and Design*. AISC Design Guide 29. Citada por el Comentario J4.4 de AISC 360-22 como la referencia del método de la columna equivalente (Apéndice C). **No consultada directamente**: lo que esta nota atribuye a la práctica se declara como tal.

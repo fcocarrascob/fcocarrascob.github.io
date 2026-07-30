@@ -1,0 +1,106 @@
+---
+// Barra de chips para filtrar un listado por tema, compartida por el archivo de
+// Notas y los tres listados de ejemplos de cálculo.
+//
+// Progressive enhancement: la página renderiza el listado completo en build (así
+// sirve sin JS y queda indexable) y este script solo esconde tarjetas. El tema
+// activo vive en la URL para poder marcar o compartir la vista filtrada.
+//
+// Contrato con la página que lo monta:
+//   - cada tarjeta filtrable lleva `data-tema="<tema>"`
+//   - el contenedor del listado lleva `data-list`
+//   - el contador de resultados lleva `data-count`
+//   - si el listado viene agrupado, cada grupo (encabezado incluido) lleva
+//     `data-group`, y se esconde solo cuando se queda sin tarjetas visibles
+interface Props {
+  temas: { name: string; count: number }[];
+  /** Sustantivo singular del contador: "ejemplo" → "3 de 10 ejemplos". */
+  noun: string;
+  /** Parámetro de URL donde vive el tema activo. */
+  param?: string;
+}
+
+const { temas, noun, param = 'tema' } = Astro.props;
+
+const chipClass =
+  'rounded border border-border px-2.5 py-1 text-xs text-muted transition-colors ' +
+  'hover:border-muted hover:text-ink aria-pressed:border-accent ' +
+  'aria-pressed:bg-accent/5 aria-pressed:font-medium aria-pressed:text-accent';
+---
+{/* Con un solo tema el filtro no separa nada: es un botón que no cambia el listado. */}
+{temas.length > 1 && (
+  <div
+    hidden
+    data-filter
+    data-noun={noun}
+    data-param={param}
+    class="mb-10 flex flex-wrap gap-1.5 border-y border-border py-4"
+  >
+    <button type="button" data-value="" aria-pressed="true" class={chipClass}>Todos</button>
+    {temas.map((t) => (
+      <button type="button" data-value={t.name} aria-pressed="false" class={chipClass}>
+        {t.name} <span class="ml-1 tabular-nums opacity-60">{t.count}</span>
+      </button>
+    ))}
+  </div>
+)}
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filter]');
+  const list = document.querySelector<HTMLElement>('[data-list]');
+
+  if (bar && list) {
+    const countEl = document.querySelector<HTMLElement>('[data-count]');
+    const cards = [...list.querySelectorAll<HTMLElement>('[data-tema]')];
+    const groups = [...list.querySelectorAll<HTMLElement>('[data-group]')];
+    const chips = [...bar.querySelectorAll<HTMLButtonElement>('button')];
+    const noun = bar.dataset.noun ?? 'entrada';
+    const param = bar.dataset.param ?? 'tema';
+    const plural = (n: number) => `${n} ${noun}${n !== 1 ? 's' : ''}`;
+
+    function apply(tema: string) {
+      let visible = 0;
+      for (const card of cards) {
+        const ok = !tema || card.dataset.tema === tema;
+        card.hidden = !ok;
+        if (ok) visible++;
+      }
+
+      // El separador de la última tarjeta se apaga a mano: `last:border-0` mira
+      // la posición en el DOM, no la visibilidad, y dejaría una línea suelta al
+      // final. Sin grupos, el listado entero se trata como uno solo.
+      for (const scope of groups.length ? groups : [list!]) {
+        const shown = [...scope.querySelectorAll<HTMLElement>('[data-tema]')].filter(
+          (c) => !c.hidden
+        );
+        if (groups.length) scope.hidden = shown.length === 0;
+        shown.forEach((c, i) => {
+          c.style.borderBottomWidth = i === shown.length - 1 ? '0' : '';
+        });
+      }
+
+      for (const chip of chips) {
+        chip.setAttribute('aria-pressed', String((chip.dataset.value ?? '') === tema));
+      }
+
+      if (countEl) {
+        countEl.textContent = tema ? `${visible} de ${plural(cards.length)}` : plural(cards.length);
+      }
+    }
+
+    for (const chip of chips) {
+      chip.addEventListener('click', () => {
+        const tema = chip.dataset.value ?? '';
+        apply(tema);
+        history.replaceState(
+          null,
+          '',
+          tema ? `?${param}=${encodeURIComponent(tema)}` : location.pathname
+        );
+      });
+    }
+
+    bar.hidden = false;
+    apply(new URLSearchParams(location.search).get(param) ?? '');
+  }
+</script>

@@ -42,6 +42,14 @@ Two collections are defined in `src/content.config.ts`, both using the Astro 6 `
 
 Posts with `draft: true` are excluded from all listings and routes.
 
+### `tema` — the filter axis for ejemplos
+
+`hormigon`, `acero` and `geotecnia` all take an optional `tema`: the family of element or problem (`Vigas`, `Conexiones`, `Losas`, `Zapatas`, …). **Every new ejemplo de cálculo must declare one**, reusing an existing value where it fits — that's what keeps the chip row short as the section grows. A post without `tema` falls into an `Otros` chip.
+
+It is deliberately coarser than `chapter`, which is nearly 1:1 with the post and would give one chip per example. The vocabulary is not declared in any central list: `contarTemas()` (`src/lib/temas.ts`) derives the chips from what's published, so a new tema appears with the first post that declares it.
+
+The chip row itself is `src/components/ui/TemaFilter.astro`, shared by `/blog` (filtering on `section`, grouped listing) and the three `/*/ejemplos` pages (filtering on `tema`, flat listing). It's progressive enhancement — the full list renders at build time and the script only hides cards. A page mounting it must provide: `data-tema` on each card (PostCard forwards arbitrary `data-*`), `data-list` on the list container, `data-count` on the results counter, and `data-group` on each group wrapper if the listing is grouped.
+
 Each collection has its own query wrapper — **import from these, don't call `getCollection` directly in pages**:
 
 - `src/lib/posts.ts` → `getAllPosts()`, `getPostsByTag()`, `getPostsBySection()` (blog)

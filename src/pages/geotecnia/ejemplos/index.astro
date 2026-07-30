@@ -1,7 +1,9 @@
 ---
 import PageLayout from '../../../layouts/PageLayout.astro';
 import PostCard from '../../../components/ui/PostCard.astro';
+import TemaFilter from '../../../components/ui/TemaFilter.astro';
 import { getGeotecniaPostsBySubsection, SUBSECTIONS } from '../../../lib/geotecnia';
+import { contarTemas } from '../../../lib/temas';
 
 const sub = SUBSECTIONS['ejemplos'];
 const posts = await getGeotecniaPostsBySubsection('ejemplos');
@@ -10,6 +12,10 @@ const posts = await getGeotecniaPostsBySubsection('ejemplos');
 // que /hormigon/ejemplos), para que se lean en el orden real de diseño.
 const capNum = (chapter?: string) => parseInt(chapter?.match(/\d+/)?.[0] ?? '999');
 const sorted = [...posts].sort((a, b) => capNum(a.data.chapter) - capNum(b.data.chapter));
+
+const temaDe = (p: (typeof sorted)[number]) => p.data.tema ?? 'Otros';
+const temas = contarTemas(sorted.map(temaDe));
+const total = sorted.length;
 ---
 <PageLayout title={sub.label} description={sub.description}>
   <div class="mb-10">
@@ -21,12 +27,15 @@ const sorted = [...posts].sort((a, b) => capNum(a.data.chapter) - capNum(b.data.
         {sub.norm}
       </p>
       <h1 class="text-2xl font-semibold text-ink mb-3">{sub.label}</h1>
-      <p class="text-muted leading-relaxed">{sub.description}</p>
+      <p class="text-muted leading-relaxed mb-3">{sub.description}</p>
+      <p class="text-muted text-sm" data-count>{total} ejemplo{total !== 1 ? 's' : ''}</p>
     </div>
   </div>
 
-  {sorted.length > 0 ? (
-    <section>
+  <TemaFilter temas={temas} noun="ejemplo" />
+
+  {total > 0 ? (
+    <section data-list>
       {sorted.map((post) => (
         <PostCard
           title={post.data.title}
@@ -35,10 +44,11 @@ const sorted = [...posts].sort((a, b) => capNum(a.data.chapter) - capNum(b.data.
           href={`/geotecnia/${post.id}`}
           tags={post.data.tags}
           section={post.data.chapter}
+          data-tema={temaDe(post)}
         />
       ))}
     </section>
   ) : (
-    <p class="text-muted">No hay notas publicadas todavía.</p>
+    <p class="text-muted">No hay ejemplos publicados todavía.</p>
   )}
 </PageLayout>

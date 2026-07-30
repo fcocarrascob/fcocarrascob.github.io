@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+    <marker id="rr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+    <marker id="gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2c7a4b"/>
+    </marker>
+  </defs>
+  <rect width="880" height="480" fill="#ffffff"/>
+  <text x="440.0" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Gobierna el pandeo del gusset — y la longitud de Thornton que se elija mueve la capacidad un 6,7 %</text>
+  <text x="40" y="56" font-size="12" fill="#1a63a8" font-weight="bold">A · Demanda contra capacidad de diseño</text>
+  <text x="248" y="84" font-size="9.5" text-anchor="end" fill="#222">Gusset — pandeo (L máx, K = 1,2)</text>
+  <rect x="258" y="72" width="190.8" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="72" width="163.5" height="16" fill="#c0392b" fill-opacity="0.55"/>
+  <text x="456.8" y="84" font-size="9.5" fill="#c0392b" font-weight="bold">0,857</text>
+  <text x="248" y="107" font-size="9.5" text-anchor="end" fill="#222">Gusset — Whitmore, fluencia</text>
+  <rect x="258" y="95" width="214.1" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="95" width="163.5" height="16" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="480.1" y="107" font-size="9.5" fill="#c07a00" font-weight="bold">0,764</text>
+  <text x="248" y="130" font-size="9.5" text-anchor="end" fill="#222">Pernos — corte doble (6 × M22)</text>
+  <rect x="258" y="118" width="215.2" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="118" width="163.5" height="16" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="481.2" y="130" font-size="9.5" fill="#c07a00" font-weight="bold">0,760</text>
+  <text x="248" y="153" font-size="9.5" text-anchor="end" fill="#222">Gusset — Whitmore, rotura</text>
+  <rect x="258" y="141" width="234.6" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="141" width="163.5" height="16" fill="#c07a00" fill-opacity="0.55"/>
+  <text x="500.6" y="153" font-size="9.5" fill="#c07a00" font-weight="bold">0,697</text>
+  <text x="248" y="176" font-size="9.5" text-anchor="end" fill="#222">Viga — fluencia local del alma</text>
+  <rect x="258" y="164" width="219.6" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="164" width="130.8" height="16" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="485.6" y="176" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,596</text>
+  <text x="248" y="199" font-size="9.5" text-anchor="end" fill="#222">Gusset — aplast. + desgarre</text>
+  <rect x="258" y="187" width="296.6" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="187" width="163.5" height="16" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="562.6" y="199" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,551</text>
+  <text x="248" y="222" font-size="9.5" text-anchor="end" fill="#222">Interfaz viga — normal al borde</text>
+  <rect x="258" y="210" width="380.0" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="210" width="130.8" height="16" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="646.0" y="222" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,344</text>
+  <text x="248" y="245" font-size="9.5" text-anchor="end" fill="#222">Interfaz columna — corte del borde</text>
+  <rect x="258" y="233" width="304.0" height="16" fill="#8a857c" fill-opacity="0.16" stroke="#8a857c" stroke-width="0.7"/>
+  <rect x="258" y="233" width="84.1" height="16" fill="#2c7a4b" fill-opacity="0.55"/>
+  <text x="570.0" y="245" font-size="9.5" fill="#2c7a4b" font-weight="bold">0,277</text>
+  <text x="258" y="268" font-size="9.5" fill="#666">Barra clara = capacidad · sólida = demanda · el número es el factor de uso</text>
+  <line x1="40" y1="294" x2="840" y2="294" stroke="#dcd8d0" stroke-width="1"/>
+  <text x="40" y="318" font-size="12" fill="#1a63a8" font-weight="bold">B · Las tres longitudes de pandeo, y el umbral de J4-6</text>
+  <text x="248" y="345" font-size="9.5" text-anchor="end" fill="#222">L₁ · sobre el eje</text>
+  <rect x="258" y="334" width="339.3" height="14" fill="#666" fill-opacity="0.45" stroke="#666" stroke-width="0.8"/>
+  <text x="605.3" y="345" font-size="9.5" fill="#666" font-weight="bold">22,50 cm</text>
+  <text x="248" y="367" font-size="9.5" text-anchor="end" fill="#222">L₂ · borde exterior de la banda</text>
+  <rect x="258" y="356" width="180.0" height="14" fill="#666" fill-opacity="0.45" stroke="#666" stroke-width="0.8"/>
+  <text x="446.0" y="367" font-size="9.5" fill="#666" font-weight="bold">11,94 cm</text>
+  <text x="248" y="389" font-size="9.5" text-anchor="end" fill="#222">L₃ · borde interior de la banda</text>
+  <rect x="258" y="378" width="119.0" height="14" fill="#666" fill-opacity="0.45" stroke="#666" stroke-width="0.8"/>
+  <text x="385.0" y="389" font-size="9.5" fill="#666" font-weight="bold">7,89 cm</text>
+  <text x="248" y="411" font-size="9.5" text-anchor="end" fill="#222">promedio de las tres</text>
+  <rect x="258" y="400" width="212.8" height="14" fill="#2c7a4b" fill-opacity="0.45" stroke="#2c7a4b" stroke-width="0.8"/>
+  <text x="478.8" y="411" font-size="9.5" fill="#2c7a4b" font-weight="bold">14,11 cm</text>
+  <text x="248" y="433" font-size="9.5" text-anchor="end" fill="#222">máximo (el adoptado)</text>
+  <rect x="258" y="422" width="339.3" height="14" fill="#c0392b" fill-opacity="0.45" stroke="#c0392b" stroke-width="0.8"/>
+  <text x="605.3" y="433" font-size="9.5" fill="#c0392b" font-weight="bold">22,50 cm</text>
+  <line x1="439.4" y1="326" x2="439.4" y2="446" stroke="#1a63a8" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="445.4" y="322" font-size="10" fill="#1a63a8" font-weight="bold">umbral de J4-6 sobre L: 25r/K = 12,03 cm</text>
+  <text x="258" y="466" font-size="9.5" fill="#666">El umbral de J4-6 es sobre <tspan font-weight="bold">L_c = K·L</tspan>, no sobre L: con K = 1.2 equivale a L ≤ 12,03 cm.</text>
+  <text x="258" y="480" font-size="9.5" fill="#666"><tspan font-weight="bold" fill="#c0392b">Las dos longitudes lo superan</tspan>, así que ambas caen en el Capítulo E: la elección cambia el <tspan font-style="italic">valor</tspan></text>
+  <text x="258" y="494" font-size="9.5" fill="#666">(122,59 → 114,32 tonf, −6,7 %), no la rama. Se adopta el máximo, y es el que gobierna la hoja.</text>
+</svg>
