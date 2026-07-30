@@ -1,7 +1,9 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import PostCard from '../../components/ui/PostCard.astro';
+import TemaFilter from '../../components/ui/TemaFilter.astro';
 import { getPostGroups } from '../../lib/posts';
+import { contarTemas } from '../../lib/temas';
 
 const groups = await getPostGroups();
 const posts = groups.flatMap((g) => g.posts);
@@ -14,14 +16,7 @@ const temaDe = (p: (typeof posts)[number]) => p.data.section ?? 'Otros';
 // Harness estructural local, Rukan ≡ Rukan — verificación, …), así que sería un
 // segundo badge para el mismo conjunto. Sísmica es la única con dos series, y al
 // filtrarla igual se ven separadas: el listado ya viene agrupado por serie.
-const temas = [...new Set(posts.map(temaDe))]
-  .sort((a, b) => a.localeCompare(b, 'es'))
-  .map((name) => ({ name, count: posts.filter((p) => temaDe(p) === name).length }));
-
-const chipClass =
-  'rounded border border-border px-2.5 py-1 text-xs text-muted transition-colors ' +
-  'hover:border-muted hover:text-ink aria-pressed:border-accent ' +
-  'aria-pressed:bg-accent/5 aria-pressed:font-medium aria-pressed:text-accent';
+const temas = contarTemas(posts.map(temaDe));
 ---
 <PageLayout title="Notas" description="Archivo de todas las notas de ingeniería estructural">
   <div class="mb-6">
@@ -29,16 +24,7 @@ const chipClass =
     <p class="text-muted text-sm" data-count>{total} entrada{total !== 1 ? 's' : ''}</p>
   </div>
 
-  {total > 0 && (
-    <div hidden data-filter class="mb-10 flex flex-wrap gap-1.5 border-y border-border py-4">
-      <button type="button" data-value="" aria-pressed="true" class={chipClass}>Todos</button>
-      {temas.map((t) => (
-        <button type="button" data-value={t.name} aria-pressed="false" class={chipClass}>
-          {t.name} <span class="tabular-nums opacity-60">{t.count}</span>
-        </button>
-      ))}
-    </div>
-  )}
+  <TemaFilter temas={temas} noun="entrada" />
 
   {total === 0 ? (
     <p class="text-muted">No hay notas publicadas todavía.</p>
@@ -67,57 +53,3 @@ const chipClass =
     </div>
   )}
 </PageLayout>
-
-<script>
-  // Filtro por tema del archivo de Notas. Progressive enhancement: el listado
-  // completo se renderiza en build (sirve sin JS y queda indexable) y esto solo
-  // esconde tarjetas. El tema activo vive en la URL para poder marcar la vista.
-  const bar = document.querySelector<HTMLElement>('[data-filter]');
-  const list = document.querySelector<HTMLElement>('[data-list]');
-
-  if (bar && list) {
-    const countEl = document.querySelector<HTMLElement>('[data-count]')!;
-    const cards = [...list.querySelectorAll<HTMLElement>('[data-tema]')];
-    const groups = [...list.querySelectorAll<HTMLElement>('[data-group]')];
-    const chips = [...bar.querySelectorAll<HTMLButtonElement>('button')];
-    const plural = (n: number) => `${n} entrada${n !== 1 ? 's' : ''}`;
-
-    function apply(tema: string) {
-      let visible = 0;
-      for (const card of cards) {
-        const ok = !tema || card.dataset.tema === tema;
-        card.hidden = !ok;
-        if (ok) visible++;
-      }
-
-      // Un grupo sin tarjetas visibles se va junto con su encabezado, y la última
-      // que queda pierde el separador para no dejar una línea suelta.
-      for (const group of groups) {
-        const shown = [...group.querySelectorAll<HTMLElement>('[data-tema]')].filter(
-          (c) => !c.hidden
-        );
-        group.hidden = shown.length === 0;
-        shown.forEach((c, i) => {
-          c.style.borderBottomWidth = i === shown.length - 1 ? '0' : '';
-        });
-      }
-
-      for (const chip of chips) {
-        chip.setAttribute('aria-pressed', String(chip.dataset.value === tema));
-      }
-
-      countEl.textContent = tema ? `${visible} de ${plural(cards.length)}` : plural(cards.length);
-    }
-
-    for (const chip of chips) {
-      chip.addEventListener('click', () => {
-        const tema = chip.dataset.value ?? '';
-        apply(tema);
-        history.replaceState(null, '', tema ? `?tema=${encodeURIComponent(tema)}` : location.pathname);
-      });
-    }
-
-    bar.hidden = false;
-    apply(new URLSearchParams(location.search).get('tema') ?? '');
-  }
-</script>

@@ -19,6 +19,12 @@ const blog = defineCollection({
   }),
 });
 
+// `tema` es la familia de elemento o problema (Vigas, Conexiones, Losas…), y es
+// el eje por el que se filtran los listados de ejemplos. Es deliberadamente más
+// grueso que `chapter`: el capítulo es casi 1:1 con el ejemplo, así que filtrar
+// por él daría un chip por post. El vocabulario se declara acá, en el
+// frontmatter, y no se deduce del capítulo — un ejemplo nuevo trae su tema y no
+// hay un mapa central que se pueda olvidar de actualizar.
 const hormigon = defineCollection({
   loader: glob({ base: './src/content/hormigon', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
@@ -30,6 +36,7 @@ const hormigon = defineCollection({
     draft: z.boolean().default(false),
     subsection: z.string(),
     chapter: z.string().optional(),
+    tema: z.string().optional(),
   }),
 });
 
@@ -44,6 +51,7 @@ const acero = defineCollection({
     draft: z.boolean().default(false),
     subsection: z.string(),
     chapter: z.string().optional(),
+    tema: z.string().optional(),
   }),
 });
 
@@ -63,6 +71,7 @@ const geotecnia = defineCollection({
     subsection: z.string(),
     chapter: z.string().optional(),
     source: z.string().optional(),
+    tema: z.string().optional(),
     // Posición en el arco de lectura. La taxonomía de subsecciones es temática
     // y no coincide con el orden en que la serie se construye, así que la
     // secuencia se declara acá en vez de dejarla implícita en la fecha.
