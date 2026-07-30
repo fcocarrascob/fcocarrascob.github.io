@@ -1,0 +1,451 @@
+---
+title: "Ejemplo — El gusset apernado de esquina: el reparto entre viga y columna es indeterminado, y el UFM es una elección"
+description: "El nudo donde no se puede esquivar el Método de la Fuerza Uniforme. Y al plantearlo por estática aparece lo que ninguna tabla dice: con las resultantes de cada interfaz en su centroide hay cuatro incógnitas y tres ecuaciones, así que el UFM no es una consecuencia del equilibrio sino una elección de cómo cerrar el grado de libertad que sobra. Se derivan tres cierres admisibles, se verifica que los tres cierran ΣFx, ΣFy y ΣM, y se descubre qué distingue al UFM: es el único que iguala el flujo de corte en las dos interfaces, P/(2r) = 0,653 tonf/cm. Gobierna el pandeo del gusset con 0,857, y la elección entre el promedio y el máximo de las tres longitudes de Thornton decide qué rama de J4.4 aplica."
+pubDate: 2026-07-29
+tags: ["ejemplo", "acero", "gusset", "conexiones", "apernado", "UFM", "nch2369", "whitmore", "marcos arriostrados", "diseño por capacidad", "aisc360", "estática"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.4.1 / 8.4.6 — Gusset de esquina y el UFM"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [gusset del ápice](/acero/ejemplo-gusset-apice-chevron) tocaba **un solo** miembro: la fuerza de
+las diagonales entraba al ala inferior de la viga y ahí terminaba el problema. Un gusset de
+esquina toca **dos** —la viga y la columna— y eso cambia la naturaleza del cálculo, no su tamaño.
+
+Y hay una razón chilena para que ese gusset sea apernado. La cláusula **8.4.6** de
+NCh2369:2025[^nch] dice que las uniones de terreno deben ser *«preferentemente apernadas»*, y
+prohíbe combinar soldadura y pernos en la misma unión. El detalle que sale de ahí es el habitual
+en montaje: la diagonal llega con sus planchas de conexión soldadas en taller, y en obra se
+aperna.
+
+Los estados límite de la plancha están explicados en la nota
+[teoría del gusset](/acero/gusset-teoria-estados-limite). Lo que este ejemplo agrega no es un
+estado límite más: es **el problema de reparto que aparece cuando el gusset toca dos miembros**, y
+que resultó ser bastante más interesante de lo que esperaba.
+
+## El caso
+
+Paño arriostrado en **X** de un edificio industrial, Categoría II.
+
+| Dato | Valor |
+|---|---|
+| Geometría del paño | 4,50 m de ancho × 6,00 m de alto → diagonal de **7,50 m** |
+| Ángulo de la diagonal | $\sin\theta = 0{,}60$, $\cos\theta = 0{,}80$ ($\theta$ desde la **vertical** = 36,87°) |
+| Longitud de pandeo | 3,75 m — el cruce de la X divide la diagonal en dos |
+| Diagonal | Cajón soldado **[] 150×150×10**, A36: $A_g = 56{,}0$ cm², $r = 5{,}73$ cm |
+| Acero | A36: $F_y = 2\,530$ kgf/cm², $F_u = 4\,080$ kgf/cm², $E = 2\,039\,000$ kgf/cm² |
+| Fluencia esperada | $R_y = 1{,}30$ (C8.3.3) → $F_{ye} = 3\,289$ kgf/cm² |
+| Del análisis | $P_E = 35{,}0$ tonf por diagonal · factor $0{,}7R_1 = \mathbf{2{,}80}$ |
+| Viga | **H 600×300×138,5**: $d = 600$ mm → $e_b = 30$ cm |
+| Columna | **H 400×200×109,5**: $d = 400$ mm → $e_c = 20$ cm |
+| Gusset | Plancha **A36 de 20 mm**, $R_{yg} = 1{,}30$ (fila *planchas*, Tabla A3.2) |
+| Pernos | **6 × M22 Grupo 120** (A325), rosca no excluida, **corte doble** |
+
+El área de la diagonal es exacta por geometría —cuatro planchas: $150^2 - 130^2 = 5\,600$ mm²— y
+la sección cumple los dos requisitos de 8.6.3 sin necesidad de la exención: $b/t = 15{,}0$ contra
+$\lambda_{md} = 0{,}76\sqrt{E/R_yF_y} = 18{,}9$, y esbeltez $65{,}4$ contra el límite de $133{,}8$.
+
+<Equation label="Sec. 8.3.1 — capacidades esperadas">
+$$
+T_{ye} = F_{ye}A_g = 184{,}18 \ \text{tonf}
+\qquad
+P_{ne} = 1{,}14\,F_{cre}A_g = 156{,}64 \ \text{tonf}
+$$
+</Equation>
+
+## 1. La demanda: acá gobierna el techo
+
+En el ejemplo del ápice el **piso** de ½$T_{ye}$ de la cláusula 8.4.1 quedaba por encima del techo
+de $0{,}7R_1$ y mandaba él. Acá pasa lo contrario, y por poco:
+
+<Equation label="Sec. 8.4.1">
+$$
+T_r = \max\big(\underbrace{\min(184{,}18;\ 98{,}00)}_{\text{techo}};\ \underbrace{\tfrac{1}{2}(184{,}18) = 92{,}09}_{\text{piso}}\big) = \mathbf{98{,}00} \ \text{tonf}
+$$
+</Equation>
+
+El techo gana por 5,91 tonf. Y en compresión gana más holgado, porque $P_{ne}$ es menor:
+$C_r = \max(\min(156{,}64;\ 98{,}00);\ 78{,}32) = \mathbf{98{,}00}$ tonf.
+
+<Note type="tip" title="La misma cláusula, las dos ramas">
+Vale la pena poner los dos ejemplos uno al lado del otro, porque la diferencia no es de
+interpretación sino de qué tan holgada esté la diagonal. En el ápice la diagonal era un cajón de
+200×200×10 con uso 0,28 —la dimensionaba la ductilidad—, así que su $T_{ye}$ era enorme y el piso
+de ½$T_{ye}$ se disparaba por encima del techo. Acá la diagonal está mejor aprovechada y el piso
+queda debajo. **Cuanto más sobredimensionado el fusible, más caro sale todo lo que cuelga de él**
+— que es exactamente lo que advierte el post de
+[capacidad vs resistencia](/blog/capacidad-vs-resistencia).
+</Note>
+
+## 2. El problema que las tablas no plantean: el reparto es indeterminado
+
+Acá está el corazón del ejemplo. La fuerza de la diagonal tiene que llegar al marco, y el gusset
+puede entregarla por dos caminos: la interfaz con la viga y la interfaz con la columna. **¿En qué
+proporción?**
+
+Planteemos el sólido libre con cuidado. Origen en el **punto de trabajo** —el cruce de los ejes de
+viga y columna—, $x$ sobre la viga, $y$ sobre la columna. El gusset ocupa el cuadrante
+$x \ge e_c$, $y \ge e_b$, y tiene dos interfaces:
+
+- con la **viga**, horizontal, en $y = e_b$, cuyo centroide está a $\alpha$ de la cara de la
+  columna;
+- con la **columna**, vertical, en $x = e_c$, cuyo centroide está a $\beta$ de la cara de la viga.
+
+Sobre cada interfaz hay una fuerza **normal** y una de **corte**, aplicadas en el centroide —que
+es lo que significa «sin momento en la interfaz»—. Eso da cuatro incógnitas: $V_b$ y $N_b$ en la
+viga, $N_c$ y $V_c$ en la columna. Y tres ecuaciones de equilibrio:
+
+<Equation label="Equilibrio del gusset">
+$$
+V_b + N_c = P\sin\theta
+\qquad
+N_b + V_c = P\cos\theta
+$$
+$$
+e_b V_b - (e_c+\alpha)N_b + (e_b+\beta)N_c - e_c V_c = 0
+$$
+</Equation>
+
+**Cuatro incógnitas, tres ecuaciones.** El gusset de esquina es estáticamente indeterminado por
+uno, y no hay manera de resolverlo con equilibrio solamente: el reparto real depende de las
+rigideces relativas de la viga, la columna y la propia plancha.
+
+Ésa es la razón de existir del Método de la Fuerza Uniforme. **El UFM no es una consecuencia de la
+estática: es una elección de cómo cerrar ese grado de libertad.** Y una vez que uno lo ve así, la
+pregunta correcta deja de ser «¿cuál es la fórmula?» y pasa a ser «¿qué condición estoy
+suponiendo, y cuánto cambia el resultado si supongo otra?».
+
+### 2a · Lo que compra la condición geométrica
+
+Sustituyendo las dos primeras ecuaciones en la tercera, el momento se reduce a algo muy revelador:
+
+<Equation label="El momento, reordenado">
+$$
+\sum M = -\beta V_b + \alpha V_c + \Big[(e_b+\beta)P_x - (e_c+\alpha)P_y\Big]
+$$
+</Equation>
+
+El corchete es puramente geométrico: **se anula exactamente** cuando
+
+<Equation label="La condición geométrica del UFM">
+$$
+\tan\theta = \frac{\alpha + e_c}{\beta + e_b}
+$$
+</Equation>
+
+Con la geometría adoptada —$L_b = 50$ cm ($\alpha = 25$) y $L_c = 60$ cm ($\beta = 30$)— eso da
+$45/60 = 0{,}750$, y $\tan\theta = 0{,}750$. **Se cumple exactamente**, y no por casualidad: la
+geometría del gusset se eligió para que se cumpla, que es precisamente lo que el método pide.
+
+Y hay una forma de decirlo que se ve de un golpe en el dibujo: llamando $a = \alpha + e_c = 45$ cm
+y $b = \beta + e_b = 60$ cm, la condición equivale a que **el punto $(a, b)$ caiga sobre el eje de
+la diagonal**. Ese punto es el que define $r = \sqrt{a^2+b^2} = 75$ cm, que resulta ser su
+distancia al punto de trabajo — medida a lo largo del propio eje.
+
+Con el corchete anulado, la ecuación de momento queda reducida a
+
+<Equation label="Lo que sobrevive del momento">
+$$
+\alpha\,V_c = \beta\,V_b
+$$
+</Equation>
+
+Sigue habiendo un grado de libertad. La condición geométrica no lo cerró: solo limpió la ecuación.
+
+<Figure
+  src="/gusset/esquina-reparto.svg"
+  alt="Dos paneles. Panel A, elevación a escala del nudo: la columna H 400 por 200 vertical y la viga H 600 por 300 horizontal se cruzan, y en el cuadrante superior derecho hay un gusset triangular cuyos dos cateto son las interfaces, una de 50 centímetros sobre el ala superior de la viga y otra de 60 centímetros contra la cara de la columna, cerradas por un borde libre diagonal. La diagonal de cajón 150 por 150 por 10 llega en ángulo con seis pernos M22 en dos filas de tres, y su eje aparece en línea discontinua pasando por el punto de trabajo, en el cruce de los ejes de viga y columna. Están acotados los cuatro brazos: e_c igual a 20 y alfa igual a 25 sobre la viga, e_b igual a 30 y beta igual a 30 sobre la columna. Un punto rojo marca la posición (a, b) igual a (45, 60), que cae exactamente sobre el eje de la diagonal, con una línea roja desde el punto de trabajo rotulada r igual a 75 centímetros. Al pie se explica que esa coincidencia es la condición geométrica del UFM, equivalente a que la tangente de theta valga 0,750, y que con ella cumplida la suma de momentos se reduce a alfa por V_c igual a beta por V_b, quedando tres ecuaciones para cuatro incógnitas. Panel B, tabla de los tres cierres con sus cuatro componentes en tonf: el cierre A o KISS da V_b igual a cero, N_b 78,40, N_c 58,80 y V_c cero; el cierre B o UFM da 32,67, 39,20, 26,13 y 39,20; el cierre C, resultantes al punto de trabajo, da 42,00, 28,00, 16,80 y 50,40; y cada fila lleva la marca de que suma de fuerzas en x, en y y de momentos valen cero. Debajo, una caja destacada dice que lo que distingue al UFM es que V_b sobre L_b igual a V_c sobre L_c igual a P sobre 2r igual a 0,653 tonf por centímetro, es decir que el flujo de corte es el mismo en las dos interfaces, de ahí el nombre fuerza uniforme. Una última caja da la envolvente de los tres cierres, V_b 42,00, N_b 78,40, N_c 58,80 y V_c 50,40 tonf, advirtiendo que no está en equilibrio: es una cota de diseño, no un estado."
+  caption="El nudo y el grado de libertad que sobra. La condición geométrica del UFM se ve mejor como una coincidencia de dibujo: el punto (a, b) sobre el eje de la diagonal."
+/>
+
+### 2b · Tres cierres, los tres en equilibrio
+
+Con $P = 98{,}00$ tonf, $P_x = 58{,}80$ y $P_y = 78{,}40$, probemos tres formas razonables de
+cerrar el grado de libertad.
+
+| Cierre | Condición extra | $V_b$ | $N_b$ | $N_c$ | $V_c$ |
+|---|---|:---:|:---:|:---:|:---:|
+| **A** · *KISS* | todo el vertical a la viga, todo el horizontal a la columna | 0,00 | 78,40 | 58,80 | 0,00 |
+| **B** · **UFM** | cada fuerza vale $P/r$ por su **propio** brazo | **32,67** | **39,20** | **26,13** | **39,20** |
+| **C** | la resultante de cada interfaz pasa por el punto de trabajo | 42,00 | 28,00 | 16,80 | 50,40 |
+
+Los tres satisfacen $\sum F_x$, $\sum F_y$ y $\sum M$ — verificado numéricamente a $10^{-13}$ en
+el script y de nuevo, de forma independiente, en la planilla del canvas. **Los tres son
+admisibles.** No hay nada en el equilibrio que permita descartar ninguno.
+
+El cierre B merece atención porque su forma es de una simetría sospechosa: los cuatro brazos del
+problema son $\alpha$, $e_b$, $e_c$ y $\beta$, y **cada fuerza vale $P/r$ multiplicado por su
+propio brazo**:
+
+<Equation label="El cierre del UFM">
+$$
+V_b = \frac{\alpha P}{r}
+\qquad
+N_b = \frac{e_b P}{r}
+\qquad
+N_c = \frac{e_c P}{r}
+\qquad
+V_c = \frac{\beta P}{r}
+$$
+</Equation>
+
+Que sume bien es inmediato: $V_b + N_c = (\alpha + e_c)P/r = P\sin\theta$ porque
+$\sin\theta = a/r$; y análogamente para el vertical.
+
+### 2c · Qué distingue al UFM, y por qué se llama así
+
+Los tres cierres están en equilibrio, así que la pregunta es qué tiene de especial el segundo. La
+respuesta aparece al dividir cada corte por el largo de su interfaz, recordando que
+$L_b = 2\alpha$ y $L_c = 2\beta$:
+
+<Equation label="El flujo de corte">
+$$
+\frac{V_b}{L_b} = \frac{\alpha P/r}{2\alpha} = \frac{P}{2r}
+\qquad
+\frac{V_c}{L_c} = \frac{\beta P/r}{2\beta} = \frac{P}{2r}
+$$
+</Equation>
+
+**Los dos valen lo mismo, y valen $P/(2r)$**: en este nudo, $98{,}00/150 = 0{,}653$ tonf/cm. El
+cierre del UFM es el que hace que el **flujo de corte sea idéntico en las dos interfaces**, sin que
+importe que una mida 50 cm y la otra 60.
+
+Ahí está el nombre. «Fuerza uniforme» no se refiere a que la fuerza esté uniformemente repartida
+sobre cada interfaz —eso ya lo suponen los tres cierres, es lo que significa poner las resultantes
+en los centroides—: se refiere a que **el corte por unidad de longitud es el mismo en ambas**. Es
+la condición que faltaba, y es una hipótesis sobre cómo se reparte la carga, no un teorema.
+
+<Note type="warning" title="La envolvente no es un estado de equilibrio">
+Como los tres cierres son admisibles y no hay forma de decidir entre ellos con equilibrio, acá se
+diseña contra la **envolvente**: el máximo componente a componente, que da $V_b = 42{,}00$,
+$N_b = 78{,}40$, $N_c = 58{,}80$ y $V_c = 50{,}40$ tonf.
+
+Y hay que decir en la memoria de cálculo lo que eso es: **la envolvente no está en equilibrio.**
+Sus residuos son $+42{,}00$ tonf en horizontal y $+50{,}40$ en vertical. Es una cota superior para
+verificar cada interfaz por separado, no un estado de carga que exista. Usarla para dimensionar
+está bien; usarla para calcular reacciones o para armar un modelo, no.
+</Note>
+
+## 3. Los pernos
+
+Seis M22 del **Grupo 120** de AISC 360-22[^aisc360] en **corte doble** — las dos planchas de
+conexión de la diagonal sandwichean el gusset, así que cada perno tiene dos planos de corte.
+
+<Equation label="Ec. J3-1, corte doble">
+$$
+\phi R_n = 0{,}75 \cdot 2 F_{nv} A_b = 0{,}75 \cdot 2 \cdot 3\,770 \cdot 3{,}801 = 21{,}50 \ \text{tonf/perno}
+$$
+$$
+\phi R_n\big|_{\text{grupo}} = 6 \cdot 21{,}50 = 128{,}98 \ \text{tonf}
+\qquad \text{uso } 0{,}760
+$$
+</Equation>
+
+<Note type="info" title="Dos cosas que cambiaron en AISC 360-22 y conviene no citar de memoria">
+**Los grupos de pernos se renombraron.** Lo que en la edición 2016 era «Grupo A» y «Grupo B» ahora
+es **Grupo 120 / 144 / 150 / 200**, numerado por la resistencia a tracción en ksi. El A325 es
+Grupo 120, con $F_{nv} = 370$ MPa con la rosca **no excluida** del plano de corte y 470 MPa si se
+excluye. Citar «Grupo A» delata la edición.
+
+**El aplastamiento y el desgarre son estados límite separados.** En §J3.11 la edición 2022 los
+partió en dos: aplastamiento por la Ec. **J3-6a** ($2{,}4dtF_u$) y desgarre por la **J3-6c**
+($1{,}2\,l_c t F_u$), cada uno con su propia verificación, y la resistencia del grupo es la suma
+del mínimo perno a perno. Antes se combinaban en una sola expresión con un tope.
+</Note>
+
+Sobre el gusset de 20 mm, el aplastamiento da 32,31 tonf por perno y el desgarre 24,24 en los dos
+pernos de borde ($l_c = 3{,}3$ cm) y 33,78 en los cuatro interiores ($l_c = 4{,}6$ cm). El grupo
+suma **177,72 tonf**, uso 0,551. Con una plancha de ese espesor el aplastamiento no es el
+problema: **gobierna el corte de los pernos**, y por bastante.
+
+## 4. El gusset: Whitmore, y el pandeo que gobierna
+
+La sección de Whitmore arranca con el ancho del gramil, porque la carga entra por un grupo de
+pernos y no por un punto:
+
+<Equation label="Sección de Whitmore con grupo de pernos">
+$$
+b_w = g + 2\,l\tan 30° = 12{,}0 + 2 \cdot 14{,}0 \cdot 0{,}5774 = 28{,}17 \ \text{cm}
+$$
+</Equation>
+
+con $g = 12$ cm de gramil y $l = 14$ cm de la primera a la última fila. Sobre esa banda:
+
+| Estado límite | Área | Capacidad | Uso |
+|---|:---:|:---:|:---:|
+| Fluencia (J4-1, $\phi = 0{,}90$) | $A_w = 56{,}33$ cm² | 128,27 tonf | **0,764** |
+| Rotura (J4-2, $\phi = 0{,}75$) | $A_{wn} = 46{,}73$ cm² | 143,00 tonf | 0,685 |
+
+La banda **corta dos perforaciones** —una por fila—, y por eso el área de rotura descuenta
+$2 \times 2{,}4$ cm de ancho. Es fácil olvidarlo: uno asocia el descuento de agujeros a la
+diagonal y no a la plancha.
+
+### La elección que decide la rama de J4.4
+
+El pandeo del gusset es el que gobierna la hoja, y su resultado depende de una decisión que no
+tiene cláusula. Las tres longitudes de Thornton —medidas desde el borde de la banda al borde
+soportado, paralelas al eje— salen muy distintas entre sí:
+
+| | Longitud |
+|---|:---:|
+| $L_1$ · sobre el eje | 22,50 cm |
+| $L_2$ · borde exterior de la banda | 11,94 cm |
+| $L_3$ · borde interior de la banda | 7,89 cm |
+| **promedio** | **14,11 cm** |
+| **máximo** | **22,50 cm** |
+
+Y el umbral de $L_c/r \le 25$ de la Ec. J4-6, que para una franja de plancha vale $7{,}22\,t$,
+cae en **14,43 cm**. Es decir: **el promedio queda justo por debajo del umbral y el máximo por
+encima.**
+
+- Con el **promedio** (14,11 cm), la esbeltez efectiva es 29,3 y da 122,59 tonf.
+- Con el **máximo** (22,50 cm), es 46,8 y da **114,32 tonf**, uso **0,857**.
+
+Se adopta el máximo, que es lo conservador. Pero conviene ver el tamaño de la decisión: no cambia
+solo un número, cambia **qué rama de la norma se está aplicando** — J4-6 con fluencia plena en un
+caso, el Capítulo E completo en el otro. Y la elección entre promedio y máximo es práctica, no
+cláusula.
+
+<Figure
+  src="/gusset/esquina-demandas.svg"
+  alt="Dos paneles. Panel A, ocho verificaciones como barras de demanda contra capacidad de diseño, ordenadas por factor de uso decreciente: gusset pandeo con la longitud máxima y K igual a 1,2 con 0,857, gusset Whitmore fluencia 0,764, pernos en corte doble 0,760, gusset Whitmore rotura 0,685, viga fluencia local del alma 0,596, gusset aplastamiento más desgarre 0,551, interfaz viga normal al borde 0,344 e interfaz columna corte del borde 0,277. Panel B, las tres longitudes de pandeo de Thornton dibujadas como barras horizontales contra una línea vertical discontinua que marca el umbral de 25r igual a 14,43 centímetros, equivalente a 7,2 espesores: L1 sobre el eje mide 22,50 centímetros y cruza el umbral, L2 en el borde exterior de la banda mide 11,94 y no lo cruza, L3 en el borde interior mide 7,89 y tampoco; el promedio de las tres, 14,11 centímetros, queda apenas a la izquierda del umbral, y el máximo, 22,50 centímetros, claramente a la derecha. Al pie se explica que con el promedio aplicaría la ecuación J4-6 y la fluencia plena, mientras que con el máximo hay que ir al Capítulo E, y que el máximo es el adoptado y el que gobierna la hoja."
+  caption="Gobierna el pandeo del gusset. Y la elección entre el promedio y el máximo de las tres longitudes de Thornton no cambia un número: cambia qué rama de J4.4 se aplica."
+/>
+
+## 5. Las dos interfaces
+
+La pierna del filete la fija la plancha y no la carga, igual que en el ápice: AISC 341-22[^aisc341]
+§F2.6c.4 pide desarrollar el gusset con $0{,}6R_yF_yt_p/\alpha_s$ por unidad de longitud, lo que
+da $w_{req} = 12{,}61$ mm. El atajo tabulado del *User Note* ($0{,}62\,t_p$ = 12,40 mm) queda otra
+vez **1,6 % del lado inseguro**. Se adopta **13 mm**, bajo el máximo de J2.2b (18 mm).
+
+Con la envolvente de los tres cierres, y los dos $\phi$ que J4 asigna a cada mecanismo:
+
+| Interfaz | $L$ | Corte (J4-3, $\phi = 1{,}00$) | Normal (J4-1, $\phi = 0{,}90$) | Interacción |
+|---|:---:|:---:|:---:|:---:|
+| Viga | 50 cm | 42,00 / 151,80 = 0,277 | 78,40 / 227,70 = 0,344 | **0,195** |
+| Columna | 60 cm | 50,40 / 182,16 = 0,277 | 58,80 / 273,24 = 0,215 | **0,123** |
+
+Las dos pasan con mucho margen, y eso tiene una explicación geométrica: las interfaces son largas
+—50 y 60 cm— porque el **largo lo fijó la condición geométrica del UFM**, no la resistencia. La
+plancha necesitaba esos brazos para que $(a,b)$ cayera sobre el eje de la diagonal, y de paso
+quedó con mucha más área de borde de la que la carga pide.
+
+Es lo contrario del ápice, donde el largo del cordón lo gobernaba el corte del borde. Acá **el
+largo lo gobierna la geometría del método**, y la resistencia del borde sobra.
+
+Con el cierre B solo, las interacciones bajarían a 0,076 y 0,055; la envolvente las multiplica por
+2,6 y 2,2. Ése es el precio de no saber cuál de los tres cierres es el real — y con estos márgenes
+es un precio que no cuesta nada pagar.
+
+## 6. Los miembros que reciben la carga
+
+Los dos, viga y columna, reciben el gusset **de canto**, así que la longitud de carga a través del
+ancho del ala es $t_g = 2{,}0$ cm:
+
+- **J10.1, flexión local del ala** — exenta en ambos: $0{,}15b_f$ vale 4,50 cm en la viga y 3,00 cm
+  en la columna, las dos mayores que 2,0. **Exenta por cláusula**, no por criterio.
+- **J10.2, fluencia local del alma** ($\phi = \mathbf{1{,}00}$) — 131,56 tonf en la viga (uso
+  0,596) y 151,80 en la columna (uso 0,387).
+
+Nótese que el uso de la viga, 0,596, es el cuarto más alto de la hoja. **La componente normal a la
+viga es la fuerza más grande de todo el reparto** (78,40 tonf en la envolvente, porque el cierre
+KISS le manda todo el vertical), y el alma de 8 mm del catálogo chileno no es generosa.
+
+## Resultado
+
+| Verificación | Demanda | Capacidad | Uso | |
+|---|:---:|:---:|:---:|:---:|
+| **Gusset — pandeo ($L$ máx, $K = 1{,}2$)** | 98,00 | 114,32 | **0,857** | ✓ |
+| Gusset — Whitmore, fluencia | 98,00 | 128,27 | 0,764 | ✓ |
+| Pernos — corte doble (6 × M22) | 98,00 | 128,98 | 0,760 | ✓ |
+| Gusset — Whitmore, rotura (2 agujeros) | 98,00 | 143,00 | 0,685 | ✓ |
+| Viga — fluencia local del alma (J10.2) | 78,40 | 131,56 | 0,596 | ✓ |
+| Gusset — aplastamiento + desgarre | 98,00 | 177,72 | 0,551 | ✓ |
+| Columna — fluencia local del alma | 58,80 | 151,80 | 0,387 | ✓ |
+| Interfaz viga — normal al borde | 78,40 | 227,70 | 0,344 | ✓ |
+| Interfaz viga — interacción | — | 1,00 | 0,195 | ✓ |
+| Interfaz columna — interacción | — | 1,00 | 0,123 | ✓ |
+| Interfaz — pierna del filete | 12,61 mm | 13 mm | 0,970 | ✓ |
+
+**Solución:** gusset de **plancha A36 de 20 mm** con interfaces de **50 cm** a la viga y **60 cm**
+a la columna, soldado con filetes de **13 mm**; diagonal apernada con **6 M22 Grupo 120 en corte
+doble**, gramil 12 cm y paso 7 cm.
+
+## Lectura
+
+El resultado numérico es rutinario. Lo que no lo es, y es lo que me llevo de este ejemplo, es que
+**el paso que parecía mecánico —repartir la fuerza entre viga y columna— resultó ser el único
+indeterminado de todo el cálculo.**
+
+Tres cosas que ordenan eso:
+
+1. **El UFM es una hipótesis, no un teorema.** Con las resultantes en los centroides hay cuatro
+   incógnitas y tres ecuaciones. Cualquier método que dé un reparto está agregando una condición,
+   y conviene saber cuál.
+2. **La condición del UFM es que el flujo de corte sea igual en las dos interfaces.** No es la
+   uniformidad de la tensión sobre cada interfaz —eso lo suponen todos los métodos— sino la
+   igualdad entre las dos. Dicho así, es fácil evaluar si uno se la cree en un nudo concreto.
+3. **La condición geométrica es una coincidencia de dibujo.** Que $(a,b)$ caiga sobre el eje de la
+   diagonal es lo mismo que $\tan\theta = a/b$, pero se verifica mirando el plano en vez de
+   despejando. Y cuando no se cumple, uno sabe exactamente qué falta: el momento del corchete.
+
+Y un cuarto, transversal a los tres posts de gusset: **lo que gobierna nunca fue lo que uno mira
+primero.** Acá gobierna el pandeo de la plancha, con la longitud de pandeo elegida entre tres
+valores que difieren en un factor de 2,9 y con un $K$ que el propio Comentario J4.4 admite difícil
+de establecer. La verificación que decide es la que tiene menos respaldo normativo de toda la hoja.
+
+## ¿Dónde falla esto?
+
+- **La envolvente es una cota, no un estado, y no está en equilibrio.** Diseñar con ella es
+  conservador y defendible; usarla para otra cosa —reacciones, un modelo, el diseño de la viga— no.
+  Si se necesita un estado de equilibrio hay que elegir un cierre y decir cuál.
+- **El UFM se derivó acá, no se transcribió.** La **AISC Design Guide 29**[^dg29] es la fuente del
+  método y no está entre las de este blog. Lo que se presenta es una derivación propia por estática, con
+  las tres ecuaciones y la condición extra explícitas, verificada numéricamente por dos
+  implementaciones independientes. La notación de $\alpha$ y $\beta$ puede no coincidir con la de
+  la guía; **quien tenga la DG 29 debería contrastar el pareo antes de reusar las fórmulas**.
+- **El $K$ del pandeo del gusset no tiene fuente.** A diferencia del ejemplo del ápice, donde el
+  barrido de $K$ no cambiaba el veredicto, acá el uso es 0,857 y el margen es más estrecho: con
+  $K = 2{,}0$ habría que revisarlo.
+- **La elección del máximo de Thornton sobre el promedio es práctica.** Cambia la rama de J4.4 que
+  aplica, no un decimal.
+- **El borde libre del gusset mide 78,1 cm** (la hipotenusa del triángulo, $39\,t$) y no se
+  verificó: misma deuda que en el ápice, misma fuente faltante.
+- **No se verificó la conexión viga-columna**, que en este nudo recibe las cuatro componentes del
+  reparto además de lo que le llega del marco. AISC 341-22 §F2.6b le pone requisitos propios
+  —conexión simple con 0,025 rad de rotación, o diseñada para $1{,}1R_yM_p/\alpha_s$— y eso es otro
+  ejemplo.
+- **La diagonal supone $K = 1{,}0$ sobre media diagonal** por el cruce de la X. Es lo habitual,
+  pero 8.3.2 prohíbe el Análisis Directo, así que $K$ es una afirmación sobre las condiciones de
+  borde y no un valor por defecto.
+
+## Reproducir esto con tus datos
+
+La planilla trae los 144 pasos y las 30 verificaciones, incluidos **los residuos de equilibrio de
+los tres cierres como veredictos ✓/✗** — de modo que si cambias la geometría y la condición
+geométrica deja de cumplirse, la hoja te lo dice sola:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-esquina-apernado)** ·
+[descargar el JSON](/planillas/gusset-esquina-apernado.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/gusset-esquina-apernado.json --md
+```
+
+Una verificación aparece en rojo a propósito y está declarada: el atajo del *User Note* frente al
+cálculo explícito de la pierna.
+
+## Bibliografía
+
+[^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*. Cláusulas 8.3.1, 8.4.1 (techo y piso), **8.4.6** (uniones de terreno preferentemente apernadas, y la prohibición de combinar soldadura y pernos), 8.6.3 y 8.6.8. La Tabla 9 da el $\lambda_{md}$ del cajón soldado.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. **Tabla J3.2** (nótese el renombre de los grupos de pernos), **§J3.11** (aplastamiento y desgarre, ahora separados: Ecs. J3-6a y J3-6c), §J4 (J4-1, J4-2, J4-3, J4.4 y su Comentario sobre la dificultad de establecer $K$ y $L$), §J2.2b y §J10.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. Tabla A3.2, §F2.6b (conexión viga-columna) y §F2.6c.4 con su *User Note*.
+
+[^dg29]: Muir, L. y Thornton, W. (2014). *Vertical Bracing Connections — Analysis and Design*. AISC Design Guide 29. Es la fuente del Método de la Fuerza Uniforme. **No consultada**: lo que este post presenta es una derivación propia por estática, y así queda declarado.
