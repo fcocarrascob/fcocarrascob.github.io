@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 566" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 584" font-family="Segoe UI, Arial, sans-serif">
   <defs>
     <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
@@ -10,7 +10,7 @@
       <path d="M0,0 L10,5 L0,10 z" fill="#2c7a4b"/>
     </marker>
   </defs>
-  <rect width="880" height="566" fill="#ffffff"/>
+  <rect width="880" height="584" fill="#ffffff"/>
   <text x="440.0" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El gusset de esquina es indeterminado: el UFM es una elección, no una consecuencia</text>
   <rect x="80.0" y="112.0" width="104.0" height="338.0" fill="#dcd8d0" stroke="#666" stroke-width="1.2"/>
   <rect x="80.0" y="294.0" width="317.2" height="156.0" fill="#dcd8d0" stroke="#666" stroke-width="1.2"/>
@@ -76,12 +76,14 @@
   <text x="776" y="204" font-size="10" text-anchor="end" fill="#666" font-weight="normal">16,80</text>
   <text x="830" y="204" font-size="10" text-anchor="end" fill="#666" font-weight="normal">50,40</text>
   <text x="834" y="219" font-size="9" text-anchor="end" fill="#2c7a4b">ΣFx = ΣFy = ΣM = 0 ✓</text>
-  <rect x="468" y="248" width="368" height="76" fill="#c0392b" fill-opacity="0.07" stroke="#c0392b" stroke-width="1.4"/>
-  <text x="652" y="270" font-size="11.5" text-anchor="middle" fill="#222" font-weight="bold">Lo que distingue al UFM</text>
-  <text x="652" y="290" font-size="12" text-anchor="middle" fill="#c0392b" font-weight="bold">V_b/L_b = V_c/L_c = P/(2r) = 0,653 tonf/cm</text>
-  <text x="652" y="308" font-size="9.5" text-anchor="middle" fill="#666">el flujo de corte es el mismo en las dos interfaces: de ahí «fuerza uniforme»</text>
-  <rect x="468" y="340" width="368" height="62" fill="#c07a00" fill-opacity="0.09" stroke="#c07a00" stroke-width="1.2"/>
-  <text x="478" y="358" font-size="10.5" fill="#c07a00" font-weight="bold">Envolvente de los tres (lo que se diseña)</text>
-  <text x="478" y="374" font-size="10.5" fill="#222" font-weight="bold">V_b = 42,00  N_b = 78,40  N_c = 58,80  V_c = 50,40 tonf</text>
-  <text x="478" y="392" font-size="9.5" fill="#c0392b">No está en equilibrio: es una cota de diseño, no un estado.</text>
+  <rect x="468" y="248" width="368" height="94" fill="#c0392b" fill-opacity="0.07" stroke="#c0392b" stroke-width="1.4"/>
+  <text x="652" y="268" font-size="11.5" text-anchor="middle" fill="#222" font-weight="bold">Lo que distingue al UFM</text>
+  <text x="652" y="288" font-size="12" text-anchor="middle" fill="#c0392b" font-weight="bold">V_b/L_b = V_c/L_c = P/(2r) = 0,653 tonf/cm</text>
+  <text x="478" y="306" font-size="9.5" fill="#666">Los <tspan font-weight="bold">tres</tspan> cierres igualan el flujo entre interfaces: esa igualdad</tspan></text>
+  <text x="478" y="319" font-size="9.5" fill="#666"><tspan font-style="italic">es</tspan> la ecuación de momento (α·V_c = β·V_b con L_b = 2α, L_c = 2β).</text>
+  <text x="478" y="332" font-size="9.5" fill="#666">Lo propio del UFM es su <tspan font-weight="bold">valor</tspan>, P/(2r) — o el reparto N_b/V_b = e_b/α.</text>
+  <rect x="468" y="358" width="368" height="62" fill="#c07a00" fill-opacity="0.09" stroke="#c07a00" stroke-width="1.2"/>
+  <text x="478" y="376" font-size="10.5" fill="#c07a00" font-weight="bold">Envolvente de los tres (lo que se diseña)</text>
+  <text x="478" y="392" font-size="10.5" fill="#222" font-weight="bold">V_b = 42,00  N_b = 78,40  N_c = 58,80  V_c = 50,40 tonf</text>
+  <text x="478" y="410" font-size="9.5" fill="#c0392b">No está en equilibrio: es una cota de diseño, no un estado.</text>
 </svg>

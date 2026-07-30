@@ -388,1073 +388,1108 @@
     },
     {
       "id": "r054",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 2654,
-      "src": "F_nv := 3770 kgf/cm^2"
+      "src": "B4.3b: para el ÁREA NETA el agujero se toma 2 mm mayor que la perforación nominal"
     },
     {
       "id": "r055",
       "kind": "math",
       "x": 40,
       "y": 2700,
-      "src": "e_bo := 4.5 cm"
+      "src": "d_hn := d_h + 0.2 cm = cm"
     },
     {
       "id": "r056",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
-      "y": 2769,
-      "src": "━━ 1 · LA DIAGONAL Y SU CAPACIDAD ESPERADA ━━"
+      "y": 2746,
+      "src": "F_nv := 3770 kgf/cm^2"
     },
     {
       "id": "r057",
       "kind": "math",
       "x": 40,
-      "y": 2815,
-      "src": "esb_d := L_p/r_x ="
+      "y": 2792,
+      "src": "e_bo := 4.5 cm"
     },
     {
       "id": "r058",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 2861,
-      "src": "lam_md := 0.76*sqrt(E/F_ye) ="
+      "src": "━━ 1 · LA DIAGONAL Y SU CAPACIDAD ESPERADA ━━"
     },
     {
       "id": "r059",
       "kind": "math",
       "x": 40,
       "y": 2907,
+      "src": "esb_d := L_p/r_x ="
+    },
+    {
+      "id": "r060",
+      "kind": "math",
+      "x": 40,
+      "y": 2953,
+      "src": "lam_md := 0.76*sqrt(E/F_ye) ="
+    },
+    {
+      "id": "r061",
+      "kind": "math",
+      "x": 40,
+      "y": 2999,
       "src": "esb_max := 1.5*pi*sqrt(E/F_y) ="
     },
     {
       "id": "v_comp",
       "kind": "math",
       "x": 40,
-      "y": 2953,
+      "y": 3045,
       "src": "B_x/t_x <= lam_md ="
     },
     {
       "id": "v_esb",
       "kind": "math",
       "x": 40,
-      "y": 2999,
+      "y": 3091,
       "src": "esb_d <= esb_max ="
     },
     {
-      "id": "r062",
-      "kind": "math",
-      "x": 40,
-      "y": 3045,
-      "src": "T_ye := F_ye*A_g = tonf"
-    },
-    {
-      "id": "r063",
-      "kind": "math",
-      "x": 40,
-      "y": 3091,
-      "src": "F_e := pi^2*E/esb_d^2 = kgf/cm^2"
-    },
-    {
       "id": "r064",
-      "kind": "program",
+      "kind": "math",
       "x": 40,
       "y": 3137,
-      "src": "F_cre :=\n    lim := 4.71*sqrt(E/F_ye)\n    if esb_d <= lim\n        return 0.658^(F_ye/F_e)*F_ye\n    return 0.877*F_e"
+      "src": "T_ye := F_ye*A_g = tonf"
     },
     {
       "id": "r065",
       "kind": "math",
       "x": 40,
       "y": 3183,
-      "src": "P_ne := 1.14*F_cre*A_g = tonf"
+      "src": "F_e := pi^2*E/esb_d^2 = kgf/cm^2"
     },
     {
       "id": "r066",
-      "kind": "math",
+      "kind": "program",
       "x": 40,
       "y": 3229,
-      "src": "P_res := 0.30*P_ne = tonf"
+      "src": "F_cre :=\n    lim := 4.71*sqrt(E/F_ye)\n    if esb_d <= lim\n        return 0.658^(F_ye/F_e)*F_ye\n    return 0.877*F_e"
     },
     {
       "id": "r067",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
-      "y": 3298,
-      "src": "━━ 2 · DEMANDA DE LA CONEXIÓN (8.4.1) — acá gobierna el TECHO ━━"
+      "y": 3275,
+      "src": "P_ne := 1.14*F_cre*A_g = tonf"
     },
     {
       "id": "r068",
       "kind": "math",
       "x": 40,
-      "y": 3344,
-      "src": "T_techo := min(T_ye, Q_cap) = tonf"
+      "y": 3321,
+      "src": "P_res := 0.30*P_ne = tonf"
     },
     {
       "id": "r069",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 3390,
-      "src": "T_piso := 0.50*T_ye = tonf"
+      "src": "━━ 2 · DEMANDA DE LA CONEXIÓN (8.4.1) — acá gobierna el TECHO ━━"
     },
     {
       "id": "r070",
       "kind": "math",
       "x": 40,
       "y": 3436,
-      "src": "T_req := max(T_techo, T_piso) = tonf"
+      "src": "T_techo := min(T_ye, Q_cap) = tonf"
     },
     {
       "id": "r071",
       "kind": "math",
       "x": 40,
       "y": 3482,
-      "src": "C_techo := min(P_ne, Q_cap) = tonf"
+      "src": "T_piso := 0.50*T_ye = tonf"
     },
     {
       "id": "r072",
       "kind": "math",
       "x": 40,
       "y": 3528,
-      "src": "C_piso := 0.50*P_ne = tonf"
+      "src": "T_req := max(T_techo, T_piso) = tonf"
     },
     {
       "id": "r073",
       "kind": "math",
       "x": 40,
       "y": 3574,
-      "src": "C_req := max(C_techo, C_piso) = tonf"
+      "src": "C_techo := min(P_ne, Q_cap) = tonf"
     },
     {
       "id": "r074",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
       "y": 3620,
+      "src": "C_piso := 0.50*P_ne = tonf"
+    },
+    {
+      "id": "r075",
+      "kind": "math",
+      "x": 40,
+      "y": 3666,
+      "src": "C_req := max(C_techo, C_piso) = tonf"
+    },
+    {
+      "id": "r076",
+      "kind": "text",
+      "x": 40,
+      "y": 3712,
       "src": "En el ejemplo del ápice gobernaba el PISO; acá el techo. Misma cláusula, otra rama."
     },
     {
       "id": "v_techo",
       "kind": "math",
       "x": 40,
-      "y": 3666,
+      "y": 3758,
       "src": "T_techo > T_piso ="
     },
     {
-      "id": "r076",
+      "id": "r078",
       "kind": "text",
       "x": 40,
-      "y": 3735,
-      "src": "━━ 3 · EL REPARTO ENTRE VIGA Y COLUMNA — indeterminado por uno ━━"
-    },
-    {
-      "id": "r077",
-      "kind": "math",
-      "x": 40,
-      "y": 3781,
-      "src": "P := T_req = tonf"
-    },
-    {
-      "id": "r078",
-      "kind": "math",
-      "x": 40,
       "y": 3827,
-      "src": "Px := P*sen_t = tonf"
+      "src": "━━ 3 · EL REPARTO ENTRE VIGA Y COLUMNA — indeterminado por uno ━━"
     },
     {
       "id": "r079",
       "kind": "math",
       "x": 40,
       "y": 3873,
-      "src": "Py := P*cos_t = tonf"
+      "src": "P := T_req = tonf"
     },
     {
       "id": "r080",
       "kind": "math",
       "x": 40,
       "y": 3919,
-      "src": "a_l := e_c + alfa = cm"
+      "src": "Px := P*sen_t = tonf"
     },
     {
       "id": "r081",
       "kind": "math",
       "x": 40,
       "y": 3965,
-      "src": "b_l := e_b + beta = cm"
+      "src": "Py := P*cos_t = tonf"
     },
     {
       "id": "r082",
       "kind": "math",
       "x": 40,
       "y": 4011,
-      "src": "r_u := sqrt(a_l^2 + b_l^2) = cm"
+      "src": "a_l := e_c + alfa = cm"
     },
     {
       "id": "r083",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
       "y": 4057,
-      "src": "Condición geométrica del UFM: tan(theta) = (alfa+e_c)/(beta+e_b)"
+      "src": "b_l := e_b + beta = cm"
     },
     {
       "id": "r084",
       "kind": "math",
       "x": 40,
       "y": 4103,
+      "src": "r_u := sqrt(a_l^2 + b_l^2) = cm"
+    },
+    {
+      "id": "r085",
+      "kind": "text",
+      "x": 40,
+      "y": 4149,
+      "src": "Condición geométrica del UFM: tan(theta) = (alfa+e_c)/(beta+e_b)"
+    },
+    {
+      "id": "r086",
+      "kind": "math",
+      "x": 40,
+      "y": 4195,
       "src": "geo := a_l/b_l ="
     },
     {
       "id": "v_geo",
       "kind": "math",
       "x": 40,
-      "y": 4149,
+      "y": 4241,
       "src": "abs(geo - tan_t) <= 0.001 ="
     },
     {
-      "id": "r086",
+      "id": "r088",
       "kind": "text",
       "x": 40,
-      "y": 4195,
+      "y": 4287,
       "src": "Sustituyendo sumFx y sumFy en sumM queda el corchete, que se anula:"
     },
     {
-      "id": "r087",
+      "id": "r089",
       "kind": "math",
       "x": 40,
-      "y": 4241,
+      "y": 4333,
       "src": "corch := b_l*Px - a_l*Py = tonf*cm"
     },
     {
       "id": "v_corch",
       "kind": "math",
       "x": 40,
-      "y": 4287,
+      "y": 4379,
       "src": "abs(corch) <= 0.001 tonf*cm ="
     },
     {
-      "id": "r089",
+      "id": "r091",
       "kind": "text",
       "x": 40,
-      "y": 4333,
+      "y": 4425,
       "src": "Con eso sumM se reduce a alfa*V_c = beta*V_b. Quedan 3 ecs. y 4 incógnitas."
     },
     {
-      "id": "r090",
+      "id": "r092",
       "kind": "text",
       "x": 40,
-      "y": 4379,
-      "src": "CIERRE A · KISS: todo el vertical a la viga, todo el horizontal a la columna"
-    },
-    {
-      "id": "r091",
-      "kind": "math",
-      "x": 40,
-      "y": 4425,
-      "src": "VbA := 0 tonf"
-    },
-    {
-      "id": "r092",
-      "kind": "math",
-      "x": 40,
       "y": 4471,
-      "src": "NbA := Py = tonf"
+      "src": "CIERRE A · KISS: todo el vertical a la viga, todo el horizontal a la columna"
     },
     {
       "id": "r093",
       "kind": "math",
       "x": 40,
       "y": 4517,
-      "src": "NcA := Px = tonf"
+      "src": "VbA := 0 tonf"
     },
     {
       "id": "r094",
       "kind": "math",
       "x": 40,
       "y": 4563,
-      "src": "VcA := 0 tonf"
+      "src": "NbA := Py = tonf"
     },
     {
       "id": "r095",
       "kind": "math",
       "x": 40,
       "y": 4609,
+      "src": "NcA := Px = tonf"
+    },
+    {
+      "id": "r096",
+      "kind": "math",
+      "x": 40,
+      "y": 4655,
+      "src": "VcA := 0 tonf"
+    },
+    {
+      "id": "r097",
+      "kind": "math",
+      "x": 40,
+      "y": 4701,
       "src": "mA := e_b*VbA - a_l*NbA + b_l*NcA - e_c*VcA = tonf*cm"
     },
     {
       "id": "v_mA",
       "kind": "math",
       "x": 40,
-      "y": 4655,
+      "y": 4747,
       "src": "abs(mA) <= 0.001 tonf*cm ="
     },
     {
-      "id": "r097",
+      "id": "r099",
       "kind": "text",
       "x": 40,
-      "y": 4701,
-      "src": "CIERRE B · UFM: cada fuerza es P/r por su PROPIO brazo"
-    },
-    {
-      "id": "r098",
-      "kind": "math",
-      "x": 40,
-      "y": 4747,
-      "src": "VbB := alfa*P/r_u = tonf"
-    },
-    {
-      "id": "r099",
-      "kind": "math",
-      "x": 40,
       "y": 4793,
-      "src": "NbB := e_b*P/r_u = tonf"
+      "src": "CIERRE B · UFM: cada fuerza es P/r por su PROPIO brazo"
     },
     {
       "id": "r100",
       "kind": "math",
       "x": 40,
       "y": 4839,
-      "src": "NcB := e_c*P/r_u = tonf"
+      "src": "VbB := alfa*P/r_u = tonf"
     },
     {
       "id": "r101",
       "kind": "math",
       "x": 40,
       "y": 4885,
-      "src": "VcB := beta*P/r_u = tonf"
+      "src": "NbB := e_b*P/r_u = tonf"
     },
     {
       "id": "r102",
       "kind": "math",
       "x": 40,
       "y": 4931,
+      "src": "NcB := e_c*P/r_u = tonf"
+    },
+    {
+      "id": "r103",
+      "kind": "math",
+      "x": 40,
+      "y": 4977,
+      "src": "VcB := beta*P/r_u = tonf"
+    },
+    {
+      "id": "r104",
+      "kind": "math",
+      "x": 40,
+      "y": 5023,
       "src": "mB := e_b*VbB - a_l*NbB + b_l*NcB - e_c*VcB = tonf*cm"
     },
     {
       "id": "v_fxB",
       "kind": "math",
       "x": 40,
-      "y": 4977,
+      "y": 5069,
       "src": "abs(VbB + NcB - Px) <= 0.001 tonf ="
     },
     {
       "id": "v_fyB",
       "kind": "math",
       "x": 40,
-      "y": 5023,
+      "y": 5115,
       "src": "abs(NbB + VcB - Py) <= 0.001 tonf ="
     },
     {
       "id": "v_mB",
       "kind": "math",
       "x": 40,
-      "y": 5069,
+      "y": 5161,
       "src": "abs(mB) <= 0.001 tonf*cm ="
     },
     {
-      "id": "r106",
+      "id": "r108",
       "kind": "text",
       "x": 40,
-      "y": 5115,
-      "src": "La propiedad que le da el nombre: el FLUJO DE CORTE es igual en las dos interfaces"
-    },
-    {
-      "id": "r107",
-      "kind": "math",
-      "x": 40,
-      "y": 5161,
-      "src": "q_b := VbB/L_b = tonf/cm"
-    },
-    {
-      "id": "r108",
-      "kind": "math",
-      "x": 40,
       "y": 5207,
-      "src": "q_c := VcB/L_c = tonf/cm"
+      "src": "La propiedad que le da el nombre: el FLUJO DE CORTE es igual en las dos interfaces"
     },
     {
       "id": "r109",
       "kind": "math",
       "x": 40,
       "y": 5253,
+      "src": "q_b := VbB/L_b = tonf/cm"
+    },
+    {
+      "id": "r110",
+      "kind": "math",
+      "x": 40,
+      "y": 5299,
+      "src": "q_c := VcB/L_c = tonf/cm"
+    },
+    {
+      "id": "r111",
+      "kind": "math",
+      "x": 40,
+      "y": 5345,
       "src": "q_t := P/(2*r_u) = tonf/cm"
     },
     {
       "id": "v_flujo",
       "kind": "math",
       "x": 40,
-      "y": 5299,
+      "y": 5391,
       "src": "abs(q_b - q_c) <= 0.00001 tonf/cm ="
     },
     {
       "id": "v_flujo2",
       "kind": "math",
       "x": 40,
-      "y": 5345,
+      "y": 5437,
       "src": "abs(q_b - q_t) <= 0.00001 tonf/cm ="
     },
     {
-      "id": "r112",
+      "id": "r114",
       "kind": "text",
       "x": 40,
-      "y": 5391,
-      "src": "CIERRE C · resultantes de interfaz por el punto de trabajo"
-    },
-    {
-      "id": "r113",
-      "kind": "math",
-      "x": 40,
-      "y": 5437,
-      "src": "VbC := Py/(e_b/a_l + beta/alfa) = tonf"
-    },
-    {
-      "id": "r114",
-      "kind": "math",
-      "x": 40,
       "y": 5483,
-      "src": "NbC := VbC*e_b/a_l = tonf"
+      "src": "CIERRE C · resultantes de interfaz por el punto de trabajo"
     },
     {
       "id": "r115",
       "kind": "math",
       "x": 40,
       "y": 5529,
-      "src": "VcC := VbC*beta/alfa = tonf"
+      "src": "VbC := Py/(e_b/a_l + beta/alfa) = tonf"
     },
     {
       "id": "r116",
       "kind": "math",
       "x": 40,
       "y": 5575,
-      "src": "NcC := Px - VbC = tonf"
+      "src": "NbC := VbC*e_b/a_l = tonf"
     },
     {
       "id": "r117",
       "kind": "math",
       "x": 40,
       "y": 5621,
+      "src": "VcC := VbC*beta/alfa = tonf"
+    },
+    {
+      "id": "r118",
+      "kind": "math",
+      "x": 40,
+      "y": 5667,
+      "src": "NcC := Px - VbC = tonf"
+    },
+    {
+      "id": "r119",
+      "kind": "math",
+      "x": 40,
+      "y": 5713,
       "src": "mC := e_b*VbC - a_l*NbC + b_l*NcC - e_c*VcC = tonf*cm"
     },
     {
       "id": "v_mC",
       "kind": "math",
       "x": 40,
-      "y": 5667,
+      "y": 5759,
       "src": "abs(mC) <= 0.001 tonf*cm ="
     },
     {
-      "id": "r119",
+      "id": "r121",
       "kind": "text",
       "x": 40,
-      "y": 5713,
-      "src": "ENVOLVENTE de los tres cierres. OJO: no está en equilibrio, es una cota."
-    },
-    {
-      "id": "r120",
-      "kind": "math",
-      "x": 40,
-      "y": 5759,
-      "src": "Vb := max(VbA, VbB, VbC) = tonf"
-    },
-    {
-      "id": "r121",
-      "kind": "math",
-      "x": 40,
       "y": 5805,
-      "src": "Nb := max(NbA, NbB, NbC) = tonf"
+      "src": "ENVOLVENTE de los tres cierres. OJO: no está en equilibrio, es una cota."
     },
     {
       "id": "r122",
       "kind": "math",
       "x": 40,
       "y": 5851,
-      "src": "Nc := max(NcA, NcB, NcC) = tonf"
+      "src": "Vb := max(VbA, VbB, VbC) = tonf"
     },
     {
       "id": "r123",
       "kind": "math",
       "x": 40,
       "y": 5897,
-      "src": "Vc := max(VcA, VcB, VcC) = tonf"
+      "src": "Nb := max(NbA, NbB, NbC) = tonf"
     },
     {
       "id": "r124",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
-      "y": 5966,
-      "src": "━━ 4 · PERNOS (J3) — corte doble ━━"
+      "y": 5943,
+      "src": "Nc := max(NcA, NcB, NcC) = tonf"
     },
     {
       "id": "r125",
       "kind": "math",
       "x": 40,
-      "y": 6012,
-      "src": "A_p := pi/4*d_p^2 = cm^2"
+      "y": 5989,
+      "src": "Vc := max(VcA, VcB, VcC) = tonf"
     },
     {
       "id": "r126",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 6058,
-      "src": "Rd_cp := 0.75*2*F_nv*A_p = tonf"
+      "src": "━━ 4 · PERNOS (J3) — corte doble ━━"
     },
     {
       "id": "r127",
       "kind": "math",
       "x": 40,
       "y": 6104,
+      "src": "A_p := pi/4*d_p^2 = cm^2"
+    },
+    {
+      "id": "r128",
+      "kind": "math",
+      "x": 40,
+      "y": 6150,
+      "src": "Rd_cp := 0.75*2*F_nv*A_p = tonf"
+    },
+    {
+      "id": "r129",
+      "kind": "math",
+      "x": 40,
+      "y": 6196,
       "src": "Rd_cg := n_p*Rd_cp = tonf"
     },
     {
       "id": "v_corte",
       "kind": "math",
       "x": 40,
-      "y": 6150,
+      "y": 6242,
       "src": "Rd_cg >= T_req ="
     },
     {
-      "id": "r129",
+      "id": "r131",
       "kind": "text",
       "x": 40,
-      "y": 6196,
-      "src": "J3.11: en la edición 2022 aplastamiento y desgarre son estados límite SEPARADOS"
-    },
-    {
-      "id": "r130",
-      "kind": "math",
-      "x": 40,
-      "y": 6242,
-      "src": "Rd_apl := 0.75*2.4*d_p*t_g*F_u = tonf"
-    },
-    {
-      "id": "r131",
-      "kind": "math",
-      "x": 40,
       "y": 6288,
-      "src": "lc_bo := e_bo - d_h/2 = cm"
+      "src": "J3.11: en la edición 2022 aplastamiento y desgarre son estados límite SEPARADOS"
     },
     {
       "id": "r132",
       "kind": "math",
       "x": 40,
       "y": 6334,
-      "src": "lc_in := pas - d_h = cm"
+      "src": "Rd_apl := 0.75*2.4*d_p*t_g*F_u = tonf"
     },
     {
       "id": "r133",
       "kind": "math",
       "x": 40,
       "y": 6380,
-      "src": "Rd_dbo := 0.75*1.2*lc_bo*t_g*F_u = tonf"
+      "src": "lc_bo := e_bo - d_h/2 = cm"
     },
     {
       "id": "r134",
       "kind": "math",
       "x": 40,
       "y": 6426,
-      "src": "Rd_din := 0.75*1.2*lc_in*t_g*F_u = tonf"
+      "src": "lc_in := pas - d_h = cm"
     },
     {
       "id": "r135",
       "kind": "math",
       "x": 40,
       "y": 6472,
+      "src": "Rd_dbo := 0.75*1.2*lc_bo*t_g*F_u = tonf"
+    },
+    {
+      "id": "r136",
+      "kind": "math",
+      "x": 40,
+      "y": 6518,
+      "src": "Rd_din := 0.75*1.2*lc_in*t_g*F_u = tonf"
+    },
+    {
+      "id": "r137",
+      "kind": "math",
+      "x": 40,
+      "y": 6564,
       "src": "Rd_gg := 2*min(Rd_apl, Rd_dbo) + 4*min(Rd_apl, Rd_din) = tonf"
     },
     {
       "id": "v_apl",
       "kind": "math",
       "x": 40,
-      "y": 6518,
+      "y": 6610,
       "src": "Rd_gg >= T_req ="
     },
     {
       "id": "v_gob",
       "kind": "math",
       "x": 40,
-      "y": 6564,
+      "y": 6656,
       "src": "Rd_cg <= Rd_gg ="
     },
     {
-      "id": "r138",
+      "id": "r140",
       "kind": "text",
       "x": 40,
-      "y": 6633,
-      "src": "━━ 5 · GUSSET · WHITMORE Y PANDEO ━━"
-    },
-    {
-      "id": "r139",
-      "kind": "math",
-      "x": 40,
-      "y": 6679,
-      "src": "l_cn := (n_col - 1)*pas = cm"
-    },
-    {
-      "id": "r140",
-      "kind": "math",
-      "x": 40,
       "y": 6725,
-      "src": "b_w := gam + 2*l_cn*tan(30 deg) = cm"
+      "src": "━━ 5 · GUSSET · WHITMORE Y PANDEO ━━"
     },
     {
       "id": "r141",
       "kind": "math",
       "x": 40,
       "y": 6771,
-      "src": "A_w := b_w*t_g = cm^2"
+      "src": "l_cn := (n_col - 1)*pas = cm"
     },
     {
       "id": "r142",
       "kind": "math",
       "x": 40,
       "y": 6817,
-      "src": "A_wn := (b_w - n_fil*d_h)*t_g = cm^2"
+      "src": "b_w := gam + 2*l_cn*tan(30 deg) = cm"
     },
     {
       "id": "r143",
       "kind": "math",
       "x": 40,
       "y": 6863,
-      "src": "Rd_flu := 0.90*F_y*A_w = tonf"
+      "src": "A_w := b_w*t_g = cm^2"
     },
     {
       "id": "r144",
       "kind": "math",
       "x": 40,
       "y": 6909,
+      "src": "A_wn := (b_w - n_fil*d_hn)*t_g = cm^2"
+    },
+    {
+      "id": "r145",
+      "kind": "math",
+      "x": 40,
+      "y": 6955,
+      "src": "Rd_flu := 0.90*F_y*A_w = tonf"
+    },
+    {
+      "id": "r146",
+      "kind": "math",
+      "x": 40,
+      "y": 7001,
       "src": "Rd_rot := 0.75*F_u*A_wn = tonf"
     },
     {
       "id": "v_flu",
       "kind": "math",
       "x": 40,
-      "y": 6955,
+      "y": 7047,
       "src": "Rd_flu >= T_req ="
     },
     {
       "id": "v_rot",
       "kind": "math",
       "x": 40,
-      "y": 7001,
+      "y": 7093,
       "src": "Rd_rot >= T_req ="
     },
     {
-      "id": "r147",
+      "id": "r149",
       "kind": "text",
       "x": 40,
-      "y": 7047,
-      "src": "Longitudes de pandeo de Thornton: del borde de la banda al borde soportado"
-    },
-    {
-      "id": "r148",
-      "kind": "math",
-      "x": 40,
-      "y": 7093,
-      "src": "s_ul := 60.0 cm"
-    },
-    {
-      "id": "r149",
-      "kind": "math",
-      "x": 40,
       "y": 7139,
-      "src": "mit := b_w/2 = cm"
+      "src": "Longitudes de pandeo de Thornton: del borde de la banda al borde soportado"
     },
     {
       "id": "r150",
       "kind": "math",
       "x": 40,
       "y": 7185,
-      "src": "L1 := min((s_ul*cos_t - e_b)/cos_t, (s_ul*sen_t - e_c)/sen_t) = cm"
+      "src": "s_ul := 60.0 cm"
     },
     {
       "id": "r151",
       "kind": "math",
       "x": 40,
       "y": 7231,
-      "src": "x2 := s_ul*sen_t + mit*cos_t = cm"
+      "src": "mit := b_w/2 = cm"
     },
     {
       "id": "r152",
       "kind": "math",
       "x": 40,
       "y": 7277,
-      "src": "y2 := s_ul*cos_t - mit*sen_t = cm"
+      "src": "L1 := min((s_ul*cos_t - e_b)/cos_t, (s_ul*sen_t - e_c)/sen_t) = cm"
     },
     {
       "id": "r153",
       "kind": "math",
       "x": 40,
       "y": 7323,
-      "src": "L2 := min((y2 - e_b)/cos_t, (x2 - e_c)/sen_t) = cm"
+      "src": "x2 := s_ul*sen_t + mit*cos_t = cm"
     },
     {
       "id": "r154",
       "kind": "math",
       "x": 40,
       "y": 7369,
-      "src": "x3 := s_ul*sen_t - mit*cos_t = cm"
+      "src": "y2 := s_ul*cos_t - mit*sen_t = cm"
     },
     {
       "id": "r155",
       "kind": "math",
       "x": 40,
       "y": 7415,
-      "src": "y3 := s_ul*cos_t + mit*sen_t = cm"
+      "src": "L2 := min((y2 - e_b)/cos_t, (x2 - e_c)/sen_t) = cm"
     },
     {
       "id": "r156",
       "kind": "math",
       "x": 40,
       "y": 7461,
-      "src": "L3 := min((y3 - e_b)/cos_t, (x3 - e_c)/sen_t) = cm"
+      "src": "x3 := s_ul*sen_t - mit*cos_t = cm"
     },
     {
       "id": "r157",
       "kind": "math",
       "x": 40,
       "y": 7507,
-      "src": "L_pr := (L1 + L2 + L3)/3 = cm"
+      "src": "y3 := s_ul*cos_t + mit*sen_t = cm"
     },
     {
       "id": "r158",
       "kind": "math",
       "x": 40,
       "y": 7553,
-      "src": "L_mx := max(L1, L2, L3) = cm"
+      "src": "L3 := min((y3 - e_b)/cos_t, (x3 - e_c)/sen_t) = cm"
     },
     {
-      "id": "v_cabe",
+      "id": "r159",
       "kind": "math",
       "x": 40,
       "y": 7599,
-      "src": "min(L1, L2, L3) > 0 cm ="
+      "src": "L_pr := (L1 + L2 + L3)/3 = cm"
     },
     {
       "id": "r160",
       "kind": "math",
       "x": 40,
       "y": 7645,
-      "src": "r_b := t_g/sqrt(12) = cm"
+      "src": "L_mx := max(L1, L2, L3) = cm"
     },
     {
-      "id": "r161",
+      "id": "v_cabe",
       "kind": "math",
       "x": 40,
       "y": 7691,
-      "src": "umb := 25*r_b = cm"
+      "src": "min(L1, L2, L3) > 0 cm ="
     },
     {
       "id": "r162",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
       "y": 7737,
-      "src": "El promedio cae bajo el umbral y el máximo no: la elección decide la rama de J4.4"
+      "src": "r_b := t_g/sqrt(12) = cm"
     },
     {
-      "id": "v_umbp",
+      "id": "r163",
       "kind": "math",
       "x": 40,
       "y": 7783,
-      "src": "L_pr <= umb ="
+      "src": "umb := 25*r_b = cm"
     },
     {
-      "id": "v_umbm",
+      "id": "r164",
       "kind": "math",
       "x": 40,
       "y": 7829,
-      "src": "L_mx > umb ="
+      "src": "K_g := 1.2"
     },
     {
       "id": "r165",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 7875,
-      "src": "K_g := 1.2"
+      "src": "OJO: el umbral de J4-6 es sobre L_c = K*L, no sobre L. Sobre L equivale a 25r/K."
     },
     {
       "id": "r166",
       "kind": "math",
       "x": 40,
       "y": 7921,
-      "src": "esb_g := K_g*L_mx/r_b ="
+      "src": "umb_L := umb/K_g = cm"
     },
     {
       "id": "r167",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 7967,
-      "src": "esb_25 := 25"
+      "src": "Las DOS longitudes lo superan: ambas caen en el Capítulo E. La elección cambia"
     },
     {
       "id": "r168",
-      "kind": "program",
+      "kind": "text",
       "x": 40,
       "y": 8013,
-      "src": "F_ng :=\n    if esb_g <= esb_25\n        return F_y\n    lim2 := 4.71*sqrt(E/F_y)\n    F_eg := pi^2*E/esb_g^2\n    if esb_g <= lim2\n        return 0.658^(F_y/F_eg)*F_y\n    return 0.877*F_eg"
+      "src": "el VALOR de la capacidad, no la rama de la norma."
     },
     {
-      "id": "r169",
+      "id": "v_umbp",
       "kind": "math",
       "x": 40,
       "y": 8059,
+      "src": "L_pr > umb_L ="
+    },
+    {
+      "id": "v_umbm",
+      "kind": "math",
+      "x": 40,
+      "y": 8105,
+      "src": "L_mx > umb_L ="
+    },
+    {
+      "id": "r171",
+      "kind": "math",
+      "x": 40,
+      "y": 8151,
+      "src": "esb_g := K_g*L_mx/r_b ="
+    },
+    {
+      "id": "r172",
+      "kind": "math",
+      "x": 40,
+      "y": 8197,
+      "src": "esb_25 := 25"
+    },
+    {
+      "id": "r173",
+      "kind": "program",
+      "x": 40,
+      "y": 8243,
+      "src": "F_ng :=\n    if esb_g <= esb_25\n        return F_y\n    lim2 := 4.71*sqrt(E/F_y)\n    F_eg := pi^2*E/esb_g^2\n    if esb_g <= lim2\n        return 0.658^(F_y/F_eg)*F_y\n    return 0.877*F_eg"
+    },
+    {
+      "id": "r174",
+      "kind": "math",
+      "x": 40,
+      "y": 8289,
       "src": "Rd_pan := 0.90*F_ng*A_w = tonf"
     },
     {
       "id": "v_pan",
       "kind": "math",
       "x": 40,
-      "y": 8105,
+      "y": 8335,
       "src": "Rd_pan >= C_req ="
     },
     {
-      "id": "r171",
+      "id": "r176",
       "kind": "text",
       "x": 40,
-      "y": 8174,
+      "y": 8404,
       "src": "━━ 6 · LAS DOS INTERFACES, CON LA ENVOLVENTE ━━"
     },
     {
-      "id": "r172",
+      "id": "r177",
       "kind": "text",
       "x": 40,
-      "y": 8220,
+      "y": 8450,
       "src": "La pierna la fija la PLANCHA, no la carga (AISC 341-22 F2.6c.4)"
     },
     {
-      "id": "r173",
-      "kind": "math",
-      "x": 40,
-      "y": 8266,
-      "src": "q_rq := 0.6*R_yg*F_y*t_g = tonf/cm"
-    },
-    {
-      "id": "r174",
-      "kind": "math",
-      "x": 40,
-      "y": 8312,
-      "src": "q_cm := 2*0.75*0.6*F_EXX*0.707 = tonf/cm^2"
-    },
-    {
-      "id": "r175",
-      "kind": "math",
-      "x": 40,
-      "y": 8358,
-      "src": "w_des := q_rq/q_cm = cm"
-    },
-    {
-      "id": "r176",
-      "kind": "math",
-      "x": 40,
-      "y": 8404,
-      "src": "w_nt := 0.62*t_g = cm"
-    },
-    {
-      "id": "r177",
-      "kind": "math",
-      "x": 40,
-      "y": 8450,
-      "src": "w_mx := t_g - 0.2 cm = cm"
-    },
-    {
-      "id": "v_wdes",
+      "id": "r178",
       "kind": "math",
       "x": 40,
       "y": 8496,
-      "src": "w_i >= w_des ="
+      "src": "q_rq := 0.6*R_yg*F_y*t_g = tonf/cm"
     },
     {
-      "id": "v_wmax",
+      "id": "r179",
       "kind": "math",
       "x": 40,
       "y": 8542,
-      "src": "w_i <= w_mx ="
+      "src": "q_cm := 2*0.75*0.6*F_EXX*0.707 = tonf/cm^2"
     },
     {
-      "id": "v_wnote",
+      "id": "r180",
       "kind": "math",
       "x": 40,
       "y": 8588,
-      "src": "w_nt >= w_des ="
+      "src": "w_des := q_rq/q_cm = cm"
     },
     {
       "id": "r181",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
       "y": 8634,
-      "src": "Interfaz con la VIGA"
+      "src": "w_nt := 0.62*t_g = cm"
     },
     {
       "id": "r182",
       "kind": "math",
       "x": 40,
       "y": 8680,
-      "src": "Rdv_b := 1.00*0.6*F_y*t_g*L_b = tonf"
+      "src": "w_mx := t_g - 0.2 cm = cm"
     },
     {
-      "id": "r183",
+      "id": "v_wdes",
       "kind": "math",
       "x": 40,
       "y": 8726,
-      "src": "Rdn_b := 0.90*F_y*t_g*L_b = tonf"
+      "src": "w_i >= w_des ="
     },
     {
-      "id": "r184",
+      "id": "v_wmax",
       "kind": "math",
       "x": 40,
       "y": 8772,
-      "src": "int_b := (Vb/Rdv_b)^2 + (Nb/Rdn_b)^2 ="
+      "src": "w_i <= w_mx ="
     },
     {
-      "id": "v_intb",
+      "id": "v_wnote",
       "kind": "math",
       "x": 40,
       "y": 8818,
-      "src": "int_b <= 1 ="
+      "src": "w_nt >= w_des ="
     },
     {
       "id": "r186",
       "kind": "text",
       "x": 40,
       "y": 8864,
-      "src": "Interfaz con la COLUMNA"
+      "src": "Interfaz con la VIGA"
     },
     {
       "id": "r187",
       "kind": "math",
       "x": 40,
       "y": 8910,
-      "src": "Rdv_c := 1.00*0.6*F_y*t_g*L_c = tonf"
+      "src": "Rdv_b := 1.00*0.6*F_y*t_g*L_b = tonf"
     },
     {
       "id": "r188",
       "kind": "math",
       "x": 40,
       "y": 8956,
-      "src": "Rdn_c := 0.90*F_y*t_g*L_c = tonf"
+      "src": "Rdn_b := 0.90*F_y*t_g*L_b = tonf"
     },
     {
       "id": "r189",
       "kind": "math",
       "x": 40,
       "y": 9002,
+      "src": "int_b := (Vb/Rdv_b)^2 + (Nb/Rdn_b)^2 ="
+    },
+    {
+      "id": "v_intb",
+      "kind": "math",
+      "x": 40,
+      "y": 9048,
+      "src": "int_b <= 1 ="
+    },
+    {
+      "id": "r191",
+      "kind": "text",
+      "x": 40,
+      "y": 9094,
+      "src": "Interfaz con la COLUMNA"
+    },
+    {
+      "id": "r192",
+      "kind": "math",
+      "x": 40,
+      "y": 9140,
+      "src": "Rdv_c := 1.00*0.6*F_y*t_g*L_c = tonf"
+    },
+    {
+      "id": "r193",
+      "kind": "math",
+      "x": 40,
+      "y": 9186,
+      "src": "Rdn_c := 0.90*F_y*t_g*L_c = tonf"
+    },
+    {
+      "id": "r194",
+      "kind": "math",
+      "x": 40,
+      "y": 9232,
       "src": "int_c := (Vc/Rdv_c)^2 + (Nc/Rdn_c)^2 ="
     },
     {
       "id": "v_intc",
       "kind": "math",
       "x": 40,
-      "y": 9048,
+      "y": 9278,
       "src": "int_c <= 1 ="
     },
     {
-      "id": "r191",
+      "id": "r196",
       "kind": "text",
       "x": 40,
-      "y": 9117,
-      "src": "━━ 7 · LOS MIEMBROS QUE RECIBEN LA CARGA (J10) ━━"
-    },
-    {
-      "id": "r192",
-      "kind": "math",
-      "x": 40,
-      "y": 9163,
-      "src": "exe_b := 0.15*bf_v = cm"
-    },
-    {
-      "id": "r193",
-      "kind": "math",
-      "x": 40,
-      "y": 9209,
-      "src": "exe_c := 0.15*bf_c = cm"
-    },
-    {
-      "id": "v_j101b",
-      "kind": "math",
-      "x": 40,
-      "y": 9255,
-      "src": "t_g < exe_b ="
-    },
-    {
-      "id": "v_j101c",
-      "kind": "math",
-      "x": 40,
-      "y": 9301,
-      "src": "t_g < exe_c ="
-    },
-    {
-      "id": "r196",
-      "kind": "math",
-      "x": 40,
       "y": 9347,
-      "src": "Rd_jb := 1.00*F_y*tw_v*(5*k_v + L_b) = tonf"
+      "src": "━━ 7 · LOS MIEMBROS QUE RECIBEN LA CARGA (J10) ━━"
     },
     {
       "id": "r197",
       "kind": "math",
       "x": 40,
       "y": 9393,
+      "src": "exe_b := 0.15*bf_v = cm"
+    },
+    {
+      "id": "r198",
+      "kind": "math",
+      "x": 40,
+      "y": 9439,
+      "src": "exe_c := 0.15*bf_c = cm"
+    },
+    {
+      "id": "v_j101b",
+      "kind": "math",
+      "x": 40,
+      "y": 9485,
+      "src": "t_g < exe_b ="
+    },
+    {
+      "id": "v_j101c",
+      "kind": "math",
+      "x": 40,
+      "y": 9531,
+      "src": "t_g < exe_c ="
+    },
+    {
+      "id": "r201",
+      "kind": "math",
+      "x": 40,
+      "y": 9577,
+      "src": "Rd_jb := 1.00*F_y*tw_v*(5*k_v + L_b) = tonf"
+    },
+    {
+      "id": "r202",
+      "kind": "math",
+      "x": 40,
+      "y": 9623,
       "src": "Rd_jc := 1.00*F_y*tw_c*(5*k_v + L_c) = tonf"
     },
     {
       "id": "v_j102b",
       "kind": "math",
       "x": 40,
-      "y": 9439,
+      "y": 9669,
       "src": "Rd_jb >= Nb ="
     },
     {
       "id": "v_j102c",
       "kind": "math",
       "x": 40,
-      "y": 9485,
+      "y": 9715,
       "src": "Rd_jc >= Nc ="
     },
     {
-      "id": "r200",
+      "id": "r205",
       "kind": "text",
       "x": 40,
-      "y": 9554,
-      "src": "━━ 8 · FACTORES DE USO ━━"
-    },
-    {
-      "id": "r201",
-      "kind": "math",
-      "x": 40,
-      "y": 9600,
-      "src": "u_pan := C_req/Rd_pan ="
-    },
-    {
-      "id": "r202",
-      "kind": "math",
-      "x": 40,
-      "y": 9646,
-      "src": "u_flu := T_req/Rd_flu ="
-    },
-    {
-      "id": "r203",
-      "kind": "math",
-      "x": 40,
-      "y": 9692,
-      "src": "u_cor := T_req/Rd_cg ="
-    },
-    {
-      "id": "r204",
-      "kind": "math",
-      "x": 40,
-      "y": 9738,
-      "src": "u_rot := T_req/Rd_rot ="
-    },
-    {
-      "id": "r205",
-      "kind": "math",
-      "x": 40,
       "y": 9784,
-      "src": "u_jb := Nb/Rd_jb ="
+      "src": "━━ 8 · FACTORES DE USO ━━"
     },
     {
       "id": "r206",
       "kind": "math",
       "x": 40,
       "y": 9830,
+      "src": "u_pan := C_req/Rd_pan ="
+    },
+    {
+      "id": "r207",
+      "kind": "math",
+      "x": 40,
+      "y": 9876,
+      "src": "u_flu := T_req/Rd_flu ="
+    },
+    {
+      "id": "r208",
+      "kind": "math",
+      "x": 40,
+      "y": 9922,
+      "src": "u_cor := T_req/Rd_cg ="
+    },
+    {
+      "id": "r209",
+      "kind": "math",
+      "x": 40,
+      "y": 9968,
+      "src": "u_rot := T_req/Rd_rot ="
+    },
+    {
+      "id": "r210",
+      "kind": "math",
+      "x": 40,
+      "y": 10014,
+      "src": "u_jb := Nb/Rd_jb ="
+    },
+    {
+      "id": "r211",
+      "kind": "math",
+      "x": 40,
+      "y": 10060,
       "src": "u_max := max(u_pan, u_flu, u_cor, u_rot, u_jb) ="
     }
   ]

@@ -1,6 +1,6 @@
 ---
 title: "Capacidad o resistencia: por qué φ no compra un mecanismo"
-description: "Las dos formas de responder «¿resiste esto?», y por qué no son grados de la misma cosa. El diseño por resistencia verifica cada elemento contra su propia demanda y no dice nada sobre el orden en que fallan; el diseño por capacidad elige el mecanismo y le impone a los eslabones frágiles lo que el fusible es capaz de entregarles. Con la consecuencia que más sorprende —la capacidad esperada es una demanda, así que se calcula con la resistencia MÁS ALTA y sin φ— y con los cuatro casos medidos en este blog, donde el factor de amplificación nunca fue el multiplicador: 2,10 se volvió 13,5 y 2,80 se volvió 5,00."
+description: "Las dos formas de responder «¿resiste esto?», y por qué no son grados de la misma cosa. El diseño por resistencia verifica cada elemento contra su propia demanda y no dice nada sobre el orden en que fallan (los factores de uso no son ni comparables entre estados límite); el diseño por capacidad elige el mecanismo y le impone a los eslabones frágiles lo que el fusible es capaz de entregarles. Con la consecuencia que más sorprende —la capacidad esperada es una demanda, así que se calcula con la resistencia MÁS ALTA y sin φ— y con los cuatro casos medidos en este blog, donde el factor de amplificación nunca fue el multiplicador: 2,10 se volvió 13,5 y 2,80 se volvió 5,00."
 pubDate: 2026-07-29
 tags: ["diseño por capacidad", "capacidad esperada", "fusibles", "estados límite", "NCh2369", "AISC 341", "ACI 318-25", "LRFD", "fundamentos", "sísmica"]
 norm: "NCh2369 / AISC 341 / ACI 318-25"
@@ -44,10 +44,18 @@ jerarquía. Dos elementos verificados con el mismo método pueden quedar los dos
 hay nada en el cálculo que diga cuál de los dos cede primero cuando la carga real supere la de
 diseño — que es justo lo que un terremoto hace.
 
-Peor: el $\phi$ puede *invertir* el orden. La fluencia por corte de una plancha lleva
-$\phi = 1{,}00$ y su rotura lleva 0,75. Si el ductil y el frágil quedan al mismo uso, el frágil
-tiene menos margen real, porque su $\phi$ ya se comió una parte mayor de la incertidumbre. **Los
-factores de resistencia no ordenan la secuencia de falla: la desordenan un poco.**
+Hay algo más: **los factores de uso no son comparables entre estados límite.** Cada $\phi$ es un
+fractil distinto de una distribución distinta, así que dos elementos «al 0,95» no están igual de
+cerca de fallar. Al mismo uso $u$, el margen contra la resistencia nominal vale $1/(u\phi)$: con
+$\phi = 1{,}00$ son 1,05 y con $\phi = 0{,}75$ son 1,40. El de $\phi$ menor tiene **más** reserva,
+porque el código le exigió más capacidad nominal para llegar al mismo uso.
+
+Y ahí está el problema de jerarquía, que va en la dirección contraria a la intuición: **es el
+elemento con el $\phi$ mayor el que puede quedar adelantado en la fila.** Si el fusible es la
+fluencia en tracción de una diagonal ($\phi_t = 0{,}90$, margen 1,17) y el eslabón es la fluencia
+por corte de su gusset ($\phi = 1{,}00$, margen 1,05), los dos al mismo uso, **el eslabón cede
+primero** — y la tabla de usos no lo dice. Los factores de resistencia no ordenan la secuencia de
+falla; simplemente no es su trabajo.
 
 <Note type="info" title="Y aun así el diseño por resistencia es el que hay que dominar primero">
 Nada de esto es una crítica al método. Para el 95 % de la estructura —bajo cargas gravitacionales,
@@ -143,10 +151,10 @@ mayor:
 |---|---|:---:|---|:---:|
 | [Anclaje de una fundación](/geotecnia/ejemplo-fundacion-anclada-nch2369) | NCh2369 10.1.6 | 2,10 | tracción del anclaje | **13,5 ×** |
 | [Perno de un pedestal](/hormigon/ejemplo-pedestal-anclaje-nch2369) | NCh2369 8.5 | 2,80 | tracción del perno | **5,00 ×** |
-| [Viga de un chevron](/acero/ejemplo-chevron-nch2369) | NCh2369 8.6.6 | equilibrio plástico | momento de diseño | **93,8 ×** (23,5 × con el techo) |
-| [Conexión de un gusset](/acero/ejemplo-gusset-apice-chevron) | NCh2369 8.4.1 | 2,80, topado | demanda de la conexión | el **piso** la subió 24 % sobre el techo |
+| [Viga de un chevron](/acero/ejemplo-chevron-nch2369) | NCh2369 8.6.6 | equilibrio plástico | momento del desbalance crudo | **93,8 ×** (el de **diseño**, con el techo: 23,5 ×) |
+| [Conexión de un gusset](/acero/ejemplo-gusset-apice-chevron) | NCh2369 8.4.1 | 2,80 | demanda de la conexión | el **piso** la subió 24 % sobre el nivel amplificado |
 
-Las razones son distintas en cada caso y vale la pena separarlas, porque son cuatro mecanismos
+Las razones son distintas y vale la pena separarlas: son cuatro casos y **tres** mecanismos
 distintos por los que el número se despega del factor.
 
 **El desbalance no se amplifica junto con lo que lo equilibra.** En el pedestal y en la fundación
@@ -161,12 +169,13 @@ el caso extremo: la cláusula 8.6.6 la manda diseñar en el instante en que una 
 diagonal pandeó, así que ese desbalance **no aparece en ninguna combinación**. El momento pasa de
 3,00 a 281,39 tonf·m: 93,8 veces, sin que ningún factor valga 93,8.
 
-**Los techos y los pisos muerden en direcciones opuestas.** El caso del gusset es el más sutil de
-los cuatro. La cláusula 8.4.1 ofrece un techo —no hace falta diseñar para más que la capacidad
-esperada— y también fija un **piso**: la resistencia requerida no puede ser menor que la mitad de
-la capacidad esperada. En ese nudo el piso (124,98 tonf) quedó **por encima** del techo (100,80),
-así que el techo no sirvió de nada y la demanda subió un 24 % respecto de lo que uno habría puesto
-leyendo solo la primera mitad de la cláusula.
+**Los pisos muerden en la dirección contraria a los techos.** El caso del gusset es el más sutil
+de los cuatro, y exige precisión con los nombres. La cláusula 8.4.1 tiene tres niveles: **parte**
+del sismo amplificado por $0{,}7R_1$, lo **acota por arriba** con la capacidad esperada (el techo),
+y fija además un **piso** en la mitad de esa capacidad esperada. En ese nudo el nivel amplificado
+daba 100,80 tonf, el techo era $T_{ye} = 249{,}96$ y nunca mordió, y el piso —124,98— quedó **por
+encima del nivel amplificado**. Resultado: la vía de $0{,}7R_1$ no sirvió de nada y la demanda
+subió un 24 % respecto de lo que uno habría puesto leyendo solo la primera mitad de la cláusula.
 
 <Note type="tip" title="Y el techo, cuando sirve, es lo que hace el problema soluble">
 En ese mismo ejemplo del gusset aparece el otro lado de la moneda. Diseñando la conexión para la
@@ -235,7 +244,13 @@ cuestan tiempo antes de ahorrarlo.
 **El orden de cálculo se invierte.** No se dimensiona el fusible al final: se dimensiona primero,
 y muchas veces **no lo dimensiona la resistencia**. La diagonal del chevron terminó con uso 0,28
 —la fijó la ductilidad, no la carga— y con eso quedó fijada la demanda de todo lo que viene
-después. Un fusible sobredimensionado no es conservador: es más caro en todos los eslabones.
+después. Un fusible sobredimensionado no es conservador: es más caro en casi todos los eslabones.
+
+Con el «casi» hay que ser honesto, porque el propio ejemplo del chevron lo desmiente en un caso:
+ahí **engrosar la diagonal abarató la viga un 37 %** (de 111,79 a 70,44 tonf·m). La razón es que la
+demanda de esa viga es una **resta** —la tracción topada menos la capacidad residual de la
+comprimida—, y engrosar la diagonal sube el sustraendo. Donde la demanda del eslabón es una suma,
+el fusible más robusto encarece; donde es una resta, puede aliviar.
 
 **Hay que declarar los supuestos, porque la mitad no tiene cláusula.** $R_y$ para un material que
 no está en la Tabla A3.2, la longitud efectiva de un gusset, el criterio de interacción de un

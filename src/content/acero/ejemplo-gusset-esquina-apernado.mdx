@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — El gusset apernado de esquina: el reparto entre viga y columna es indeterminado, y el UFM es una elección"
-description: "El nudo donde no se puede esquivar el Método de la Fuerza Uniforme. Y al plantearlo por estática aparece lo que ninguna tabla dice: con las resultantes de cada interfaz en su centroide hay cuatro incógnitas y tres ecuaciones, así que el UFM no es una consecuencia del equilibrio sino una elección de cómo cerrar el grado de libertad que sobra. Se derivan tres cierres admisibles, se verifica que los tres cierran ΣFx, ΣFy y ΣM, y se descubre qué distingue al UFM: es el único que iguala el flujo de corte en las dos interfaces, P/(2r) = 0,653 tonf/cm. Gobierna el pandeo del gusset con 0,857, y la elección entre el promedio y el máximo de las tres longitudes de Thornton decide qué rama de J4.4 aplica."
+description: "El nudo donde no se puede esquivar el Método de la Fuerza Uniforme. Al plantearlo por estática aparece lo que ninguna tabla dice: con las resultantes de cada interfaz en su centroide hay cuatro incógnitas y tres ecuaciones, así que el UFM no es una consecuencia del equilibrio sino una elección de cómo cerrar el grado de libertad que sobra. Se derivan tres cierres admisibles, se verifica que los tres cierran ΣFx, ΣFy y ΣM, y resulta que lo que distingue al UFM no es el flujo de corte igual —eso lo cumplen los tres— sino su valor, P/(2r). Gobierna el pandeo del gusset con 0,857."
 pubDate: 2026-07-29
 tags: ["ejemplo", "acero", "gusset", "conexiones", "apernado", "UFM", "nch2369", "whitmore", "marcos arriostrados", "diseño por capacidad", "aisc360", "estática"]
 subsection: "ejemplos"
@@ -43,6 +43,10 @@ Paño arriostrado en **X** de un edificio industrial, Categoría II.
 | Columna | **H 400×200×109,5**: $d = 400$ mm → $e_c = 20$ cm |
 | Gusset | Plancha **A36 de 20 mm**, $R_{yg} = 1{,}30$ (fila *planchas*, Tabla A3.2) |
 | Pernos | **6 × M22 Grupo 120** (A325), rosca no excluida, **corte doble** |
+| Patrón de pernos | 2 líneas a gramil $g = 12$ cm × 3 a paso 7 cm · **última línea a $s = 60$ cm** del punto de trabajo sobre el eje · distancia al borde **4,5 cm** |
+| Planchas de conexión | Dos de **16 mm** soldadas a la diagonal en taller; sandwichean el gusset (de ahí el corte doble) |
+| Soldadura del gusset al marco | Electrodo **E70XX**, $F_{EXX} = 4\,920$ kgf/cm², filetes de **13 mm** — de taller |
+| Detalle de la viga y la columna | $t_w = 8$ mm en las dos · $b_f = 300$ y 200 mm · $k = 3{,}0$ cm (supuesto: $t_f$ + pierna del cordón de fabricación, adoptado también para la columna) |
 
 El área de la diagonal es exacta por geometría —cuatro planchas: $150^2 - 130^2 = 5\,600$ mm²— y
 la sección cumple los dos requisitos de 8.6.3 sin necesidad de la exención: $b/t = 15{,}0$ contra
@@ -209,14 +213,31 @@ $$
 $$
 </Equation>
 
-**Los dos valen lo mismo, y valen $P/(2r)$**: en este nudo, $98{,}00/150 = 0{,}653$ tonf/cm. El
-cierre del UFM es el que hace que el **flujo de corte sea idéntico en las dos interfaces**, sin que
-importe que una mida 50 cm y la otra 60.
+**Los dos valen lo mismo, y valen $P/(2r)$**: en este nudo, $98{,}00/150 = 0{,}653$ tonf/cm.
 
-Ahí está el nombre. «Fuerza uniforme» no se refiere a que la fuerza esté uniformemente repartida
-sobre cada interfaz —eso ya lo suponen los tres cierres, es lo que significa poner las resultantes
-en los centroides—: se refiere a que **el corte por unidad de longitud es el mismo en ambas**. Es
-la condición que faltaba, y es una hipótesis sobre cómo se reparte la carga, no un teorema.
+Ahora, hay que ser cuidadoso con qué se concluye de eso, porque el flujo igual **no es** lo que
+distingue al UFM. Al revisar los otros dos cierres aparece que **los tres** igualan el flujo entre
+interfaces: el A trivialmente ($0/50 = 0/60$) y el C en $42{,}00/50 = 50{,}40/60 = 0{,}84$
+tonf/cm. Y la razón es que la igualdad de flujo **es** la ecuación de momento disfrazada: con
+$L_b = 2\alpha$ y $L_c = 2\beta$, pedir $V_b/L_b = V_c/L_c$ es pedir exactamente
+$\alpha V_c = \beta V_b$, que es lo que sobrevivió de $\sum M$.
+
+Lo propio del UFM, entonces, es el **valor** de ese flujo —que sea $P/(2r)$— o, dicho sin
+referencia a $r$, el reparto entre normal y corte en cada interfaz:
+
+<Equation label="La condición que cierra el UFM">
+$$
+\frac{N_b}{V_b} = \frac{e_b}{\alpha}
+\qquad\Longleftrightarrow\qquad
+\frac{N_c}{V_c} = \frac{e_c}{\beta}
+$$
+</Equation>
+
+Ésa sí es una condición independiente, y es la que pina el grado de libertad. El nombre «fuerza
+uniforme» sigue teniendo sentido —el flujo de corte resulta uniforme e igual en ambas interfaces—,
+pero conviene saber que esa uniformidad la comparten todos los repartos admisibles, y que lo que
+el método elige es su magnitud. Es una hipótesis sobre cómo se distribuye la carga, no un
+teorema.
 
 <Note type="warning" title="La envolvente no es un estado de equilibrio">
 Como los tres cierres son admisibles y no hay forma de decidir entre ellos con equilibrio, acá se
@@ -272,18 +293,27 @@ b_w = g + 2\,l\tan 30° = 12{,}0 + 2 \cdot 14{,}0 \cdot 0{,}5774 = 28{,}17 \ \te
 $$
 </Equation>
 
-con $g = 12$ cm de gramil y $l = 14$ cm de la primera a la última fila. Sobre esa banda:
+con $g = 12$ cm de gramil y $l = 14$ cm de la primera a la última **línea de pernos medida sobre
+el eje** (tres líneas a paso de 7 cm). En lo que sigue, «fila» se reserva para las **dos** líneas
+separadas por el gramil, que son las que la banda de Whitmore corta. Sobre esa banda:
 
 | Estado límite | Área | Capacidad | Uso |
 |---|:---:|:---:|:---:|
 | Fluencia (J4-1, $\phi = 0{,}90$) | $A_w = 56{,}33$ cm² | 128,27 tonf | **0,764** |
-| Rotura (J4-2, $\phi = 0{,}75$) | $A_{wn} = 46{,}73$ cm² | 143,00 tonf | 0,685 |
+| Rotura (J4-2, $\phi = 0{,}75$) | $A_{wn} = 45{,}93$ cm² | 140,55 tonf | 0,697 |
 
-La banda **corta dos perforaciones** —una por fila—, y por eso el área de rotura descuenta
-$2 \times 2{,}4$ cm de ancho. Es fácil olvidarlo: uno asocia el descuento de agujeros a la
-diagonal y no a la plancha.
+La banda **corta dos perforaciones** —una por cada línea del gramil—, y por eso el área de rotura
+las descuenta. Dos detalles que es fácil pasar por alto:
 
-### La elección que decide la rama de J4.4
+- Uno asocia el descuento de agujeros a la diagonal y no a la plancha, pero J4-2 remite a $A_e$
+  *según la Sección D3*, y eso aplica igual al gusset.
+- El ancho que se descuenta **no es el de la perforación**. La cláusula **§B4.3b** de
+  AISC 360-22[^aisc360] exige que, al calcular el área neta para tracción y corte, el ancho del
+  agujero se tome **2 mm mayor** que su dimensión nominal. Con perforación estándar de 24 mm eso
+  son **26 mm** por agujero, no 24: $A_{wn} = (28{,}17 - 2 \times 2{,}6) \cdot 2{,}0 = 45{,}93$ cm².
+  Olvidarlo deja la capacidad un 1,7 % del lado inseguro.
+
+### La elección que mueve la capacidad un 6,7 %
 
 El pandeo del gusset es el que gobierna la hoja, y su resultado depende de una decisión que no
 tiene cláusula. Las tres longitudes de Thornton —medidas desde el borde de la banda al borde
@@ -297,22 +327,30 @@ soportado, paralelas al eje— salen muy distintas entre sí:
 | **promedio** | **14,11 cm** |
 | **máximo** | **22,50 cm** |
 
-Y el umbral de $L_c/r \le 25$ de la Ec. J4-6, que para una franja de plancha vale $7{,}22\,t$,
-cae en **14,43 cm**. Es decir: **el promedio queda justo por debajo del umbral y el máximo por
-encima.**
+Acá hay una trampa que vale la pena señalar porque es fácil caer en ella. El umbral de la
+Ec. J4-6 es sobre $L_c/r \le 25$, y $L_c = KL$ — **no sobre $L/r$**. Ese umbral vale
+$25r = 7{,}22\,t = 14{,}43$ cm *medido sobre $L_c$*, lo que con $K = 1{,}2$ equivale a
 
-- Con el **promedio** (14,11 cm), la esbeltez efectiva es 29,3 y da 122,59 tonf.
-- Con el **máximo** (22,50 cm), es 46,8 y da **114,32 tonf**, uso **0,857**.
+$$
+L \ \le \ \frac{25r}{K} = 12{,}03 \ \text{cm}
+$$
 
-Se adopta el máximo, que es lo conservador. Pero conviene ver el tamaño de la decisión: no cambia
-solo un número, cambia **qué rama de la norma se está aplicando** — J4-6 con fluencia plena en un
-caso, el Capítulo E completo en el otro. Y la elección entre promedio y máximo es práctica, no
-cláusula.
+y **las dos longitudes lo superan**. De modo que las dos caen en el Capítulo E:
+
+- Con el **promedio** (14,11 cm), $L_c/r = 29{,}3$ → Capítulo E → 122,59 tonf, uso 0,799.
+- Con el **máximo** (22,50 cm), $L_c/r = 46{,}8$ → Capítulo E → **114,32 tonf**, uso **0,857**.
+
+Se adopta el máximo, que es lo conservador. La elección **no cambia la rama de la norma**: cambia
+el valor, un 6,7 %. Y sigue siendo una elección de práctica y no de cláusula, así que hay que
+declararla — pero conviene no venderla como más dramática de lo que es. El error de comparar $L$
+contra $25r$ en vez de $L_c$ contra $25r$ es exactamente el que la
+[nota de teoría](/acero/gusset-teoria-estados-limite) advierte al derivar el umbral de $7{,}2\,t$:
+esos $7{,}2$ espesores son longitud **de pandeo**, ya multiplicada por $K$.
 
 <Figure
   src="/gusset/esquina-demandas.svg"
-  alt="Dos paneles. Panel A, ocho verificaciones como barras de demanda contra capacidad de diseño, ordenadas por factor de uso decreciente: gusset pandeo con la longitud máxima y K igual a 1,2 con 0,857, gusset Whitmore fluencia 0,764, pernos en corte doble 0,760, gusset Whitmore rotura 0,685, viga fluencia local del alma 0,596, gusset aplastamiento más desgarre 0,551, interfaz viga normal al borde 0,344 e interfaz columna corte del borde 0,277. Panel B, las tres longitudes de pandeo de Thornton dibujadas como barras horizontales contra una línea vertical discontinua que marca el umbral de 25r igual a 14,43 centímetros, equivalente a 7,2 espesores: L1 sobre el eje mide 22,50 centímetros y cruza el umbral, L2 en el borde exterior de la banda mide 11,94 y no lo cruza, L3 en el borde interior mide 7,89 y tampoco; el promedio de las tres, 14,11 centímetros, queda apenas a la izquierda del umbral, y el máximo, 22,50 centímetros, claramente a la derecha. Al pie se explica que con el promedio aplicaría la ecuación J4-6 y la fluencia plena, mientras que con el máximo hay que ir al Capítulo E, y que el máximo es el adoptado y el que gobierna la hoja."
-  caption="Gobierna el pandeo del gusset. Y la elección entre el promedio y el máximo de las tres longitudes de Thornton no cambia un número: cambia qué rama de J4.4 se aplica."
+  alt="Dos paneles. Panel A, ocho verificaciones como barras de demanda contra capacidad de diseño, ordenadas por factor de uso decreciente: gusset pandeo con la longitud máxima y K igual a 1,2 con 0,857, gusset Whitmore fluencia 0,764, pernos en corte doble 0,760, gusset Whitmore rotura 0,685, viga fluencia local del alma 0,596, gusset aplastamiento más desgarre 0,551, interfaz viga normal al borde 0,344 e interfaz columna corte del borde 0,277. Panel B, las tres longitudes de pandeo de Thornton dibujadas como barras horizontales contra una línea vertical discontinua que marca el umbral de la ecuación J4-6 expresado sobre L, es decir 25r partido por K, igual a 12,03 centímetros: L1 sobre el eje mide 22,50 centímetros, L2 en el borde exterior de la banda 11,94 y L3 en el borde interior 7,89; el promedio de las tres es 14,11 centímetros y el máximo 22,50, y tanto el promedio como el máximo quedan a la derecha de la línea. Al pie se explica que el umbral es sobre la longitud de pandeo L_c igual a K por L y no sobre L, que las dos longitudes lo superan y por lo tanto ambas caen en el Capítulo E, y que la elección cambia el valor de 122,59 a 114,32 tonf, un 6,7 por ciento, pero no la rama."
+  caption="Gobierna el pandeo del gusset. El umbral de J4-6 está dibujado sobre L, o sea en 25r/K: las dos longitudes lo superan, así que ambas caen en el Capítulo E y la elección solo mueve el valor."
 />
 
 ## 5. Las dos interfaces
@@ -329,13 +367,16 @@ Con la envolvente de los tres cierres, y los dos $\phi$ que J4 asigna a cada mec
 | Viga | 50 cm | 42,00 / 151,80 = 0,277 | 78,40 / 227,70 = 0,344 | **0,195** |
 | Columna | 60 cm | 50,40 / 182,16 = 0,277 | 58,80 / 273,24 = 0,215 | **0,123** |
 
-Las dos pasan con mucho margen, y eso tiene una explicación geométrica: las interfaces son largas
-—50 y 60 cm— porque el **largo lo fijó la condición geométrica del UFM**, no la resistencia. La
-plancha necesitaba esos brazos para que $(a,b)$ cayera sobre el eje de la diagonal, y de paso
-quedó con mucha más área de borde de la que la carga pide.
+Las dos pasan con mucho margen, y conviene ser preciso sobre por qué. La condición geométrica del
+UFM **no fija el tamaño de las interfaces: fija su relación.** Es una familia de un parámetro
+—$\alpha = 0{,}75\beta + 2{,}5$—, y los pares 35/40, 50/60 o 57,5/70 la cumplen exactamente igual.
+Lo que fijó el tamaño absoluto fue el **grupo de pernos**: la última fila queda a 60 cm del punto
+de trabajo sobre el eje, y la plancha tiene que llegar hasta ahí con su banda de Whitmore adentro.
 
-Es lo contrario del ápice, donde el largo del cordón lo gobernaba el corte del borde. Acá **el
-largo lo gobierna la geometría del método**, y la resistencia del borde sobra.
+De modo que el largo lo fijó el detalle de la conexión, la condición geométrica se encargó de que
+los dos largos guardaran la proporción 45/60, y la resistencia del borde no participó en la
+decisión. Es lo contrario del ápice, donde el largo del cordón sí lo gobernaba el corte del
+borde.
 
 Con el cierre B solo, las interacciones bajarían a 0,076 y 0,055; la envolvente las multiplica por
 2,6 y 2,2. Ése es el precio de no saber cuál de los tres cierres es el real — y con estos márgenes
@@ -349,9 +390,14 @@ ancho del ala es $t_g = 2{,}0$ cm:
 - **J10.1, flexión local del ala** — exenta en ambos: $0{,}15b_f$ vale 4,50 cm en la viga y 3,00 cm
   en la columna, las dos mayores que 2,0. **Exenta por cláusula**, no por criterio.
 - **J10.2, fluencia local del alma** ($\phi = \mathbf{1{,}00}$) — 131,56 tonf en la viga (uso
-  0,596) y 151,80 en la columna (uso 0,387).
+  0,596) y 151,80 en la columna (uso 0,387). Se usa la rama de **interior** ($5k + l_b$, Ec. J10-2)
+  porque en este marco la viga es **continua a través del nudo**: el paño arriostrado es interior y
+  la viga sigue hacia el vano siguiente. Si el nudo fuera de esquina de edificio, con la viga
+  terminando en la cara de la columna, la carga quedaría a menos de $d$ del extremo y regiría la
+  Ec. **J10-3** ($2{,}5k + l_b$), que da 116,38 tonf y sube el uso a **0,674**. Es una diferencia de
+  dos puestos en el ranking, así que la condición de continuidad conviene declararla y no suponerla.
 
-Nótese que el uso de la viga, 0,596, es el cuarto más alto de la hoja. **La componente normal a la
+Nótese que el uso de la viga, 0,596, es el quinto más alto de la hoja. **La componente normal a la
 viga es la fuerza más grande de todo el reparto** (78,40 tonf en la envolvente, porque el cierre
 KISS le manda todo el vertical), y el alma de 8 mm del catálogo chileno no es generosa.
 

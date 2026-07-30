@@ -20,10 +20,13 @@ modelo de análisis, no tiene un capítulo propio en la norma, y su geometría l
 resolviendo un problema de encaje —que la diagonal llegue al punto de trabajo, que los pernos
 quepan, que se pueda soldar—. Nadie le pide un factor de uso.
 
-Este blog no es la excepción. Hay cinco ejemplos de conexiones publicados y ninguno verifica el
-gusset; dos lo dejan escrito como deuda pendiente, uno pidiendo «que el gusset resista el momento
-de pandeo de la diagonal o acomode su giro plástico» y el otro, «gusset con geometría que acomode
-el giro del pandeo». Esta nota es lo que hacía falta antes de poder cerrar esas dos frases.
+Este blog no era la excepción. Había **seis** ejemplos de conexiones publicados y ninguno
+verificaba el gusset; dos dejaban la deuda escrita: el de la
+[diagonal HSS ranurada](/acero/ejemplo-diagonal-hss-traccion), pidiendo «que el gusset resista el
+momento de pandeo de la diagonal o acomode su giro plástico», y el del
+[paño en V invertida](/acero/ejemplo-chevron-nch2369) —que no es de conexión sino de paño, pero
+deja el mismo cabo suelto—, «gusset con geometría que acomode el giro del pandeo». Esta nota es lo
+que hacía falta antes de poder cerrar esas dos frases.
 
 ## 1. Por qué hace falta un ancho efectivo
 
@@ -238,7 +241,7 @@ formar una rótula plástica. El *User Note* de §F2.6c.3 lo nombra así textual
 
 <Figure
   src="/gusset/gusset-rotula-holguras.svg"
-  alt="Dos paneles sobre la rótula del gusset. Panel A: gusset de esquina con la diagonal llegando a 45 grados y terminando antes de llegar al nudo; se marca en verde el punto restringido más cercano sobre el borde soldado a la viga y la línea de restricción que pasa por él perpendicular al eje de la diagonal, la cota de la holgura 2t entre esa línea y el extremo de la diagonal, la rótula plástica en rojo sobre la franja intermedia, y un contorno discontinuo rojo que muestra la diagonal girada al pandear con una flecha curva que indica el giro fuera del plano; una nota advierte que si el extremo llega hasta la línea de restricción el giro no tiene dónde ocurrir y la conexión se fractura antes de que la diagonal trabaje. Panel B: los tres modelos de holgura en tres filas con su icono, lineal 2t de Astaneh-Asl 1986 y 1998, elíptica 8t de Roeder y otros 2011 para gussets de esquina, y horizontal 6t de los mismos autores para gussets de vano medio; debajo una caja destacada dice que más holgura da plancha más delgada y por lo tanto más capacidad inelástica, y advierte que con el modelo 2t el pandeo del propio gusset puede controlar el diseño; y una última caja cita el comentario C8.6.9 de NCh2369 pidiendo cuidar que la geometría de la placa sea capaz de producir el giro plástico estable en lugar de robustecerla y trasladar la plastificación al elemento. Una franja al pie recuerda que el gusset completo es zona protegida por el párrafo F2.6c.3 b."
+  alt="Dos paneles sobre la rótula del gusset. Panel A: gusset de esquina con la diagonal llegando a 45 grados y terminando antes de llegar al nudo; se marca en verde el punto restringido más cercano sobre el borde soldado a la viga y la línea de restricción que pasa por él perpendicular al eje de la diagonal, la cota de la holgura 2t entre esa línea y el extremo de la diagonal, la rótula plástica en rojo sobre la franja intermedia, y un contorno discontinuo rojo que muestra la diagonal girada al pandear con una flecha curva que indica el giro fuera del plano; una nota advierte que si el extremo llega hasta la línea de restricción el giro no tiene dónde ocurrir y la conexión se fractura antes de que la diagonal trabaje. Panel B: los tres modelos de holgura en tres filas con su icono, lineal 2t de Astaneh-Asl 1986 y 1998, elíptica 8t de Roeder y otros 2011 para gussets de esquina, y horizontal 6t de los mismos autores para gussets de vano medio; debajo una caja destacada dice que más holgura da plancha más delgada y por lo tanto más capacidad inelástica, y advierte que con el modelo 2t el pandeo del propio gusset puede controlar el diseño; y una última caja cita el comentario C8.6.9 de NCh2369 pidiendo cuidar que la geometría de la placa sea capaz de producir el giro plástico estable en lugar de robustecerla y trasladar la plastificación al elemento. Una franja al pie recuerda que el gusset completo es zona protegida por el párrafo F2.5c b, y una nota indica que la práctica toma el promedio o el máximo de las tres longitudes."
   caption="La holgura del gusset. Cómo se mide es el detalle que más se equivoca, y el modelo que se elige cambia el espesor de la plancha en la dirección contraria a la intuición."
 />
 
@@ -287,7 +290,7 @@ problema a la diagonal, y que se lo devuelve en forma de flexión concentrada en
 donde la diagonal ya está pandeando.
 
 <Note type="warning" title="El gusset completo es zona protegida">
-AISC 341-22 §F2.6c.3(b) declara zona protegida a *los elementos que conectan las diagonales a
+AISC 341-22 §F2.5c(b) declara zona protegida a *los elementos que conectan las diagonales a
 vigas y columnas* — es decir, al gusset entero. Sin perforaciones, sin fijaciones de
 instalaciones, sin soldaduras ajenas, y §A4.2(g) obliga a acotarlo en los planos. Es coherente
 con todo lo anterior: si la plancha es la pieza que debe plastificar de forma estable, cualquier
@@ -339,20 +342,26 @@ la mitad de lo que se hace no está en la norma que se cita al pie.
 | Recorte de la banda al borde real de la plancha | **Práctica** ⚠️ | — |
 | Interacción corte + normal en el borde | **Práctica** ⚠️ | Manual / DG 29 (von Mises) |
 | Holguras $2t$ / $8t$ / $6t$ | **Comentario** | Coment. AISC 341-22 F2.6c.3 |
-| Pierna del filete que desarrolla la plancha | **Cláusula** | AISC 341-22 §F2.6c.4 |
-| Zona protegida = el gusset completo | **Cláusula** | AISC 341-22 §F2.6c.3(b) |
+| Soldadura gusset–ala: el corte por unidad de longitud $0{,}6R_yF_yt_p/\alpha_s$ | **Cláusula** | AISC 341-22 §F2.6c.4 |
+| La pierna de filete tabulada que lo entrega ($0{,}62\,t_p$ en A36, $0{,}74\,t_p$ en A572 Gr. 50) | ***User Note*** | AISC 341-22 §F2.6c.4 |
+| Zona protegida = el gusset completo | **Cláusula** | AISC 341-22 §F2.5c(b) |
 | Diagonal: acomodar el giro o resistir el momento | **Cláusula** | AISC 341-22 §F2.6c.3; NCh2369 8.6.9 |
 
 Las tres filas marcadas ⚠️ son las que hay que declarar como supuestos. Y no son detalles
 marginales: son, respectivamente, la que fija la capacidad a compresión, la que fija el área
 resistente cuando la banda se sale, y la que fija el largo del borde soldado.
 
-<Note type="info" title="Lo que sigue">
-Esta nota es la base teórica de dos ejemplos de cálculo que la ejercitan con números: el
-**gusset soldado del ápice de un chevron**, donde las dos diagonales concurren y la demanda es el
-desbalance de NCh2369 8.6.6, y el **gusset apernado de esquina**, donde el gusset toca viga y
-columna y hay que repartir la fuerza entre las dos interfaces con el Método de la Fuerza
-Uniforme. Cada uno con su planilla del canvas verificada.
+<Note type="info" title="Dónde se ejercita esto con números">
+Dos ejemplos de cálculo cuelgan de esta nota, cada uno con su planilla del canvas verificada:
+
+- El [**gusset soldado del ápice de un chevron**](/acero/ejemplo-gusset-apice-chevron), donde las
+  dos diagonales concurren bajo el ala de la viga y la demanda de la conexión **la fija el piso de
+  ½$T_{ye}$ de la cláusula 8.4.1**, que queda un 24 % por encima del nivel amplificado por
+  $0{,}7R_1$. Ahí las dos bandas de Whitmore se traslapan.
+- El [**gusset apernado de esquina**](/acero/ejemplo-gusset-esquina-apernado), donde la plancha
+  toca viga y columna y hay que repartir la fuerza entre las dos interfaces. Ahí resulta que el
+  reparto es **estáticamente indeterminado**, y que el Método de la Fuerza Uniforme es una
+  elección de cómo cerrar ese grado de libertad, no una consecuencia del equilibrio.
 </Note>
 
 ## Bibliografía

@@ -47,6 +47,148 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+**Tanda 2026-07-29 (tercera del día) — los 4 posts del bloque de gusset + Fundamentos.** Las tablas
+de hallazgos van completas; las secciones «Verificado y correcto» vienen condensadas a su sustancia.
+Los cuatro quedaron ❌ bloqueados: **6 🔴 en total**, todos errores propios confirmados por recálculo
+independiente. **Los 24 🔴+🟠 se aplicaron el mismo día**, más un séptimo punto grave que el
+auditor del gusset apernado mencionó sin escalar (el flujo de corte igual no distingue al UFM: lo
+cumplen los tres cierres, porque es la ecuación de momento disfrazada). Quedan abiertos los 🟡 y
+🔵. Corregir el hallazgo #1 del apernado y el #2 obligó a tocar también el script de cálculo, la
+planilla y dos SVG generados — la cadena completa, no solo el MDX.
+
+### 2026-07-29 · `acero/ejemplo-gusset-esquina-apernado` · ❌ bloqueado — 19 (2🔴 · 5🟠 · 10🟡 · 2🔵) — **🔴 y 🟠 aplicados**, desbloqueado
+
+**Commit:** `8acb012` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (script 26/26, planilla 144 pasos/30 verif., derivación con sympy, build 161 páginas)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/C | §4, L.3 (`description`), alt+caption, L.414-415 y el SVG `esquina-demandas.svg` | **La tesis de §4 es falsa: la elección de L NO cambia de rama.** El umbral de J4-6 es sobre `L_c/r = KL/r ≤ 25`, no sobre `L/r`. Con K = 1,2: promedio → L_c/r = **29,33 > 25** → Cap. E; máximo → 46,77 → Cap. E. **Las dos caen en Capítulo E.** El 122,59 tonf ya sale del Cap. E (J4-6 daría 128,27, que es el valor de Whitmore-fluencia). Sobre L el umbral vale 12,03 cm y las dos lo superan | La elección cambia el **valor** (122,59 → 114,32, −6,7 %; uso 0,799 → 0,857), no la rama. Solo aplicaría con K = 1,0. Corregir `description`, `caption`, `alt`, el pie del SVG **y la planilla** (`L_pr <= umb` / `L_mx > umb` y su nota) | ✅ aplicado |
+| 2 | 🔴 | N | L.280-283 y la fila «Whitmore, rotura» | **Área neta sin el sobreancho de B4.3b**, que exige tomar el agujero **2 mm mayor** que el nominal. Con 2,6 cm: A_wn = 45,93 cm², φRn = 140,55 tonf, uso 0,697. El 143,00 publicado está **1,7 % del lado inseguro**. No cambia el veredicto ni el estado gobernante | Usar 2,6 cm por agujero; corregir script y planilla (`d_h + 0.2 cm`) | ✅ aplicado |
+| 3 | 🟠 | N | L.354 | «0,596 es el **cuarto** más alto» — es el **quinto** (0,857 · 0,764 · 0,760 · 0,685 · 0,596) | «el quinto más alto» | ✅ aplicado |
+| 4 | 🟠 | C | L.332-338 | «el largo lo fijó la condición geométrica del UFM, no la resistencia»: la condición fija solo la **relación** (familia α = 0,75β + 2,5); 35/40 o 57,5/70 la cumplen igual. El tamaño absoluto lo fija el grupo de pernos | «La condición ata los dos largos entre sí; el tamaño absoluto lo fijó el grupo de pernos» | ✅ aplicado |
+| 5 | 🟠 | N/R | L.351-352 y la fila de J10.2 de la viga | J10.2 con la rama de interior (5k) sin declarar la posición respecto del extremo. En un nudo de esquina la viga termina en la cara de la columna → correspondería **J10-3** (2,5k + l_b) → 116,38 tonf, uso **0,674** en vez de 0,596 | Declarar que la viga es continua a través del nudo, o usar J10-3. Decir cuál y por qué | ✅ aplicado |
+| 6 | 🟠 | R | §3, §4, §5 | **Cinco entradas sin las que el post no es reproducible:** (a) la última fila de pernos en s = 60 cm — de ella y solo de ella salen L1/L2/L3; (b) k = 3,0 cm, reusado para la columna (cuyo t_f = 2,8 daría k ≈ 3,8); (c) la distancia al borde de 4,5 cm; (d) el electrodo E70; (e) el espesor de las planchas de conexión (16 mm) | Agregarlas a «El caso». La (a) es la más grave: sin ella no se rehace la verificación que gobierna | ✅ aplicado |
+| 7 | 🟠 | L | L.275 vs L.282 | **«fila» significa dos cosas en ocho líneas**, y las dos son portantes: las 3 posiciones sobre el eje (paso 7 cm) y las 2 líneas del gramil (12 cm) | Reservar «fila» para las 2 del gramil; «línea de pernos sobre el eje» para las 3 del paso | ✅ aplicado |
+| 8 | 🟡 | N | L.242 | «6 · 21,50 = 128,98» — la aritmética escrita da 129,00; el 128,98 sale de 6 × 21,497 | Escribir 21,497 o declarar el redondeo | ⬜ |
+| 9 | 🟡 | N | L.226-228 | La envolvente incumple **tres** ecuaciones: además de +42,00 y +50,40 tonf, ΣM = **+252 tonf·cm** | Agregar el residuo de momento — refuerza el punto de la nota | ⬜ |
+| 10 | 🟡 | N/R | L.259-260 | El l_c = 3,3 cm sale de un borde de 4,5 cm que **contradice la geometría del propio post**: con el triángulo definido, del perno al borde hay 15,0 cm → l_c = 13,8 y el desgarre no gobernaría (grupo 193,9 en vez de 177,72). Conservador, pero incoherente y no declarado | Declarar 4,5 cm como adoptado por detallamiento (mín. J3.4 = 28 mm) y conservador | ⬜ |
+| 11 | 🟡 | F | `alt` y el SVG | «ocho verificaciones ordenadas por uso decreciente» omite «Columna — fluencia local del alma 0,387», que iría entre 0,551 y 0,344 | Incluir la novena barra o decir «ocho de las once» | ⬜ |
+| 12 | 🟡 | L | L.160 (`alt`) | «cuyos dos **cateto**» — concordancia | «cuyos dos catetos» | ⬜ |
+| 13 | 🟡 | U | L.375 | «6 M22» contra «6 × M22» en L.45 y L.364 | «6 × M22» | ⬜ |
+| 14 | 🟡 | C | L.18-22 vs L.320-323 | El post abre con que 8.4.6 **prohíbe combinar soldadura y pernos** y cierra §5 soldando el gusset y apernando la diagonal al mismo gusset, sin decir que los filetes son **de taller** y los pernos la unión de terreno. (La prohibición general es **8.4.5**; 8.4.6 la repite para terreno) | Una frase en §5 aclarando taller vs terreno | ⬜ |
+| 15 | 🟡 | L/C | L.422-424 | La longitud de media diagonal se apoya en «es lo habitual» y en 8.3.2, cuando **8.6.4 la autoriza explícitamente**, y C8.6.4 da los dos casos en que no aplica | Citar 8.6.4 y sus dos condiciones: la deuda pasa a ser verificarlas | ⬜ |
+| 16 | 🟡 | F | L.445 | La nota al pie omite **8.3.2** y **C8.3.3** que el cuerpo cita, y lista **8.6.8, que nunca aparece en el cuerpo** | Agregar 8.3.2 y C8.3.3; citar 8.6.8 en §1 junto al C_r | ⬜ |
+| 17 | 🟡 | F | L.3 | `description` de 703 caracteres con seis cifras, y arrastra el error #1 | Recortar a ~450 y corregir la frase de la rama | ⬜ |
+| 18 | 🔵 | L | L.248-256 | No verificable en disco el contraste con la edición **2016** («Grupo A/B», «antes se combinaban con un tope»). Todo lo de 360-**22** sí está confirmado | Bajar el tono, o cerrar con el PDF de AISC 360-16 §J3.10 | ⬜ |
+| 19 | 🔵 | R | L.398, L.411-413 | K = 1,2 y el promedio/máximo de Thornton no son verificables (DG 29 y Dowswell 2006 fuera de disco). **El post lo declara**, que es la forma correcta | Nada | ⬜ |
+
+**Verificado y correcto (condensado):** *la teoría resiste entera, verificada con sympy y no leyendo el script*: indeterminación por uno ✓; las tres ecuaciones planteadas desde cero ✓; la reducción `ΣM = −βV_b + αV_c + [(e_b+β)Px − (e_c+α)Py]` (`simplify(M2 − target) == 0`) ✓; el corchete se anula ⟺ `tanθ = (α+e_c)/(β+e_b)` ⟺ (a,b) sobre el eje ✓ (45/60 = 0,750, r = 75 cm); los tres cierres en equilibrio exacto (~1e-13), el C reproducido desde su propia condición y no copiado ✓; el flujo 0,65333 = P/(2r) ✓; la envolvente fuera de equilibrio ✓. Aritmética completa ✓ (56,0 cm² por geometría, T_ye = 184,18, P_ne = 156,64, T_r = C_r = 98,00, techo gana por 5,91, grupo 177,72, b_w = 28,166, L1/L2/L3 rehechas desde la geometría, pandeo 114,32 → 0,857, w_req = 12,61 mm con el *User Note* 1,6 % inseguro, interacciones 0,195/0,123, J10.1 exentas, borde libre 78,10 cm = 39,05t). Normas contra fichas: NCh2369 8.4.1 / 8.4.6 *verbatim* / 8.6.3 / 8.3.1 / 8.3.2 / C8.3.3 / Tabla 9 ✓; AISC 360-22 J3-1, Tabla J3.2 Grupo 120, J3.11 con J3-6a/J3-6c separados, J4-1/J4-2/J4-3 y J4-6 con el umbral sobre `L_c/r` ✓ (fuente del hallazgo #1). Cadena de consistencia de 12 cifras por prosa, ecuaciones, tablas, alt, caption, SVG y description: **todas idénticas** salvo #1, #2, #3 y #8.
+
+> **Punto fino que el auditor no escaló y que sí conviene corregir**: el post dice que lo que distingue al UFM es que el flujo de corte sea igual en las dos interfaces, pero **los tres cierres tienen flujo igual** (A: 0/0; B: 0,653; C: 0,84) — porque la igualdad de flujo **es** la propia ecuación de momento (`αV_c = βV_b` con `L_b = 2α`, `L_c = 2β`). Lo único propio del UFM es que ese flujo valga **P/(2r)**, o el reparto `N_b/V_b = e_b/α`. Afecta §2c, la caja «Lo que distingue al UFM» del SVG `esquina-reparto.svg` y la memoria del proyecto.
+
+**No verificable:** K = 1,2 y el promedio/máximo de Thornton · el pareo de notación α/β con la DG 29 (**la derivación en sí se verificó y es correcta**; lo no verificable es solo si los símbolos coinciden) · el contraste con AISC 360-16 · P_E = 35,0 y 0,7R₁ = 2,80 · las propiedades ICHA y el k = 3,0.
+
+**Planilla del canvas:** sí · **ya tiene** (207 regiones / 144 pasos / 30 verificaciones, 0 errores) · 11 verificaciones demanda-capacidad + 8 de equilibrio y geometría. **Dos observaciones:** (a) la planilla **arrastra #1 y #2** — las dos implementaciones «independientes» comparten el desliz porque se escribió la misma comparación en ambas, y por eso el cruce no lo atrapó; (b) el 122,59 tonf tiene una sola fuente (el script), porque la planilla nunca calcula φPn con L_prom.
+
+---
+
+### 2026-07-29 · `acero/ejemplo-gusset-apice-chevron` · ❌ bloqueado — 14 (2🔴 · 5🟠 · 5🟡 · 2🔵) — **🔴 y 🟠 aplicados**, desbloqueado
+
+**Commit:** `8acb012` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (script 28/28, planilla `--md`, recálculo independiente de 40+ cifras, normas contra los PDF de AISC 360-22, 341-22 y NCh2369:2025)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.141-145 (`Note` «Control independiente de x̄») | El «control a mano» da **7,19 cm** y se afirma que concuerda «dentro del 1 %» y que «la diferencia es cómo la tabla trata las esquinas». **Las dos cosas son falsas**: la fórmula del caso 5 **es** el centroide exacto de la media sección. Integrando la media sección real: **7,1316 cm**, idéntico a 10 dígitos. Los 7,19 salen de tomar las medias paredes de 9,5 cm en vez de 9,0 (39 cm² en vez de 38) | «la fórmula del caso 5 es exactamente el centroide de la media sección — la integración da 7,132, idéntico», o eliminar la nota. No cambia ningún resultado (U = 0,762 se mantiene) | ✅ aplicado |
+| 2 | 🔴 | N | L.260-263 (`Note` «Por qué el traslape no invalida…») | «separar hasta b_w/2 = 17,3 cm de cada lado del punto de trabajo, o sea s_e ≥ 24,5 cm»: **dividido por cos α dos veces**. Con la ecuación del propio post, traslape = 0 ⟺ s_e = b_w/2 = **17,32 cm** (24,49 = 17,32/cos45°); y «de cada lado» son b_w·cosα/2 = **12,25 cm** horizontales, no 17,3. El número sostiene una conclusión: el aumento real es **+2,3 cm**, no +9,5, así que «un gusset sensiblemente más grande… no conviene» pierde base | «llevar la huella de cada banda a 12,25 cm de cada lado, o sea s_e ≥ b_w/2 = 17,3 cm (2,3 cm más que el adoptado)» y reformular el juicio | ✅ aplicado |
+| 3 | 🟠 | N/F | L.466 y L.3 (`description`) | «los **102 pasos** y las **23 verificaciones**»: el JSON publicado da **105 pasos y 24 verificaciones** | Corregir en el cuerpo y en el `description` | ✅ aplicado |
+| 4 | 🟠 | N | L.52-57 (`Note` de la diferencia de 0,03 %) | El mecanismo declarado no reproduce el número: «redondea F_cre a 2 288» da **198,232**, no 198,25. La causa real es la que la nota menciona al final: con el F_e = 3 794 publicado allá, F_cre = 2 288,15 → **198,246 ≈ 198,25** | Unificar la explicación en el redondeo de **F_e** (3 794 vs 3 797) y borrar la atribución a F_cre | ✅ aplicado |
+| 5 | 🟠 | U | L.114, L.155, L.172, L.334 | **Cambio de unidad silencioso dentro de las ecuaciones**: la tabla declara kgf/cm² pero cuatro ecuaciones escriben `2{,}530` y `4{,}080`, que son **tonf/cm²**. Con coma decimal es-CL no se distingue de un separador de miles mal puesto — y dos ecuaciones más abajo los mismos valores van como `2\,530` en kgf/cm² | Escribir la unidad en la ecuación o mantener kgf/cm² mostrando el /1000 | ✅ aplicado |
+| 6 | 🟠 | N/U | L.315-321 y L.187-191 | Fórmulas presentadas como generales que **solo valen a 45°**: `H = senα(T+C)` y `V = senα(T−C)` (la componente paralela al cordón es `P·cosα`); y `s_e ≥ (gap + (H/2)senα)/senα` (lo correcto es `gap/senα + (H/2)cotα`). A 45° los **números son correctos**, pero el propio post usa cos α para las proyecciones horizontales | Escribir cos α donde corresponde, o declarar «con α = 45°, sen α = cos α» al presentarlas | ✅ aplicado |
+| 7 | 🟠 | C/L | L.170-171 | «§F2.5b(c) exige literalmente **para diagonales con ranuras**»: el texto es **incondicional**. El diseño adoptado deja A_e = 54,43 < A_g = 76,0. Bajo NCh2369 es legítimo (8.4.1 da la vía por fuerza) pero el post insinúa que solo muerde a capacidad plena y no lo lista en las deudas | Aclarar que F2.5b(c) es incondicional en AISC 341 para SCBF y que este ejemplo se rige por NCh2369; agregarlo a «¿Dónde falla esto?» | ✅ aplicado |
+| 8 | 🟡 | N | L.247, L.3, L.212-213 y el SVG | «el 13,4 % de cada banda» es la fracción de la **huella horizontal**; respecto de la banda (34,64 cm) es 9,5 %. La base no está explícita en ningún lugar | «el 13,4 % de la huella horizontal de cada banda» | ⬜ |
+| 9 | 🟡 | N | L.93 | «el piso queda 1,6 tonf por debajo»: 100,80 − 99,152 = **1,65** | «1,65 tonf» | ⬜ |
+| 10 | 🟡 | L/C | L.218-232 | La banda se calcula con **30°** y con ella se verifica **tracción**. Es conservador (con los 45° del Coment. J4.1: b_w = 60 cm, φRn = 273,2, uso 0,458) pero no se declara — y la nota hermana hace de esa distinción su argumento central | «se usa 30° también en tracción, del lado conservador frente a los 45° del Coment. J4.1» | ⬜ |
+| 11 | 🟡 | R/F | L.361-364, L.373, L.404 | El número más alto de la hoja (0,882) sale de un criterio que **nunca se escribe**: solo se lo nombra «interacción de von Mises», y en la tabla la demanda queda como «—» | Mostrar la expresión una vez en un `Equation` y declararla no normativa ahí | ⬜ |
+| 12 | 🟡 | N | L.48 y el `alt` de L.212 | La nota declara las diferencias en P_ne y F_e pero **no la de 0,3P_ne**: 59,49 acá contra 59,47 allá | Agregar «y 0,3P_ne pasa de 59,47 a 59,49» | ⬜ |
+| 13 | 🔵 | R | L.112-124 | Los estados límite del tubo se calculan con F_y y F_u **nominales**. C8.3.1 permite F_ye/F_ue para estados de falla al interior del fusible, y el *User Note* de F2.6c.1 lo repite para el bloque de corte. Conservador y legítimo; declararlo cierra la pregunta del revisor | Una frase en §2 declarando el uso de propiedades nominales | ⬜ |
+| 14 | 🔵 | L | L.326-338 | §F2.6c.4 empieza con *«For out-of-plane brace buckling»*. La condición se cumple pero el post aplica la cláusula sin decirlo | Añadir «para pandeo fuera del plano, que es el detalle adoptado» | ⬜ |
+
+**Verificado y correcto (condensado):** las 40+ cifras recalculadas y correctas — F_ye = 3 289, T_ye = 249,964, F_e = 3 797,1, F_cre = 2 288,8, P_ne = 198,3045, 0,3P_ne = 59,491; demanda 100,80 / 124,982 / 99,152 con **+23,99 % → 24,0 %**; l_min = 27,44 cm **y es el que gobierna** (soldadura 24,95, rotura neta 16,66 → la tesis de §2 se sostiene); x̄ = 7,1316 y U = 0,7623 con la fórmula **correcta** del caso 5 (verificada en el PDF); A_e = 54,43, rotura 166,55, soldadura 150,27; A_e,req = 81,687 y razón 1,0748; s_e,geom = 14,243, holgura 3,75t, borde libre 63,64 cm = 31,82t; b_w = 34,641, Whitmore 157,76 y 212,00, traslape 3,281; r = 0,5774, 25r = 14,434 = 7,22t, +3,92 % → «3,9 %», y **toda la fila de K (0,639-0,737) reproducida desde el Cap. E**; H_A = 130,442, V_A = 46,309, H_B = 142,553; w_req = 12,607 mm y el *User Note* 1,64 % → 1,6 %; los siete largos mínimos y la propiedad pitagórica; interacciones 0,780 y 0,882. Las 12 filas de «Resultado» coinciden con script y planilla. Normas contra el PDF: NCh2369 8.4.1 (la lectura de «tres niveles» es **literal**), 8.3.1, 8.6.6, 8.6.8, 8.6.9(b), C8.3.3; AISC 360-22 J4-1/J4-3/J4-5/J4-6 y Tabla D3.1 caso 5; AISC 341-22 F2.5b(c), F2.6c.3, F2.6c.4 y Tabla A3.2 fila «Plates → R_y = 1,3». El H 600×300×138,5 es autoconsistente por peso.
+
+**No verificable:** nada depende de un modelo SAP2000. Dato externo: propiedades del cajón y del H 600 (ICHA, verificada por autoconsistencia), P_E = 36,0 y 0,7R₁ = 2,80, los 3 cm de holgura de montaje, k = 3,0 (declarado), el ancho de ranura, los adoptados l/s_e/L y las piernas, el K del pandeo (**el barrido demuestra que no decide**) y el criterio del borde libre.
+
+**Planilla del canvas:** sí · ya tiene · **24** verificaciones demanda-capacidad (el post muestra 12 filas) · cadena cerrada; los dos rojos declarados son los que el post anuncia. Los conteos publicados (102/23) están mal — hallazgo #3.
+
+---
+
+### 2026-07-29 · `blog/capacidad-vs-resistencia` · ❌ bloqueado — 20 (1🔴 · 3🟠 · 12🟡 · 4🔵) — **🔴 y 🟠 aplicados**, desbloqueado
+
+**Commit:** `8acb012` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/C | §1 (L.47-50) | **El argumento de φ está invertido.** Con el propio ejemplo (fluencia por corte φ = 1,00 vs rotura φ = 0,75), a igual uso 0,95 el margen R_n/demanda es 1,053 para el dúctil y **1,404** para el frágil → el frágil tiene **33 % más** margen, no menos. Y en la misma plancha A36, φR_n = 1 518 (fluencia) contra 1 836 (rotura): **gobierna y llega primero la fluencia**, el orden deseado. «El frágil tiene menos margen real» y «la desordenan un poco» son falsos con ese par | Conservar la mitad válida (los usos **no son comparables** entre estados límite porque cada φ es un fractil distinto) y (a) borrar «la desordenan un poco», o (b) usar un par donde el **fusible** cargue el φ menor — fluencia en tracción de la diagonal (φ_t = 0,90) contra fluencia por corte del gusset (φ = 1,00): ahí sí el uso miente (1,170 contra 1,053) | ✅ aplicado |
+| 2 | 🟠 | C | L.238 | «Un fusible sobredimensionado es más caro en **todos** los eslabones» — falsificado por el post del chevron que el propio post enlaza: engrosar la diagonal **bajó** el momento de la viga de 111,79 a 70,44 tonf·m (**−37,0 %**), porque la tracción ya estaba topada y la residual, que se resta, crece | «…más caro en casi todos los eslabones — salvo donde la demanda es una **resta**, como la viga del chevron, donde una diagonal más robusta la abarata un 37 %» | ✅ aplicado |
+| 3 | 🟠 | L/N | L.164-169 y L.147 | **«Techo» designa dos cosas distintas en el mismo párrafo.** Se define como «no hace falta diseñar para más que la capacidad esperada» (= 249,96) y se cuantifica en 100,80, que es el **nivel amplificado**. En 8.4.1 el amplificado es la **base**, min(T_ye; máx. transferible) el techo y ½T_ye el piso | «el piso (124,98) quedó por encima del **nivel amplificado** (100,80)». **Se propaga al post del ápice y al SVG `apice-demandas.svg`**, que rotula 100,80 como «el techo de 8.4.1(a)» | ✅ aplicado |
+| 4 | 🟠 | C | L.149-150 | «son **cuatro** mecanismos distintos» pero se enumeran **tres**, y el texto agrupa pedestal y fundación bajo el primero. La `Note` tip que sigue no es un mecanismo de despegue | «cuatro casos, tres mecanismos», o subir a cuatro con un mecanismo propio | ✅ aplicado |
+| 5 | 🟡 | N | L.146 (tabla) | «Lo que se multiplicó: **momento de diseño**» con 93,8 × es al revés: 281,39 no es el de diseño (el de diseño es 70,44, o 23,5 ×) | «momento del desbalance crudo → 93,8 × (el de **diseño**: 23,5 ×)» | ⬜ |
+| 6 | 🟡 | N/L | L.147 (tabla) | «Amplificación: 2,80, **topado**» — nada quedó topado: 2,80 · 36,0 = 100,80 exacto y el techo 249,96 nunca mordió | «2,80 (el techo no muerde; gobierna el piso)» | ⬜ |
+| 7 | 🟡 | N | L.125-126 | «infla o desinfla un 15 %»: 1,5/1,3 − 1 = +15,4 % pero 1 − 1,3/1,5 = **−13,3 %** | «infla un 15 % o desinfla un 13 %» | ⬜ |
+| 8 | 🟡 | C | L.138-140 | «**Nunca pasa eso**» es absoluto y lo contradicen los propios ejemplos: el corte del dado va ×2,100 exacto y la diagonal del chevron ×2,80 exacto. El factor **sí** es el multiplicador cuando la fuerza es proporcional al estado sísmico | «Casi nunca pasa en un elemento que toma desbalance», con una línea de cuándo sí coincide | ⬜ |
+| 9 | 🟡 | C/L | L.117-118 | «Es la **única** situación donde suponer el acero más fuerte es lo conservador» — el propio §6 nombra otra (M_pr con 1,25 f_y), y A3.2 agrega f'_ce = R_c f'_c | «Es una de las pocas familias…» o «aparece también en el 1,25 f_y de ACI 18» | ⬜ |
+| 10 | 🟡 | F/N | L.190 | La enumeración de cláusulas con 0,7R₁ se lee como exhaustiva y omite **8.6.3, 8.7.3 y 8.8.4** (las exenciones de la Tabla 9) — y 8.6.3 es justo la que el post del chevron trabaja | «aparece al menos en …, y además como **exención** en 8.6.3, 8.7.3 y 8.8.4» | ⬜ |
+| 11 | 🟡 | C | L.196 | «en conexiones, 8.4.1 no deja bajar de la mitad» omite que la cláusula **exceptúa del piso a los anclajes de bases de columna** — y dos de los cuatro casos de la tabla son anclajes | Añadir la excepción en la misma frase | ⬜ |
+| 12 | 🟡 | L | L.106-108 | «su **cláusula** 8.3.3 agrega el dato nacional R_y ≈ 1,30»: está en el **comentario C8.3.3**; 8.3.3 remite a la Tabla A3.1 de AISC 341-**16** | «su cláusula 8.3.3 remite a AISC 341 y su comentario C8.3.3 agrega el dato nacional…» | ⬜ |
+| 13 | 🟡 | N | L.181-183 | «lo que compra **la vía de resistencia amplificada**»: la demanda que produjo el uso 0,750 fue 124,98 (el **piso**), no 100,80 — y dos párrafos antes el post dice que esa vía «no sirvió de nada» | «lo que compra la vía de 8.4.1» (techo + piso), o nombrar el piso | ⬜ |
+| 14 | 🟡 | L | L.48 | «Si el **ductil**…» — falta la tilde | «dúctil» | ⬜ |
+| 15 | 🟡 | E/C | todo el post | No enlaza a `/blog/factor-r-capacidad-esperada`, que ya midió el mismo patrón con pushover (desbalance de 869 kN que el análisis pone en cero y el atajo 0,7R no ve) | Enlazarlo en §4 (mecanismo 2) o en el cierre | ⬜ |
+| 16 | 🟡 | U | L.91 y L.174 | «2 530 kgf/cm²» con espacio normal en vez de `2\,530` en math, y «un área bruta de 76,0» **sin unidad** | `$2\,530$ kgf/cm²` y «76,0 cm²» | ⬜ |
+| 17 | 🔵 | R/C | L.162 | El 93,8 × se cita sin el caveat del post fuente: los 3,00 son el momento **negativo sobre el apoyo central** y los 281,39 el positivo en el centro del vano | Media línea aclarándolo | ⬜ |
+| 18 | 🔵 | F | `src/pages/blog/index.astro` L.13 | El comentario del filtro dice «cuatro de las **seis** secciones»; con "Fundamentos" pasan a siete. El listado funciona (es data-driven) | Actualizar el comentario | ⬜ |
+| 19 | 🔵 | U | todo el post | Separador decimal **coma**, coherente con los cuatro posts citados, pero la mayoría de `blog` usa **punto** — incluida la nota hermana `factor-r-capacidad-esperada` | Decisión de estilo del repo; no tocar solo este post | ⬜ |
+| 20 | 🔵 | R | L.114-116 | La **equivalencia de rol** entre α_s = 1,5 (ASD) y el factor 1,5 del Anexo B no está afirmada por ninguna fuente accesible | Declararlo como lectura del autor o citar C-Anexo B | ⬜ |
+
+**Verificado y correcto (condensado):** las cuatro cifras heredadas coinciden **exactamente** con sus posts de origen: 2,10 → 13,5 (32,11/2,37 = 13,55), 2,80 → 5,00 (20,03/4,00 = 5,0075), 93,8 × y 23,5 ×, 124,98 vs 100,80 con **+23,99 % → 24 %**, y 1,075 = (1,30·2 530)/(0,75·4 080) con A_e,req = 81,69 contra 76,0. Ningún valor aparece con dos cifras distintas. «Baja la demanda un 10-25 %» ✓. **A36: R_y = 1,5 laminado / 1,3 plancha, R_t = 1,2** ✓ Tabla A3.2, y «promedios de una encuesta, no máximos» ✓ textual. **La capacidad esperada es una demanda** ✓ Commentary A3.2 textual (*«neither the resistance factor (LRFD) nor the safety factor (ASD) are applied»*), con R_tF_u limitado al interior del fusible ✓. NCh2369 8.3.5 ✓ literal y 8.4.1 con techo **y piso** ✓. ACI 318-25 18.7, Cap. 18 y 17.10.5.3 ✓; AISC 341-22 A3.2/F2.5b/F2.6c ✓. Los 4 enlaces existen y ninguno es draft ✓. **`section: "Fundamentos"` no necesita nada más** ✓.
+
+**No verificable:** las subsecciones exactas de 8.7.5 y 8.8.5 como portadoras del 0,7R₁ · la equivalencia de rol del α_s con el Anexo B · la subsección exacta de ACI para el M_pr (el post la deja deliberadamente en «Cap. 18») · la cadena interna de los cuatro casos.
+
+**Planilla del canvas:** no · ¿ya tiene? no · **0 verificaciones propias** — post conceptual sin cálculo propio; su única aritmética cerrada ya está cubierta por la planilla del gusset. **No se recomienda generarla.**
+
+---
+
+### 2026-07-29 · `acero/gusset-teoria-estados-limite` · ❌ bloqueado — 18 (1🔴 · 5🟠 · 8🟡 · 4🔵) — **🔴 y 🟠 aplicados**, desbloqueado
+
+**Commit:** `8acb012` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | L | L.290, L.343, L.241 (`alt`) y el propio `public/gusset/gusset-rotula-holguras.svg` | La zona protegida se atribuye a **§F2.6c.3(b)**. Esa cláusula no existe con ese contenido: F2.6c.3 es *Accommodation of Brace Buckling* y su literal (b) es la **capacidad de rotación** — que el propio post usa así en la tabla de L.233. La zona protegida de un SCBF es **§F2.5c**, y el literal (b) *«los elementos que conectan las diagonales a vigas y columnas»* es de F2.5c. El error está en **4 lugares**, incluido el texto embebido en la SVG | Cambiar a `§F2.5c(b)` en la `Note`, en la tabla §7, en el `alt` y en el `<text>` de la SVG. Mantener `§A4.2(g)`, que sí es correcta | ✅ aplicado |
+| 2 | 🟠 | C | L.353 (`Note` «Lo que sigue») | Dice que en el ejemplo del ápice «la demanda es el desbalance de **8.6.6**». El hermano tiene como titular lo contrario: la fija **el piso de ½T_ye de 8.4.1**. 8.6.6 gobierna la **viga** del chevron, no el gusset | «…la demanda la fija el piso de 8.4.1, no el techo de 0,7R₁» | ✅ aplicado |
+| 3 | 🟠 | C | L.23-26 | «Hay **cinco** ejemplos de conexiones y **ninguno** verifica el gusset; **dos** lo dejan como deuda». No reconcilia: hay **seis** ejemplos de conexión, y de los dos portadores de la deuda uno (`ejemplo-chevron-nch2369`) **no es** de conexión sino de paño. Además los dos ejemplos de gusset comparten `pubDate` y sí verifican el gusset: «ninguno verifica» se autoinvalida el día de publicación | «Había seis ejemplos de conexiones y ninguno verificaba el gusset; dos dejaban la deuda escrita —el de la diagonal HSS ranurada y el del paño en V invertida—», en pasado y con los dos enlaces | ✅ aplicado |
+| 4 | 🟠 | E | L.350-356, L.23-26 | La `Note` final presenta los dos ejemplos **en futuro** cuando ya están publicados — y ellos **enlazan de vuelta a esta nota**. El post no tiene **ni un solo enlace interno** a ninguno de los cuatro posts que nombra, en una colección donde los cruzados son la norma (16 enlaces `/acero/…` en el resto) | Convertir la `Note` en enlaces a los dos ejemplos, y enlazar en la intro los dos posts con la deuda | ✅ aplicado |
+| 5 | 🟠 | F | L.170 (`alt` de `gusset-columna-equivalente.svg`) | El `alt` describe elementos que la figura **no tiene**: hay **un solo** rótulo verde `L`, no «tres flechas rotuladas L1, L2 y L3»; y la nota de la figura dice «toma **el promedio**» mientras el `alt` dice «el promedio **o el máximo**». Es la figura la incompleta: el hermano de esquina convierte esa elección en un resultado de titular | Rotular L₁, L₂, L₃ en la SVG y añadir «o el máximo» a su nota; o alinear el `alt` | ✅ aplicado |
+| 6 | 🟠 | C | L.342 (tabla §7) | La fila «Pierna del filete — **Cláusula** — §F2.6c.4» (a) no tiene respaldo en el cuerpo y (b) **invierte el estatus que el post enseña**: los valores de pierna (0,62 t_p / 0,74 t_p) vienen del ***User Note***, no mandatorio; la cláusula es la resistencia de corte 0,6R_yF_yt_p/α_s | Separar cláusula (resistencia por unidad de longitud) de *User Note* (pierna tabulada), o quitar la fila | ✅ aplicado |
+| 7 | 🟡 | N | L.90 | «con gramil la razón baja **algo**». Con la geometría del hermano (g = 12,0, l = 14,0): 40/28,17 = **1,42** — un 18 % por debajo de 1,73. El argumento del +73 % no sobrevive a un gusset apernado real | «…baja rápido: en la geometría del gusset apernado queda en 1,42» | ⬜ |
+| 8 | 🟡 | N | L.135-136 | «el aumento de **aproximadamente 10 %**»: el cociente de los factores que el post declara es 1,00/0,90 = **+11,1 %** | Marcarlo como cita textual del Comentario y añadir el cociente exacto | ⬜ |
+| 9 | 🟡 | L | L.2 (`title`) | «la rótula que no hay que robustecer»: lo que no hay que robustecer es el **gusset**, como dicen bien §5 y la cita de C8.6.9 | «…y la plancha que no hay que robustecer» | ⬜ |
+| 10 | 🟡 | F | L.358-368 | La Bibliografía **omite cuatro fuentes que el cuerpo cita por autor-año**: Dowswell (2006), Dowswell (2016), Astaneh-Asl (1986, 1998) y Roeder et al. (2011) — en un post cuyo tema es la trazabilidad de la fuente. Y `[^nch]` lista 8.6.8, que no se usa, y omite 8.6.6, que sí se cita | Añadir las cuatro entradas; corregir `[^nch]` a 8.6.6 / 8.6.9 / C8.6.9 | ⬜ |
+| 11 | 🟡 | L | L.117-118 | Llama a §J4 «un **capítulo** corto», cuando J4 es una **sección** del Capítulo J — y la intro apoya su tesis en que el gusset «no tiene un capítulo propio» | «…es una sección corta» | ⬜ |
+| 12 | 🟡 | L | L.304 | «da **J4-1** para la normal». Si la componente perpendicular **comprime** —caso que L.300 admite— la ecuación es J4-6 / Cap. E con el umbral de 25 | «J4-1 (o J4-6 si la normal comprime) para la normal y J4-3 para el corte» | ⬜ |
+| 13 | 🟡 | L | L.102 | «no hay K **de que** preocuparse» — construcción incorrecta | «no hay K del que preocuparse» | ⬜ |
+| 14 | 🟡 | F | L.206-216 vs el panel A de la fig. 2 | El método de las **tres longitudes y su promedio** solo existe en la figura y en su `alt`; el cuerpo nombra únicamente Dowswell (2006). El hermano lo llama «las tres longitudes de **Thornton**», término que esta nota nunca introduce | Añadir dos líneas en §4 con el método y el nombre de Thornton | ⬜ |
+| 15 | 🔵 | L | L.265 | La ficha cita «Astaneh-Asl **et al.** (1986, 1998)» | Añadir *et al.* | ⬜ |
+| 16 | 🔵 | C | §6 | §F2.6c permite considerar tracción, compresión y flexión **sin interacción**. No contradice a §6 (ahí la interacción es entre componentes de borde) pero un revisor va a cruzar las dos frases | Una línea aclarando el alcance de cada no-interacción | ⬜ |
+| 17 | 🔵 | F | L.230-233 | La tabla fusiona §F2.6c.3 con 8.6.9 usando la redacción de la NCh. La vía (a) de AISC es cuantitativa (1,1R_yM_p/α_s), número que el post no da aunque sí da otros | Añadir el 1,1R_yM_p/α_s, o separar las dos normas en dos filas | ⬜ |
+| 18 | 🔵 | F | varias | Todas las citas de AISC vienen en español entre comillas de cita textual, sin declarar que la traducción es propia | Una línea al pie: «traducciones del autor» | ⬜ |
+
+**Verificado y correcto (condensado):** tan45°/tan30° = 1,7320508 = √3 → «1,73» ✓ y 73,2 % → «73 % más ancha» con la base explícita ✓. r = t/√12 = 0,2886751 t ✓ con la cancelación de b_w exacta; 25·0,2887 = 7,2175 → «7,2 t» ✓; 115,47 mm → «115 mm» ✓ idéntico en prosa, `alt`, SVG y `description`. El sentido del efecto del gramil es correcto (1,7321 → 1,5591 → 1,4202 → 1,2563 para g = 0/5/12/30 cm). L_req = √(L_V² + L_N²) **verificado con sympy** ✓. El argumento ASD del φ = 1,00: 0,60F_y/0,40F_y = 1,50 ✓ exacto y 1,00/0,75 = 1,333 ✓. **Los seis φ de la tabla de §3 contra el cuerpo normativo de J4: los seis correctos.** La adscripción de secciones del Comentario (J4.1 tracción, J4.2 corte, J4.4 compresión) ✓. La cita de C-F2.6c.3 sobre cómo se mide la holgura reproduce **literalmente** la ficha ✓, y los tres modelos 2t/8t/6t con autores y destinos ✓. NCh2369 8.6.9 a)/b) ✓ y C8.6.9 ✓ literal. Whitmore (1952) Bulletin No. 16 ✓. **Coherencia de la tabla §7 fila por fila** ✓, con las filas ⚠️ siendo **exactamente tres** — las dos únicas incoherencias son #1 y #6. Las cinco promesas del `description` están las cinco sostenidas. Frontmatter válido y `subsection: "teoria"` correctamente enlazada ✓. Las **48** expresiones KaTeX renderizan con `throwOnError: true`, 0 fallas ✓.
+
+**No verificable:** el **texto literal del Comentario de AISC 360-22** — las cuatro citas de C-J4.1 y C-J4.4 y la atribución a Dowswell (2016); la ficha `capJ` trae solo el cuerpo normativo, haría falta el PDF del *Commentary*. También: si C-J4.2 dice literalmente «aproximadamente 10 %» · Dowswell (2006) y el Apéndice C de la DG 29 (**el post declara que la DG 29 no fue consultada: la declaración es correcta y suficiente**) · que el 30° salga directamente del ensayo de Whitmore · el estatus de la interacción como «práctica del Manual».
+
+**Planilla del canvas:** no · ¿ya tiene? no · **0 verificaciones demanda-capacidad** — el post no tiene ni un dato de entrada de proyecto; su única cadena cerrada (r = t/√12 ⇒ L_c ≤ 7,2t ⇒ 115 mm) es la ilustración de un umbral. Los dos ejemplos hermanos ya cubren el terreno numérico. **No se recomienda generarla.**
+
+---
+
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
@@ -2330,10 +2472,11 @@ enlaces internos.
 
 Estado de auditoría por post. `—` = nunca auditado.
 
-### `blog` — blog (29)
+### `blog` — blog (30)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `capacidad-vs-resistencia` | 2026-07-29 | ⚠️ | 16 (0🔴 0🟠 · 12🟡 4🔵) · 4 aplicados (1🔴 3🟠) |
 | `harness-estructural-e1-tools-que-calculan` | 2026-07-26 | ⚠️ | 24 (1🔴 4🟠 · 14🟡 5🔵) |
 | `harness-estructural-e2-elegir-motor` | 2026-07-26 | ⚠️ | 15 (0🔴 7🟠 · 6🟡 2🔵) |
 | `harness-estructural-e3-rag-con-cita` | 2026-07-26 | ❌ | 13 (1🔴 5🟠 · 4🟡 3🔵) |
@@ -2397,10 +2540,13 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (17)
+### `acero` — acero (AISC 360-22) (20)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-gusset-esquina-apernado` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) |
+| `ejemplo-gusset-apice-chevron` | 2026-07-29 | ⚠️ | 7 (0🔴 0🟠 · 5🟡 2🔵) · 7 aplicados (2🔴 5🟠) |
+| `gusset-teoria-estados-limite` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 8🟡 4🔵) · 6 aplicados (1🔴 5🟠) |
 | `ejemplo-chevron-nch2369` | 2026-07-27 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` |
 | `ejemplo-conexion-momento-end-plate` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados |
 | `ejemplo-conexion-momento-placas-ala` | 2026-07-26 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) |

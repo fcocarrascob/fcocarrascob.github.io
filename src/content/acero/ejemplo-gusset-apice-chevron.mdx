@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — El gusset del ápice: el piso de 8.4.1 que sube la demanda 24 %, y las dos bandas de Whitmore que se traslapan"
-description: "La plancha de nudo que el ejemplo del chevron dejó pendiente. Cuatro resultados que no se ven venir: el techo de 0,7R₁ no sirve porque el piso de ½T_ye de la cláusula 8.4.1 queda 24 % más arriba (124,98 contra 100,80 tonf); a capacidad esperada plena la rotura de la sección ranurada sería aritméticamente imposible (A_e requerida 81,69 cm² contra A_g 76,0); el canto del tubo regala una holgura de rótula de 3,75t donde la norma pide 2t; y las dos bandas de Whitmore se traslapan 3,28 cm, el 13,4 % de cada una. Con planilla del canvas verificada de 23 comprobaciones."
+description: "La plancha de nudo que el ejemplo del chevron dejó pendiente. Cuatro resultados que no se ven venir: la vía de 0,7R₁ no sirve porque el piso de ½T_ye de la cláusula 8.4.1 queda 24 % más arriba (124,98 contra 100,80 tonf); a capacidad esperada plena la rotura de la sección ranurada sería aritméticamente imposible (A_e requerida 81,69 cm² contra A_g 76,0); el canto del tubo regala una holgura de rótula de 3,75t donde la norma pide 2t; y las dos bandas de Whitmore se traslapan 3,28 cm, el 13,4 % de cada una. Con planilla del canvas verificada de 24 comprobaciones."
 pubDate: 2026-07-29
 tags: ["ejemplo", "acero", "gusset", "conexiones", "nch2369", "whitmore", "marcos arriostrados", "chevron", "diseño por capacidad", "aisc360", "aisc341", "sensibilidad"]
 subsection: "ejemplos"
@@ -50,14 +50,15 @@ $$
 </Equation>
 
 <Note type="info" title="Una diferencia de 0,03 % con el post anterior, declarada">
-Ese post publica $P_{ne} = 198{,}25$ tonf porque redondea $F_{cre}$ a $2\,288$ kgf/cm² antes de
-multiplicar; acá el valor entra sin redondear ($2\,289$) y da $198{,}30$. La diferencia es
-$0{,}03$ % y no cambia ninguna verificación, pero conviene decirlo antes de que el lector
-compare las dos tablas. En la misma línea: con $L_c/r = 72{,}8$ la ecuación de Euler da
-$F_e = 3\,797$ kgf/cm² y el post anterior publica $3\,794$ — de ahí arrastra la diferencia.
+La diferencia arranca en $F_e$: con $L_c/r = 72{,}8$ la ecuación de Euler da
+$F_e = 3\,797$ kgf/cm² y el post anterior publica $3\,794$. Ese $0{,}08$ % se propaga a
+$F_{cre}$ ($2\,288{,}8$ acá contra $2\,288{,}2$ allá) y de ahí a $P_{ne}$: **198,30 contra
+198,25 tonf, un 0,03 %**. También corre el derivado: $0{,}3P_{ne}$ pasa de 59,47 a **59,49** tonf.
+Nada de eso cambia una verificación, pero conviene decirlo antes de que el lector compare las dos
+tablas.
 </Note>
 
-## 1. La demanda no es el techo: es el piso
+## 1. La demanda no es el nivel amplificado: es el piso
 
 Acá está el primer resultado, y es el que cambia todo lo que sigue. La cláusula **8.6.8** de
 NCh2369:2025[^nch] manda diseñar la conexión de una diagonal para *«tanto la capacidad esperada en tracción como la
@@ -78,9 +79,11 @@ T_r = \max\Big(\underbrace{\min(T_{ye};\ 0{,}7R_1 P_E)}_{\min(249{,}96;\ 100{,}8
 $$
 </Equation>
 
-El techo de $0{,}7R_1$ deja la demanda en 100,80 tonf, y el piso la vuelve a subir a **124,98**:
-un **24,0 % más**. En este paño, *el techo de 8.4.1 no sirve de nada* — queda por debajo del piso
-de la misma cláusula, así que la conexión se diseña con el piso.
+El nivel amplificado deja la demanda en 100,80 tonf, y el piso la vuelve a subir a **124,98**: un
+**24,0 % más**. Conviene ser preciso con los nombres, porque acá se confunden fácil: los 100,80 son
+la **base** de la cláusula (el paso 1), y el **techo** del paso 2 es $T_{ye} = 249{,}96$ tonf, que
+nunca muerde. Lo que gobierna es el **piso**. En este paño *la vía de $0{,}7R_1$ no sirve de nada*:
+el piso de la misma cláusula la deja sin efecto.
 
 En compresión el reparto es distinto, y por poco:
 
@@ -90,13 +93,13 @@ C_r = \max\big(\min(198{,}30;\ 100{,}80);\ \tfrac{1}{2}P_{ne} = 99{,}15\big) = \
 $$
 </Equation>
 
-Acá el piso queda 1,6 tonf *por debajo* del nivel amplificado y no muerde. **La misma cláusula
+Acá el piso queda 1,65 tonf *por debajo* del nivel amplificado y no muerde. **La misma cláusula
 gobierna por una vía en tracción y por otra en compresión**, y con la diagonal cargada al 0,28
 del ejemplo anterior eso no era previsible.
 
 <Figure
   src="/gusset/apice-demandas.svg"
-  alt="Dos paneles. Panel A, los tres niveles de la cláusula 8.4.1 dibujados como barras horizontales a escala: la primera, gris, es el techo de 0,7R1 por P_E con 100,80 tonf y la leyenda de que es el nivel del análisis amplificado; la segunda, roja y destacada, es el piso de media capacidad esperada con 124,98 tonf y la leyenda de que gobierna, un 24,0 % sobre el techo; la tercera, gris y la más larga, es la capacidad esperada plena T_ye con 249,96 tonf y la leyenda de que a ese nivel la sección neta es imposible. Bajo las barras, el texto explica que 8.4.1 admite bajar del nivel amplificado pero no por debajo de la mitad de la capacidad esperada, y que como el piso queda por encima del techo, el techo no sirve de nada. Panel B, siete verificaciones como barras de demanda contra capacidad de diseño, ordenadas de mayor a menor factor de uso: interfaz corte del borde en el estado B con 0,939, tubo bloque de corte 0,915, tubo soldadura de cuatro filetes 0,832, gusset Whitmore fluencia 0,792, tubo rotura de la sección ranurada 0,750, gusset pandeo con K igual a 1,2 con 0,672, y viga fluencia local del alma 0,352. Al pie se indica que gobierna el corte del borde del gusset con 0,939 y que la interacción de von Mises del mismo borde da 0,882."
+  alt="Dos paneles. Panel A, los tres niveles de la cláusula 8.4.1 dibujados como barras horizontales a escala: la primera, gris, es el nivel amplificado 0,7R1 por P_E con 100,80 tonf, rotulado como la base de 8.4.1 y no su techo; la segunda, roja y destacada, es el piso de media capacidad esperada con 124,98 tonf y la leyenda de que gobierna, un 24,0 % sobre el nivel amplificado; la tercera, gris y la más larga, es la capacidad esperada plena T_ye con 249,96 tonf, rotulada como el techo de 8.4.1(a), que nunca muerde acá. Bajo las barras, el texto explica que 8.4.1 parte del nivel amplificado, lo acota por arriba con la capacidad esperada y no deja bajar de la mitad de ella, y que acá el piso queda por encima del nivel amplificado, de modo que la vía de 0,7R1 no sirve de nada. Panel B, siete verificaciones como barras de demanda contra capacidad de diseño, ordenadas de mayor a menor factor de uso: interfaz corte del borde en el estado B con 0,939, tubo bloque de corte 0,915, tubo soldadura de cuatro filetes 0,832, gusset Whitmore fluencia 0,792, tubo rotura de la sección ranurada 0,750, gusset pandeo con K igual a 1,2 con 0,672, y viga fluencia local del alma 0,352. Al pie se indica que gobierna el corte del borde del gusset con 0,939 y que la interacción de von Mises del mismo borde da 0,882."
   caption="La escalera de 8.4.1 y el resultado. El nivel de diseño no lo fija el análisis amplificado sino el piso de la cláusula, y de ahí en adelante todo el dimensionamiento cambia."
 />
 
@@ -111,7 +114,7 @@ acotamiento por fluencia:
 
 <Equation label="Ec. J4-5, despejando el largo">
 $$
-l \ \ge \ \frac{T_r}{\phi \cdot 0{,}6F_y \cdot 4t} = \frac{124{,}98}{0{,}75 \cdot 0{,}6 \cdot 2{,}530 \cdot 4 \cdot 1{,}0} = 27{,}44 \ \text{cm}
+l \ \ge \ \frac{T_r}{\phi \cdot 0{,}6F_y \cdot 4t} = \frac{124{,}98}{0{,}75 \cdot 0{,}6 \cdot 2{,}53\,\tfrac{\text{tonf}}{\text{cm}^2} \cdot 4 \cdot 1{,}0\,\text{cm}} = 27{,}44 \ \text{cm}
 $$
 </Equation>
 
@@ -139,9 +142,12 @@ con $b = B/2 = 10$ cm. El área neta descuenta el ancho completo de la ranura ($
 dos ubicaciones: $A_n = 71{,}40$ cm², y $A_e = A_n U = 54{,}43$ cm².
 
 <Note type="tip" title="Control independiente de x̄">
-Ese $7{,}13$ cm se verificó calculando a mano el centroide de media sección —una pared completa
-de $200 \times 10$ más dos medias paredes— que da $7{,}19$ cm. La fórmula de la tabla y la
-geometría concuerdan dentro del 1 %; la diferencia es cómo la tabla trata las esquinas.
+La fórmula del caso 5 **es** el centroide exacto de la media sección, no una aproximación.
+Integrando la media sección real —una pared completa de $200 \times 10$ mm más dos medias paredes
+de $90 \times 10$— el centroide sale a $7{,}132$ cm del plano del gusset: **idéntico a la fórmula
+en todos los dígitos**. Vale la pena comprobarlo porque el error fácil es tomar las medias paredes
+de 95 mm en vez de 90 —contando dos veces el espesor de la pared lejana—, que da 7,19 cm y hace
+creer que la tabla es aproximada.
 </Note>
 
 ## 3. El contraste: a capacidad plena esto no tendría solución
@@ -152,7 +158,7 @@ sección neta sería:
 
 <Equation label="El área que haría falta">
 $$
-A_{e,\text{req}} = \frac{T_{ye}}{\phi F_u} = \frac{249{,}96}{0{,}75 \cdot 4{,}080} = 81{,}69 \ \text{cm}^2
+A_{e,\text{req}} = \frac{T_{ye}}{\phi F_u} = \frac{249{,}96\ \text{tonf}}{0{,}75 \cdot 4{,}08\,\tfrac{\text{tonf}}{\text{cm}^2}} = 81{,}69 \ \text{cm}^2
 \qquad \text{contra} \qquad
 A_g = 76{,}0 \ \text{cm}^2
 $$
@@ -167,11 +173,22 @@ $$
 $$
 </Equation>
 
-A capacidad plena habría que **reforzar la sección neta** —lo que AISC 341-22 §F2.5b(c) exige
-literalmente para diagonales con ranuras—, y el post sería otro. Con la demanda de 8.4.1 el mismo
-cociente da $124{,}98/(0{,}75 \cdot 4{,}080 \cdot 76{,}0) = 0{,}538$ y sobra área de sobra. **Ese
-salto —de imposible a uso 0,75— es lo que compra el piso de 8.4.1**, y es exactamente la frontera
-entre diseñar por capacidad plena y diseñar por resistencia amplificada.
+A capacidad plena habría que **reforzar la sección neta**, y el post sería otro. Con la demanda de
+8.4.1 el mismo cociente da $124{,}98/(0{,}75 \cdot 4{,}08 \cdot 76{,}0) = 0{,}538$ y sobra área de
+sobra. **Ese salto —de imposible a uso 0,75— es lo que compra el piso de 8.4.1**, y es exactamente
+la frontera entre diseñar por capacidad plena y diseñar por resistencia amplificada.
+
+<Note type="warning" title="Bajo AISC 341 esto no sería opcional">
+Conviene no leer el párrafo anterior como si el refuerzo fuera un requisito que solo aparece a
+capacidad plena. La cláusula **§F2.5b(c)** de AISC 341-22 es **incondicional** para las diagonales
+de un SCBF: *«el área neta efectiva de la diagonal no debe ser menor que su área bruta»*, sin
+importar con qué fuerza se diseñe la conexión. El diseño adoptado acá deja
+$A_e = 54{,}43 < A_g = 76{,}0$ cm² y **no cumpliría** ese requisito.
+
+Este ejemplo se rige por **NCh2369**, que no replica esa cláusula y en cambio ofrece la vía por
+fuerza de 8.4.1 — así que es legítimo. Pero es una diferencia real entre las dos normas, no un
+detalle de redacción, y queda anotada en las deudas del final.
+</Note>
 
 ## 4. La geometría: el canto del tubo regala la rótula
 
@@ -257,10 +274,21 @@ completa**, y ésa existe: es la interfaz de la §7, sobre los 50 cm de borde so
 resultante de las dos diagonales a la vez. El traslape es la razón por la que esa verificación no
 es redundante con las dos de Whitmore.
 
-Si se quisiera eliminar el traslape habría que separar los extremos de las diagonales hasta
-$b_w/2$ = 17,3 cm de cada lado del punto de trabajo, o sea $s_e \ge 24{,}5$ cm — un gusset
-sensiblemente más grande y una excentricidad que 8.6.6 limita a dos veces la altura de la viga.
-No conviene: sale más caro que el conservadurismo que compra.
+Si se quisiera eliminar el traslape, la condición es que la huella de cada banda llegue justo al
+eje de simetría: $b_w\cos\alpha/2 = 12{,}25$ cm horizontales de cada lado del punto de trabajo, lo
+que equivale a
+
+$$
+s_e \ \ge \ \frac{b_w}{2} = 17{,}3 \ \text{cm}
+$$
+
+es decir **2,3 cm más** que los 15 cm adoptados. Es mucho menos de lo que parecía a primera vista,
+y es un cambio perfectamente asumible: alarga el gusset unos 3 cm por lado y no toca ninguna otra
+verificación. La razón para no hacerlo acá es distinta y más floja: el traslape ya queda cubierto
+por la verificación de la interfaz, y separar los extremos aumenta la excentricidad entre puntos
+de trabajo que 8.6.6 limita a dos veces la altura de la viga. **Con 2,3 cm en juego, cualquiera de
+las dos decisiones es defendible** — y conviene decirlo así en vez de presentarlo como si la
+alternativa fuera cara.
 </Note>
 
 ## 6. El pandeo del gusset, y el supuesto que no alcanza a decidir
@@ -310,15 +338,21 @@ decidir **qué estado simultáneo** se verifica, porque no hay uno solo:
 | **B** | Amplificado simétrico: ambas en $0{,}7R_1P_E$, una en tracción y otra en compresión | **142,55** | 0,00 | 142,55 |
 
 Las componentes salen del equilibrio del nudo, con las horizontales sumándose y las verticales
-restándose:
+restándose. Midiendo $\alpha$ desde la **horizontal**:
 
 <Equation label="Equilibrio del nudo">
 $$
-H = \sin\alpha\,(T + C)
+H = \cos\alpha\,(T + C)
 \qquad
 V = \sin\alpha\,(T - C)
 $$
 </Equation>
+
+Acá $\alpha = 45°$, así que $\sin\alpha = \cos\alpha = 0{,}7071$ y las dos componentes salen del
+mismo factor. **Ojo al reusar estas expresiones con otro ángulo**: la que va con el coseno es la
+paralela al cordón y la del seno la perpendicular, y a 45° la coincidencia numérica esconde cuál
+es cuál. El mismo cuidado vale para la ecuación del canto del tubo de §4, cuya forma general es
+$s_e \ge \text{gap}/\sin\alpha + (H/2)\cot\alpha$.
 
 **El estado B gobierna el corte y el A la componente normal.** Ninguno domina al otro, así que
 hay que llevar los dos.
@@ -331,7 +365,7 @@ $0{,}6R_yF_yt_p/\alpha_s$, donde $F_y$, $R_y$ y $t_p$ son **de la plancha**.
 
 <Equation label="Sec. F2.6c.4">
 $$
-q_{req} = 0{,}6 R_{yg} F_y t_g = 0{,}6 \cdot 1{,}30 \cdot 2{,}530 \cdot 2{,}0 = 3{,}947 \ \text{tonf/cm}
+q_{req} = 0{,}6 R_{yg} F_y t_g = 0{,}6 \cdot 1{,}30 \cdot 2{,}53\,\tfrac{\text{tonf}}{\text{cm}^2} \cdot 2{,}0\,\text{cm} = 3{,}947 \ \text{tonf/cm}
 \qquad\Rightarrow\qquad
 w_{req} = 12{,}61 \ \text{mm}
 $$
@@ -440,6 +474,11 @@ más convincente que elegir un valor y defenderlo.
 
 ## ¿Dónde falla esto?
 
+- **Bajo AISC 341 este detalle no pasaría.** §F2.5b(c) exige, sin condiciones, que el área neta
+  efectiva de la diagonal no sea menor que la bruta, y acá $A_e = 54{,}43$ contra
+  $A_g = 76{,}0$ cm². NCh2369 no replica esa cláusula y ofrece la vía por fuerza de 8.4.1, así que
+  el diseño es conforme a la norma que rige — pero un proyecto que se comprometa además con AISC
+  341 tendría que reforzar la sección neta.
 - **El borde libre inferior mide 63,64 cm, o 31,8 espesores, y no se verificó.** Es la deuda
   abierta del ejemplo: el criterio de estabilidad del borde libre de un gusset es práctica de la
   **Design Guide 29**, que no está entre las fuentes de este blog. Un borde de esa longitud
@@ -463,7 +502,7 @@ más convincente que elegir un valor y defenderlo.
 
 ## Reproducir esto con tus datos
 
-La planilla del canvas trae los 102 pasos y las 23 verificaciones de este ejemplo, con todos los
+La planilla del canvas trae los 105 pasos y las 24 verificaciones de este ejemplo, con todos los
 datos de entrada arriba y a la vista:
 
 **[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-apice-chevron)** ·

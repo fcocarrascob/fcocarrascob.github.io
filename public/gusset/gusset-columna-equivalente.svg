@@ -42,12 +42,16 @@
   <text x="296" y="122" font-size="10.5" fill="#333" font-weight="bold">diagonal</text>
   <circle cx="167.9" cy="238.1" r="3.4" fill="#c0392b"/>
 
-  <!-- longitud de pandeo sobre el eje -->
+  <!-- las tres longitudes de pandeo, paralelas al eje: sobre el eje y desde los dos bordes de la banda -->
   <line x1="167.9" y1="238.1" x2="80" y2="326" stroke="#2c7a4b" stroke-width="1.8" marker-end="url(#gr)"/>
-  <text x="142" y="252" font-size="12" fill="#2c7a4b" font-weight="bold">L</text>
+  <text x="146" y="250" font-size="11" fill="#2c7a4b" font-weight="bold">L<tspan font-size="8" dy="2">1</tspan></text>
+  <line x1="147.0" y1="316.2" x2="134.5" y2="328.7" stroke="#2c7a4b" stroke-width="1.6" marker-end="url(#gr)"/>
+  <text x="157" y="327" font-size="11" fill="#2c7a4b" font-weight="bold">L<tspan font-size="8" dy="2">2</tspan></text>
+  <line x1="89.8" y1="259.0" x2="77.3" y2="271.5" stroke="#2c7a4b" stroke-width="1.6" marker-end="url(#gr)"/>
+  <text x="95" y="253" font-size="11" fill="#2c7a4b" font-weight="bold">L<tspan font-size="8" dy="2">3</tspan></text>
 
   <text x="40" y="382" font-size="9.5" fill="#666">La práctica mide <tspan font-weight="bold">tres</tspan> longitudes —sobre el eje y desde los dos</text>
-  <text x="40" y="395" font-size="9.5" fill="#666">bordes de la banda, todas paralelas al eje— y toma el promedio.</text>
+  <text x="40" y="395" font-size="9.5" fill="#666">bordes de la banda, todas paralelas al eje— y toma el promedio o el máximo.</text>
   <text x="40" y="412" font-size="9.5" fill="#666">El Comentario J4.4 admite que en un gusset de esquina, restringido</text>
   <text x="40" y="425" font-size="9.5" fill="#666">en dos bordes, <tspan font-weight="bold" fill="#c0392b">es difícil establecer tanto L como K</tspan>, y remite a la</text>
   <text x="40" y="438" font-size="9.5" fill="#666">guía empírica de Dowswell (2006).</text>
