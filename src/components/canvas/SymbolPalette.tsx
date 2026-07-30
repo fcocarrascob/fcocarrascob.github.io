@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { RegionKind } from '../../lib/worksheet';
 
 export interface SymbolEntry {
   /** Texto visible en el botón. */
@@ -122,7 +123,7 @@ interface Props {
   /** Inserta el símbolo en el input de la región activa. */
   onInsert: (entry: SymbolEntry) => void;
   /** Tipo de la región en edición; habilita los snippets de programa. */
-  activeKind?: 'math' | 'text' | 'program' | null;
+  activeKind?: RegionKind | null;
 }
 
 export default function SymbolPalette({ onInsert, activeKind }: Props) {

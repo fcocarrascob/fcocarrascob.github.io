@@ -115,6 +115,15 @@ body {
   .worksheet-print .wp-raw {
     font-family: 'JetBrains Mono', monospace;
   }
+  .worksheet-print .wp-fig {
+    margin: 0.6rem 0;
+    break-inside: avoid;
+  }
+  /* El ancho en px de la hoja se respeta, pero nunca desborda el papel. */
+  .worksheet-print .wp-fig img {
+    max-width: 100%;
+    height: auto;
+  }
   .worksheet-print .wp-ok {
     color: #15803d;
     font-weight: 700;

@@ -20,7 +20,8 @@ function Katex({ tex }: { tex: string }) {
  *
  * Convenciones de la hoja: la primera región de texto es el título; las de texto
  * con "━" son encabezados de sección; el resto, etiquetas. Las regiones math/programa
- * muestran su LaTeX ya calculado y el veredicto ✓/✗ de las comparaciones.
+ * muestran su LaTeX ya calculado y el veredicto ✓/✗ de las comparaciones, y las de
+ * imagen se intercalan como figuras en el punto que les toca por orden de lectura.
  */
 export default function WorksheetPrint({
   regions,
@@ -52,6 +53,14 @@ export default function WorksheetPrint({
 
       {ordered.map((r) => {
         if (r.id === titleRegion?.id) return null; // ya está en el encabezado
+
+        if (r.kind === 'image') {
+          return (
+            <figure key={r.id} className="wp-fig">
+              <img src={r.src} alt="" style={{ width: r.w ? `${r.w}px` : undefined }} />
+            </figure>
+          );
+        }
 
         if (r.kind === 'text') {
           if (r.src.includes('━')) {

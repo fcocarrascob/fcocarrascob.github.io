@@ -4,6 +4,12 @@ import SymbolPalette, { type SymbolEntry } from './SymbolPalette';
 import WorksheetPrint from './WorksheetPrint';
 import { evaluateSheet, type Region, type RegionKind } from '../../lib/worksheet';
 import { TEMPLATES, type Template } from '../../lib/worksheet-templates';
+import {
+  IMAGE_WARN_BYTES,
+  fileToImagePayload,
+  fitToSheet,
+  isImageFile,
+} from '../../lib/canvas-image';
 
 const STORAGE_KEY = 'structpad.worksheet.v1';
 
@@ -50,20 +56,43 @@ function hasStoredWork(): boolean {
 }
 
 const toolBtn =
-  'rounded border border-border bg-white px-2.5 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent';
+  'whitespace-nowrap rounded border border-border bg-white px-2.5 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent';
 
 export default function MathCanvas() {
   const [regions, setRegions] = useState<Region[]>(loadInitial);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  /** Tipo de la próxima región a crear con clic ('text' tras pulsar el botón Texto). */
-  const [nextKind, setNextKind] = useState<RegionKind>('math');
+  /**
+   * Punto de inserción: dónde caerá el próximo bloque. Lo fija el clic izquierdo
+   * en la hoja (sin crear nada) y lo consumen los botones de la barra, el pegado
+   * de imágenes y el tecleo directo. `null` = todavía no se ha fijado.
+   */
+  const [insertAt, setInsertAt] = useState<{ x: number; y: number } | null>(null);
   /** Menú desplegable de plantillas abierto. */
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  /** Menú desplegable de origen de la imagen (portapapeles / archivo) abierto. */
+  const [imageMenuOpen, setImageMenuOpen] = useState(false);
+  /** Aviso del autoguardado (cuota llena, storage deshabilitado). */
+  const [storageWarn, setStorageWarn] = useState<string | null>(null);
+  /** Hay un archivo sobrevolando la hoja (realce de la zona de soltado). */
+  const [dropping, setDropping] = useState(false);
 
   const sheetRef = useRef<HTMLDivElement>(null);
   const activeInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imageFileRef = useRef<HTMLInputElement>(null);
+
+  // Espejos en ref del punto de inserción y de las regiones: los manejadores de
+  // pegado y de teclado se suscriben una sola vez y necesitan el valor vigente
+  // sin volver a suscribirse en cada pulsación.
+  const insertRef = useRef(insertAt);
+  const regionsRef = useRef(regions);
+  useEffect(() => {
+    insertRef.current = insertAt;
+  }, [insertAt]);
+  useEffect(() => {
+    regionsRef.current = regions;
+  }, [regions]);
 
   const results = useMemo(() => evaluateSheet(regions), [regions]);
 
@@ -116,6 +145,10 @@ export default function MathCanvas() {
   }, []);
 
   // Autoguardado con debounce.
+  //
+  // El fallo NO es silencioso: una hoja con imágenes pegadas puede superar la
+  // cuota de `localStorage` (~5 MB), y a partir de ahí todo lo que el usuario
+  // escriba se perdería al recargar sin que nada lo indique.
   useEffect(() => {
     const t = setTimeout(() => {
       try {
@@ -123,8 +156,16 @@ export default function MathCanvas() {
         // no se persisten por si la página se cierra con una a medio crear.
         const persistable = regions.filter((r) => r.src.trim() !== '');
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, regions: persistable }));
-      } catch {
-        // cuota llena o storage deshabilitado: ignorar
+        setStorageWarn(null);
+      } catch (err) {
+        const quota =
+          err instanceof DOMException &&
+          (err.name === 'QuotaExceededError' || err.name === 'NS_ERROR_DOM_QUOTA_REACHED');
+        setStorageWarn(
+          quota
+            ? 'La hoja superó la cuota del navegador y dejó de autoguardarse. Exporta el JSON y borra alguna imagen.'
+            : 'No se pudo autoguardar la hoja en este navegador. Exporta el JSON para no perder el trabajo.',
+        );
       }
     }, 300);
     return () => clearTimeout(t);
@@ -142,37 +183,179 @@ export default function MathCanvas() {
     setActiveId(null);
   }, [activeId]);
 
+  /** Coordenadas del puntero relativas a la hoja. */
+  const sheetPoint = (e: { clientX: number; clientY: number }) => {
+    const rect = sheetRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 32, y: 32 };
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+
+  /**
+   * Dónde cae el próximo bloque: el punto fijado con el clic o, si aún no se ha
+   * fijado ninguno, el final de la hoja (así el primer botón pulsado nunca
+   * escribe encima de lo que ya hay).
+   */
+  const nextSpot = useCallback((): { x: number; y: number } => {
+    if (insertRef.current) return insertRef.current;
+    const rs = regionsRef.current;
+    const maxY = rs.length ? Math.max(...rs.map((r) => r.y + (r.h ?? 0))) : 0;
+    return { x: 32, y: snap(maxY + 48) };
+  }, []);
+
+  /**
+   * Crea un bloque en el punto de inserción y lo deja en edición. El punto baja
+   * por debajo del bloque recién creado, de modo que pulsar dos veces el mismo
+   * botón encadena bloques en columna en vez de superponerlos.
+   */
+  const insertRegion = useCallback(
+    (kind: Exclude<RegionKind, 'image'>, src = '') => {
+      const { x, y } = nextSpot();
+      const region: Region = { id: newId(), kind, x: snap(x), y: snap(y), src };
+      setRegions((prev) => [...prev, region]);
+      setSelected(new Set());
+      setActiveId(region.id);
+      setInsertAt({ x: snap(x), y: snap(y) + (kind === 'program' ? 5 * GRID : 3 * GRID) });
+    },
+    [nextSpot],
+  );
+
+  /**
+   * Inserta imágenes en la hoja. Se usa desde el pegado, el soltado de archivos
+   * y el botón de la barra. Varias imágenes a la vez se apilan hacia abajo.
+   */
+  const addImages = useCallback(
+    async (files: File[], at?: { x: number; y: number }) => {
+    const imgs = files.filter(isImageFile);
+    if (imgs.length === 0) return;
+    const punto = at ?? nextSpot();
+    const { x } = punto;
+    let y = punto.y;
+    let pesada = false;
+
+    for (const file of imgs) {
+      try {
+        const payload = await fileToImagePayload(file);
+        const { w, h } = fitToSheet(payload.naturalW, payload.naturalH);
+        if (payload.bytes > IMAGE_WARN_BYTES) pesada = true;
+        const region: Region = {
+          id: newId(),
+          kind: 'image',
+          x: snap(x),
+          y: snap(y),
+          src: payload.src,
+          w: snap(w),
+          h,
+        };
+        setRegions((prev) => [...prev, region]);
+        setActiveId(null);
+        setSelected(new Set([region.id]));
+        y += h + GRID;
+      } catch {
+        alert(`No se pudo leer «${file.name}» como imagen.`);
+      }
+    }
+
+    // El punto de inserción baja tras las imágenes colocadas: dos pegados
+    // seguidos sin clic de por medio se encadenan en vez de taparse.
+    setInsertAt({ x: snap(x), y: snap(y) });
+
+    if (pesada) {
+      alert(
+        'La imagen quedó pesada aun tras reescalarla. Se guarda dentro de la hoja ' +
+          '(localStorage y JSON exportado), así que conviene recortarla antes de pegarla.',
+      );
+    }
+    },
+    [nextSpot],
+  );
+
+  /**
+   * Lee una imagen del portapapeles y la inserta (opción «Desde el portapapeles»).
+   *
+   * `navigator.clipboard.read()` necesita contexto seguro, gesto del usuario y,
+   * en Chrome, un permiso que el navegador puede pedir o denegar. Cuando no está
+   * disponible o falla, se remite al Ctrl+V de toda la vida, que sigue montado y
+   * no depende de ningún permiso.
+   */
+  const pasteFromClipboard = useCallback(async () => {
+    setImageMenuOpen(false);
+    const alPegado = 'Pulsa Ctrl+V con la hoja enfocada y la imagen se insertará igual.';
+    if (!navigator.clipboard?.read) {
+      alert(`Este navegador no deja leer el portapapeles desde un botón. ${alPegado}`);
+      return;
+    }
+    try {
+      const items = await navigator.clipboard.read();
+      const files: File[] = [];
+      for (const item of items) {
+        const type = item.types.find((t) => t.startsWith('image/'));
+        if (!type) continue;
+        const blob = await item.getType(type);
+        files.push(new File([blob], `portapapeles.${type.split('/')[1]}`, { type }));
+      }
+      if (files.length === 0) {
+        alert('No hay ninguna imagen en el portapapeles.');
+        return;
+      }
+      await addImages(files);
+    } catch {
+      alert(`No se pudo leer el portapapeles (puede que el navegador lo bloquee). ${alPegado}`);
+    }
+  }, [addImages]);
+
+  // Pegar una imagen del portapapeles (Ctrl+V) la coloca en el punto de
+  // inserción. Se ignora mientras se edita una región: ahí el pegado es de texto.
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const el = document.activeElement;
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
+      const files = Array.from(e.clipboardData?.files ?? []).filter(isImageFile);
+      if (files.length === 0) return;
+      e.preventDefault();
+      void addImages(files);
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [addImages]);
+
+  /**
+   * Clic izquierdo en la hoja: solo fija el punto de inserción. No crea nada,
+   * para poder elegir el sitio primero y el tipo de bloque después (con los
+   * botones de la barra, tecleando, o con doble clic para una fórmula).
+   */
   const onSheetClick = (e: React.MouseEvent) => {
     if (e.target !== e.currentTarget) return;
     setSelected(new Set());
-    const rect = e.currentTarget.getBoundingClientRect();
-    const kind: RegionKind = e.shiftKey ? 'text' : nextKind;
-    const region: Region = {
-      id: newId(),
-      kind,
-      x: snap(e.clientX - rect.left),
-      y: snap(e.clientY - rect.top - GRID / 2),
-      src: '',
-    };
-    setNextKind('math');
-    setRegions((prev) => [...prev, region]);
-    setActiveId(region.id);
+    const p = sheetPoint(e);
+    setInsertAt({ x: snap(p.x), y: snap(p.y - GRID / 2) });
   };
 
-  // Supr/Retroceso elimina la selección (fuera de edición).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Delete' && e.key !== 'Backspace') return;
       const el = document.activeElement;
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
-      if (selected.size === 0) return;
+      // Con un menú abierto el teclado es del menú, no de la hoja.
+      if (templatesOpen || imageMenuOpen) return;
+
+      // Supr/Retroceso elimina la selección (fuera de edición).
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selected.size === 0) return;
+        e.preventDefault();
+        setRegions((prev) => prev.filter((r) => !selected.has(r.id)));
+        setSelected(new Set());
+        return;
+      }
+
+      // Teclear sin nada en edición abre una fórmula en el punto de inserción
+      // con ese primer carácter: es el camino rápido al bloque más frecuente,
+      // ahora que el clic ya no crea uno por sí solo.
+      if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
       e.preventDefault();
-      setRegions((prev) => prev.filter((r) => !selected.has(r.id)));
-      setSelected(new Set());
+      insertRegion('math', e.key);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selected]);
+  }, [selected, insertRegion, templatesOpen, imageMenuOpen]);
 
   const insertSymbol = useCallback(
     (entry: SymbolEntry) => {
@@ -233,6 +416,7 @@ export default function MathCanvas() {
     setRegions(tpl.regions.map((r) => ({ ...r })));
     setSelected(new Set());
     setActiveId(null);
+    setInsertAt(null);
   };
 
   const importJson = (file: File) => {
@@ -243,6 +427,7 @@ export default function MathCanvas() {
         setRegions(data.regions as Region[]);
         setSelected(new Set());
         setActiveId(null);
+        setInsertAt(null);
       } catch {
         alert('El archivo no es una hoja de cálculo válida.');
       }
@@ -252,21 +437,77 @@ export default function MathCanvas() {
   return (
     <>
     <div className="app-screen flex h-full w-full flex-col">
-      <div className="flex items-center gap-2 border-b border-border bg-surface/80 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border bg-surface/80 px-3 py-2">
         <button
-          className={`${toolBtn} ${nextKind === 'text' ? '!border-accent !text-accent' : ''}`}
-          onClick={() => setNextKind((k) => (k === 'text' ? 'math' : 'text'))}
-          title="Pulsa y luego haz clic en la hoja para colocar texto (o Shift+clic directo)"
+          className={toolBtn}
+          onClick={() => insertRegion('math')}
+          title="Inserta una fórmula en el punto de inserción (también: doble clic en la hoja, o teclea directamente)"
+        >
+          = Fórmula
+        </button>
+        <button
+          className={toolBtn}
+          onClick={() => insertRegion('text')}
+          title="Inserta un bloque de texto en el punto de inserción"
         >
           T Texto
         </button>
         <button
-          className={`${toolBtn} ${nextKind === 'program' ? '!border-accent !text-accent' : ''}`}
-          onClick={() => setNextKind((k) => (k === 'program' ? 'math' : 'program'))}
-          title="Pulsa y luego haz clic en la hoja para colocar un bloque de programa"
+          className={toolBtn}
+          onClick={() => insertRegion('program')}
+          title="Inserta un bloque de programa en el punto de inserción"
         >
           ƒ Programa
         </button>
+        <div className="relative">
+          <button
+            className={`${toolBtn} ${imageMenuOpen ? '!border-accent !text-accent' : ''}`}
+            onClick={() => setImageMenuOpen((o) => !o)}
+            title="Inserta una imagen en el punto de inserción (también: Ctrl+V, o arrastrar el archivo a la hoja)"
+          >
+            ▣ Imagen ▾
+          </button>
+          {imageMenuOpen && (
+            <>
+              {/* Capa para cerrar el menú al hacer clic fuera. */}
+              <div className="fixed inset-0 z-30" onClick={() => setImageMenuOpen(false)} />
+              <div className="absolute left-0 top-full z-40 mt-1 w-64 rounded border border-border bg-white py-1 shadow-lg">
+                <button
+                  className="block w-full px-3 py-1.5 text-left hover:bg-accent/10"
+                  onClick={pasteFromClipboard}
+                >
+                  <span className="block text-xs font-medium text-ink">Desde el portapapeles</span>
+                  <span className="block text-[10px] text-muted">
+                    Lo mismo que pulsar Ctrl+V sobre la hoja
+                  </span>
+                </button>
+                <button
+                  className="block w-full px-3 py-1.5 text-left hover:bg-accent/10"
+                  onClick={() => {
+                    setImageMenuOpen(false);
+                    imageFileRef.current?.click();
+                  }}
+                >
+                  <span className="block text-xs font-medium text-ink">Desde un archivo…</span>
+                  <span className="block text-[10px] text-muted">
+                    Abre el explorador; también sirve arrastrarlo a la hoja
+                  </span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+        <input
+          ref={imageFileRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            void addImages(Array.from(e.target.files ?? []));
+            e.target.value = '';
+          }}
+        />
         <span className="mx-1 h-4 w-px bg-border" />
         <div className="relative">
           <button
@@ -326,34 +567,82 @@ export default function MathCanvas() {
               setRegions([]);
               setSelected(new Set());
               setActiveId(null);
+              setInsertAt(null);
             }
           }}
         >
           Limpiar
         </button>
         <span className="ml-auto hidden text-xs text-muted sm:block">
-          Clic: nueva región · doble clic: editar · Supr: borrar
+          Clic: fija el punto · doble clic: fórmula · Ctrl+V: imagen · Supr: borrar
         </span>
       </div>
+
+      {storageWarn && (
+        <div className="flex items-center gap-2 border-b border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
+          <span>⚠ {storageWarn}</span>
+          <button className="ml-auto underline" onClick={() => setStorageWarn(null)}>
+            Ocultar
+          </button>
+        </div>
+      )}
 
       <div className="flex min-h-0 flex-1">
         <div className="relative flex-1 overflow-auto bg-white">
           <div
             ref={sheetRef}
-            className="relative cursor-crosshair"
+            className={`relative cursor-crosshair ${dropping ? 'ring-2 ring-inset ring-accent' : ''}`}
             style={{
               minWidth: '100%',
               minHeight: '100%',
               width: 1600,
-              // Crece para acomodar plantillas largas (deja margen tras la última región).
-              height: Math.max(1400, (regions.length ? Math.max(...regions.map((r) => r.y)) : 0) + 240),
+              // Crece para acomodar plantillas largas (deja margen tras la última
+              // región). Una imagen ocupa hacia abajo su alto, no solo su `y`.
+              height: Math.max(
+                1400,
+                (regions.length ? Math.max(...regions.map((r) => r.y + (r.h ?? 0))) : 0) + 240,
+              ),
               backgroundImage:
                 'linear-gradient(to right, rgba(100,116,139,0.12) 1px, transparent 1px), ' +
                 'linear-gradient(to bottom, rgba(100,116,139,0.12) 1px, transparent 1px)',
               backgroundSize: `${GRID}px ${GRID}px`,
             }}
             onClick={onSheetClick}
+            onDoubleClick={(e) => {
+              // Camino rápido al bloque más frecuente. El `click` previo ya dejó
+              // el punto de inserción justo aquí.
+              if (e.target !== e.currentTarget) return;
+              insertRegion('math');
+            }}
+            onDragOver={(e) => {
+              if (!e.dataTransfer.types.includes('Files')) return;
+              e.preventDefault();
+              setDropping(true);
+            }}
+            onDragLeave={(e) => {
+              if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+              setDropping(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDropping(false);
+              void addImages(Array.from(e.dataTransfer.files), sheetPoint(e));
+            }}
           >
+            {/* Punto de inserción: barra tipo cursor de texto. Se esconde
+                mientras se edita una región, donde solo sería ruido. */}
+            {insertAt && !activeId && (
+              <div
+                className="pointer-events-none absolute flex items-center gap-1"
+                style={{ left: insertAt.x, top: insertAt.y }}
+              >
+                <span className="block h-6 w-0.5 animate-pulse bg-accent" />
+                <span className="text-[10px] leading-none text-accent/60">
+                  teclea o elige un bloque
+                </span>
+              </div>
+            )}
+
             {regions.map((r) => (
               <MathRegion
                 key={r.id}
@@ -376,6 +665,7 @@ export default function MathCanvas() {
                   })
                 }
                 onMove={(x, y) => updateRegion(r.id, { x, y })}
+                onResize={(w, h) => updateRegion(r.id, { w, h })}
                 registerInput={(el) => {
                   // Solo registrar montajes; insertSymbol ya valida que haya
                   // región activa, así que una referencia obsoleta es inocua.

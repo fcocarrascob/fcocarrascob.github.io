@@ -59,7 +59,7 @@ math.import(
 /** Tope de iteraciones por programa (anti-bucle-infinito; evita colgar la pestaña). */
 const MAX_ITERS = 100_000;
 
-export type RegionKind = 'math' | 'text' | 'program';
+export type RegionKind = 'math' | 'text' | 'program' | 'image';
 
 export interface Region {
   id: string;
@@ -67,8 +67,14 @@ export interface Region {
   /** Posición en la hoja (px), ajustada a la cuadrícula. */
   x: number;
   y: number;
-  /** Texto crudo: expresión math.js o texto libre según `kind`. */
+  /**
+   * Texto crudo: expresión math.js o texto libre según `kind`. En una región
+   * `image` es la fuente: una ruta del sitio (`/esquemas/x.svg`) o un data URI.
+   */
   src: string;
+  /** Solo `image`: tamaño mostrado en la hoja (px). Sin él, el natural. */
+  w?: number;
+  h?: number;
 }
 
 export interface ParsedMath {
@@ -206,8 +212,9 @@ export function evaluateSheet(regions: Region[]): SheetResults {
   const results: SheetResults = {};
   const scope: Record<string, unknown> = {};
 
+  // `text` e `image` no se evalúan: no aportan ni consumen variables.
   const ordered = regions
-    .filter((r) => r.kind !== 'text')
+    .filter((r) => r.kind !== 'text' && r.kind !== 'image')
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
   const ctx: ProgramContext = {

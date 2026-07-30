@@ -25,6 +25,8 @@
 //   { "version": 1,
 //     "meta": { "titulo": "...", "esperadoFalso": { "<id>": "por qué" } },
 //     "regions": [ { "id": "...", "kind": "math", "x": 0, "y": 0, "src": "..." } ] }
+//
+// Las regiones `image` no se evalúan: se cuentan y se omiten del desarrollo.
 
 import { build } from 'esbuild';
 import { readFile, rm } from 'node:fs/promises';
@@ -100,10 +102,17 @@ const errores = [];
 const verdictos = [];
 const filas = [];
 let n = 0;
+let figuras = 0;
 
 for (const r of ordenadas) {
   if (r.kind === 'text') {
     filas.push({ tipo: 'seccion', texto: r.src });
+    continue;
+  }
+  // Las imágenes no se evalúan; se cuentan y se omiten del desarrollo (su `src`
+  // puede ser un data URI de cientos de kB, que no tiene nada que hacer en una tabla).
+  if (r.kind === 'image') {
+    figuras += 1;
     continue;
   }
   const res = results[r.id] ?? {};
@@ -130,7 +139,11 @@ for (const r of ordenadas) {
 const titulo = meta.titulo ?? path.basename(planillaPath);
 console.log(`\nPlanilla: ${titulo}`);
 console.log(`Archivo:  ${path.relative(process.cwd(), planillaPath)}`);
-console.log(`Regiones: ${regions.length}  ·  pasos: ${n}  ·  verificaciones: ${verdictos.length}\n`);
+console.log(
+  `Regiones: ${regions.length}  ·  pasos: ${n}  ·  verificaciones: ${verdictos.length}` +
+    (figuras ? `  ·  figuras: ${figuras}` : '') +
+    '\n',
+);
 
 for (const e of errores) {
   console.log(`  [ERROR] ${e.src}`);
