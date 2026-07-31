@@ -62,7 +62,7 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 | `ejemplo-columna-galpon-compresion` | | | | | | ⬜ |
 | `ejemplo-conexion-apernada-corte` | | | | | | ⬜ |
 | `ejemplo-conexion-doble-angulo` | | | | | | ⬜ |
-| `ejemplo-conexion-momento-end-plate` | | | | | | ⬜ |
+| `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 0 | 2026-07-31 | ✅ |
 | `ejemplo-conexion-momento-placas-ala` | | | | | | ⬜ |
 | `ejemplo-empalme-apernado-viga` | | | | | | ⬜ |
 | `ejemplo-viga-carrilera-puente-grua` | | | | | | ⬜ |
