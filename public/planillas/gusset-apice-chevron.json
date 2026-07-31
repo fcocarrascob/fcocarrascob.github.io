@@ -1098,414 +1098,423 @@
       "id": "r155",
       "kind": "text",
       "x": 40,
-      "y": 7507,
+      "y": 7936,
       "src": "━━ 10 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
     },
     {
       "id": "r156",
       "kind": "text",
       "x": 40,
-      "y": 7553,
+      "y": 7982,
       "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
     },
     {
       "id": "c_fye",
       "kind": "math",
       "x": 40,
-      "y": 7599,
+      "y": 8028,
       "src": "abs(F_ye - 3289 kgf/cm^2) < 0.5 kgf/cm^2 ="
     },
     {
       "id": "c_tye",
       "kind": "math",
       "x": 40,
-      "y": 7645,
+      "y": 8074,
       "src": "abs(T_ye - 249.96 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_fe",
       "kind": "math",
       "x": 40,
-      "y": 7691,
+      "y": 8120,
       "src": "abs(F_e - 3797 kgf/cm^2) < 0.5 kgf/cm^2 ="
     },
     {
       "id": "c_fcre",
       "kind": "math",
       "x": 40,
-      "y": 7737,
+      "y": 8166,
       "src": "abs(F_cre - 2288.8 kgf/cm^2) < 0.05 kgf/cm^2 ="
     },
     {
       "id": "c_pne",
       "kind": "math",
       "x": 40,
-      "y": 7783,
+      "y": 8212,
       "src": "abs(P_ne - 198.30 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_pres",
       "kind": "math",
       "x": 40,
-      "y": 7829,
+      "y": 8258,
       "src": "abs(P_res - 59.49 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_qcap",
       "kind": "math",
       "x": 40,
-      "y": 7875,
+      "y": 8304,
       "src": "abs(Q_cap - 100.80 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_treq",
       "kind": "math",
       "x": 40,
-      "y": 7921,
+      "y": 8350,
       "src": "abs(T_req - 124.98 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_cpiso",
       "kind": "math",
       "x": 40,
-      "y": 7967,
+      "y": 8396,
       "src": "abs(C_piso - 99.15 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_creq",
       "kind": "math",
       "x": 40,
-      "y": 8013,
+      "y": 8442,
       "src": "abs(C_req - 100.80 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_lmin",
       "kind": "math",
       "x": 40,
-      "y": 8059,
+      "y": 8488,
       "src": "abs(l_min - 27.44 cm) < 0.005 cm ="
     },
     {
       "id": "c_blo",
       "kind": "math",
       "x": 40,
-      "y": 8105,
+      "y": 8534,
       "src": "abs(Rd_blo - 136.62 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_xb",
       "kind": "math",
       "x": 40,
-      "y": 8151,
+      "y": 8580,
       "src": "abs(x_b - 7.13 cm) < 0.005 cm ="
     },
     {
       "id": "c_u",
       "kind": "math",
       "x": 40,
-      "y": 8197,
+      "y": 8626,
       "src": "abs(U - 0.762) < 0.0005 ="
     },
     {
       "id": "c_an",
       "kind": "math",
       "x": 40,
-      "y": 8243,
+      "y": 8672,
       "src": "abs(A_n - 71.40 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_ae",
       "kind": "math",
       "x": 40,
-      "y": 8289,
+      "y": 8718,
       "src": "abs(A_e - 54.43 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_rot",
       "kind": "math",
       "x": 40,
-      "y": 8335,
+      "y": 8764,
       "src": "abs(Rd_rot - 166.55 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_sol",
       "kind": "math",
       "x": 40,
-      "y": 8381,
+      "y": 8810,
       "src": "abs(Rd_sol - 150.27 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_aereq",
       "kind": "math",
       "x": 40,
-      "y": 8427,
+      "y": 8856,
       "src": "abs(A_ereq - 81.69 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_razon",
       "kind": "math",
       "x": 40,
-      "y": 8473,
+      "y": 8902,
       "src": "abs(razon - 1.075) < 0.0005 ="
     },
     {
       "id": "c_u84",
       "kind": "math",
       "x": 40,
-      "y": 8519,
+      "y": 8948,
       "src": "abs(T_req/(0.75*F_u*A_g) - 0.537) < 0.0005 ="
     },
     {
       "id": "c_sgeom",
       "kind": "math",
       "x": 40,
-      "y": 8565,
+      "y": 8994,
       "src": "abs(s_geom - 14.24 cm) < 0.005 cm ="
     },
     {
       "id": "c_hol",
       "kind": "math",
       "x": 40,
-      "y": 8611,
+      "y": 9040,
       "src": "abs(hol - 7.50 cm) < 0.005 cm ="
     },
     {
       "id": "c_holreq",
       "kind": "math",
       "x": 40,
-      "y": 8657,
+      "y": 9086,
       "src": "abs(hol_req - 4.00 cm) < 0.005 cm ="
     },
     {
       "id": "c_bw",
       "kind": "math",
       "x": 40,
-      "y": 8703,
+      "y": 9132,
       "src": "abs(b_w - 34.64 cm) < 0.005 cm ="
     },
     {
       "id": "c_aw",
       "kind": "math",
       "x": 40,
-      "y": 8749,
+      "y": 9178,
       "src": "abs(A_w - 69.28 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_flu",
       "kind": "math",
       "x": 40,
-      "y": 8795,
+      "y": 9224,
       "src": "abs(Rd_flu - 157.76 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_rog",
       "kind": "math",
       "x": 40,
-      "y": 8841,
+      "y": 9270,
       "src": "abs(Rd_rog - 212.00 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_hue",
       "kind": "math",
       "x": 40,
-      "y": 8887,
+      "y": 9316,
       "src": "abs(huella - 24.49 cm) < 0.005 cm ="
     },
     {
       "id": "c_sep",
       "kind": "math",
       "x": 40,
-      "y": 8933,
+      "y": 9362,
       "src": "abs(sep - 21.21 cm) < 0.005 cm ="
     },
     {
       "id": "c_trasl",
       "kind": "math",
       "x": 40,
-      "y": 8979,
+      "y": 9408,
       "src": "abs(trasl - 3.28 cm) < 0.005 cm ="
     },
     {
       "id": "c_rb",
       "kind": "math",
       "x": 40,
-      "y": 9025,
+      "y": 9454,
       "src": "abs(r_b - 0.577 cm) < 0.0005 cm ="
     },
     {
       "id": "c_umb",
       "kind": "math",
       "x": 40,
-      "y": 9071,
+      "y": 9500,
       "src": "abs(umb - 14.43 cm) < 0.005 cm ="
     },
     {
       "id": "c_esbg",
       "kind": "math",
       "x": 40,
-      "y": 9117,
+      "y": 9546,
       "src": "abs(esb_g - 31.2) < 0.05 ="
     },
     {
       "id": "c_pan",
       "kind": "math",
       "x": 40,
-      "y": 9163,
+      "y": 9592,
       "src": "abs(Rd_pan - 149.89 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_ha",
       "kind": "math",
       "x": 40,
-      "y": 9209,
+      "y": 9638,
       "src": "abs(H_A - 130.44 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_va",
       "kind": "math",
       "x": 40,
-      "y": 9255,
+      "y": 9684,
       "src": "abs(V_A - 46.31 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_hb",
       "kind": "math",
       "x": 40,
-      "y": 9301,
+      "y": 9730,
       "src": "abs(H_B - 142.55 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_ra",
       "kind": "math",
       "x": 40,
-      "y": 9347,
+      "y": 9776,
       "src": "abs(R_A - 138.42 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_qreq",
       "kind": "math",
       "x": 40,
-      "y": 9393,
+      "y": 9822,
       "src": "abs(q_req - 3.947 tonf/cm) < 0.0005 tonf/cm ="
     },
     {
       "id": "c_wdes",
       "kind": "math",
       "x": 40,
-      "y": 9439,
+      "y": 9868,
       "src": "abs(w_des - 12.61 mm) < 0.005 mm ="
     },
     {
       "id": "c_wnote",
       "kind": "math",
       "x": 40,
-      "y": 9485,
+      "y": 9914,
       "src": "abs(w_note - 12.40 mm) < 0.005 mm ="
     },
     {
       "id": "c_wmax",
       "kind": "math",
       "x": 40,
-      "y": 9531,
+      "y": 9960,
       "src": "abs(w_max - 18 mm) < 0.5 mm ="
     },
     {
       "id": "c_lcor",
       "kind": "math",
       "x": 40,
-      "y": 9577,
+      "y": 10006,
       "src": "abs(L_cor - 46.95 cm) < 0.005 cm ="
     },
     {
       "id": "c_huetot",
       "kind": "math",
       "x": 40,
-      "y": 9623,
+      "y": 10052,
       "src": "abs(hue_tot - 45.71 cm) < 0.005 cm ="
     },
     {
       "id": "c_lia",
       "kind": "math",
       "x": 40,
-      "y": 9669,
+      "y": 10098,
       "src": "abs(L_iA - 44.15 cm) < 0.005 cm ="
     },
     {
       "id": "c_lsb",
       "kind": "math",
       "x": 40,
-      "y": 9715,
+      "y": 10144,
       "src": "abs(L_sB - 35.03 cm) < 0.005 cm ="
     },
     {
       "id": "c_kds",
       "kind": "math",
       "x": 40,
-      "y": 9761,
+      "y": 10190,
       "src": "abs(k_ds - 1.097) < 0.0005 ="
     },
     {
       "id": "c_lsa",
       "kind": "math",
       "x": 40,
-      "y": 9807,
+      "y": 10236,
       "src": "abs(L_sA - 31.01 cm) < 0.005 cm ="
     },
     {
       "id": "c_lnor",
       "kind": "math",
       "x": 40,
-      "y": 9853,
+      "y": 10282,
       "src": "abs(L_nor - 10.17 cm) < 0.005 cm ="
     },
     {
       "id": "c_rdcor",
       "kind": "math",
       "x": 40,
-      "y": 9899,
+      "y": 10328,
       "src": "abs(Rd_cor - 151.80 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_rdnor",
       "kind": "math",
       "x": 40,
-      "y": 9945,
+      "y": 10374,
       "src": "abs(Rd_nor - 227.70 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_inta",
       "kind": "math",
       "x": 40,
-      "y": 9991,
+      "y": 10420,
       "src": "abs(int_A - 0.780) < 0.0005 ="
     },
     {
       "id": "c_intb",
       "kind": "math",
       "x": 40,
-      "y": 10037,
+      "y": 10466,
       "src": "abs(int_B - 0.882) < 0.0005 ="
     },
     {
       "id": "c_exe",
       "kind": "math",
       "x": 40,
-      "y": 10083,
+      "y": 10512,
       "src": "abs(exe - 4.50 cm) < 0.005 cm ="
     },
     {
       "id": "c_j102",
       "kind": "math",
       "x": 40,
-      "y": 10129,
+      "y": 10558,
       "src": "abs(Rd_j102 - 131.56 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_umax",
       "kind": "math",
       "x": 40,
-      "y": 10175,
+      "y": 10604,
       "src": "abs(u_max - 0.939) < 0.0005 ="
+    },
+    {
+      "id": "r_esq",
+      "kind": "image",
+      "x": 40,
+      "y": 7507,
+      "src": "/esquemas/gusset-apice-chevron.svg",
+      "w": 600,
+      "h": 360
     }
   ]
 }

@@ -105,8 +105,8 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 |---|---|---|---|---|---|---|---|
 | `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 18 | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 16 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | ⬜ | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | ⬜ | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 51 | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | | | | | | | ⬜ |
 | `ejemplo-columna-galpon-compresion` | | | | | | | ⬜ |
@@ -119,9 +119,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` | | | | | | | ⬜ |
 | `ejemplo-viga-ltb` | | | | | | | ⬜ |
 
-**Esq.** = tokens del esquema paramétrico. Las dos filas con ⬜ son anteriores a la
-regla: `gusset-esquina-apernado` y `gusset-apice-chevron` nunca tuvieron región
-`image` y deben su esquema.
+**Esq.** = tokens del esquema paramétrico. Las 7 planillas publicadas lo tienen.
 
 ### hormigón
 
