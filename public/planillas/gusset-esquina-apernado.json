@@ -4,8 +4,7 @@
     "titulo": "Gusset apernado de esquina — el reparto entre viga y columna es indeterminado (NCh2369 8.4.1 + UFM derivado)",
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-esquina-apernado.mdx",
     "esperadoFalso": {
-      "v_wnote": "el atajo tabulado del User Note (0,62 t_p) queda 1,6 % del lado inseguro frente al cálculo explícito: hallazgo, no defecto",
-      "c_rot2": "HALLAZGO 2026-07-31: el post publica 143,00 tonf (uso 0,685) en la tabla de Resultado y en la figura; la planilla calcula 140,55 (uso 0,697, que es lo que publica la tabla de la seccion 4). 143,00 sale de descontar agujeros de 24 mm sin el +2 mm de B4.3b — exactamente el error del 1,7 % que el propio post advierte dos parrafos antes"
+      "v_wnote": "el atajo tabulado del User Note (0,62 t_p) queda 1,6 % del lado inseguro frente al cálculo explícito: hallazgo, no defecto"
     }
   },
   "regions": [
@@ -1834,7 +1833,7 @@
       "kind": "math",
       "x": 40,
       "y": 12337,
-      "src": "abs(Rd_rot - 143.00 tonf) < 0.005 tonf ="
+      "src": "abs(Rd_rot - 140.55 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_l1",

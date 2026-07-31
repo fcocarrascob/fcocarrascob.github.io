@@ -350,7 +350,7 @@ esos $7{,}2$ espesores son longitud **de pandeo**, ya multiplicada por $K$.
 
 <Figure
   src="/gusset/esquina-demandas.svg"
-  alt="Dos paneles. Panel A, ocho verificaciones como barras de demanda contra capacidad de diseño, ordenadas por factor de uso decreciente: gusset pandeo con la longitud máxima y K igual a 1,2 con 0,857, gusset Whitmore fluencia 0,764, pernos en corte doble 0,760, gusset Whitmore rotura 0,685, viga fluencia local del alma 0,596, gusset aplastamiento más desgarre 0,551, interfaz viga normal al borde 0,344 e interfaz columna corte del borde 0,277. Panel B, las tres longitudes de pandeo de Thornton dibujadas como barras horizontales contra una línea vertical discontinua que marca el umbral de la ecuación J4-6 expresado sobre L, es decir 25r partido por K, igual a 12,03 centímetros: L1 sobre el eje mide 22,50 centímetros, L2 en el borde exterior de la banda 11,94 y L3 en el borde interior 7,89; el promedio de las tres es 14,11 centímetros y el máximo 22,50, y tanto el promedio como el máximo quedan a la derecha de la línea. Al pie se explica que el umbral es sobre la longitud de pandeo L_c igual a K por L y no sobre L, que las dos longitudes lo superan y por lo tanto ambas caen en el Capítulo E, y que la elección cambia el valor de 122,59 a 114,32 tonf, un 6,7 por ciento, pero no la rama."
+  alt="Dos paneles. Panel A, ocho verificaciones como barras de demanda contra capacidad de diseño, ordenadas por factor de uso decreciente: gusset pandeo con la longitud máxima y K igual a 1,2 con 0,857, gusset Whitmore fluencia 0,764, pernos en corte doble 0,760, gusset Whitmore rotura 0,697, viga fluencia local del alma 0,596, gusset aplastamiento más desgarre 0,551, interfaz viga normal al borde 0,344 e interfaz columna corte del borde 0,277. Panel B, las tres longitudes de pandeo de Thornton dibujadas como barras horizontales contra una línea vertical discontinua que marca el umbral de la ecuación J4-6 expresado sobre L, es decir 25r partido por K, igual a 12,03 centímetros: L1 sobre el eje mide 22,50 centímetros, L2 en el borde exterior de la banda 11,94 y L3 en el borde interior 7,89; el promedio de las tres es 14,11 centímetros y el máximo 22,50, y tanto el promedio como el máximo quedan a la derecha de la línea. Al pie se explica que el umbral es sobre la longitud de pandeo L_c igual a K por L y no sobre L, que las dos longitudes lo superan y por lo tanto ambas caen en el Capítulo E, y que la elección cambia el valor de 122,59 a 114,32 tonf, un 6,7 por ciento, pero no la rama."
   caption="Gobierna el pandeo del gusset. El umbral de J4-6 está dibujado sobre L, o sea en 25r/K: las dos longitudes lo superan, así que ambas caen en el Capítulo E y la elección solo mueve el valor."
 />
 
@@ -409,7 +409,7 @@ KISS le manda todo el vertical), y el alma de 8 mm del catálogo chileno no es g
 | **Gusset — pandeo ($L$ máx, $K = 1{,}2$)** | 98,00 | 114,32 | **0,857** | ✓ |
 | Gusset — Whitmore, fluencia | 98,00 | 128,27 | 0,764 | ✓ |
 | Pernos — corte doble (6 × M22) | 98,00 | 128,98 | 0,760 | ✓ |
-| Gusset — Whitmore, rotura (2 agujeros) | 98,00 | 143,00 | 0,685 | ✓ |
+| Gusset — Whitmore, rotura (2 agujeros) | 98,00 | 140,55 | 0,697 | ✓ |
 | Viga — fluencia local del alma (J10.2) | 78,40 | 131,56 | 0,596 | ✓ |
 | Gusset — aplastamiento + desgarre | 98,00 | 177,72 | 0,551 | ✓ |
 | Columna — fluencia local del alma | 58,80 | 151,80 | 0,387 | ✓ |
@@ -472,7 +472,7 @@ de establecer. La verificación que decide es la que tiene menos respaldo normat
 
 ## Reproducir esto con tus datos
 
-La planilla trae los 144 pasos y las 30 verificaciones, incluidos **los residuos de equilibrio de
+La planilla trae los 146 pasos, las 30 verificaciones y 69 contrastes que comparan cada número publicado en este post contra el que la hoja calcula, incluidos **los residuos de equilibrio de
 los tres cierres como veredictos ✓/✗** — de modo que si cambias la geometría y la condición
 geométrica deja de cumplirse, la hoja te lo dice sola:
 

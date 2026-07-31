@@ -53,10 +53,10 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 
 | Post | Pasos | Verif. | Contrastes | Hallazgos | Última corrida | Estado |
 |---|---|---|---|---|---|---|
-| `ejemplo-gusset-simple-apernado` | 92 | 46 | 22 | 3 (tabla por-perno con t = 18 mm) | 2026-07-31 | ⚠️ |
-| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 1 (387,2 publicado; exacto 387,09 — suma de redondeados) | 2026-07-31 | ⚠️ |
-| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 1 (Resultado publica 143,00; §4 y la planilla dan 140,55) | 2026-07-31 | ⚠️ |
-| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 1 (0,538 publicado; exacto 0,5374 — doble redondeo) | 2026-07-31 | ⚠️ |
+| `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | | | | | | ⬜ piloto propuesto |
 | `ejemplo-chevron-nch2369` | | | | | | ⬜ |
 | `ejemplo-columna-galpon-compresion` | | | | | | ⬜ |

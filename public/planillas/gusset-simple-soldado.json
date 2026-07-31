@@ -3,9 +3,7 @@
   "meta": {
     "titulo": "Gusset de un solo borde, soldado — el cordón abre la banda de Whitmore y el eslabón débil se muda al tubo (NCh2369 8.4.1/8.6.8 + AISC 360-22)",
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-simple-soldado.mdx",
-    "esperadoFalso": {
-      "c_flu85": "HALLAZGO 2026-07-31: el post publica 387,2 tonf como fluencia sin acotar la banda; la planilla calcula 0,90*2530*85,0*2,0 = 387,09 tonf, que redondea a 387,1. La cifra publicada cuadra con derivarla de intermedios redondeados (305,70 + 0,9*Fy*17,9*2,0 = 387,22), no con recalcular la formula exacta."
-    }
+    "esperadoFalso": {}
   },
   "regions": [
     {
@@ -1009,7 +1007,7 @@
       "kind": "math",
       "x": 40,
       "y": 7244,
-      "src": "abs(0.90*F_y*(B_t + 2*l_w*tan(pi/4))*t_g - 387.2 tonf) < 0.05 tonf ="
+      "src": "abs(0.90*F_y*(B_t + 2*l_w*tan(pi/4))*t_g - 387.1 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_agv",

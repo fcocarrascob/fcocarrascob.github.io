@@ -3,11 +3,7 @@
   "meta": {
     "titulo": "Gusset de un solo borde, apernado — dos anchos efectivos para la misma plancha y gobierna la compresión (NCh2369 8.4.1/8.6.8 + AISC 360-22)",
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-simple-apernado.mdx",
-    "esperadoFalso": {
-      "c_rapl": "HALLAZGO 2026-07-31: el post publica 31,73 (t = 1,8 cm, gusset de 18 mm de la version previa); con el gusset vigente de 20 mm da 35,25. No cambia el minimo por perno (25,60, corte doble) ni el grupo (153,62)",
-      "c_rdb": "HALLAZGO 2026-07-31: el post publica 27,43 (t = 1,8 cm); con 20 mm da 30,48. No cambia el minimo por perno",
-      "c_rdi": "HALLAZGO 2026-07-31: el post publica 41,64 (t = 1,8 cm); con 20 mm da 46,27. No cambia el minimo por perno"
-    }
+    "esperadoFalso": {}
   },
   "regions": [
     {
@@ -1130,21 +1126,21 @@
       "kind": "math",
       "x": 40,
       "y": 8026,
-      "src": "abs(R_apl - 31.73 tonf) < 0.005 tonf ="
+      "src": "abs(R_apl - 35.25 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_rdb",
       "kind": "math",
       "x": 40,
       "y": 8072,
-      "src": "abs(R_db - 27.43 tonf) < 0.005 tonf ="
+      "src": "abs(R_db - 30.48 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_rdi",
       "kind": "math",
       "x": 40,
       "y": 8118,
-      "src": "abs(R_di - 41.64 tonf) < 0.005 tonf ="
+      "src": "abs(R_di - 46.27 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_pan",
