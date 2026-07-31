@@ -47,6 +47,16 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-07-31 · `acero/ejemplo-diagonal-hss-traccion` · **planilla piloto** (primera fuera del bloque gusset) · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
+
+**Commit auditado:** `3355fa4` · **Método:** contraste de planillas. Planilla construida desde cero a partir de los datos declarados del post (`public/planillas/diagonal-hss-traccion.json`: 41 pasos, 9 verificaciones de diseño, 25 contrastes). Era el caso de control —post ya auditado dos veces contra los PDF— y se comportó como tal: 24 de 25 contrastes limpios a la primera.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔵 | N | L.164 | $4 \cdot 939 \cdot 15 = 56\,340$ kgf arrastra el 939 ya redondeado, y la igualdad impresa es además internamente inconsistente: 56 340 kgf sería 56,3 tonf, no el 56,4 que la acompaña. Con precisión completa: $4 \cdot 939{,}18 \cdot 15 = 56\,351$ kgf → 56,4 tonf (el tonf publicado sí era correcto) | Mostrar 939,18 y 56 351 | ✅ aplicado |
+
+**Verificado y correcto:** los otros 24 contrastes, incluidos D2-1/D2-2 en kgf y tonf, el Caso 5 completo ($\bar{x}$, $U$, $A_e$), las dos ramas de J4-5 con la sobreestimación del 24 %, la palanca $l_w$ = 20 cm ($U_{20}$ y la rotura), la esbeltez D1 y el cierre de 8.6.8 (el detalle no calificaría para diseño por capacidad, que es la Note del post). Al post se le agregó el enlace a la planilla con el patrón del bloque gusset.
+
 ### 2026-07-31 · bloque gusset (4 posts) · auditoría por **contraste de planillas** · ⚠️ — 6 hallazgos (0🔴 · 1🟠 · 4🟡 · 2🔵) — **todos aplicados**
 
 **Commit auditado:** `0481145` · **Método:** estreno del cruce cálculo↔post por planilla del canvas: a las 4 planillas de `public/planillas/` se les agregó un bloque «Contraste con el post» (un booleano por número publicado, tolerancia de media unidad del último dígito) y se corrió `npm run verify:planillas`, que ejecuta el mismo motor del canvas fuera del navegador. 176 contrastes en total (apernado 23 · soldado 28 · esquina 69 · ápice 57); 170 cuadraron a la primera. Cobertura: solo categoría **N** (y conteos **R**) — este método no ve prosa, figuras ni citas, que siguen siendo del auditor. El registro de estado vive en `PLANILLAS.md`.
@@ -2667,7 +2677,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-07-26 | ⚠️ | 17 (0🔴 0🟠 · 11🟡 6🔵) · 2.ª pasada: 9 aplicados (1🔴 4🟠 4🟡) |
-| `ejemplo-diagonal-hss-traccion` | 2026-07-26 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) |
+| `ejemplo-diagonal-hss-traccion` | 2026-07-31 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) · planilla ✅ 25 contrastes, 1 aplicado |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |
 | `aisc360-22-capE-compresion` | — | — | — |

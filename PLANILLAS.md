@@ -57,7 +57,7 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 | `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
-| `ejemplo-diagonal-hss-traccion` | | | | | | ⬜ piloto propuesto |
+| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | | | | | | ⬜ |
 | `ejemplo-columna-galpon-compresion` | | | | | | ⬜ |
 | `ejemplo-conexion-apernada-corte` | | | | | | ⬜ |

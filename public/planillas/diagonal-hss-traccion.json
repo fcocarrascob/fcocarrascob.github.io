@@ -1,0 +1,782 @@
+{
+  "version": 1,
+  "meta": {
+    "titulo": "Diagonal HSS a tracción, ranurada y soldada al gusset — gobierna la rotura por retraso de cortante y la palanca es la longitud de la soldadura (AISC 360-22 D2/D3.1 Caso 5, J2.4, J4.3)",
+    "ficha": "struct_pad/src/content/acero/ejemplo-diagonal-hss-traccion.mdx",
+    "esperadoFalso": {}
+  },
+  "regions": [
+    {
+      "id": "r000",
+      "kind": "text",
+      "x": 40,
+      "y": 32,
+      "src": "DIAGONAL HSS A TRACCIÓN, RANURADA Y SOLDADA AL GUSSET — la conexión fija la capacidad"
+    },
+    {
+      "id": "r001",
+      "kind": "text",
+      "x": 40,
+      "y": 78,
+      "src": "AISC 360-22 Cap. D (D1, D2, Tabla D3.1 Caso 5) + J2.4, J4.3 · LRFD"
+    },
+    {
+      "id": "r002",
+      "kind": "text",
+      "x": 40,
+      "y": 124,
+      "src": "Rd_ = capacidad de diseño (incluye phi) · las comparaciones dan ✓/✗"
+    },
+    {
+      "id": "r003",
+      "kind": "image",
+      "x": 40,
+      "y": 170,
+      "src": "/ejemplos/diagonal-hss-traccion.svg",
+      "w": 560,
+      "h": 313
+    },
+    {
+      "id": "r004",
+      "kind": "text",
+      "x": 40,
+      "y": 507,
+      "src": "El caso: tubo ranurado en sus dos paredes, plancha gusset concéntrica pasante, 4 cordones de filete."
+    },
+    {
+      "id": "r005",
+      "kind": "text",
+      "x": 40,
+      "y": 576,
+      "src": "━━ DATOS · ACEROS ━━"
+    },
+    {
+      "id": "r006",
+      "kind": "text",
+      "x": 40,
+      "y": 622,
+      "src": "Tubo ASTM A500 Gr. C · electrodo E70XX"
+    },
+    {
+      "id": "r007",
+      "kind": "math",
+      "x": 40,
+      "y": 668,
+      "src": "F_y := 3520 kgf/cm^2"
+    },
+    {
+      "id": "r008",
+      "kind": "math",
+      "x": 40,
+      "y": 714,
+      "src": "F_u := 4360 kgf/cm^2"
+    },
+    {
+      "id": "r009",
+      "kind": "math",
+      "x": 40,
+      "y": 760,
+      "src": "F_EXX := 4920 kgf/cm^2"
+    },
+    {
+      "id": "r010",
+      "kind": "text",
+      "x": 40,
+      "y": 829,
+      "src": "━━ DATOS · PERFIL HSS 4×4×1/4 (≈ □100×100×6) ━━"
+    },
+    {
+      "id": "r011",
+      "kind": "text",
+      "x": 40,
+      "y": 875,
+      "src": "Propiedades de catálogo AISC, con la pared de diseño t (no la nominal)"
+    },
+    {
+      "id": "r012",
+      "kind": "math",
+      "x": 40,
+      "y": 921,
+      "src": "A_g := 21.7 cm^2"
+    },
+    {
+      "id": "r013",
+      "kind": "math",
+      "x": 40,
+      "y": 967,
+      "src": "t_d := 0.59 cm"
+    },
+    {
+      "id": "r014",
+      "kind": "math",
+      "x": 40,
+      "y": 1013,
+      "src": "r_d := 3.84 cm"
+    },
+    {
+      "id": "r015",
+      "kind": "math",
+      "x": 40,
+      "y": 1059,
+      "src": "B := 10.16 cm"
+    },
+    {
+      "id": "r016",
+      "kind": "math",
+      "x": 40,
+      "y": 1105,
+      "src": "H := 10.16 cm"
+    },
+    {
+      "id": "r017",
+      "kind": "text",
+      "x": 40,
+      "y": 1174,
+      "src": "━━ DATOS · CONEXIÓN, GEOMETRÍA Y CARGA ━━"
+    },
+    {
+      "id": "r018",
+      "kind": "math",
+      "x": 40,
+      "y": 1220,
+      "src": "t_p := 1.6 cm"
+    },
+    {
+      "id": "r019",
+      "kind": "math",
+      "x": 40,
+      "y": 1266,
+      "src": "w_r := 1.9 cm"
+    },
+    {
+      "id": "r020",
+      "kind": "math",
+      "x": 40,
+      "y": 1312,
+      "src": "w_s := 0.6 cm"
+    },
+    {
+      "id": "r021",
+      "kind": "text",
+      "x": 40,
+      "y": 1358,
+      "src": "l_w se ADOPTA en §3 (por resistencia bastarían 11,2 cm): es LA variable de diseño del ejemplo"
+    },
+    {
+      "id": "r022",
+      "kind": "math",
+      "x": 40,
+      "y": 1404,
+      "src": "l_w := 15 cm"
+    },
+    {
+      "id": "r023",
+      "kind": "math",
+      "x": 40,
+      "y": 1450,
+      "src": "L := 450 cm"
+    },
+    {
+      "id": "r024",
+      "kind": "math",
+      "x": 40,
+      "y": 1496,
+      "src": "P_u := 42 tonf"
+    },
+    {
+      "id": "r025",
+      "kind": "text",
+      "x": 40,
+      "y": 1565,
+      "src": "━━ 1 · FLUENCIA EN EL ÁREA BRUTA (Ec. D2-1, phi = 0.90) ━━"
+    },
+    {
+      "id": "r026",
+      "kind": "text",
+      "x": 40,
+      "y": 1611,
+      "src": "El estado dúctil: área BRUTA y el phi generoso — en tracción casi nunca gobierna"
+    },
+    {
+      "id": "r027",
+      "kind": "math",
+      "x": 40,
+      "y": 1657,
+      "src": "Rd_flu := 0.90*F_y*A_g = tonf"
+    },
+    {
+      "id": "v_flu",
+      "kind": "math",
+      "x": 40,
+      "y": 1703,
+      "src": "Rd_flu >= P_u ="
+    },
+    {
+      "id": "r028",
+      "kind": "text",
+      "x": 40,
+      "y": 1772,
+      "src": "━━ 2 · ROTURA POR RETRASO DE CORTANTE (Ec. D2-2 / D3-1 · Caso 5, phi = 0.75) ━━"
+    },
+    {
+      "id": "r029",
+      "kind": "text",
+      "x": 40,
+      "y": 1818,
+      "src": "La ranura corta las dos paredes por donde pasa la plancha: se descuentan dos franjas t·w_r (B4.3)"
+    },
+    {
+      "id": "r030",
+      "kind": "math",
+      "x": 40,
+      "y": 1864,
+      "src": "A_n := A_g - 2*t_d*w_r = cm^2"
+    },
+    {
+      "id": "r031",
+      "kind": "text",
+      "x": 40,
+      "y": 1910,
+      "src": "Caso 5 de la Tabla D3.1 (360-22): x̄ es el centroide de media sección, ESPESOR INCLUIDO"
+    },
+    {
+      "id": "r032",
+      "kind": "text",
+      "x": 40,
+      "y": 1956,
+      "src": "(en 360-16 esta configuración era el Caso 6 y su x̄ ignoraba el espesor)"
+    },
+    {
+      "id": "r033",
+      "kind": "math",
+      "x": 40,
+      "y": 2002,
+      "src": "b := B/2 = cm"
+    },
+    {
+      "id": "r034",
+      "kind": "math",
+      "x": 40,
+      "y": 2048,
+      "src": "num_x := 2*b^2 + t_d*H - 2*t_d^2 = cm^2"
+    },
+    {
+      "id": "r035",
+      "kind": "math",
+      "x": 40,
+      "y": 2094,
+      "src": "den_x := 2*H + 4*b - 4*t_d = cm"
+    },
+    {
+      "id": "r036",
+      "kind": "math",
+      "x": 40,
+      "y": 2140,
+      "src": "x_bar := b - num_x/den_x = cm"
+    },
+    {
+      "id": "r037",
+      "kind": "math",
+      "x": 40,
+      "y": 2186,
+      "src": "U_5 := 1 - x_bar/l_w ="
+    },
+    {
+      "id": "r038",
+      "kind": "math",
+      "x": 40,
+      "y": 2232,
+      "src": "A_e := A_n*U_5 = cm^2"
+    },
+    {
+      "id": "r039",
+      "kind": "math",
+      "x": 40,
+      "y": 2278,
+      "src": "Rd_ro := 0.75*F_u*A_e = tonf"
+    },
+    {
+      "id": "v_ro",
+      "kind": "math",
+      "x": 40,
+      "y": 2324,
+      "src": "Rd_ro >= P_u ="
+    },
+    {
+      "id": "r040",
+      "kind": "text",
+      "x": 40,
+      "y": 2370,
+      "src": "GOBIERNA: paga dos peajes (área menor y phi 0.75) que pesan más que el mayor F_u"
+    },
+    {
+      "id": "r041",
+      "kind": "text",
+      "x": 40,
+      "y": 2439,
+      "src": "━━ 3 · SOLDADURA — la longitud que fija todo (Ec. J2-4, phi = 0.75) ━━"
+    },
+    {
+      "id": "r042",
+      "kind": "text",
+      "x": 40,
+      "y": 2485,
+      "src": "Cordón longitudinal (theta = 0): garganta efectiva 0.707·w por el corte del metal de aporte"
+    },
+    {
+      "id": "r043",
+      "kind": "math",
+      "x": 40,
+      "y": 2531,
+      "src": "Rn_cm := 0.75*0.6*F_EXX*(0.707*w_s) = kgf/cm"
+    },
+    {
+      "id": "r044",
+      "kind": "math",
+      "x": 40,
+      "y": 2577,
+      "src": "l_min := P_u/(4*Rn_cm) = cm"
+    },
+    {
+      "id": "v_lmin",
+      "kind": "math",
+      "x": 40,
+      "y": 2623,
+      "src": "l_w >= l_min ="
+    },
+    {
+      "id": "r045",
+      "kind": "text",
+      "x": 40,
+      "y": 2669,
+      "src": "Se adopta l_w = 15 cm > mínimo: el retraso de cortante del §2 PREMIA la conexión larga"
+    },
+    {
+      "id": "r046",
+      "kind": "math",
+      "x": 40,
+      "y": 2715,
+      "src": "Rd_sol := 4*Rn_cm*l_w = tonf"
+    },
+    {
+      "id": "v_sol",
+      "kind": "math",
+      "x": 40,
+      "y": 2761,
+      "src": "Rd_sol >= P_u ="
+    },
+    {
+      "id": "r047",
+      "kind": "text",
+      "x": 40,
+      "y": 2807,
+      "src": "La palanca en acción (tabla de la nota del post): con l = 20 cm suben U y la rotura"
+    },
+    {
+      "id": "r048",
+      "kind": "math",
+      "x": 40,
+      "y": 2853,
+      "src": "l_alt := 20 cm"
+    },
+    {
+      "id": "r049",
+      "kind": "math",
+      "x": 40,
+      "y": 2899,
+      "src": "U_20 := 1 - x_bar/l_alt ="
+    },
+    {
+      "id": "r050",
+      "kind": "math",
+      "x": 40,
+      "y": 2945,
+      "src": "Rd_ro20 := 0.75*F_u*A_n*U_20 = tonf"
+    },
+    {
+      "id": "r051",
+      "kind": "text",
+      "x": 40,
+      "y": 3014,
+      "src": "━━ 4 · CORTE DE BLOQUE (Ec. J4-5, phi = 0.75) ━━"
+    },
+    {
+      "id": "r052",
+      "kind": "text",
+      "x": 40,
+      "y": 3060,
+      "src": "Cuatro planos de corte de largo l_w sobre t; soldado: sin agujeros (A_nv = A_gv) y sin plano de tracción"
+    },
+    {
+      "id": "r053",
+      "kind": "math",
+      "x": 40,
+      "y": 3106,
+      "src": "A_gv := 4*l_w*t_d = cm^2"
+    },
+    {
+      "id": "r054",
+      "kind": "math",
+      "x": 40,
+      "y": 3152,
+      "src": "A_nv := A_gv = cm^2"
+    },
+    {
+      "id": "r055",
+      "kind": "text",
+      "x": 40,
+      "y": 3198,
+      "src": "Las dos ramas de J4-5, y manda la MENOR: con A_nv = A_gv y F_y < F_u, siempre la segunda"
+    },
+    {
+      "id": "r056",
+      "kind": "math",
+      "x": 40,
+      "y": 3244,
+      "src": "Rd_bc := 0.75*min(0.6*F_u*A_nv, 0.6*F_y*A_gv) = tonf"
+    },
+    {
+      "id": "v_bc",
+      "kind": "math",
+      "x": 40,
+      "y": 3290,
+      "src": "Rd_bc >= P_u ="
+    },
+    {
+      "id": "v_rama",
+      "kind": "math",
+      "x": 40,
+      "y": 3336,
+      "src": "0.6*F_y*A_gv < 0.6*F_u*A_nv ="
+    },
+    {
+      "id": "r057",
+      "kind": "text",
+      "x": 40,
+      "y": 3382,
+      "src": "Quedarse con la primera rama sola sobreestimaría un 24% hacia el lado inseguro"
+    },
+    {
+      "id": "r058",
+      "kind": "math",
+      "x": 40,
+      "y": 3428,
+      "src": "Rd_r1 := 0.75*0.6*F_u*A_nv = tonf"
+    },
+    {
+      "id": "r059",
+      "kind": "math",
+      "x": 40,
+      "y": 3474,
+      "src": "sobre := Rd_r1/Rd_bc - 1 ="
+    },
+    {
+      "id": "r060",
+      "kind": "text",
+      "x": 40,
+      "y": 3543,
+      "src": "━━ 5 · ESBELTEZ (Sec. D1, recomendado) ━━"
+    },
+    {
+      "id": "r061",
+      "kind": "text",
+      "x": 40,
+      "y": 3589,
+      "src": "Un traccionado no pandea: L/r <= 300 no es obligatorio, es por vibración y montaje"
+    },
+    {
+      "id": "r062",
+      "kind": "math",
+      "x": 40,
+      "y": 3635,
+      "src": "esb := L/r_d ="
+    },
+    {
+      "id": "v_esb",
+      "kind": "math",
+      "x": 40,
+      "y": 3681,
+      "src": "esb <= 300 ="
+    },
+    {
+      "id": "r063",
+      "kind": "text",
+      "x": 40,
+      "y": 3750,
+      "src": "━━ 6 · USOS ━━"
+    },
+    {
+      "id": "r064",
+      "kind": "math",
+      "x": 40,
+      "y": 3796,
+      "src": "u_flu := P_u/Rd_flu ="
+    },
+    {
+      "id": "r065",
+      "kind": "math",
+      "x": 40,
+      "y": 3842,
+      "src": "u_ro := P_u/Rd_ro ="
+    },
+    {
+      "id": "r066",
+      "kind": "math",
+      "x": 40,
+      "y": 3888,
+      "src": "u_sol := P_u/Rd_sol ="
+    },
+    {
+      "id": "r067",
+      "kind": "math",
+      "x": 40,
+      "y": 3934,
+      "src": "u_bc := P_u/Rd_bc ="
+    },
+    {
+      "id": "r068",
+      "kind": "math",
+      "x": 40,
+      "y": 3980,
+      "src": "u_max := max(u_flu, u_ro, u_sol, u_bc) ="
+    },
+    {
+      "id": "v_umax",
+      "kind": "math",
+      "x": 40,
+      "y": 4026,
+      "src": "u_max <= 1 ="
+    },
+    {
+      "id": "r069",
+      "kind": "text",
+      "x": 40,
+      "y": 4072,
+      "src": "Gobierna la ROTURA por retraso de cortante (0,87): el diseño se juega en la conexión, no en el perfil"
+    },
+    {
+      "id": "r070",
+      "kind": "text",
+      "x": 40,
+      "y": 4141,
+      "src": "━━ 7 · ALCANCE — resistencia, no diseño por capacidad (NCh2369:2025 cl. 8.6.8) ━━"
+    },
+    {
+      "id": "r071",
+      "kind": "text",
+      "x": 40,
+      "y": 4187,
+      "src": "Bajo 8.6.8 la conexión debería desarrollar la capacidad esperada; su cota inferior F_y·A_g"
+    },
+    {
+      "id": "r072",
+      "kind": "text",
+      "x": 40,
+      "y": 4233,
+      "src": "ya supera lo disponible: este detalle NO calificaría como sismorresistente"
+    },
+    {
+      "id": "r073",
+      "kind": "math",
+      "x": 40,
+      "y": 4279,
+      "src": "T_y := F_y*A_g = tonf"
+    },
+    {
+      "id": "v_nocal",
+      "kind": "math",
+      "x": 40,
+      "y": 4325,
+      "src": "Rd_ro < T_y ="
+    },
+    {
+      "id": "r074",
+      "kind": "text",
+      "x": 40,
+      "y": 4394,
+      "src": "━━ 8 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
+    },
+    {
+      "id": "r075",
+      "kind": "text",
+      "x": 40,
+      "y": 4440,
+      "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
+    },
+    {
+      "id": "c_flu_kgf",
+      "kind": "math",
+      "x": 40,
+      "y": 4486,
+      "src": "abs(Rd_flu - 68746 kgf) < 0.5 kgf ="
+    },
+    {
+      "id": "c_flu",
+      "kind": "math",
+      "x": 40,
+      "y": 4532,
+      "src": "abs(Rd_flu - 68.7 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_an",
+      "kind": "math",
+      "x": 40,
+      "y": 4578,
+      "src": "abs(A_n - 19.46 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_b",
+      "kind": "math",
+      "x": 40,
+      "y": 4624,
+      "src": "abs(b - 5.08 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_numx",
+      "kind": "math",
+      "x": 40,
+      "y": 4670,
+      "src": "abs(num_x - 56.91 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_denx",
+      "kind": "math",
+      "x": 40,
+      "y": 4716,
+      "src": "abs(den_x - 38.28 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_xbar",
+      "kind": "math",
+      "x": 40,
+      "y": 4762,
+      "src": "abs(x_bar - 3.59 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_u5",
+      "kind": "math",
+      "x": 40,
+      "y": 4808,
+      "src": "abs(U_5 - 0.760) < 0.0005 ="
+    },
+    {
+      "id": "c_ae",
+      "kind": "math",
+      "x": 40,
+      "y": 4854,
+      "src": "abs(A_e - 14.80 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_ro_kgf",
+      "kind": "math",
+      "x": 40,
+      "y": 4900,
+      "src": "abs(Rd_ro - 48385 kgf) < 0.5 kgf ="
+    },
+    {
+      "id": "c_ro",
+      "kind": "math",
+      "x": 40,
+      "y": 4946,
+      "src": "abs(Rd_ro - 48.4 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_rncm",
+      "kind": "math",
+      "x": 40,
+      "y": 4992,
+      "src": "abs(Rn_cm - 939 kgf/cm) < 0.5 kgf/cm ="
+    },
+    {
+      "id": "c_lmin",
+      "kind": "math",
+      "x": 40,
+      "y": 5038,
+      "src": "abs(l_min - 11.2 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_sol_kgf",
+      "kind": "math",
+      "x": 40,
+      "y": 5084,
+      "src": "abs(Rd_sol - 56351 kgf) < 0.5 kgf ="
+    },
+    {
+      "id": "c_sol",
+      "kind": "math",
+      "x": 40,
+      "y": 5130,
+      "src": "abs(Rd_sol - 56.4 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_u20",
+      "kind": "math",
+      "x": 40,
+      "y": 5176,
+      "src": "abs(U_20 - 0.82) < 0.005 ="
+    },
+    {
+      "id": "c_ro20",
+      "kind": "math",
+      "x": 40,
+      "y": 5222,
+      "src": "abs(Rd_ro20 - 52.2 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_agv",
+      "kind": "math",
+      "x": 40,
+      "y": 5268,
+      "src": "abs(A_gv - 35.4 cm^2) < 0.05 cm^2 ="
+    },
+    {
+      "id": "c_bc_kgf",
+      "kind": "math",
+      "x": 40,
+      "y": 5314,
+      "src": "abs(Rd_bc - 56074 kgf) < 0.5 kgf ="
+    },
+    {
+      "id": "c_bc",
+      "kind": "math",
+      "x": 40,
+      "y": 5360,
+      "src": "abs(Rd_bc - 56.1 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_r1",
+      "kind": "math",
+      "x": 40,
+      "y": 5406,
+      "src": "abs(Rd_r1 - 69.5 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_sobre",
+      "kind": "math",
+      "x": 40,
+      "y": 5452,
+      "src": "abs(sobre - 0.24) < 0.005 ="
+    },
+    {
+      "id": "c_esb",
+      "kind": "math",
+      "x": 40,
+      "y": 5498,
+      "src": "abs(esb - 117) < 0.5 ="
+    },
+    {
+      "id": "c_uro",
+      "kind": "math",
+      "x": 40,
+      "y": 5544,
+      "src": "abs(u_ro - 0.87) < 0.005 ="
+    },
+    {
+      "id": "c_ty",
+      "kind": "math",
+      "x": 40,
+      "y": 5590,
+      "src": "abs(T_y - 76.4 tonf) < 0.05 tonf ="
+    }
+  ]
+}
