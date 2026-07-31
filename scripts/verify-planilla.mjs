@@ -6,9 +6,11 @@
 // es la fuente de verdad y este script la ejecuta con el mismo motor que corre
 // en /herramientas/canvas — mismas unidades, mismo chequeo dimensional.
 //
-//   npm run verify:planilla -- <planilla.json> [--md]
+//   npm run verify:planilla -- <planilla.json> [...más] [--md]
+//   npm run verify:planillas            # todas las de public/planillas/
 //
-// Sale con código 1 si:
+// Acepta uno o más .json, o un directorio (verifica todos sus .json). Sale con
+// código 1 si en cualquiera de ellas:
 //   - alguna región tiene error (sintaxis, variable indefinida, unidades que no
 //     casan — esto último es el motivo principal de que el script exista);
 //   - alguna comparación da `false` sin estar declarada en meta.esperadoFalso;
@@ -29,7 +31,7 @@
 // Las regiones `image` no se evalúan: se cuentan y se omiten del desarrollo.
 
 import { build } from 'esbuild';
-import { readFile, rm } from 'node:fs/promises';
+import { readFile, readdir, rm, stat } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -38,11 +40,26 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 
 const args = process.argv.slice(2);
 const emitMd = args.includes('--md');
-const target = args.find((a) => !a.startsWith('--'));
+const targets = args.filter((a) => !a.startsWith('--'));
 
-if (!target) {
-  console.error('Uso: npm run verify:planilla -- <planilla.json> [--md]');
+if (targets.length === 0) {
+  console.error('Uso: npm run verify:planilla -- <planilla.json | directorio> [...más] [--md]');
   process.exit(2);
+}
+
+/** Expande directorios a sus .json (orden alfabético, para un reporte estable). */
+async function resolverPlanillas(entradas) {
+  const rutas = [];
+  for (const t of entradas) {
+    const abs = path.resolve(t);
+    if ((await stat(abs)).isDirectory()) {
+      const hijos = (await readdir(abs)).filter((f) => f.endsWith('.json')).sort();
+      rutas.push(...hijos.map((f) => path.join(abs, f)));
+    } else {
+      rutas.push(abs);
+    }
+  }
+  return rutas;
 }
 
 /** Compila el motor del canvas (TypeScript) a un módulo importable por Node. */
@@ -87,7 +104,8 @@ function valorDeTex(tex, src) {
 
 const { evaluateSheet, parseMathRegion } = await loadEngine();
 
-const planillaPath = path.resolve(target);
+/** Verifica una planilla; devuelve true si está limpia. */
+async function verificar(planillaPath) {
 const planilla = JSON.parse(await readFile(planillaPath, 'utf8'));
 const regions = planilla.regions ?? [];
 const meta = planilla.meta ?? {};
@@ -216,4 +234,23 @@ console.log(
     `${inesperados.length} verificaciones no pasan sin declarar · ` +
     `${obsoletos.length} excepciones obsoletas\n`,
 );
-process.exit(falla ? 1 : 0);
+return !falla;
+}
+
+const rutas = await resolverPlanillas(targets);
+const fallidas = [];
+for (const ruta of rutas) {
+  if (!(await verificar(ruta))) fallidas.push(path.relative(process.cwd(), ruta));
+}
+
+if (rutas.length > 1) {
+  console.log('='.repeat(60));
+  if (fallidas.length) {
+    console.log(`FALLA: ${fallidas.length} de ${rutas.length} planillas:`);
+    for (const f of fallidas) console.log(`  - ${f}`);
+  } else {
+    console.log(`OK: las ${rutas.length} planillas cuadran.`);
+  }
+  console.log('');
+}
+process.exit(fallidas.length ? 1 : 0);

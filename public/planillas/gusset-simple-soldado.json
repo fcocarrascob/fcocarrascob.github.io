@@ -3,7 +3,9 @@
   "meta": {
     "titulo": "Gusset de un solo borde, soldado — el cordón abre la banda de Whitmore y el eslabón débil se muda al tubo (NCh2369 8.4.1/8.6.8 + AISC 360-22)",
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-simple-soldado.mdx",
-    "esperadoFalso": {}
+    "esperadoFalso": {
+      "c_flu85": "HALLAZGO 2026-07-31: el post publica 387,2 tonf como fluencia sin acotar la banda; la planilla calcula 0,90*2530*85,0*2,0 = 387,09 tonf, que redondea a 387,1. La cifra publicada cuadra con derivarla de intermedios redondeados (305,70 + 0,9*Fy*17,9*2,0 = 387,22), no con recalcular la formula exacta."
+    }
   },
   "regions": [
     {
@@ -875,6 +877,216 @@
       "x": 40,
       "y": 6347,
       "src": "Gobierna la ROTURA DEL TUBO (0,968): el estado que decide está en el Cap. D, no en el gusset"
+    },
+    {
+      "id": "r106",
+      "kind": "text",
+      "x": 40,
+      "y": 6416,
+      "src": "━━ 10 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
+    },
+    {
+      "id": "r107",
+      "kind": "text",
+      "x": 40,
+      "y": 6462,
+      "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
+    },
+    {
+      "id": "c_tr",
+      "kind": "math",
+      "x": 40,
+      "y": 6508,
+      "src": "abs(T_r - 112.00 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_pct",
+      "kind": "math",
+      "x": 40,
+      "y": 6554,
+      "src": "abs(base/piso - 1.077) < 0.0005 ="
+    },
+    {
+      "id": "c_vi",
+      "kind": "math",
+      "x": 40,
+      "y": 6600,
+      "src": "abs(V_i - 79.20 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_sol4",
+      "kind": "math",
+      "x": 40,
+      "y": 6646,
+      "src": "abs(Rd_sol4 - 175.34 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_agt",
+      "kind": "math",
+      "x": 40,
+      "y": 6692,
+      "src": "abs(A_gt - 45.44 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_and",
+      "kind": "math",
+      "x": 40,
+      "y": 6738,
+      "src": "abs(A_nd - 41.76 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_xb",
+      "kind": "math",
+      "x": 40,
+      "y": 6784,
+      "src": "abs(x_b - 5.331 cm) < 0.0005 cm ="
+    },
+    {
+      "id": "c_u5",
+      "kind": "math",
+      "x": 40,
+      "y": 6830,
+      "src": "abs(U_5 - 0.8477) < 0.00005 ="
+    },
+    {
+      "id": "c_ae",
+      "kind": "math",
+      "x": 40,
+      "y": 6876,
+      "src": "abs(A_e - 35.40 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_dro",
+      "kind": "math",
+      "x": 40,
+      "y": 6922,
+      "src": "abs(Rd_dro - 115.76 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_dfl",
+      "kind": "math",
+      "x": 40,
+      "y": 6968,
+      "src": "abs(Rd_dfl - 143.95 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_wban",
+      "kind": "math",
+      "x": 40,
+      "y": 7014,
+      "src": "abs(B_t + 2*l_w*tan(pi/4) - 85.0 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_wdisp",
+      "kind": "math",
+      "x": 40,
+      "y": 7060,
+      "src": "abs(w_disp - 67.1 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_wc",
+      "kind": "math",
+      "x": 40,
+      "y": 7106,
+      "src": "abs(w_c - 55.41 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_flu",
+      "kind": "math",
+      "x": 40,
+      "y": 7152,
+      "src": "abs(Rd_flu - 305.70 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rot",
+      "kind": "math",
+      "x": 40,
+      "y": 7198,
+      "src": "abs(Rd_rot - 410.83 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_flu85",
+      "kind": "math",
+      "x": 40,
+      "y": 7244,
+      "src": "abs(0.90*F_y*(B_t + 2*l_w*tan(pi/4))*t_g - 387.2 tonf) < 0.05 tonf ="
+    },
+    {
+      "id": "c_agv",
+      "kind": "math",
+      "x": 40,
+      "y": 7290,
+      "src": "abs(A_gv - 140.0 cm^2) < 0.05 cm^2 ="
+    },
+    {
+      "id": "c_ant",
+      "kind": "math",
+      "x": 40,
+      "y": 7336,
+      "src": "abs(A_nt - 30.0 cm^2) < 0.05 cm^2 ="
+    },
+    {
+      "id": "c_bc",
+      "kind": "math",
+      "x": 40,
+      "y": 7382,
+      "src": "abs(Rd_bc - 251.19 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_esb",
+      "kind": "math",
+      "x": 40,
+      "y": 7428,
+      "src": "abs(esb - 70.9) < 0.05 ="
+    },
+    {
+      "id": "c_fcr",
+      "kind": "math",
+      "x": 40,
+      "y": 7474,
+      "src": "abs(F_cr - 1942 kgf/cm^2) < 0.5 kgf/cm^2 ="
+    },
+    {
+      "id": "c_pan",
+      "kind": "math",
+      "x": 40,
+      "y": 7520,
+      "src": "abs(Rd_pan - 193.74 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_tj46",
+      "kind": "math",
+      "x": 40,
+      "y": 7566,
+      "src": "abs(t_J46 - 5.6 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_sol",
+      "kind": "math",
+      "x": 40,
+      "y": 7612,
+      "src": "abs(Rd_sol - 240.47 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_vb",
+      "kind": "math",
+      "x": 40,
+      "y": 7658,
+      "src": "abs(Rd_vb - 291.46 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_udro",
+      "kind": "math",
+      "x": 40,
+      "y": 7704,
+      "src": "abs(u_dro - 0.968) < 0.0005 ="
+    },
+    {
+      "id": "c_t9",
+      "kind": "math",
+      "x": 40,
+      "y": 7750,
+      "src": "abs(bt_r/lam_md - 0.982) < 0.0005 ="
     }
   ]
 }

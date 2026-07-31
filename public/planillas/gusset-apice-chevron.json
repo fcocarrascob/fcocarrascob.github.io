@@ -5,7 +5,8 @@
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-apice-chevron.mdx",
     "esperadoFalso": {
       "v_wnote": "el atajo tabulado del User Note (0,62 t_p) queda 1,6 % del lado inseguro frente al cálculo explícito: es un hallazgo del ejemplo, no un defecto",
-      "v_plena": "a capacidad plena (T_ye) el área efectiva requerida supera el área BRUTA del tubo: es el contraste que justifica la vía de 8.4.1"
+      "v_plena": "a capacidad plena (T_ye) el área efectiva requerida supera el área BRUTA del tubo: es el contraste que justifica la vía de 8.4.1",
+      "c_u84": "HALLAZGO 2026-07-31: el post publica 0,538 para el cociente 124,98/(0,75·4,08·76,0); la planilla calcula 0,5374, que redondea a 0,537. Causa probable: se derivó del razon ya redondeado (1,075/2 = 0,5375 → 0,538) en vez de recalcularlo"
     }
   },
   "regions": [
@@ -1093,6 +1094,419 @@
       "x": 40,
       "y": 7438,
       "src": "u_max := max(u_rot, u_blo, u_sol, u_flu, u_pan, u_cor) ="
+    },
+    {
+      "id": "r155",
+      "kind": "text",
+      "x": 40,
+      "y": 7507,
+      "src": "━━ 10 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
+    },
+    {
+      "id": "r156",
+      "kind": "text",
+      "x": 40,
+      "y": 7553,
+      "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
+    },
+    {
+      "id": "c_fye",
+      "kind": "math",
+      "x": 40,
+      "y": 7599,
+      "src": "abs(F_ye - 3289 kgf/cm^2) < 0.5 kgf/cm^2 ="
+    },
+    {
+      "id": "c_tye",
+      "kind": "math",
+      "x": 40,
+      "y": 7645,
+      "src": "abs(T_ye - 249.96 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_fe",
+      "kind": "math",
+      "x": 40,
+      "y": 7691,
+      "src": "abs(F_e - 3797 kgf/cm^2) < 0.5 kgf/cm^2 ="
+    },
+    {
+      "id": "c_fcre",
+      "kind": "math",
+      "x": 40,
+      "y": 7737,
+      "src": "abs(F_cre - 2288.8 kgf/cm^2) < 0.05 kgf/cm^2 ="
+    },
+    {
+      "id": "c_pne",
+      "kind": "math",
+      "x": 40,
+      "y": 7783,
+      "src": "abs(P_ne - 198.30 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_pres",
+      "kind": "math",
+      "x": 40,
+      "y": 7829,
+      "src": "abs(P_res - 59.49 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_qcap",
+      "kind": "math",
+      "x": 40,
+      "y": 7875,
+      "src": "abs(Q_cap - 100.80 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_treq",
+      "kind": "math",
+      "x": 40,
+      "y": 7921,
+      "src": "abs(T_req - 124.98 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_cpiso",
+      "kind": "math",
+      "x": 40,
+      "y": 7967,
+      "src": "abs(C_piso - 99.15 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_creq",
+      "kind": "math",
+      "x": 40,
+      "y": 8013,
+      "src": "abs(C_req - 100.80 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_lmin",
+      "kind": "math",
+      "x": 40,
+      "y": 8059,
+      "src": "abs(l_min - 27.44 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_blo",
+      "kind": "math",
+      "x": 40,
+      "y": 8105,
+      "src": "abs(Rd_blo - 136.62 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_xb",
+      "kind": "math",
+      "x": 40,
+      "y": 8151,
+      "src": "abs(x_b - 7.13 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_u",
+      "kind": "math",
+      "x": 40,
+      "y": 8197,
+      "src": "abs(U - 0.762) < 0.0005 ="
+    },
+    {
+      "id": "c_an",
+      "kind": "math",
+      "x": 40,
+      "y": 8243,
+      "src": "abs(A_n - 71.40 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_ae",
+      "kind": "math",
+      "x": 40,
+      "y": 8289,
+      "src": "abs(A_e - 54.43 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_rot",
+      "kind": "math",
+      "x": 40,
+      "y": 8335,
+      "src": "abs(Rd_rot - 166.55 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_sol",
+      "kind": "math",
+      "x": 40,
+      "y": 8381,
+      "src": "abs(Rd_sol - 150.27 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_aereq",
+      "kind": "math",
+      "x": 40,
+      "y": 8427,
+      "src": "abs(A_ereq - 81.69 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_razon",
+      "kind": "math",
+      "x": 40,
+      "y": 8473,
+      "src": "abs(razon - 1.075) < 0.0005 ="
+    },
+    {
+      "id": "c_u84",
+      "kind": "math",
+      "x": 40,
+      "y": 8519,
+      "src": "abs(T_req/(0.75*F_u*A_g) - 0.538) < 0.0005 ="
+    },
+    {
+      "id": "c_sgeom",
+      "kind": "math",
+      "x": 40,
+      "y": 8565,
+      "src": "abs(s_geom - 14.24 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_hol",
+      "kind": "math",
+      "x": 40,
+      "y": 8611,
+      "src": "abs(hol - 7.50 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_holreq",
+      "kind": "math",
+      "x": 40,
+      "y": 8657,
+      "src": "abs(hol_req - 4.00 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_bw",
+      "kind": "math",
+      "x": 40,
+      "y": 8703,
+      "src": "abs(b_w - 34.64 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_aw",
+      "kind": "math",
+      "x": 40,
+      "y": 8749,
+      "src": "abs(A_w - 69.28 cm^2) < 0.005 cm^2 ="
+    },
+    {
+      "id": "c_flu",
+      "kind": "math",
+      "x": 40,
+      "y": 8795,
+      "src": "abs(Rd_flu - 157.76 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rog",
+      "kind": "math",
+      "x": 40,
+      "y": 8841,
+      "src": "abs(Rd_rog - 212.00 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_hue",
+      "kind": "math",
+      "x": 40,
+      "y": 8887,
+      "src": "abs(huella - 24.49 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_sep",
+      "kind": "math",
+      "x": 40,
+      "y": 8933,
+      "src": "abs(sep - 21.21 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_trasl",
+      "kind": "math",
+      "x": 40,
+      "y": 8979,
+      "src": "abs(trasl - 3.28 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_rb",
+      "kind": "math",
+      "x": 40,
+      "y": 9025,
+      "src": "abs(r_b - 0.577 cm) < 0.0005 cm ="
+    },
+    {
+      "id": "c_umb",
+      "kind": "math",
+      "x": 40,
+      "y": 9071,
+      "src": "abs(umb - 14.43 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_esbg",
+      "kind": "math",
+      "x": 40,
+      "y": 9117,
+      "src": "abs(esb_g - 31.2) < 0.05 ="
+    },
+    {
+      "id": "c_pan",
+      "kind": "math",
+      "x": 40,
+      "y": 9163,
+      "src": "abs(Rd_pan - 149.89 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_ha",
+      "kind": "math",
+      "x": 40,
+      "y": 9209,
+      "src": "abs(H_A - 130.44 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_va",
+      "kind": "math",
+      "x": 40,
+      "y": 9255,
+      "src": "abs(V_A - 46.31 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_hb",
+      "kind": "math",
+      "x": 40,
+      "y": 9301,
+      "src": "abs(H_B - 142.55 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_ra",
+      "kind": "math",
+      "x": 40,
+      "y": 9347,
+      "src": "abs(R_A - 138.42 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_qreq",
+      "kind": "math",
+      "x": 40,
+      "y": 9393,
+      "src": "abs(q_req - 3.947 tonf/cm) < 0.0005 tonf/cm ="
+    },
+    {
+      "id": "c_wdes",
+      "kind": "math",
+      "x": 40,
+      "y": 9439,
+      "src": "abs(w_des - 12.61 mm) < 0.005 mm ="
+    },
+    {
+      "id": "c_wnote",
+      "kind": "math",
+      "x": 40,
+      "y": 9485,
+      "src": "abs(w_note - 12.40 mm) < 0.005 mm ="
+    },
+    {
+      "id": "c_wmax",
+      "kind": "math",
+      "x": 40,
+      "y": 9531,
+      "src": "abs(w_max - 18 mm) < 0.5 mm ="
+    },
+    {
+      "id": "c_lcor",
+      "kind": "math",
+      "x": 40,
+      "y": 9577,
+      "src": "abs(L_cor - 46.95 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_huetot",
+      "kind": "math",
+      "x": 40,
+      "y": 9623,
+      "src": "abs(hue_tot - 45.71 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_lia",
+      "kind": "math",
+      "x": 40,
+      "y": 9669,
+      "src": "abs(L_iA - 44.15 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_lsb",
+      "kind": "math",
+      "x": 40,
+      "y": 9715,
+      "src": "abs(L_sB - 35.03 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_kds",
+      "kind": "math",
+      "x": 40,
+      "y": 9761,
+      "src": "abs(k_ds - 1.097) < 0.0005 ="
+    },
+    {
+      "id": "c_lsa",
+      "kind": "math",
+      "x": 40,
+      "y": 9807,
+      "src": "abs(L_sA - 31.01 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_lnor",
+      "kind": "math",
+      "x": 40,
+      "y": 9853,
+      "src": "abs(L_nor - 10.17 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_rdcor",
+      "kind": "math",
+      "x": 40,
+      "y": 9899,
+      "src": "abs(Rd_cor - 151.80 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rdnor",
+      "kind": "math",
+      "x": 40,
+      "y": 9945,
+      "src": "abs(Rd_nor - 227.70 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_inta",
+      "kind": "math",
+      "x": 40,
+      "y": 9991,
+      "src": "abs(int_A - 0.780) < 0.0005 ="
+    },
+    {
+      "id": "c_intb",
+      "kind": "math",
+      "x": 40,
+      "y": 10037,
+      "src": "abs(int_B - 0.882) < 0.0005 ="
+    },
+    {
+      "id": "c_exe",
+      "kind": "math",
+      "x": 40,
+      "y": 10083,
+      "src": "abs(exe - 4.50 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_j102",
+      "kind": "math",
+      "x": 40,
+      "y": 10129,
+      "src": "abs(Rd_j102 - 131.56 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_umax",
+      "kind": "math",
+      "x": 40,
+      "y": 10175,
+      "src": "abs(u_max - 0.939) < 0.0005 ="
     }
   ]
 }

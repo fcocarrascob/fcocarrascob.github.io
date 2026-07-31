@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync:sap-scripts": "node scripts/sync-sap-scripts.mjs",
-    "verify:planilla": "node scripts/verify-planilla.mjs"
+    "verify:planilla": "node scripts/verify-planilla.mjs",
+    "verify:planillas": "node scripts/verify-planilla.mjs public/planillas"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",

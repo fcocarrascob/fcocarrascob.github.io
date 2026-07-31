@@ -3,7 +3,11 @@
   "meta": {
     "titulo": "Gusset de un solo borde, apernado — dos anchos efectivos para la misma plancha y gobierna la compresión (NCh2369 8.4.1/8.6.8 + AISC 360-22)",
     "ficha": "struct_pad/src/content/acero/ejemplo-gusset-simple-apernado.mdx",
-    "esperadoFalso": {}
+    "esperadoFalso": {
+      "c_rapl": "HALLAZGO 2026-07-31: el post publica 31,73 (t = 1,8 cm, gusset de 18 mm de la version previa); con el gusset vigente de 20 mm da 35,25. No cambia el minimo por perno (25,60, corte doble) ni el grupo (153,62)",
+      "c_rdb": "HALLAZGO 2026-07-31: el post publica 27,43 (t = 1,8 cm); con 20 mm da 30,48. No cambia el minimo por perno",
+      "c_rdi": "HALLAZGO 2026-07-31: el post publica 41,64 (t = 1,8 cm); con 20 mm da 46,27. No cambia el minimo por perno"
+    }
   },
   "regions": [
     {
@@ -1057,6 +1061,181 @@
       "x": 40,
       "y": 7543,
       "src": "Gobierna el PANDEO (0,940): la compresión decide aunque la demanda sea igual en los dos sentidos"
+    },
+    {
+      "id": "r127",
+      "kind": "text",
+      "x": 40,
+      "y": 7612,
+      "src": "━━ 10 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
+    },
+    {
+      "id": "r128",
+      "kind": "text",
+      "x": 40,
+      "y": 7658,
+      "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
+    },
+    {
+      "id": "c_tye",
+      "kind": "math",
+      "x": 40,
+      "y": 7704,
+      "src": "abs(T_ye - 207.93 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_tr",
+      "kind": "math",
+      "x": 40,
+      "y": 7750,
+      "src": "abs(T_r - 112.00 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_vi",
+      "kind": "math",
+      "x": 40,
+      "y": 7796,
+      "src": "abs(V_i - 79.20 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_wdisp",
+      "kind": "math",
+      "x": 40,
+      "y": 7842,
+      "src": "abs(w_disp - 57.2 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_wt",
+      "kind": "math",
+      "x": 40,
+      "y": 7888,
+      "src": "abs(w_t - 45.0 cm) < 0.05 cm ="
+    },
+    {
+      "id": "c_wc",
+      "kind": "math",
+      "x": 40,
+      "y": 7934,
+      "src": "abs(w_c - 29.78 cm) < 0.005 cm ="
+    },
+    {
+      "id": "c_rcor",
+      "kind": "math",
+      "x": 40,
+      "y": 7980,
+      "src": "abs(R_cor - 25.60 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rapl",
+      "kind": "math",
+      "x": 40,
+      "y": 8026,
+      "src": "abs(R_apl - 31.73 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rdb",
+      "kind": "math",
+      "x": 40,
+      "y": 8072,
+      "src": "abs(R_db - 27.43 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rdi",
+      "kind": "math",
+      "x": 40,
+      "y": 8118,
+      "src": "abs(R_di - 41.64 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_pan",
+      "kind": "math",
+      "x": 40,
+      "y": 8164,
+      "src": "abs(Rd_pan - 119.12 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_dro",
+      "kind": "math",
+      "x": 40,
+      "y": 8210,
+      "src": "abs(Rd_dro - 125.13 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_len",
+      "kind": "math",
+      "x": 40,
+      "y": 8256,
+      "src": "abs(min(Rd_lfl, Rd_lro) - 131.16 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_dfl",
+      "kind": "math",
+      "x": 40,
+      "y": 8302,
+      "src": "abs(Rd_dfl - 143.95 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_bc",
+      "kind": "math",
+      "x": 40,
+      "y": 8348,
+      "src": "abs(Rd_bc - 144.35 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_per",
+      "kind": "math",
+      "x": 40,
+      "y": 8394,
+      "src": "abs(Rd_per - 153.62 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_flu",
+      "kind": "math",
+      "x": 40,
+      "y": 8440,
+      "src": "abs(Rd_flu - 204.93 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_rot",
+      "kind": "math",
+      "x": 40,
+      "y": 8486,
+      "src": "abs(Rd_rot - 239.90 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_sol",
+      "kind": "math",
+      "x": 40,
+      "y": 8532,
+      "src": "abs(Rd_sol - 240.47 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_vb",
+      "kind": "math",
+      "x": 40,
+      "y": 8578,
+      "src": "abs(Rd_vb - 291.46 tonf) < 0.005 tonf ="
+    },
+    {
+      "id": "c_esb",
+      "kind": "math",
+      "x": 40,
+      "y": 8624,
+      "src": "abs(esb - 49.7) < 0.05 ="
+    },
+    {
+      "id": "c_fcr",
+      "kind": "math",
+      "x": 40,
+      "y": 8670,
+      "src": "abs(F_cr - 2222 kgf/cm^2) < 0.5 kgf/cm^2 ="
+    },
+    {
+      "id": "c_upan",
+      "kind": "math",
+      "x": 40,
+      "y": 8716,
+      "src": "abs(u_pan - 0.940) < 0.0005 ="
     }
   ]
 }
