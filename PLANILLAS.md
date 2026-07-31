@@ -24,6 +24,27 @@ SAP2000, de un catálogo o de una tabla de norma entra como dato declarado con s
 ("Tabla J3.3M: d_h = 28 mm") y es frontera explícita de lo verificado. Tampoco ve prosa,
 figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 
+## El ciclo, un ejemplo a la vez
+
+Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
+
+1. **Construir** la planilla desde la norma y los datos de entrada del post
+   (§ Convenciones: independencia). Sale de un agente con el PDF de la norma a
+   la vista, nunca de copiar los pasos intermedios del post.
+2. **Dibujar el esquema paramétrico** en `public/esquemas/<slug>.svg` y colgarlo
+   de la región `image` (§ Esquema paramétrico). No es opcional: una planilla
+   sin esquema queda incompleta.
+3. **Verificar**: `npm run verify:planilla -- public/planillas/<slug>.json`.
+   Falla por número que no cuadra, por unidad incoherente y por token de
+   esquema que no resuelve.
+4. **Aplicar los fixes mecánicos** al post — redondeos, dígitos, un número mal
+   arrastrado. Si un hallazgo toca una **tesis o una decisión de diseño**, ahí
+   se para: eso se conversa antes de tocar el post.
+5. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
+   registro con pasos, verificaciones, contrastes y fecha de corrida.
+6. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
+   build`, y commit del par planilla + esquema + post corregido.
+
 ## Convenciones
 
 - **Independencia**: la planilla se construye desde la norma (verificada en el PDF) y los
@@ -41,14 +62,35 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
   para tapar una discrepancia en silencio. Si el post se corrige, el runner avisa que la
   excepción quedó obsoleta y hay que borrarla.
-- **Esquema paramétrico**: un SVG de `public/esquemas/` con tokens `{{expr}}` /
-  `{{expr:unidad}}` (la forma con unidad convierte e imprime **solo el número**; la
-  unidad la escribe el SVG con su propia tipografía). La región `image` que lo muestra
-  lo inyecta inline con los tokens sustituidos contra el scope visible en su posición
-  de lectura — va **después** de las variables que rotula (típicamente tras los usos,
-  si rotula resultados). `verify:planillas` falla si un token no resuelve, así el
-  esquema queda bajo el mismo contrato que los números. Solo `/esquemas/` se inyecta
-  inline; cualquier otra imagen va por `<img>`.
+- **Esquema paramétrico** (obligatorio): toda planilla lleva un SVG en
+  `public/esquemas/<slug de la planilla>.svg` con tokens `{{expr}}` /
+  `{{expr:unidad}}`, colgado de su región `image`. Una imagen muda no cumple: el
+  esquema existe para que el lector vea **cuánto valen** las variables que el dibujo
+  rotula, y para que al mover un dato el dibujo se mueva con los números. Reglas:
+  - **De dónde sale**: se deriva de la figura del post — misma composición, mismos
+    colores — y se guarda **aparte**, en `/esquemas/`. El post conserva su SVG
+    estático (ahí los tokens saldrían crudos). Si el panel recortado solo existía
+    para la planilla, se mueve a `/esquemas/` y no queda copia.
+  - **Tokens**: `{{expr}}` acepta cualquier expresión mathjs contra el scope
+    (`{{max(u_a, u_b)}}`, `{{d_v - t_fv:mm}}`). La forma con unidad convierte e
+    imprime **solo el número**; la unidad la escribe el SVG con su propia tipografía
+    (cm², tonf·m). Los valores salen con 4 cifras significativas, no con el redondeo
+    del post. La sustitución barre **todo el archivo, comentarios incluidos**: un
+    `{{expr}}` de ejemplo dentro de un `<!-- -->` también se evalúa y hace fallar
+    la corrida.
+  - **Dónde va**: la región `image` ve el scope de su posición de lectura, así que
+    va **después** de las variables que rotula. En la práctica: justo antes del
+    encabezado «CONTRASTE CON EL POST», donde ya está todo definido.
+  - **Banda de valores**: bajo el dibujo van dos o tres líneas con lo que la hoja
+    concluye — demanda, la variable que el ejemplo hace hablar, y el estado límite
+    que gobierna con su uso. Es lo que convierte el esquema en un resumen vivo.
+    Si hace falta espacio, se estira el `viewBox` hacia abajo y se recalcula el `h`
+    de la región (`h = w · alto/ancho del viewBox`).
+  - **Contrato**: `verify:planillas` falla si un token no resuelve — variable no
+    definida todavía en ese punto de la hoja, o unidad incoherente. El dibujo queda
+    bajo el mismo contrato que los números.
+  - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
+    por `<img>`.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
@@ -59,45 +101,49 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 
 ### acero
 
-| Post | Pasos | Verif. | Contrastes | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|
-| `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
-| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
-| `ejemplo-chevron-nch2369` | | | | | | ⬜ |
-| `ejemplo-columna-galpon-compresion` | | | | | | ⬜ |
-| `ejemplo-conexion-apernada-corte` | | | | | | ⬜ |
-| `ejemplo-conexion-doble-angulo` | | | | | | ⬜ |
-| `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 0 | 2026-07-31 | ✅ |
-| `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
-| `ejemplo-empalme-apernado-viga` | | | | | | ⬜ |
-| `ejemplo-viga-carrilera-puente-grua` | | | | | | ⬜ |
-| `ejemplo-viga-columna` | | | | | | ⬜ |
-| `ejemplo-viga-ltb` | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|
+| `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 18 | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 16 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | ⬜ | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | ⬜ | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
+| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
+| `ejemplo-chevron-nch2369` | | | | | | | ⬜ |
+| `ejemplo-columna-galpon-compresion` | | | | | | | ⬜ |
+| `ejemplo-conexion-apernada-corte` | | | | | | | ⬜ |
+| `ejemplo-conexion-doble-angulo` | | | | | | | ⬜ |
+| `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 0 | 2026-07-31 | ✅ |
+| `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
+| `ejemplo-empalme-apernado-viga` | | | | | | | ⬜ |
+| `ejemplo-viga-carrilera-puente-grua` | | | | | | | ⬜ |
+| `ejemplo-viga-columna` | | | | | | | ⬜ |
+| `ejemplo-viga-ltb` | | | | | | | ⬜ |
+
+**Esq.** = tokens del esquema paramétrico. Las dos filas con ⬜ son anteriores a la
+regla: `gusset-esquina-apernado` y `gusset-apice-chevron` nunca tuvieron región
+`image` y deben su esquema.
 
 ### hormigón
 
-| Post | Pasos | Verif. | Contrastes | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|
-| `ejemplo-anclajes-pedestal` | | | | | | ⬜ |
-| `ejemplo-columna-interaccion-esbeltez` | | | | | | ⬜ |
-| `ejemplo-losa-punzonamiento-momento` | | | | | | ⬜ |
-| `ejemplo-losa-unidireccional` | | | | | | ⬜ |
-| `ejemplo-mensula-puntal-tensor` | | | | | | ⬜ |
-| `ejemplo-muro-flexocompresion` | | | | | | ⬜ |
-| `ejemplo-pedestal-anclaje-nch2369` | | | | | | ⬜ |
-| `ejemplo-viga-flexion-corte` | | | | | | ⬜ |
-| `ejemplo-viga-t` | | | | | | ⬜ |
-| `ejemplo-zapata-aislada` | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|
+| `ejemplo-anclajes-pedestal` | | | | | | | ⬜ |
+| `ejemplo-columna-interaccion-esbeltez` | | | | | | | ⬜ |
+| `ejemplo-losa-punzonamiento-momento` | | | | | | | ⬜ |
+| `ejemplo-losa-unidireccional` | | | | | | | ⬜ |
+| `ejemplo-mensula-puntal-tensor` | | | | | | | ⬜ |
+| `ejemplo-muro-flexocompresion` | | | | | | | ⬜ |
+| `ejemplo-pedestal-anclaje-nch2369` | | | | | | | ⬜ |
+| `ejemplo-viga-flexion-corte` | | | | | | | ⬜ |
+| `ejemplo-viga-t` | | | | | | | ⬜ |
+| `ejemplo-zapata-aislada` | | | | | | | ⬜ |
 
 ### geotecnia
 
-| Post | Pasos | Verif. | Contrastes | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|
-| `ejemplo-fundacion-anclada-nch2369` | | | | | | ⬜ |
-| `ejemplo-losa-rigida-o-flexible-nch2369` | | | | | | ⬜ |
-| `ejemplo-pilotes-friccion-negativa-nch2369` | | | | | | ⬜ |
-| `ejemplo-zapata-galpon-nch2369` | | | | | | ⬜ |
-| `ejemplo-zapata-los-dos-criterios` | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|
+| `ejemplo-fundacion-anclada-nch2369` | | | | | | | ⬜ |
+| `ejemplo-losa-rigida-o-flexible-nch2369` | | | | | | | ⬜ |
+| `ejemplo-pilotes-friccion-negativa-nch2369` | | | | | | | ⬜ |
+| `ejemplo-zapata-galpon-nch2369` | | | | | | | ⬜ |
+| `ejemplo-zapata-los-dos-criterios` | | | | | | | ⬜ |
