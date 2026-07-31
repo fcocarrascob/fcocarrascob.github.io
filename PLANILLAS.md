@@ -37,12 +37,17 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 3. **Verificar**: `npm run verify:planilla -- public/planillas/<slug>.json`.
    Falla por número que no cuadra, por unidad incoherente y por token de
    esquema que no resuelve.
-4. **Aplicar los fixes mecánicos** al post — redondeos, dígitos, un número mal
+4. **Mirar el esquema**: `npm run render:esquema -- public/planillas/<slug>.json`
+   resuelve los tokens contra la hoja, rasteriza el SVG con Chromium y deja el
+   PNG en un temporal. Que los tokens resuelvan no dice que el dibujo se lea
+   (§ Esquema paramétrico: revisión visual). Sin abrir ese PNG el paso no está
+   hecho.
+5. **Aplicar los fixes mecánicos** al post — redondeos, dígitos, un número mal
    arrastrado. Si un hallazgo toca una **tesis o una decisión de diseño**, ahí
    se para: eso se conversa antes de tocar el post.
-5. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
+6. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
    registro con pasos, verificaciones, contrastes y fecha de corrida.
-6. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
+7. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
    build`, y commit del par planilla + esquema + post corregido.
 
 ## Convenciones
@@ -89,6 +94,16 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   - **Contrato**: `verify:planillas` falla si un token no resuelve — variable no
     definida todavía en ese punto de la hoja, o unidad incoherente. El dibujo queda
     bajo el mismo contrato que los números.
+  - **Revisión visual** (`npm run render:esquema`): el contrato de tokens es
+    necesario y no suficiente. Un esquema puede cuadrar y verse mal, y eso
+    ningún booleano lo ve: el valor sustituido es más largo que el rótulo que
+    lo esperaba y se sale de su caja, un texto se pasa del `viewBox` y queda
+    cortado, un rótulo cae encima de una línea del dibujo. Hay que abrir el
+    PNG. La lista de lo que se mira: (a) nada cortado en los cuatro bordes;
+    (b) ningún texto encima de otro texto ni de una línea que lo tache;
+    (c) los valores sustituidos caben en su caja o su barra; (d) la banda de
+    valores dice lo que la hoja concluye; (e) el símbolo del tubo es `□`
+    (U+25A1), no `[]`. Lo que se corrige va al SVG y se vuelve a renderizar.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen

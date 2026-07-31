@@ -12,7 +12,9 @@
     "astro": "astro",
     "sync:sap-scripts": "node scripts/sync-sap-scripts.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
-    "verify:planillas": "node scripts/verify-planilla.mjs public/planillas"
+    "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
+    "render:esquema": "node scripts/render-esquema.mjs",
+    "render:esquemas": "node scripts/render-esquema.mjs public/planillas"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
