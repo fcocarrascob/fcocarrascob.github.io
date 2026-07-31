@@ -47,6 +47,16 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-07-31 · `acero/ejemplo-conexion-momento-placas-ala` · planilla · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
+
+**Commit auditado:** `1c111b2` · **Método:** contraste de planillas (`public/planillas/conexion-momento-placas-ala.json`: 87 pasos, 18 verificaciones de diseño —3 en rojo a propósito: J10-1, J10-2 y J10-10, los estados que el post repara— y 41 contrastes). 40 de 41 cuadraron.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔵 | N | L.72 y L.267 | $6 \cdot 0{.}75 \cdot 4792 \cdot 4{.}524 = 97{.}5$ tonf — el producto de los factores impresos da 97.56, y con $A_b$ exacta 97.55: en ambos casos redondea a **97.6**, no 97.5 (truncación). El uso 0.69 no cambia | 97.6 en la ecuación y en la tabla resumen | ✅ aplicado |
+
+**Verificado y correcto:** los otros 40 contrastes, incluidos el par F_f = 67.1, el grupo de pernos por J3.7 (97.2, el de la tabla), F13.1, J10-1/-2/-4/-9/-10/-11 con el término axial (el «uso exactamente 1.00» sin axial da 0.9997 ✓ y el 0.87 de J10-11 pasa por 0.00002), las áreas de rigidizadores y el doubler. El 21 678 kgf por perno resultó redondeo correcto una vez que la planilla derivó $A_b = \pi d^2/4$ en vez de declarar el 4.524 impreso — lección de método: los derivables se derivan.
+
 ### 2026-07-31 · `acero/ejemplo-diagonal-hss-traccion` · **planilla piloto** (primera fuera del bloque gusset) · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
 
 **Commit auditado:** `3355fa4` · **Método:** contraste de planillas. Planilla construida desde cero a partir de los datos declarados del post (`public/planillas/diagonal-hss-traccion.json`: 41 pasos, 9 verificaciones de diseño, 25 contrastes). Era el caso de control —post ya auditado dos veces contra los PDF— y se comportó como tal: 24 de 25 contrastes limpios a la primera.
@@ -2669,7 +2679,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `gusset-teoria-estados-limite` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 8🟡 4🔵) · 6 aplicados (1🔴 5🟠) |
 | `ejemplo-chevron-nch2369` | 2026-07-27 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` |
 | `ejemplo-conexion-momento-end-plate` | 2026-07-31 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados · planilla ✅ 38 contrastes, 0 hallazgos |
-| `ejemplo-conexion-momento-placas-ala` | 2026-07-26 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) |
+| `ejemplo-conexion-momento-placas-ala` | 2026-07-31 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) · planilla ✅ 41 contrastes, 1 aplicado |
 | `ejemplo-conexion-doble-angulo` | 2026-07-26 | ⚠️ | 7 (0🔴 0🟠 · 4🟡 3🔵) · 2.ª pasada: 3 aplicados (1🔴 2🟠) |
 | `ejemplo-empalme-apernado-viga` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 5 aplicados (3🟠 1🟡 1🔵) |
 | `ejemplo-viga-columna` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🔴 1🟠 6🟡 4🔵) |

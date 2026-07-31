@@ -63,7 +63,7 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 | `ejemplo-conexion-apernada-corte` | | | | | | ⬜ |
 | `ejemplo-conexion-doble-angulo` | | | | | | ⬜ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 0 | 2026-07-31 | ✅ |
-| `ejemplo-conexion-momento-placas-ala` | | | | | | ⬜ |
+| `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
 | `ejemplo-empalme-apernado-viga` | | | | | | ⬜ |
 | `ejemplo-viga-carrilera-puente-grua` | | | | | | ⬜ |
 | `ejemplo-viga-columna` | | | | | | ⬜ |
