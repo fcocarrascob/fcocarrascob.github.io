@@ -31,8 +31,8 @@
       "id": "r003",
       "kind": "image",
       "x": 40,
-      "y": 170,
-      "src": "/ejemplos/diagonal-hss-traccion.svg",
+      "y": 4141,
+      "src": "/esquemas/diagonal-hss-traccion.svg",
       "w": 560,
       "h": 313
     },
@@ -558,224 +558,224 @@
       "id": "r070",
       "kind": "text",
       "x": 40,
-      "y": 4141,
+      "y": 4523,
       "src": "━━ 7 · ALCANCE — resistencia, no diseño por capacidad (NCh2369:2025 cl. 8.6.8) ━━"
     },
     {
       "id": "r071",
       "kind": "text",
       "x": 40,
-      "y": 4187,
+      "y": 4569,
       "src": "Bajo 8.6.8 la conexión debería desarrollar la capacidad esperada; su cota inferior F_y·A_g"
     },
     {
       "id": "r072",
       "kind": "text",
       "x": 40,
-      "y": 4233,
+      "y": 4615,
       "src": "ya supera lo disponible: este detalle NO calificaría como sismorresistente"
     },
     {
       "id": "r073",
       "kind": "math",
       "x": 40,
-      "y": 4279,
+      "y": 4661,
       "src": "T_y := F_y*A_g = tonf"
     },
     {
       "id": "v_nocal",
       "kind": "math",
       "x": 40,
-      "y": 4325,
+      "y": 4707,
       "src": "Rd_ro < T_y ="
     },
     {
       "id": "r074",
       "kind": "text",
       "x": 40,
-      "y": 4394,
+      "y": 4776,
       "src": "━━ 8 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
     },
     {
       "id": "r075",
       "kind": "text",
       "x": 40,
-      "y": 4440,
+      "y": 4822,
       "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada, estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
     },
     {
       "id": "c_flu_kgf",
       "kind": "math",
       "x": 40,
-      "y": 4486,
+      "y": 4868,
       "src": "abs(Rd_flu - 68746 kgf) < 0.5 kgf ="
     },
     {
       "id": "c_flu",
       "kind": "math",
       "x": 40,
-      "y": 4532,
+      "y": 4914,
       "src": "abs(Rd_flu - 68.7 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_an",
       "kind": "math",
       "x": 40,
-      "y": 4578,
+      "y": 4960,
       "src": "abs(A_n - 19.46 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_b",
       "kind": "math",
       "x": 40,
-      "y": 4624,
+      "y": 5006,
       "src": "abs(b - 5.08 cm) < 0.005 cm ="
     },
     {
       "id": "c_numx",
       "kind": "math",
       "x": 40,
-      "y": 4670,
+      "y": 5052,
       "src": "abs(num_x - 56.91 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_denx",
       "kind": "math",
       "x": 40,
-      "y": 4716,
+      "y": 5098,
       "src": "abs(den_x - 38.28 cm) < 0.005 cm ="
     },
     {
       "id": "c_xbar",
       "kind": "math",
       "x": 40,
-      "y": 4762,
+      "y": 5144,
       "src": "abs(x_bar - 3.59 cm) < 0.005 cm ="
     },
     {
       "id": "c_u5",
       "kind": "math",
       "x": 40,
-      "y": 4808,
+      "y": 5190,
       "src": "abs(U_5 - 0.760) < 0.0005 ="
     },
     {
       "id": "c_ae",
       "kind": "math",
       "x": 40,
-      "y": 4854,
+      "y": 5236,
       "src": "abs(A_e - 14.80 cm^2) < 0.005 cm^2 ="
     },
     {
       "id": "c_ro_kgf",
       "kind": "math",
       "x": 40,
-      "y": 4900,
+      "y": 5282,
       "src": "abs(Rd_ro - 48385 kgf) < 0.5 kgf ="
     },
     {
       "id": "c_ro",
       "kind": "math",
       "x": 40,
-      "y": 4946,
+      "y": 5328,
       "src": "abs(Rd_ro - 48.4 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_rncm",
       "kind": "math",
       "x": 40,
-      "y": 4992,
+      "y": 5374,
       "src": "abs(Rn_cm - 939 kgf/cm) < 0.5 kgf/cm ="
     },
     {
       "id": "c_lmin",
       "kind": "math",
       "x": 40,
-      "y": 5038,
+      "y": 5420,
       "src": "abs(l_min - 11.2 cm) < 0.05 cm ="
     },
     {
       "id": "c_sol_kgf",
       "kind": "math",
       "x": 40,
-      "y": 5084,
+      "y": 5466,
       "src": "abs(Rd_sol - 56351 kgf) < 0.5 kgf ="
     },
     {
       "id": "c_sol",
       "kind": "math",
       "x": 40,
-      "y": 5130,
+      "y": 5512,
       "src": "abs(Rd_sol - 56.4 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_u20",
       "kind": "math",
       "x": 40,
-      "y": 5176,
+      "y": 5558,
       "src": "abs(U_20 - 0.82) < 0.005 ="
     },
     {
       "id": "c_ro20",
       "kind": "math",
       "x": 40,
-      "y": 5222,
+      "y": 5604,
       "src": "abs(Rd_ro20 - 52.2 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_agv",
       "kind": "math",
       "x": 40,
-      "y": 5268,
+      "y": 5650,
       "src": "abs(A_gv - 35.4 cm^2) < 0.05 cm^2 ="
     },
     {
       "id": "c_bc_kgf",
       "kind": "math",
       "x": 40,
-      "y": 5314,
+      "y": 5696,
       "src": "abs(Rd_bc - 56074 kgf) < 0.5 kgf ="
     },
     {
       "id": "c_bc",
       "kind": "math",
       "x": 40,
-      "y": 5360,
+      "y": 5742,
       "src": "abs(Rd_bc - 56.1 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_r1",
       "kind": "math",
       "x": 40,
-      "y": 5406,
+      "y": 5788,
       "src": "abs(Rd_r1 - 69.5 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_sobre",
       "kind": "math",
       "x": 40,
-      "y": 5452,
+      "y": 5834,
       "src": "abs(sobre - 0.24) < 0.005 ="
     },
     {
       "id": "c_esb",
       "kind": "math",
       "x": 40,
-      "y": 5498,
+      "y": 5880,
       "src": "abs(esb - 117) < 0.5 ="
     },
     {
       "id": "c_uro",
       "kind": "math",
       "x": 40,
-      "y": 5544,
+      "y": 5926,
       "src": "abs(u_ro - 0.87) < 0.005 ="
     },
     {
       "id": "c_ty",
       "kind": "math",
       "x": 40,
-      "y": 5590,
+      "y": 5972,
       "src": "abs(T_y - 76.4 tonf) < 0.05 tonf ="
     }
   ]

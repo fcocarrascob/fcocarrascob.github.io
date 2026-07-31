@@ -97,6 +97,12 @@ export interface RegionResult {
   defined?: string;
   /** Mensaje de error (sintaxis, variable indefinida, unidad incoherente...). */
   error?: string;
+  /**
+   * Solo `image`: instantánea del scope en la posición de lectura de la región.
+   * Es lo que consume el esquema paramétrico (`esquema.ts`): la imagen ve las
+   * variables definidas más arriba/izquierda, igual que una región math.
+   */
+  scope?: Record<string, unknown>;
 }
 
 export type SheetResults = Record<string, RegionResult>;
@@ -212,9 +218,11 @@ export function evaluateSheet(regions: Region[]): SheetResults {
   const results: SheetResults = {};
   const scope: Record<string, unknown> = {};
 
-  // `text` e `image` no se evalúan: no aportan ni consumen variables.
+  // `text` no se evalúa: no aporta ni consume variables. `image` tampoco evalúa,
+  // pero participa del orden de lectura: captura el scope visible en su posición
+  // para que un esquema paramétrico rotule con las variables definidas arriba.
   const ordered = regions
-    .filter((r) => r.kind !== 'text' && r.kind !== 'image')
+    .filter((r) => r.kind !== 'text')
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
   const ctx: ProgramContext = {
@@ -223,6 +231,11 @@ export function evaluateSheet(regions: Region[]): SheetResults {
   };
 
   for (const region of ordered) {
+    if (region.kind === 'image') {
+      results[region.id] = { scope: { ...scope } };
+      continue;
+    }
+
     if (region.src.trim() === '') {
       results[region.id] = {};
       continue;
@@ -325,4 +338,36 @@ function evalProgramRegion(
 
 function errMsg(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+/**
+ * Evalúa una expresión suelta contra un scope, sin mutarlo (la usa el esquema
+ * paramétrico para resolver los tokens `{{expr}}` con el mismo motor y las
+ * mismas unidades de la hoja).
+ */
+export function evalExpr(expr: string, scope: Record<string, unknown>): unknown {
+  return math.evaluate(expr, { ...scope });
+}
+
+/** Número compacto para rótulos: 4 cifras significativas, sin cola de ceros. */
+function numLabel(n: number): string {
+  if (!Number.isFinite(n)) return String(n);
+  const r = Number(n.toPrecision(4));
+  if (r !== 0 && (Math.abs(r) >= 1e6 || Math.abs(r) < 1e-4)) return r.toExponential(2);
+  return String(r);
+}
+
+/**
+ * Valor como texto plano para un rótulo de esquema. Con `unidad`, convierte y
+ * devuelve SOLO el número (el autor del SVG escribe la unidad con su propia
+ * tipografía: cm², tonf·m); la conversión lanza si es dimensionalmente
+ * incoherente, y ese error debe aflorar como token sin resolver. Sin `unidad`,
+ * un número va a secas y una cantidad con unidad va como la formatea mathjs.
+ */
+export function formatValor(v: unknown, unidad?: string): string {
+  if (unidad) return numLabel(math.number(v as never, unidad as never));
+  if (math.isUnit(v)) return math.format(v, { precision: 4 });
+  if (typeof v === 'number') return numLabel(v);
+  if (typeof v === 'boolean') return v ? '✓' : '✗';
+  return String(v);
 }

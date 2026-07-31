@@ -41,6 +41,14 @@ figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
   para tapar una discrepancia en silencio. Si el post se corrige, el runner avisa que la
   excepción quedó obsoleta y hay que borrarla.
+- **Esquema paramétrico**: un SVG de `public/esquemas/` con tokens `{{expr}}` /
+  `{{expr:unidad}}` (la forma con unidad convierte e imprime **solo el número**; la
+  unidad la escribe el SVG con su propia tipografía). La región `image` que lo muestra
+  lo inyecta inline con los tokens sustituidos contra el scope visible en su posición
+  de lectura — va **después** de las variables que rotula (típicamente tras los usos,
+  si rotula resultados). `verify:planillas` falla si un token no resuelve, así el
+  esquema queda bajo el mismo contrato que los números. Solo `/esquemas/` se inyecta
+  inline; cualquier otra imagen va por `<img>`.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 

@@ -66,7 +66,7 @@ async function resolverPlanillas(entradas) {
 async function loadEngine() {
   const out = path.join(tmpdir(), `worksheet-engine-${process.pid}.mjs`);
   await build({
-    entryPoints: [path.join(ROOT, 'src/lib/worksheet.ts')],
+    entryPoints: [path.join(ROOT, 'src/lib/planilla-engine.ts')],
     bundle: true,
     platform: 'node',
     format: 'esm',
@@ -102,7 +102,7 @@ function valorDeTex(tex, src) {
     .trim();
 }
 
-const { evaluateSheet, parseMathRegion } = await loadEngine();
+const { evaluateSheet, parseMathRegion, renderEsquema, ESQUEMAS_PREFIX } = await loadEngine();
 
 /** Verifica una planilla; devuelve true si está limpia. */
 async function verificar(planillaPath) {
@@ -121,6 +121,7 @@ const verdictos = [];
 const filas = [];
 let n = 0;
 let figuras = 0;
+let tokensEsquema = 0;
 
 for (const r of ordenadas) {
   if (r.kind === 'text') {
@@ -128,9 +129,28 @@ for (const r of ordenadas) {
     continue;
   }
   // Las imágenes no se evalúan; se cuentan y se omiten del desarrollo (su `src`
-  // puede ser un data URI de cientos de kB, que no tiene nada que hacer en una tabla).
+  // puede ser un data URI de cientos de kB, que no tiene nada que hacer en una
+  // tabla). Excepción: un esquema paramétrico de /esquemas/ sí se somete al
+  // contrato — se sustituyen sus tokens contra el scope capturado y un token
+  // sin resolver es un error de la planilla.
   if (r.kind === 'image') {
     figuras += 1;
+    if (r.src.startsWith(ESQUEMAS_PREFIX)) {
+      try {
+        const svgText = await readFile(path.join(ROOT, 'public', r.src), 'utf8');
+        const esquema = renderEsquema(svgText, results[r.id]?.scope ?? {});
+        tokensEsquema += esquema.tokens;
+        if (esquema.faltantes.length) {
+          errores.push({
+            id: r.id,
+            src: r.src,
+            error: `token(es) sin resolver: ${esquema.faltantes.join(' · ')}`,
+          });
+        }
+      } catch (err) {
+        errores.push({ id: r.id, src: r.src, error: `esquema ilegible: ${err.message}` });
+      }
+    }
     continue;
   }
   const res = results[r.id] ?? {};
@@ -160,6 +180,7 @@ console.log(`Archivo:  ${path.relative(process.cwd(), planillaPath)}`);
 console.log(
   `Regiones: ${regions.length}  ·  pasos: ${n}  ·  verificaciones: ${verdictos.length}` +
     (figuras ? `  ·  figuras: ${figuras}` : '') +
+    (tokensEsquema ? `  ·  tokens de esquema: ${tokensEsquema}` : '') +
     '\n',
 );
 
