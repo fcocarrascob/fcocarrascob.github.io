@@ -59,9 +59,9 @@
   <rect x="470" y="118" width="96" height="18" fill="#fdecea" stroke="#c0392b" stroke-width="1.8"/>
   <text x="476" y="131" font-size="10" fill="#c0392b" font-weight="bold">A) L_b=8 m  φM_n=19.1</text>
   <text x="806" y="131" font-size="10" text-anchor="end" fill="#c0392b" font-weight="bold">1.05 ✗</text>
-  <!-- B: 51.0 pasa -->
+  <!-- B: 50.9 pasa -->
   <rect x="470" y="150" width="255" height="18" fill="#eef7ee" stroke="#1c7c3c" stroke-width="1.3"/>
-  <text x="476" y="163" font-size="10" fill="#1c7c3c">B) L_b=4 m  φM_n=51.0</text>
+  <text x="476" y="163" font-size="10" fill="#1c7c3c">B) L_b=4 m  φM_n=50.9</text>
   <text x="806" y="163" font-size="10" text-anchor="end" fill="#1c7c3c">0.39 ✓</text>
 
   <!-- caja tesis -->
@@ -69,6 +69,6 @@
   <text x="74" y="322" font-size="11.5" fill="#222" font-weight="bold">La palanca del LTB: arriostrar y el crédito C_b, no un perfil mayor</text>
   <text x="74" y="343" font-size="10.5" fill="#333">• Con L_b = 8 m la viga pandea elástica y φM_n = 19.1 &lt; 20: FALLA, aunque su φM_p = 52.4 sobra por lejos.</text>
   <text x="74" y="362" font-size="10.5" fill="#333">• C_b rescata algo: de 16.8 (C_b=1) a 19.1 (C_b=1.14), pero no alcanza.</text>
-  <text x="74" y="381" font-size="10.5" fill="#333">• Un arriostre a media luz (L_b = 4 m) sube φM_n a 51.0 → uso 0.39. Mismo perfil, mismo acero.</text>
+  <text x="74" y="381" font-size="10.5" fill="#333">• Un arriostre a media luz (L_b = 4 m) sube φM_n a 50.9 → uso 0.39. Mismo perfil, mismo acero.</text>
   <text x="74" y="402" font-size="10" fill="#888">Subir de perfil sube M_p (que ya sobra); lo que gobierna es la distancia entre arriostres.</text>
 </svg>

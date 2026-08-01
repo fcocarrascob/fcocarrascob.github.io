@@ -1,8 +1,8 @@
 ---
 title: "Ejemplo — Conexión apernada a corte (AISC 360-22)"
-description: "Verificación de una conexión de corte tipo shear tab (plancha simple apernada al alma de una viga) recorriendo su cadena de transferencia: corte de los pernos, aplastamiento y desgarre en la plancha, corte por fluencia y rotura de la plancha, y rotura en bloque. En la cadena de resistencia gobierna la plancha (rotura por corte en área neta, uso 0.93) y los pernos parecen holgados (0.69). Pero esa holgura es aparente: la reacción llega 60 mm antes de la línea de pernos, y la excentricidad deja al perno extremo justo en el límite (uso 0.995) y suma flexión en la plancha (0.48)."
+description: "Verificación de una conexión de corte tipo shear tab (plancha simple apernada al alma de una viga) recorriendo su cadena de transferencia: corte de los pernos, aplastamiento y desgarre en la plancha, corte por fluencia y rotura de la plancha, y rotura en bloque. En la cadena de resistencia gobierna la plancha (rotura por corte en área neta, uso 0.93) y los pernos parecen holgados (0.70). Pero esa holgura es aparente: la reacción llega 60 mm antes de la línea de pernos, y la excentricidad lleva al perno extremo a uso 1.00 —el único elemento que no alcanza— además de sumar flexión en la plancha (0.48)."
 pubDate: 2026-07-23
-updatedDate: 2026-07-25
+updatedDate: 2026-08-01
 tags: ["ejemplo", "acero", "conexiones", "pernos", "corte", "aplastamiento", "rotura en bloque", "excentricidad", "aisc360"]
 subsection: "ejemplos"
 chapter: "Cap. J — Conexiones"
@@ -43,7 +43,7 @@ y pernos de uso corriente.
 
 <Figure
   src="/ejemplos/conexion-apernada-esquema.svg"
-  alt="Elevación de una conexión shear tab: una plancha de 10 mm de espesor y 100 mm de ancho, soldada al ala de una columna y apernada al alma de la viga con 4 pernos Ø22 en línea vertical, separación 70 mm y distancias al borde 35 mm (vertical) y 40 mm (horizontal), con la reacción V_u = 30 tonf hacia abajo. Una cota marca en rojo la excentricidad a = 60 mm entre la cara de la columna y la línea de pernos. Se resaltan los dos modos de falla de la plancha: el plano vertical de rotura por corte que pasa por los cuatro agujeros (gobierna) y la rotura en bloque a la derecha de la línea de pernos (corte vertical más tracción hacia el borde). Una leyenda anota que en la cadena de resistencia los pernos parecen holgados (0.69) pero que esa holgura es aparente: con la excentricidad el perno extremo llega a 0.995."
+  alt="Elevación de una conexión shear tab: una plancha de 10 mm de espesor y 100 mm de ancho, soldada al ala de una columna y apernada al alma de la viga con 4 pernos Ø22 en línea vertical, separación 70 mm y distancias al borde 35 mm (vertical) y 40 mm (horizontal), con la reacción V_u = 30 tonf hacia abajo. Una cota marca en rojo la excentricidad a = 60 mm entre la cara de la columna y la línea de pernos. Se resaltan los dos modos de falla de la plancha: el plano vertical de rotura por corte que pasa por los cuatro agujeros (gobierna) y la rotura en bloque a la derecha de la línea de pernos (corte vertical más tracción hacia el borde). Una leyenda anota que en la cadena de resistencia los pernos parecen holgados (0.70) pero que esa holgura es aparente: con la excentricidad el perno extremo llega a 1.00 y no alcanza."
   caption="La shear tab y los dos modos de falla de la plancha que dominan la cadena: la rotura por corte en el área neta (plano por los agujeros) y la rotura en bloque. Los pernos parecen holgados —hasta que entra la excentricidad a = 60 mm del punto 6."
 />
 
@@ -59,11 +59,12 @@ falla es frágil y hay que sobreprotegerla.
 ## 1. Los pernos: corte simple (J3)
 
 La resistencia de un perno a corte es su tensión nominal por su área (Ec. J3-1). Para un A325-N
-(Grupo A, rosca incluida) la Tabla J3.2 da $F_{nv} = 372$ MPa $= 3793$ kgf/cm²:
+(Grupo 120, rosca incluida) la **columna métrica** de la Tabla J3.2 da $F_{nv} = 54$ ksi
+$= 370$ MPa $= 3773$ kgf/cm²:
 
 <Equation label="Ec. J3-1 (por perno)">
 $$
-\phi R_n = 0.75 \, F_{nv} A_b = 0.75 \cdot 3793 \cdot 3.80 = 10\,810 \ \text{kgf} = 10.8 \ \text{tonf}
+\phi R_n = 0.75 \, F_{nv} A_b = 0.75 \cdot 3773 \cdot 3.80 = 10\,757 \ \text{kgf} = 10.76 \ \text{tonf}
 $$
 </Equation>
 
@@ -71,13 +72,13 @@ Con 4 pernos en un plano de corte:
 
 <Equation label="Corte de los 4 pernos">
 $$
-\phi R_n = 4 \cdot 10.8 = 43.2 \ \text{tonf} \;\ge\; V_u = 30 \ \text{tonf}
+\phi R_n = 4 \cdot 10.76 = 43.0 \ \text{tonf} \;\ge\; V_u = 30 \ \text{tonf}
 $$
 </Equation>
 
-Pasa con holgura (**uso 0.69**). Es el estado que la intuición señala primero —"¿aguantan los
+Pasa con holgura (**uso 0.70**). Es el estado que la intuición señala primero —"¿aguantan los
 pernos?"— y en la cadena de resistencia no llega a gobernar: el problema está en la plancha.
-Guarda ese 0.69, eso sí; en el punto 6 se lo va a comer la excentricidad.
+Guarda ese 0.70, eso sí; en el punto 6 se lo va a comer la excentricidad.
 
 ## 2. El apoyo en la plancha: aplastamiento y desgarre (J3.11)
 
@@ -107,8 +108,8 @@ $$
 Holgado (**uso 0.53**): con estas distancias al borde el apoyo en la plancha no es el problema.
 Formalmente, J3.7 pide combinar los dos puntos anteriores: la resistencia **efectiva** de cada
 perno es la menor entre su corte y su apoyo, y el grupo es la suma. Acá el perno de borde queda
-limitado por el desgarre ($11\,261 < 14\,413$ kgf) y los tres interiores por el corte, de modo que
-$\phi R_n = 0.75\,(11\,261 + 3 \cdot 14\,413) = 40.9$ tonf, **uso 0.73** — algo peor que el 0.69
+limitado por el desgarre ($11\,261 < 14\,342$ kgf) y los tres interiores por el corte, de modo que
+$\phi R_n = 0.75\,(11\,261 + 3 \cdot 14\,342) = 40.7$ tonf, **uso 0.74** — algo peor que el 0.70
 del corte solo, y aun así lejos de gobernar.
 
 ## 3. La plancha en corte: fluencia y rotura (J4)
@@ -135,7 +136,7 @@ $$
 </Equation>
 
 Este es el estado que **gobierna** la cadena de resistencia: **uso 0.93**. Fíjate en el contraste
-con los pernos —que dan 43.2 tonf y usan solo 0.69—: aunque el acero de la plancha es más blando y
+con los pernos —que dan 43.0 tonf y usan solo 0.70—: aunque el acero de la plancha es más blando y
 el $\phi$ más estricto, lo decisivo es que la línea de agujeros recorta el área justo en el
 plano por donde la plancha debe cortar.
 
@@ -166,7 +167,7 @@ Ambos —los dos que gobiernan la cadena— son estados **de la plancha**, no de
 
 <Note type="tip" title="La palanca está en la plancha, no en los pernos">
 La cadena de resistencia gobierna por la plancha (usos 0.93 y 0.83), mientras el corte de los
-pernos sobra (0.69). Subir a A490 **no ayudaría a la cadena**: no es la resistencia del perno la
+pernos sobra (0.70). Subir a A490 **no ayudaría a la cadena**: no es la resistencia del perno la
 que manda acá. Lo que sube la capacidad de la conexión es reforzar la plancha —más espesor o más
 profundidad—:
 
@@ -180,13 +181,13 @@ los pernos. Es la filosofía del Cap. J hecha número: **la conexión debe ser m
 miembro, y se refuerza el eslabón que gobierna** —no el que la intuición señala.
 
 Todo esto vale para la cadena de resistencia con la carga aplicada **en la línea de pernos**. El
-punto 6 levanta esa hipótesis: ahí el perno extremo pasa a ser el elemento más cargado, y sí
-importa su grado —con A490 el uso baja de 0.995 a 0.79—.
+punto 6 levanta esa hipótesis: ahí el perno extremo pasa a ser el elemento más cargado —y el único
+que no alcanza—, y sí importa su grado: con A490 el uso baja de 1.00 a 0.79.
 </Note>
 
 <Figure
   src="/ejemplos/conexion-apernada-cadena.svg"
-  alt="Barras de φR_n de los cinco estados límite de la conexión contra V_u = 30 tonf: aplastamiento/desgarre 56.9 (uso 0.53), corte de los pernos 43.2 (0.69), corte por fluencia de la plancha 42.5 (0.71), rotura en bloque 36.2 (0.83) y rotura por corte de la plancha 32.3 (0.93, gobierna). Una caja resume que en la cadena el eslabón débil es la plancha, no el perno, que la palanca es el espesor —de 10 mm (32.3) a 12 mm (38.8)— y advierte que estas barras suponen la carga centrada en la línea de pernos: con la excentricidad a = 60 mm el perno extremo sube de 0.69 a 0.995."
+  alt="Barras de φR_n de los cinco estados límite de la conexión contra V_u = 30 tonf: aplastamiento/desgarre 56.9 (uso 0.53), corte de los pernos 43.0 (0.70), corte por fluencia de la plancha 42.5 (0.71), rotura en bloque 36.2 (0.83) y rotura por corte de la plancha 32.3 (0.93, gobierna). Una caja resume que en la cadena el eslabón débil es la plancha, no el perno, que la palanca es el espesor —de 10 mm (32.3) a 12 mm (38.8)— y advierte que estas barras suponen la carga centrada en la línea de pernos: con la excentricidad a = 60 mm el perno extremo sube de 0.70 a 1.00."
   caption="La cadena de transferencia en barras. Gobierna el menor eslabón —la rotura por corte de la plancha (32.3 tonf)—, seguido de la rotura en bloque; el corte de los pernos, que la intuición pondría primero, es de los más holgados… con la carga centrada."
 />
 
@@ -232,10 +233,16 @@ r = \sqrt{\left(\frac{M\,y_{max}}{J}\right)^2 + \left(\frac{V_u}{n}\right)^2}
 $$
 </Equation>
 
-Contra las $\phi r_n = 10.81$ tonf de un Ø22 A325-N en corte simple: **uso 0.995**, es decir,
-**justo en el límite**. La holgura que los pernos parecían tener en el punto 1 no existía —era el
-resultado de mirar la cadena con la carga centrada—: la excentricidad se la comió entera, y lo que
-queda es medio punto porcentual. Se adopta $e = a$, el lado conservador.
+Contra las $\phi r_n = 10.76$ tonf de un Ø22 A325-N en corte simple: **uso 1.00** —1.0002, para
+ser exactos—, es decir, **no alcanza, por dos centésimas de por ciento**. La holgura que los pernos
+parecían tener en el punto 1 no existía —era el resultado de mirar la cadena con la carga
+centrada—: la excentricidad se la comió entera y se pasó de largo. Se adopta $e = a$, el lado
+conservador.
+
+Un margen de esa magnitud no decide nada por sí solo —está muy por debajo de la dispersión de
+cualquier variable del problema—, pero sí decide **dónde poner la atención**: el elemento crítico
+de esta conexión es el perno extremo, no la plancha, y el proyectista que se quedó en la cadena de
+resistencia nunca lo habría mirado.
 
 <Note type="warning" title="Conservador, y por eso el Manual pone límites de geometría">
 El método elástico ignora la redistribución plástica del grupo; el AISC *Manual* (Parte 7) usa el
@@ -244,33 +251,36 @@ recupera margen. Por eso el Manual acota la *configuración convencional* de la 
 otras cosas, $a \le 89$ mm (3½ in), una sola línea vertical de pernos y distancias al borde
 mínimas que conviene revisar caso a caso— **precisamente porque la excentricidad crece con $a$**. Fuera de esos límites
 (*extended configuration*) hay que verificar explícitamente el grupo excéntrico, la flexión de la
-plancha y su pandeo. La comparación con el
+plancha y su pandeo. Acá el método elástico es también el que dicta el veredicto: el 1.00 es suyo,
+y con el centro instantáneo la conexión recupera margen. La comparación con el
 [doble ángulo](/acero/ejemplo-conexion-doble-angulo) muestra el otro extremo del intercambio:
 con dos ángulos se acumulan tres efectos —brazo menor (55 mm, $M = 1.65$ tonf·m), dos secciones
-para la flexión y pernos en corte doble— y el uso del perno extremo baja de 0.995 a 0.48.
+para la flexión y pernos en corte doble— y el uso del perno extremo baja de 1.00 a 0.48.
 </Note>
 
 ## Resumen: demanda vs. capacidad
 
 | Eslabón (verificación) | Referencia | Naturaleza | Capacidad $\phi R_n$ | Uso |
 |---|---|:---:|:---:|:---:|
-| Corte de los pernos | Ec. J3-1 ($\phi=0.75$) | frágil — fractura | $43.2$ tonf | 0.69 |
-| Grupo — resistencia efectiva | J3.7 (User Note) | frágil | $40.9$ tonf | 0.73 |
+| Corte de los pernos | Ec. J3-1 ($\phi=0.75$) | frágil — fractura | $43.0$ tonf | 0.70 |
+| Grupo — resistencia efectiva | J3.7 (User Note) | frágil | $40.7$ tonf | 0.74 |
 | Aplastamiento / desgarre | Ecs. J3-6a/c ($\phi=0.75$) | frágil | $56.9$ tonf | 0.53 |
 | Plancha — corte fluencia | J4.2 ($\phi=1.00$) | dúctil | $42.5$ tonf | 0.71 |
 | **Plancha — corte rotura** | J4.2 ($\phi=0.75$) | **frágil — gobierna la cadena** | $\mathbf{32.3}$ **tonf** | **0.93** |
 | Rotura en bloque | Ec. J4-5 ($\phi=0.75$) | frágil | $36.2$ tonf | 0.83 |
 | Geometría | J3.3–J3.5 | detallado / fija $l_c$ | — | ✓ |
 | Plancha — flexión por $V_u a$ | J4 ($\phi=0.90$ / $0.75$) | dúctil / frágil | $4.46$ / $3.77$ tonf·m | 0.40 / 0.48 |
-| **Perno extremo con excentricidad** | método elástico | **frágil — el más cargado** | $\mathbf{10.81}$ **tonf** | **0.995** |
+| **Perno extremo con excentricidad** | método elástico | **frágil — el más cargado** | $\mathbf{10.76}$ **tonf** | **1.00** ✗ |
 
-**Solución:** shear tab de **plancha 10 mm (A36) con 4 pernos Ø22 A325-N** en corte simple,
-resiste $V_u = 30$ tonf. En la **cadena de resistencia** el uso máximo es 0.93 y gobierna la
+**Solución:** shear tab de **plancha 10 mm (A36) con 4 pernos Ø22 A325-N** en corte simple. En la
+**cadena de resistencia** la conexión resiste $V_u = 30$ tonf con uso máximo 0.93, y gobierna la
 **rotura por corte de la plancha**, seguida de la rotura en bloque —ambos estados de la plancha—,
 mientras el corte de los pernos parece sobrar. Al incorporar la **excentricidad** ($a = 60$ mm)
-el cuadro se completa: la plancha absorbe la flexión sin problema (0.48) pero el perno extremo
-llega a **0.995**, es decir, la conexión queda justo en el límite en el elemento que la cadena
-declaraba holgado. Dos lecciones, entonces: **el eslabón débil no es el que la intuición señala** —hay que
+el cuadro se completa y se da vuelta: la plancha absorbe la flexión sin problema (0.48) pero el
+perno extremo llega a **1.00** y no alcanza, en el elemento que la cadena declaraba holgado. El
+déficit es de dos centésimas de por ciento —cualquier ajuste lo cubre: A490 lo lleva a 0.79, y el
+centro instantáneo del *Manual* también—, pero la lección no es el margen sino dónde está el
+elemento crítico. Dos, entonces: **el eslabón débil no es el que la intuición señala** —hay que
 recorrer la cadena entera—, y **la cadena sola no alcanza**: mientras la carga no llegue centrada
 en la línea de pernos, hay un momento que alguien tiene que tomar.
 

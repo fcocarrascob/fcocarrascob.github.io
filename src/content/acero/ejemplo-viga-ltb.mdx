@@ -40,8 +40,8 @@ media luz.
 
 <Figure
   src="/ejemplos/viga-ltb-esquema.svg"
-  alt="Arriba: dos esquemas de la viga W460×74 de 8 m simplemente apoyada con carga distribuida — el esquema A con arriostramiento lateral solo en los apoyos (L_b = 8 m > L_r = 5.16 m, elástico) y el esquema B con un arriostre adicional a media luz (dos tramos de L_b = 4 m, inelástico). Derecha: barras de φM_n contra M_u = 20 tonf·m — la meta φM_p = 52.4, el caso A con φM_n = 19.1 que falla (uso 1.05) y el caso B con φM_n = 51.0 que pasa (uso 0.39). Abajo: caja que resume que la palanca es el arriostramiento y el crédito C_b, no un perfil mayor, porque φM_p ya sobra."
-  caption="La misma viga, dos esquemas de arriostramiento. Con L_b = 8 m falla (φM_n = 19.1 < M_u = 20) aunque su φM_p = 52.4 sobra; un solo arriostre a media luz (L_b = 4 m) la lleva a φM_n = 51.0 y uso 0.39. Lo que gobierna es la distancia entre arriostres, no el perfil."
+  alt="Arriba: dos esquemas de la viga W460×74 de 8 m simplemente apoyada con carga distribuida — el esquema A con arriostramiento lateral solo en los apoyos (L_b = 8 m > L_r = 5.16 m, elástico) y el esquema B con un arriostre adicional a media luz (dos tramos de L_b = 4 m, inelástico). Derecha: barras de φM_n contra M_u = 20 tonf·m — la meta φM_p = 52.4, el caso A con φM_n = 19.1 que falla (uso 1.05) y el caso B con φM_n = 50.9 que pasa (uso 0.39). Abajo: caja que resume que la palanca es el arriostramiento y el crédito C_b, no un perfil mayor, porque φM_p ya sobra."
+  caption="La misma viga, dos esquemas de arriostramiento. Con L_b = 8 m falla (φM_n = 19.1 < M_u = 20) aunque su φM_p = 52.4 sobra; un solo arriostre a media luz (L_b = 4 m) la lleva a φM_n = 50.9 y uso 0.39. Lo que gobierna es la distancia entre arriostres, no el perfil."
 />
 
 <Note type="info" title="Por qué esta viga aísla el LTB">
@@ -116,13 +116,13 @@ $$
 <Equation label="Ec. F2-4">
 $$
 F_{cr} = \frac{C_b\,\pi^2 E}{(L_b/r_{ts})^2}\sqrt{1 + 0.078\,\frac{Jc}{S_x h_o}\left(\frac{L_b}{r_{ts}}\right)^2}
-= 1.14 \cdot 1279 = 1458 \ \text{kgf/cm}^2
+= 1.136 \cdot 1279 = 1453 \ \text{kgf/cm}^2
 $$
 </Equation>
 
 <Equation label="Ec. F2-3">
 $$
-\phi_b M_n = 0.90 \, F_{cr} S_x = 0.90 \cdot 1458 \cdot 1457 = 1\,912\,000 \ \text{kgf·cm} = 19.1 \ \text{tonf·m}
+\phi_b M_n = 0.90 \, F_{cr} S_x = 0.90 \cdot 1453 \cdot 1457 = 1\,905\,000 \ \text{kgf·cm} = 19.1 \ \text{tonf·m}
 \;<\; M_u = 20 \ \text{tonf·m}
 $$
 </Equation>
@@ -134,7 +134,7 @@ sube a 19.1, y aun así falta.
 
 <Figure
   src="/ejemplos/viga-ltb-curva.svg"
-  alt="Curva de M_n contra L_b para la viga W460×74 con las tres zonas sombreadas: plástico hasta L_p = 1.78 m con M_n = M_p = 58.3, inelástico entre L_p y L_r = 5.16 m bajando en recta hasta 0.7·F_y·S_x = 35.9, y elástico pasado L_r. Sobre la curva base (C_b = 1) se marcan los dos casos: el punto B en L_b = 4 m que C_b = 1.30 sube a M_n = 56.7 (φM_n = 51.0), y el punto A en L_b = 8 m que C_b = 1.14 sube a M_n = 21.2 (φM_n = 19.1). Flechas verticales muestran el efecto de C_b sobre la curva base, con la nota de que nunca supera M_p."
+  alt="Curva de M_n contra L_b para la viga W460×74 con las tres zonas sombreadas: plástico hasta L_p = 1.78 m con M_n = M_p = 58.3, inelástico entre L_p y L_r = 5.16 m bajando en recta hasta 0.7·F_y·S_x = 35.9, y elástico pasado L_r. Sobre la curva base (C_b = 1) se marcan los dos casos: el punto B en L_b = 4 m que C_b = 1.30 sube a M_n = 56.6 (φM_n = 50.9), y el punto A en L_b = 8 m que C_b = 1.14 sube a M_n = 21.2 (φM_n = 19.1). Flechas verticales muestran el efecto de C_b sobre la curva base, con la nota de que nunca supera M_p."
   caption="Las tres zonas de L_b para esta viga. El caso A (L_b = 8 m) cae en la rama elástica, muy abajo; el caso B (L_b = 4 m) en la inelástica, cerca de M_p. C_b sube cada punto por sobre la curva base, pero nunca por encima de M_p."
 />
 
@@ -149,18 +149,18 @@ premia con un $C_b$ mayor:
 
 <Equation label="Ec. F1-1 (caso B)">
 $$
-C_b = \frac{12.5}{2.5 + 3(0.44) + 4(0.75) + 3(0.94)} = 1.30
+C_b = \frac{12.5}{2.5 + 3(0.44) + 4(0.75) + 3(0.94)} = 1.299
 $$
 </Equation>
 
 <Equation label="Ec. F2-2">
 $$
 \phi_b M_n = 0.90 \, C_b\left[M_p - (M_p - 0.7F_y S_x)\frac{L_b - L_p}{L_r - L_p}\right]
-= 0.90 \cdot 1.30\left[58.3 - 22.4\,\frac{4.0 - 1.78}{5.16 - 1.78}\right] = 51.0 \ \text{tonf·m}
+= 0.90 \cdot 1.299\left[58.26 - 22.36\,\frac{4.0 - 1.78}{5.16 - 1.78}\right] = 50.9 \ \text{tonf·m}
 $$
 </Equation>
 
-(acotado a $\phi_b M_p = 52.4$, que no se alcanza). Ahora $\phi_b M_n = 51.0 \ge M_u = 20$
+(acotado a $\phi_b M_p = 52.4$, que no se alcanza). Ahora $\phi_b M_n = 50.9 \ge M_u = 20$
 tonf·m con **uso 0.39**. El mismo perfil, el mismo acero, la misma carga: solo cambió que el ala
 comprimida ya no puede volcarse sobre 8 m sino sobre 4.
 
@@ -171,10 +171,10 @@ Un LTB que no da tienta a subir de perfil, pero eso sube $M_p$ —que aquí ya s
 | Esquema | $L_b$ | Zona | $C_b$ | $\phi_b M_n$ |
 |:---|:---:|:---:|:---:|:---:|
 | Solo apoyos | 8 m | elástico | 1.14 | 19.1 tonf·m |
-| + media luz | 4 m | inelástico | 1.30 | 51.0 tonf·m |
+| + media luz | 4 m | inelástico | 1.30 | 50.9 tonf·m |
 
 Un arriostre —una diagonal, una costanera, una viga secundaria que llegue al ala comprimida—
-casi **triplica** $\phi_b M_n$. Y el crédito $C_b$, gratis, aporta antes de tocar nada: no tomarlo
+**multiplica por 2.7** $\phi_b M_n$. Y el crédito $C_b$, gratis, aporta antes de tocar nada: no tomarlo
 ($C_b = 1.0$) deja capacidad sobre la mesa.
 </Note>
 
@@ -185,7 +185,7 @@ casi **triplica** $\phi_b M_n$. Y el crédito $C_b$, gratis, aporta antes de toc
 | Momento plástico (meta) | Ec. F2-1 | dúctil — la meta | $52.4$ tonf·m | 0.38 |
 | Clasificación de placas | Tabla B4.1b | ala y alma compactas | — | — |
 | **LTB, caso A ($L_b = 8$ m)** | Ec. F2-3 (elástico) | **inestabilidad — no pasa** | $\mathbf{19.1}$ **tonf·m** | **1.05** |
-| LTB, caso B ($L_b = 4$ m) | Ec. F2-2 (inelástico) | inestabilidad — controlada | $51.0$ tonf·m | 0.39 |
+| LTB, caso B ($L_b = 4$ m) | Ec. F2-2 (inelástico) | inestabilidad — controlada | $50.9$ tonf·m | 0.39 |
 
 **Solución:** viga **W460×74** (A992) de 8 m, con un **arriostre lateral a media luz** que lleva
 $L_b$ a 4 m; resiste $M_u = 20$ tonf·m con uso 0.39. Arriostrada solo en los apoyos ($L_b = 8$ m)
