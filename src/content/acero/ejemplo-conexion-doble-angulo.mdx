@@ -63,11 +63,12 @@ corte. La Ec. J3-1 se aplica por plano ($F_{nv} = 370$ MPa $= 3773$ kgf/cm² par
 
 <Equation label="Ec. J3-1, corte doble (por perno)">
 $$
-\phi r_n = 2 \cdot 0.75\,F_{nv}A_b = 2 \cdot 10\,757 = 21\,514 \ \text{kgf} = 21.5 \ \text{tonf}
+\phi r_n = 2 \cdot 0.75\,F_{nv}A_b = 21\,513 \ \text{kgf} = 21.5 \ \text{tonf}
 $$
 </Equation>
 
-Cuatro pernos: $\phi R_n = 86.1$ tonf, **uso 0.35**, contra $43.0$ tonf y **uso 0.70** de la shear
+—el doble exacto de los $10\,757$ kgf que da el corte simple—. Cuatro pernos: $\phi R_n = 86.1$ tonf,
+**uso 0.35**, contra $43.0$ tonf y **uso 0.70** de la shear
 tab. Es la ganancia más barata de todas: el mismo perno, la misma perforación, el doble de
 resistencia, solo por cómo se lo abraza.
 
@@ -92,7 +93,7 @@ porque el alma de la viga es la misma; lo que cambia es **quién queda por debaj
 En la shear tab, no: la plancha se rompe antes (0.93) y es ella el eslabón débil. En el doble
 ángulo la conexión baja hasta el nivel del alma y las dos quedan en **empate técnico**: la
 rotura en corte de los ángulos da 64.6 tonf (uso 0.464) contra 65.1 tonf del apoyo en el alma
-(uso 0.461) —**0.8 % de diferencia**, dentro del ruido de cualquier hipótesis de la
+(uso 0.460) —**0.8 % de diferencia**, dentro del ruido de cualquier hipótesis de la
 verificación—. Y ese empate es exactamente el objetivo del Cap. J: *la conexión debe ser al
 menos tan fuerte como lo que conecta*. La shear tab no lo logra; el doble ángulo sí.
 
@@ -104,7 +105,7 @@ Todo lo que la plancha hacía sola, los ángulos lo hacen de a dos. Cada verific
 |---|:---:|:---:|
 | Fluencia en corte (J4-3, $\phi = 1.00$) | 42.5 tonf · 0.71 | 85.0 tonf · 0.35 |
 | **Rotura en corte** (J4-4, $\phi = 0.75$) | **32.3 tonf · 0.93** | 64.6 tonf · 0.46 |
-| Rotura en bloque (J4-5, $\phi = 0.75$) | 36.2 tonf · 0.83 | 72.3 tonf · 0.42 |
+| Rotura en bloque (J4-5, $\phi = 0.75$) | 36.2 tonf · 0.83 | 72.3 tonf · 0.41 |
 
 La rotura en corte del área neta —el estado que gobernaba la cadena de la shear tab con 0.93—
 pasa a 0.46 sin cambiar el espesor, solo por tener dos planchas en vez de una, y con eso pasa a
@@ -168,7 +169,7 @@ verificar explícitamente el grupo excéntrico, la flexión de la plancha y su p
 
 <Figure
   src="/ejemplos/doble-angulo-comparacion.svg"
-  alt="Barras de uso enfrentadas para las dos conexiones bajo la misma reacción de 30 tonf. Para cada verificación aparecen dos barras: pernos a corte 0.70 en la shear tab contra 0.35 en el doble ángulo; apoyo en el elemento de conexión 0.53 contra 0.26; apoyo en el alma de la viga 0.46 en ambos casos, que en el doble ángulo queda empatado con la rotura en corte; fluencia en corte 0.71 contra 0.35; rotura en corte 0.93 contra 0.46; rotura en bloque 0.83 contra 0.42; flexión por excentricidad en área neta 0.48 contra 0.22; y perno extremo con excentricidad por el método elástico 1.00 contra 0.48. El máximo de la shear tab, 1.00, se marca en rojo pegado al límite 1.0; el máximo del doble ángulo es 0.48. Una caja al pie compara el acero: 2.2 kg la shear tab contra 8.4 kg el doble ángulo, y 4 agujeros de terreno contra 12."
+  alt="Barras de uso enfrentadas para las dos conexiones bajo la misma reacción de 30 tonf. Para cada verificación aparecen dos barras: pernos a corte 0.70 en la shear tab contra 0.35 en el doble ángulo; apoyo en el elemento de conexión 0.53 contra 0.26; apoyo en el alma de la viga 0.46 en ambos casos, que en el doble ángulo queda empatado con la rotura en corte; fluencia en corte 0.71 contra 0.35; rotura en corte 0.93 contra 0.46; rotura en bloque 0.83 contra 0.41; flexión por excentricidad en área neta 0.48 contra 0.22; y perno extremo con excentricidad por el método elástico 1.00 contra 0.48. El máximo de la shear tab, 1.00, se marca en rojo pegado al límite 1.0; el máximo del doble ángulo es 0.48. Una caja al pie compara el acero: 2.2 kg la shear tab contra 8.4 kg el doble ángulo, y 4 agujeros de terreno contra 12."
   caption="Verificación por verificación, la misma demanda. El doble ángulo divide casi todos los usos por dos —salvo el apoyo en el alma de la viga, que es común y con el que termina empatando—, a cambio de casi cuatro veces el acero y el triple de agujeros. Ninguna de las dos es «mejor»: son puntos distintos del mismo intercambio."
 />
 
@@ -179,7 +180,7 @@ Nada de esto es gratis:
 | | Shear tab | Doble ángulo |
 |---|:---:|:---:|
 | Uso máximo | **1.00** (perno extremo, excentricidad) | **0.48** |
-| Estado límite que gobierna la cadena | rotura en corte de la plancha (0.93) | rotura en corte de los ángulos (0.464), en empate con el alma (0.461) |
+| Estado límite que gobierna la cadena | rotura en corte de la plancha (0.93) | rotura en corte de los ángulos (0.464), en empate con el alma (0.460) |
 | Acero de la conexión | 2.2 kg | 8.4 kg |
 | Agujeros en terreno | 4 | 12 (4 al alma + 8 al soporte) |
 | Soldadura | sí (al soporte, en taller) | no (apernada a ambos lados) |
@@ -197,10 +198,10 @@ una sola plancha.
 |---|---|:---:|:---:|
 | Pernos a corte | Ec. J3-1 | 43.0 tonf · 0.70 | 86.1 tonf · **0.35** |
 | Apoyo en el elemento de conexión | Ecs. J3-6a/c | 56.9 tonf · 0.53 | 113.8 tonf · 0.26 |
-| Apoyo en el alma de la viga | Ec. J3-6a | 65.1 tonf · 0.46 | 65.1 tonf · **0.461** |
+| Apoyo en el alma de la viga | Ec. J3-6a | 65.1 tonf · 0.46 | 65.1 tonf · **0.460** |
 | Fluencia en corte | Ec. J4-3 | 42.5 tonf · 0.71 | 85.0 tonf · 0.35 |
 | Rotura en corte | Ec. J4-4 | 32.3 tonf · **0.93 ← gobierna la cadena** | 64.6 tonf · **0.464 ← gobierna** |
-| Rotura en bloque | Ec. J4-5 | 36.2 tonf · 0.83 | 72.3 tonf · 0.42 |
+| Rotura en bloque | Ec. J4-5 | 36.2 tonf · 0.83 | 72.3 tonf · 0.41 |
 | Flexión por excentricidad (rotura neta) | J4 | 3.77 tonf·m · 0.48 | 7.54 tonf·m · 0.22 |
 | Perno extremo con excentricidad | método elástico | 10.76 tonf · **1.00** | 21.5 tonf · 0.48 |
 

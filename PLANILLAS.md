@@ -24,6 +24,12 @@ SAP2000, de un catálogo o de una tabla de norma entra como dato declarado con s
 ("Tabla J3.3M: d_h = 28 mm") y es frontera explícita de lo verificado. Tampoco ve prosa,
 figuras ni citas — eso sigue siendo territorio del auditor (`AUDIT.md`).
 
+> **El formato `{version, regions}` lo usa también `struct_llm`**, que genera planillas
+> desde el `Resultado` de sus tools. Esas hojas **no viven acá ni entran en las tablas de
+> estado de este archivo**: son entregables de ese proyecto, autocontenidos, y su bloque de
+> contraste compara contra la tool, no contra un post. El formato es el punto de contacto;
+> los repos siguen separados.
+
 ## El ciclo, un ejemplo a la vez
 
 Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
@@ -94,6 +100,17 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 - **Tolerancia**: media unidad del último dígito publicado —
   `abs(Rd_pan - 119.12 tonf) < 0.005 tonf`. El post publica redondeado; la planilla
   calcula a precisión completa.
+- **Una columna derivada se recalcula, no se escala.** Cuando el post compara dos
+  configuraciones y una es N veces la otra —dos planos de corte en vez de uno, dos
+  elementos en vez de uno—, la columna derivada hay que calcularla desde los datos,
+  no multiplicando o dividiendo el número **ya redondeado** de la otra. La planilla
+  lo hace solo si se le declara el factor (`n_ea := 2`) y se aplica sobre la
+  cantidad de precisión completa. **Por qué es su propia regla**: el 2026-08-01 la
+  planilla del doble ángulo encontró tres hallazgos y **los tres eran esto** —
+  `2 × 10 757 = 21 514` cuando el exacto es 21 513; el uso de bloque publicado como
+  0,42 porque es el 0,83 de la shear tab partido por dos, cuando `30/72,311` da
+  0,41. Cada paso de redondeo intermedio se acumula, y en un post comparativo la
+  columna derivada es justo la que el lector lee para sacar la conclusión.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -155,6 +172,15 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   selecciona la región que debería abrir la página y se pulsa **⇱ Salto de página**
   (queda como `"pageBreak": true` en el JSON, y viaja con la planilla). Para verlo
   impreso de verdad: `npm run pdf:planilla -- <slug>` con el sitio servido.
+  **El salto se pone después de mirar, nunca antes.** Un salto en el encabezado de
+  cada sección parece prolijo y no lo es: si el corte natural ya caía justo antes de
+  ese encabezado, el forzado no mueve nada y en cambio deja una página de 300 px.
+  El 2026-08-01 la planilla del doble ángulo empezó con cuatro saltos «de oficio»
+  y los cuatro hicieron eso —11 páginas, de las cuales cuatro con 250-530 px de
+  contenido—; sin ninguno quedó en 8 páginas parejas, y mirando el PDF resultó que
+  hacía falta **uno solo**, en la única sección que arrancaba al pie. El criterio
+  para leer el reporte es la distancia entre marcas consecutivas: dos muy juntas
+  = página talón.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
@@ -175,7 +201,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
 | `ejemplo-columna-galpon-compresion` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |
-| `ejemplo-conexion-doble-angulo` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-conexion-doble-angulo` | 107 | 88 | 58 | 67 | 9 (1⇱) | 3 aplicados 2026-08-01 (doblar y dividir el redondeado: 21 514 → 21 513 kgf · 0,461 → 0,460 · 0,42 → 0,41) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
 | `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
 | `ejemplo-empalme-apernado-viga` |  |  |  |  |  |  |  | ⬜ |
@@ -183,7 +209,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
 
-**Esq.** = tokens del esquema paramétrico. Las 9 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 10 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
