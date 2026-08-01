@@ -89,13 +89,18 @@ The largest piece of non-content code: a SMath-style interactive worksheet at `/
 - `MathCanvas.tsx` — top-level: holds the `Region[]` state, autosaves to `localStorage` (key `structpad.worksheet.v1`, 300 ms debounce), handles click-to-create / drag / multi-select / delete, JSON import/export, and the templates dropdown. Empty regions are transient (dropped on blur, never persisted).
 - `MathRegion.tsx` — one draggable region; renders KaTeX output or the editing input, and paints the ✓/✗ verdict for boolean results. Exports `GRID` and `snap()`.
 - `SymbolPalette.tsx` — right-hand palette of insertable symbols/snippets; snippet support includes placeholder selection and multiline re-indentation.
+- `WorksheetPrint.tsx` — the print document: a portal in `<body>` that reflows the regions into a *linear* document (reading order), hidden on screen and shown only under `@media print`. It is **not** the canvas layout, so there is no geometric correspondence between a region's position on the sheet and its position on paper.
+- `usePaginacion.ts` — measures that print document (off-screen, at the A4 content width) and reports which page each region lands on. Feeds the «página N» rules the canvas draws across the sheet.
 
 **Engine layer** (`src/lib/`, pure, no React — keep it that way so it stays testable/portable):
 - `worksheet.ts` — `evaluateSheet(regions)` is the core. Evaluates every non-text region against a **single shared mathjs scope in reading order (y, then x)**, so variables defined higher/left are visible lower/right (SMath semantics). Region `src` grammar: `name := expr` defines, a trailing `=` shows the result, `= unit` converts with dimensional checking. Also handles LaTeX generation (greek letters, subscripts, scientific notation). Registers the local unit `tonf` (= 1000 kgf, alias `tf`).
 - `program.ts` — a minimal **imperative interpreter** for `program`-kind regions, because mathjs has no control flow. Parses Python-style **indentation-defined blocks** (`if`/`else if`/`else`, `for … in range/list`, `while`, `break`/`continue`, `return`) into statements and runs them, delegating each expression/condition back to mathjs via `ProgramContext.evaluate`. A header `name :=` exports the return value as a variable; `name(args) :=` defines a callable function (a closure capturing the live scope, allowing recursion). Guarded by `MAX_ITERS` (100k) against infinite loops.
 - `worksheet-templates.ts` — the built-in template gallery (e.g. ACI 318-25 beam design). Templates use the same `{version, regions}` shape as export/import; `layout()` stacks items in a single column so the reading-order scope resolves predictably.
+- `paginacion.ts` — the A4 page-break model: takes measured block heights and returns the page split, replicating what the browser does with unbreakable blocks (greedy fill, collapsed margins, margins truncated at unforced breaks only). `Region.pageBreak` forces a break. Verified against real PDFs with `npm run pdf:planilla` — do not "simplify" the margin rules or `A4_ALTO_UTIL_PX` without re-running it.
 
 Three region kinds: `math`, `text`, `program`. When adding engine features, prefer extending the pure lib modules and keep React components thin.
+
+The print styles live in `global.css` **outside** `@media print` (the media query only decides visibility) — `usePaginacion` has to measure that document on screen, and rules inside a print-only query would not apply there.
 
 ## SAP2000 Script Builder
 

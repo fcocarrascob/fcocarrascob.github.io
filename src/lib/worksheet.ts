@@ -75,6 +75,12 @@ export interface Region {
   /** Solo `image`: tamaño mostrado en la hoja (px). Sin él, el natural. */
   w?: number;
   h?: number;
+  /**
+   * Salto de página forzado: al imprimir, esta región abre una A4 nueva. Es la
+   * forma de que una sección de cálculo no quede partida donde el llenado
+   * automático la corte (ver `paginacion.ts`).
+   */
+  pageBreak?: boolean;
 }
 
 export interface ParsedMath {
