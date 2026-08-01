@@ -123,6 +123,17 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   del caso B, 50,9 publicado como 51,0. El fix es el mismo en los dos: **la ecuación
   exhibe sus operandos con los dígitos que de verdad usa** ($1{,}136$, $58{,}26$,
   $22{,}36$), aunque la sección de más arriba los publique redondeados.
+  **Y a veces el operando redondeado es el propio dato de entrada, y ahí el fix va al
+  revés**: el 2026-08-01 la planilla de la viga-columna encontró que $M_r = 1{,}34 \cdot 8{,}0$
+  arrastraba hasta el número insignia —el uso combinado daba 0,93495, que redondea a 0,93
+  y no al 0,94 publicado, a $5\cdot10^{-5}$ de la frontera—, y la raíz no era la ecuación
+  sino la tabla del caso: declaraba $w_u = 1{,}3$ tonf/m, de donde $M_u = 7{,}96$ publicado
+  como 8,0 y **después usado como operando**. Cuando el dato de entrada ya es de por sí
+  un redondeo (una carga de viento, una carga de piso), el arreglo barato es **darle al
+  dato los dígitos que la cadena de verdad usa** ($w_u = 1{,}306$) en vez de propagar el
+  corrimiento por todo el post: acá dejó los cinco números publicados intactos. Cuál de
+  las dos puntas se mueve —el dato o los resultados— es decisión del autor, no de la
+  planilla; lo que la planilla aporta es el número que muestra que hay que elegir.
 - **Un coeficiente que depende de la configuración se deriva, no se cita.** En los
   ejemplos de miembros hay factores tabulados por caso —el $C_b$ de la Ec. F1-1, un
   $K$, un $C_m$— que es tentador declarar como dato. Si el post **compara dos
@@ -133,6 +144,16 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   momentos. Citar «1,14 y 1,30» habría dado por bueno justamente el paso que el
   ejemplo quiere demostrar —que el tramo corto tiene gradiente más fuerte y por eso
   gana crédito—, y además habría escondido el hallazgo #1.
+  **Y también se deriva cuando la norma permite explícitamente no hacerlo.** El
+  2026-08-01, en la viga-columna, A-8-3(b) autoriza tomar $C_m = 1{,}0$ «conservadoramente»
+  para carga transversal entre apoyos, así que el post lo cita y queda correcto. Pero
+  derivarlo cuesta tres líneas y dice algo distinto: el Comentario da $C_m = 1 + \psi\,\alpha
+  P_r/P_{e1}$ (C-A-8-2) con $\psi$ de la C-A-8-3, y para apoyos simples con carga **uniforme**
+  el $\delta_o = 5wL^4/384EI$ y el $M_o = wL^2/8$ cancelan $EI$, $w$ y $L$, dejando
+  $\psi = \pi^2\cdot5/48 - 1 = +0{,}028$ — que es la primera fila de la Tabla C-A-8.1, la que
+  tabula $C_m = 1{,}0$. O sea que acá el 1,0 **no es conservador: es el valor exacto**. La
+  planilla no cambió ningún número, pero convirtió un permiso de la norma en un resultado,
+  que es justo lo que separa «está permitido» de «está bien».
 - **Propiedades de perfil: dato declarado, y lo derivable se deriva de las planchas.** Los
   ejemplos de miembros (Cap. E/F/H) se apoyan en tablas de perfiles, que **no son la norma**:
   la *Specification* no tabula perfiles —eso es el *Manual*, que no está en disco— y el
@@ -248,10 +269,10 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
 | `ejemplo-empalme-apernado-viga` | 125 | 92 | 61 | 60 | 9 (2⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: 86,5 → 86,1 tonf y el uso 0,52 → 0,53; era el último post con la conversión de las ksi) | 2026-08-01 | ✅ |
 | `ejemplo-viga-carrilera-puente-grua` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 13 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 14 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
