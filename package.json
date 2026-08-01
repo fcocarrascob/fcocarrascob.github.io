@@ -16,7 +16,7 @@
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
     "pdf:planilla": "node scripts/render-planilla-pdf.mjs",
-    "pdf:planillas": "node scripts/render-planilla-pdf.mjs gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala"
+    "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",

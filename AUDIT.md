@@ -47,6 +47,24 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-07-31 · `acero/ejemplo-chevron-nch2369` · planilla · ⚠️ — 5 hallazgos (1🟠 4🔵) — **todos aplicados**
+
+**Commit auditado:** `72ba086` · **Método:** contraste de planillas. Planilla construida desde la norma con el PDF a la vista —8.3.1, 8.6.2, 8.6.3, 8.6.6 y Tabla 9 de NCh2369:2025 extraídas por columna con `pdfplumber`, porque la extracción plana mezcla el texto normativo con el comentario— y desde los datos declarados del post; los pasos intermedios del post no se copiaron (`public/planillas/chevron-nch2369.json`: 133 pasos, 96 verificaciones de diseño —4 en rojo a propósito: las dos puertas cerradas de 8.6.3, el alma no compacta y la H 400 que no da— y 81 contrastes). 76 de 81 cuadraron a la primera.
+
+Las propiedades de las dos secciones soldadas y de la viga se **derivan de las planchas** ($A$, $I$, $S$, $Z$, $r_y$, $h/t_w$) en vez de declararse del catálogo: por eso los tres redondeos de abajo salieron a la luz. Las tres tablas de sensibilidad de §9 son bucles `program`, no filas transcritas.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.386 (tabla §9, fila $R_1 = 2{,}0$) | Es la única fila en que la tracción topada (50,40 tonf) cae **por debajo** de la residual (59,47), así que el desequilibrio **cambia de signo** y apunta hacia arriba: descarga la viga en vez de cargarla. El post publicaba 24,83 tonf·m, que suma las dos magnitudes. Comprobado el diagrama completo: con la puntual hacia arriba el máximo se corre del centro ($M = 2{,}60$ tonf·m en $x = 1{,}86$ m; $-0{,}83$ en el centro), o sea la combinación sísmica deja de gobernar. Las otras cuatro filas cuadran al dígito | La fila pasa a **12,00 tonf·m**, que es la gravedad sola sobre los 8 m sin apoyo central —la otra combinación de la envolvente—, con una nota nueva que deriva el umbral $0{,}7R_1P_E = 0{,}3P_{ne} \Rightarrow R_1 = 2{,}36$ bajo el cual la curva se aplana. La planilla pasa a calcular la envolvente, no la suma | ✅ aplicado |
+| 2 | 🔵 | N | L.279 (tabla de secciones) | $\phi P_n$ de la H 600×300×138,5 da 387,05 tonf; publicado 387,0 (truncado) | 387,1 | ✅ aplicado |
+| 3 | 🔵 | N | L.263 y L.277 | $\phi P_n$ de la H 400×200×109,5 da 293,66 tonf; publicado 293,6 (truncado) | 293,7 | ✅ aplicado |
+| 4 | 🔵 | N | L.263 | $L_p = 1{,}76\,r_y\sqrt{E/F_y} = 258{,}5$ cm; publicado 258. No cambia la conclusión ($L_p > L_b = 200$) | 259 | ✅ aplicado |
+| 5 | 🔵 | N | L.369 | $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,787$ kg, no 1 783: la propia aritmética impresa da 1 787,2 | 1 787 | ✅ aplicado |
+
+**Verificado y correcto:** los otros 76 contrastes. La cadena completa de 8.3.1 ($F_{ye}$, $T_{ye} = 249{,}96$, $F_e = 3\,794$, $F_{cre} = 2\,288$, $P_{ne} = 198{,}25$, $0{,}3P_{ne} = 59{,}47$) reproduce al dígito desde la geometría de las cuatro planchas — el $r = 7{,}767$ cm derivado confirma el 7,77 publicado. El desequilibrio crudo (134,70 / 218,81 / 281,39) y el topado (100,80 / 29,22 / 113,33 / 70,44), las dos razones (93,8 y 23,5) y el 75 % de caída ✓. La viga por F4 con el alma no compacta: $C_a = 0{,}282$, $\lambda_{pw} = 65{,}1$, $R_{pc} = 1{,}088$, $M_n = 111{,}7$ contra $M_p = 112{,}2$, y H1-1a = 0,92 ✓ — la cadena más delicada del post y salió entera. Las tres tablas de sensibilidad, fila por fila, salvo la del hallazgo 1. Norma contra el PDF: 8.6.3 (el $1{,}5\pi\sqrt{E/F_y}$ y la exención por $0{,}7R_1$), 8.6.6 completa —incluido el 2 % de $P_{ne}$ fuera del plano, que **continúa en la página siguiente** de la cláusula y el post atribuye bien— y Tabla 9 en sus dos filas: 0,76 para paredes de cajón soldado usado como arriostramiento y 0,40 para alas no atiesadas de I/H, las dos que el post usa ✓.
+
+**Limitación del esquema, no del post:** `formatValor` redondea los rótulos del esquema paramétrico a 4 cifras significativas, así que el dibujo muestra «T_ye = 250 tonf» donde el post publica 249,96. Ninguna expresión de token lo evade. Cambiarlo re-renderiza los 8 esquemas del sitio, así que queda anotado y no se tocó en esta vuelta.
+
 ### 2026-07-31 · `acero/ejemplo-conexion-momento-placas-ala` · planilla · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
 
 **Commit auditado:** `1c111b2` · **Método:** contraste de planillas (`public/planillas/conexion-momento-placas-ala.json`: 87 pasos, 18 verificaciones de diseño —3 en rojo a propósito: J10-1, J10-2 y J10-10, los estados que el post repara— y 41 contrastes). 40 de 41 cuadraron.
@@ -2677,7 +2695,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
 | `ejemplo-gusset-apice-chevron` | 2026-07-31 | ⚠️ | 7 (0🔴 0🟠 · 5🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 57 contrastes, 2 aplicados |
 | `gusset-teoria-estados-limite` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 8🟡 4🔵) · 6 aplicados (1🔴 5🟠) |
-| `ejemplo-chevron-nch2369` | 2026-07-27 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` |
+| `ejemplo-chevron-nch2369` | 2026-07-31 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` · planilla ✅ 82 contrastes, 5 aplicados (1🟠: el signo del desequilibrio en R₁ = 2,0) |
 | `ejemplo-conexion-momento-end-plate` | 2026-07-31 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados · planilla ✅ 38 contrastes, 0 hallazgos |
 | `ejemplo-conexion-momento-placas-ala` | 2026-07-31 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) · planilla ✅ 41 contrastes, 1 aplicado |
 | `ejemplo-conexion-doble-angulo` | 2026-07-26 | ⚠️ | 7 (0🔴 0🟠 · 4🟡 3🔵) · 2.ª pasada: 3 aplicados (1🔴 2🟠) |

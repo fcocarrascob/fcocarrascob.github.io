@@ -260,7 +260,7 @@ un proyectista escogería mirando solo el modelo elástico— queda en:
 
 | H 400×200×109,5 | |
 |---|---|
-| $\phi P_n = 293{,}6$ tonf · $\phi M_n = 52{,}8$ tonf·m | Ala y alma compactas · $L_p = 258 > L_b = 200$ cm |
+| $\phi P_n = 293{,}7$ tonf · $\phi M_n = 52{,}8$ tonf·m | Ala y alma compactas · $L_p = 259 > L_b = 200$ cm |
 | **H1-1a**: $P_r/P_c + \tfrac{8}{9}(M_r/M_c) = 0{,}386 + \tfrac{8}{9}(1{,}333)$ | **uso 1,57 ✗** |
 
 **Pero el catálogo sí la tiene.** La Tabla 2.1.1 del ICHA va de H 1100×600 a H 200×100 —52
@@ -274,9 +274,9 @@ familias—, así que no hay que soldar nada a medida: hay que **subir de famili
 
 | | $A$ (cm²) | $Z_x$ (cm³) | $h/t_w$ | $\phi P_n$ | $\phi M_n$ | Uso |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| H 400×200×109,5 | 139,5 | 2 320 | 43,0 | 293,6 | 52,8 | **1,57 ✗** |
+| H 400×200×109,5 | 139,5 | 2 320 | 43,0 | 293,7 | 52,8 | **1,57 ✗** |
 | H 600×300×129,4 | 164,8 | 4 107 | 70,0 | 361,1 | 93,1 | 0,99 ✓ |
-| **H 600×300×138,5** | 176,5 | 4 433 | 69,5 | 387,0 | 100,6 | **0,92 ✓** |
+| **H 600×300×138,5** | 176,5 | 4 433 | 69,5 | 387,1 | 100,6 | **0,92 ✓** |
 
 Se adopta el **H 600×300×138,5** —un escalón sobre el mínimo, para no cerrar en 0,99—: **+26 %
 de peso** sobre el H 400×200, y 600 mm de altura contra 400.
@@ -366,7 +366,7 @@ tonf), y el desequilibrio es **la resta de las dos**. Una diagonal comprimida m�
 conserva más capacidad después de pandear y descarga menos desbalance en la viga.
 
 La sección que la norma obliga a usar por ductilidad resulta ser, además, la que abarata la viga.
-El acero del paño queda en $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,783$ kg.
+El acero del paño queda en $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,787$ kg.
 
 <Note type="warning" title="Un límite de este ejemplo">
 Cambiar la sección de la diagonal cambia la rigidez del paño y, estrictamente, obliga a rehacer
@@ -383,7 +383,7 @@ modelo elástico (≈ 5,3 tonf por diagonal, un 15 % de $P_E$).
 
 | $R_1$ | $0{,}7R_1$ | $T$ gobernante | $M$ |
 |:---:|:---:|:---:|:---:|
-| 2,0 | 1,40 | 50,40 tonf | 24,83 tonf·m |
+| 2,0 | 1,40 | 50,40 tonf | 12,00 tonf·m † |
 | 3,0 | 2,10 | 75,60 tonf | 34,80 tonf·m |
 | **4,0** | **2,80** | **100,80 tonf** | **70,44 tonf·m** |
 | 5,0 | 3,50 | 126,00 tonf | 106,08 tonf·m |
@@ -392,6 +392,24 @@ modelo elástico (≈ 5,3 tonf por diagonal, un 15 % de $P_E$).
 Cuanto más dúctil se declara la estructura, más caro sale su chevron. Y el techo solo dejaría de
 morder cuando $0{,}7R_1 P_E$ superara los 249,96 tonf de $T_{ye}$, o sea con $R_1 > 9{,}9$:
 acá siempre gobierna el techo.
+
+**† El umbral de abajo.** La fila de $R_1 = 2{,}0$ no sigue la misma cuenta que las otras, y vale
+la pena detenerse. Ahí el techo deja la tracción en 50,40 tonf, **por debajo** de la residual de
+59,47: como el desequilibrio es una resta, cambia de signo y la fuerza en el nudo apunta **hacia
+arriba**. Deja de cargar la viga y pasa a descargarla —el momento en el centro cae a −0,83
+tonf·m—, así que la combinación sísmica deja de gobernar y el diseño lo fija la **gravedad sola**,
+que en 8.6.6 actúa sobre los 8 m sin apoyo central: 12,00 tonf·m. El cruce está en
+
+<Equation label="Cuándo se invierte el desequilibrio">
+$$
+0{,}7R_1 P_E = 0{,}3P_{ne} \quad\Rightarrow\quad R_1 = \frac{59{,}47}{0{,}7 \cdot 36{,}0} = 2{,}36
+$$
+</Equation>
+
+Bajo ese valor la curva se aplana en los 12,00 tonf·m de la gravedad. Es un artefacto del techo,
+no del mecanismo: la tracción real seguiría siendo $T_{ye}$ y el desequilibrio seguiría apuntando
+hacia abajo. Pero el techo es lo que la cláusula permite diseñar, y con él la viga de un chevron
+muy poco dúctil vuelve a ser una viga de gravedad.
 
 **El $R_y$ funciona al revés de lo que uno esperaría**, y por la misma razón del §8:
 
@@ -451,6 +469,21 @@ Y trae una corrección a lo que acaba de decir este párrafo: para la **conexió
 los 100,80 tonf del techo de $0{,}7R_1$ sino **124,98**, porque la cláusula 8.4.1 —la que rige las
 conexiones, mientras 8.6.6 rige la viga— fija además un piso en la mitad de la capacidad esperada,
 y ese piso queda un 24 % por encima del nivel amplificado.
+
+## La planilla
+
+El cálculo completo está como planilla del canvas: 134 pasos, 97 verificaciones ✓/✗ y 82
+contrastes que comparan cada número publicado acá contra el que la hoja calcula. Las tres
+tablas de sensibilidad de §9 son bucles, no filas escritas a mano. Sube $R_1$ o tumba la
+diagonal y verás moverse el momento de diseño, que es la palanca de este ejemplo:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=chevron-nch2369)** ·
+[descargar el JSON](/planillas/chevron-nch2369.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/chevron-nch2369.json --md
+```
 
 ## Lo que este ejemplo agrega
 

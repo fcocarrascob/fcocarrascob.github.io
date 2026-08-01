@@ -136,7 +136,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 51 | 10 (3⇱) | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
-| `ejemplo-chevron-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
 | `ejemplo-columna-galpon-compresion` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-conexion-apernada-corte` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-conexion-doble-angulo` |  |  |  |  |  |  |  | ⬜ |
