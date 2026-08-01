@@ -30,7 +30,11 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 
 1. **Construir** la planilla desde la norma y los datos de entrada del post
    (§ Convenciones: independencia). Sale de un agente con el PDF de la norma a
-   la vista, nunca de copiar los pasos intermedios del post.
+   la vista, nunca de copiar los pasos intermedios del post. Cada **valor de
+   tabla** que el post cite se abre en el PDF y se lee en la columna de las
+   unidades del cálculo (§ Convenciones: valores de tabla). Es el paso que no
+   se puede saltar: un número tabulado mal citado no lo caza ningún recálculo,
+   porque la aritmética del post cuadra consigo misma.
 2. **Dibujar el esquema paramétrico** en `public/esquemas/<slug>.svg` y colgarlo
    de la región `image` (§ Esquema paramétrico). No es opcional: una planilla
    sin esquema queda incompleta.
@@ -39,6 +43,11 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
    esquema que no resuelve. Y con el sitio servido,
    `npm run reflow:planilla -- <slug>` recoloca los bloques para que ninguno
    quede encima de otro (§ Convenciones: disposición de los bloques).
+   **Ojo con el servido**: `reflow` y `pdf:planilla` abren la planilla desde el
+   sitio, o sea desde `dist/`, y escriben en `public/`. Después de reflow hay
+   que rehacer el build (o copiar el `.json` a `dist/planillas/`) antes de
+   imprimir, o el PDF sale del layout viejo — y como cuadra consigo mismo, el
+   chequeo pasa igual.
 4. **Mirar el esquema**: `npm run render:esquema -- public/planillas/<slug>.json`
    resuelve los tokens contra la hoja, rasteriza el SVG con Chromium y deja el
    PNG en un temporal. Que los tokens resuelvan no dice que el dibujo se lea
@@ -64,6 +73,20 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 - **Independencia**: la planilla se construye desde la norma (verificada en el PDF) y los
   datos de entrada del post — nunca transcribiendo los pasos intermedios del post, que es
   verificar que el post coincide consigo mismo.
+- **Valores de tabla: al PDF, y en la columna de las unidades del cálculo.** Toda constante
+  que venga de una tabla de la norma —$F_{nv}$, $F_y$ de un grado, un $\phi$, un coeficiente,
+  una dimensión de agujero— se lee en el PDF y se declara en la planilla con su cita
+  («Tabla J3.3M: $d_h$ = 24 mm»), aunque el post ya la publique. Los códigos escritos en
+  unidades imperiales traen **dos columnas**, y no son la misma: en AISC 360-22 la Tabla J3.2
+  tabula 54 ksi **(370 MPa)** para el Grupo 120 con rosca incluida, mientras la conversión
+  exacta de las 54 ksi da 372. En un cálculo métrico manda **la columna métrica**; ésa es la
+  convención del sitio (370/470 para el Grupo 120, 470/580 para el Grupo 150, 190 para el
+  A307).
+  **Por qué es un paso propio**: el 2026-08-01, la planilla de la shear tab encontró que el
+  post citaba 372 MPa «de la Tabla J3.2». Los 0,5 % de diferencia dieron vuelta el número
+  insignia del ejemplo —el perno extremo pasó de uso 0,995 a 1,00— y arrastraban a otros tres
+  posts. Ningún recálculo lo habría encontrado: la aritmética publicada era correcta a partir
+  del valor equivocado. Solo aparece abriendo la tabla.
 - **Contrastes**: un booleano por cada número publicado en las tablas del post (más los
   intermedios clave publicados en prosa), con id `c_*`, al final de la hoja bajo el
   encabezado «CONTRASTE CON EL POST». Se omiten los redundantes (un uso que es cociente
@@ -112,7 +135,11 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     (b) ningún texto encima de otro texto ni de una línea que lo tache;
     (c) los valores sustituidos caben en su caja o su barra; (d) la banda de
     valores dice lo que la hoja concluye; (e) el símbolo del tubo es `□`
-    (U+25A1), no `[]`. Lo que se corrige va al SVG y se vuelve a renderizar.
+    (U+25A1), no `[]`; (f) **ningún valor pierde en el redondeo lo que el
+    esquema quería mostrar** — `formatValor` imprime 4 cifras significativas,
+    así que un uso de 1,0002 sale «1» y un margen del 0,02 % desaparece. Si el
+    punto del rótulo es la diferencia, se rotula la diferencia: `{{(1-u)*100}}`
+    en vez de `{{u}}`. Lo que se corrige va al SVG y se vuelve a renderizar.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
 - **Disposición de los bloques**: la planilla se escribe con un paso vertical fijo, y eso
@@ -147,7 +174,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
 | `ejemplo-columna-galpon-compresion` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-conexion-apernada-corte` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-doble-angulo` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
 | `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
@@ -156,7 +183,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
 
-**Esq.** = tokens del esquema paramétrico. Las 7 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 9 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón

@@ -62,9 +62,9 @@
   <text x="550" y="146" font-size="10" fill="#333">Rotura en bloque (corte vertical en la línea</text>
   <text x="550" y="159" font-size="10" fill="#333">de pernos + tracción hacia el borde L_eh)</text>
   <text x="514" y="184" font-size="10" fill="#888">En la cadena de resistencia los pernos parecen</text>
-  <text x="514" y="198" font-size="10" fill="#888">holgados (0.69) y el eslabón débil es la plancha.</text>
+  <text x="514" y="198" font-size="10" fill="#888">holgados (0.70) y el eslabón débil es la plancha.</text>
   <text x="514" y="220" font-size="10" fill="#c0392b">Pero esa holgura es aparente: la reacción llega</text>
   <text x="514" y="234" font-size="10" fill="#c0392b">a = 60 mm antes, y la excentricidad lleva el</text>
-  <text x="514" y="248" font-size="10" fill="#c0392b">perno extremo a 0.995 — justo en el límite.</text>
+  <text x="514" y="248" font-size="10" fill="#c0392b">perno extremo a 1.00 — el único que no alcanza.</text>
   <text x="514" y="262" font-size="9.5" fill="#888">(dimensiones en mm)</text>
 </svg>
