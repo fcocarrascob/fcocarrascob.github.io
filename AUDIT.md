@@ -47,6 +47,24 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-07-31 · `acero/ejemplo-chevron-nch2369` · planilla · ⚠️ — 5 hallazgos (1🟠 4🔵) — **4 aplicados, 1 abierto**
+
+**Commit auditado:** `72ba086` · **Método:** contraste de planillas. Planilla construida desde la norma con el PDF a la vista —8.3.1, 8.6.2, 8.6.3, 8.6.6 y Tabla 9 de NCh2369:2025 extraídas por columna con `pdfplumber`, porque la extracción plana mezcla el texto normativo con el comentario— y desde los datos declarados del post; los pasos intermedios del post no se copiaron (`public/planillas/chevron-nch2369.json`: 133 pasos, 96 verificaciones de diseño —4 en rojo a propósito: las dos puertas cerradas de 8.6.3, el alma no compacta y la H 400 que no da— y 81 contrastes). 76 de 81 cuadraron a la primera.
+
+Las propiedades de las dos secciones soldadas y de la viga se **derivan de las planchas** ($A$, $I$, $S$, $Z$, $r_y$, $h/t_w$) en vez de declararse del catálogo: por eso los tres redondeos de abajo salieron a la luz. Las tres tablas de sensibilidad de §9 son bucles `program`, no filas transcritas.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.386 (tabla §9, fila $R_1 = 2{,}0$) | Es la única fila en que la tracción topada (50,40 tonf) cae **por debajo** de la residual (59,47), así que el desequilibrio **cambia de signo** y apunta hacia arriba. El post publica 24,83 tonf·m, que suma las dos magnitudes; algebraicamente $12{,}00 - 12{,}83 = -0{,}83$, y el momento de diseño lo daría la gravedad sola (12,00). Las otras cuatro filas cuadran al dígito | Decidir el criterio: o la fila dice 12,00 (gravedad gobierna) o el texto explica por qué se suman las magnitudes cuando el techo invierte el desequilibrio | ⬜ **abierto — toca la interpretación de la cláusula, no es un redondeo** |
+| 2 | 🔵 | N | L.279 (tabla de secciones) | $\phi P_n$ de la H 600×300×138,5 da 387,05 tonf; publicado 387,0 (truncado) | 387,1 | ✅ aplicado |
+| 3 | 🔵 | N | L.263 y L.277 | $\phi P_n$ de la H 400×200×109,5 da 293,66 tonf; publicado 293,6 (truncado) | 293,7 | ✅ aplicado |
+| 4 | 🔵 | N | L.263 | $L_p = 1{,}76\,r_y\sqrt{E/F_y} = 258{,}5$ cm; publicado 258. No cambia la conclusión ($L_p > L_b = 200$) | 259 | ✅ aplicado |
+| 5 | 🔵 | N | L.369 | $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,787$ kg, no 1 783: la propia aritmética impresa da 1 787,2 | 1 787 | ✅ aplicado |
+
+**Verificado y correcto:** los otros 76 contrastes. La cadena completa de 8.3.1 ($F_{ye}$, $T_{ye} = 249{,}96$, $F_e = 3\,794$, $F_{cre} = 2\,288$, $P_{ne} = 198{,}25$, $0{,}3P_{ne} = 59{,}47$) reproduce al dígito desde la geometría de las cuatro planchas — el $r = 7{,}767$ cm derivado confirma el 7,77 publicado. El desequilibrio crudo (134,70 / 218,81 / 281,39) y el topado (100,80 / 29,22 / 113,33 / 70,44), las dos razones (93,8 y 23,5) y el 75 % de caída ✓. La viga por F4 con el alma no compacta: $C_a = 0{,}282$, $\lambda_{pw} = 65{,}1$, $R_{pc} = 1{,}088$, $M_n = 111{,}7$ contra $M_p = 112{,}2$, y H1-1a = 0,92 ✓ — la cadena más delicada del post y salió entera. Las tres tablas de sensibilidad, fila por fila, salvo la del hallazgo 1. Norma contra el PDF: 8.6.3 (el $1{,}5\pi\sqrt{E/F_y}$ y la exención por $0{,}7R_1$), 8.6.6 completa —incluido el 2 % de $P_{ne}$ fuera del plano, que **continúa en la página siguiente** de la cláusula y el post atribuye bien— y Tabla 9 en sus dos filas: 0,76 para paredes de cajón soldado usado como arriostramiento y 0,40 para alas no atiesadas de I/H, las dos que el post usa ✓.
+
+**Limitación del esquema, no del post:** `formatValor` redondea los rótulos del esquema paramétrico a 4 cifras significativas, así que el dibujo muestra «T_ye = 250 tonf» donde el post publica 249,96. Ninguna expresión de token lo evade. Cambiarlo re-renderiza los 8 esquemas del sitio, así que queda anotado y no se tocó en esta vuelta.
+
 ### 2026-07-31 · `acero/ejemplo-conexion-momento-placas-ala` · planilla · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
 
 **Commit auditado:** `1c111b2` · **Método:** contraste de planillas (`public/planillas/conexion-momento-placas-ala.json`: 87 pasos, 18 verificaciones de diseño —3 en rojo a propósito: J10-1, J10-2 y J10-10, los estados que el post repara— y 41 contrastes). 40 de 41 cuadraron.

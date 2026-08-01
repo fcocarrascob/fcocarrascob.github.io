@@ -260,7 +260,7 @@ un proyectista escogería mirando solo el modelo elástico— queda en:
 
 | H 400×200×109,5 | |
 |---|---|
-| $\phi P_n = 293{,}6$ tonf · $\phi M_n = 52{,}8$ tonf·m | Ala y alma compactas · $L_p = 258 > L_b = 200$ cm |
+| $\phi P_n = 293{,}7$ tonf · $\phi M_n = 52{,}8$ tonf·m | Ala y alma compactas · $L_p = 259 > L_b = 200$ cm |
 | **H1-1a**: $P_r/P_c + \tfrac{8}{9}(M_r/M_c) = 0{,}386 + \tfrac{8}{9}(1{,}333)$ | **uso 1,57 ✗** |
 
 **Pero el catálogo sí la tiene.** La Tabla 2.1.1 del ICHA va de H 1100×600 a H 200×100 —52
@@ -274,9 +274,9 @@ familias—, así que no hay que soldar nada a medida: hay que **subir de famili
 
 | | $A$ (cm²) | $Z_x$ (cm³) | $h/t_w$ | $\phi P_n$ | $\phi M_n$ | Uso |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| H 400×200×109,5 | 139,5 | 2 320 | 43,0 | 293,6 | 52,8 | **1,57 ✗** |
+| H 400×200×109,5 | 139,5 | 2 320 | 43,0 | 293,7 | 52,8 | **1,57 ✗** |
 | H 600×300×129,4 | 164,8 | 4 107 | 70,0 | 361,1 | 93,1 | 0,99 ✓ |
-| **H 600×300×138,5** | 176,5 | 4 433 | 69,5 | 387,0 | 100,6 | **0,92 ✓** |
+| **H 600×300×138,5** | 176,5 | 4 433 | 69,5 | 387,1 | 100,6 | **0,92 ✓** |
 
 Se adopta el **H 600×300×138,5** —un escalón sobre el mínimo, para no cerrar en 0,99—: **+26 %
 de peso** sobre el H 400×200, y 600 mm de altura contra 400.
@@ -366,7 +366,7 @@ tonf), y el desequilibrio es **la resta de las dos**. Una diagonal comprimida m�
 conserva más capacidad después de pandear y descarga menos desbalance en la viga.
 
 La sección que la norma obliga a usar por ductilidad resulta ser, además, la que abarata la viga.
-El acero del paño queda en $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,783$ kg.
+El acero del paño queda en $2 \times 5{,}66 \times 60 + 8{,}00 \times 138{,}5 = 1\,787$ kg.
 
 <Note type="warning" title="Un límite de este ejemplo">
 Cambiar la sección de la diagonal cambia la rigidez del paño y, estrictamente, obliga a rehacer
@@ -451,6 +451,21 @@ Y trae una corrección a lo que acaba de decir este párrafo: para la **conexió
 los 100,80 tonf del techo de $0{,}7R_1$ sino **124,98**, porque la cláusula 8.4.1 —la que rige las
 conexiones, mientras 8.6.6 rige la viga— fija además un piso en la mitad de la capacidad esperada,
 y ese piso queda un 24 % por encima del nivel amplificado.
+
+## La planilla
+
+El cálculo completo está como planilla del canvas: 133 pasos, 96 verificaciones ✓/✗ y 81
+contrastes que comparan cada número publicado acá contra el que la hoja calcula. Las tres
+tablas de sensibilidad de §9 son bucles, no filas escritas a mano. Sube $R_1$ o tumba la
+diagonal y verás moverse el momento de diseño, que es la palanca de este ejemplo:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=chevron-nch2369)** ·
+[descargar el JSON](/planillas/chevron-nch2369.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/chevron-nch2369.json --md
+```
 
 ## Lo que este ejemplo agrega
 
