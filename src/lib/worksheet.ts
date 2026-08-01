@@ -364,16 +364,29 @@ function numLabel(n: number): string {
 }
 
 /**
+ * Coma decimal, que es la del castellano y la que publican los posts. Se
+ * aplica solo aquí, en los rótulos de esquema: dentro de una expresión de la
+ * hoja el punto es sintaxis y no se toca.
+ */
+function comaDecimal(s: string): string {
+  return s.replace(/(\d)\.(\d)/g, '$1,$2');
+}
+
+/**
  * Valor como texto plano para un rótulo de esquema. Con `unidad`, convierte y
  * devuelve SOLO el número (el autor del SVG escribe la unidad con su propia
  * tipografía: cm², tonf·m); la conversión lanza si es dimensionalmente
  * incoherente, y ese error debe aflorar como token sin resolver. Sin `unidad`,
  * un número va a secas y una cantidad con unidad va como la formatea mathjs.
+ *
+ * Sale con coma decimal: en un mismo dibujo conviven valores calculados y
+ * rótulos escritos a mano («H 600×300×138,5»), y verlos con separadores
+ * distintos delata que unos los pone la hoja y otros el autor.
  */
 export function formatValor(v: unknown, unidad?: string): string {
-  if (unidad) return numLabel(math.number(v as never, unidad as never));
-  if (math.isUnit(v)) return math.format(v, { precision: 4 });
-  if (typeof v === 'number') return numLabel(v);
+  if (unidad) return comaDecimal(numLabel(math.number(v as never, unidad as never)));
+  if (math.isUnit(v)) return comaDecimal(math.format(v, { precision: 4 }));
+  if (typeof v === 'number') return comaDecimal(numLabel(v));
   if (typeof v === 'boolean') return v ? '✓' : '✗';
   return String(v);
 }

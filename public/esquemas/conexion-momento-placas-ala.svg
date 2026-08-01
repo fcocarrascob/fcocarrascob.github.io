@@ -105,5 +105,8 @@
   <text x="514" y="336" font-size="10" fill="#333">Doubler de {{t_w6 - t_wc:mm}} mm: zona panel {{u_pz}} → {{u_d6}}</text>
   <text x="514" y="356" font-size="10" fill="#888">…o una columna con ala y alma más gruesas.</text>
 
-  <text x="500" y="440" font-size="9.5" fill="#888">Rigidizadores y doubler se dibujan en línea punteada: son el refuerzo propuesto, no parte de la conexión verificada.</text>
+  <!-- En dos líneas: de una sola se pasaba del viewBox y se leía «…el refuerzo
+       propuesto,» sin el final. -->
+  <text x="500" y="428" font-size="9.5" fill="#888">Rigidizadores y doubler se dibujan en línea punteada: son el</text>
+  <text x="500" y="441" font-size="9.5" fill="#888">refuerzo propuesto, no parte de la conexión verificada.</text>
 </svg>

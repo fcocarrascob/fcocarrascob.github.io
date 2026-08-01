@@ -25,7 +25,7 @@
   <polygon points="184.0,294.0 314.0,294.0 184.0,138.0" fill="#eef2f7" stroke="#333" stroke-width="1.8"/>
   <line x1="132.0" y1="372.0" x2="303.6" y2="143.2" stroke="#888" stroke-width="0.9" stroke-dasharray="7 4"/>
   <polygon points="186.6,266.7 291.1,127.3 322.3,150.7 217.8,290.1" fill="#dfe5ec" fill-opacity="0.9" stroke="#333" stroke-width="1.6"/>
-  <text x="319.2" y="122.4" font-size="10" fill="#222" font-weight="bold">[] {{B_x:mm}}×{{B_x:mm}}×{{t_x:mm}}</text>
+  <text x="319.2" y="122.4" font-size="10" fill="#222" font-weight="bold">□ {{B_x:mm}}×{{B_x:mm}}×{{t_x:mm}}</text>
   <circle cx="216.2" cy="285.7" r="3.2" fill="#333"/>
   <circle cx="191.3" cy="267.0" r="3.2" fill="#333"/>
   <circle cx="227.2" cy="271.1" r="3.2" fill="#333"/>
@@ -35,8 +35,10 @@
   <text x="282.8" y="304.4" font-size="9.5" fill="#222">{{n_p}} × M{{d_p:mm}}, corte doble</text>
   <circle cx="249.0" cy="216.0" r="4.4" fill="#c0392b"/>
   <line x1="132.0" y1="372.0" x2="249.0" y2="216.0" stroke="#c0392b" stroke-width="2"/>
-  <text x="277.6" y="197.8" font-size="10.5" fill="#c0392b" font-weight="bold">(a, b) = ({{a_l:cm}}, {{b_l:cm}})</text>
-  <text x="277.6" y="210.8" font-size="9.5" fill="#c0392b">r = {{r_u:cm}} cm</text>
+  <!-- Los tres rótulos que siguen caen sobre la diagonal: halo blanco para que
+       se lean sin moverlos del punto que nombran. -->
+  <text x="277.6" y="197.8" font-size="10.5" fill="#c0392b" font-weight="bold" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">(a, b) = ({{a_l:cm}}, {{b_l:cm}})</text>
+  <text x="277.6" y="210.8" font-size="9.5" fill="#c0392b" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">r = {{r_u:cm}} cm</text>
   <circle cx="249.0" cy="294.0" r="3.4" fill="#1a63a8"/>
   <circle cx="184.0" cy="216.0" r="3.4" fill="#1a63a8"/>
   <line x1="132.0" y1="476.0" x2="184.0" y2="476.0" stroke="#1a63a8" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
@@ -48,7 +50,7 @@
   <line x1="412.8" y1="294.0" x2="412.8" y2="216.0" stroke="#1a63a8" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
   <text x="446.8" y="255.0" font-size="10" text-anchor="end" fill="#1a63a8" font-weight="bold">β = {{beta:cm}}</text>
   <line x1="184.0" y1="281.0" x2="314.0" y2="281.0" stroke="#2c7a4b" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
-  <text x="249.0" y="274.0" font-size="10" text-anchor="middle" fill="#2c7a4b" font-weight="bold">L_b = {{L_b:cm}}</text>
+  <text x="249.0" y="274.0" font-size="10" text-anchor="middle" fill="#2c7a4b" font-weight="bold" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">L_b = {{L_b:cm}}</text>
   <line x1="163.2" y1="294.0" x2="163.2" y2="138.0" stroke="#2c7a4b" stroke-width="0.9" marker-start="url(#ar)" marker-end="url(#ar)"/>
   <text x="159.2" y="216.0" font-size="10" text-anchor="end" fill="#2c7a4b" font-weight="bold">L_c = {{L_c:cm}}</text>
   <text x="40" y="502" font-size="10.5" fill="#c0392b" font-weight="bold">La condición geométrica del UFM, dicha con un dibujo: el punto (a, b) cae SOBRE el eje de la diagonal.</text>
