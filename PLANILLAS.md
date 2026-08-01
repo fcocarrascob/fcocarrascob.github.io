@@ -36,7 +36,9 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
    sin esquema queda incompleta.
 3. **Verificar**: `npm run verify:planilla -- public/planillas/<slug>.json`.
    Falla por número que no cuadra, por unidad incoherente y por token de
-   esquema que no resuelve.
+   esquema que no resuelve. Y con el sitio servido,
+   `npm run reflow:planilla -- <slug>` recoloca los bloques para que ninguno
+   quede encima de otro (§ Convenciones: disposición de los bloques).
 4. **Mirar el esquema**: `npm run render:esquema -- public/planillas/<slug>.json`
    resuelve los tokens contra la hoja, rasteriza el SVG con Chromium y deja el
    PNG en un temporal. Que los tokens resuelvan no dice que el dibujo se lea
@@ -113,6 +115,13 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     (U+25A1), no `[]`. Lo que se corrige va al SVG y se vuelve a renderizar.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
+- **Disposición de los bloques**: la planilla se escribe con un paso vertical fijo, y eso
+  vale mientras cada bloque sea una línea. No lo es: una región `program` ocupa una línea
+  por instrucción —ocho, diez— y una `math` con una fracción también crece, así que el
+  bloque de abajo termina dibujado encima del de arriba. `npm run reflow:planilla` lo
+  arregla midiendo el alto **real** de cada región ya renderizada en el canvas (un modelo
+  estático erraría justo en los casos que importan) y reasignando `y` en orden de lectura.
+  No toca `x`, ni `pageBreak`, ni el orden: el scope y el PDF salen idénticos.
 - **Cortes de página**: la planilla se lee en el canvas, pero también se imprime como
   memoria de cálculo, y ahí la hoja se parte en A4. El canvas anuncia dónde con una
   línea «── página N ──»; si un corte cae a mitad de una sección de cálculo, se
