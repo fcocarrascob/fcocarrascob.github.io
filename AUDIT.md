@@ -47,7 +47,7 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
-### 2026-07-31 · `acero/ejemplo-chevron-nch2369` · planilla · ⚠️ — 5 hallazgos (1🟠 4🔵) — **4 aplicados, 1 abierto**
+### 2026-07-31 · `acero/ejemplo-chevron-nch2369` · planilla · ⚠️ — 5 hallazgos (1🟠 4🔵) — **todos aplicados**
 
 **Commit auditado:** `72ba086` · **Método:** contraste de planillas. Planilla construida desde la norma con el PDF a la vista —8.3.1, 8.6.2, 8.6.3, 8.6.6 y Tabla 9 de NCh2369:2025 extraídas por columna con `pdfplumber`, porque la extracción plana mezcla el texto normativo con el comentario— y desde los datos declarados del post; los pasos intermedios del post no se copiaron (`public/planillas/chevron-nch2369.json`: 133 pasos, 96 verificaciones de diseño —4 en rojo a propósito: las dos puertas cerradas de 8.6.3, el alma no compacta y la H 400 que no da— y 81 contrastes). 76 de 81 cuadraron a la primera.
 
@@ -55,7 +55,7 @@ Las propiedades de las dos secciones soldadas y de la viga se **derivan de las p
 
 | # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
 |---|-----|-----|-----------|----------|---------------|--------|
-| 1 | 🟠 | N | L.386 (tabla §9, fila $R_1 = 2{,}0$) | Es la única fila en que la tracción topada (50,40 tonf) cae **por debajo** de la residual (59,47), así que el desequilibrio **cambia de signo** y apunta hacia arriba. El post publica 24,83 tonf·m, que suma las dos magnitudes; algebraicamente $12{,}00 - 12{,}83 = -0{,}83$, y el momento de diseño lo daría la gravedad sola (12,00). Las otras cuatro filas cuadran al dígito | Decidir el criterio: o la fila dice 12,00 (gravedad gobierna) o el texto explica por qué se suman las magnitudes cuando el techo invierte el desequilibrio | ⬜ **abierto — toca la interpretación de la cláusula, no es un redondeo** |
+| 1 | 🟠 | N | L.386 (tabla §9, fila $R_1 = 2{,}0$) | Es la única fila en que la tracción topada (50,40 tonf) cae **por debajo** de la residual (59,47), así que el desequilibrio **cambia de signo** y apunta hacia arriba: descarga la viga en vez de cargarla. El post publicaba 24,83 tonf·m, que suma las dos magnitudes. Comprobado el diagrama completo: con la puntual hacia arriba el máximo se corre del centro ($M = 2{,}60$ tonf·m en $x = 1{,}86$ m; $-0{,}83$ en el centro), o sea la combinación sísmica deja de gobernar. Las otras cuatro filas cuadran al dígito | La fila pasa a **12,00 tonf·m**, que es la gravedad sola sobre los 8 m sin apoyo central —la otra combinación de la envolvente—, con una nota nueva que deriva el umbral $0{,}7R_1P_E = 0{,}3P_{ne} \Rightarrow R_1 = 2{,}36$ bajo el cual la curva se aplana. La planilla pasa a calcular la envolvente, no la suma | ✅ aplicado |
 | 2 | 🔵 | N | L.279 (tabla de secciones) | $\phi P_n$ de la H 600×300×138,5 da 387,05 tonf; publicado 387,0 (truncado) | 387,1 | ✅ aplicado |
 | 3 | 🔵 | N | L.263 y L.277 | $\phi P_n$ de la H 400×200×109,5 da 293,66 tonf; publicado 293,6 (truncado) | 293,7 | ✅ aplicado |
 | 4 | 🔵 | N | L.263 | $L_p = 1{,}76\,r_y\sqrt{E/F_y} = 258{,}5$ cm; publicado 258. No cambia la conclusión ($L_p > L_b = 200$) | 259 | ✅ aplicado |

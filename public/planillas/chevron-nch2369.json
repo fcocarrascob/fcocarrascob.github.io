@@ -7,8 +7,7 @@
       "v_btx": "Es la tesis del §1: el [] 200×200×5,0 del catálogo NO cumple el lam_md de la Tabla 9 (35,0 contra 18,9), y por eso hay que soldar.",
       "v_exen": "La segunda puerta de 8.6.3 tampoco abre: con el sismo amplificado por 0,7R_1 la misma sección se va a uso 1,52. Las dos puertas cerradas son el argumento del §1.",
       "v_alma": "El alma de la H 600×300×138,5 queda NO compacta bajo el axial (69,5 contra 65,1), que es justo lo que obliga a ir por la Sec. F4 con R_pc en vez de M_p.",
-      "v_vigaw": "La H 400×200×109,5 —la que uno elegiría mirando el modelo elástico— no da: uso 1,57. Es el punto del §5.",
-      "c_r1_2": "HALLAZGO 2026-07-31: en R_1 = 2,0 la tracción topada (50,40 tonf) cae POR DEBAJO de la residual (59,47), así que el desequilibrio se invierte y apunta hacia arriba. El post publica 24,83 tonf·m sumando las magnitudes; algebraicamente la resta da −0,83, y el momento de diseño lo daría la gravedad sola (12,00). Es interpretación de la cláusula, no un redondeo: pendiente de conversar antes de tocar el post."
+      "v_vigaw": "La H 400×200×109,5 —la que uno elegiría mirando el modelo elástico— no da: uso 1,57. Es el punto del §5."
     }
   },
   "regions": [
@@ -1437,697 +1436,739 @@
     },
     {
       "id": "r203",
-      "kind": "program",
+      "kind": "text",
       "x": 40,
       "y": 9692,
-      "src": "M_R1 :=\n    out := []\n    for k in [2, 3, 4, 5, 6]\n        Tk := min(T_ye, 0.7*k*P_E)\n        Vk := sin(alf)*(Tk - P_res)\n        out := concat(out, [(M_gra + Vk*L/4) to tonf*m])\n    return out"
+      "src": "Y hay un segundo umbral, por abajo: si el techo deja la tracción por DEBAJO de la"
     },
     {
       "id": "r204",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 9738,
-      "src": "M_R1 ="
+      "src": "residual, el desequilibrio se invierte —apunta hacia arriba— y descarga la viga."
     },
     {
       "id": "r205",
-      "kind": "text",
+      "kind": "math",
       "x": 40,
       "y": 9784,
-      "src": "El R_y funciona al revés: subirlo BAJA el momento, porque la tracción ya está topada"
+      "src": "R1_cru := P_res/(0.7*P_E) ="
     },
     {
       "id": "r206",
       "kind": "text",
       "x": 40,
       "y": 9830,
-      "src": "y la residual crece. En lam_md (§1) el mismo factor tira para el otro lado."
+      "src": "Por eso el momento de diseño es la envolvente de dos combinaciones: la sísmica de 8.6.6"
     },
     {
       "id": "r207",
-      "kind": "program",
+      "kind": "text",
       "x": 40,
       "y": 9876,
-      "src": "M_Ry :=\n    out := []\n    for k in [1.1, 1.3, 1.5]\n        Fk := k*F_y\n        lim := 4.71*sqrt(E/Fk)\n        Fck := 0.658^(Fk/F_e)*Fk\n        if esb_d > lim\n            Fck := 0.877*F_e\n        Pk := 0.3*1.14*Fck*A_d\n        Tk := min(Fk*A_d, T_cap)\n        out := concat(out, [(M_gra + sin(alf)*(Tk - Pk)*L/4) to tonf*m])\n    return out"
+      "src": "y la gravedad sola, que en esta cláusula actúa sobre los 8 m SIN apoyo central. Con el"
     },
     {
       "id": "r208",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 9922,
-      "src": "M_Ry ="
+      "src": "desequilibrio invertido la sísmica cae por debajo y manda la gravedad."
     },
     {
       "id": "r209",
-      "kind": "text",
+      "kind": "program",
       "x": 40,
       "y": 9968,
-      "src": "El ángulo, a luz fija: cambiarlo cambia la altura, el largo de la diagonal y con él P_ne."
+      "src": "M_R1 :=\n    out := []\n    for k in [2, 3, 4, 5, 6]\n        Tk := min(T_ye, 0.7*k*P_E)\n        Vk := sin(alf)*(Tk - P_res)\n        out := concat(out, [max(M_gra, M_gra + Vk*L/4) to tonf*m])\n    return out"
     },
     {
       "id": "r210",
-      "kind": "program",
+      "kind": "math",
       "x": 40,
       "y": 10014,
-      "src": "M_alf :=\n    out := []\n    for g in [30, 40, 45, 50, 60]\n        a := g*pi/180\n        Lk := (L/2)/cos(a)\n        ek := Lk/r_d\n        Fek := pi^2*E/ek^2\n        Fck := 0.658^(F_ye/Fek)*F_ye\n        if ek > 4.71*sqrt(E/F_ye)\n            Fck := 0.877*Fek\n        Pk := 0.3*1.14*Fck*A_d\n        out := concat(out, [(M_gra + sin(a)*(T_cap - Pk)*L/4) to tonf*m])\n    return out"
+      "src": "M_R1 ="
     },
     {
       "id": "r211",
-      "kind": "math",
+      "kind": "text",
       "x": 40,
       "y": 10060,
-      "src": "M_alf ="
+      "src": "El R_y funciona al revés: subirlo BAJA el momento, porque la tracción ya está topada"
     },
     {
       "id": "r212",
       "kind": "text",
       "x": 40,
       "y": 10106,
+      "src": "y la residual crece. En lam_md (§1) el mismo factor tira para el otro lado."
+    },
+    {
+      "id": "r213",
+      "kind": "program",
+      "x": 40,
+      "y": 10152,
+      "src": "M_Ry :=\n    out := []\n    for k in [1.1, 1.3, 1.5]\n        Fk := k*F_y\n        lim := 4.71*sqrt(E/Fk)\n        Fck := 0.658^(Fk/F_e)*Fk\n        if esb_d > lim\n            Fck := 0.877*F_e\n        Pk := 0.3*1.14*Fck*A_d\n        Tk := min(Fk*A_d, T_cap)\n        out := concat(out, [(M_gra + sin(alf)*(Tk - Pk)*L/4) to tonf*m])\n    return out"
+    },
+    {
+      "id": "r214",
+      "kind": "math",
+      "x": 40,
+      "y": 10198,
+      "src": "M_Ry ="
+    },
+    {
+      "id": "r215",
+      "kind": "text",
+      "x": 40,
+      "y": 10244,
+      "src": "El ángulo, a luz fija: cambiarlo cambia la altura, el largo de la diagonal y con él P_ne."
+    },
+    {
+      "id": "r216",
+      "kind": "program",
+      "x": 40,
+      "y": 10290,
+      "src": "M_alf :=\n    out := []\n    for g in [30, 40, 45, 50, 60]\n        a := g*pi/180\n        Lk := (L/2)/cos(a)\n        ek := Lk/r_d\n        Fek := pi^2*E/ek^2\n        Fck := 0.658^(F_ye/Fek)*F_ye\n        if ek > 4.71*sqrt(E/F_ye)\n            Fck := 0.877*Fek\n        Pk := 0.3*1.14*Fck*A_d\n        out := concat(out, [(M_gra + sin(a)*(T_cap - Pk)*L/4) to tonf*m])\n    return out"
+    },
+    {
+      "id": "r217",
+      "kind": "math",
+      "x": 40,
+      "y": 10336,
+      "src": "M_alf ="
+    },
+    {
+      "id": "r218",
+      "kind": "text",
+      "x": 40,
+      "y": 10382,
       "src": "Un chevron tumbado es un chevron barato: de 45° a 30° se ahorra un tercio del momento."
     },
     {
       "id": "img_esq",
       "kind": "image",
       "x": 40,
-      "y": 10152,
+      "y": 10428,
       "src": "/esquemas/chevron-nch2369.svg",
       "w": 620,
       "h": 468
     },
     {
-      "id": "r214",
+      "id": "r220",
       "kind": "text",
       "x": 40,
-      "y": 10221,
+      "y": 10497,
       "src": "━━ 10 · CONTRASTE CON EL POST — cada capacidad publicada, contra la calculada ━━"
     },
     {
-      "id": "r215",
+      "id": "r221",
       "kind": "text",
       "x": 40,
-      "y": 10267,
+      "y": 10543,
       "src": "Tolerancia: media unidad del último dígito publicado. Si cambias un dato de entrada,"
     },
     {
-      "id": "r216",
+      "id": "r222",
       "kind": "text",
       "x": 40,
-      "y": 10313,
+      "y": 10589,
       "src": "estos contrastes dejarán de cumplirse: comparan contra los números impresos en el post."
     },
     {
       "id": "c_fye",
       "kind": "math",
       "x": 40,
-      "y": 10359,
+      "y": 10635,
       "src": "abs(F_ye - 3289 kgf/cm^2) < 0.5 kgf/cm^2 ="
     },
     {
       "id": "c_lammd",
       "kind": "math",
       "x": 40,
-      "y": 10405,
+      "y": 10681,
       "src": "abs(lam_md - 18.9) < 0.05 ="
     },
     {
       "id": "c_esbmax",
       "kind": "math",
       "x": 40,
-      "y": 10451,
+      "y": 10727,
       "src": "abs(esb_max - 133.8) < 0.05 ="
     },
     {
       "id": "c_esbeul",
       "kind": "math",
       "x": 40,
-      "y": 10497,
+      "y": 10773,
       "src": "abs(esb_eul - 89.2) < 0.05 ="
     },
     {
       "id": "c_ld",
       "kind": "math",
       "x": 40,
-      "y": 10543,
+      "y": 10819,
       "src": "abs(L_d - 5.657 m) < 0.0005 m ="
     },
     {
       "id": "c_q",
       "kind": "math",
       "x": 40,
-      "y": 10589,
+      "y": 10865,
       "src": "abs(Q - 50.9 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_ad",
       "kind": "math",
       "x": 40,
-      "y": 10635,
+      "y": 10911,
       "src": "abs(A_d - 76.0 cm^2) < 0.05 cm^2 ="
     },
     {
       "id": "c_rd",
       "kind": "math",
       "x": 40,
-      "y": 10681,
+      "y": 10957,
       "src": "abs(r_d - 7.77 cm) < 0.005 cm ="
     },
     {
       "id": "c_btd",
       "kind": "math",
       "x": 40,
-      "y": 10727,
+      "y": 11003,
       "src": "abs(bt_d - 18.0) < 0.05 ="
     },
     {
       "id": "c_esbd",
       "kind": "math",
       "x": 40,
-      "y": 10773,
+      "y": 11049,
       "src": "abs(esb_d - 72.8) < 0.05 ="
     },
     {
       "id": "c_rdd",
       "kind": "math",
       "x": 40,
-      "y": 10819,
+      "y": 11095,
       "src": "abs(Rd_d - 130.9 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_ud",
       "kind": "math",
       "x": 40,
-      "y": 10865,
+      "y": 11141,
       "src": "abs(u_d - 0.28) < 0.005 ="
     },
     {
       "id": "c_esbx",
       "kind": "math",
       "x": 40,
-      "y": 10911,
+      "y": 11187,
       "src": "abs(esb_x - 71.5) < 0.05 ="
     },
     {
       "id": "c_rdx",
       "kind": "math",
       "x": 40,
-      "y": 10957,
+      "y": 11233,
       "src": "abs(Rd_x - 66.35 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_ux",
       "kind": "math",
       "x": 40,
-      "y": 11003,
+      "y": 11279,
       "src": "abs(u_x - 0.54) < 0.005 ="
     },
     {
       "id": "c_pux",
       "kind": "math",
       "x": 40,
-      "y": 11049,
+      "y": 11325,
       "src": "abs(Pu_x - 100.80 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_uexen",
       "kind": "math",
       "x": 40,
-      "y": 11095,
+      "y": 11371,
       "src": "abs(u_exen - 1.52) < 0.005 ="
     },
     {
       "id": "c_ubtx",
       "kind": "math",
       "x": 40,
-      "y": 11141,
+      "y": 11417,
       "src": "abs(u_btx - 1.85) < 0.005 ="
     },
     {
       "id": "c_tye",
       "kind": "math",
       "x": 40,
-      "y": 11187,
+      "y": 11463,
       "src": "abs(T_ye - 249.96 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_fe",
       "kind": "math",
       "x": 40,
-      "y": 11233,
+      "y": 11509,
       "src": "abs(F_e - 3794 kgf/cm^2) < 0.5 kgf/cm^2 ="
     },
     {
       "id": "c_fcre",
       "kind": "math",
       "x": 40,
-      "y": 11279,
+      "y": 11555,
       "src": "abs(F_cre - 2288 kgf/cm^2) < 0.5 kgf/cm^2 ="
     },
     {
       "id": "c_pne",
       "kind": "math",
       "x": 40,
-      "y": 11325,
+      "y": 11601,
       "src": "abs(P_ne - 198.25 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_pres",
       "kind": "math",
       "x": 40,
-      "y": 11371,
+      "y": 11647,
       "src": "abs(P_res - 59.47 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_vcru",
       "kind": "math",
       "x": 40,
-      "y": 11417,
+      "y": 11693,
       "src": "abs(V_cru - 134.70 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_ncru",
       "kind": "math",
       "x": 40,
-      "y": 11463,
+      "y": 11739,
       "src": "abs(N_cru - 218.81 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_mgra",
       "kind": "math",
       "x": 40,
-      "y": 11509,
+      "y": 11785,
       "src": "abs(M_gra - 12.00 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_mdes",
       "kind": "math",
       "x": 40,
-      "y": 11555,
+      "y": 11831,
       "src": "abs(V_cru*L/4 - 269.39 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_mcru",
       "kind": "math",
       "x": 40,
-      "y": 11601,
+      "y": 11877,
       "src": "abs(M_cru - 281.39 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_mela",
       "kind": "math",
       "x": 40,
-      "y": 11647,
+      "y": 11923,
       "src": "abs(M_ela - 3.00 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_razcru",
       "kind": "math",
       "x": 40,
-      "y": 11693,
+      "y": 11969,
       "src": "abs(raz_cru - 93.8) < 0.05 ="
     },
     {
       "id": "c_tdis",
       "kind": "math",
       "x": 40,
-      "y": 11739,
+      "y": 12015,
       "src": "abs(T_dis - 100.80 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_vdis",
       "kind": "math",
       "x": 40,
-      "y": 11785,
+      "y": 12061,
       "src": "abs(V_dis - 29.22 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_ndis",
       "kind": "math",
       "x": 40,
-      "y": 11831,
+      "y": 12107,
       "src": "abs(N_dis - 113.33 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_mdis",
       "kind": "math",
       "x": 40,
-      "y": 11877,
+      "y": 12153,
       "src": "abs(M_dis - 70.44 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_razdis",
       "kind": "math",
       "x": 40,
-      "y": 11923,
+      "y": 12199,
       "src": "abs(raz_dis - 23.5) < 0.05 ="
     },
     {
       "id": "c_baja",
       "kind": "math",
       "x": 40,
-      "y": 11969,
+      "y": 12245,
       "src": "abs(baja - 0.75) < 0.005 ="
     },
     {
       "id": "c_av",
       "kind": "math",
       "x": 40,
-      "y": 12015,
+      "y": 12291,
       "src": "abs(A_v - 176.5 cm^2) < 0.05 cm^2 ="
     },
     {
       "id": "c_zx",
       "kind": "math",
       "x": 40,
-      "y": 12061,
+      "y": 12337,
       "src": "abs(Zx - 4433 cm^3) < 0.5 cm^3 ="
     },
     {
       "id": "c_htw",
       "kind": "math",
       "x": 40,
-      "y": 12107,
+      "y": 12383,
       "src": "abs(htw - 69.5) < 0.05 ="
     },
     {
       "id": "c_btf",
       "kind": "math",
       "x": 40,
-      "y": 12153,
+      "y": 12429,
       "src": "abs(btf - 6.8) < 0.05 ="
     },
     {
       "id": "c_rdpv",
       "kind": "math",
       "x": 40,
-      "y": 12199,
+      "y": 12475,
       "src": "abs(Rd_pv - 387.1 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_rdmv",
       "kind": "math",
       "x": 40,
-      "y": 12245,
+      "y": 12521,
       "src": "abs(Rd_mv - 100.6 tonf*m) < 0.05 tonf*m ="
     },
     {
       "id": "c_ca",
       "kind": "math",
       "x": 40,
-      "y": 12291,
+      "y": 12567,
       "src": "abs(C_a - 0.282) < 0.0005 ="
     },
     {
       "id": "c_lampw",
       "kind": "math",
       "x": 40,
-      "y": 12337,
+      "y": 12613,
       "src": "abs(lam_pw - 65.1) < 0.05 ="
     },
     {
       "id": "c_lampwf",
       "kind": "math",
       "x": 40,
-      "y": 12383,
+      "y": 12659,
       "src": "abs(lam_pwf - 106.7) < 0.05 ="
     },
     {
       "id": "c_rpc",
       "kind": "math",
       "x": 40,
-      "y": 12429,
+      "y": 12705,
       "src": "abs(R_pc - 1.088) < 0.0005 ="
     },
     {
       "id": "c_mnv",
       "kind": "math",
       "x": 40,
-      "y": 12475,
+      "y": 12751,
       "src": "abs(M_nv - 111.7 tonf*m) < 0.05 tonf*m ="
     },
     {
       "id": "c_mp",
       "kind": "math",
       "x": 40,
-      "y": 12521,
+      "y": 12797,
       "src": "abs(M_p - 112.2 tonf*m) < 0.05 tonf*m ="
     },
     {
       "id": "c_lamaf",
       "kind": "math",
       "x": 40,
-      "y": 12567,
+      "y": 12843,
       "src": "abs(lam_af - 9.96) < 0.005 ="
     },
     {
       "id": "c_uv",
       "kind": "math",
       "x": 40,
-      "y": 12613,
+      "y": 12889,
       "src": "abs(u_v - 0.92) < 0.005 ="
     },
     {
       "id": "c_aw",
       "kind": "math",
       "x": 40,
-      "y": 12659,
+      "y": 12935,
       "src": "abs(A_w - 139.5 cm^2) < 0.05 cm^2 ="
     },
     {
       "id": "c_zxw",
       "kind": "math",
       "x": 40,
-      "y": 12705,
+      "y": 12981,
       "src": "abs(Zx_w - 2320 cm^3) < 0.5 cm^3 ="
     },
     {
       "id": "c_htww",
       "kind": "math",
       "x": 40,
-      "y": 12751,
+      "y": 13027,
       "src": "abs(htw_w - 43.0) < 0.05 ="
     },
     {
       "id": "c_rdpw",
       "kind": "math",
       "x": 40,
-      "y": 12797,
+      "y": 13073,
       "src": "abs(Rd_pw - 293.7 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_rdmw",
       "kind": "math",
       "x": 40,
-      "y": 12843,
+      "y": 13119,
       "src": "abs(Rd_mw - 52.8 tonf*m) < 0.05 tonf*m ="
     },
     {
       "id": "c_lp",
       "kind": "math",
       "x": 40,
-      "y": 12889,
+      "y": 13165,
       "src": "abs(L_p - 259 cm) < 0.5 cm ="
     },
     {
       "id": "c_uw",
       "kind": "math",
       "x": 40,
-      "y": 12935,
+      "y": 13211,
       "src": "abs(u_w - 1.57) < 0.005 ="
     },
     {
       "id": "c_sube",
       "kind": "math",
       "x": 40,
-      "y": 12981,
+      "y": 13257,
       "src": "abs(sube - 0.26) < 0.005 ="
     },
     {
       "id": "c_ftra",
       "kind": "math",
       "x": 40,
-      "y": 13027,
+      "y": 13303,
       "src": "abs(F_tra - 3.96 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_emax",
       "kind": "math",
       "x": 40,
-      "y": 13073,
+      "y": 13349,
       "src": "abs(e_max - 1.20 m) < 0.005 m ="
     },
     {
       "id": "c_apt",
       "kind": "math",
       "x": 40,
-      "y": 13119,
+      "y": 13395,
       "src": "abs(ap_t - 122.4 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_qmin",
       "kind": "math",
       "x": 40,
-      "y": 13165,
+      "y": 13441,
       "src": "abs(Q_min - 15.3 tonf) < 0.05 tonf ="
     },
     {
       "id": "c_tyex",
       "kind": "math",
       "x": 40,
-      "y": 13211,
+      "y": 13487,
       "src": "abs(T_yex - 125.44 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_presx",
       "kind": "math",
       "x": 40,
-      "y": 13257,
+      "y": 13533,
       "src": "abs(P_resx - 30.24 tonf) < 0.005 tonf ="
     },
     {
       "id": "c_mdisx",
       "kind": "math",
       "x": 40,
-      "y": 13303,
+      "y": 13579,
       "src": "abs(M_disx - 111.79 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_ahorro",
       "kind": "math",
       "x": 40,
-      "y": 13349,
+      "y": 13625,
       "src": "abs(ahorro - 0.37) < 0.005 ="
     },
     {
       "id": "c_peso",
       "kind": "math",
       "x": 40,
-      "y": 13395,
+      "y": 13671,
       "src": "abs(peso - 1787 kgf) < 0.5 kgf ="
     },
     {
       "id": "c_r1lib",
       "kind": "math",
       "x": 40,
-      "y": 13441,
+      "y": 13717,
       "src": "abs(R1_lib - 9.9) < 0.05 ="
     },
     {
-      "id": "r285",
-      "kind": "text",
-      "x": 40,
-      "y": 13487,
-      "src": "Las tres tablas de sensibilidad de §9, fila por fila:"
-    },
-    {
-      "id": "c_r1_3",
+      "id": "c_r1cru",
       "kind": "math",
-      "x": 40,
-      "y": 13533,
-      "src": "abs(M_R1[2] - 34.80 tonf*m) < 0.005 tonf*m ="
-    },
-    {
-      "id": "c_r1_4",
-      "kind": "math",
-      "x": 40,
-      "y": 13579,
-      "src": "abs(M_R1[3] - 70.44 tonf*m) < 0.005 tonf*m ="
-    },
-    {
-      "id": "c_r1_5",
-      "kind": "math",
-      "x": 40,
-      "y": 13625,
-      "src": "abs(M_R1[4] - 106.08 tonf*m) < 0.005 tonf*m ="
-    },
-    {
-      "id": "c_r1_6",
-      "kind": "math",
-      "x": 40,
-      "y": 13671,
-      "src": "abs(M_R1[5] - 141.72 tonf*m) < 0.005 tonf*m ="
-    },
-    {
-      "id": "r290",
-      "kind": "text",
-      "x": 40,
-      "y": 13717,
-      "src": "La fila R_1 = 2,0 va aparte: es la única en que la tracción topada (50,40) cae POR DEBAJO"
-    },
-    {
-      "id": "r291",
-      "kind": "text",
       "x": 40,
       "y": 13763,
-      "src": "de la residual (59,47), así que el desequilibrio se invierte y apunta hacia arriba. El post"
+      "src": "abs(R1_cru - 2.36) < 0.005 ="
     },
     {
       "id": "r292",
       "kind": "text",
       "x": 40,
       "y": 13809,
+      "src": "Las tres tablas de sensibilidad de §9, fila por fila:"
+    },
+    {
+      "id": "c_r1_3",
+      "kind": "math",
+      "x": 40,
+      "y": 13855,
+      "src": "abs(M_R1[2] - 34.80 tonf*m) < 0.005 tonf*m ="
+    },
+    {
+      "id": "c_r1_4",
+      "kind": "math",
+      "x": 40,
+      "y": 13901,
+      "src": "abs(M_R1[3] - 70.44 tonf*m) < 0.005 tonf*m ="
+    },
+    {
+      "id": "c_r1_5",
+      "kind": "math",
+      "x": 40,
+      "y": 13947,
+      "src": "abs(M_R1[4] - 106.08 tonf*m) < 0.005 tonf*m ="
+    },
+    {
+      "id": "c_r1_6",
+      "kind": "math",
+      "x": 40,
+      "y": 13993,
+      "src": "abs(M_R1[5] - 141.72 tonf*m) < 0.005 tonf*m ="
+    },
+    {
+      "id": "r297",
+      "kind": "text",
+      "x": 40,
+      "y": 14039,
+      "src": "de la residual (59,47), así que el desequilibrio se invierte y apunta hacia arriba. El post"
+    },
+    {
+      "id": "r298",
+      "kind": "text",
+      "x": 40,
+      "y": 14085,
       "src": "publica 24,83, que suma las dos magnitudes; algebraicamente la resta da −0,83."
     },
     {
       "id": "c_r1_2",
       "kind": "math",
       "x": 40,
-      "y": 13855,
-      "src": "abs(M_R1[1] - 24.83 tonf*m) < 0.005 tonf*m ="
+      "y": 14131,
+      "src": "abs(M_R1[1] - 12.00 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_ry_11",
       "kind": "math",
       "x": 40,
-      "y": 13901,
+      "y": 14177,
       "src": "abs(M_Ry[1] - 79.30 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_ry_13",
       "kind": "math",
       "x": 40,
-      "y": 13947,
+      "y": 14223,
       "src": "abs(M_Ry[2] - 70.44 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_ry_15",
       "kind": "math",
       "x": 40,
-      "y": 13993,
+      "y": 14269,
       "src": "abs(M_Ry[3] - 62.77 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_al_30",
       "kind": "math",
       "x": 40,
-      "y": 14039,
+      "y": 14315,
       "src": "abs(M_alf[1] - 45.68 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_al_40",
       "kind": "math",
       "x": 40,
-      "y": 14085,
+      "y": 14361,
       "src": "abs(M_alf[2] - 60.91 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_al_45",
       "kind": "math",
       "x": 40,
-      "y": 14131,
+      "y": 14407,
       "src": "abs(M_alf[3] - 70.44 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_al_50",
       "kind": "math",
       "x": 40,
-      "y": 14177,
+      "y": 14453,
       "src": "abs(M_alf[4] - 82.00 tonf*m) < 0.005 tonf*m ="
     },
     {
       "id": "c_al_60",
       "kind": "math",
       "x": 40,
-      "y": 14223,
+      "y": 14499,
       "src": "abs(M_alf[5] - 114.92 tonf*m) < 0.005 tonf*m ="
     }
   ]
