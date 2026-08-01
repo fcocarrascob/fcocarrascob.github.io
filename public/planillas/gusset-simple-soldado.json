@@ -454,7 +454,8 @@
       "kind": "text",
       "x": 40,
       "y": 3068,
-      "src": "━━ 4 · EL CONTORNO → ancho disponible en la sección de Whitmore ━━"
+      "src": "━━ 4 · EL CONTORNO → ancho disponible en la sección de Whitmore ━━",
+      "pageBreak": true
     },
     {
       "id": "r058",
@@ -804,7 +805,8 @@
       "kind": "text",
       "x": 40,
       "y": 5483,
-      "src": "━━ 9 · USOS ━━"
+      "src": "━━ 9 · USOS ━━",
+      "pageBreak": true
     },
     {
       "id": "r097",

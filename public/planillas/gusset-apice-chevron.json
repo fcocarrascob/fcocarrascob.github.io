@@ -665,7 +665,8 @@
       "kind": "text",
       "x": 40,
       "y": 4563,
-      "src": "━━ 6 · PANDEO DEL GUSSET (J4.4) — r no depende del ancho ━━"
+      "src": "━━ 6 · PANDEO DEL GUSSET (J4.4) — r no depende del ancho ━━",
+      "pageBreak": true
     },
     {
       "id": "r094",
@@ -742,7 +743,8 @@
       "kind": "text",
       "x": 40,
       "y": 5092,
-      "src": "━━ 7 · INTERFAZ GUSSET - ALA INFERIOR DE LA VIGA ━━"
+      "src": "━━ 7 · INTERFAZ GUSSET - ALA INFERIOR DE LA VIGA ━━",
+      "pageBreak": true
     },
     {
       "id": "r105",

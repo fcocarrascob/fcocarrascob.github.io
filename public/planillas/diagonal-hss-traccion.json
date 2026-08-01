@@ -475,7 +475,8 @@
       "kind": "text",
       "x": 40,
       "y": 3229,
-      "src": "━━ 5 · ESBELTEZ (Sec. D1, recomendado) ━━"
+      "src": "━━ 5 · ESBELTEZ (Sec. D1, recomendado) ━━",
+      "pageBreak": true
     },
     {
       "id": "r061",

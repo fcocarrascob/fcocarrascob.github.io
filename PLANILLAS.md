@@ -45,9 +45,16 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 5. **Aplicar los fixes mecánicos** al post — redondeos, dígitos, un número mal
    arrastrado. Si un hallazgo toca una **tesis o una decisión de diseño**, ahí
    se para: eso se conversa antes de tocar el post.
-6. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
+6. **Revisar los cortes de página**: con el sitio servido,
+   `npm run pdf:planilla -- <slug>` imprime la A4 de verdad y comprueba que el
+   corte que el canvas anuncia es el que el PDF tiene. Donde una sección de
+   cálculo quede partida a la mala —arranca al pie, o se derrama por dos
+   líneas— se pone un salto forzado en su encabezado (§ Convenciones: cortes de
+   página). Una sección más larga que una página se parte igual: eso no se
+   fuerza, se acepta.
+7. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
    registro con pasos, verificaciones, contrastes y fecha de corrida.
-7. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
+8. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
    build`, y commit del par planilla + esquema + post corregido.
 
 ## Convenciones
@@ -106,6 +113,12 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     (U+25A1), no `[]`. Lo que se corrige va al SVG y se vuelve a renderizar.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
+- **Cortes de página**: la planilla se lee en el canvas, pero también se imprime como
+  memoria de cálculo, y ahí la hoja se parte en A4. El canvas anuncia dónde con una
+  línea «── página N ──»; si un corte cae a mitad de una sección de cálculo, se
+  selecciona la región que debería abrir la página y se pulsa **⇱ Salto de página**
+  (queda como `"pageBreak": true` en el JSON, y viaja con la planilla). Para verlo
+  impreso de verdad: `npm run pdf:planilla -- <slug>` con el sitio servido.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
@@ -116,47 +129,48 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 
 ### acero
 
-| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|---|
-| `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 18 | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 16 | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 51 | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
-| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
-| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
-| `ejemplo-chevron-nch2369` | | | | | | | ⬜ |
-| `ejemplo-columna-galpon-compresion` | | | | | | | ⬜ |
-| `ejemplo-conexion-apernada-corte` | | | | | | | ⬜ |
-| `ejemplo-conexion-doble-angulo` | | | | | | | ⬜ |
-| `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 0 | 2026-07-31 | ✅ |
-| `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
-| `ejemplo-empalme-apernado-viga` | | | | | | | ⬜ |
-| `ejemplo-viga-carrilera-puente-grua` | | | | | | | ⬜ |
-| `ejemplo-viga-columna` | | | | | | | ⬜ |
-| `ejemplo-viga-ltb` | | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Págs. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `ejemplo-gusset-simple-apernado` | 92 | 46 | 23 | 18 | 6 (1⇱) | 3 aplicados 2026-07-31 (tabla por-perno con t = 18 mm) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 16 | 6 (2⇱) | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 51 | 10 (3⇱) | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
+| `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
+| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
+| `ejemplo-chevron-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-columna-galpon-compresion` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-conexion-apernada-corte` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-conexion-doble-angulo` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
+| `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
+| `ejemplo-empalme-apernado-viga` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-carrilera-puente-grua` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
 
 **Esq.** = tokens del esquema paramétrico. Las 7 planillas publicadas lo tienen.
+**Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
 
-| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|---|
-| `ejemplo-anclajes-pedestal` | | | | | | | ⬜ |
-| `ejemplo-columna-interaccion-esbeltez` | | | | | | | ⬜ |
-| `ejemplo-losa-punzonamiento-momento` | | | | | | | ⬜ |
-| `ejemplo-losa-unidireccional` | | | | | | | ⬜ |
-| `ejemplo-mensula-puntal-tensor` | | | | | | | ⬜ |
-| `ejemplo-muro-flexocompresion` | | | | | | | ⬜ |
-| `ejemplo-pedestal-anclaje-nch2369` | | | | | | | ⬜ |
-| `ejemplo-viga-flexion-corte` | | | | | | | ⬜ |
-| `ejemplo-viga-t` | | | | | | | ⬜ |
-| `ejemplo-zapata-aislada` | | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Págs. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `ejemplo-anclajes-pedestal` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-columna-interaccion-esbeltez` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-losa-punzonamiento-momento` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-mensula-puntal-tensor` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-pedestal-anclaje-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-flexion-corte` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-zapata-aislada` |  |  |  |  |  |  |  | ⬜ |
 
 ### geotecnia
 
-| Post | Pasos | Verif. | Contrastes | Esq. | Hallazgos | Última corrida | Estado |
-|---|---|---|---|---|---|---|---|
-| `ejemplo-fundacion-anclada-nch2369` | | | | | | | ⬜ |
-| `ejemplo-losa-rigida-o-flexible-nch2369` | | | | | | | ⬜ |
-| `ejemplo-pilotes-friccion-negativa-nch2369` | | | | | | | ⬜ |
-| `ejemplo-zapata-galpon-nch2369` | | | | | | | ⬜ |
-| `ejemplo-zapata-los-dos-criterios` | | | | | | | ⬜ |
+| Post | Pasos | Verif. | Contrastes | Esq. | Págs. | Hallazgos | Última corrida | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `ejemplo-fundacion-anclada-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-losa-rigida-o-flexible-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-pilotes-friccion-negativa-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-zapata-galpon-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-zapata-los-dos-criterios` |  |  |  |  |  |  |  | ⬜ |

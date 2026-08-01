@@ -419,7 +419,8 @@
       "kind": "text",
       "x": 40,
       "y": 2861,
-      "src": "━━ 1 · LA DIAGONAL Y SU CAPACIDAD ESPERADA ━━"
+      "src": "━━ 1 · LA DIAGONAL Y SU CAPACIDAD ESPERADA ━━",
+      "pageBreak": true
     },
     {
       "id": "r059",
@@ -1385,7 +1386,8 @@
       "kind": "text",
       "x": 40,
       "y": 9347,
-      "src": "━━ 7 · LOS MIEMBROS QUE RECIBEN LA CARGA (J10) ━━"
+      "src": "━━ 7 · LOS MIEMBROS QUE RECIBEN LA CARGA (J10) ━━",
+      "pageBreak": true
     },
     {
       "id": "r197",
@@ -1448,7 +1450,8 @@
       "kind": "text",
       "x": 40,
       "y": 9784,
-      "src": "━━ 8 · FACTORES DE USO ━━"
+      "src": "━━ 8 · FACTORES DE USO ━━",
+      "pageBreak": true
     },
     {
       "id": "r206",
