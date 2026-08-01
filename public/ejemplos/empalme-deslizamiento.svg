@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" font-family="Segoe UI, Arial, sans-serif">
   <rect width="840" height="440" fill="#ffffff"/>
-  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los mismos 8 pernos, dos estados límite: rotura 0.52 · deslizamiento 0.93</text>
+  <text x="420" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Los mismos 8 pernos, dos estados límite: rotura 0.53 · deslizamiento 0.93</text>
 
   <!-- limite -->
   <line x1="550" y1="56" x2="550" y2="330" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="7 4"/>
@@ -20,8 +20,8 @@
   <!-- bloque 1: los dos estados limite -->
   <text x="60" y="76" font-size="11.5" fill="#222" font-weight="bold">La conexión ejecutada: 8 pernos Ø22, Clase A</text>
   <text x="240" y="102" font-size="10.5" fill="#333" text-anchor="end">Rotura — corte del perno (Ec. J3-1)</text>
-  <rect x="250" y="90" width="156" height="17" fill="#5b8db8"/>
-  <text x="414" y="103" font-size="10.5" fill="#1f4e79" font-weight="bold">0.52  ·  86.5 tonf</text>
+  <rect x="250" y="90" width="158" height="17" fill="#5b8db8"/>
+  <text x="416" y="103" font-size="10.5" fill="#1f4e79" font-weight="bold">0.53  ·  86.1 tonf</text>
 
   <text x="240" y="132" font-size="10.5" fill="#333" text-anchor="end">Deslizamiento (Ec. J3-4)  GOBIERNA</text>
   <rect x="250" y="120" width="279" height="17" fill="#c0392b"/>

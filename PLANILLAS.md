@@ -92,7 +92,11 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   post citaba 372 MPa «de la Tabla J3.2». Los 0,5 % de diferencia dieron vuelta el número
   insignia del ejemplo —el perno extremo pasó de uso 0,995 a 1,00— y arrastraban a otros tres
   posts. Ningún recálculo lo habría encontrado: la aritmética publicada era correcta a partir
-  del valor equivocado. Solo aparece abriendo la tabla.
+  del valor equivocado. Solo aparece abriendo la tabla. **Y vuelve a entrar si no se cita**: el
+  mismo día, la planilla del empalme apernado encontró los 372 otra vez, en el único post que
+  quedaba sin alinear. Por eso el fix no es solo cambiar el número — es dejar escrita la
+  procedencia junto a él («Tabla J3.2: 54 ksi = 370 MPa, la columna métrica»), que es lo que
+  impide que la próxima vuelta lo reintroduzca.
 - **Contrastes**: un booleano por cada número publicado en las tablas del post (más los
   intermedios clave publicados en prosa), con id `c_*`, al final de la hoja bajo el
   encabezado «CONTRASTE CON EL POST». Se omiten los redundantes (un uso que es cociente
@@ -204,12 +208,12 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-conexion-doble-angulo` | 107 | 88 | 58 | 67 | 9 (1⇱) | 3 aplicados 2026-08-01 (doblar y dividir el redondeado: 21 514 → 21 513 kgf · 0,461 → 0,460 · 0,42 → 0,41) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
 | `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
-| `ejemplo-empalme-apernado-viga` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-empalme-apernado-viga` | 125 | 92 | 61 | 60 | 9 (2⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: 86,5 → 86,1 tonf y el uso 0,52 → 0,53; era el último post con la conversión de las ksi) | 2026-08-01 | ✅ |
 | `ejemplo-viga-carrilera-puente-grua` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
 
-**Esq.** = tokens del esquema paramétrico. Las 10 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 11 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
