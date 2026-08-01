@@ -2695,7 +2695,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
 | `ejemplo-gusset-apice-chevron` | 2026-07-31 | ⚠️ | 7 (0🔴 0🟠 · 5🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 57 contrastes, 2 aplicados |
 | `gusset-teoria-estados-limite` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 8🟡 4🔵) · 6 aplicados (1🔴 5🟠) |
-| `ejemplo-chevron-nch2369` | 2026-07-27 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` |
+| `ejemplo-chevron-nch2369` | 2026-07-31 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` · planilla ✅ 82 contrastes, 5 aplicados (1🟠: el signo del desequilibrio en R₁ = 2,0) |
 | `ejemplo-conexion-momento-end-plate` | 2026-07-31 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados · planilla ✅ 38 contrastes, 0 hallazgos |
 | `ejemplo-conexion-momento-placas-ala` | 2026-07-31 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) · planilla ✅ 41 contrastes, 1 aplicado |
 | `ejemplo-conexion-doble-angulo` | 2026-07-26 | ⚠️ | 7 (0🔴 0🟠 · 4🟡 3🔵) · 2.ª pasada: 3 aplicados (1🔴 2🟠) |
