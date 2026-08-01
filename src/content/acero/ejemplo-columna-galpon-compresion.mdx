@@ -163,20 +163,37 @@ en el plano del marco que lleve $K_x$ de $2.0$ a $\approx 1.0$.
 | Base empotrada, tope libre ($K_x = 2$) | 136 | elástico | 79.3 tonf |
 | Arriostrar el marco en el plano ($K_x = 1$) | 68 | inelástico | 209 tonf |
 
-Arriostrar el plano casi **triplica** la capacidad sin cambiar el perfil ni el acero. Esa es la
+Arriostrar el plano **multiplica por 2.6** la capacidad sin cambiar el perfil ni el acero. Esa es la
 tesis del Cap. E hecha número: *mover la columna hacia la izquierda de la curva, hacia el
 material.*
 </Note>
 
 ## 5. Pandeo torsional (E4)
 
-Queda verificar que ningún modo torsional ceda antes que la flexión. En un perfil W
-**doblemente simétrico** el centro de corte coincide con el centroide, de modo que empujar por
-el centroide no induce giro y la torsión no se acopla con la flexión (Ec. E4-2). Con la longitud
-a torsión igual a la arriostrada ($L_{cz} = L_{cy} = 3.75$ m), $F_e$ del modo torsional resulta
-muy por encima del de flexión del eje fuerte, así que **no gobierna** —como es la regla en
-columnas W compactas y doblemente simétricas—. El modo flexo-torsional (E4-3) y E5 aplican a
-secciones de simetría simple (ángulos, tés, canales), no a este perfil.
+Queda verificar que ningún modo torsional ceda antes que la flexión. Conviene separar los dos
+modos que E4 cubre, porque en un perfil W se descartan por razones **distintas**:
+
+- El **flexo-torsional** (Ec. E4-3) no aplica porque el centro de corte coincide con el
+  centroide: empujar por el centroide no induce giro, y la torsión no se acopla con la flexión.
+  E4-3 y E5 son para secciones de simetría simple (ángulos, tés, canales), no para este perfil.
+- El **torsional puro** (Ec. E4-2) sí existe en una sección doblemente simétrica —el centro de
+  corte no lo descarta—. Lo que lo deja fuera es el alcance de E4, que llega a estos perfiles
+  solo *cuando la longitud no arriostrada a torsión supera la lateral*. Acá la torsión está
+  sujeta donde lo está el eje débil ($L_{cz} = L_{cy} = 3.75$ m), así que la puerta ni abre.
+
+Con esa longitud, y con $J = 53.5$ cm⁴, $C_w = 553\,000$ cm⁶ e $I_x + I_y = 14\,990$ cm⁴
+derivados de las planchas del perfil, la Ec. E4-2 pone el margen en número ($G = 787\,000$
+kgf/cm², o 77 200 MPa):
+
+<Equation label="Ec. E4-2">
+$$
+F_e = \left(\frac{\pi^2 E C_w}{L_{cz}^2} + GJ\right)\frac{1}{I_x + I_y} \approx 8100 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+Son **7.5 veces** el $F_e = 1083$ kgf/cm² del pandeo por flexión del eje fuerte —equivalen a
+$\phi_c P_n = 245$ tonf contra 79.3—, así que el modo torsional **no gobierna**, como es la regla
+en columnas W doblemente simétricas arriostradas.
 
 ## Resumen: demanda vs. capacidad
 
@@ -187,7 +204,7 @@ secciones de simetría simple (ángulos, tés, canales), no a este perfil.
 | Pandeo local | Sec. E7 | inestabilidad local | no esbelto → $A_e = A_g$ | — |
 | Pandeo eje débil (Y) | Ec. E3-2 ($\phi=0.90$) | inestabilidad global | $229.7$ tonf | 0.28 |
 | **Pandeo eje fuerte (X)** | Ec. E3-3 ($\phi=0.90$) | **inestabilidad global — gobierna** | $\mathbf{79.3}$ **tonf** | **0.82** |
-| Pandeo torsional | Sec. E4 | inestabilidad global | no gobierna (doble simetría) | — |
+| Pandeo torsional | Ec. E4-2 ($\phi=0.90$) | inestabilidad global | $245$ tonf (E4 ni aplica: $L_{cz}=L_{cy}$) | 0.27 |
 
 **Solución:** columna **W250×73** (A992), base empotrada y arriostrada a media altura fuera del
 plano, resiste $P_u = 65$ tonf con uso 0.82. Gobierna el **pandeo por flexión del eje fuerte**

@@ -115,6 +115,21 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   0,42 porque es el 0,83 de la shear tab partido por dos, cuando `30/72,311` da
   0,41. Cada paso de redondeo intermedio se acumula, y en un post comparativo la
   columna derivada es justo la que el lector lee para sacar la conclusión.
+- **Propiedades de perfil: dato declarado, y lo derivable se deriva de las planchas.** Los
+  ejemplos de miembros (Cap. E/F/H) se apoyan en tablas de perfiles, que **no son la norma**:
+  la *Specification* no tabula perfiles —eso es el *Manual*, que no está en disco— y el
+  `Manual_ICHA_2010` no trae perfiles W. Así que $A_g$, $I$, $r$, $Z$, $J$, $C_w$ entran como
+  dato declarado con su fuente, igual que un valor de tabla, y son frontera explícita. Pero
+  **lo que se pueda derivar, se deriva**: se declaran las cuatro planchas ($d$, $b_f$, $t_f$,
+  $t_w$) y de ahí salen área, inercias, radios de giro, $b_f/2t_f$, $h/t_w$, $J$ y $C_w$, que
+  se contrastan contra la fila de tabla con **tolerancia declarada** — no a media unidad, porque
+  las planchas no llevan los redondeos de unión ala-alma. **Por qué vale la pena**: el 2026-08-01
+  la planilla de la columna de galpón validó la fila del W250×73 por dos vías —el ala, que no
+  tiene redondeos, dio $b_f/2t_f = 8{,}9437$ contra el 8,94 publicado, exacto, y las diferencias
+  del resto (área $-1{,}45\%$, $r_y$ $+0{,}82\%$) son justo las que el fillet explica—, y de paso
+  produjo el $J$ y el $C_w$ que el post no publicaba y que hacían falta para poner número al E4.
+  Cuando el dato del redondeo falta, conviene buscar la **cota conservadora**: $d - 2t_f$ es cota
+  superior de $h$ (B4.1 §1b), y si esa ya pasa el $\lambda_r$, el elemento está demostrado.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -135,7 +150,12 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     (cm², tonf·m). Los valores salen con 4 cifras significativas, no con el redondeo
     del post. La sustitución barre **todo el archivo, comentarios incluidos**: un
     `{{expr}}` de ejemplo dentro de un `<!-- -->` también se evalúa y hace fallar
-    la corrida.
+    la corrida. **Y solo van en texto, nunca en un atributo numérico**: `formatValor` sale
+    con coma decimal a propósito —para que se note qué número puso la hoja y cuál escribió
+    el autor—, así que un `width="{{0.92*Rd:tonf}}"` se sustituye por `width="211,4"`, que
+    es SVG inválido, y la barra se dibuja con ancho cero. Los anchos y las coordenadas van
+    fijos a mano; lo paramétrico son los rótulos. El contrato de tokens pasa igual: esto
+    solo lo caza abrir el PNG.
   - **Dónde va**: la región `image` ve el scope de su posición de lectura, así que
     va **después** de las variables que rotula. En la práctica: justo antes del
     encabezado «CONTRASTE CON EL POST», donde ya está todo definido.
@@ -203,7 +223,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
-| `ejemplo-columna-galpon-compresion` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-columna-galpon-compresion` | 63 | 45 | 44 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-doble-angulo` | 107 | 88 | 58 | 67 | 9 (1⇱) | 3 aplicados 2026-08-01 (doblar y dividir el redondeado: 21 514 → 21 513 kgf · 0,461 → 0,460 · 0,42 → 0,41) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
@@ -213,7 +233,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
 
-**Esq.** = tokens del esquema paramétrico. Las 11 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 12 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
