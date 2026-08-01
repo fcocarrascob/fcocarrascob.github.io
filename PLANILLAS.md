@@ -115,6 +115,24 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   0,42 porque es el 0,83 de la shear tab partido por dos, cuando `30/72,311` da
   0,41. Cada paso de redondeo intermedio se acumula, y en un post comparativo la
   columna derivada es justo la que el lector lee para sacar la conclusión.
+  **Y no hace falta un factor para caer en lo mismo**: el 2026-08-01 la planilla de la
+  viga LTB encontró los otros dos hallazgos de la especie sin que hubiera ningún «×2»
+  — el post escribía la Ec. F2-4 como `1,14 · 1279` (los dos operandos ya redondeados,
+  1458 en vez de 1453) y la Ec. F2-2 con cuatro operandos redondeados a la vez
+  ($C_b$, $M_p$, $M_p - 0{,}7F_yS_x$), que acumularon hasta mover el número insignia
+  del caso B, 50,9 publicado como 51,0. El fix es el mismo en los dos: **la ecuación
+  exhibe sus operandos con los dígitos que de verdad usa** ($1{,}136$, $58{,}26$,
+  $22{,}36$), aunque la sección de más arriba los publique redondeados.
+- **Un coeficiente que depende de la configuración se deriva, no se cita.** En los
+  ejemplos de miembros hay factores tabulados por caso —el $C_b$ de la Ec. F1-1, un
+  $K$, un $C_m$— que es tentador declarar como dato. Si el post **compara dos
+  configuraciones**, ese factor cambia entre ellas y suele ser la mitad de la tesis:
+  ahí se deriva. La planilla de la viga LTB declara la parábola $M(x) = wx(L-x)/2$
+  como función `program` y evalúa los cuartos de **cada segmento no arriostrado**
+  (0–8 m y 0–4 m), obteniendo $C_b = 1{,}136$ y $1{,}299$ desde el diagrama de
+  momentos. Citar «1,14 y 1,30» habría dado por bueno justamente el paso que el
+  ejemplo quiere demostrar —que el tramo corto tiene gradiente más fuerte y por eso
+  gana crédito—, y además habría escondido el hallazgo #1.
 - **Propiedades de perfil: dato declarado, y lo derivable se deriva de las planchas.** Los
   ejemplos de miembros (Cap. E/F/H) se apoyan en tablas de perfiles, que **no son la norma**:
   la *Specification* no tabula perfiles —eso es el *Manual*, que no está en disco— y el
@@ -231,9 +249,9 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-empalme-apernado-viga` | 125 | 92 | 61 | 60 | 9 (2⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: 86,5 → 86,1 tonf y el uso 0,52 → 0,53; era el último post con la conversión de las ksi) | 2026-08-01 | ✅ |
 | `ejemplo-viga-carrilera-puente-grua` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-columna` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-viga-ltb` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 12 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 13 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón

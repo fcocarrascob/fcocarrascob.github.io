@@ -16,9 +16,9 @@
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
     "pdf:planilla": "node scripts/render-planilla-pdf.mjs",
-    "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga",
+    "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-ltb",
     "reflow:planilla": "node scripts/reflow-planilla.mjs",
-    "reflow:planillas": "node scripts/reflow-planilla.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga"
+    "reflow:planillas": "node scripts/reflow-planilla.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-ltb"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
