@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import katex from 'katex';
 import type { Region, RegionResult } from '../../lib/worksheet';
+import { renderEsquema, ESQUEMAS_PREFIX } from '../../lib/esquema';
 
 export const GRID = 16;
 export const snap = (v: number) => Math.max(0, Math.round(v / GRID) * GRID);
@@ -24,6 +25,57 @@ interface Props {
   onResize: (w: number, h: number) => void;
   /** Registra el input/textarea activo para que la paleta inserte símbolos. */
   registerInput: (el: HTMLInputElement | HTMLTextAreaElement | null) => void;
+}
+
+/** Texto de cada esquema ya descargado, por ruta (no cambian en la sesión). */
+const esquemaCache = new Map<string, string>();
+
+/**
+ * Esquema paramétrico: SVG de `/esquemas/` inyectado inline con los tokens
+ * `{{expr}}` sustituidos contra el scope capturado por la región (solo rutas
+ * de autoría propia pasan por aquí; una imagen pegada va por `<img>`).
+ */
+function EsquemaInline({
+  src,
+  scope,
+  w,
+  h,
+}: {
+  src: string;
+  scope?: Record<string, unknown>;
+  w?: number;
+  h?: number;
+}) {
+  const [raw, setRaw] = useState<string | null>(esquemaCache.get(src) ?? null);
+
+  useEffect(() => {
+    if (esquemaCache.has(src)) {
+      setRaw(esquemaCache.get(src)!);
+      return;
+    }
+    let vivo = true;
+    fetch(src)
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((text) => {
+        esquemaCache.set(src, text);
+        if (vivo) setRaw(text);
+      })
+      .catch(() => vivo && setRaw(null));
+    return () => {
+      vivo = false;
+    };
+  }, [src]);
+
+  const html = useMemo(() => (raw ? renderEsquema(raw, scope ?? {}).svg : null), [raw, scope]);
+
+  if (!html) return <div className="rounded-sm bg-surface" style={{ width: w, height: h }} />;
+  return (
+    <div
+      className="[&>svg]:block [&>svg]:h-full [&>svg]:w-full"
+      style={{ width: w, height: h }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
 }
 
 /** Render KaTeX imperativo (sin dangerouslySetInnerHTML). */
@@ -121,13 +173,17 @@ export default function MathRegion({
     >
       {isImage ? (
         <>
-          <img
-            src={region.src}
-            alt=""
-            draggable={false}
-            className="block max-w-none rounded-sm"
-            style={{ width: region.w, height: region.h }}
-          />
+          {region.src.startsWith(ESQUEMAS_PREFIX) ? (
+            <EsquemaInline src={region.src} scope={result?.scope} w={region.w} h={region.h} />
+          ) : (
+            <img
+              src={region.src}
+              alt=""
+              draggable={false}
+              className="block max-w-none rounded-sm"
+              style={{ width: region.w, height: region.h }}
+            />
+          )}
           {/* Tirador de esquina: siempre visible si la región está seleccionada,
               y al pasar el cursor por encima para que se descubra sin clic. */}
           <span

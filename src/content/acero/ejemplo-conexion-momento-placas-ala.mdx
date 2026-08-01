@@ -69,7 +69,7 @@ Seis pernos Ø24 A490-N en corte simple ($F_{nv} = 470$ MPa $= 4792$ kgf/cm²), 
 
 <Equation label="Ec. J3-1 (6 pernos)">
 $$
-\phi R_n = 6 \cdot 0.75 \cdot 4792 \cdot 4.524 = 97.5 \ \text{tonf} \;\ge\; F_f = 67.1 \ \text{tonf}
+\phi R_n = 6 \cdot 0.75 \cdot 4792 \cdot 4.524 = 97.6 \ \text{tonf} \;\ge\; F_f = 67.1 \ \text{tonf}
 $$
 </Equation>
 
@@ -264,7 +264,7 @@ principio**: la misma W310 en su versión de 158 kg/m tiene $t_w = 15.5$ mm y no
 | Verificación | Referencia | Lado | Capacidad | Uso |
 |---|---|:---:|:---:|:---:|
 | Apoyo en el ala de la viga | Ecs. J3-6a/c | conexión | 137.2 tonf | 0.49 |
-| Pernos a corte | Ec. J3-1 | conexión | 97.5 tonf | 0.69 |
+| Pernos a corte | Ec. J3-1 | conexión | 97.6 tonf | 0.69 |
 | **Grupo — resistencia efectiva** | **Sec. J3.7** | conexión | 97.2 tonf | **0.69** |
 | Placa de ala — fluencia | Ec. J4-1 | conexión | 91.1 tonf | 0.74 |
 | Placa de ala — rotura neta | Ec. J4-2 | conexión | 88.1 tonf | 0.76 |
@@ -283,6 +283,20 @@ receptor —el ala, el alma y sobre todo la zona panel de la columna— suele se
 Y dentro de la zona panel, el término $(1.4 - P_r/P_c)$ recuerda algo que el diseño por partes
 esconde: **la columna no puede usar dos veces el mismo acero**, una para comprimir y otra para
 cortar.
+
+Y el cálculo completo está además como planilla del canvas: 87 pasos, 18 verificaciones ✓/✗ —tres
+de ellas en rojo a propósito: los estados de la columna que fallan y que este post repara con
+rigidizadores y doubler— y 41 contrastes que comparan cada número publicado en este post contra
+el que la hoja calcula. La carga axial $P_u$ va como dato a la vista: bájala bajo $0.40\,P_c$ y
+verás al término $(1.4 - P_r/P_c)$ soltar la zona panel:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=conexion-momento-placas-ala)** ·
+[descargar el JSON](/planillas/conexion-momento-placas-ala.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/conexion-momento-placas-ala.json --md
+```
 
 <Note type="info" title="Alcance de este ejemplo">
 Se verifican las placas de ala, sus pernos, la viga y los estados límite del nudo de la columna.

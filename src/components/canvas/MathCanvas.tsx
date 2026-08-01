@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MathRegion, { GRID, snap } from './MathRegion';
 import SymbolPalette, { type SymbolEntry } from './SymbolPalette';
 import WorksheetPrint from './WorksheetPrint';
+import { usePaginacion } from './usePaginacion';
 import { evaluateSheet, type Region, type RegionKind } from '../../lib/worksheet';
 import { TEMPLATES, type Template } from '../../lib/worksheet-templates';
 import {
@@ -95,6 +96,40 @@ export default function MathCanvas() {
   }, [regions]);
 
   const results = useMemo(() => evaluateSheet(regions), [regions]);
+
+  // Dónde cae cada corte de A4 al imprimir. Se mide el documento de impresión,
+  // que es lineal y distinto de este plano 2D: por eso el corte se anuncia
+  // sobre la región que ABRE la página, que en orden de lectura es exacto.
+  const paginacion = usePaginacion(regions, results);
+
+  /**
+   * Los cortes, ya llevados a la geometría de la hoja. La `y` es la de la
+   * región que abre página; la línea se dibuja un pelo más arriba, en el hueco
+   * que queda entre ella y la anterior.
+   */
+  const marcasDeCorte = useMemo(() => {
+    const porId = new Map(regions.map((r) => [r.id, r]));
+    return paginacion.cortes
+      .map((c) => {
+        const r = porId.get(c.id);
+        return r ? { pagina: c.pagina, y: r.y, forzado: Boolean(r.pageBreak) } : null;
+      })
+      .filter((m): m is { pagina: number; y: number; forzado: boolean } => m !== null);
+  }, [paginacion.cortes, regions]);
+
+  /** Marca (o desmarca) las regiones seleccionadas como inicio de página. */
+  const toggleSalto = useCallback(() => {
+    setRegions((prev) => {
+      const sel = prev.filter((r) => selected.has(r.id));
+      if (sel.length === 0) return prev;
+      // Si alguna no tiene salto, el botón lo pone en todas; si ya lo tienen
+      // todas, lo quita. Así el mismo botón sirve de ida y de vuelta.
+      const poner = sel.some((r) => !r.pageBreak);
+      return prev.map((r) =>
+        selected.has(r.id) ? { ...r, pageBreak: poner ? true : undefined } : r,
+      );
+    });
+  }, [selected]);
 
   // Deep-link: /herramientas/canvas?plantilla=<id> abre esa plantilla al entrar.
   // Si hay trabajo previo guardado, confirma antes de reemplazarlo.
@@ -537,11 +572,28 @@ export default function MathCanvas() {
           )}
         </div>
         <button
+          className={`${toolBtn} ${selected.size === 0 ? 'opacity-40' : ''}`}
+          disabled={selected.size === 0}
+          onClick={toggleSalto}
+          title={
+            selected.size === 0
+              ? 'Selecciona una región y este botón hará que empiece en una página nueva al imprimir'
+              : 'La región seleccionada abre página nueva al imprimir (vuelve a pulsarlo para quitarlo)'
+          }
+        >
+          ⇱ Salto de página
+        </button>
+        <button
           className={toolBtn}
           onClick={() => window.print()}
           title="Genera un documento limpio de la planilla para imprimir o guardar como PDF (memoria de cálculo)"
         >
           Imprimir / PDF
+          {paginacion.paginas.length > 0 && (
+            <span className="ml-1 text-muted">
+              ({paginacion.paginas.length} {paginacion.paginas.length === 1 ? 'pág.' : 'págs.'})
+            </span>
+          )}
         </button>
         <button className={toolBtn} onClick={exportJson}>
           Exportar
@@ -577,6 +629,14 @@ export default function MathCanvas() {
           Clic: fija el punto · doble clic: fórmula · Ctrl+V: imagen · Supr: borrar
         </span>
       </div>
+
+      {paginacion.largos.length > 0 && (
+        <div className="border-b border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
+          ⚠ {paginacion.largos.length === 1 ? 'Un bloque es' : `${paginacion.largos.length} bloques son`}{' '}
+          más alto que una A4 completa: al imprimir se desborda de la página. Suele ser una
+          figura — achícala arrastrando su esquina.
+        </div>
+      )}
 
       {storageWarn && (
         <div className="flex items-center gap-2 border-b border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
@@ -629,6 +689,37 @@ export default function MathCanvas() {
               void addImages(Array.from(e.dataTransfer.files), sheetPoint(e));
             }}
           >
+            {/* Cortes de página A4: dónde parte la hoja al imprimir. Van bajo
+                las regiones (z-0) para no estorbar el clic ni tapar nada. El
+                salto forzado por el autor se dibuja lleno; el automático,
+                punteado — la diferencia importa, porque uno se respeta y el
+                otro se mueve solo al editar más arriba. */}
+            {marcasDeCorte.map((m) => (
+              <div
+                key={`corte-${m.pagina}`}
+                className="pointer-events-none absolute left-0 right-0 z-0 flex items-center gap-2"
+                style={{ top: m.y - 10 }}
+              >
+                {/* El rótulo va a la izquierda, no centrado: la hoja mide 1600
+                    px de ancho y el contenido vive en el primer tercio, así
+                    que un rótulo al medio queda fuera de lo que se está
+                    mirando. */}
+                <span
+                  className={`ml-3 h-px w-4 ${
+                    m.forzado ? 'bg-accent/60' : 'border-t border-dashed border-accent/50'
+                  }`}
+                />
+                <span className="whitespace-nowrap rounded-sm bg-accent/10 px-1.5 py-px text-[10px] leading-tight text-accent/80">
+                  {m.forzado ? '⇱ ' : ''}página {m.pagina}
+                </span>
+                <span
+                  className={`h-px flex-1 ${
+                    m.forzado ? 'bg-accent/60' : 'border-t border-dashed border-accent/50'
+                  }`}
+                />
+              </div>
+            ))}
+
             {/* Punto de inserción: barra tipo cursor de texto. Se esconde
                 mientras se edita una región, donde solo sería ruido. */}
             {insertAt && !activeId && (

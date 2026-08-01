@@ -47,6 +47,41 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-07-31 · `acero/ejemplo-conexion-momento-placas-ala` · planilla · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
+
+**Commit auditado:** `1c111b2` · **Método:** contraste de planillas (`public/planillas/conexion-momento-placas-ala.json`: 87 pasos, 18 verificaciones de diseño —3 en rojo a propósito: J10-1, J10-2 y J10-10, los estados que el post repara— y 41 contrastes). 40 de 41 cuadraron.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔵 | N | L.72 y L.267 | $6 \cdot 0{.}75 \cdot 4792 \cdot 4{.}524 = 97{.}5$ tonf — el producto de los factores impresos da 97.56, y con $A_b$ exacta 97.55: en ambos casos redondea a **97.6**, no 97.5 (truncación). El uso 0.69 no cambia | 97.6 en la ecuación y en la tabla resumen | ✅ aplicado |
+
+**Verificado y correcto:** los otros 40 contrastes, incluidos el par F_f = 67.1, el grupo de pernos por J3.7 (97.2, el de la tabla), F13.1, J10-1/-2/-4/-9/-10/-11 con el término axial (el «uso exactamente 1.00» sin axial da 0.9997 ✓ y el 0.87 de J10-11 pasa por 0.00002), las áreas de rigidizadores y el doubler. El 21 678 kgf por perno resultó redondeo correcto una vez que la planilla derivó $A_b = \pi d^2/4$ en vez de declarar el 4.524 impreso — lección de método: los derivables se derivan.
+
+### 2026-07-31 · `acero/ejemplo-diagonal-hss-traccion` · **planilla piloto** (primera fuera del bloque gusset) · ⚠️ — 1 hallazgo (1🔵) — **aplicado**
+
+**Commit auditado:** `3355fa4` · **Método:** contraste de planillas. Planilla construida desde cero a partir de los datos declarados del post (`public/planillas/diagonal-hss-traccion.json`: 41 pasos, 9 verificaciones de diseño, 25 contrastes). Era el caso de control —post ya auditado dos veces contra los PDF— y se comportó como tal: 24 de 25 contrastes limpios a la primera.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔵 | N | L.164 | $4 \cdot 939 \cdot 15 = 56\,340$ kgf arrastra el 939 ya redondeado, y la igualdad impresa es además internamente inconsistente: 56 340 kgf sería 56,3 tonf, no el 56,4 que la acompaña. Con precisión completa: $4 \cdot 939{,}18 \cdot 15 = 56\,351$ kgf → 56,4 tonf (el tonf publicado sí era correcto) | Mostrar 939,18 y 56 351 | ✅ aplicado |
+
+**Verificado y correcto:** los otros 24 contrastes, incluidos D2-1/D2-2 en kgf y tonf, el Caso 5 completo ($\bar{x}$, $U$, $A_e$), las dos ramas de J4-5 con la sobreestimación del 24 %, la palanca $l_w$ = 20 cm ($U_{20}$ y la rotura), la esbeltez D1 y el cierre de 8.6.8 (el detalle no calificaría para diseño por capacidad, que es la Note del post). Al post se le agregó el enlace a la planilla con el patrón del bloque gusset.
+
+### 2026-07-31 · bloque gusset (4 posts) · auditoría por **contraste de planillas** · ⚠️ — 6 hallazgos (0🔴 · 1🟠 · 4🟡 · 2🔵) — **todos aplicados**
+
+**Commit auditado:** `0481145` · **Método:** estreno del cruce cálculo↔post por planilla del canvas: a las 4 planillas de `public/planillas/` se les agregó un bloque «Contraste con el post» (un booleano por número publicado, tolerancia de media unidad del último dígito) y se corrió `npm run verify:planillas`, que ejecuta el mismo motor del canvas fuera del navegador. 176 contrastes en total (apernado 23 · soldado 28 · esquina 69 · ápice 57); 170 cuadraron a la primera. Cobertura: solo categoría **N** (y conteos **R**) — este método no ve prosa, figuras ni citas, que siguen siendo del auditor. El registro de estado vive en `PLANILLAS.md`.
+
+| # | Sev | Cat | Post · Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|------------------|----------|---------------|--------|
+| 1 | 🟠 | N C | `esquina-apernado` L.412 (tabla Resultado) y L.353 (alt) | **El post se contradice entre sus dos tablas.** Resultado y el alt publican rotura de Whitmore **143,00 tonf / uso 0,685**; la tabla del §4 publica **140,55 / 0,697**, que es lo correcto. El 143,00 sale de descontar agujeros de 24 mm sin el +2 mm de §B4.3b — exactamente el error del 1,7 % contra el que el propio post advierte dos párrafos antes (L.315) | Poner 140,55 / 0,697 en Resultado y en el alt (no cambia el orden del ranking) | ✅ aplicado |
+| 2 | 🟡 | N | `simple-apernado` L.108–109 (tabla por perno) | Aplastamiento 31,73 y desgarres 27,43 / 41,64 son de la **versión con gusset de 18 mm** (previa al fix del 2026-07-30); con los 20 mm vigentes dan 35,25 / 30,48 / 46,27. No cambia el mínimo por perno (25,60, corte doble) ni el grupo (153,62) | Actualizar las tres celdas | ✅ aplicado |
+| 3 | 🟡 | N R | `esquina-apernado` L.475 | «144 pasos y 30 verificaciones» — la planilla ya tenía **146** pasos antes de esta pasada | 146, y declarar los contrastes | ✅ aplicado |
+| 4 | 🟡 | F R | los 4 posts (frase «la planilla trae…») | Los conteos de la planilla quedaron obsoletos al agregar los contrastes: apernado 92/23+23, soldado 71/18+28, esquina 146/30+69, ápice 105/24+57 (más la `description` del ápice) | Declarar «pasos, verificaciones y contrastes» como cosas distintas | ✅ aplicado |
+| 5 | 🔵 | N | `simple-soldado` L.112 | «daría 387,2 tonf» — la fórmula exacta da 387,09 → **387,1**; el 387,2 sale de sumar intermedios redondeados (305,70 + 0,9·F_y·17,9·2,0) | 387,1 | ✅ aplicado |
+| 6 | 🔵 | N | `apice-chevron` L.178 | «= 0,538» — el cociente exacto da 0,5374 → **0,537**; el 0,538 sale de dividir el 1,075 ya redondeado | 0,537 | ✅ aplicado |
+
+**Verificado y correcto:** los otros 170 contrastes, incluidos los redondeos más finos (P_ne 198,30 con desviación 0,0049 de 0,005 · Rd_flu 305,70 con 0,0046 · u_dro 0,968). Los falsos legítimos quedaron declarados con su razón: el atajo del User Note 1,6 % inseguro (esquina y ápice) y el A_e requerido > A_g a capacidad plena (ápice). Tras aplicar los fixes, los 6 contrastes-hallazgo pasaron a verde y sus excepciones se borraron: `verify:planillas` cierra **OK: las 4 planillas cuadran** sin excepción HALLAZGO alguna.
+
 ### 2026-07-30 · `acero/ejemplo-gusset-simple-soldado` · ❌ bloqueado — 21 (1🔴 · 4🟠 · 11🟡 · 5🔵) — **el 🔴 y los 4 🟠 aplicados**, más 12 colaterales, desbloqueado
 
 **Commit:** `8c86e37` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -2637,14 +2672,14 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
-| `ejemplo-gusset-simple-soldado` | 2026-07-30 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) |
-| `ejemplo-gusset-simple-apernado` | 2026-07-30 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano |
-| `ejemplo-gusset-esquina-apernado` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) |
-| `ejemplo-gusset-apice-chevron` | 2026-07-29 | ⚠️ | 7 (0🔴 0🟠 · 5🟡 2🔵) · 7 aplicados (2🔴 5🟠) |
+| `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |
+| `ejemplo-gusset-simple-apernado` | 2026-07-31 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano · planilla ✅ 23 contrastes, 2 aplicados |
+| `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
+| `ejemplo-gusset-apice-chevron` | 2026-07-31 | ⚠️ | 7 (0🔴 0🟠 · 5🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 57 contrastes, 2 aplicados |
 | `gusset-teoria-estados-limite` | 2026-07-29 | ⚠️ | 12 (0🔴 0🟠 · 8🟡 4🔵) · 6 aplicados (1🔴 5🟠) |
 | `ejemplo-chevron-nch2369` | 2026-07-27 | ✅ | 0 abiertos · 18 aplicados en `4b0bb1c` |
-| `ejemplo-conexion-momento-end-plate` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados |
-| `ejemplo-conexion-momento-placas-ala` | 2026-07-26 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) |
+| `ejemplo-conexion-momento-end-plate` | 2026-07-31 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 2🟠 aplicados · planilla ✅ 38 contrastes, 0 hallazgos |
+| `ejemplo-conexion-momento-placas-ala` | 2026-07-31 | ⚠️ | 11 (0🔴 0🟠 · 6🟡 5🔵) · 2.ª pasada: 5 aplicados (4🟠 1🟡) · planilla ✅ 41 contrastes, 1 aplicado |
 | `ejemplo-conexion-doble-angulo` | 2026-07-26 | ⚠️ | 7 (0🔴 0🟠 · 4🟡 3🔵) · 2.ª pasada: 3 aplicados (1🔴 2🟠) |
 | `ejemplo-empalme-apernado-viga` | 2026-07-26 | ⚠️ | 14 (0🔴 0🟠 · 10🟡 4🔵) · 2.ª pasada: 5 aplicados (3🟠 1🟡 1🔵) |
 | `ejemplo-viga-columna` | 2026-07-25 | ✅ | 0 (12 aplicados: 1🔴 1🟠 6🟡 4🔵) |
@@ -2652,7 +2687,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-viga-ltb` | 2026-07-23 | ✅ | 0 (1 aplicado: 1🟡) |
 | `ejemplo-columna-galpon-compresion` | 2026-07-23 | ✅ | 0 (2 aplicados: 1🟡 1🔵) |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-07-26 | ⚠️ | 17 (0🔴 0🟠 · 11🟡 6🔵) · 2.ª pasada: 9 aplicados (1🔴 4🟠 4🟡) |
-| `ejemplo-diagonal-hss-traccion` | 2026-07-26 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) |
+| `ejemplo-diagonal-hss-traccion` | 2026-07-31 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) · planilla ✅ 25 contrastes, 1 aplicado |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |
 | `aisc360-22-capE-compresion` | — | — | — |

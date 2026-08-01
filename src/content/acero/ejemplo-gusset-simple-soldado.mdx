@@ -109,7 +109,7 @@ $$
 Nótese el $\min$ del primero, porque **acá el tope muerde**. En el post apernado la banda de tracción medía 45,0 cm y cabía holgada en los 57,2 cm que el contorno da a **su** sección. Con el cordón largo la fórmula pide **85,0 cm** sobre los 67,1 que hay acá, y la plancha no los tiene.
 
 <Note type="warning" title="El ancho efectivo no puede exceder la plancha, y esto se omite seguido">
-No es un refinamiento de segundo orden: aplicar la fórmula sin acotarla daría 387,2 tonf en vez de 305,7 para la fluencia, un **27 % de capacidad que no existe**, porque estaría contando 17,9 cm de plancha que no están ahí. El tope no aparece en el cuerpo de la norma ni en la fórmula de la banda — sale de mirar el detalle.
+No es un refinamiento de segundo orden: aplicar la fórmula sin acotarla daría 387,1 tonf en vez de 305,7 para la fluencia, un **27 % de capacidad que no existe**, porque estaría contando 17,9 cm de plancha que no están ahí. El tope no aparece en el cuerpo de la norma ni en la fórmula de la banda — sale de mirar el detalle.
 
 Y de acá se ve por qué el contorno del gusset hay que **declararlo**: los 67,1 cm no son un dato independiente, salen de medir sobre el contorno —perpendicular a la línea de acción— cuánta plancha hay a la profundidad donde se evalúa la sección. Cambiar la profundidad cambia el ancho: a 23,9 cm, que es donde cae la sección del post apernado, este mismo contorno da 57,2 cm. Y el máximo que alcanza, 67,1 cm, ocurre justo a los 34,1 cm de este ejemplo.
 </Note>
@@ -226,7 +226,7 @@ Eso tiene una consecuencia práctica incómoda: si uno verifica solo el gusset �
 
 Los números de los dos posts del par salen del mismo script, `ejemplo_gusset_simple.py`, precisamente para que la tabla comparativa no dependa de copiar cifras de un post al otro. Cierra con 26 validaciones, cuatro de ellas contra casos cerrados — una es la razón $\sqrt{3}$ entre las partes dispersadas, y corre sobre las bandas de la variante apernada, porque en la soldada el tope de la plancha la rompe.
 
-Y el cálculo completo está además como planilla del canvas, encabezada por el esquema del nudo: 71 pasos y 18 verificaciones ✓/✗. Una de ellas comprueba en ✓ que **el tope de plancha efectivamente muerde** —la fórmula pide más banda de la que el contorno tiene—, que es la tesis de este post: si agrandas el gusset y el tope deja de morder, la hoja lo acusa sola:
+Y el cálculo completo está además como planilla del canvas, encabezada por el esquema del nudo: 71 pasos, 18 verificaciones ✓/✗ y 28 contrastes que comparan cada número publicado en este post contra el que la hoja calcula. Una de ellas comprueba en ✓ que **el tope de plancha efectivamente muerde** —la fórmula pide más banda de la que el contorno tiene—, que es la tesis de este post: si agrandas el gusset y el tope deja de morder, la hoja lo acusa sola:
 
 **[Abrir la planilla en el canvas](/herramientas/canvas?planilla=gusset-simple-soldado)** ·
 [descargar el JSON](/planillas/gusset-simple-soldado.json)

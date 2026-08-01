@@ -161,7 +161,7 @@ mínimo. Adoptamos **$l = 15$ cm**, con lo que la soldadura queda:
 
 <Equation label="Capacidad de la soldadura">
 $$
-\phi R_n = 4 \cdot 939 \cdot 15 = 56\,340 \ \text{kgf} = 56.4 \ \text{tonf} \;\ge\; P_u = 42 \ \text{tonf}
+\phi R_n = 4 \cdot 939.18 \cdot 15 = 56\,351 \ \text{kgf} = 56.4 \ \text{tonf} \;\ge\; P_u = 42 \ \text{tonf}
 $$
 </Equation>
 
@@ -233,6 +233,19 @@ con **4 cordones de filete de 6 mm × 15 cm** (E70). Gobierna la rotura por retr
 (uso 0.87); el cuerpo del tubo sobra y el detallado de la soldadura —su longitud— es lo que
 fija la capacidad. Es el resultado típico de las diagonales de tracción: **el diseño se juega
 en la conexión, no en el perfil.**
+
+Y el cálculo completo está además como planilla del canvas: 41 pasos, 9 verificaciones ✓/✗ y
+25 contrastes que comparan cada número publicado en este post contra el que la hoja calcula. La
+longitud del cordón $l_w$ va como dato a la vista — súbela a 20 cm y verás moverse $U$ y la
+rotura, que es la palanca de este ejemplo:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=diagonal-hss-traccion)** ·
+[descargar el JSON](/planillas/diagonal-hss-traccion.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/diagonal-hss-traccion.json --md
+```
 
 <Note type="warning" title="Alcance: esto es una verificación de resistencia, no un diseño por capacidad">
 El ejemplo dimensiona la conexión para la **demanda del análisis**, $P_u = 42$ tonf, que es lo
