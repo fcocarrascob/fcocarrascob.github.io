@@ -58,18 +58,18 @@
   <text x="810" y="350" font-size="10" fill="#c0392b" text-anchor="middle" font-weight="bold">1.0</text>
 
   <!-- rows: label right-aligned at x=555, bar from 560 -->
-  <!-- LTB 0.72 -->
+  <!-- LTB 0.73 -->
   <text x="555" y="85" font-size="10.5" fill="#333" text-anchor="end">Pandeo LTB</text>
-  <rect x="560" y="75" width="180" height="15" fill="#7fa8d0"/>
-  <text x="746" y="86" font-size="10" fill="#333">0.72</text>
-  <!-- Biaxial 0.96 GOBIERNA -->
+  <rect x="560" y="75" width="183" height="15" fill="#7fa8d0"/>
+  <text x="749" y="86" font-size="10" fill="#333">0.73</text>
+  <!-- Biaxial 0.97 GOBIERNA -->
   <text x="555" y="112" font-size="10.5" fill="#c0392b" text-anchor="end" font-weight="bold">Flexión biaxial</text>
-  <rect x="560" y="102" width="240" height="15" fill="#c0392b"/>
-  <text x="806" y="113" font-size="10" fill="#c0392b" font-weight="bold">0.96</text>
-  <!-- Corte 0.36 -->
+  <rect x="560" y="102" width="242" height="15" fill="#c0392b"/>
+  <text x="806" y="113" font-size="10" fill="#c0392b" font-weight="bold">0.97</text>
+  <!-- Corte 0.37 -->
   <text x="555" y="139" font-size="10.5" fill="#333" text-anchor="end">Corte</text>
-  <rect x="560" y="129" width="90" height="15" fill="#7fa8d0"/>
-  <text x="656" y="140" font-size="10" fill="#333">0.36</text>
+  <rect x="560" y="129" width="91" height="15" fill="#7fa8d0"/>
+  <text x="657" y="140" font-size="10" fill="#333">0.37</text>
   <!-- Fluencia alma 0.32 -->
   <text x="555" y="166" font-size="10.5" fill="#333" text-anchor="end">Fluencia local alma</text>
   <rect x="560" y="156" width="80" height="15" fill="#7fa8d0"/>
@@ -78,22 +78,22 @@
   <text x="555" y="193" font-size="10.5" fill="#333" text-anchor="end">Aplastamiento alma</text>
   <rect x="560" y="183" width="60" height="15" fill="#7fa8d0"/>
   <text x="626" y="194" font-size="10" fill="#333">0.24</text>
-  <!-- Flecha vertical 0.44 -->
+  <!-- Flecha vertical 0.43 -->
   <text x="555" y="220" font-size="10.5" fill="#333" text-anchor="end">Flecha vertical (L/600)</text>
-  <rect x="560" y="210" width="110" height="15" fill="#8fb98a"/>
-  <text x="676" y="221" font-size="10" fill="#333">0.44</text>
-  <!-- Fatiga Clase C 0.48 -->
+  <rect x="560" y="210" width="107" height="15" fill="#8fb98a"/>
+  <text x="673" y="221" font-size="10" fill="#333">0.43</text>
+  <!-- Fatiga Clase C 0.46 -->
   <text x="555" y="247" font-size="10.5" fill="#333" text-anchor="end">Fatiga (Clase C)</text>
-  <rect x="560" y="237" width="120" height="15" fill="#e0a94b"/>
-  <text x="686" y="248" font-size="10" fill="#333">0.48</text>
+  <rect x="560" y="237" width="116" height="15" fill="#e0a94b"/>
+  <text x="682" y="248" font-size="10" fill="#333">0.46</text>
 
   <!-- callout fatiga servicio severo -->
   <rect x="470" y="368" width="345" height="82" rx="4" fill="#fbf3e0" stroke="#e0a94b" stroke-width="1.2"/>
   <text x="482" y="386" font-size="10.5" fill="#8a6d1f" font-weight="bold">La fatiga se da vuelta con el servicio de la grúa:</text>
-  <text x="482" y="403" font-size="10" fill="#5a5030">Clase C (5·10⁵ ciclos) ............ uso 0.48</text>
-  <text x="482" y="418" font-size="10" fill="#5a5030">Clase D (2·10⁶ ciclos) ........... uso 0.76  (no gobierna)</text>
-  <text x="482" y="433" font-size="10" fill="#c0392b" font-weight="bold">Vida infinita (>4.4·10⁶) ......... uso 0.98  → gobierna</text>
-  <text x="482" y="447" font-size="9" fill="#8a6d1f">Ni en Clase D desplaza al 0.96 de la flexión biaxial: solo lo hace en servicio severo.</text>
+  <text x="482" y="403" font-size="10" fill="#5a5030">Clase C (5·10⁵ ciclos) ............ uso 0.46</text>
+  <text x="482" y="418" font-size="10" fill="#5a5030">Clase D (2·10⁶ ciclos) ........... uso 0.74  (no gobierna)</text>
+  <text x="482" y="433" font-size="10" fill="#c0392b" font-weight="bold">Vida infinita (>4.46·10⁶) ......... uso 0.96  → empata</text>
+  <text x="482" y="447" font-size="9" fill="#8a6d1f">Ni en servicio severo la desplaza: 0.96 contra el 0.97 de la biaxial — pero se le pone al lado.</text>
 
   <!-- nota panel A -->
   <text x="40" y="410" font-size="9.5" fill="#666">L_b = 8 m sin arriostrar → el canal sube I_y y controla</text>

@@ -169,6 +169,24 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   produjo el $J$ y el $C_w$ que el post no publicaba y que hacían falta para poner número al E4.
   Cuando el dato del redondeo falta, conviene buscar la **cota conservadora**: $d - 2t_f$ es cota
   superior de $h$ (B4.1 §1b), y si esa ya pasa el $\lambda_r$, el elemento está demostrado.
+- **Sección compuesta: no hay fila contra la cual validar, así que se compone — y se declara
+  la hipótesis geométrica.** Cuando el ejemplo suelda dos perfiles (un canal-tapa sobre el ala
+  de una W, una platabanda), la sección resultante es monosimétrica y **sus propiedades no las
+  tabula nadie**: no hay fila que contrastar. Ahí la planilla compone desde las filas de
+  catálogo de las partes —Steiner para el eje fuerte, suma directa donde los centroides ya
+  coinciden— y contrasta los compuestos contra lo que el post publica. **Y el paso que no se
+  puede saltar es declarar dónde queda el centroide de la pieza agregada**, porque de ahí
+  cuelga todo. **Por qué es su propia regla**: el 2026-08-01 la planilla de la viga carrilera
+  encontró que el par publicado ($I_x = 169\,300$ / $S_{x,\text{inf}} = 4540$) **no lo
+  reproducía ninguna hipótesis limpia** — con el canal sobre su dorso daba 175 148, con los
+  talones abajo 189 276, y hasta la idealización de ignorar el $\bar x$ daba 170 407. El par
+  publicado implicaba un eje neutro corrido 6,74 cm cuando el físico es 7,19. Se adoptó la
+  hipótesis física **y, entre las dos orientaciones planas, la de menor $I_x$**, que es la
+  desfavorable para los estados que dependen de él (flecha y fatiga). Costó reescribir la
+  tesis de cierre del post: con la sección bien compuesta el rango de tensiones baja un 2 % y
+  la fatiga **deja de tomar el control** en servicio severo. Ningún recálculo interno lo
+  habría encontrado — el post cuadraba consigo mismo a partir de un par que nadie podía
+  reconstruir.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -268,11 +286,11 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
 | `ejemplo-conexion-momento-placas-ala` | 87 | 59 | 41 | 27 | 6 | 1 aplicado 2026-07-31 (97.5 → 97.6) | 2026-07-31 | ✅ |
 | `ejemplo-empalme-apernado-viga` | 125 | 92 | 61 | 60 | 9 (2⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: 86,5 → 86,1 tonf y el uso 0,52 → 0,53; era el último post con la conversión de las ksi) | 2026-08-01 | ✅ |
-| `ejemplo-viga-carrilera-puente-grua` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-carrilera-puente-grua` | 156 | 82 | 62 | 41 | 12 (1↱) | 13 aplicados 2026-08-01 (la Ec. A-3-1 con el C_f de 360-16 y el exponente 1/3; la flecha lateral que era la vertical escalada; y la sección compuesta, que ninguna hipótesis reproducía — al componerla bien la fatiga deja de gobernar en servicio severo y **la tesis de cierre se reescribió**) | 2026-08-01 | ✅ |
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 14 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 15 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
