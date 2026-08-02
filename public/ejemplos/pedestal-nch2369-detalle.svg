@@ -142,11 +142,11 @@
   <text x="456" y="440" font-size="11.5" fill="#c0392b" font-weight="bold">Lo que ACI 318-25 por sí solo no habría puesto acá</text>
   <g font-size="9.8" fill="#5a2f2a">
     <text x="456" y="461">·  La <tspan font-weight="bold">llave de corte</tspan>, obligatoria porque 96,1 kN &gt; 75 kN — y con ella</text>
-    <text x="466" y="475">desaparece la interacción N–V que gobernaba el ejemplo anterior (0,76).</text>
+    <text x="466" y="475">desaparece la interacción N–V que gobernaba el ejemplo anterior (0,71).</text>
     <text x="456" y="494">·  El <tspan font-weight="bold">roce bajo la placa</tspan> (7,54 tonf, el 77 % del corte) y el mortero:</text>
     <text x="466" y="508">existen, pero 8.5.4 prohíbe contarlos.</text>
     <text x="456" y="527">·  La <tspan font-weight="bold">armadura de anclaje y la plancha de cabeza</tspan>, porque el hormigón</text>
-    <text x="466" y="541">se diseña para la capacidad del perno (49,43 tonf) y no para la demanda (8,00).</text>
+    <text x="466" y="541">se diseña para la capacidad del perno (49,46 tonf) y no para la demanda (8,00).</text>
     <text x="456" y="560">·  Los <tspan font-weight="bold">tres primeros estribos a 50 mm</tspan>, que la práctica tradicional no tenía.</text>
   </g>
 

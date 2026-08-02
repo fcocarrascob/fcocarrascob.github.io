@@ -261,6 +261,18 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   Corolario: **cuando el código ofrece dos ramas de hipótesis, se calculan las dos.** La
   R17.7.2.1 pide mirar el Caso 1 y el Caso 2 del cono de corte; calcularlos convirtió un
   «tomamos conservadoramente la fila delantera» en «la fila delantera es la que gobierna».
+- **Cuando una norma remite a otra, hay que ir a buscar la sección dedicada, no la genérica.**
+  Una cláusula que dice «esto se diseña de acuerdo con la norma de material» es una frontera
+  donde es fácil quedarse con el capítulo general que uno ya conoce. El 2026-08-02 la planilla
+  del pedestal NCh2369 encontró que la **llave de corte** —que 8.5.3 obliga a poner pero no
+  dimensiona— se verificaba con el §22.8 de aplastamiento genérico de ACI, cuando 318-25 tiene
+  desde 318-19 una sección propia, la **§17.11 *Attachments with shear lugs***. Y no es un
+  cambio de etiqueta: recorta el área efectiva a $b_{sl}\cdot 2t_{sl}$ (180 cm² de los 450
+  embebidos), penaliza el levantamiento con $\psi_{brg,sl}$, y sobre todo **agrega un modo de
+  falla que el cálculo genérico no tiene** —el cono del hormigón de la propia llave, 17.11.3—
+  que ahí daba 1,23 y no pasaba. El síntoma que lo delata: **una pieza que el post dibuja y
+  nombra pero verifica con menos chequeos que sus vecinas**. En la hoja se traduce en abrir el
+  índice del capítulo de la norma remitida antes de escribir la primera fórmula de esa pieza.
 - **En ACI, la trampa de edición no está en todos los coeficientes: hay que abrir cuál.** La
   regla de la columna métrica no significa que todo número empírico se mueva. El 2026-08-01 la
   planilla de la ménsula abrió el techo de la 16.5.2.4 rama por rama —(a) $0{,}2f'_c$,
@@ -336,7 +348,20 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   desfase persiste con las fórmulas ya partidas, un salto forzado en la región `image` lo
   resuelve y de paso le da al dibujo su propia página. Pero **se prueba, no se supone**: el
   2026-08-01 la ménsula lo necesitó y la viga a flexión y corte no —ahí el salto dejaba una
-  página de 688 px y sin él quedó en 7 páginas parejas—.
+  página de 688 px y sin él quedó en 7 páginas parejas—. Y cuando el esquema es el que queda
+  en el borde, **antes que el salto conviene achicarlo**: el 2026-08-02 el pedestal NCh2369
+  pasó de 720×480 a 660×440 y cuadró sin salto, mientras que con salto cuadraba igual pero
+  dejaba una página talón de 14 líneas.
+- **Las líneas de texto van a ≤ 88 caracteres.** Es la otra causa de desfase de paginación, y
+  no se parece a la anterior: una línea más larga se envuelve en el documento de impresión, y
+  ahí `usePaginacion` la mide distinto de como Chromium la reparte. El error se **acumula**
+  línea a línea, así que no aparece como un salto en un bloque concreto sino como un corrimiento
+  que arranca en la página 1. **Por qué es su propia regla**: el 2026-08-02 la planilla del
+  pedestal NCh2369 anunciaba 13 páginas y traía 12; correr `anclajes-pedestal` en paralelo
+  descartó `paginacion.ts`, y partir las cuatro fórmulas anidadas —la receta del párrafo
+  anterior— **empeoró** el desfase a dos páginas. Lo que lo causaba eran 16 líneas de texto de
+  entre 89 y 99 caracteres. Las planillas que cuadran tienen 88 como máximo exacto, que es de
+  dónde sale el número.
 - **Disposición de los bloques**: la planilla se escribe con un paso vertical fijo, y eso
   vale mientras cada bloque sea una línea. No lo es: una región `program` ocupa una línea
   por instrucción —ocho, diez— y una `math` con una fracción también crece, así que el
@@ -400,7 +425,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-pedestal-anclaje-nch2369` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 81 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
 | `ejemplo-viga-flexion-corte` | 81 | 59 | 40 | 46 | 7 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-zapata-aislada` |  |  |  |  |  |  |  | ⬜ |
