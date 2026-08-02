@@ -90,7 +90,7 @@
   <!-- =============== BANDA DE VALORES =============== -->
   <line x1="46" y1="452" x2="794" y2="452" stroke="#d5dbe2" stroke-width="1"/>
   <text x="46" y="474" font-size="11" fill="#333">Demanda M_u = {{M_u:tonf*m}} tonf·m y V_u@d = {{V_ud:tonf}} tonf. La altura útil no se declara: sale de h − rec − estribo − φ/2 = {{d:cm}} cm.</text>
-  <text x="46" y="492" font-size="11" fill="#333">La variable que hace hablar al ejemplo es ε_t: con {{eps_t}} contra el límite {{eps_lim}} el acero fluye de sobra y la Tabla 21.2.2 concede φ = {{phi_chk}}.</text>
+  <text x="46" y="492" font-size="11" fill="#333">Ductilidad: ε_t = {{eps_t}} contra el límite {{eps_lim}} → la Tabla 21.2.2 concede φ = {{phi_chk}}.</text>
   <text x="46" y="510" font-size="11" fill="#c0392b" font-weight="bold">Gobierna la FLEXIÓN: uso {{round(u_M,3)}} contra {{round(u_V,3)}} al corte. Y el estribo lo fija el detallado: la resistencia pedía s = {{s_req:cm}} cm, la Tabla 9.7.6.2.2 deja {{s_max:cm}} cm.</text>
   <text x="46" y="530" font-size="10.5" fill="#888">Coeficientes de la edición SI: V_c = 0,17λ√f'c (MPa) ≡ 0,543√f'c (kgf/cm²) = {{V_c:tonf}} tonf. Con el 0,53 de la edición inch-pound saldría {{0.53*sqrt(f_c/(1 kgf/cm^2))*kgf/cm^2*b_w*d:tonf}} tonf, un 2,4 % menos.</text>
 </svg>

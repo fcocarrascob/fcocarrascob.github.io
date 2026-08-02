@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 600" font-family="Segoe UI, Arial, sans-serif">
-  <rect width="840" height="600" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 490" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="490" fill="#ffffff"/>
   <text x="420" y="24" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Ménsula {{b:cm}} cm de ancho, h = {{h:cm}} cm, vuelo {{vuelo:cm}} cm — y su enrejado interno (escala 2,25 px/cm)</text>
 
   <!-- ===== Panel izquierdo: geometría y cargas ===== -->
@@ -74,20 +74,15 @@
   <text x="450" y="290" font-size="10" fill="#1c7c3c">Estribos {{n_h}}Ø{{d_e:mm}} cerrados, repartidos en 2/3 d = {{z_h:cm}} cm (16.5.6.6)</text>
   <text x="450" y="306" font-size="10" fill="#555">w_s = {{w_s:cm}} cm (supuesto) · θ = {{theta_gr}}° ≥ 25° (23.2.7)</text>
 
-  <!-- ===== caja equilibrio ===== -->
-  <rect x="60" y="320" width="720" height="112" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
-  <text x="74" y="342" font-size="11.5" fill="#222" font-weight="bold">Un triángulo en equilibrio — pero el brazo lo elige uno</text>
-  <text x="74" y="362" font-size="10.5" fill="#333">jd = d − w_s/2 = {{jd:cm}} cm   ·   θ = atan(jd/a_v) = {{theta_gr}}°   ·   C = V_u/sen θ = {{C_u:tonf}} tonf   (ΣV en el nodo A cierra exacto)</text>
-  <text x="74" y="381" font-size="10.5" fill="#333">T = [V_u·a_v + N_uc·(jd + h − d)]/jd = {{T_sinN:tonf}} + {{dT_N:tonf}} = {{T_u:tonf}} tonf — N_uc pone, con su palanca, el {{frac_N*100}} % del tirante.</text>
-  <text x="74" y="400" font-size="10.5" fill="#c0392b">Pero ΣH no cierra: el triángulo puro daría T = {{T_tri:tonf}} tonf, y los {{dT:tonf}} tonf de diferencia son la excentricidad de N_uc (16.5.3.1).</text>
-  <text x="74" y="419" font-size="10" fill="#888">El ancho w_s no sale de ninguna tabla: se supone, y queda verificado por la tensión del puntal (uso {{round(u_s,3)}}).</text>
+  <!-- ===== el enrejado, en numeros ===== -->
+  <rect x="60" y="320" width="720" height="74" rx="6" fill="#f4f7fb" stroke="#1a63a8"/>
+  <text x="74" y="342" font-size="10.5" fill="#333">jd = d − w_s/2 = {{jd:cm}} cm · θ = atan(jd/a_v) = {{theta_gr}}° · C = V_u/sen θ = {{C_u:tonf}} tonf</text>
+  <text x="74" y="361" font-size="10.5" fill="#333">T = [V_u·a_v + N_uc·(jd + h − d)]/jd = {{T_sinN:tonf}} + {{dT_N:tonf}} = {{T_u:tonf}} tonf   (16.5.3.1)</text>
+  <text x="74" y="380" font-size="10.5" fill="#c0392b">Triángulo puro: T = {{T_tri:tonf}} tonf. La diferencia de {{dT:tonf}} tonf es la excentricidad de N_uc.</text>
 
   <!-- =============== BANDA DE VALORES =============== -->
-  <line x1="46" y1="448" x2="794" y2="448" stroke="#d5dbe2" stroke-width="1"/>
-  <text x="46" y="468" font-size="11" fill="#333">Demanda V_u = {{V_u:tonf}} tonf y N_uc = {{N_uc:tonf}} tonf. El enrejado la reparte: C = {{C_u:tonf}} tonf al puntal de hormigón, T = {{T_u:tonf}} tonf al tirante de acero.</text>
-  <text x="46" y="487" font-size="11" fill="#c0392b" font-weight="bold">Gobierna el TIRANTE: uso {{round(u_T,3)}} contra {{round(u_s,3)}} del puntal — dúctil antes que frágil, que es la jerarquía que el método busca.</text>
-  <text x="46" y="506" font-size="11" fill="#333">Detrás: nodo B {{round(u_B,3)}} · corte por fricción en la cara {{round(u_sf,3)}} (23.2.12) · techo de corte {{round(u_Vmax,3)}} (16.5.2.4) · nodo A {{round(u_A,3)}} · aplastamiento {{round(u_ap,3)}}.</text>
-  <text x="46" y="525" font-size="11" fill="#1c7c3c">Los {{n_h}}Ø{{d_e:mm}} no sobran: 16.5.5.2 pide {{A_hreq:cm^2}} cm², pero el que manda es 23.5.1 con {{A_hreq23:cm^2}} cm² contra los {{A_h:cm^2}} provistos — {{hol_rho*100}} % de margen.</text>
-  <text x="46" y="544" font-size="11" fill="#333">Y son ellos los que habilitan β_s = 0,75: sin armadura distribuida la Tabla 23.4.3(a) cae a 0,40 y el puntal pasa a uso {{round(u_s_sin,3)}} — no pasaría.</text>
-  <text x="46" y="565" font-size="10.5" fill="#888">N_uc = 0,2·V_u es la regla anterior a 318-19. En 318-25, 16.2.2.3(b) tarifa el 20 % de la reacción SOSTENIDA sin mayorar × 1,6: haría falta R = {{R_equiv:tonf}} tonf sostenidas.</text>
+  <line x1="46" y1="414" x2="794" y2="414" stroke="#d5dbe2" stroke-width="1"/>
+  <text x="46" y="434" font-size="11" fill="#c0392b" font-weight="bold">Gobierna el TIRANTE (23.7.2) con uso {{round(u_T,3)}} — dúctil antes que frágil.</text>
+  <text x="46" y="453" font-size="11" fill="#333">Usos: puntal {{round(u_s,3)}} · corte por fricción {{round(u_sf,3)}} · nodo B {{round(u_B,3)}} · techo de corte {{round(u_Vmax,3)}} · nodo A {{round(u_A,3)}} · aplastamiento {{round(u_ap,3)}}</text>
+  <text x="46" y="472" font-size="11" fill="#1c7c3c">Estribos: manda 23.5.1 con {{A_hreq23:cm^2}} cm² (no los {{A_hreq:cm^2}} de 16.5.5.2) contra {{A_h:cm^2}} provistos — {{hol_rho*100}} % de margen.</text>
 </svg>
