@@ -431,6 +431,15 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   hacía falta **uno solo**, en la única sección que arrancaba al pie. El criterio
   para leer el reporte es la distancia entre marcas consecutivas: dos muy juntas
   = página talón.
+- **El enlace post → planilla es automático: no se escribe.** `BlogPost.astro` pinta la caja
+  «Planilla interactiva» cuando existe `public/planillas/<id del post sin `ejemplo-`>.json`
+  (`src/lib/planillas.ts`), así que **basta con crear el archivo**. **Por qué es una regla y no
+  un detalle**: mientras se escribía a mano faltaba en **8 de las 21** planillas publicadas —las
+  7 de la tanda de acero del 2026-08-01 se saltaron todas juntas—, o sea que la planilla existía,
+  cuadraba y se registraba acá, y el lector no tenía cómo llegar a ella. Lo que sí sigue a mano
+  es la sección **`## La planilla`** al cierre del post, que no es el enlace sino la prosa: qué
+  aporta la hoja que el post no puede: el booleano que decide, la variable que se deriva y mueve
+  toda la cadena, el equilibrio que cierra. Esa se escribe una vez, al aplicar los fixes.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
