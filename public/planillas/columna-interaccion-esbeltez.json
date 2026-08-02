@@ -4,7 +4,6 @@
   "titulo": "Columna de hormigón a flexocompresión — el diagrama P–M barrido, el φ variable con el tope de 21.2.2.3, y la esbeltez (ACI 318-25)",
   "ficha": "struct_pad/src/content/hormigon/ejemplo-columna-interaccion-esbeltez.mdx",
   "esperadoFalso": {
-   "c_traba_150": "25.7.2.3(b): con 3 barras por cara en 50 cm la barra central queda a 162,5 mm libres de la de esquina, sobre los 150 mm, así que pide traba. El post declara la sección admisible mirando solo el mínimo de 4 barras de 10.7.3.1. HALLAZGO 2026-08-02: además el 0,80 de la Tabla 22.4.2.1(a) cuelga de 22.4.2.4, que remite a 25.7.2.",
    "c_d1": "HALLAZGO 2026-08-02: d' derivada da 6,25 cm (40 mm de recubrimiento + estribo Ø10 + 12,5 mm de radio) y el post declara 6.",
    "c_d": "HALLAZGO 2026-08-02: d = h - d' = 43,75 cm y el post publica 44, redondeado hacia arriba, que es el lado inseguro. Misma especie que la viga a flexión y corte (53,75 → 54) y la zapata (45,7 → 46).",
    "c_epsty": "HALLAZGO 2026-08-02: con E_s = 200 000 MPa (20.2.2.2) sale ε_ty = 0,00206. El post declara E_s = 2,1e6 kgf/cm² y ε_ty = 0,002; 21.2.2.1 permite el 0,002 para Grado 420, pero las otras dos planillas de hormigón publican 0,00206.",
@@ -14,7 +13,8 @@
    "c_RdM0": "HALLAZGO 2026-08-02: φM_n = 29,62 tonf·m en flexión pura contra 29,8. Con los datos del post da 29,83, o sea que el gap es la d redondeada.",
    "c_RdM1": "HALLAZGO 2026-08-02: φM_n = 28,96 tonf·m para C1 contra 29,2. Con los datos del post da 29,11.",
    "c_RdM2": "HALLAZGO 2026-08-02: φM_n = 40,08 tonf·m para C2 contra 41,4. La causa principal es 21.2.2.3, que acota el φ de la Tabla 21.2.2 y en C2 lo baja de 0,90 a 0,874; sin ese tope y con los datos del post la planilla da 41,30.",
-   "c_u2": "HALLAZGO 2026-08-02: el uso de C2 sube a 0,70 (0,68 publicado) al aplicar 21.2.2.3. La tesis del post no se toca: C2 queda MÁS cerca de la frontera, no menos."
+   "c_u2": "HALLAZGO 2026-08-02: el uso de C2 sube a 0,70 (0,68 publicado) al aplicar 21.2.2.3. La tesis del post no se toca: C2 queda MÁS cerca de la frontera, no menos.",
+   "v007": "25.7.2.3(b): con 3 barras por cara en 50 cm la barra central queda a 162,5 mm libres de la de esquina, sobre los 150 mm, así que pide traba. El post declara la sección admisible mirando solo el mínimo de 4 barras de 10.7.3.1. HALLAZGO 2026-08-02: además el 0,80 de la Tabla 22.4.2.1(a) cuelga de 22.4.2.4, que remite a 25.7.2."
   }
  },
  "regions": [
@@ -124,7 +124,7 @@
    "src": "22.4.2.1: el f_y que entra en P_o está limitado a 550 MPa."
   },
   {
-   "id": "c_fy_tope",
+   "id": "v000",
    "kind": "math",
    "x": 40,
    "y": 736,
@@ -187,7 +187,7 @@
    "src": "beta_1 := 0.85"
   },
   {
-   "id": "c_beta_rango",
+   "id": "v001",
    "kind": "math",
    "x": 40,
    "y": 1168,
@@ -208,7 +208,7 @@
    "src": "kgf/cm² las dos ediciones dan 0,85, así que β1 no es sensible a la edición."
   },
   {
-   "id": "c_beta_ip",
+   "id": "v002",
    "kind": "math",
    "x": 40,
    "y": 1312,
@@ -432,14 +432,14 @@
    "src": "10.6.1.1: 0,01A_g ≤ A_st ≤ 0,08A_g."
   },
   {
-   "id": "c_rho_min",
+   "id": "v003",
    "kind": "math",
    "x": 40,
    "y": 2880,
    "src": "rho_g >= 0.01 ="
   },
   {
-   "id": "c_rho_max",
+   "id": "v004",
    "kind": "math",
    "x": 40,
    "y": 2928,
@@ -453,7 +453,7 @@
    "src": "R10.6.1.1: bajo el 4 % si las barras se empalman por traslapo (no es requisito)."
   },
   {
-   "id": "c_rho_practico",
+   "id": "v005",
    "kind": "math",
    "x": 40,
    "y": 3024,
@@ -467,7 +467,7 @@
    "src": "10.7.3.1(b): mínimo cuatro barras longitudinales dentro de estribos rectangulares."
   },
   {
-   "id": "c_n_barras",
+   "id": "v006",
    "kind": "math",
    "x": 40,
    "y": 3120,
@@ -495,7 +495,7 @@
    "src": "s_libre := (d_2 - d_1) - d_b = mm"
   },
   {
-   "id": "c_traba_150",
+   "id": "v007",
    "kind": "math",
    "x": 40,
    "y": 3312,
@@ -733,7 +733,7 @@
    "src": "descuento del hormigón desplazado:"
   },
   {
-   "id": "c_Po_limite",
+   "id": "v008",
    "kind": "math",
    "x": 40,
    "y": 5184,
@@ -944,7 +944,7 @@
    "src": "c_0 = cm"
   },
   {
-   "id": "c_raiz",
+   "id": "v009",
    "kind": "math",
    "x": 40,
    "y": 7072,
@@ -986,7 +986,7 @@
    "src": "la sección es controlada por tracción y φ = 0,90."
   },
   {
-   "id": "c_phi0_tc",
+   "id": "v010",
    "kind": "math",
    "x": 40,
    "y": 7360,
@@ -1070,21 +1070,21 @@
    "src": "corre al revés o la escala está mal."
   },
   {
-   "id": "c_arranca",
+   "id": "v011",
    "kind": "math",
    "x": 40,
    "y": 8160,
    "src": "abs(curva[1,1]*1 tonf*m - Rd_M0) < 0.01 tonf*m ="
   },
   {
-   "id": "c_arranca_P",
+   "id": "v012",
    "kind": "math",
    "x": 40,
    "y": 8208,
    "src": "abs(curva[1,2]) < 0.01 ="
   },
   {
-   "id": "c_cierra",
+   "id": "v013",
    "kind": "math",
    "x": 40,
    "y": 8256,
@@ -1112,7 +1112,7 @@
    "src": "sube :=\n    ok := 1\n    for i in 2:(n_curva - 1)\n        if curva[i,2] < curva[i-1,2]\n            ok := 0\n    return ok"
   },
   {
-   "id": "c_sube",
+   "id": "v014",
    "kind": "math",
    "x": 40,
    "y": 8528,
@@ -1154,7 +1154,7 @@
    "src": "porque al pasar el balanceado φ empieza a subir."
   },
   {
-   "id": "c_panza_baja",
+   "id": "v015",
    "kind": "math",
    "x": 40,
    "y": 8896,
@@ -1476,7 +1476,7 @@
    "src": "lim_esb := min(lim_b, lim_c) ="
   },
   {
-   "id": "c_esbeltez",
+   "id": "v016",
    "kind": "math",
    "x": 40,
    "y": 11296,
@@ -1511,7 +1511,7 @@
    "src": "gobierna :=\n    if u_max == u_2\n        return \"flexocompresión C2 (0,9D+E), rama baja\"\n    else if u_max == u_1\n        return \"flexocompresión C1 (1,2D+1,6L)\"\n    else\n        return \"axial máximo, tope de 22.4.2.1\""
   },
   {
-   "id": "c_uso",
+   "id": "v017",
    "kind": "math",
    "x": 40,
    "y": 11664,

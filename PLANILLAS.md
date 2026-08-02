@@ -70,7 +70,9 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
    página). Una sección más larga que una página se parte igual: eso no se
    fuerza, se acepta.
 7. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
-   registro con pasos, verificaciones, contrastes y fecha de corrida.
+   registro con pasos, verificaciones, contrastes y fecha de corrida, y la
+   sección **`## La planilla`** al cierre del post (§ Convenciones: cómo se
+   publica un ejemplo con planilla). El enlace no se escribe: lo pone el layout.
 8. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
    build`, y commit del par planilla + esquema + post corregido.
 
@@ -431,15 +433,33 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   hacía falta **uno solo**, en la única sección que arrancaba al pie. El criterio
   para leer el reporte es la distancia entre marcas consecutivas: dos muy juntas
   = página talón.
-- **El enlace post → planilla es automático: no se escribe.** `BlogPost.astro` pinta la caja
-  «Planilla interactiva» cuando existe `public/planillas/<id del post sin `ejemplo-`>.json`
-  (`src/lib/planillas.ts`), así que **basta con crear el archivo**. **Por qué es una regla y no
-  un detalle**: mientras se escribía a mano faltaba en **8 de las 21** planillas publicadas —las
-  7 de la tanda de acero del 2026-08-01 se saltaron todas juntas—, o sea que la planilla existía,
-  cuadraba y se registraba acá, y el lector no tenía cómo llegar a ella. Lo que sí sigue a mano
-  es la sección **`## La planilla`** al cierre del post, que no es el enlace sino la prosa: qué
-  aporta la hoja que el post no puede: el booleano que decide, la variable que se deriva y mueve
-  toda la cadena, el equilibrio que cierra. Esa se escribe una vez, al aplicar los fixes.
+- **Cómo se publica un ejemplo con planilla** (el estándar, fijado el 2026-08-02 con las 21
+  alineadas). Tres piezas, y solo una se escribe:
+  - **El enlace es automático: no se escribe.** `BlogPost.astro` pinta la caja «Planilla
+    interactiva» cuando existe `public/planillas/<id del post sin `ejemplo-`>.json`
+    (`src/lib/planillas.ts`), así que **basta con crear el archivo**. Mientras se escribió a
+    mano faltaba en **8 de las 21** —las 7 de la tanda de acero del 2026-08-01 se saltaron
+    todas juntas—: la hoja existía, cuadraba y estaba registrada acá, y el lector no tenía
+    cómo llegar a ella.
+  - **La sección se escribe una vez y se llama `## La planilla`**, al cierre del post, antes
+    de la bibliografía. Es lo único a mano, y no es el enlace: es **qué aporta la hoja que el
+    post no puede** — el booleano que decide, la variable que se deriva y mueve toda la
+    cadena, el equilibrio que cierra, el factor que se obtiene en vez de citarse. El
+    2026-08-02 convivían tres encabezados distintos (`La planilla`, `Reproducir esto con tus
+    datos`, y cuatro posts donde el enlace flotaba al final del resumen); quedaron los 21 con
+    el mismo.
+  - **Los conteos los verifica el runner, no se cuentan a mano.** Si la sección declara
+    «N pasos, M verificaciones y K contrastes», `verify:planilla` lo compara contra la hoja y
+    **falla si no cuadra**. Declararlos es opcional; que mientan, no. **Por qué hizo falta**:
+    esos números se desalinean solos —una planilla gana verificaciones en la auditoría
+    siguiente y la prosa se queda con el número viejo—, y el 2026-08-02 estaban mal en **10 de
+    los 21 posts**, con casos de 9 publicadas contra 34 reales. Es el tipo de dato que nadie
+    vuelve a mirar justamente porque parece inofensivo.
+  - **Contraste = verificación con id `c_*`.** Es lo que hace derivable el conteo anterior, y
+    la frontera es de sentido: un contraste compara contra un número **que el post publica**;
+    un chequeo interno de la hoja —un rango de tabla, un equilibrio, la colocación de una
+    curva— es una verificación pero no un contraste, y lleva id `v*` o `r*`. Tres planillas lo
+    tenían mezclado y se retagearon el 2026-08-02.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
@@ -458,7 +478,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
-| `ejemplo-columna-galpon-compresion` | 63 | 45 | 44 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
+| `ejemplo-columna-galpon-compresion` | 63 | 45 | 30 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-doble-angulo` | 107 | 88 | 58 | 67 | 9 (1⇱) | 3 aplicados 2026-08-01 (doblar y dividir el redondeado: 21 514 → 21 513 kgf · 0,461 → 0,460 · 0,42 → 0,41) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
@@ -481,7 +501,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 81 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
+| `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 105 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
 | `ejemplo-viga-flexion-corte` | 81 | 59 | 40 | 46 | 7 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-zapata-aislada` | 95 | 70 | 56 | 45 | 8 (1⇱) | 7 aplicados 2026-08-02 (el 🟠 raíz: faltaba el **piso de 22.5.5.1.1** —la fila (c) da 3,69 y el código no obliga a bajar de 0,265√f'c = 4,19—, que sube φV_c de 27,9 a 31,6 y mueve el número insignia **0,86 → 0,76**; y con él se desarma el «−16 % del efecto de tamaño», que con el piso es −4,4 %. Más la familia inch-pound afirmada como identidad —0,17 ↔ 0,53 cuando la exacta es 0,5429— y el d redondeado de 45,7 a 46, hacia arriba) | 2026-08-02 | ✅ |

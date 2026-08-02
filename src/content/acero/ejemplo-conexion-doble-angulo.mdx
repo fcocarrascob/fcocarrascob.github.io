@@ -222,6 +222,26 @@ de sus alas salientes) y la soldadura de la shear tab a la columna: son la otra 
 conexión y no cambian la comparación, que es entre anatomías del mismo lado del nudo.
 </Note>
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 107 pasos, 88 verificaciones y 58
+contrastes contra los números publicados acá. En un post comparativo la trampa tiene nombre:
+**la columna derivada no se escala, se recalcula**. Los tres hallazgos de la auditoría fueron
+exactamente eso —duplicar o partir un número ya redondeado—, así que la hoja declara el factor
+($n_{ea} := 2$) y lo aplica sobre la cantidad de precisión completa, cada configuración desde
+sus propios datos. Y verifica **como booleano** la frase que sostiene el §2: en la shear tab
+el apoyo de la conexión queda por debajo del alma de la viga, y en el doble ángulo por encima
+— el traspaso del elemento crítico no se afirma, se comprueba. Hasta la razón de precios (3,8)
+sale de la geometría de las piezas, sin catálogo.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=conexion-doble-angulo)** ·
+[descargar el JSON](/planillas/conexion-doble-angulo.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/conexion-doble-angulo.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022 (Secciones J3 y J4), y *Steel Construction Manual*,
 16.ª ed., Partes 7 (grupos de conectores excéntricos, método del centro instantáneo) y 10
