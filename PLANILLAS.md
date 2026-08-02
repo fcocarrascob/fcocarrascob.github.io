@@ -325,12 +325,37 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     (cm², tonf·m). Los valores salen con 4 cifras significativas, no con el redondeo
     del post. La sustitución barre **todo el archivo, comentarios incluidos**: un
     `{{expr}}` de ejemplo dentro de un `<!-- -->` también se evalúa y hace fallar
-    la corrida. **Y solo van en texto, nunca en un atributo numérico**: `formatValor` sale
-    con coma decimal a propósito —para que se note qué número puso la hoja y cuál escribió
-    el autor—, así que un `width="{{0.92*Rd:tonf}}"` se sustituye por `width="211,4"`, que
-    es SVG inválido, y la barra se dibuja con ancho cero. Los anchos y las coordenadas van
-    fijos a mano; lo paramétrico son los rótulos. El contrato de tokens pasa igual: esto
-    solo lo caza abrir el PNG.
+    la corrida. **En texto va el rótulo; en un atributo numérico va `{{expr:svg}}` y nada
+    más**: `formatValor` sale con coma decimal a propósito —para que se note qué número puso
+    la hoja y cuál escribió el autor—, así que un `width="{{0.92*Rd:tonf}}"` se sustituye por
+    `width="211,4"`, que es SVG inválido, y la barra se dibuja con ancho cero. El contrato de
+    tokens pasa igual: eso solo lo caza abrir el PNG. Por eso la forma cruda es un modificador
+    propio y explícito.
+  - **`{{expr:svg}}` — geometría calculada dentro de un atributo.** Emite punto decimal, sin
+    unidad y sin el redondeo a 4 cifras, y **vuelca una matriz Nx2 como lista de puntos**
+    (`points="{{pts_px:svg}}"` → `"40,310 52,287 …"`), que es lo que permite **dibujar una
+    curva que la hoja calculó** — el diagrama de interacción P–M se arma barriendo el eje
+    neutro, y entra al dibujo por un solo token. Se encadena con la unidad: `{{x:cm:svg}}`
+    convierte y después formatea crudo. Reglas de uso:
+    - **El mapeo a píxeles lo hace la hoja, no el motor.** Una región `program` devuelve ya
+      las coordenadas de pantalla (`y_px := y_0 - P*s_P`), así la escala y la inversión del
+      eje P quedan a la vista y auditables, que es la premisa del proyecto. El motor no sabe
+      dibujar y no tiene por qué: solo formatea.
+    - **`formatSvg` es más estricto que `formatValor`, no menos.** Lanza —o sea, el token cae
+      en `faltantes` y `verify` falla— si el valor no es finito, si llega con unidad sin
+      convertir, o si no es un escalar ni una Nx2. El caso que importa es el primero: un `NaN`
+      en la coordenada 137 escribe `NaN` en el atributo, el navegador dibuja **nada**, y eso
+      ningún booleano lo ve. El guard es lo único que lo caza.
+    - **Una curva no se revisa como un rótulo.** Puede resolver todos sus tokens y salir
+      espejada, fuera de escala o con el barrido corriendo al revés. El amarre es contrastar
+      en la hoja los **puntos que anclan** el dibujo (acá: compresión pura con su tope, el
+      balanceado y la flexión pura) contra los que el post publica, y rotularlos sobre la
+      curva: si los tres caen en su sitio, la escala y el sentido de los ejes quedan
+      verificados de paso. Lo mismo con la demanda: se contrasta su **distancia a la
+      frontera**, no solo su posición.
+    - Un barrido de 200 puntos en una región `program` con cabecera imprimiría 400 números
+      en un solo bloque; `resultToTex` lo resume como `matriz 201×2` por encima de 12
+      entradas. La variable queda íntegra en el scope: lo que se recorta es la impresión.
   - **Dónde va**: la región `image` ve el scope de su posición de lectura, así que
     va **después** de las variables que rotula. En la práctica: justo antes del
     encabezado «CONTRASTE CON EL POST», donde ya está todo definido.
@@ -442,7 +467,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | Post | Pasos | Verif. | Contrastes | Esq. | Págs. | Hallazgos | Última corrida | Estado |
 |---|---|---|---|---|---|---|---|---|
 | `ejemplo-anclajes-pedestal` | 130 | 81 | 64 | 49 | 9 (1⇱) | 8 aplicados 2026-08-01 (el 🟠 raíz: no se aplicaba 17.6.2.1.2 —tres bordes a 25 cm < 1,5h_ef = 60 obligan a leer los 40 cm de embebido como 16,67—, que sube el breakout un 10,5 % y mueve la interacción 0,76 → 0,71 y la tesis de cierre. Más el A_brg de tuerca hex NORMAL en un post que declara PESADA, y el exponente de la Ec. 17.8.4, que es 2 y no 5/3) | 2026-08-01 | ✅ |
-| `ejemplo-columna-interaccion-esbeltez` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-columna-interaccion-esbeltez` | 119 | 41 | 21 | 144 | 9 (2⇱) | 7 aplicados 2026-08-02 (el 🟠: la curva de diseño se armaba solo con la Tabla 21.2.2 y falta la **21.2.2.3**, que la acota interpolando en P_n entre 0,90 en 0,1f'cA_g y φ_cc en P_n,bal — en C2 baja φ de 0,90 a **0,874**, φM_n de 41,4 a 40,1 y el uso de 0,68 a **0,70**. Más el d redondeado de 43,75 a 44 hacia arriba, el E_s de 2,1e6 en vez del de 20.2.2.2, el balanceado que no reproducía ninguna hipótesis, las trabas de 25.7.2.3(b) de las que cuelga el 0,80P_o, y el «uso máximo 0,68» que contradecía a su propia tabla) | 2026-08-02 | ✅ |
 | `ejemplo-losa-punzonamiento-momento` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |

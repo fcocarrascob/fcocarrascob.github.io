@@ -238,6 +238,26 @@ con 0.86. Es la lección de las regiones D: **cuando la carga vive pegada al apo
 flexión ni corte que verificar — hay un enrejado que uno elige, un tirante que debe gobernar,
 y un anclaje que es la mitad del diseño.**
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 128 pasos, 83 verificaciones y 59
+contrastes que comparan cada número publicado acá contra el que la hoja calcula desde la
+norma. En una región D el bloque que importa es otro: como el enrejado **lo elige el
+proyectista** —el ancho del puntal, la posición de los nodos, y con ellos $jd$ y $\theta$—, la
+hoja declara esa geometría como hipótesis y después **comprueba que cierra**, con un $\Sigma F = 0$
+por nodo. Ese chequeo es el que mostró que el triángulo publicado no cerraba $\Sigma H$ por
+0.78 tonf, y que la diferencia no era un error sino la excentricidad de $N_{uc}$ que la 16.5.3.1
+resuelve metiéndola en $M_u$. Cambiando $a_v$, el canto o el diámetro del tirante se rearma el
+enrejado entero y los equilibrios se vuelven a evaluar.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=mensula-puntal-tensor)** ·
+[descargar el JSON](/planillas/mensula-puntal-tensor.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/mensula-puntal-tensor.json --md
+```
+
 [^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
 (ACI 318-25) and Commentary*, Farmington Hills, MI, 2025 — Cap. 23 (método puntal-tensor),
 Sec. 16.5 (ménsulas y cartelas), Sec. 22.8 (aplastamiento) y Sec. 25.4.3 (desarrollo de ganchos).

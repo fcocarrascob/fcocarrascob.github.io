@@ -15,6 +15,6 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const seriesNav = await getSeriesNav(post.id);
 ---
-<BlogPost frontmatter={post.data} seriesNav={seriesNav}>
+<BlogPost frontmatter={post.data} seriesNav={seriesNav} slug={post.id}>
   <Content />
 </BlogPost>

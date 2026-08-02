@@ -201,8 +201,37 @@ function numToTex(s: string): string {
   return s;
 }
 
+/**
+ * Entradas de una matriz/array por encima de las cuales el resultado se resume
+ * en vez de volcarse. Una región `program` con cabecera imprime su valor de
+ * retorno, y un barrido (el diagrama de interacción P–M son 200 puntos) metería
+ * 400 números en una sola región: revienta el alto del bloque, y con él la
+ * paginación y el PDF. La variable queda íntegra en el scope; lo que se recorta
+ * es la impresión.
+ */
+const MAX_ENTRADAS_TEX = 12;
+
+/** Resumen `matriz 200\times2` para un valor que no cabe impreso. */
+function matrizResumen(value: unknown): string | undefined {
+  // Una cadena también tiene `size` (su largo), y el nombre del estado límite que
+  // devuelve `gobierna` pasa de 12 caracteres sin ser una matriz.
+  if (typeof value === 'string') return undefined;
+  let dims: number[];
+  try {
+    dims = math.size(value as never).valueOf() as number[];
+  } catch {
+    return undefined;
+  }
+  if (!Array.isArray(dims) || dims.length === 0) return undefined;
+  const entradas = dims.reduce((a, b) => a * b, 1);
+  if (entradas <= MAX_ENTRADAS_TEX) return undefined;
+  return `\\mathrm{matriz}\\;${dims.join('\\times')}`;
+}
+
 /** LaTeX del valor calculado: número (con exponente) + unidad en redonda. */
 function resultToTex(value: unknown): string {
+  const resumen = matrizResumen(value);
+  if (resumen) return resumen;
   const formatted = math.format(value, { precision: 5 });
   if (math.isUnit(value)) {
     const sp = formatted.indexOf(' ');
@@ -389,4 +418,51 @@ export function formatValor(v: unknown, unidad?: string): string {
   if (typeof v === 'number') return comaDecimal(numLabel(v));
   if (typeof v === 'boolean') return v ? '✓' : '✗';
   return String(v);
+}
+
+/** Decimales de una coordenada cruda: sobra para un píxel, y no trae exponente. */
+const SVG_DECIMALES = 3;
+
+/** Un número apto para un atributo SVG, o lanza si no lo es. */
+function numSvg(n: unknown): string {
+  if (typeof n !== 'number' || !Number.isFinite(n)) {
+    throw new Error(`valor no finito para SVG: ${String(n)}`);
+  }
+  return String(Number(n.toFixed(SVG_DECIMALES)));
+}
+
+/**
+ * Valor como geometría para un ATRIBUTO SVG (`{{expr:svg}}`), que es otra cosa
+ * que un rótulo: acá el consumidor es el parser del navegador, no un lector.
+ * Sale con PUNTO decimal, sin unidad y sin el redondeo a 4 cifras — la coma de
+ * `formatValor` produce `width="211,4"`, que es SVG inválido y dibuja ancho cero.
+ *
+ * Una matriz Nx2 se vuelca como lista de puntos `x1,y1 x2,y2 …`, lista para el
+ * `points` de un `<polyline>`: así una curva calculada (barrer el eje neutro y
+ * mapear a píxeles en la hoja) entra al dibujo por un solo token.
+ *
+ * Es más estricto que `formatValor`, no menos, y a propósito: lanza —o sea, el
+ * token cae en `faltantes` y `verify:planilla` falla— si el valor no es finito,
+ * si llega con unidad sin convertir, o si no es un escalar ni una Nx2. Un `NaN`
+ * en la coordenada 137 no lo ve ningún booleano: el navegador dibuja nada y el
+ * PNG sale con la curva muda. El guard es lo único que lo caza.
+ */
+export function formatSvg(v: unknown, unidad?: string): string {
+  if (unidad) return numSvg(math.number(v as never, unidad as never));
+  if (math.isUnit(v)) {
+    throw new Error('un atributo SVG no lleva unidad: convertila con `:unidad:svg`');
+  }
+  if (typeof v === 'number') return numSvg(v);
+
+  const filas = math.isMatrix(v) ? (v.valueOf() as unknown[]) : v;
+  if (!Array.isArray(filas)) throw new Error(`valor no dibujable: ${typeof v}`);
+  if (filas.length === 0) throw new Error('lista de puntos vacía');
+  return filas
+    .map((fila) => {
+      if (!Array.isArray(fila) || fila.length !== 2) {
+        throw new Error('se esperaba una matriz Nx2 de puntos (x, y)');
+      }
+      return `${numSvg(fila[0])},${numSvg(fila[1])}`;
+    })
+    .join(' ');
 }
