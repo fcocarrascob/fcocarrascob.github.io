@@ -433,6 +433,16 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   hacía falta **uno solo**, en la única sección que arrancaba al pie. El criterio
   para leer el reporte es la distancia entre marcas consecutivas: dos muy juntas
   = página talón.
+  **Y el salto no siempre es la herramienta: si al ponerlo aparece un desfase que antes
+  no estaba, el salto es la causa y hay que empujar con contenido.** El 2026-08-02 el muro
+  tenía el §13 arrancando a tres líneas del pie; el `pageBreak` lo movió pero el modelo
+  pasó a anunciar **20 páginas contra las 19 del PDF**, porque en un corte *forzado*
+  `paginacion.ts` conserva el margen y ahí el navegador no lo reproducía. Se resolvió
+  agregando dos líneas de contenido legítimo a la sección anterior —una cita que
+  faltaba—, con lo que el encabezado pasó a abrir la página siguiente **por corte
+  natural** y la cuenta volvió a 19 = 19. **Es específico de la posición, no general**:
+  en la misma hoja otros dos saltos, en el §18 y en el bloque de contrastes, cuadraron
+  sin tocar nada. Por eso se prueba uno a la vez y se vuelve a imprimir.
 - **Cómo se publica un ejemplo con planilla** (el estándar, fijado el 2026-08-02 con las 21
   alineadas). Tres piezas, y solo una se escribe:
   - **El enlace es automático: no se escribe.** `BlogPost.astro` pinta la caja «Planilla
@@ -488,7 +498,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 18 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 22 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
@@ -500,7 +510,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-losa-punzonamiento-momento` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
-| `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-muro-flexocompresion` | 282 | 186 | 116 | 201 | 19 (2⇱) | 9 aplicados 2026-08-02 (el 🟠: falta la **21.2.2.3** otra vez, y acá el umbral 0,1f'cA_g = 450 tonf cae JUSTO entre las dos combinaciones —A con P_n = 616 encima, B con 432 dieciocho tonf debajo—, así que muerde sólo en A: φ 0,90 → **0,873** y el uso 0,86 → **0,89**, sin dar vuelta cuál gobierna. Más el E_s de 2,0e6 no declarado, que corría las cinco c un 0,3 %; cuatro coeficientes exhibiendo el operando SI y calculando con el de kgf/cm²; y el «+2 %» que era de M_n y en capacidad de diseño es **+3,4 %**, porque al engrosar el φ también se recupera) | 2026-08-02 | ✅ |
 | `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 105 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
 | `ejemplo-viga-flexion-corte` | 81 | 59 | 40 | 46 | 7 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
