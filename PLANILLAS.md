@@ -261,6 +261,22 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   Corolario: **cuando el código ofrece dos ramas de hipótesis, se calculan las dos.** La
   R17.7.2.1 pide mirar el Caso 1 y el Caso 2 del cono de corte; calcularlos convirtió un
   «tomamos conservadoramente la fila delantera» en «la fila delantera es la que gobierna».
+- **Una tabla de la norma no termina en la tabla: hay que leer las cláusulas que la acotan.**
+  Es la variante interna de la regla anterior —la remisión no cruza de norma, cruza de párrafo— y
+  es más fácil de pasar por alto, porque la fórmula que uno copió *es* la correcta. El 2026-08-02
+  la planilla de la zapata aislada encontró que el post aplicaba la fila (c) de la Tabla 22.5.5.1
+  y se detenía ahí, cuando la **22.5.5.1.1** acota esa misma tabla por arriba y por abajo. Acá el
+  **piso mandaba**: la fila (c) daba $3{,}69$ kgf/cm² contra los $0{,}265\sqrt{f'_c} = 4{,}19$ que
+  el código dice que no hace falta bajar, y $\phi V_c$ subía de 27,9 a **31,6 tonf** — el número
+  insignia del ejemplo, de 0,86 a **0,76**. Ningún recálculo lo caza: la cadena publicada es
+  aritméticamente correcta y además conservadora. **El síntoma que lo delata es de forma, no de
+  número**: una tabla citada por su fila (`Tabla 22.5.5.1(c)`) sin que aparezca en la hoja ninguna
+  de las subcláusulas `.1`, `.2`, `.3` que la siguen. En la planilla se traduce en declarar el
+  piso y el tope como variables propias y **dejar escrito cuál de los tres manda** (`piso_manda :=
+  v_bruto < v_piso`), que es un booleano que cuesta una línea y no puede quedar implícito.
+  Corolario sobre la tesis: acá el efecto fue **subir** la capacidad, y eso obligó a reescribir el
+  subargumento de la `Note` —el post atribuía −16 % al efecto de tamaño y con el piso son −4,4 %—.
+  Un hallazgo que afloja el cálculo puede apretar la prosa.
 - **Cuando una norma remite a otra, hay que ir a buscar la sección dedicada, no la genérica.**
   Una cláusula que dice «esto se diseña de acuerdo con la norma de material» es una frontera
   donde es fácil quedarse con el capítulo general que uno ya conoce. El 2026-08-02 la planilla
@@ -297,6 +313,12 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     colores — y se guarda **aparte**, en `/esquemas/`. El post conserva su SVG
     estático (ahí los tokens saldrían crudos). Si el panel recortado solo existía
     para la planilla, se mueve a `/esquemas/` y no queda copia.
+    **Y por eso hereda sus defectos de composición**: si la revisión visual encuentra un
+    solape que no es de valor sino de disposición —un rótulo montado sobre otro, una
+    flecha que cruza una leyenda—, hay que ir a mirar la figura de la que se derivó,
+    porque casi seguro está ahí también. El 2026-08-02 la zapata aislada arregló dos en
+    `/esquemas/` y los mismos dos estaban en `/ejemplos/zapata-aislada.svg`, donde nadie
+    los había visto en tres semanas.
   - **Tokens**: `{{expr}}` acepta cualquier expresión mathjs contra el scope
     (`{{max(u_a, u_b)}}`, `{{d_v - t_fv:mm}}`). La forma con unidad convierte e
     imprime **solo el número**; la unidad la escribe el SVG con su propia tipografía
@@ -428,7 +450,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 81 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
 | `ejemplo-viga-flexion-corte` | 81 | 59 | 40 | 46 | 7 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-zapata-aislada` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-zapata-aislada` | 95 | 70 | 56 | 45 | 8 (1⇱) | 7 aplicados 2026-08-02 (el 🟠 raíz: faltaba el **piso de 22.5.5.1.1** —la fila (c) da 3,69 y el código no obliga a bajar de 0,265√f'c = 4,19—, que sube φV_c de 27,9 a 31,6 y mueve el número insignia **0,86 → 0,76**; y con él se desarma el «−16 % del efecto de tamaño», que con el piso es −4,4 %. Más la familia inch-pound afirmada como identidad —0,17 ↔ 0,53 cuando la exacta es 0,5429— y el d redondeado de 45,7 a 46, hacia arriba) | 2026-08-02 | ✅ |
 
 ### geotecnia
 
