@@ -20,7 +20,7 @@
   <line x1="222" y1="109" x2="252" y2="109" stroke="#c07a00" stroke-width="2.2"/>
   <path d="M 259 109 L 249 104 L 249 114 Z" fill="#c07a00"/>
   <text x="240" y="98" font-size="10.5" fill="#c07a00" font-weight="bold">N_uc = 5.6 tonf</text>
-  <text x="240" y="132" font-size="8.5" fill="#c07a00">(0.2·V_u, 16.5.3.4)</text>
+  <text x="240" y="132" font-size="8.5" fill="#c07a00">(dato de diseño, 16.2.2.3)</text>
   <!-- cotas -->
   <line x1="160" y1="228" x2="194" y2="228" stroke="#888" stroke-width="1"/>
   <text x="177" y="242" font-size="9" text-anchor="middle" fill="#888">a_v = 15</text>

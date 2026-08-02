@@ -212,6 +212,29 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   a flexión y corte encontró que el post derivaba bien 53,75 cm y acto seguido lo redondeaba a
   54 — **hacia arriba**, el lado inseguro, y justo en el uso a flexión 0,99 que es su número
   insignia. Derivarlo movió cinco números y le devolvió al ejemplo su margen real.
+- **En una región D la frontera no es una barra: es el enrejado, y hay que cerrarlo por
+  estática.** El método puntal-tensor no tiene fórmula para el brazo: el ancho del puntal, la
+  posición de los nodos y con ellos $jd$ y $\theta$ **los elige el proyectista**. Van declarados
+  como hipótesis geométrica —el mismo estatus que el centroide del canal en la viga carrilera—
+  y, ya declarados, la planilla tiene que **comprobar que el enrejado cierra**: $\Sigma F = 0$
+  en cada nodo y el ángulo contra el mínimo del 23.2.7. **Por qué es su propia regla**: el
+  2026-08-01 la planilla de la ménsula encontró que el triángulo publicado **no cierra
+  $\Sigma H = 0$** — con $T = 18{,}04$ tonf el nodo A pide 17,27 y sobran 0,78 (4,3 %). No era un
+  error: es que $N_{uc}$ actúa 5 cm sobre el tirante y la 16.5.3.1 resuelve esa excentricidad
+  metiéndola en $M_u$ en vez de modelarla con un par vertical. El número publicado es el
+  conservador y no se movió; lo que cambió es de dónde dice el post que sale. Un contraste de
+  equilibrio por nodo es barato y es lo único que separa «el modelo da 18,0» de «el código
+  manda 18,0».
+- **En ACI, la trampa de edición no está en todos los coeficientes: hay que abrir cuál.** La
+  regla de la columna métrica no significa que todo número empírico se mueva. El 2026-08-01 la
+  planilla de la ménsula abrió el techo de la 16.5.2.4 rama por rama —(a) $0{,}2f'_c$,
+  (b) $(3{,}3+0{,}08f'_c)$, (c) 11 MPa contra los (480 + 0,08f'c) y 1600 psi de la impresión
+  inch-pound— y la diferencia resultó ser 0,18 % y 0,29 %, con la rama (a) gobernando: por ser
+  **fracción de $f'_c$**, es idéntica en las dos ediciones. Lo mismo los $\beta_s$, $\beta_c$,
+  $\beta_n$ del Cap. 23 y el $0{,}04(f'_c/f_y)$: adimensionales, insensibles. El criterio corto:
+  **el coeficiente que arrastra unidad —el que multiplica $\sqrt{f'_c}$ o suma MPa— es el que
+  hay que ir a buscar; el adimensional no.** Contrastar las ramas igual vale la pena: deja
+  escrito que se miró.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -315,7 +338,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 16 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 17 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
@@ -326,7 +349,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-columna-interaccion-esbeltez` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-losa-punzonamiento-momento` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-mensula-puntal-tensor` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-mensula-puntal-tensor` | 211 | 84 | 59 | 61 | 12 | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-pedestal-anclaje-nch2369` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-viga-flexion-corte` | 137 | 58 | 40 | 46 | 8 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
