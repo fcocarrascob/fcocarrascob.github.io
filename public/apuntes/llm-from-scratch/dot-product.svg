@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 430" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="dp-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="dp-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9333ea"/>
+    </marker>
+  </defs>
+  <rect width="780" height="430" fill="#ffffff"/>
+
+  <!-- ===== IZQUIERDA: la geometría ===== -->
+  <text x="205" y="40" text-anchor="middle" font-size="13" fill="#6b7280">El producto punto mide alineamiento</text>
+  <text x="205" y="72" text-anchor="middle" font-size="16" fill="#1a1a1a" font-family="'JetBrains Mono', ui-monospace, monospace">a · b = |a| |b| cos θ</text>
+  <text x="205" y="104" text-anchor="middle" font-size="11.5" fill="#6b7280">Crece con la longitud de los dos vectores</text>
+  <text x="205" y="121" text-anchor="middle" font-size="11.5" fill="#6b7280">y con lo alineados que estén entre sí.</text>
+
+  <!-- caso 1: alineados -->
+  <g>
+    <path d="M60,235 L121,192" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#dp-a)"/>
+    <path d="M60,235 L134,222" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#dp-b)"/>
+    <path d="M85,224 A28,28 0 0,1 89,231" stroke="#9ca3af" stroke-width="1.2" fill="none"/>
+    <text x="126" y="188" font-size="11" fill="#2563eb">a</text>
+    <text x="140" y="222" font-size="11" fill="#9333ea">b</text>
+    <text x="97" y="220" font-size="10" fill="#9ca3af">θ</text>
+    <text x="100" y="266" text-anchor="middle" font-size="11.5" fill="#374151">θ pequeño</text>
+    <text x="100" y="283" text-anchor="middle" font-size="12" fill="#16a34a" font-weight="600">a · b grande</text>
+  </g>
+
+  <!-- caso 2: ortogonales -->
+  <g>
+    <path d="M195,235 L195,168" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#dp-a)"/>
+    <path d="M195,235 L266,235" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#dp-b)"/>
+    <path d="M195,218 L212,218 L212,235" stroke="#9ca3af" stroke-width="1.2" fill="none"/>
+    <text x="200" y="164" font-size="11" fill="#2563eb">a</text>
+    <text x="271" y="239" font-size="11" fill="#9333ea">b</text>
+    <text x="222" y="266" text-anchor="middle" font-size="11.5" fill="#374151">θ = 90°</text>
+    <text x="222" y="283" text-anchor="middle" font-size="12" fill="#6b7280" font-weight="600">a · b = 0</text>
+  </g>
+
+  <!-- caso 3: opuestos -->
+  <g>
+    <path d="M330,235 L288,208" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#dp-a)"/>
+    <path d="M330,235 L398,235" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#dp-b)"/>
+    <path d="M356,235 A26,26 0 0,0 312,217" stroke="#9ca3af" stroke-width="1.2" fill="none"/>
+    <text x="279" y="204" font-size="11" fill="#2563eb">a</text>
+    <text x="403" y="239" font-size="11" fill="#9333ea">b</text>
+    <text x="351" y="222" font-size="10" fill="#9ca3af">θ</text>
+    <text x="345" y="266" text-anchor="middle" font-size="11.5" fill="#374151">θ &gt; 90°</text>
+    <text x="345" y="283" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="600">a · b negativo</text>
+  </g>
+
+  <!-- separador vertical -->
+  <line x1="432" y1="30" x2="432" y2="300" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- ===== DERECHA: los números reales ===== -->
+  <text x="606" y="40" text-anchor="middle" font-size="13" fill="#6b7280">Los seis scores del query <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#1e3a8a">journey</tspan></text>
+
+  <g font-size="11" fill="#6b7280" font-family="'JetBrains Mono', ui-monospace, monospace">
+    <text x="480" y="70" text-anchor="start">token</text>
+    <text x="632" y="70" text-anchor="end">ω₂ⱼ</text>
+    <text x="732" y="70" text-anchor="end">ángulo</text>
+  </g>
+  <line x1="470" y1="78" x2="740" y2="78" stroke="#d1d5db" stroke-width="1"/>
+
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11.5">
+    <text x="480" y="100" fill="#374151">Your</text>
+    <text x="632" y="100" text-anchor="end" fill="#374151">0.9544</text>
+    <text x="732" y="100" text-anchor="end" fill="#9ca3af">38.7°</text>
+
+    <rect x="470" y="108" width="270" height="22" fill="#dbeafe"/>
+    <text x="480" y="124" fill="#1e3a8a" font-weight="600">journey</text>
+    <text x="632" y="124" text-anchor="end" fill="#1e3a8a" font-weight="600">1.4950</text>
+    <text x="732" y="124" text-anchor="end" fill="#1e3a8a">0.0°</text>
+
+    <rect x="470" y="132" width="270" height="22" fill="#eff6ff"/>
+    <text x="480" y="148" fill="#1e3a8a">starts</text>
+    <text x="632" y="148" text-anchor="end" fill="#1e3a8a">1.4754</text>
+    <text x="732" y="148" text-anchor="end" fill="#1e3a8a">1.5°</text>
+
+    <text x="480" y="172" fill="#374151">with</text>
+    <text x="632" y="172" text-anchor="end" fill="#374151">0.8434</text>
+    <text x="732" y="172" text-anchor="end" fill="#9ca3af">11.0°</text>
+
+    <rect x="470" y="180" width="270" height="22" fill="#fef2f2"/>
+    <text x="480" y="196" fill="#374151">one</text>
+    <text x="632" y="196" text-anchor="end" fill="#b91c1c">0.7070</text>
+    <text x="732" y="196" text-anchor="end" fill="#b91c1c">44.9°</text>
+
+    <text x="480" y="220" fill="#374151">step</text>
+    <text x="632" y="220" text-anchor="end" fill="#374151">1.0865</text>
+    <text x="732" y="220" text-anchor="end" fill="#9ca3af">23.9°</text>
+  </g>
+
+  <text x="470" y="252" font-size="11.5" fill="#6b7280">Casi el mismo vector que <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#1e3a8a">starts</tspan> (1.5°): score alto.</text>
+  <text x="470" y="270" font-size="11.5" fill="#6b7280"><tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#b91c1c">one</tspan> apunta a otro lado (44.9°): score bajo.</text>
+
+  <!-- caption -->
+  <line x1="40" y1="322" x2="740" y2="322" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="390" y="352" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Todo el mecanismo de atención cuelga de una sola operación.</text>
+  <text x="390" y="376" text-anchor="middle" font-size="12.5" fill="#6b7280">El score entre dos tokens es el producto punto de sus vectores: crece con la <tspan font-weight="600">longitud</tspan> de cada uno</text>
+  <text x="390" y="394" text-anchor="middle" font-size="12.5" fill="#6b7280">y con lo <tspan font-weight="600">alineados</tspan> que estén. Sin pesos entrenables, «relevancia» significa literalmente «parecido geométrico».</text>
+</svg>
