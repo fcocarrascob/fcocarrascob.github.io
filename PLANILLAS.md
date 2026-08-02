@@ -97,6 +97,20 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   quedaba sin alinear. Por eso el fix no es solo cambiar el número — es dejar escrita la
   procedencia junto a él («Tabla J3.2: 54 ksi = 370 MPa, la columna métrica»), que es lo que
   impide que la próxima vuelta lo reintroduzca.
+  **En ACI la trampa no es una columna: es una edición entera.** ACI 318 se publica dos veces
+  —inch-pound y SI— y sus coeficientes empíricos **no son conversiones exactas uno del otro**:
+  ACI redondea el $2\sqrt{f'_c}$ (psi) del corte a $0{,}17\lambda\sqrt{f'_c}$ (MPa), que en
+  kgf/cm² son $0{,}53$ y $0{,}543$. La práctica chilena trabaja en kgf/cm² con la familia
+  inch-pound entera (0,53 · 0,8 · 14 · 2,1 · 1,06), así que un post puede citar una tabla de
+  la edición SI y calcular con el coeficiente de la otra sin que nada chirríe. El 2026-08-01
+  la planilla de la viga a flexión y corte encontró exactamente eso, con una `Note` que además
+  afirmaba que «es la misma ecuación; solo cambió el sistema de unidades». **El PDF en disco es
+  la edición SI, y ésa es la columna métrica**: se adoptaron 0,543 · 2,108 · 1,054 · 0,265 ·
+  3,57, se movieron diez números publicados un 2 % (ninguna conclusión cambió) y la `Note` pasó
+  a ser una tabla de dos columnas con la cita de cada una. La defensa permanente es un contraste
+  por coeficiente contra el factor exacto $\sqrt{1\,\text{MPa}/1\,\text{kgf/cm}^2} = 3{,}1933$,
+  que es lo que impide que la familia vieja vuelva a entrar en las nueve planillas de hormigón
+  que faltan.
 - **Contrastes**: un booleano por cada número publicado en las tablas del post (más los
   intermedios clave publicados en prosa), con id `c_*`, al final de la hoja bajo el
   encabezado «CONTRASTE CON EL POST». Se omiten los redundantes (un uso que es cociente
@@ -187,6 +201,17 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   la fatiga **deja de tomar el control** en servicio severo. Ningún recálculo interno lo
   habría encontrado — el post cuadraba consigo mismo a partir de un par que nadie podía
   reconstruir.
+- **En hormigón la frontera se corre: casi todo es derivable, y el que manda es $d$.** El
+  equivalente de «las cuatro planchas» acá es la **disposición de barras**. En acero $A_g$, $I$
+  y $Z$ entran como fila de catálogo declarada; en hormigón no hay fila que declarar: $A_s$ sale
+  de $n\cdot A_{barra}$, la altura útil de $h - \text{rec} - d_e - d_b/2$ y el $b_w d$ es
+  geometría. Lo único que queda como frontera es el **área nominal de la barra** y el par
+  **$f'_c$ / $f_y$**. Por eso $d$ **se deriva, nunca se declara**: es la variable de la que
+  cuelgan $\phi M_n$, $V_c$, $s_{\max}$ y $A_{s,\min}$ a la vez, y un $d$ mal armado no lo caza
+  ningún recálculo interno. **Por qué es su propia regla**: el 2026-08-01 la planilla de la viga
+  a flexión y corte encontró que el post derivaba bien 53,75 cm y acto seguido lo redondeaba a
+  54 — **hacia arriba**, el lado inseguro, y justo en el uso a flexión 0,99 que es su número
+  insignia. Derivarlo movió cinco números y le devolvió al ejemplo su margen real.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -290,7 +315,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 15 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 16 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
@@ -304,7 +329,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-mensula-puntal-tensor` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-pedestal-anclaje-nch2369` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-viga-flexion-corte` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-viga-flexion-corte` | 137 | 58 | 40 | 46 | 8 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
 | `ejemplo-zapata-aislada` |  |  |  |  |  |  |  | ⬜ |
 
