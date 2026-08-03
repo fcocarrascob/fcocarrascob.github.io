@@ -169,6 +169,31 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   corrimiento por todo el post: acá dejó los cinco números publicados intactos. Cuál de
   las dos puntas se mueve —el dato o los resultados— es decisión del autor, no de la
   planilla; lo que la planilla aporta es el número que muestra que hay que elegir.
+- **En un barrido, lo que el proyectista elegiría se elige en CADA fila.** Un barrido no es la
+  misma losa con otro número: es una losa distinta por fila, y las decisiones que cuelgan del
+  parámetro barrido —la malla, el diámetro, el número de barras— hay que rehacerlas ahí adentro.
+  Fijar una y barrer el resto mete un error que **no aparece en la fila del caso adoptado**, que
+  es la única que uno revisa, sino en los extremos, que son justo los que sostienen la forma de
+  la curva. El 2026-08-02 la planilla de la losa unidireccional encontró que el barrido de
+  espesores elegía la malla por $A_{s,min}$ y no por el mayor entre el mínimo y la flexión: de
+  18 cm para arriba manda el mínimo y da igual, pero en $h = 150$ la propia fila publica
+  «gobierna flexión, 343 mm²/m» y calculaba el $I_e$ con 286. La flecha pasó de 41,95 a **35,51**
+  mm y el uso de 4,47 a 3,79 — en el tramo empinado de la curva, que es el que decide si uno
+  sigue tanteando. El mismo error salía por otras dos bocas: un punto de la figura y un «reprueba
+  por 2,5 a **3,7** veces» que era 3,1. En la hoja se traduce en que el barrido llame a la misma
+  función de detallamiento que el caso principal, y en publicar la columna elegida.
+- **El modelo de servicio y el de resistencia tienen que ser el mismo elemento.** Es fácil que no
+  lo sean, porque vienen de capítulos distintos y nadie los pone uno al lado del otro: los
+  coeficientes tabulados de resistencia traen una condición de apoyo incorporada, y el análisis
+  elástico que uno escribe para servicio trae la que uno eligió. El 2026-08-02 la planilla de la
+  losa unidireccional encontró que el post tomaba de la Tabla 6.5.2 la fila «extremo discontinuo
+  **integral con el apoyo**» ($w_u\ell_n^2/14$) y armaba la viga de borde por $w_u\ell_n^2/24$
+  —o sea, extremo restringido— y resolvía la flecha con ese mismo extremo **rotulado**. La
+  diferencia valía **dos centímetros de losa**: el $M^+ = 1/14$ corresponde a $K \approx 0{,}847\,
+  EI/\ell$, y con ese resorte el espesor que cumple baja de 21 a 19 cm. El síntoma es de forma:
+  **un apoyo que aparece con momento en una tabla y sin momento en la otra**. Ponerle al marco de
+  la hoja un resorte parametrizado cuesta un término en la diagonal y convierte la pregunta en
+  una tabla de tres filas; cuál se adopta es del autor, pero deja de ser implícito.
 - **Un coeficiente que depende de la configuración se deriva, no se cita.** En los
   ejemplos de miembros hay factores tabulados por caso —el $C_b$ de la Ec. F1-1, un
   $K$, un $C_m$— que es tentador declarar como dato. Si el post **compara dos
@@ -383,6 +408,20 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     así que un uso de 1,0002 sale «1» y un margen del 0,02 % desaparece. Si el
     punto del rótulo es la diferencia, se rotula la diferencia: `{{(1-u)*100}}`
     en vez de `{{u}}`. Lo que se corrige va al SVG y se vuelve a renderizar.
+  - **El ancho de la región no puede pasar de 680 px, que es el área imprimible de la A4.**
+    No es estética: `.wp-fig svg { max-width: 100% }` hace que Chromium **encoja el documento
+    entero** para que el esquema quepa, y con él encoge cada línea de texto de la hoja. El
+    2026-08-02 la losa unidireccional anunciaba 18 páginas y el PDF traía 16, con las dos
+    planillas de control cuadrando, ningún texto por encima de 88 caracteres y ningún bloque
+    más alto que la página — o sea, ninguno de los tres diagnósticos conocidos daba. El
+    esquema medía 760 px: el `h1` de 15 pt salía impreso a **13,44** (× 0,896 = 680,3/760) y
+    cada página aguantaba un 11 % más de lo que el modelo supone. A 660 px quedó en 17 = 17
+    **sin ningún salto forzado**. El síntoma que lo delata es un desfase que oscila entre 1 y 2
+    páginas con **todas las páginas del modelo llenas al 99 %**: si no hay hueco desperdiciado,
+    el modelo no está partiendo de más — está midiendo un documento que se imprime más chico.
+    Se comprueba en dos líneas leyendo el `size` de un span del PDF y comparándolo con el pt del
+    CSS. `anclajes-pedestal` y `mensula-puntal-tensor` siguen en 720 px y cuadran, pero por
+    suerte: su documento es corto y el 5,6 % de holgura no alcanza a cruzar un corte.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
 - **Una región `math` es un paso, no una fórmula anidada.** Es tentador cerrar un estado
@@ -508,7 +547,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-anclajes-pedestal` | 130 | 81 | 64 | 49 | 9 (1⇱) | 8 aplicados 2026-08-01 (el 🟠 raíz: no se aplicaba 17.6.2.1.2 —tres bordes a 25 cm < 1,5h_ef = 60 obligan a leer los 40 cm de embebido como 16,67—, que sube el breakout un 10,5 % y mueve la interacción 0,76 → 0,71 y la tesis de cierre. Más el A_brg de tuerca hex NORMAL en un post que declara PESADA, y el exponente de la Ec. 17.8.4, que es 2 y no 5/3) | 2026-08-01 | ✅ |
 | `ejemplo-columna-interaccion-esbeltez` | 119 | 41 | 21 | 144 | 9 (2⇱) | 7 aplicados 2026-08-02 (el 🟠: la curva de diseño se armaba solo con la Tabla 21.2.2 y falta la **21.2.2.3**, que la acota interpolando en P_n entre 0,90 en 0,1f'cA_g y φ_cc en P_n,bal — en C2 baja φ de 0,90 a **0,874**, φM_n de 41,4 a 40,1 y el uso de 0,68 a **0,70**. Más el d redondeado de 43,75 a 44 hacia arriba, el E_s de 2,1e6 en vez del de 20.2.2.2, el balanceado que no reproducía ninguna hipótesis, las trabas de 25.7.2.3(b) de las que cuelga el 0,80P_o, y el «uso máximo 0,68» que contradecía a su propia tabla) | 2026-08-02 | ✅ |
 | `ejemplo-losa-punzonamiento-momento` | 195 | 145 | 118 | 43 | 14 | 6 aplicados 2026-08-02 (los tres numéricos eran **un φ perdido al leer el PDF por texto**: el techo de la Tabla 8.4.2.2.4 es 0,4φv_c → 5,00 y la razón 1,97; el gatillo de 8.6.1.2 → 6,44; y el 🟠 de **18.14.5.1, que divide por φv_c** — el umbral de (a) es negativo y la ventana la fija solo el 0,50 % de 18.14.5.2(a); el §10 se reescribió. Más el 2,50 → 2,51 que cierra el #6 de 2026-07-29. La hoja resuelve el marco por rigidez directa con `lusolve`: primera planilla con el análisis estructural adentro, amarrado a los contrafácticos 1,26 y 9,74) | 2026-08-02 | ✅ |
-| `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-losa-unidireccional` | 241 | 228 | 188 | 74 | 17 | 7 aplicados 2026-08-02 (el 🟠: el post modela el apoyo exterior **rotulado** para servicio y **restringido** para resistencia —la Tabla 6.5.2 le da w·ℓn²/14 y arma la viga de borde por w·ℓn²/24—; ese M⁺ pide K ≈ 0,847 EI/ℓ y bajaría el espesor de 21 a **19 cm**. Se mantiene el rotulado por conservador y se declara: es el supuesto de mayor peso, por encima de la luz y de la ruta de I_e. Más el 0,0069 de flecha usado como operando cuando el exacto por rigidez directa es **0,006884** —30 números un 0,23 %, y el insignia 2,57 → **2,56**—, y el barrido armado con la malla del mínimo cuando bajo 17 cm manda la flexión: la fila h = 150 pasaba de 41,95 a **35,51** mm) | 2026-08-02 | ✅ |
 | `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-muro-flexocompresion` | 282 | 186 | 116 | 201 | 19 (2⇱) | 9 aplicados 2026-08-02 (el 🟠: falta la **21.2.2.3** otra vez, y acá el umbral 0,1f'cA_g = 450 tonf cae JUSTO entre las dos combinaciones —A con P_n = 616 encima, B con 432 dieciocho tonf debajo—, así que muerde sólo en A: φ 0,90 → **0,873** y el uso 0,86 → **0,89**, sin dar vuelta cuál gobierna. Más el E_s de 2,0e6 no declarado, que corría las cinco c un 0,3 %; cuatro coeficientes exhibiendo el operando SI y calculando con el de kgf/cm²; y el «+2 %» que era de M_n y en capacidad de diseño es **+3,4 %**, porque al engrosar el φ también se recupera) | 2026-08-02 | ✅ |
 | `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 105 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |

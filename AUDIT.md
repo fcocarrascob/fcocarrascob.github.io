@@ -710,6 +710,54 @@ planilla y dos SVG generados — la cadena completa, no solo el MDX.
 _Más reciente arriba. Cada auditoría se apila; no se reemplazan las anteriores — el
 historial es el punto._
 
+### 2026-08-02 · `hormigon/ejemplo-losa-unidireccional` (planilla) · ⚠️ 7 (0🔴 · 1🟠 · 4🟡 · 2🔵) — **los 7 aplicados**
+
+**Commit:** working tree · **Planilla:** `public/planillas/losa-unidireccional.json` (241 pasos ·
+228 verificaciones · 188 contrastes · 74 tokens de esquema · 17 págs. sin salto forzado) ·
+**Recalculado:** sí, cadena independiente desde el PDF de ACI 318-25 SI
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🟠 | R/N | §6 y §7 | **El post usa dos modelos distintos del mismo apoyo exterior.** Para resistencia toma de la Tabla 6.5.2 la fila «extremo discontinuo **integral con el apoyo**» ($w_u\ell_n^2/14$) y arma la cara interior de la viga de borde por $w_u\ell_n^2/24$; para servicio resuelve la viga continua con ese extremo **rotulado**. El $M^+ = 1/14$ corresponde a $K \approx 0{,}847\,EI/\ell$, y con ese resorte el coeficiente de flecha cae de $0{,}006884$ a $0{,}006006$ (−13 %): el espesor que cumple por los dos caminos baja de **21 a 19 cm**. Es el supuesto de mayor peso del ejemplo y no estaba declarado — §7 atribuía el primer puesto a la luz declarada (1 cm) y a la ruta de $I_e$ (1 cm) | Se mantiene el rotulado, que es el conservador (la rigidez torsional de una viga de borde es chica y se fisura en servicio). Se declara en el supuesto 5, se agrega a §7 la tabla de tres modelos con su coeficiente y su espesor, y la tesis de cierre pasa a nombrar **tres** lecturas. Ningún número publicado se mueve por esto | ✅ aplicado — decisión del autor |
+| 2 | 🟡 | N | §6, §7 y las dos figuras | El $\Delta_{max} = 0{,}0069\,w\ell_n^4/EI$ que el post llama «solución elástica exacta» es el valor **tabulado**: el exacto por rigidez directa + doble integración es $0{,}006884$ en $x = 0{,}446\ell_n$ (los otros dos, 0,080 y 0,100, sí son exactos). Usarlo como operando deja toda la cadena 0,23 % alta, fuera de la tolerancia de media unidad en ~30 números | Adoptar 0,006884 y mover: 24,08 → **24,03** · 2,57 → **2,56** · 13,49 → 13,45 · 10,60 → 10,57 · 21,19 → 21,14 · 2,89 → 2,88 · 13,10 → 13,07 · 4,60 → 4,58 · 3,85 → 3,84 · 4,33 → 4,32 · 6,27 → 6,25 · el 0,82 del barrido → **0,81** · y las columnas de flecha de las cuatro tablas de sensibilidad | ✅ aplicado |
+| 3 | 🟡 | N/R | §7, tabla del barrido y `losa-unidireccional-flecha.svg` | **El barrido elige la malla por $A_{s,min}$ y no por la flexión**, y por debajo de 17 cm la flexión pide más. En $h = 150$ la fila publica «gobierna flexión, $A_s$ req. 343 mm²/m» y calcula el $I_e$ con φ10@275 = 286 (−17 %). Un mismo error, tres síntomas: la fila $h = 150$ ($I_e/I_g$ 14,9 → **17,6 %**, flecha 41,95 → **35,51**, uso 4,47 → **3,79**), el punto $h = 160$ de la curva (30,79 → 28,23) y el «2,5 a **3,7** veces» de §7, cuyo 3,7 sale de $h = 170$ con $\ell = 4{,}80$ m armado con @250 cuando la flexión pide 354 | Armar cada fila con la malla que cubre a la vez el mínimo y su propia flexión; agregar la columna «Malla» a la tabla y decir por qué está; «2,5 a **3,1** veces»; regenerar la curva | ✅ aplicado |
+| 4 | 🟡 | N | Resumen | El uso de la fila «Flexión, 1.er apoyo interior» es cociente de dos redondeados: $375/393 = 0{,}954$, pero $375{,}28/392{,}70 = 0{,}9556 \to$ **0,96**. Reabre el #4 de la auditoría del 2026-07-29, que lo cambió de 0,96 a 0,95 por parecer copiado de la fila siguiente: **las dos valen 0,96** y difieren recién en el tercer dígito (0,9556 vs 0,9626) | Publicar 0,96 y exhibir los operandos sin redondear (375,3 / 392,7), que es lo que hace reconstruible el cociente | ✅ aplicado |
+| 5 | 🟡 | F/U | ambas figuras del post | Subíndices Unicode mal elegidos, heredados por el esquema paramétrico: `&#8342;` es **ₖ** y no ᵤ, así que `w_u·ℓn²/14` se imprimía «wₖlₙ²/14» en las 5 secciones críticas; `&#8341;` no está asignado y `I_e/I_g` salía con un **tofu**; `&#8331;` es el ₋ subíndice donde iba el ⁻ superíndice. Además el punto de la sección $w_u\ell_n^2/24$ estaba 34 px a la derecha del apoyo exterior donde vive | Subíndices en ASCII plano (`M_u`, `A_s`, `I_e`, `I_g`) en las dos figuras y en el esquema; mover el punto a x = 83 | ✅ aplicado |
+| 6 | 🔵 | L | §4 y Resumen | «el 0,005 que la Sec. 7.3.3.1 exige vía la Tabla 21.2.2»: la Tabla 21.2.2 pide $\varepsilon_{ty} + 0{,}003$, y con el exacto $f_y/E_s = 0{,}0021$ daría 0,0051. El 0,005 es correcto pero por la **21.2.2.1**, que permite tomar $\varepsilon_{ty} = 0{,}002$ en Grado 420 — sin esa cita se lee como el límite pre-2019, que R21.2.2 dice que era exactamente 0,005 | Citar «7.3.3.1 / 21.2.2.1» y escribir el límite como suma | ✅ aplicado |
+| 7 | 🔵 | R | `Note` de supuestos | La nota [3] de la Tabla 24.2.2 permite descontar la flecha ocurrida **antes** de montar la tabiquería; el post no la toma (conservador) y no lo declaraba, siendo el margen más grande que el ejemplo deja sobre la mesa | Supuesto declarado n.º 6 | ✅ aplicado |
+
+**Verificado y correcto** (reproducción independiente, sin reusar el script del post): los tres
+coeficientes elásticos por rigidez directa; las diez $M_u$ y las diez $A_s$ de las dos losas; el
+corte completo con el piso y el techo de 22.5.5.1.1; toda la cadena de deflexión por las dos rutas;
+**las siete filas del barrido de espesores, los once puntos de la curva del SVG, las cuatro filas de
+la tabla de luces, las dieciséis celdas de la tabla 2×2, las tres de $\rho'$ y las cuatro de la
+fracción sostenida**; el cruce en $h = 215$; la errata del $f_r$ (19.2.3.1 **imprime**
+`0,062λ√f'c` — confirmado en la página rasterizada) y su consecuencia (1,49 kN·m/m, 43 mm).
+**Cláusulas contrastadas contra el PDF de ACI 318-25 SI, con zoom rasterizado a 300 dpi donde hay
+φ o coeficiente compuesto**: 6.5.1(a)-(e), Tabla 6.5.2 con su nota [1], 6.5.3, Tabla 6.5.4,
+7.3.1.1 y 7.3.1.1.1, 7.3.2.1, 7.3.3.1, 7.4.3.2, 7.6.1.1, R7.6.1.1, 7.7.2.2, 7.7.2.3 (el $3h$ es
+solo para tendones **no adheridos**: la tesis del post se sostiene), 19.2.2.1, 19.2.3.1, 20.2.2.2,
+Tabla 20.5.1.3.1 (19 mm también en la edición SI), Tabla 21.2.1, Tabla 21.2.2 con 21.2.2.1 y
+21.2.2.3, 22.2.2.1 y Tabla 22.2.2.4.3, Tabla 22.5.5.1 con 22.5.5.1.1 y 22.5.5.1.3, Tabla 24.2.2
+con sus cinco notas, Tabla 24.2.3.5, 24.2.3.6 (promedio simple, sin ponderar), 24.2.3.7,
+24.2.4.1.1 y Tabla 24.2.4.1.3, 24.3.2 y 24.3.2.1, 24.4.3.2 y 24.4.3.3. **Ningún φ perdido**:
+ninguna de las tablas que este post usa lo lleva dentro de un cociente.
+
+**Hallazgo de herramienta (no del post).** El primer PDF salió con 18 páginas anunciadas contra 16
+reales, y el diagnóstico habitual no daba: las dos planillas de control cuadraban, ningún texto
+pasaba de 88 caracteres y ningún bloque superaba la página. La causa era el **esquema, de 760 px de
+ancho contra los 680,3 px del área imprimible de la A4**: Chromium encoge el documento entero para
+que quepa —el `h1` de 15 pt salía impreso a 13,44, o sea × 0,896 = 680,3/760— y con eso cada página
+aguantaba un 11 % más de lo que el modelo supone. Achicar el esquema a 660 px lo dejó en 17 = 17
+sin ningún salto forzado. `anclajes-pedestal` y `mensula-puntal-tensor` (720 px) siguen cuadrando,
+pero es suerte: su documento es corto y el 5,6 % de holgura no llega a cruzar un corte.
+
+**No verificable:** la sobrecarga de 250 kgf/m² atribuida a NCh1537.Of2009 (la norma no está en
+disco), las cargas de proyecto y la fracción sostenida del 25 %, y la atribución a **ACI PRC-435**
+de mantener el mismo $I_e$ para todos los niveles de carga.
+
+---
+
 ### 2026-07-29 · `hormigon/ejemplo-losa-unidireccional` · ⚠️ 20 (1🔴 · 5🟠 · 10🟡 · 4🔵) — **19 aplicados**, queda 1🔵 de alcance de repo
 
 **Commit:** `93dac8a` (post nuevo, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -3036,7 +3084,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
-| `ejemplo-losa-unidireccional` | 2026-07-29 | ⚠️ | 1 abierto (0🔴 0🟠 · 0🟡 1🔵, convención decimal del repo) · 19 aplicados (1🔴 5🟠 10🟡 3🔵) |
+| `ejemplo-losa-unidireccional` | 2026-08-02 (planilla) | ⚠️ | planilla: 7 hallazgos, los 7 aplicados · queda 1 abierto de 2026-07-29 (0🔴 0🟠 · 0🟡 1🔵, convención decimal del repo) · 19 aplicados entonces |
 | `ejemplo-losa-punzonamiento-momento` | 2026-08-02 (planilla) | ⚠️ | 16 abiertos (0🔴 0🟠 · 12🟡 4🔵) · 11 aplicados |
 | `ejemplo-pedestal-anclaje-nch2369` | 2026-08-02 (planilla) | ⚠️ | 2 abiertos (0🔴 0🟠 · 2🟡, de 2026-07-27) · 14 aplicados 2026-08-02 + 15 en `4b0bb1c` |
 | `ejemplo-muro-flexocompresion` | 2026-08-02 | ⚠️ | planilla: 9 hallazgos, los 9 aplicados · quedan 10 abiertos de 2026-07-26 (0🔴 0🟠 · 6🟡 4🔵); la planilla cerró los #10, #11, #12, #15, #17 y #23 |
