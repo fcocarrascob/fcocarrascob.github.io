@@ -32,6 +32,7 @@
 
 import { build } from 'esbuild';
 import { readFile, readdir, rm, stat } from 'node:fs/promises';
+import { existsSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -104,6 +105,46 @@ function valorDeTex(tex, src) {
 
 const { evaluateSheet, parseMathRegion, renderEsquema, ESQUEMAS_PREFIX } = await loadEngine();
 
+/** Secciones de contenido donde puede vivir el ejemplo de una planilla. */
+const SECCIONES = ['acero', 'hormigon', 'geotecnia'];
+
+/**
+ * El post de un ejemplo, por la misma convención de nombre que usa el enlace
+ * automático del layout (`src/lib/planillas.ts`): `ejemplo-<slug>.mdx`.
+ */
+function postDePlanilla(planillaPath) {
+  const slug = path.basename(planillaPath, '.json');
+  for (const sec of SECCIONES) {
+    const p = path.join(ROOT, 'src', 'content', sec, `ejemplo-${slug}.mdx`);
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
+
+/**
+ * Comprueba que el «N pasos, M verificaciones y K contrastes» que el post
+ * publica sea el que la planilla tiene. Devuelve [] si cuadra o si el post no
+ * declara conteos (no es obligatorio declararlos; sí lo es que no mientan).
+ */
+function comprobarConteosDelPost(planillaPath, real) {
+  const post = postDePlanilla(planillaPath);
+  if (!post) return [];
+  const texto = readFileSync(post, 'utf8');
+  const m = texto.match(
+    /(?:los\s+)?(\d+)\s+pasos,\s*(?:las\s+)?(\d+)\s+verificaciones[^.]*?(\d+)\s+contrastes/s,
+  );
+  if (!m) return [];
+  const [, pasos, verif, contr] = m.map(Number);
+  if (pasos === real.n && verif === real.verdictos && contr === real.contrastes) return [];
+  return [
+    {
+      post: path.relative(ROOT, post),
+      publicado: `${pasos} pasos, ${verif} verificaciones, ${contr} contrastes`,
+      real: `${real.n} / ${real.verdictos} / ${real.contrastes}`,
+    },
+  ];
+}
+
 /** Verifica una planilla; devuelve true si está limpia. */
 async function verificar(planillaPath) {
 const planilla = JSON.parse(await readFile(planillaPath, 'utf8'));
@@ -174,15 +215,31 @@ for (const r of ordenadas) {
 
 // --- Reporte a consola -------------------------------------------------------
 
+// Los contrastes son las verificaciones con id `c_*`: las que comparan contra un
+// número que el post publica. El resto son chequeos internos de la hoja (rangos
+// de tabla, equilibrios, la colocación de una curva) y no cuentan como contraste.
+const contrastes = verdictos.filter((v) => v.id.startsWith('c_')).length;
+
 const titulo = meta.titulo ?? path.basename(planillaPath);
 console.log(`\nPlanilla: ${titulo}`);
 console.log(`Archivo:  ${path.relative(process.cwd(), planillaPath)}`);
 console.log(
   `Regiones: ${regions.length}  ·  pasos: ${n}  ·  verificaciones: ${verdictos.length}` +
+    `  ·  contrastes: ${contrastes}` +
     (figuras ? `  ·  figuras: ${figuras}` : '') +
     (tokensEsquema ? `  ·  tokens de esquema: ${tokensEsquema}` : '') +
     '\n',
 );
+
+// El post publica esos tres números en su sección «La planilla», y se desalinean
+// solos: una planilla gana verificaciones en la auditoría siguiente y la prosa se
+// queda con el número viejo. El 2026-08-02 pasaba en 10 de las 21. Acá se
+// comprueban, que es más barato que volver a contarlos a mano.
+const desalineados = comprobarConteosDelPost(planillaPath, { n, verdictos: verdictos.length, contrastes });
+for (const d of desalineados) {
+  console.log(`  [ERROR] ${d.post}`);
+  console.log(`          publica «${d.publicado}» y la planilla tiene ${d.real}`);
+}
 
 for (const e of errores) {
   console.log(`  [ERROR] ${e.src}`);
@@ -249,11 +306,14 @@ for (const v of obsoletos) {
   console.log(`  [AVISO] "${v.id}" está en meta.esperadoFalso pero ahora pasa: bórralo.`);
 }
 
-const falla = errores.length > 0 || inesperados.length > 0 || obsoletos.length > 0;
+const falla =
+  errores.length > 0 || inesperados.length > 0 || obsoletos.length > 0 || desalineados.length > 0;
 console.log(
   `\n${falla ? 'FALLA' : 'OK'}: ${errores.length} errores · ` +
     `${inesperados.length} verificaciones no pasan sin declarar · ` +
-    `${obsoletos.length} excepciones obsoletas\n`,
+    `${obsoletos.length} excepciones obsoletas` +
+    (desalineados.length ? ` · ${desalineados.length} conteos desalineados con el post` : '') +
+    '\n',
 );
 return !falla;
 }

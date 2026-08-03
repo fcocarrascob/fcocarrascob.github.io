@@ -245,6 +245,26 @@ alcance el empalme del **ala comprimida** en su detalle de contacto, que en un e
 se diseña igual que el traccionado.
 </Note>
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 125 pasos, 92 verificaciones y 61
+contrastes contra los números publicados acá. Dos cosas que la hoja no toma prestadas del
+post: el **reparto por rigidez**, que deriva de la geometría ($I_{alas}/I = 26\,972/33\,300 =
+0{,}81$, y de ahí el momento que le queda al alma), y el $F_{nv}$ de la **columna métrica** de
+la Tabla J3.2 — 370 MPa, no los 372 de convertir las 54 ksi, que es el hallazgo que movió las
+86,5 tonf a 86,1. Las tres salidas de la comparación final se calculan cada una desde los
+datos, nunca escalando el número redondeado de la vecina. Y el ✗ de los 6 pernos Clase A está
+declarado a propósito: es la tesis del ejemplo, y va acompañado de la comprobación de que
+**sí resisten** la rotura.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=empalme-apernado-viga)** ·
+[descargar el JSON](/planillas/empalme-apernado-viga.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/empalme-apernado-viga.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022. Secciones J3.7 (corte de pernos), J3.9
 (conexiones de deslizamiento crítico, Ec. J3-4 y Tabla J3.1M de pretensiones), J4 (elementos de

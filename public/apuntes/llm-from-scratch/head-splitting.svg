@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" font-family="'Segoe UI', system-ui, Arial, sans-serif">
+  <defs>
+    <marker id="hs-ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+    <marker id="hs-arb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect width="780" height="480" fill="#ffffff"/>
+
+  <!-- ================= ① WRAPPER ================= -->
+  <text x="40" y="42" font-size="13" fill="#6b7280">① <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#374151">MultiHeadAttentionWrapper</tspan> — una matriz por cabeza, dos multiplicaciones</text>
+
+  <rect x="48" y="76" width="54" height="66" rx="3" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="75" y="114" text-anchor="middle" font-size="14" fill="#374151" font-weight="600">X</text>
+  <text x="75" y="158" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="'JetBrains Mono', ui-monospace, monospace">6×3</text>
+
+  <g stroke="#9ca3af" stroke-width="1.4" fill="none">
+    <path d="M104,100 C126,100 126,88 144,88" marker-end="url(#hs-ar)"/>
+    <path d="M104,120 C126,120 126,152 144,152" marker-end="url(#hs-ar)"/>
+    <path d="M198,88 L242,88" marker-end="url(#hs-ar)"/>
+    <path d="M198,152 L242,152" marker-end="url(#hs-ar)"/>
+    <path d="M284,88 C314,88 320,100 342,100" marker-end="url(#hs-ar)"/>
+    <path d="M284,152 C314,152 320,130 342,130" marker-end="url(#hs-ar)"/>
+  </g>
+
+  <rect x="150" y="72" width="48" height="32" rx="3" fill="#ede9fe" stroke="#c4b5fd"/>
+  <text x="174" y="88" text-anchor="middle" font-size="11.5" fill="#5b21b6" font-weight="600">Wq₁</text>
+  <text x="174" y="99" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="'JetBrains Mono', ui-monospace, monospace">3×2</text>
+
+  <rect x="150" y="136" width="48" height="32" rx="3" fill="#ede9fe" stroke="#c4b5fd"/>
+  <text x="174" y="152" text-anchor="middle" font-size="11.5" fill="#5b21b6" font-weight="600">Wq₂</text>
+  <text x="174" y="163" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="'JetBrains Mono', ui-monospace, monospace">3×2</text>
+
+  <rect x="248" y="62" width="34" height="52" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="265" y="86" text-anchor="middle" font-size="12" fill="#1e3a8a" font-weight="600">Q₁</text>
+  <text x="265" y="99" text-anchor="middle" font-size="9" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×2</text>
+
+  <rect x="248" y="126" width="34" height="52" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="265" y="150" text-anchor="middle" font-size="12" fill="#1e3a8a" font-weight="600">Q₂</text>
+  <text x="265" y="163" text-anchor="middle" font-size="9" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×2</text>
+
+  <text x="313" y="180" text-anchor="middle" font-size="10.5" fill="#6b7280">concat</text>
+
+  <rect x="348" y="82" width="52" height="66" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="374" y="118" text-anchor="middle" font-size="14" fill="#1e3a8a" font-weight="600">Q</text>
+  <text x="374" y="164" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×4</text>
+
+  <line x1="40" y1="200" x2="740" y2="200" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- ================= ② SPLIT ================= -->
+  <text x="40" y="234" font-size="13" fill="#6b7280">② <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#374151">MultiHeadAttention</tspan> — una matriz grande, una multiplicación, y luego se parte</text>
+
+  <rect x="48" y="272" width="54" height="66" rx="3" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="75" y="310" text-anchor="middle" font-size="14" fill="#374151" font-weight="600">X</text>
+  <text x="75" y="354" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="'JetBrains Mono', ui-monospace, monospace">6×3</text>
+
+  <g stroke="#9ca3af" stroke-width="1.4" fill="none">
+    <path d="M104,305 L144,305" marker-end="url(#hs-ar)"/>
+    <path d="M224,305 L264,305" marker-end="url(#hs-ar)"/>
+  </g>
+
+  <!-- Wq grande, con sus dos bloques de columnas -->
+  <rect x="150" y="280" width="72" height="50" rx="3" fill="#ede9fe" stroke="#c4b5fd"/>
+  <line x1="186" y1="280" x2="186" y2="330" stroke="#8b5cf6" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="168" y="310" text-anchor="middle" font-size="10" fill="#5b21b6">Wq₁</text>
+  <text x="204" y="310" text-anchor="middle" font-size="10" fill="#5b21b6">Wq₂</text>
+  <text x="186" y="272" text-anchor="middle" font-size="12" fill="#5b21b6" font-weight="600">Wq</text>
+  <text x="186" y="346" text-anchor="middle" font-size="10" fill="#8b5cf6" font-family="'JetBrains Mono', ui-monospace, monospace">3×4</text>
+
+  <!-- Q grande -->
+  <rect x="270" y="272" width="64" height="66" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <line x1="302" y1="272" x2="302" y2="338" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="302" y="266" text-anchor="middle" font-size="13" fill="#1e3a8a" font-weight="600">Q</text>
+  <text x="302" y="354" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×4</text>
+
+  <path d="M338,305 L404,305" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#hs-arb)"/>
+  <text x="371" y="294" text-anchor="middle" font-size="10" fill="#2563eb" font-family="'JetBrains Mono', ui-monospace, monospace">.view</text>
+  <text x="371" y="322" text-anchor="middle" font-size="10" fill="#2563eb" font-family="'JetBrains Mono', ui-monospace, monospace">.transpose</text>
+
+  <rect x="410" y="266" width="34" height="52" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="427" y="290" text-anchor="middle" font-size="12" fill="#1e3a8a" font-weight="600">Q₁</text>
+  <text x="427" y="303" text-anchor="middle" font-size="9" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×2</text>
+
+  <rect x="410" y="326" width="34" height="52" rx="3" fill="#dbeafe" stroke="#60a5fa"/>
+  <text x="427" y="350" text-anchor="middle" font-size="12" fill="#1e3a8a" font-weight="600">Q₂</text>
+  <text x="427" y="363" text-anchor="middle" font-size="9" fill="#3b82f6" font-family="'JetBrains Mono', ui-monospace, monospace">6×2</text>
+
+  <!-- caja de la idea clave -->
+  <rect x="474" y="256" width="266" height="122" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="492" y="282" font-size="12" fill="#1a1a1a" font-weight="600">Son la misma cuenta</text>
+  <text x="492" y="304" font-size="11.5" fill="#6b7280">Las columnas 0–1 de <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#5b21b6">Wq</tspan> son</text>
+  <text x="492" y="321" font-size="11.5" fill="#6b7280">exactamente <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#5b21b6">Wq₁</tspan>; las 2–3, <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#5b21b6">Wq₂</tspan>.</text>
+  <text x="492" y="343" font-size="11.5" fill="#6b7280">Concatenar por columnas y luego</text>
+  <text x="492" y="360" font-size="11.5" fill="#6b7280">multiplicar da lo mismo que multiplicar</text>
+  <text x="492" y="377" font-size="11.5" fill="#6b7280">por partes — pero en una sola pasada.</text>
+
+  <!-- caption -->
+  <line x1="40" y1="400" x2="740" y2="400" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="390" y="428" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">El «weight split»: no es una aproximación, es álgebra por bloques.</text>
+  <text x="390" y="450" text-anchor="middle" font-size="12.5" fill="#6b7280">Lo mismo vale para K y V. Se gana una sola multiplicación grande —que la GPU paraleliza— en vez de</text>
+  <text x="390" y="468" text-anchor="middle" font-size="12.5" fill="#6b7280">un bucle de multiplicaciones pequeñas, sin cambiar ni un parámetro ni un resultado.</text>
+</svg>

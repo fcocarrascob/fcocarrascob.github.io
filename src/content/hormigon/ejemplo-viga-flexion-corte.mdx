@@ -21,7 +21,7 @@ hormigón, la fisura de corte, la biela comprimida.
 
 <Note type="tip" title="Planilla interactiva">
 Este mismo cálculo está disponible como planilla en el
-[canvas matemático](/herramientas/canvas?plantilla=viga-flexion-corte): **cambia cualquier
+[canvas matemático](/herramientas/canvas?planilla=viga-flexion-corte): **cambia cualquier
 dato de entrada** (sección, cargas, refuerzo) y todos los chequeos se recalculan al vuelo.
 Desde ahí puedes **imprimir o exportar a PDF** la planilla ordenada para incorporarla a una
 memoria de cálculo.
@@ -37,12 +37,12 @@ A630-420H.
 |---|---|
 | Luz | $L = 6.0$ m |
 | Sección | $b = 30$ cm, $h = 60$ cm |
-| Hormigón | $f'_c = 250$ kgf/cm² ($\beta_1 = 0.85$) |
-| Acero | $f_y = f_{yt} = 4200$ kgf/cm², $E_s = 2.1\times10^6$ kgf/cm² |
+| Hormigón | $f'_c = 250$ kgf/cm² $= 24.5$ MPa ($\beta_1 = 0.85$, Tabla 22.2.2.4.3) |
+| Acero | $f_y = f_{yt} = 4200$ kgf/cm², $E_s = 200\,000$ MPa $= 2.04\times10^6$ kgf/cm² (Sec. 20.2.2.2) |
 | Carga muerta (servicio) | $D = 3.0$ tonf/m (peso propio 0.45 + losa y terminaciones 2.55) |
 | Carga viva (servicio) | $L_v = 1.5$ tonf/m |
 
-La combinación gravitacional que gobierna es $1.2D + 1.6L_v$ (Sec. 5.3.1):
+La combinación gravitacional que gobierna es $1.2D + 1.6L_v$ (Tabla 5.3.1):
 
 <Equation label="Ec. 5.3.1b">
 $$
@@ -62,7 +62,7 @@ $$
 
 <Figure
   src="/ejemplos/viga-flexion-corte.svg"
-  alt="Panel izquierdo: viga simplemente apoyada con carga distribuida w_u = 6 tonf/m, luz 6 m, y sus diagramas de momento (M_u = 27 tonf·m al centro) y corte (V_u = 18 tonf en el apoyo, 14.8 tonf a distancia d). Panel derecho: sección transversal 30×60 con 3 φ25 de fondo y estribo φ10, diagrama de deformaciones con ε_cu = 0.003 en compresión y ε_t = 0.0112 en el acero, y el resultado φM_n = 27.4 ≥ M_u = 27 tonf·m."
+  alt="Panel izquierdo: viga simplemente apoyada con carga distribuida w_u = 6 tonf/m, luz 6 m, y sus diagramas de momento (M_u = 27 tonf·m al centro) y corte (V_u = 18 tonf en el apoyo, 14.8 tonf a distancia d). Panel derecho: sección transversal 30×60 con 3 φ25 de fondo y estribo φ10, altura útil d = 53.75 cm, diagrama de deformaciones con ε_cu = 0.003 en compresión y ε_t = 0.0111 en el acero, y el resultado φM_n = 27.2 ≥ M_u = 27 tonf·m."
   caption="El caso completo en una imagen: del modelo de cargas (izquierda) al equilibrio de la sección (derecha). El corte de diseño se toma a una distancia d de la cara del apoyo (Sec. 9.4.3.2)."
 />
 
@@ -78,9 +78,19 @@ h_{\min} = \frac{\ell}{16} = \frac{600}{16} = 37.5 \ \text{cm} \;\le\; h = 60 \ 
 $$
 </Equation>
 
-Cumple con holgura, así que el diseño se rige por resistencia. Tomamos la altura útil
-suponiendo una fila de barras φ25 sobre estribo φ10, con recubrimiento libre de 40 mm
-(Tabla 20.5.1.3): $d \approx 60 - 4.0 - 1.0 - 2.5/2 = 53.75 \approx 54$ cm.
+Cumple con holgura, así que el diseño se rige por resistencia. La altura útil no es un
+dato: **se deriva** de la disposición de barras — una fila de φ25 sobre estribo φ10, con
+recubrimiento especificado de 40 mm a la cara del estribo (Tabla 20.5.1.3.1, vigas no
+expuestas a la intemperie):
+
+<Equation label="Altura útil">
+$$
+d = h - \text{rec} - d_e - \frac{d_b}{2} = 60 - 4.0 - 1.0 - \frac{2.5}{2} = 53.75 \ \text{cm}
+$$
+</Equation>
+
+Se usa **53.75 cm, sin redondear**: subirlo a 54 cm parece inocuo y no lo es — sube $d$ por
+el lado inseguro justo en la variable de la que cuelgan $\phi M_n$ y $V_c$.
 
 ## 2. Flexión: armadura y ductilidad ($\phi = 0.90$)
 
@@ -88,15 +98,17 @@ El acero requerido sale de igualar $\phi M_n = M_u$ con el bloque rectangular
 equivalente. Como $a$ depende de $A_s$, se itera una o dos veces partiendo del brazo
 $\approx 0.9d$:
 
-<Equation label="Ec. 22.2.2">
+<Equation label="Sec. 22.2.2.4">
 $$
 M_n = A_s f_y \left(d - \frac{a}{2}\right), \qquad a = \frac{A_s f_y}{0.85 f'_c\, b}
 $$
 </Equation>
 
-Con $\phi = 0.90$ (a verificar) la iteración converge en $A_{s,\text{req}} \approx 14.5$
-cm². Adoptamos **3 φ25** ($A_s = 14.73$ cm²), que entran en una capa en $b = 30$ cm con
-separación libre $> 25$ mm (Sec. 25.2.1). Con ese acero:
+Con $\phi = 0.90$ (a verificar) la iteración converge en $A_{s,\text{req}} \approx 14.6$
+cm². Adoptamos **3 φ25** ($A_s = 14.73$ cm²), que entran en una capa en $b = 30$ cm: la
+separación libre resulta $(30 - 2\cdot4.0 - 2\cdot1.0 - 3\cdot2.5)/2 = 6.25$ cm, holgada
+frente al mínimo de la Sec. 25.2.1 (la mayor de 25 mm, $d_b$ y $\tfrac43 d_{agg}$). Con ese
+acero:
 
 <Equation label="Bloque y eje neutro">
 $$
@@ -110,22 +122,26 @@ $$
 
 Antes de aceptar $\phi = 0.90$, hay que confirmar que la sección es **controlada por
 tracción** — la viga no puede vivir en la zona de transición. La deformación del acero
-extremo sale de la geometría del triángulo de deformaciones con $\varepsilon_{cu} = 0.003$:
+extremo sale de la compatibilidad de deformaciones (Sec. 22.2.1.2) con
+$\varepsilon_{cu} = 0.003$:
 
-<Equation label="Ec. 21.2.2">
+<Equation label="Sec. 22.2.1.2">
 $$
-\varepsilon_t = 0.003\,\frac{d_t - c}{c} = 0.003\,\frac{54 - 11.41}{11.41} = 0.0112
+\varepsilon_t = 0.003\,\frac{d_t - c}{c} = 0.003\,\frac{53.75 - 11.41}{11.41} = 0.0111
 $$
 </Equation>
 
-Como $\varepsilon_t = 0.0112 \ge \varepsilon_{ty} + 0.003 = 0.005$, la sección es controlada
-por tracción y **$\phi = 0.90$ es correcto**. Equivalentemente, $c/d_t = 0.21 \le 0.375$:
-estamos lejos del límite máximo de acero.
+Con $E_s = 200\,000$ MPa la deformación de fluencia es
+$\varepsilon_{ty} = 411.9/200\,000 = 0.00206$, así que el umbral de la Tabla 21.2.2 es
+$\varepsilon_{ty} + 0.003 = 0.00506$. Como $\varepsilon_t = 0.0111 \ge 0.00506$, la sección
+es controlada por tracción y **$\phi = 0.90$ es correcto**. Equivalentemente,
+$c/d_t = 0.21 \le \varepsilon_{cu}/(\varepsilon_{cu}+0.00506) = 0.372$: estamos lejos del
+límite máximo de acero.
 
-<Equation label="Ec. 9.3.2.1">
+<Equation label="Sec. 9.5.1.1(a)">
 $$
-\phi M_n = 0.90 \cdot 14.73 \cdot 4200 \cdot \left(54 - \frac{9.70}{2}\right)
-= 27.4 \ \text{tonf}\cdot\text{m} \;\ge\; M_u = 27 \ \text{tonf}\cdot\text{m}
+\phi M_n = 0.90 \cdot 14.73 \cdot 4200 \cdot \left(53.75 - \frac{9.70}{2}\right)
+= 27.2 \ \text{tonf}\cdot\text{m} \;\ge\; M_u = 27 \ \text{tonf}\cdot\text{m}
 $$
 </Equation>
 
@@ -134,101 +150,129 @@ $$
 La otra falla frágil — que la viga falle al abrirse la primera fisura — la cubre el
 mínimo:
 
-<Equation label="Ec. 9.6.1.2">
+La cuantía mínima es adimensional, así que se evalúa directamente en las unidades del
+código (MPa) y después se multiplica por $b_w d$:
+
+<Equation label="Sec. 9.6.1.2">
 $$
-A_{s,\min} = \max\left(
-\frac{0.8\sqrt{f'_c}}{f_y}
+\rho_{\min} = \max\left(
+\frac{0.25\sqrt{f'_c}}{f_y}
 \; ,\;
-\frac{14}{f_y}
-\right) b_w d
-= \max(0.00301,\, 0.00333)\cdot 30 \cdot 54 = 5.40 \ \text{cm}^2
+\frac{1.4}{f_y}
+\right)
+= \max(0.00301,\, 0.00340) \quad (f'_c,\, f_y \text{ en MPa})
 $$
 </Equation>
 
-$A_s = 14.73 \ge 5.40$ cm² (gobierna el término $14/f_y$, el piso para hormigones
-corrientes).
+<Equation label="Sec. 9.6.1.2">
+$$
+A_{s,\min} = 0.00340 \cdot 30 \cdot 53.75 = 5.48 \ \text{cm}^2 \;\le\; A_s = 14.73 \ \text{cm}^2
+$$
+</Equation>
 
-<Note type="tip" title="Por qué 0.8 y 14 y no 0.25 y 1.4">
-Las constantes de la nota teórica ($0.25\sqrt{f'_c}$ y $1.4$) están en **MPa**. Acá
-trabajamos en **kgf/cm²**, donde las mismas expresiones se escriben $0.8\sqrt{f'_c}$ y
-$14$. Es la misma ecuación; solo cambió el sistema de unidades. Igual pasa con $V_c$ y el
-tope de la biela más abajo.
+Gobierna el término $1.4/f_y$, el piso para hormigones corrientes.
+
+<Note type="warning" title="Los coeficientes salen de la edición SI, no de la inch-pound">
+ACI 318 se publica en dos ediciones —inch-pound y SI— y **sus coeficientes empíricos no son
+conversiones exactas uno del otro**: el $2\sqrt{f'_c}$ (psi) del corte es $0.17\lambda\sqrt{f'_c}$
+(MPa) en la SI, y las dos redondean distinto. Traducidas a kgf/cm², la primera da
+$0.53\sqrt{f'_c}$ y la segunda $0.543\sqrt{f'_c}$: un **2.4 %** de diferencia que la
+aritmética no delata, porque cada cadena cuadra consigo misma.
+
+Acá manda **la columna métrica**, que para ACI es la edición SI. Cada coeficiente se lee
+en ella y se escribe con su equivalencia exacta en kgf/cm²:
+
+| Concepto | Edición SI (MPa) | En kgf/cm² | Referencia |
+|---|:---:|:---:|---|
+| $V_c$ simplificado | $0.17\lambda\sqrt{f'_c}$ | $0.543\sqrt{f'_c}$ | Tabla 22.5.5.1(a) |
+| Tope de la biela | $0.66\lambda\sqrt{f'_c}$ | $2.108\sqrt{f'_c}$ | Sec. 22.5.1.2 |
+| Umbral de $s_{\max}$ | $0.33\lambda\sqrt{f'_c}$ | $1.054\sqrt{f'_c}$ | Tabla 9.7.6.2.2 |
+| Gatillo de $A_{v,\min}$ | $0.083\lambda\sqrt{f'_c}$ | $0.265\sqrt{f'_c}$ | Sec. 9.6.3.1 |
+| $A_{v,\min}/s$ (piso) | $0.35\,b_w/f_{yt}$ | $3.57\,b_w/f_{yt}$ | Tabla 9.6.3.4(b) |
+
+Las cuantías mínimas de flexión ($0.25\sqrt{f'_c}/f_y$ y $1.4/f_y$) son adimensionales:
+basta evaluarlas en MPa y no hace falta convertir nada.
 </Note>
 
 ## 3. Corte: contribución del hormigón y estribos ($\phi = 0.75$)
 
 El corte se verifica a una distancia $d$ de la cara del apoyo (Sec. 9.4.3.2), donde la
-compresión del apoyo ya ayuda:
+compresión del apoyo ya ayuda. Se cumplen las tres condiciones que la sección exige: el
+apoyo comprime el extremo, la carga llega por arriba y no hay puntual entremedio. Sin ancho
+de apoyo declarado, la distancia se mide desde el eje — la lectura conservadora:
 
 <Equation label="Corte de diseño">
 $$
-V_{u@d} = w_u \left(\frac{L}{2} - d\right) = 6.0 \cdot (3.0 - 0.54) = 14.76 \ \text{tonf}
+V_{u@d} = w_u \left(\frac{L}{2} - d\right) = 6.0 \cdot (3.0 - 0.5375) = 14.78 \ \text{tonf}
 $$
 </Equation>
 
 ### 3.1 Contribución del hormigón (Tabla 22.5.5.1)
 
-Como proveeremos al menos el refuerzo mínimo, usamos la expresión simplificada
-$V_c = 0.53\,\lambda\sqrt{f'_c}\,b_w d$ (equivalente en kgf/cm² a $0.17\lambda\sqrt{f'_c}$
-en MPa), con $\lambda = 1$ para hormigón de densidad normal:
+Como proveeremos al menos el refuerzo mínimo, rige la primera fila de la tabla, y de sus
+dos expresiones tomamos la simple, la (a): $V_c = 0.17\,\lambda\sqrt{f'_c}\,b_w d$ (MPa),
+con $N_u = 0$ y $\lambda = 1$ para hormigón de densidad normal:
 
-<Equation label="Ec. 22.5.5.1">
+<Equation label="Tabla 22.5.5.1(a)">
 $$
-V_c = 0.53\sqrt{250}\cdot 30 \cdot 54 = 13.58 \ \text{tonf}
+V_c = 0.543\sqrt{250}\cdot 30 \cdot 53.75 = 13.84 \ \text{tonf}
 \qquad
-\phi V_c = 0.75 \cdot 13.58 = 10.18 \ \text{tonf}
+\phi V_c = 0.75 \cdot 13.84 = 10.38 \ \text{tonf}
 $$
 </Equation>
 
-Como $V_{u@d} = 14.76 > \phi V_c = 10.18$ tonf, **los estribos deben tomar el resto**
-(y como $V_{u@d} > 0.5\,\phi V_c = 5.09$ tonf, en cualquier caso se exige estribo mínimo).
+Como $V_{u@d} = 14.78 > \phi V_c = 10.38$ tonf, **los estribos deben tomar el resto**. Y en
+cualquier caso se exige estribo mínimo, porque la Sec. 9.6.3.1 lo pide donde
+$V_u > \phi\,0.265\sqrt{f'_c}\,b_w d = 5.07$ tonf.
 
-### 3.2 Estribos requeridos (Sec. 22.5.10.5)
+### 3.2 Estribos requeridos (Sec. 22.5.8.1)
 
-<Equation label="Ec. 22.5.10.5.3">
+<Equation label="Ec. 22.5.8.1">
 $$
-V_{s,\text{req}} = \frac{V_{u@d}}{\phi} - V_c = \frac{14.76}{0.75} - 13.58 = 6.10 \ \text{tonf}
+V_{s,\text{req}} = \frac{V_{u@d}}{\phi} - V_c = \frac{14.78}{0.75} - 13.84 = 5.86 \ \text{tonf}
 $$
 </Equation>
 
-Antes de dimensionar, el tope que protege la biela comprimida —
-$V_s \le 2.1\sqrt{f'_c}\,b_w d = 53.8$ tonf — se cumple con enorme margen ($6.10 \ll
-53.8$): la sección no está sobreexigida al corte. Con estribo **φ10 de dos ramas**
-($A_v = 2 \cdot 0.785 = 1.571$ cm²), el espaciamiento por resistencia sería:
+Antes de dimensionar, el tope que protege la biela comprimida — la Sec. 22.5.1.2 exige
+$V_u \le \phi(V_c + 0.66\lambda\sqrt{f'_c}\,b_w d)$, o sea
+$V_{s,\text{req}} \le 2.108\sqrt{f'_c}\,b_w d = 53.7$ tonf — se cumple con enorme margen
+($5.86 \ll 53.7$): la sección no está sobreexigida al corte. Con estribo **φ10 de dos
+ramas** ($A_v = 2 \cdot 0.785 = 1.571$ cm²), el espaciamiento por resistencia sería:
 
-<Equation label="Ec. 22.5.10.5.3 (despejando s)">
+<Equation label="Ec. 22.5.8.5.3 (despejando s)">
 $$
 s_{\text{req}} = \frac{A_v f_{yt}\, d}{V_{s,\text{req}}}
-= \frac{1.571 \cdot 4200 \cdot 54}{6100} = 58.4 \ \text{cm}
+= \frac{1.571 \cdot 4200 \cdot 53.75}{5860} = 60.5 \ \text{cm}
 $$
 </Equation>
 
 ### 3.3 El espaciamiento máximo gobierna (Sec. 9.7.6.2.2)
 
-Un espaciamiento de 58 cm no es admisible: la geometría de la celosía exige que toda
+Un espaciamiento de 60 cm no es admisible: la geometría de la celosía exige que toda
 fisura diagonal cruce al menos un estribo. Como
-$V_{s,\text{req}} = 6.10 \le 1.03\sqrt{f'_c}\,b_w d = 26.4$ tonf, el límite es el menos
+$V_{s,\text{req}} = 5.86 \le 1.054\sqrt{f'_c}\,b_w d = 26.9$ tonf, el límite es el menos
 restrictivo:
 
 <Equation label="Tabla 9.7.6.2.2">
 $$
-s_{\max} = \min\left(\frac{d}{2},\ 60\ \text{cm}\right) = \min(27,\ 60) = 27 \ \text{cm}
+s_{\max} = \min\left(\frac{d}{2},\ 60\ \text{cm}\right) = \min(26.9,\ 60) = 26.9 \ \text{cm}
 $$
 </Equation>
 
-El mínimo de armadura de corte (Ec. 9.6.3.4) admite hasta $s = 63$ cm con este estribo, así
-que **gobierna $s_{\max} = 27$ cm**. Adoptamos **φ10 @ 25 cm**. Con ese espaciamiento:
+El mínimo de armadura de corte (Tabla 9.6.3.4) admite hasta
+$s = A_v f_{yt}/(3.57\,b_w) = 61.6$ cm con este estribo, así que **gobierna
+$s_{\max} = 26.9$ cm**. Adoptamos **φ10 @ 25 cm**. Con ese espaciamiento:
 
 <Equation label="Capacidad provista">
 $$
-V_s = \frac{1.571 \cdot 4200 \cdot 54}{25} = 14.25 \ \text{tonf}
+V_s = \frac{1.571 \cdot 4200 \cdot 53.75}{25} = 14.18 \ \text{tonf}
 \quad\Rightarrow\quad
-\phi V_n = 0.75 \cdot (13.58 + 14.25) = 20.9 \ \text{tonf} \ge V_{u@d}
+\phi V_n = 0.75 \cdot (13.84 + 14.18) = 21.0 \ \text{tonf} \ge V_{u@d}
 $$
 </Equation>
 
 <Note type="info" title="Lo que enseña el corte de esta viga">
-La resistencia pedía $s = 58$ cm, pero el detallado impuso 25 cm — el estribo queda
+La resistencia pedía $s = 60$ cm, pero el detallado impuso 25 cm — el estribo queda
 gobernado por **ductilidad y geometría, no por resistencia**. Es el resultado habitual en
 vigas de gravedad, y la razón de que el corte se trate con la mentalidad de "sobreproteger
 lo frágil" en vez de ajustar al milímetro.
@@ -239,7 +283,7 @@ lo frágil" en vez de ajustar al milímetro.
 - **Refuerzo de piel:** no se requiere; $h = 60 \le 90$ cm (Sec. 9.7.2.3).
 - **Integridad estructural (Sec. 9.7.7):** si la viga es perimetral, al menos $1/4$ del
   acero positivo (aquí 1 φ25) debe ser continuo y confinado con estribos cerrados.
-- **Recubrimiento:** 40 mm a la cara del estribo, ambiente interior (Tabla 20.5.1.3).
+- **Recubrimiento:** 40 mm a la cara del estribo, ambiente interior (Tabla 20.5.1.3.1).
 - **Desarrollo y cortes:** las barras deben anclarse y prolongarse según el
   [Cap. 25](/hormigon/aci318-25-cap25-desarrollo-empalmes) — el paso que cierra el diseño.
 
@@ -248,16 +292,33 @@ lo frágil" en vez de ajustar al milímetro.
 | Verificación | Referencia | Demanda | Capacidad | Uso |
 |---|---|:---:|:---:|:---:|
 | Altura mínima (deflexión) | Tabla 9.3.1.1 | $h \ge 37.5$ cm | $h = 60$ cm | 0.63 |
-| Flexión | Sec. 22.2 / 9.3.2 | $M_u = 27$ tonf·m | $\phi M_n = 27.4$ | 0.99 |
-| Ductilidad | Sec. 9.3.3.1 | $\varepsilon_t \ge 0.005$ | $\varepsilon_t = 0.0112$ | ✓ |
-| Refuerzo mínimo | Sec. 9.6.1.2 | $A_{s,\min} = 5.40$ cm² | $A_s = 14.73$ | ✓ |
-| Corte | Sec. 22.5 / 9.4.3.2 | $V_{u@d} = 14.76$ tonf | $\phi V_n = 20.9$ | 0.71 |
-| Tope de biela | Sec. 22.5.1.2 | $V_s = 6.10$ tonf | $53.8$ | 0.11 |
-| Espaciamiento estribos | Tabla 9.7.6.2.2 | $s = 25$ cm | $s_{\max} = 27$ | ✓ |
+| Flexión | Sec. 22.3 / 9.5.1.1 | $M_u = 27$ tonf·m | $\phi M_n = 27.2$ | 0.99 |
+| Ductilidad | Sec. 9.3.3.1 / Tabla 21.2.2 | $\varepsilon_t \ge 0.00506$ | $\varepsilon_t = 0.0111$ | ✓ |
+| Refuerzo mínimo | Sec. 9.6.1.2 | $A_{s,\min} = 5.48$ cm² | $A_s = 14.73$ | ✓ |
+| Corte | Sec. 22.5 / 9.4.3.2 | $V_{u@d} = 14.78$ tonf | $\phi V_n = 21.0$ | 0.70 |
+| Tope de biela | Sec. 22.5.1.2 | $V_s = 5.86$ tonf | $53.7$ | 0.11 |
+| Espaciamiento estribos | Tabla 9.7.6.2.2 | $s = 25$ cm | $s_{\max} = 26.9$ | ✓ |
 
 **Solución:** viga $30\times60$ cm, **3 φ25** de armadura de flexión inferior y **estribos
 φ10 @ 25 cm**. La flexión gobierna el dimensionamiento (uso 0.99); el corte queda holgado y
 sus estribos los fija el detallado, no la resistencia.
+
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 81 pasos, 59 verificaciones ✓/✗
+y 40 contrastes que comparan cada número publicado acá contra el que la hoja calcula desde
+la norma. Cinco de esos contrastes verifican las **equivalencias de coeficientes** de la
+tabla de más arriba (0.543, 2.108, 1.054, 0.265 y 3.57), que es justo donde una edición se
+cuela por la otra. La altura útil $d$ no va como dato: la hoja la deriva del recubrimiento
+y de la barra, así que si cambias φ25 por φ22 se mueve toda la cadena:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=viga-flexion-corte)** ·
+[descargar el JSON](/planillas/viga-flexion-corte.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/viga-flexion-corte.json --md
+```
 
 [^aci318]: ACI Committee 318, *Building Code Requirements for Structural Concrete (ACI
 318-25) and Commentary*, American Concrete Institute, 2025. En Chile el diseño de hormigón

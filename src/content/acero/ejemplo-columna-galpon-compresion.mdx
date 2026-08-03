@@ -211,6 +211,26 @@ plano, resiste $P_u = 65$ tonf con uso 0.82. Gobierna el **pandeo por flexión d
 —el del cantilever—, no el eje débil ni el material. Es el resultado típico de las columnas de
 galpón: **el diseño se juega en la longitud efectiva, no en el perfil ni en el acero.**
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 63 pasos, 45 verificaciones y 30
+contrastes contra los números publicados acá. La diferencia con leer la tabla de perfiles es
+que la hoja **compone el W250×73 desde sus cuatro planchas** —$d$, $b_f$, $t_f$, $t_w$— y de
+ahí saca área, inercias, radios de giro y las dos esbelteces. El ala, que no tiene el redondeo
+de la unión con el alma, da $b_f/2t_f = 8{,}9437$ contra el 8,94 tabulado: exacto. El resto
+difiere en lo que el fillet explica (área $-1{,}45\,\%$, $r_y$ $+0{,}82\,\%$), y de paso salen
+el $J$ y el $C_w$ que ninguna tabla de este sitio publica y que hacen falta para poner número
+al pandeo flexo-torsional. Cambiando cualquiera de las cuatro planchas —o las dos longitudes
+efectivas, que son la tesis del ejemplo— se rehace la sección entera y las tres curvas.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=columna-galpon-compresion)** ·
+[descargar el JSON](/planillas/columna-galpon-compresion.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/columna-galpon-compresion.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
 industriales se apoya además en la NCh2369 (diseño sísmico de estructuras e instalaciones

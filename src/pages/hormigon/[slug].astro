@@ -28,6 +28,7 @@ const sub = SUBSECTIONS[subKey];
     norm: sub?.norm,
     section: post.data.chapter ?? sub?.label,
   }}
+  slug={post.id}
   breadcrumb={{ href: `/hormigon/${post.data.subsection}`, label: sub?.label ?? post.data.subsection }}
 >
   <Content />

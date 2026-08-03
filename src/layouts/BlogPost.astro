@@ -4,6 +4,7 @@ import TagPill from '../components/ui/TagPill.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
 import type { SeriesNav } from '../lib/posts';
+import { planillaDePost } from '../lib/planillas';
 
 interface Props {
   frontmatter: {
@@ -17,9 +18,13 @@ interface Props {
   };
   breadcrumb?: { href: string; label: string };
   seriesNav?: SeriesNav;
+  /** Id del post: si tiene planilla, se enlaza sola (ver `lib/planillas.ts`). */
+  slug?: string;
 }
 
-const { frontmatter, breadcrumb, seriesNav } = Astro.props;
+const { frontmatter, breadcrumb, seriesNav, slug } = Astro.props;
+
+const planilla = planillaDePost(slug);
 
 const dateFormatter = new Intl.DateTimeFormat('es-CL', {
   year: 'numeric',
@@ -73,6 +78,24 @@ const dateFormatter = new Intl.DateTimeFormat('es-CL', {
           </div>
         )}
       </header>
+
+      {planilla && (
+        <aside class="mb-10 rounded-lg border border-accent/40 bg-accent/5 px-5 py-4">
+          <p class="text-sm font-semibold text-ink mb-1">Planilla interactiva</p>
+          <p class="text-sm text-muted mb-3">
+            Este cálculo está reproducido como planilla del canvas, armada desde la norma:
+            cambia cualquier dato de entrada y todos los chequeos se recalculan, cada uno con
+            su veredicto. Desde ahí se imprime como memoria de cálculo.
+          </p>
+          <p class="text-sm">
+            <a href={planilla.canvas} class="text-accent font-medium hover:underline">
+              Abrir en el canvas
+            </a>
+            <span class="text-muted"> · </span>
+            <a href={planilla.json} class="text-accent hover:underline">descargar el JSON</a>
+          </p>
+        </aside>
+      )}
 
       <div class="prose prose-slate max-w-none">
         <slot />

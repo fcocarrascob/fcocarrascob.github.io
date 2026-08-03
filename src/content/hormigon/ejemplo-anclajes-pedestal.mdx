@@ -1,7 +1,8 @@
 ---
 title: "Ejemplo — Grupo de anclajes de una placa base en pedestal (ACI 318-25)"
-description: "Verificación al hormigón de un grupo de 4 pernos de anclaje de una columna industrial sobre pedestal, según ACI 318-25 Cap. 17: cono de arrancamiento (breakout) y extracción (pullout) en tracción, breakout de corte y pryout, y la interacción tracción–corte. Cada modo con su referencia, con los φ de la Tabla 21.2.1 y el Ψ_a de la Tabla 17.5.4.1 que 318-25 estrena; el resultado es que los modos individuales holgan pero la interacción N–V gobierna."
+description: "Verificación al hormigón de un grupo de 4 pernos de anclaje de una columna industrial sobre pedestal, según ACI 318-25 Cap. 17: cono de arrancamiento (breakout) y extracción (pullout) en tracción, breakout de corte y pryout, y la interacción tracción–corte. Cada modo con su referencia, con los φ de la Tabla 21.2.1 y el Ψ_a de la Tabla 17.5.4.1 que 318-25 estrena. El paso que decide todo es 17.6.2.1.2: con tres bordes a menos de 1.5·h_ef el código no deja usar el embebido real, y los 40 cm se leen como 16.7. Los modos individuales holgan y gobierna la interacción N–V con 0.71."
 pubDate: 2026-07-23
+updatedDate: 2026-08-01
 tags: ["ejemplo", "anclajes", "placas base", "pedestal", "breakout", "pryout", "aci318"]
 subsection: "ejemplos"
 chapter: "Cap. 17 — Anclajes"
@@ -20,6 +21,17 @@ y por eso el Cap. 17 obliga a verificar una batería de modos de falla del hormi
 cuáles son frágiles; acá lo bajamos a números[^aci318] para un pedestal típico, con la
 referencia normativa de cada paso. El desenlace enseña la razón de ser de la última
 verificación: **cada modo individual holga, pero la interacción tracción–corte gobierna**.
+Y en el camino aparece la variable que de verdad manda, que no es la que uno esperaría:
+**no es el embebido del perno, es el ancho del pedestal**.
+
+<Note type="tip" title="Planilla interactiva">
+Este mismo cálculo está disponible como planilla en el
+[canvas matemático](/herramientas/canvas?planilla=anclajes-pedestal): **cambia cualquier
+dato de entrada** (embebido, distancia al borde, patrón, $f'_c$) y todos los chequeos se
+recalculan al vuelo — incluido el $h'_{ef}$ del §1.1, que es el que hace saltar los
+resultados cuando mueves el ancho del pedestal. Desde ahí puedes **imprimir o exportar a
+PDF** la planilla ordenada para incorporarla a una memoria de cálculo.
+</Note>
 
 <Note type="info" title="De dónde salen las fuerzas del perno">
 Las tracciones y el corte por perno vienen del **análisis de la placa base** (equilibrio de la
@@ -28,9 +40,9 @@ placa bajo $P_u$, $M_u$ y $V_u$), que es un problema aparte —resuelto a mano e
 [herramienta de placa base](/herramientas/placa-base)—. Acá los tomamos como **dato** y nos
 concentramos en lo que el Cap. 17 agrega: la verificación del **hormigón** que rodea al perno.
 Los modos de **acero** del perno (17.6.1 y 17.7.1) se verifican por separado y aquí holgan: con
-pernos **ASTM F1554 Gr. 55** ($f_{uta} = 5\,270$ kgf/cm², $A_{se,N} = 3.91$ cm²) y los φ de la
-Tabla 21.2.1 para acero dúctil —fila (o), 0.75 en tracción y fila (q), 0.65 en corte—,
-$\phi N_{sa} = 15.4$ tonf y $\phi V_{sa} = 8.0$ tonf, contra 4.0 y 1.75 tonf por perno.
+pernos **ASTM F1554 Gr. 55** ($f_{uta} = 75$ ksi $= 5\,273$ kgf/cm², $A_{se,N} = 3.91$ cm²) y los
+φ de la Tabla 21.2.1 para acero dúctil —fila (o), 0.75 en tracción y fila (q), 0.65 en corte—,
+$\phi N_{sa} = 15.5$ tonf y $\phi V_{sa} = 8.0$ tonf, contra 4.0 y 1.75 tonf por perno.
 </Note>
 
 <Note type="warning" title="Los φ de anclajes cambiaron en ACI 318-25">
@@ -64,69 +76,122 @@ vuelca hacia un lado) y un corte horizontal en la base.
 
 <Figure
   src="/ejemplos/anclajes-pedestal.svg"
-  alt="Panel izquierdo: planta de un pedestal de 100×100 cm con 4 pernos φ1″ en patrón 50×50 (distancia al borde 25 cm), la fila traccionada de barlovento marcada en rojo con T=4 tonf cada uno, el corte V=3.5 tonf hacia el borde x+, y una sección con el cono de arrancamiento a 35° y el embebido h_ef=40 cm. Panel derecho: diagrama de interacción tracción–corte con la región segura bajo la curva (N/φN)^(5/3) + (V/φV)^(5/3) = 1 y el punto de diseño (0.57, 0.55) que da 0.76 y queda dentro, más la lista de los seis modos verificados con sus usos: breakout tracción 0.57, pullout 0.37, side-face blowout no aplica, breakout de corte 0.55, pryout 0.11 e interacción 0.76 (gobierna)."
-  caption="Los modos del hormigón (φ·Ψ_a = 0.75 × 0.95): en tracción gobierna el cono de arrancamiento; en corte, el breakout hacia el borde; y la combinación de ambos, la interacción N–V, es la que finalmente manda."
+  alt="Panel izquierdo: planta de un pedestal de 100×100 cm con 4 pernos φ1″ en patrón 50×50 (distancia al borde 25 cm), la fila traccionada de barlovento marcada en rojo con T=4 tonf cada uno, el corte V=3.5 tonf hacia el borde x+, y una sección con las dos superficies de falla: la real, que arranca del embebido h_ef=40 cm y no cabe en el pedestal, y la que limita h_ef, cuyo borde toca la cara justo cuando h'_ef=16.7 cm. Panel derecho: diagrama de interacción tracción–corte con la región segura bajo la curva (N/φN)^(5/3) + (V/φV)^(5/3) = 1 y el punto de diseño (0.52, 0.55) que da 0.71 y queda dentro, más la lista de los seis modos verificados con sus usos: breakout tracción 0.52, pullout 0.29, side-face blowout no aplica, breakout de corte 0.55, pryout 0.06 e interacción 0.71 (gobierna)."
+  caption="Los modos del hormigón (φ·Ψ_a = 0.75 × 0.95): en tracción gobierna el cono de arrancamiento —calculado con el h'_ef que impone la 17.6.2.1.2, no con el embebido—; en corte, el breakout hacia el borde; y la combinación de ambos, la interacción N–V, es la que finalmente manda."
 />
 
 ## 1. Tracción: cono, extracción y desprendimiento
 
-### 1.1 Cono de arrancamiento — breakout (17.6.2)
+### 1.1 El h_ef que se usa no es el que está en el plano (17.6.2.1.2)
+
+Antes de escribir ninguna fórmula hay que resolver un paso que decide todo lo que sigue, y
+que es fácil saltarse porque no parece un cálculo. El modelo CCD sobre el que descansa todo
+el 17.6.2 supone que el cono de 35° tiene dónde formarse: necesita $1.5\,h_{ef}$ de hormigón
+a cada lado. Con $h_{ef} = 40$ cm eso son **60 cm por lado**, y este pedestal tiene 25.
+
+Cuando el hormigón no alcanza por **tres o más bordes**, el código no reduce la capacidad:
+**cambia el $h_{ef}$**. La 17.6.2.1.2 obliga a usar, en todo el rango 17.6.2.1 a 17.6.2.4, el
+mayor de $c_{a,\max}/1.5$ y $s/3$:
+
+<Equation label="Ec. 17.6.2.1.2">
+$$
+h'_{ef} = \max\!\left(\frac{c_{a,\max}}{1.5},\ \frac{s}{3}\right)
+= \max\!\left(\frac{25}{1.5},\ \frac{50}{3}\right) = 16.7 \ \text{cm}
+$$
+</Equation>
+
+Los tres bordes son el de barlovento y los dos laterales, todos a 25 cm; el de sotavento
+queda a 75 y no cuenta ($75 > 1.5h_{ef}$). Y $c_{a,\max}$ es el **mayor de los bordes que
+influyen**, no el mayor de todos: acá los tres valen 25.
+
+La figura R17.6.2.1.2 lo explica geométricamente y vale la pena leerla así: es como empujar
+la superficie de falla real **hacia arriba**, paralela a la carga, hasta el primer instante en
+que su borde toca una cara libre. Ese instante —el «punto A» de la figura— define $h'_{ef}$. Acá
+ocurre a los 16.7 cm, justo cuando la proyección de 25 cm llega a la cara del pedestal.
+
+<Note type="tip" title="El resultado es contraintuitivo: la capacidad sube">
+Uno espera que capar $h_{ef}$ de 40 a 16.7 cm —un **58 %** menos— hunda el breakout, porque
+$N_b \propto h_{ef}^{1.5}$ y eso solo ya lo deja en el 27 %. Pero $h_{ef}$ entra **tres veces**
+en la Ec. (17.6.2.1), y las otras dos juegan al revés: $A_{Nco} = 9h_{ef}^2$ se achica más
+rápido que $A_{Nc}$ —que ya estaba recortado por los bordes—, así que la razón $A_{Nc}/A_{Nco}$
+salta de 0.590 a **2.00**, y $\psi_{ed}$ vuelve a **1.00** porque ahora $c_a = 25 \ge 1.5h'_{ef} = 25$.
+Neto: la capacidad **sube un 10.5 %**.
+
+La lectura de diseño es la que importa: entre los 16.7 y los 40 cm de embebido **no hay
+un solo kilo de breakout comprado**. El perno largo sirve para otras cosas —el
+side-face blowout, el ℓ_e del corte, el desarrollo si hay armadura de anclaje—, pero para el
+cono, en un pedestal de este ancho, es plata perdida. Si el breakout no diera, la palanca no
+es profundizar el perno: es **ensanchar el pedestal**.
+</Note>
+
+### 1.2 Cono de arrancamiento — breakout (17.6.2)
 
 El modo frágil por excelencia: la tracción del grupo descorcha un cono de hormigón. La
-capacidad base de un perno aislado en hormigón masivo es (17.6.2.2):
+capacidad base de un perno aislado en hormigón masivo es (17.6.2.2.1), con $k_c = 10$ para
+anclajes *cast-in* —el coeficiente de la **edición SI**, que en kgf y cm vale 10.098—:
 
-<Equation label="Ec. 17.6.2.2">
+<Equation label="Ec. 17.6.2.2.1">
 $$
-N_b = 10.1\,\lambda_a\sqrt{f'_c}\,h_{ef}^{1.5}
-= 10.1\sqrt{250}\cdot 40^{1.5} = 40\,400 \ \text{kgf} = 40.4 \ \text{tonf}
+N_b = k_c\,\lambda_a\sqrt{f'_c}\,h_{ef}'^{\,1.5}
+= 10.098\sqrt{250}\cdot 16.67^{1.5} = 10\,864 \ \text{kgf} = 10.86 \ \text{tonf}
 $$
 </Equation>
 
 Sobre esa base actúan las correcciones geométricas: la razón de áreas proyectadas
 $A_{Nc}/A_{Nco}$ (cuánto se recortan los conos por los bordes y cuánto se solapan entre pernos)
-y la reducción por borde $\psi_{ed}$. Con $A_{Nco} = 9\,h_{ef}^2 = 14\,400$ cm² y la proyección
-del grupo de los 2 pernos traccionados recortada por los bordes del pedestal, $A_{Nc} = 8\,500$
-cm²:
+y la reducción por borde $\psi_{ed}$. Con $A_{Nco} = 9\,h_{ef}'^{\,2} = 2\,500$ cm² y la
+proyección del grupo de los 2 pernos —$50 \times 100$ cm, que es el pedestal entero en el
+sentido de la fila y medio pedestal en el otro—, $A_{Nc} = 5\,000$ cm². Ojo que ese valor cae
+**justo en el tope** de la 17.6.2.1.1, $A_{Nc} \le n\,A_{Nco} = 2 \times 2\,500$:
 
-<Equation label="Ec. 17.6.2.1">
+<Equation label="Ec. 17.6.2.1b">
 $$
-N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\,\psi_{ec}\,\psi_{ed}\,\psi_{c}\,N_b
-= 0.590 \cdot 1.0 \cdot 0.825 \cdot 1.0 \cdot 40.4 = 19.7 \ \text{tonf}
+N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\,\Psi_a\,\psi_{ec,N}\,\psi_{ed,N}\,\psi_{c,N}\,\psi_{cp,N}\,\psi_{cm,N}\,N_b
+= 2.00 \cdot 1.0 \cdot 1.0 \cdot 1.0 \cdot 1.0 \cdot 1.0 \cdot 10.86 = 21.73 \ \text{tonf}
 $$
 </Equation>
 
-con $\psi_{ec} = 1.0$ (tracción simétrica sobre los 2 pernos), $\psi_{ed} = 0.7 + 0.3\,\dfrac{c_a}{1.5\,h_{ef}}
-= 0.825$ (borde a 25 < $1.5h_{ef} = 60$ cm) y $\psi_c = 1.0$ (hormigón fisurado). Con
-$\phi\,\Psi_a = 0.75 \times 0.95$:
+con $\psi_{ec,N} = 1.0$ (tracción simétrica sobre los 2 pernos), $\psi_{ed,N} = 1.0$ porque
+$c_a = 25 \ge 1.5h'_{ef} = 25$ cm (17.6.2.4.1a), $\psi_{c,N} = 1.0$ (hormigón fisurado),
+$\psi_{cp,N} = 1.0$ (17.6.2.6.2: es un factor de post-instalados) y $\psi_{cm,N} = 1.0$ —el
+factor de campo de compresión que **estrena 318-25** (17.6.2.7), que aquí se desprecia porque
+R17.6.2.7.1 lo descarta cuando el breakout está influido por los bordes—. El $\Psi_a$ va dentro
+de la ecuación, que es como 318-25 la escribe; acá lo dejamos fuera para exhibirlo junto a φ:
 
 <Equation label="Verificación (breakout en tracción)">
 $$
-\phi\,\Psi_a N_{cbg} = 0.75 \cdot 0.95 \cdot 19.7 = 14.0 \ \text{tonf} \;\ge\; T_{\text{grupo}} = 8.0 \ \text{tonf}
+\phi\,\Psi_a N_{cbg} = 0.75 \cdot 0.95 \cdot 21.73 = 15.48 \ \text{tonf} \;\ge\; T_{\text{grupo}} = 8.0 \ \text{tonf}
 $$
 </Equation>
 
-Uso **0.57**: es el modo que **gobierna la tracción**. Es también el que dimensiona el
-pedestal —su tamaño en planta lo pide el cono de anclaje, no la columna—.
+Uso **0.52**: es el modo que **gobierna la tracción**. Y como acaba de mostrar el §1.1, lo que
+lo dimensiona es el tamaño en planta del pedestal, no la columna ni el largo del perno.
 
-### 1.2 Extracción — pullout (17.6.3)
+### 1.3 Extracción — pullout (17.6.3)
 
 Que la cabeza (o tuerca) del perno más traccionado aplaste el hormigón sobre el que apoya. Se
-verifica **perno a perno** con el más cargado (17.6.3.2), sobre el área de aplastamiento de la
-tuerca hexagonal pesada $A_{brg} = 0.866(1.5d)^2 - \pi d^2/4 = 7.50$ cm²:
+verifica **perno a perno** con el más cargado (Tabla 17.5.2), sobre el área neta de apoyo de la
+tuerca. Para una **hexagonal pesada** de 1″ la ASME B18.2.2 da entrecaras $F = 1\text{-}5/8''
+= 4.128$ cm —la *normal* tiene $1\text{-}1/2''$, y confundirlas cuesta un 29 %—, de donde
+$A_{brg} = 0.866\,F^2 - \pi d^2/4 = 9.686$ cm² $= 1.50$ in², que es justo lo que tabula la
+Tabla 4-2 del AISC *Design Guide* 1:
 
-<Equation label="Ec. 17.6.3.2">
+<Equation label="Ec. 17.6.3.2.2a">
 $$
-\phi\,\Psi_a N_{pn} = \phi\,\Psi_a\,(8\,A_{brg}\,f'_c) = 0.75 \cdot 0.95 \cdot 8 \cdot 7.50 \cdot 250
-= 10\,690 \ \text{kgf} = 10.7 \ \text{tonf} \;\ge\; T_{\max} = 4.0 \ \text{tonf}
+\phi\,\Psi_a N_{pn} = \phi\,\Psi_a\,(8\,A_{brg}\,f'_c) = 0.75 \cdot 0.95 \cdot 8 \cdot 9.686 \cdot 250
+= 13\,803 \ \text{kgf} = 13.80 \ \text{tonf} \;\ge\; T_{\max} = 4.0 \ \text{tonf}
 $$
 </Equation>
 
-Uso 0.37: holgado.
+Uso 0.29: holgado. El 8 de esa expresión es **adimensional**, así que —a diferencia del $k_c$
+del breakout— vale igual en las dos ediciones del código.
 
-### 1.3 Desprendimiento lateral — side-face blowout (17.6.4)
+### 1.4 Desprendimiento lateral — side-face blowout (17.6.4)
 
-Sólo aplica a pernos con **cabeza profunda muy cerca de un borde** ($c_a < 0.4\,h_{ef}$). Acá
-$c_a = 25 > 0.4\,h_{ef} = 16$ cm, así que **no se activa**. (Si el pedestal fuera más angosto,
+Sólo aplica a pernos con **cabeza profunda muy cerca de un borde**: la 17.6.4.1 lo gatilla con
+$h_{ef} > 2.5\,c_{a1}$, o sea $c_a < 0.4\,h_{ef}$. Acá $40 < 2.5 \cdot 25 = 62.5$ cm, así que
+**no se activa**. Y va con el $h_{ef}$ **real**, no con el $h'_{ef}$ del §1.1: la 17.6.4 queda
+fuera del rango 17.6.2.1–17.6.2.4 que la 17.6.2.1.2 alcanza. (Si el pedestal fuera más angosto,
 este modo frágil podría bajar tanto como el breakout; ver la nota teórica.)
 
 ## 2. Corte: breakout hacia el borde y pryout
@@ -138,25 +203,32 @@ forma conservadora, la **fila delantera** (los 2 pernos hacia el borde $x+$) tom
 componente. Con $c_{a1} = 25$ cm al borde y la longitud de apoyo $\ell_e = \min(h_{ef},\,8d) =
 20.3$ cm, la capacidad base es (17.7.2.2):
 
-<Equation label="Ec. 17.7.2.2">
+<Equation label="Ec. 17.7.2.2.1">
 $$
-V_b = \min\!\left(1.92\left(\tfrac{\ell_e}{d}\right)^{0.2}\!\sqrt{d}\;,\; 3.74\right)\sqrt{f'_c}\,c_{a1}^{1.5}
-= 3.74\sqrt{250}\cdot 25^{1.5} = 7\,392 \ \text{kgf}
+V_b = \min\!\left(1.916\left(\tfrac{\ell_e}{d}\right)^{0.2}\!\sqrt{d}\;,\; 3.736\right)\sqrt{f'_c}\,c_{a1}^{1.5}
+= 3.736\sqrt{250}\cdot 25^{1.5} = 7\,385 \ \text{kgf}
 $$
 </Equation>
 
-(gobierna el tope). Con $A_{Vc}/A_{Vco} = \tfrac{4}{3} \approx 1.33$, $\psi_{ed,V} = 0.90$ y
-$\psi_{c,V} = \psi_{h,V} = \psi_{ec,V} = 1.0$ (el pedestal de $h_a = 120$ cm cumple con holgura
-$h_a \ge 1.5\,c_{a1} = 37.5$ cm, que es lo que hace $\psi_{h,V} = 1$):
+(gobierna el tope: la otra rama da 9 148 kgf). Los dos coeficientes son los de la **edición SI**
+—0.6 y 3.7, con $d$ y $c_{a1}$ en mm— pasados a kgf y cm; la impresión *inch-pound* trae 7 y 9,
+y el tope de esa columna daría un 1.8 % más. Con $A_{Vc}/A_{Vco} = \tfrac{4}{3} \approx 1.33$,
+$\psi_{ed,V} = 0.90$ y $\psi_{c,V} = \psi_{h,V} = \psi_{ec,V} = 1.0$ (el pedestal de $h_a = 120$ cm
+cumple con holgura $h_a \ge 1.5\,c_{a1} = 37.5$ cm, que es lo que hace $\psi_{h,V} = 1$, y es
+también lo que impide que se active la 17.7.2.1.2 —el gemelo en corte del §1.1—, porque ésa
+exige que **tanto** los bordes $c_{a2}$ **como** el espesor $h_a$ queden bajo $1.5\,c_{a1}$):
 
-<Equation label="Ec. 17.7.2.1">
+<Equation label="Ec. 17.7.2.1b">
 $$
 \phi\,\Psi_a V_{cbg} = \phi\,\Psi_a\,\frac{A_{Vc}}{A_{Vco}}\,\psi_{ed,V}\,V_b
-= 0.75 \cdot 0.95 \cdot \tfrac{4}{3} \cdot 0.90 \cdot 7\,392 = 6\,320 \ \text{kgf} = 6.3 \ \text{tonf}
+= 0.75 \cdot 0.95 \cdot \tfrac{4}{3} \cdot 0.90 \cdot 7\,385 = 6\,314 \ \text{kgf} = 6.31 \ \text{tonf}
 $$
 </Equation>
 
-$\phi\,\Psi_a V_{cbg} = 6.3 \ge V_u = 3.5$ tonf, uso **0.55**: **gobierna el corte**.
+$\phi\,\Psi_a V_{cbg} = 6.31 \ge V_u = 3.5$ tonf, uso **0.55**: **gobierna el corte**. Tomar la
+fila delantera no es solo prudente, es lo que manda: la R17.7.2.1 pide mirar también el Caso 2
+—el cono saliendo de la fila trasera, con $c_{a1} = 75$ cm— y ése da 9.3 tonf, o sea que el
+Caso 1 es el que controla.
 
 ### 2.2 Pryout (17.7.3)
 
@@ -164,16 +236,18 @@ En anclajes robustos y sin borde cercano por detrás, el corte hace palanca y sa
 *hacia atrás*. Reutiliza el breakout de tracción del grupo completo, con $k_{cp} = 2$
 ($h_{ef} \ge 6.35$ cm):
 
-<Equation label="Ec. 17.7.3.1">
+<Equation label="Ec. 17.7.3.1b">
 $$
-\phi\,\Psi_a V_{cpg} = \phi\,\Psi_a\,k_{cp}\,N_{cbg,\text{grupo}} = 0.75 \cdot 0.95 \cdot 2 \cdot 23.15
-= 33.0 \ \text{tonf} \;\ge\; V_u = 3.5 \ \text{tonf}
+\phi\,\Psi_a V_{cpg} = \phi\,\Psi_a\,k_{cp}\,N_{cbg,\text{grupo}} = 0.75 \cdot 0.95 \cdot 2 \cdot 43.46
+= 61.9 \ \text{tonf} \;\ge\; V_u = 3.5 \ \text{tonf}
 $$
 </Equation>
 
-Uso 0.11: lejísimos de gobernar. El $N_{cbg,\text{grupo}} = 23.15$ tonf es el breakout de los
+Uso 0.06: lejísimos de gobernar. El $N_{cbg,\text{grupo}} = 43.46$ tonf es el breakout de los
 **cuatro** pernos ($A_{Nc} = 100 \times 100$ cm², la proyección completa del pedestal), no el de
-los dos traccionados. El pedestal es ancho y no tiene borde trasero cercano.
+los dos traccionados. El tope del §1.1 se aplica aquí también —los cuatro pernos tienen los
+**cuatro** bordes a 25 cm— y da el mismo $h'_{ef} = 16.7$ cm, con lo que $A_{Nc}/A_{Nco} = 4.00$,
+otra vez el tope $n\,A_{Nco}$ de la 17.6.2.1.1.
 
 ## 3. Interacción tracción–corte (17.8.3)
 
@@ -186,22 +260,22 @@ adherencia y blowout (17.8.3); el pullout no entra ahí porque es una verificaci
 <Equation label="Ec. 17.8.3">
 $$
 \left(\frac{N_{ua,g}}{\phi N_{n,cg}}\right)^{5/3} + \left(\frac{V_{ua,g}}{\phi V_{n,cg}}\right)^{5/3}
-= 0.57^{5/3} + 0.55^{5/3} = 0.39 + 0.37 = 0.76 \;\le\; 1
+= 0.517^{5/3} + 0.554^{5/3} = 0.33 + 0.37 = 0.71 \;\le\; 1
 $$
 </Equation>
 
-Pasa con **uso 0.76**. Sigue siendo la verificación más exigente del conjunto —más que
+Pasa con **uso 0.71**. Sigue siendo la verificación más exigente del conjunto —más que
 cualquier modo individual— pero con margen real: la interacción se agota recién cuando los
 usos individuales rondan **0.66** cada uno ($2r^{5/3} = 1 \Rightarrow r = 0.5^{0.6} = 0.66$).
 
 <Note type="warning" title="Con la regla anterior este era el punto crítico">
 Bajo ACI 318-19 la interacción era **trilineal**: por debajo del 20 % de una de las dos
 solicitaciones no se verificaba nada, y por encima regía $N/\phi N_n + V/\phi V_n \le 1.2$. Con
-los φ de esa edición (0.70, Tabla 17.5.3 Condición B) los usos daban 0.58 y 0.56, o sea
-$1.14/1.2 =$ **0.95** — casi al límite, y la conclusión del ejemplo era que un escalón más de
-carga lo dejaba fuera. ACI 318-25 reemplazó esa regla por la ley $5/3$ separada por modo de
-falla, que R17.8.1 describe como *"un enfoque menos conservador"*. El diseño no cambió;
-**cambió el criterio con que se lo mide**.
+los φ de esa edición (0.70, Tabla 17.5.3 Condición B) los usos daban 0.53 y 0.56, o sea
+$1.09/1.2 =$ **0.91** — el mismo diseño quedaba bastante más apretado, y la conclusión del
+ejemplo era que dos escalones de carga lo dejaban fuera. ACI 318-25 reemplazó esa regla por
+la ley $5/3$ separada por modo de falla, que R17.8.1 describe como *"un enfoque menos
+conservador"*. El diseño no cambió; **cambió el criterio con que se lo mide**.
 
 **Ojo con la herramienta**: la [herramienta de placa base](/herramientas/placa-base) de este
 sitio todavía implementa la regla lineal $\le 1.2$ de 318-19 y minora con φ = 0.70. Da un
@@ -209,29 +283,31 @@ resultado más conservador que este ejemplo, no uno equivocado, pero no es el cr
 </Note>
 
 Además, la **Sec. 17.8.4** exige verificar la interacción sobre la resistencia del **acero** del
-anclaje más solicitado. Con el mismo supuesto del §2.1 —el corte lo toman los 2 pernos de la
-fila delantera, 1.75 tonf cada uno— los usos son $4.0/15.4 = 0.26$ en tracción y
-$1.75/8.0 = 0.22$ en corte:
+anclaje más solicitado, y ahí **el exponente es otro**: R17.8.1 usa $\zeta = 5/3$ para los modos
+de hormigón y $\zeta = 2$ para los de acero, que es la práctica de pernos de toda la vida. Con
+el mismo supuesto del §2.1 —el corte lo toman los 2 pernos de la fila delantera, 1.75 tonf cada
+uno— los usos son $4.0/15.5 = 0.26$ en tracción y $1.75/8.0 = 0.22$ en corte:
 
 <Equation label="Ec. 17.8.4">
 $$
-0.26^{5/3} + 0.22^{5/3} = 0.11 + 0.08 = 0.19 \;\le\; 1
+0.26^{2} + 0.22^{2} = 0.067 + 0.047 = 0.11 \;\le\; 1
 $$
 </Equation>
 
 Holgado. Y aun en el supuesto pesimista de que la holgura de los agujeros dejara a **un solo
-perno** tomando todo el corte ($3.5/8.0 = 0.44$), la suma daría $0.11 + 0.25 = 0.36$: sigue sin
+perno** tomando todo el corte ($3.5/8.0 = 0.44$), la suma daría $0.067 + 0.19 = 0.26$: sigue sin
 acercarse.
 
 <Note type="warning" title="Si no diera: armadura de anclaje">
-Los usos del hormigón (0.57, 0.55) son mayores que los del acero del perno (≈ 0.26 en
+Los usos del hormigón (0.52, 0.55) son mayores que los del acero del perno (≈ 0.26 en
 tracción, ≈ 0.22 en corte): el grupo está **gobernado por modos frágiles**. Para una base sísmica (NCh2369) eso es indeseable —se
 prefiere que ceda el acero dúctil—. La salida, y el detalle habitual en pedestales
 industriales chilenos, es la **armadura de anclaje** (§17.5.2.1): estribos y barras verticales
 que cosen el cono, permiten **ignorar el breakout** y llevan la falla al acero. Con la
-demanda de este ejemplo el hormigón alcanza con margen (interacción 0.76); con más carga —o
+demanda de este ejemplo el hormigón alcanza con margen (interacción 0.71); con más carga —o
 si se exige comportamiento dúctil por NCh2369— corresponde esa armadura (ver §4 de la nota
-teórica).
+teórica). Y hay un argumento extra a su favor, que sale del §1.1: como el embebido no compra
+breakout, agrandar el perno hacia abajo no es la palanca; la armadura de anclaje sí lo es.
 </Note>
 
 ## Resumen: demanda vs. capacidad
@@ -241,19 +317,43 @@ filas (o) y (q) de la Tabla 21.2.1 (0.75 en tracción, 0.65 en corte).
 
 | Verificación | Referencia | Demanda | Capacidad (tonf) | Uso |
 |---|---|:---:|:---:|:---:|
-| Cono de arrancamiento (breakout) | §17.6.2 | $T_g = 8.0$ tonf | $\phi\Psi_a N_{cbg} = 14.0$ | 0.57 |
-| Extracción (pullout) | §17.6.3 | $T_{\max} = 4.0$ tonf | $\phi\Psi_a N_{pn} = 10.7$ | 0.37 |
-| Desprendimiento lateral | §17.6.4 | — | no aplica ($c_a > 0.4h_{ef}$) | — |
-| Breakout de corte | §17.7.2 | $V_u = 3.5$ tonf | $\phi\Psi_a V_{cbg} = 6.3$ | 0.55 |
-| Pryout | §17.7.3 | $V_u = 3.5$ tonf | $\phi\Psi_a V_{cpg} = 33.0$ | 0.11 |
-| **Interacción N–V (hormigón)** | §17.8.3 | $0.57^{5/3} + 0.55^{5/3}$ | $\le 1$ | **0.76** |
-| Interacción N–V (acero) | §17.8.4 | $0.26^{5/3} + 0.22^{5/3}$ | $\le 1$ | 0.19 |
+| Cono de arrancamiento (breakout) | §17.6.2 | $T_g = 8.0$ tonf | $\phi\Psi_a N_{cbg} = 15.48$ | 0.52 |
+| Extracción (pullout) | §17.6.3 | $T_{\max} = 4.0$ tonf | $\phi\Psi_a N_{pn} = 13.80$ | 0.29 |
+| Desprendimiento lateral | §17.6.4 | — | no aplica ($h_{ef} < 2.5c_{a1}$) | — |
+| Breakout de corte | §17.7.2 | $V_u = 3.5$ tonf | $\phi\Psi_a V_{cbg} = 6.31$ | 0.55 |
+| Pryout | §17.7.3 | $V_u = 3.5$ tonf | $\phi\Psi_a V_{cpg} = 61.9$ | 0.06 |
+| **Interacción N–V (hormigón)** | §17.8.3 | $0.52^{5/3} + 0.55^{5/3}$ | $\le 1$ | **0.71** |
+| Interacción N–V (acero) | §17.8.4 | $0.26^{2} + 0.22^{2}$ | $\le 1$ | 0.11 |
 
 **Solución:** el grupo de 4 φ1″ con $h_{ef} = 40$ cm en el pedestal $100 \times 100$ verifica
 todos los modos del hormigón, con la **interacción tracción–corte** como verificación
-gobernante (uso 0.76). El pedestal ancho es el que hace pasar el breakout y el pryout —lo
-dimensiona el anclaje, no la columna—; para una base sísmica con más demanda, el paso siguiente
-es la armadura de anclaje que lleva la falla del hormigón frágil al acero dúctil.
+gobernante (uso 0.71). Lo que hace pasar el breakout y el pryout no es que el pedestal sea
+ancho: es que, siendo **angosto** para un cono de 40 cm de embebido, la 17.6.2.1.2 lo obliga a
+recalcularse con $h'_{ef} = 16.7$ cm, y con ese $h'_{ef}$ la proyección del grupo llega al tope
+$n\,A_{Nco}$ en las dos direcciones. La consecuencia de proyecto es la que conviene llevarse:
+**la variable que gobierna el anclaje al hormigón es el tamaño en planta del pedestal, no el
+largo del perno** —entre 16.7 y 40 cm de embebido el breakout no se mueve—. Para una base
+sísmica con más demanda, el paso siguiente tampoco es un perno más largo: es la armadura de
+anclaje que lleva la falla del hormigón frágil al acero dúctil.
+
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 130 pasos, 81 verificaciones ✓/✗
+y 64 contrastes que comparan cada número publicado acá contra el que la hoja calcula desde
+la norma. Dos de esos contrastes verifican las **equivalencias de coeficientes** entre las
+dos ediciones del código —el $k_c = 10$ del breakout, que en kgf y cm da 10.098 contra los
+10.142 de la impresión *inch-pound*, y el tope 3.7 del corte, 3.736 contra 3.803—, que es
+donde una edición se cuela por la otra. Y el $h'_{ef}$ no va como dato: la hoja **cuenta los
+bordes influyentes** y aplica la 17.6.2.1.2 sola, así que si ensanchas el pedestal a
+$130 \times 130$ el tope deja de morder y toda la cadena se mueve:
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=anclajes-pedestal)** ·
+[descargar el JSON](/planillas/anclajes-pedestal.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/anclajes-pedestal.json --md
+```
 
 [^aci318]: ACI Committee 318, *Building Code Requirements for Structural Concrete (ACI
 318-25) and Commentary*, American Concrete Institute, 2025. En Chile el diseño de anclajes al

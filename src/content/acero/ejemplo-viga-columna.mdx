@@ -202,6 +202,26 @@ Verificada a compresión sola (0.55) o a flexión sola (0.33) parece sobrada; la
 viga-columnas: **los usos separados no se suman ni se miran solos, y el momento que entra al
 presupuesto es el de segundo orden, no el del análisis.**
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 126 pasos, 82 verificaciones y 39
+contrastes contra los números publicados acá. El $C_m = 1{,}0$ que el A-8-3(b) permite tomar
+«conservadoramente» la hoja **lo deriva**, y el resultado dice algo distinto del permiso: con
+$\psi = \pi^2\cdot 5/48 - 1 = +0{,}028$ de la C-A-8-3, para apoyo simple con carga uniforme
+el $1{,}0$ no es conservador, **es el valor exacto**. Lo mismo con la afirmación del §3 —que
+la recta amplificada de la F2-2 supera $M_p$ y por eso manda el tope—, que va como booleano y
+no por inspección. Y el dato de entrada lleva los dígitos que la cadena de verdad usa
+($w_u = 1{,}306$ tonf/m): declararlo redondeado a 1,3 y después usar el $M_u$ redondeado como
+operando dejaba el uso combinado a $5\cdot10^{-5}$ de cambiar de redondeo.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=viga-columna)** ·
+[descargar el JSON](/planillas/viga-columna.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/viga-columna.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022 — Cap. H (fuerzas combinadas), Cap. E
 (compresión), Cap. F (flexión) y Apéndice 8 (análisis aproximado de segundo orden). En Chile

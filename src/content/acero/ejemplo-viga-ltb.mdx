@@ -193,6 +193,25 @@ $L_b$ a 4 m; resiste $M_u = 20$ tonf·m con uso 0.39. Arriostrada solo en los ap
 lateral-torsional: **el diseño se juega en cuánto se arriostra el ala comprimida, no en el
 tamaño del perfil.**
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 73 pasos, 52 verificaciones y 31
+contrastes contra los números publicados acá. El factor que decide la comparación —$C_b$— la
+hoja **no lo cita: lo deriva**. Declara la parábola de momentos $M(x) = wx(L-x)/2$ como
+función y evalúa los cuartos de **cada segmento no arriostrado**, obteniendo $1{,}136$ para el
+tramo de 8 m y $1{,}299$ para el de 4 m. Tomar «1,14 y 1,30» de una tabla habría dado por
+bueno justamente el paso que el ejemplo quiere demostrar: que el tramo corto tiene gradiente
+más fuerte y por eso gana crédito. Al mover la longitud arriostrada se rearman los dos $C_b$,
+las tres zonas de la curva y el reparto entre ellas.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=viga-ltb)** ·
+[descargar el JSON](/planillas/viga-ltb.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/viga-ltb.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
 industriales se apoya además en la NCh2369, que impone límites propios a la longitud no

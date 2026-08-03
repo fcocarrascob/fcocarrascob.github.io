@@ -127,7 +127,7 @@ $$
 </Equation>
 
 La resistencia es la **menor** de las tres expresiones de la Tabla 22.6.5.2. Con $\beta = 1$
-(columna cuadrada) y $\alpha_s = 40$ (interior):
+(columna cuadrada) y $\alpha_s = 40$ (interior, Sec. 22.6.5.3):
 
 | Expresión | Valor |
 |---|---|
@@ -214,11 +214,11 @@ ancho efectivo, y sobre todo
 
 <Equation label="Tabla 8.4.2.2.4">
 $$
-v_{uv} \le 0{,}4\,v_c = 0{,}4 \times 16{,}66 = 6{,}66 \text{ kgf/cm}^2
+v_{uv} \le 0{,}4\,\phi v_c = 0{,}4 \times 12{,}50 = 5{,}00 \text{ kgf/cm}^2
 $$
 </Equation>
 
-Nuestro $v_{uv} = 9{,}87$ kgf/cm² es **1,48 veces** ese límite. La puerta está cerrada, y la
+Nuestro $v_{uv} = 9{,}87$ kgf/cm² es **1,97 veces** ese límite. La puerta está cerrada, y la
 lógica de la norma es transparente: la concesión existe solo donde el corte directo es bajo,
 porque ahí la conexión aún puede plastificar en flexión antes de punzonar. Donde el corte
 directo ya es alto —justo donde uno querría la concesión— la falla sería frágil y el código no
@@ -273,7 +273,7 @@ engrosado, y otra a $d/2$ del borde del ábaco, con el canto de la losa.
 | $\phi v_c$ | $12{,}05$ kgf/cm² | $8{,}64$ kgf/cm² |
 | $v_{uv}$ | $5{,}81$ | $2{,}20$ |
 | $v_M$ | $2{,}23$ | $0{,}30$ |
-| $v_u$ | $8{,}04$ | $2{,}50$ |
+| $v_u$ | $8{,}04$ | $2{,}51$ |
 | **Uso** | **0,67** | **0,29** |
 
 Dos cosas que conviene no pasar por alto. En la sección **interior** aparece el efecto de tamaño
@@ -316,7 +316,7 @@ conexiones como ésta:
 
 <Equation label="Sec. 8.6.1.2">
 $$
-v_{uv} = 9{,}87 \;>\; 0{,}17\,\lambda_s\lambda\sqrt{f'_c} = 8{,}58 \text{ kgf/cm}^2
+v_{uv} = 9{,}87 \;>\; \phi\,0{,}17\,\lambda_s\lambda\sqrt{f'_c} = 6{,}44 \text{ kgf/cm}^2
 \;\Rightarrow\;
 A_{s,min} = \frac{5\,v_{uv}\,b_{slab}\,b_o}{\phi\,\alpha_s\,f_y} = 12{,}50 \text{ cm}^2
 $$
@@ -350,25 +350,29 @@ sismorresistente, la Sec. 18.14.5.1 no le pide resistencia sísmica, pero sí le
 
 <Equation label="Sec. 18.14.5.1(a)">
 $$
-\frac{\Delta_x}{h_{sx}} \ge 0{,}035 - \frac{1}{20}\,\frac{v_{uv}}{v_c}
+\frac{\Delta_x}{h_{sx}} \ge 0{,}035 - \frac{1}{20}\,\frac{v_{uv}}{\phi v_c}
 $$
 </Equation>
 
-Con $v_{uv}/v_c = 0{,}592$, el umbral queda en **0,54 %** de deriva de diseño. Y la Sec.
-18.14.5.2(a) exime del requisito bajo 0,50 %.
+El cociente lleva $\phi$ dentro —así lo escribe la cláusula, y la Fig. R18.14.5.1 grafica
+$v_{uv}/\phi v_c$ en su eje—. Con $v_{uv}/\phi v_c = 0{,}79$, el umbral da **−0,45 %**:
+negativo. Para esta conexión la condición (a) se cumple con **cualquier** deriva, y lo único
+que mantiene a los conectores de corte como opcionales es la **exención de la Sec.
+18.14.5.2(a)**: deriva de diseño no mayor que **0,50 %**.
 
 <Note type="info" title="Un matiz sobre el v_uv de este chequeo">
 La cláusula pide evaluar $v_{uv}$ **solo con las combinaciones que incluyen $E$**. Acá se usó el
 $v_{uv} = 9{,}87$ kgf/cm² de $1{,}2D + 1{,}6L$, que es mayor que el de una combinación sísmica y
-por lo tanto deja el umbral **más bajo** —del lado seguro—. Con la combinación que corresponde,
-la ventana de deriva se ensancha; el orden de magnitud, no.
+por lo tanto empuja el umbral aún más abajo —del lado seguro—. Con la combinación que
+corresponde el umbral de (a) se recupera algo, pero para una conexión tan cargada la frontera
+que manda en la práctica sigue siendo el 0,50 % de la exención.
 </Note>
 
-Dicho de otro modo: esta conexión, cargada como está, tolera una ventana de deriva estrechísima
-antes de que los conectores de corte pasen de opcionales a obligatorios. En un edificio chileno arriostrado con muros eso normalmente se
-cumple, pero es un chequeo que hay que hacer con el **desplazamiento de diseño** —no con la
-deriva de las fuerzas reducidas— y que castiga precisamente a las conexiones con $v_{uv}$ alto,
-que son las de este ejemplo.
+Dicho de otro modo: esta conexión, cargada como está, no tiene ventana propia — el corte
+directo ya agotó el umbral de la cláusula, y todo cuelga del 0,50 % de la exención. En un
+edificio chileno arriostrado con muros eso normalmente se cumple, pero es un chequeo que hay
+que hacer con el **desplazamiento de diseño** —no con la deriva de las fuerzas reducidas— y que
+castiga precisamente a las conexiones con $v_{uv}$ alto, que son las de este ejemplo.
 
 ## Resumen: demanda vs. capacidad
 
@@ -377,13 +381,13 @@ que son las de este ejemplo.
 | Espesor mínimo | Tabla 8.3.1.1 | $\ell_n/33 = 21{,}2$ cm | $h = 22$ cm | ✓ |
 | Punzonamiento, solo carga vertical | Tabla 22.6.5.2 | $v_{uv} = 9{,}87$ | $\phi v_c = 12{,}50$ | 0,79 |
 | **Punzonamiento con $M_{sc}$, $h = 22$ cm** | Sec. 8.4.4.2 | $v_{u,AB} = \mathbf{14{,}41}$ | $\phi v_c = 12{,}50$ | **1,15 ✗** |
-| Aumento de $\gamma_f$ (salida barata) | Tabla 8.4.2.2.4 | $v_{uv} = 9{,}87$ | $0{,}4v_c = 6{,}66$ | no aplica |
+| Aumento de $\gamma_f$ (salida barata) | Tabla 8.4.2.2.4 | $v_{uv} = 9{,}87$ | $0{,}4\phi v_c = 5{,}00$ | no aplica |
 | Punzonamiento con ábaco, sección interior | Sec. 22.6.4.1 | $v_u = 8{,}04$ | $\phi v_c = 12{,}05$ | **0,67** |
 | Punzonamiento con ábaco, sección exterior | Sec. 22.6.4.1 | $v_u = 2{,}50$ | $\phi v_c = 8{,}64$ | 0,29 |
 | Flexión de $\gamma_f M_{sc}$ en $b_{slab}$ | Sec. 8.4.2.2.3 | $A_s = 12{,}27$ cm² | $7\phi16 = 14{,}07$ cm² | 0,87 |
 | **Armadura mínima en $b_{slab}$** | Sec. 8.6.1.2 | $A_{s,min} = \mathbf{12{,}50}$ cm² | $7\phi16 = 14{,}07$ cm² | **0,89 ← gobierna** |
 | Espaciamiento en sección crítica | Sec. 8.7.2.2 | $s = 16{,}6$ cm | $\min(2h; 450\text{ mm}) = 44$ cm | ✓ |
-| Umbral de deriva de la conexión | Sec. 18.14.5.1 | — | $0{,}54$ % | verificar |
+| Umbral de deriva de la conexión | Sec. 18.14.5.1 y 18.14.5.2(a) | umbral (a) $= -0{,}45$ % | exención $0{,}50$ % | verificar |
 
 **Solución:** losa plana de **22 cm** con **ábaco de $2{,}50 \times 2{,}50$ m y 10 cm de
 proyección** sobre la columna interior, y el acero negativo de la franja de columna corrido de
@@ -400,7 +404,7 @@ práctica que sale de acá es que **toda columna con vanos contiguos desiguales 
 punzonamiento**, aunque sea interior y aunque la carga vertical sobre.
 
 **Segunda: la norma cierra la salida barata justo donde uno la buscaría.** Subir $\gamma_f$ es
-gratis en papel y la Tabla 8.4.2.2.4 lo permite —pero solo si $v_{uv} \le 0{,}4v_c$, es decir,
+gratis en papel y la Tabla 8.4.2.2.4 lo permite —pero solo si $v_{uv} \le 0{,}4\phi v_c$, es decir,
 solo si el corte directo es bajo. En una conexión holgada la concesión está disponible y no hace
 falta; en una apretada hace falta y no está disponible. No es una inconsistencia: es el código
 diciendo que la redistribución supone ductilidad, y que una conexión con corte directo alto no
@@ -414,6 +418,19 @@ sobre $b_o$ exactamente donde se necesita, sin tocar la carga: **3,1 veces menos
 uso 28 % mejor**. Cuando una verificación local falla, la respuesta local casi siempre gana — y
 acá se puede medir cuánto.
 
+## La planilla
+
+Lo que esta hoja aporta y el post no puede: **el análisis estructural se resuelve adentro,
+no se declara**. El marco de cuatro vanos sobre resortes rotacionales se arma por rigidez
+directa en una región `program` —cinco giros nodales, matriz de 5×5— y queda amarrado
+contra cuatro blancos independientes: los momentos de los dos vanos (22,90 / 36,62), la
+reacción de 51,64 tonf contra los 52,39 del área tributaria, y los dos contrafácticos
+—vanos iguales (1,26) y secciones brutas (9,74)—. Con el marco derivado, la tabla de
+espesores del §7 se recalcula entera al mover cualquier dato, $M_{sc}$ incluido, que es
+exactamente la realimentación que la tesis necesita mostrar. Y el esquema dibuja la rampa
+con geometría calculada: el triángulo de exceso nace donde la rampa cruza $\phi v_c$, no
+donde lo puso el autor. Son 195 pasos, 145 verificaciones y 118 contrastes.
+
 [^aci]: American Concrete Institute, *Building Code Requirements for Structural Concrete
 (ACI 318-25) and Commentary*, edición SI, Farmington Hills, MI, 2025 — Sec. 6.2.4.1 y R6.2.4.1
 (métodos de análisis permitidos para losas bidireccionales), Sec. 6.4.3.2 (disposición de la
@@ -423,6 +440,7 @@ valores modificados), Sec. 8.4.4.2 y R8.4.4.2.3 ($\gamma_v$, $J_c$ y la distribu
 tensiones), Sec. 8.6.1.1 y 8.6.1.2 con su comentario R8.6.1.2 (armadura mínima a flexión y el
 mínimo adicional cuando $v_{uv}$ es alto), Sec. 8.7.2.2 (espaciamiento), Sec. 18.14.5
 (conexiones losa-columna), Tabla 21.2.1
-($\phi$), Sec. 22.5.5.1.3 ($\lambda_s$), Sec. 22.6.4.1 (sección crítica) y Tabla 22.6.5.2
+($\phi$), Sec. 22.5.5.1.3 ($\lambda_s$, a la que remiten tanto la nota de la Tabla 22.6.5.2 como
+la Sec. 8.6.1.2), Sec. 22.6.4.1 (sección crítica), Sec. 22.6.5.3 ($\alpha_s$) y Tabla 22.6.5.2
 ($v_c$). En Chile el diseño en hormigón armado se rige por la NCh430, que adopta el ACI 318 con
 modificaciones introducidas por el DS 60 (2011).

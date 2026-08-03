@@ -34,6 +34,7 @@ const breadcrumb = isSinglePost(subKey)
     norm: sub?.author,
     section: post.data.chapter ?? sub?.label,
   }}
+  slug={post.id}
   breadcrumb={breadcrumb}
 >
   <Content />

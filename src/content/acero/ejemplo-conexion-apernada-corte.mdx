@@ -291,6 +291,26 @@ alma de la viga**, que para esta misma conexión da 65.1 tonf, uso 0.46: se calc
 [ejemplo del doble ángulo](/acero/ejemplo-conexion-doble-angulo).
 </Note>
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 73 pasos, 69 verificaciones y 49
+contrastes contra los números publicados acá. Lo que la hoja hace y una lectura no: **abre la
+Tabla J3.2 en su columna métrica**. Los 370 MPa de $F_{nv}$ tabulados para el Grupo 120 con
+rosca incluida no son la conversión exacta de las 54 ksi, que da 372 — y ese 0,5 % es el que
+mueve al perno extremo de 0,995 a 1,00, o sea de «pasa raspando» a «está justo». La cadena de
+apoyo va perno por perno, con su distancia libre real, así que la hoja también muestra **cuál
+falla por desgarre y cuáles por aplastamiento**: el de borde desgarra, los tres interiores
+aplastan. Al mover el espesor de la plancha o la distancia al borde, ese reparto se recalcula
+solo.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=conexion-apernada-corte)** ·
+[descargar el JSON](/planillas/conexion-apernada-corte.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/conexion-apernada-corte.json --md
+```
+
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
 Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
 industriales se apoya además en la NCh2369, que para conexiones sismorresistentes exige que su

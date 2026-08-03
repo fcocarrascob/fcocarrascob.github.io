@@ -6,55 +6,75 @@
   </defs>
   <rect width="780" height="400" fill="#ffffff"/>
 
-  <!-- STEP 1: raw scores -->
-  <text x="120" y="46" text-anchor="middle" font-size="13" fill="#6b7280">1) Attention scores</text>
-  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="10" text-anchor="middle">
-    <rect x="40" y="60" width="160" height="120" rx="4" fill="#f9fafb" stroke="#d1d5db"/>
-    <text x="120" y="80" fill="#374151">0.29 0.47 0.46 0.26 0.22 0.34</text>
-    <text x="120" y="100" fill="#374151">0.47 0.17 0.17 0.10 0.09 0.13</text>
-    <text x="120" y="120" fill="#374151">0.46 0.17 0.17 0.10 0.09 0.13</text>
-    <text x="120" y="140" fill="#374151">0.26 0.10 0.10 0.02 0.02 0.02</text>
-    <text x="120" y="160" fill="#374151">0.22 0.09 0.09 0.02 0.08 0.13</text>
-    <text x="120" y="176" fill="#374151">0.34 0.13 0.13 0.02 0.13 0.01</text>
+  <!-- ===== 1) scores completos ===== -->
+  <text x="131" y="52" text-anchor="middle" font-size="12.5" fill="#6b7280">1) Attention scores  Q·Kᵀ</text>
+  <rect x="40" y="64" width="182" height="124" rx="4" fill="#f9fafb" stroke="#d1d5db"/>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9" fill="#374151" text-anchor="end">
+    <text x="71" y="80">0.29</text><text x="100" y="80">0.07</text><text x="128" y="80">0.08</text><text x="157" y="80">−0.01</text><text x="185" y="80">0.13</text><text x="214" y="80">−0.05</text>
+    <text x="71" y="98">0.47</text><text x="100" y="98">0.17</text><text x="128" y="98">0.18</text><text x="157" y="98">0.03</text><text x="185" y="98">0.18</text><text x="214" y="98">0.01</text>
+    <text x="71" y="116">0.46</text><text x="100" y="116">0.17</text><text x="128" y="116">0.17</text><text x="157" y="116">0.03</text><text x="185" y="116">0.17</text><text x="214" y="116">0.01</text>
+    <text x="71" y="134">0.26</text><text x="100" y="134">0.10</text><text x="128" y="134">0.10</text><text x="157" y="134">0.02</text><text x="185" y="134">0.10</text><text x="214" y="134">0.01</text>
+    <text x="71" y="152">0.22</text><text x="100" y="152">0.09</text><text x="128" y="152">0.09</text><text x="157" y="152">0.02</text><text x="185" y="152">0.08</text><text x="214" y="152">0.02</text>
+    <text x="71" y="170">0.34</text><text x="100" y="170">0.13</text><text x="128" y="170">0.13</text><text x="157" y="170">0.02</text><text x="185" y="170">0.13</text><text x="214" y="170">0.01</text>
+  </g>
+  <text x="131" y="206" text-anchor="middle" font-size="9.5" fill="#9ca3af">ω₀₁ = 0.07 ≠ ω₁₀ = 0.47 · no es simétrica</text>
+
+  <!-- flecha 1 -> 2 -->
+  <path d="M228,120 L279,120" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#cm-ar)"/>
+  <text x="253" y="108" text-anchor="middle" font-size="10.5" fill="#2563eb">mask −∞</text>
+
+  <!-- ===== 2) enmascarados ===== -->
+  <text x="376" y="52" text-anchor="middle" font-size="12.5" fill="#6b7280">2) −∞ sobre la diagonal</text>
+  <rect x="285" y="64" width="182" height="124" rx="4" fill="#fef2f2" stroke="#fca5a5"/>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9" text-anchor="end">
+    <g fill="#374151">
+      <text x="316" y="80">0.29</text>
+      <text x="316" y="98">0.47</text><text x="345" y="98">0.17</text>
+      <text x="316" y="116">0.46</text><text x="345" y="116">0.17</text><text x="373" y="116">0.17</text>
+      <text x="316" y="134">0.26</text><text x="345" y="134">0.10</text><text x="373" y="134">0.10</text><text x="402" y="134">0.02</text>
+      <text x="316" y="152">0.22</text><text x="345" y="152">0.09</text><text x="373" y="152">0.09</text><text x="402" y="152">0.02</text><text x="430" y="152">0.08</text>
+      <text x="316" y="170">0.34</text><text x="345" y="170">0.13</text><text x="373" y="170">0.13</text><text x="402" y="170">0.02</text><text x="430" y="170">0.13</text><text x="459" y="170">0.01</text>
+    </g>
+    <g fill="#dc2626">
+      <text x="345" y="80">−∞</text><text x="373" y="80">−∞</text><text x="402" y="80">−∞</text><text x="430" y="80">−∞</text><text x="459" y="80">−∞</text>
+      <text x="373" y="98">−∞</text><text x="402" y="98">−∞</text><text x="430" y="98">−∞</text><text x="459" y="98">−∞</text>
+      <text x="402" y="116">−∞</text><text x="430" y="116">−∞</text><text x="459" y="116">−∞</text>
+      <text x="430" y="134">−∞</text><text x="459" y="134">−∞</text>
+      <text x="459" y="152">−∞</text>
+    </g>
   </g>
 
-  <!-- arrow to step 2 -->
-  <path d="M205,120 L260,120" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#cm-ar)"/>
-  <text x="232" y="108" text-anchor="middle" font-size="11" fill="#2563eb">mask −∞</text>
-  <text x="232" y="136" text-anchor="middle" font-size="10" fill="#9ca3af">sobre diagonal</text>
+  <!-- flecha 2 -> 3 -->
+  <path d="M473,120 L524,120" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#cm-ar)"/>
+  <text x="498" y="108" text-anchor="middle" font-size="10.5" fill="#2563eb">softmax</text>
+  <text x="498" y="136" text-anchor="middle" font-size="9.5" fill="#9ca3af">(÷ √dₖ)</text>
 
-  <!-- STEP 2: masked with -inf -->
-  <text x="345" y="46" text-anchor="middle" font-size="13" fill="#6b7280">2) −∞ sobre la diagonal</text>
-  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="10" text-anchor="middle">
-    <rect x="265" y="60" width="160" height="120" rx="4" fill="#fef2f2" stroke="#fca5a5"/>
-    <text x="290" y="80" fill="#374151" text-anchor="start">0.29</text><text x="410" y="80" fill="#dc2626" text-anchor="end">−∞ …</text>
-    <text x="290" y="100" fill="#374151" text-anchor="start">0.47 0.17</text><text x="410" y="100" fill="#dc2626" text-anchor="end">−∞ …</text>
-    <text x="290" y="120" fill="#374151" text-anchor="start">0.46 0.17 0.17</text><text x="412" y="120" fill="#dc2626" text-anchor="end">−∞</text>
-    <text x="290" y="140" fill="#374151" text-anchor="start">0.26 0.10 0.10 0.02</text>
-    <text x="290" y="160" fill="#374151" text-anchor="start">0.22 0.09 0.09 0.02 0.08</text>
-    <text x="290" y="176" fill="#374151" text-anchor="start">0.34 0.13 0.13 0.02 0.13 0.01</text>
+  <!-- ===== 3) pesos causales ===== -->
+  <text x="621" y="52" text-anchor="middle" font-size="12.5" fill="#6b7280">3) Pesos causales · filas suman 1</text>
+  <rect x="530" y="64" width="182" height="124" rx="4" fill="#dbeafe" stroke="#60a5fa"/>
+  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="9" text-anchor="end">
+    <g fill="#1e3a8a">
+      <text x="561" y="80">1.00</text>
+      <text x="561" y="98">0.55</text><text x="590" y="98">0.45</text>
+      <text x="561" y="116">0.38</text><text x="590" y="116">0.31</text><text x="618" y="116">0.31</text>
+      <text x="561" y="134">0.28</text><text x="590" y="134">0.25</text><text x="618" y="134">0.25</text><text x="647" y="134">0.23</text>
+      <text x="561" y="152">0.22</text><text x="590" y="152">0.20</text><text x="618" y="152">0.20</text><text x="647" y="152">0.19</text><text x="675" y="152">0.20</text>
+      <text x="561" y="170">0.19</text><text x="590" y="170">0.17</text><text x="618" y="170">0.17</text><text x="647" y="170">0.15</text><text x="675" y="170">0.17</text><text x="704" y="170">0.15</text>
+    </g>
+    <g fill="#93c5fd">
+      <text x="590" y="80">0</text><text x="618" y="80">0</text><text x="647" y="80">0</text><text x="675" y="80">0</text><text x="704" y="80">0</text>
+      <text x="618" y="98">0</text><text x="647" y="98">0</text><text x="675" y="98">0</text><text x="704" y="98">0</text>
+      <text x="647" y="116">0</text><text x="675" y="116">0</text><text x="704" y="116">0</text>
+      <text x="675" y="134">0</text><text x="704" y="134">0</text>
+      <text x="704" y="152">0</text>
+    </g>
   </g>
-
-  <!-- arrow to step 3 -->
-  <path d="M430,120 L485,120" stroke="#2563eb" stroke-width="1.6" fill="none" marker-end="url(#cm-ar)"/>
-  <text x="457" y="108" text-anchor="middle" font-size="11" fill="#2563eb">softmax</text>
-
-  <!-- STEP 3: normalized lower-triangular -->
-  <text x="595" y="46" text-anchor="middle" font-size="13" fill="#6b7280">3) Pesos causales (filas suman 1)</text>
-  <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="10" text-anchor="start">
-    <rect x="490" y="60" width="250" height="120" rx="4" fill="#dbeafe" stroke="#60a5fa"/>
-    <text x="500" y="80" fill="#1e3a8a">1.00</text>
-    <text x="500" y="100" fill="#1e3a8a">0.55 0.45</text>
-    <text x="500" y="120" fill="#1e3a8a">0.38 0.31 0.31</text>
-    <text x="500" y="140" fill="#1e3a8a">0.28 0.25 0.25 0.23</text>
-    <text x="500" y="160" fill="#1e3a8a">0.22 0.20 0.20 0.19 0.20</text>
-    <text x="500" y="176" fill="#1e3a8a">0.19 0.17 0.17 0.15 0.17 0.15</text>
-  </g>
+  <text x="621" y="206" text-anchor="middle" font-size="9.5" fill="#9ca3af">la fila 0 vale 1.00: solo se atiende a sí misma</text>
 
   <!-- caption -->
-  <line x1="40" y1="240" x2="740" y2="240" stroke="#e5e7eb" stroke-width="1"/>
-  <text x="390" y="272" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">El truco eficiente de la causal attention.</text>
-  <text x="390" y="296" text-anchor="middle" font-size="12.5" fill="#6b7280">Poner −∞ en los scores por encima de la diagonal <tspan font-weight="600">antes</tspan> de la softmax</text>
-  <text x="390" y="314" text-anchor="middle" font-size="12.5" fill="#6b7280">enmascara y renormaliza en un solo paso: como e^(−∞)→0, cada token solo atiende a sí mismo y a los previos.</text>
-  <text x="390" y="340" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="'JetBrains Mono', ui-monospace, monospace">masked = scores.masked_fill(mask.bool(), -torch.inf)</text>
+  <line x1="40" y1="234" x2="740" y2="234" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="390" y="264" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">El truco eficiente de la causal attention.</text>
+  <text x="390" y="288" text-anchor="middle" font-size="12.5" fill="#6b7280">Poner −∞ en los scores por encima de la diagonal <tspan font-weight="600">antes</tspan> de la softmax enmascara y renormaliza</text>
+  <text x="390" y="306" text-anchor="middle" font-size="12.5" fill="#6b7280">en un solo paso: como e^(−∞) → 0, cada token solo atiende a sí mismo y a los previos.</text>
+  <text x="390" y="334" text-anchor="middle" font-size="11.5" fill="#9ca3af" font-family="'JetBrains Mono', ui-monospace, monospace">masked = attn_scores.masked_fill(mask.bool(), -torch.inf)</text>
 </svg>

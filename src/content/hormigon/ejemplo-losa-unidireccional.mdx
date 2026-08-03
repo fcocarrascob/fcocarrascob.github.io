@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — Losa unidireccional continua: el espesor no lo decide la resistencia"
-description: "Losa de tres tramos de 4,50 m para un piso de oficinas. Con 17 cm el corte pasa cómodo (0,54) y la flexión se resuelve con más malla, pero la losa reprueba la deflexión por 2,57 veces —y también el límite más blando de todos—. Con 21 cm cumple, y las cinco secciones críticas se arman con el mínimo de 7.6.1.1: el cálculo de flexión no pone ni una barra. Además, tres cosas que cambiaron: el V_c de las losas quedó en la mitad desde 318-19, el mínimo de retracción perdió su tabla por grado de acero, y calcular la flecha con la sección bruta da un uso 0,49 donde el real es 2,57."
+description: "Losa de tres tramos de 4,50 m para un piso de oficinas. Con 17 cm el corte pasa cómodo (0,54) y la flexión se resuelve con más malla, pero la losa reprueba la deflexión por 2,56 veces —y también el límite más blando de todos—. Con 21 cm cumple, y las cinco secciones críticas se arman con el mínimo de 7.6.1.1: el cálculo de flexión no pone ni una barra. Además, tres cosas que cambiaron: el V_c de las losas quedó en la mitad desde 318-19, el mínimo de retracción perdió su tabla por grado de acero, y calcular la flecha con la sección bruta da un uso 0,49 donde el real es 2,56."
 pubDate: 2026-07-29
 tags: ["ejemplo", "hormigón", "losas", "losa unidireccional", "deflexiones", "servicio", "armadura mínima", "aci318", "retracción"]
 subsection: "ejemplos"
@@ -21,7 +21,7 @@ espesor, **salta**.
 
 El caso es el de siempre: tres tramos de 4,50 m entre vigas, piso de oficinas con tabiquería.
 Un espesor de 17 cm —el que sale de redondear hacia abajo y el que la resistencia acepta sin
-chistar— reprueba la deflexión por **2,57 veces**. Hay que llegar a 21 cm. Y en esa losa de
+chistar— reprueba la deflexión por **2,56 veces**. Hay que llegar a 21 cm. Y en esa losa de
 21 cm el cálculo de flexión no coloca una sola barra: todo el acero sale de la cuantía mínima.
 
 ## El caso
@@ -170,8 +170,12 @@ $$
 Pero con $\phi$10 (78,5 mm²), colocar los 306 mm²/m del mínimo obliga a $s \le 257$ mm. **Manda
 la cuantía mínima, no la fisuración**, y se adopta $\phi$10@250 (314 mm²/m) como malla base, con
 $\phi$10@175 en el primer apoyo interior. La sección queda controlada por tracción con
-$\varepsilon_t = 0{,}039$, muy por encima del 0,005 que la Sec. 7.3.3.1 **exige** a las losas
-vía la Tabla 21.2.2 (no es una opción: en losas la norma obliga a que la falla sea dúctil).
+$\varepsilon_t = 0{,}039$, muy por encima del límite que la Sec. 7.3.3.1 **exige** a las losas
+vía la Tabla 21.2.2 (no es una opción: en losas la norma obliga a que la falla sea dúctil). Ese
+límite es $\varepsilon_{ty} + 0{,}003$, y vale 0,005 porque la Sec. 21.2.2.1 permite tomar
+$\varepsilon_{ty} = 0{,}002$ en el Grado 420; con el exacto $f_y/E_s = 0{,}0021$ sería 0,0051.
+Conviene citarlo así: desde 318-19 el límite ya no es el 0,005 escrito a secas —que es el que
+traían las ediciones anteriores— sino una suma de la que el 0,005 resulta ser el valor.
 
 ## 5. Corte: la mitad de la capacidad que daba el código anterior
 
@@ -210,9 +214,19 @@ anterior puede no pasar hoy.
 ## 6. La deflexión: la verificación que sí decide
 
 Acá cambia el análisis. Los coeficientes de 6.5.2 son una envolvente mayorada; para servicio se
-usa la solución elástica exacta de la viga continua de tres tramos iguales bajo carga uniforme
-($M^+ = 0{,}080\,w\ell_n^2$ en el tramo extremo, $M^- = 0{,}100\,w\ell_n^2$ en el primer apoyo
-interior, $\Delta_{max} = 0{,}0069\,w\ell_n^4/E_cI_e$).
+resuelve la viga continua de tres tramos iguales bajo carga uniforme, **con los apoyos exteriores
+rotulados**, que es el supuesto conservador para una losa apoyada en vigas (la rigidez torsional
+de una viga de borde es pequeña y se fisura en servicio). De ahí salen
+$M^+ = 0{,}080\,w\ell_n^2$ en el tramo extremo, $M^- = 0{,}100\,w\ell_n^2$ en el primer apoyo
+interior y $\Delta_{max} = 0{,}006884\,w\ell_n^4/E_cI_e$ en $x = 0{,}446\,\ell_n$.
+
+<Note type="info" title="El coeficiente de flecha se deriva, no se cita">
+Los dos primeros son exactos y redondos; el tercero **no es 0,0069**. Ése es el valor tabulado, y
+usarlo como operando deja toda la cadena de deflexión un 0,23 % alta. El exacto —rigidez directa
+sobre los cuatro giros y doble integración de $M/EI$— es $0{,}006884$, y es el que usa este
+ejemplo. La misma rutina, con los extremos empotrados, devuelve $w\ell^2/24$ y $w\ell^4/384$:
+ése es el control de que el número está bien derivado.
+</Note>
 
 **El momento de fisuración y la inercia fisurada.** Con $E_c = 4700\sqrt{f'_c} = 23\,500$ MPa,
 $n = 8{,}51$ y $f_r = 0{,}62\lambda\sqrt{f'_c} = 3{,}10$ MPa:
@@ -250,23 +264,24 @@ no estructurales susceptibles de dañarse):
 
 | Componente | Valor |
 |---|:---:|
-| Flecha inmediata, $D + L$ | $13{,}49$ mm |
-| Flecha inmediata sostenida, $D + 0{,}25L$ | $10{,}60$ mm |
-| Flecha diferida, $\lambda_\Delta \times$ sostenida | $21{,}19$ mm |
-| $+$ inmediata de la $L$ adicional | $2{,}89$ mm |
-| **Total posterior al montaje** | $\mathbf{24{,}08}$ **mm** |
+| Flecha inmediata, $D + L$ | $13{,}45$ mm |
+| Flecha inmediata sostenida, $D + 0{,}25L$ | $10{,}57$ mm |
+| Flecha diferida, $\lambda_\Delta \times$ sostenida | $21{,}14$ mm |
+| $+$ inmediata de la $L$ adicional | $2{,}88$ mm |
+| **Total posterior al montaje** | $\mathbf{24{,}03}$ **mm** |
 | Límite $\ell_n/480$ | $9{,}38$ mm |
-| **Uso** | **2,57 — NO CUMPLE** |
+| **Uso** | **2,56 — NO CUMPLE** |
 
 No es un margen discutible: la losa se pasa por 2,6 veces. Y ni siquiera el límite más blando de
 la tabla la salva — con $\ell_n/240 = 18{,}75$ mm (el que aplicaría si la tabiquería *no* fuera
-dañable) el uso sigue en **1,28**.
+dañable) el uso sigue en **1,28**. La nota [3] de la Tabla 24.2.2 permite además descontar la
+flecha ocurrida *antes* de montar la tabiquería; este ejemplo no la toma, y lo declara al cierre.
 
 <Note type="tip" title="La flecha que mata no es la de la sobrecarga">
 Si uno verifica solo la flecha inmediata por sobrecarga contra $\ell/360$ —el chequeo rápido de
-oficina— obtiene $3{,}85$ mm contra $12{,}50$ y concluye **uso 0,31**: cumple con holgura. Lo que
-reprueba es la **diferida de la carga sostenida**, que vale 21,19 mm ella sola — el 88 % del
-total. Y dentro de ella el protagonista es el peso propio: sus $13{,}10$ mm de flecha diferida
+oficina— obtiene $3{,}84$ mm contra $12{,}50$ y concluye **uso 0,31**: cumple con holgura. Lo que
+reprueba es la **diferida de la carga sostenida**, que vale 21,14 mm ella sola — el 88 % del
+total. Y dentro de ella el protagonista es el peso propio: sus $13{,}07$ mm de flecha diferida
 superan por sí solos el límite de 9,38 mm. En una losa el peso propio es la mitad de la carga
 total y actúa desde el día uno; multiplicado por $\lambda_\Delta = 2$, es la componente dominante
 y la que ningún chequeo rápido mira.
@@ -274,7 +289,7 @@ y la que ningún chequeo rápido mira.
 
 <Note type="warning" title="El error de calcular la flecha con la sección bruta">
 Con $I_g$ en vez de $I_e$ —la simplificación que hace cualquier planilla que no implemente
-24.2.3.5— la misma losa da $4{,}60$ mm y **uso 0,49**. Es decir: la planilla informa que sobra el
+24.2.3.5— la misma losa da $4{,}58$ mm y **uso 0,49**. Es decir: la planilla informa que sobra el
 doble de margen donde en realidad falta 2,6 veces. Un factor **5,2** de error, y siempre del lado
 inseguro. La fisuración no es un detalle de segundo orden en losas: es el fenómeno principal.
 </Note>
@@ -283,22 +298,27 @@ inseguro. La fisuración no es un detalle de segundo orden en losas: es el fenó
 
 <Figure
   src="/ejemplos/losa-unidireccional-flecha.svg"
-  alt="Gráfico de la flecha posterior al montaje contra el espesor de la losa, de 150 a 250 mm. La curva parte en 41,95 mm para h = 150 mm y cae rápidamente: 24,08 mm en h = 170 mm (marcado en rojo, uso 2,57), 16,90 en 180, 12,30 en 190, 7,65 en 200, 4,33 mm en h = 210 mm (marcado en verde, uso 0,46) y 2,46 en 220, aplanándose después hasta 1,81 en 250. Una línea horizontal roja punteada marca el límite l/480 = 9,38 mm y una línea vertical verde punteada en h = 215 mm marca dónde el momento de servicio deja de superar dos tercios del momento de fisuración. Una tabla lateral da, para cada espesor, la razón entre inercia efectiva y bruta (19 % en 170, 24 % en 180, 28 % en 190, 40 % en 200, 63 % en 210, 100 % en 220), la flecha y los usos por los dos caminos que el código permite para la inercia efectiva."
-  caption="La flecha no es una función suave del espesor. Entre 190 y 220 mm la inercia efectiva pasa del 28 % al 100 % de la bruta, porque el momento de servicio cruza el umbral: los dos tercios del momento de fisuración. Ahí la curva colapsa: 4 cm de espesor bajan la flecha a la quinta parte, y no por el aumento de la inercia bruta, que solo sube 88 %."
+  alt="Gráfico de la flecha posterior al montaje contra el espesor de la losa, de 150 a 250 mm. La curva parte en 35,51 mm para h = 150 mm y cae: 28,23 en 160, 24,03 mm en h = 170 mm (marcado en rojo, uso 2,56), 16,86 en 180, 12,27 en 190, 7,63 en 200, 4,32 mm en h = 210 mm (marcado en verde, uso 0,46) y 2,45 en 220, aplanándose después hasta 1,81 en 250. Una línea horizontal roja punteada marca el límite l/480 = 9,38 mm y una línea vertical verde punteada en h = 215 mm marca dónde el momento de servicio deja de superar dos tercios del momento de fisuración. Una tabla lateral da, para cada espesor, la razón entre inercia efectiva y bruta (19 % en 170, 24 % en 180, 28 % en 190, 40 % en 200, 63 % en 210, 100 % en 220), la flecha y los usos por los dos caminos que el código permite para la inercia efectiva."
+  caption="La flecha no es una función suave del espesor. Entre 190 y 220 mm la inercia efectiva pasa del 28 % al 100 % de la bruta, porque el momento de servicio cruza el umbral: los dos tercios del momento de fisuración. Ahí la curva colapsa: 4 cm de espesor bajan la flecha a la quinta parte, y no por el aumento de la inercia bruta, que solo sube 88 %. Cada espesor va armado con la malla que satisface a la vez el mínimo de 7.6.1.1 y su propia flexión — abajo de 17 cm es la flexión la que la fija."
 />
 
 **El espesor.** El barrido muestra por qué el tanteo fallaba tan feo y por qué la solución
 aparece de golpe:
 
-| $h$ (mm) | $A_{s,min}$ | $A_s$ req. M⁺ | Gobierna | Uso corte | $I_e/I_g$ | Flecha (mm) | Uso $\ell/480$ |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 150 | 270 | 343 | flexión | 0,54 | 14,9 % | 41,95 | 4,47 |
-| 170 | 306 | 310 | flexión | 0,54 | 19,1 % | 24,08 | **2,57** |
-| 180 | 324 | 297 | mínimo | 0,52 | 23,6 % | 16,90 | 1,80 |
-| 190 | 342 | 285 | mínimo | 0,51 | 28,5 % | 12,30 | 1,31 |
-| 200 | 360 | 275 | mínimo | 0,53 | 40,5 % | 7,65 | 0,82 |
-| **210** | **378** | **266** | **mínimo** | **0,52** | **63,5 %** | **4,33** | **0,46** |
-| 220 | 396 | 258 | mínimo | 0,49 | 100 % | 2,46 | 0,26 |
+| $h$ (mm) | $A_{s,min}$ | $A_s$ req. M⁺ | Gobierna | Malla | Uso corte | $I_e/I_g$ | Flecha (mm) | Uso $\ell/480$ |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 150 | 270 | 343 | flexión | $\phi$10@225 | 0,54 | 17,6 % | 35,51 | 3,79 |
+| 170 | 306 | 310 | flexión | $\phi$10@250 | 0,54 | 19,1 % | 24,03 | **2,56** |
+| 180 | 324 | 297 | mínimo | $\phi$10@225 | 0,52 | 23,6 % | 16,86 | 1,80 |
+| 190 | 342 | 285 | mínimo | $\phi$10@225 | 0,51 | 28,5 % | 12,27 | 1,31 |
+| 200 | 360 | 275 | mínimo | $\phi$10@200 | 0,53 | 40,5 % | 7,63 | 0,81 |
+| **210** | **378** | **266** | **mínimo** | **$\phi$10@200** | **0,52** | **63,5 %** | **4,32** | **0,46** |
+| 220 | 396 | 258 | mínimo | $\phi$10@175 | 0,49 | 100 % | 2,45 | 0,26 |
+
+La columna «Malla» no es decorativa: el $I_e$ de cada fila depende del acero que esa losa lleva
+puesto, y por debajo de 17 cm la flexión pide más que el mínimo. Armar el barrido con la malla
+del mínimo a secas exagera la flecha justo en el extremo empinado de la curva —en $h = 150$ da
+41,95 mm en vez de 35,51— y ése es el tramo que uno mira para decidir si sigue tanteando.
 
 Fíjese en la columna $I_e/I_g$: entre 190 y 220 mm pasa de 28 % a 100 %. Lo que ocurre no es que
 la sección se ponga más rígida por geometría —$I_g$ solo crece un 88 % de 170 a 210— sino que
@@ -309,7 +329,7 @@ recupera al cruzar ese umbral es mucho mayor que la que se compra con el canto.
 Para un elemento continuo la norma ofrece dos rutas. La Sec. 24.2.3.7 permite usar el $I_e$ del
 **centro del tramo** (lo que se hizo arriba); la Sec. 24.2.3.6 permite **promediar** el de la
 sección positiva con el de la negativa — que está más fisurada, porque su momento de servicio es
-mayor. En $h = 200$ mm los dos caminos **se reparten el veredicto**: 0,82 por el primero y
+mayor. En $h = 200$ mm los dos caminos **se reparten el veredicto**: 0,81 por el primero y
 **1,06** por el segundo. Por eso el espesor adoptado es $h = 210$ mm, donde ambos cumplen
 (0,46 y 0,67). Elegir la ruta no es un detalle de método: en el espesor de tanteo natural, es la
 diferencia entre aprobar y reprobar.
@@ -320,8 +340,8 @@ mismos 17 cm de espesor:
 
 | $\ell_n$ | Flecha posterior al montaje | Uso $\ell/480$ (24.2.3.7) | Uso $\ell/480$ (24.2.3.6) |
 |:---:|:---:|:---:|:---:|
-| 4,50 m | 24,08 mm | 2,57 | 2,51 |
-| 4,00 m | 7,91 mm | 0,95 | **1,20** |
+| 4,50 m | 24,03 mm | 2,56 | 2,51 |
+| 4,00 m | 7,89 mm | 0,95 | **1,20** |
 | 3,60 m | 1,88 mm | 0,25 | 0,37 |
 | 3,30 m | 1,33 mm | 0,19 | 0,19 |
 
@@ -344,15 +364,33 @@ servicio deja la sección más fisurada. El resultado, con las dos rutas de $I_e
 | $h$ (mm) | $\ell = \ell_n = 4{,}50$ m | | $\ell = 4{,}80$ m entre ejes | |
 |:---:|:---:|:---:|:---:|:---:|
 | | 24.2.3.7 | 24.2.3.6 | 24.2.3.7 | 24.2.3.6 |
-| 200 | 0,82 | 1,06 | 1,53 | 1,72 |
+| 200 | 0,81 | 1,06 | 1,53 | 1,72 |
 | **210** | **0,46** | **0,67** | **1,13** | **1,34** |
 | 220 | 0,26 | 0,40 | 0,72 | 0,94 |
 | 230 | 0,24 | 0,34 | 0,43 | 0,62 |
 
-**Este es el supuesto más caro del ejemplo**: mueve el espesor de 21 a 22 cm, más que cualquier
-parámetro del código y mucho más que la fracción sostenida de la sobrecarga (13 % de recorrido
-entre 20 % y 100 %). El veredicto del tanteo es robusto —los 17 cm reprueban por 2,5 a 3,7 veces
-con cualquier combinación—, pero el espesor final no lo es.
+Esta lectura mueve el espesor de 21 a 22 cm, más que cualquier parámetro del código y mucho más
+que la fracción sostenida de la sobrecarga (13 % de recorrido entre 20 % y 100 %). El veredicto
+del tanteo es robusto —los 17 cm reprueban por 2,5 a 3,1 veces con cualquier combinación—, pero
+el espesor final no lo es.
+
+**Y hay una tercera lectura, que pesa más que las dos anteriores: cómo se modela el apoyo
+exterior.** Para servicio, este ejemplo resuelve la viga continua con los extremos rotulados. Pero
+para resistencia toma de la Tabla 6.5.2 la fila «extremo discontinuo **integral con el apoyo**»
+($w_u\ell_n^2/14$) y arma la cara interior de la viga de borde por $w_u\ell_n^2/24$ — o sea, ahí
+el extremo sí está restringido. Un apoyo no puede ser las dos cosas, y la diferencia se paga en
+espesor:
+
+| Apoyo exterior en el modelo de servicio | Coef. de flecha | Espesor que cumple por los dos caminos |
+|---|:---:|:---:|
+| **rotulado** (el adoptado) | $0{,}006884$ | **21 cm** (0,46 / 0,67) |
+| resorte $K = 0{,}50\,EI/\ell$ | $0{,}006319$ | 20 cm (0,47 / 0,69) |
+| resorte $K = 0{,}847\,EI/\ell$, el que da el $w_u\ell_n^2/14$ | $0{,}006006$ | 19 cm (0,68 / 0,92) |
+
+Se adopta el rotulado porque es el conservador y porque la rigidez torsional de una viga de borde
+es pequeña y se fisura en servicio — pero conviene saber que es el supuesto de mayor peso del
+ejemplo, por encima de la luz declarada y de la ruta de $I_e$. Con cualquiera de los tres, los
+17 cm siguen reprobando (1,79 a 2,56): lo que se mueve es el espesor final, no el veredicto.
 
 <Note type="tip" title="Que espesor firmar">
 El ejemplo sigue con $h = 210$ mm porque adopta la luz libre y lo declara. Pero si usted tiene
@@ -367,9 +405,9 @@ diferida. En losas no:
 
 | $\rho'$ | $\lambda_\Delta$ | Flecha | Uso |
 |:---:|:---:|:---:|:---:|
-| 0 | 2,00 | 24,08 mm | 2,57 |
-| 0,2 % | 1,82 | 22,16 mm | 2,36 |
-| 0,4 % | 1,67 | 20,55 mm | 2,19 |
+| 0 | 2,00 | 24,03 mm | 2,56 |
+| 0,2 % | 1,82 | 22,10 mm | 2,36 |
+| 0,4 % | 1,67 | 20,50 mm | 2,19 |
 
 El $\rho'$ que alimenta la Ec. (24.2.4.1.1) es el del **centro del tramo** (Sec. 24.2.4.1.2), o
 sea la malla *superior* corrida. Llevarla al 0,4 % —más del doble de lo que pide el mínimo— baja
@@ -405,13 +443,13 @@ $s \le \min(5h, 450) = 450$ mm.
 
 | Verificación | Cláusula | Demanda | Capacidad | Uso |
 |---|---|:---:|:---:|:---:|
-| Flexión, 1.er apoyo interior | 7.5.1.1 / 22.2 | $A_s = 375$ mm²/m | $393$ mm²/m | 0,95 |
-| Armadura mínima de flexión | 7.6.1.1 | $378$ mm²/m | $393$ mm²/m | 0,96 |
+| Flexión, 1.er apoyo interior | 7.5.1.1 / 22.2 | $A_s = 375{,}3$ mm²/m | $392{,}7$ mm²/m | 0,96 |
+| Armadura mínima de flexión | 7.6.1.1 | $378$ mm²/m | $392{,}7$ mm²/m | 0,96 |
 | Corte a $d$ de la cara | 22.5.5.1(c) | $30{,}51$ kN/m | $58{,}85$ kN/m | **0,52** |
-| Deformación unitaria del acero | 7.3.3.1 | $\varepsilon_t = 0{,}058$ | $\ge 0{,}005$ | ✓ |
+| Deformación unitaria del acero | 7.3.3.1 / 21.2.2.1 | $\varepsilon_t = 0{,}058$ | $\ge \varepsilon_{ty} + 0{,}003 = 0{,}005$ | ✓ |
 | Espaciamiento por fisuración | 24.3.2 | $200$ mm | $300$ mm | 0,67 |
-| Flecha posterior al montaje ($I_e$ centro) | 24.2.2 / 24.2.3.7 | $4{,}33$ mm | $9{,}38$ mm | 0,46 |
-| Flecha posterior al montaje ($I_e$ promedio) | 24.2.2 / 24.2.3.6 | $6{,}27$ mm | $9{,}38$ mm | **0,67** |
+| Flecha posterior al montaje ($I_e$ centro) | 24.2.2 / 24.2.3.7 | $4{,}32$ mm | $9{,}38$ mm | 0,46 |
+| Flecha posterior al montaje ($I_e$ promedio) | 24.2.2 / 24.2.3.6 | $6{,}25$ mm | $9{,}38$ mm | **0,67** |
 | Flecha inmediata por $L$ | 24.2.2 | $0{,}61$ mm | $12{,}50$ mm | 0,05 |
 | Retracción y temperatura | 24.4.3.2 | $378$ mm²/m | $393$ mm²/m | 0,96 |
 
@@ -428,17 +466,20 @@ resto es detallamiento. Eso explica por qué el capítulo entero de la norma es 
 problema sea trivial, sino porque la parte no trivial —la flecha— vive en el Cap. 24.
 
 **El salto de fisuración es la razón por la que el tanteo engaña.** Partiendo de los 17 cm del
-tanteo, uno espera que subir 2 cm baje la flecha un 20 % y la baja **a la mitad** (24,08 → 12,30);
-espera que subir 4 cm la baje a la mitad y la baja **a la quinta parte** (24,08 → 4,33). La
+tanteo, uno espera que subir 2 cm baje la flecha un 20 % y la baja **a la mitad** (24,03 → 12,27);
+espera que subir 4 cm la baje a la mitad y la baja **a la quinta parte** (24,03 → 4,32). La
 respuesta no es proporcional porque cruza un umbral. Iterar a ciegas con incrementos de
 1 cm es caro; mirar dónde queda $M_a$ respecto de $\tfrac{2}{3}M_{cr}$ dice al tiro si se está
 del lado empinado de la curva o del plano.
 
-**Lo que más movió el espesor no fue una cláusula sino una lectura.** Entre la luz libre y la luz
-entre ejes hay un centímetro de losa; entre las dos rutas de $I_e$ que la norma permite, otro
-tanto. Las dos son decisiones editoriales que ningún texto del código zanja, y las dos pesan más
-que la fracción sostenida de la sobrecarga o el grado del acero. Vale la pena declararlas en la
-memoria de cálculo, porque son exactamente lo que un revisor puede leer distinto.
+**Lo que más movió el espesor no fue una cláusula sino una lectura — y son tres.** Entre la luz
+libre y la luz entre ejes hay un centímetro de losa; entre las dos rutas de $I_e$ que la norma
+permite, otro tanto; y entre modelar el apoyo exterior rotulado o con la restricción que el
+propio $w_u\ell_n^2/14$ de la Tabla 6.5.2 implica, **dos**. Las tres son decisiones que ningún
+texto del código zanja, y las tres pesan más que la fracción sostenida de la sobrecarga o el
+grado del acero. Vale la pena declararlas en la memoria de cálculo, porque son exactamente lo
+que un revisor puede leer distinto. Lo que ninguna de las tres mueve es el veredicto del tanteo:
+los 17 cm reprueban con todas.
 
 **Y hay dos cosas que cambiaron desde 318-19 y que conviene tener presentes** al revisar planos
 antiguos o planillas heredadas: el $V_c$ de elementos sin estribos y poco armados quedó en la
@@ -452,17 +493,21 @@ código**:
 
 1. **Fracción sostenida de la sobrecarga = 25 %.** ACI 318 no la fija; es criterio del
    proyectista. Es el supuesto con menos peso de todo el ejemplo: la flecha del tanteo va de
-   23,89 mm (20 %) a 24,08 (25 %), 25,05 (50 %) y 26,97 (100 %) — un 13 % de recorrido entre los
-   dos extremos, contra un déficit de 157 %.
+   23,83 mm (20 %) a 24,03 (25 %), 24,99 (50 %) y 26,91 (100 %) — un 13 % de recorrido entre los
+   dos extremos, contra un déficit de 156 %.
 2. **La tabiquería es susceptible de dañarse** → límite $\ell/480$. Si se declarara no dañable
    ($\ell/240$), el tanteo de 17 cm igual reprueba (1,28).
 3. **El mismo $I_e$ para todos los niveles de carga**, calculado con el momento de servicio
    máximo. Es la práctica de ACI PRC-435: una vez fisurada, la sección no recupera rigidez.
-4. **$\ell = \ell_n = 4{,}50$ m** tanto en el análisis como en el límite de la Tabla 24.2.2. Es
-   el supuesto de mayor peso del ejemplo y está medido en la Sec. 7: con la luz entre ejes
-   (4,80 m) el espesor necesario sube de 21 a 22 cm.
-5. **Momentos de servicio por análisis elástico** (viga continua de tres tramos), no por los
-   coeficientes de 6.5.2, que son una envolvente mayorada.
+4. **$\ell = \ell_n = 4{,}50$ m** tanto en el análisis como en el límite de la Tabla 24.2.2. Con
+   la luz entre ejes (4,80 m) el espesor necesario sube de 21 a 22 cm (Sec. 7).
+5. **Momentos y flecha de servicio por análisis elástico** (viga continua de tres tramos **con
+   los apoyos exteriores rotulados**), no por los coeficientes de 6.5.2, que son una envolvente
+   mayorada. Es el supuesto de mayor peso del ejemplo: la restricción que el propio
+   $w_u\ell_n^2/14$ implica bajaría el espesor a 19 cm (Sec. 7).
+6. **No se descuenta la flecha anterior al montaje de la tabiquería**, que la nota [3] de la
+   Tabla 24.2.2 permite deducir. Descontarla exige datos de cronograma que el ejemplo no fija, y
+   omitirla es del lado seguro.
 </Note>
 
 <Note type="warning" title="Errata de la edición SI de ACI 318-25">
@@ -474,6 +519,29 @@ de pilotes *«considerando un módulo de rotura igual a $0{,}62\sqrt{f'_c}$»*. 
 1,49 kN·m/m, toda losa quedaría siempre fisurada y $I_e \to I_{cr}$: la flecha del tanteo se
 dispararía a 43 mm.
 </Note>
+
+## La planilla
+
+La hoja reproduce la cadena entera en 241 pasos, 228 verificaciones y 188 contrastes contra los
+números publicados. Lo que aporta y el post no puede:
+
+**Resuelve el marco, en vez de citarlo.** Los tres coeficientes de la viga continua salen de una
+región `program` que arma la matriz de rigidez de los cuatro giros, la invierte con `lusolve` e
+integra $M/EI$ dos veces barriendo $x$. Eso es lo que devuelve el $0{,}006884$ en lugar del
+0,0069 tabulado — un 0,23 % que mueve treinta números publicados —, y es también lo que permite
+poner un resorte $K$ en los apoyos exteriores y medir cuánto vale ese supuesto. La rutina se
+autovalida contra los dos límites cerrados: con $K = 0$ devuelve $w\ell^2/12{,}5$ y
+$0{,}006884\,w\ell^4/EI$; con $K \to \infty$, $w\ell^2/24$ y $w\ell^4/384$.
+
+**Deriva el canto útil y la malla, que es de donde cuelga todo.** $d$ sale de $h$, el
+recubrimiento y media barra; la malla, del mayor múltiplo de 25 mm que cubre a la vez el mínimo
+de 7.6.1.1 y la flexión de esa sección. Con eso los cuatro barridos —espesor, luz, luz declarada
+y $\rho'$— son un bucle sobre la misma función, y no cuatro cadenas que puedan desincronizarse.
+
+**Deja escrito de qué edición es cada coeficiente.** Los seis que arrastran unidad ($0{,}66$,
+$0{,}083$, $0{,}42$, $0{,}17$, $0{,}62$, $4700$) se contrastan contra su gemelo inch-pound a
+través de $\sqrt{1\,\text{MPa}/1\,\text{psi}} = 12{,}04$, que es lo que impide que la familia de
+la otra impresión del código entre sin que nadie lo note.
 
 ---
 

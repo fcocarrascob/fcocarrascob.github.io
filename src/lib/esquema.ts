@@ -7,6 +7,13 @@
 //   <text>U = {{U_5}}</text>            → "U = 0.7607"     (valor a secas)
 //   <text>{{1 - x_bar/l_w}}</text>      → cualquier expresión mathjs vale
 //
+// En un ATRIBUTO el rótulo no sirve —`formatValor` sale con coma decimal, y
+// `width="211,4"` es SVG inválido—, así que va el modificador `:svg`, que emite
+// geometría cruda y vuelca una matriz Nx2 como lista de puntos:
+//
+//   <polyline points="{{pts_px:svg}}" />   → "40,310 52,287 …"
+//   <circle cx="{{x_bal:svg}}" ... />      → "128.4"
+//
 // La región `image` que lo muestra captura el scope en su posición de lectura
 // (ver `evaluateSheet`): el esquema ve las variables definidas arriba, igual
 // que una región math. Un token que no resuelve (variable no definida todavía,
@@ -17,7 +24,7 @@
 // Seguridad: solo se inyecta SVG inline desde `/esquemas/` (mismo origen,
 // autoría propia). Una imagen pegada por el usuario nunca pasa por aquí.
 
-import { evalExpr, formatValor } from './worksheet';
+import { evalExpr, formatSvg, formatValor } from './worksheet';
 
 /** Prefijo de ruta desde el que se permite render inline con tokens. */
 export const ESQUEMAS_PREFIX = '/esquemas/';
@@ -35,6 +42,14 @@ export interface EsquemaRender {
   /** Tokens que no resolvieron (expresión, tal como se escribió). */
   faltantes: string[];
 }
+
+/**
+ * Modificador de formato crudo: `{{expr:svg}}` sale con punto decimal, sin
+ * unidad y sin el redondeo a 4 cifras, para poder ir DENTRO de un atributo
+ * (`points`, `cx`, `d`). Ocupa el slot de la unidad y se puede encadenar con
+ * ella: `{{x:cm:svg}}` convierte a cm y después formatea crudo.
+ */
+const MOD_SVG = 'svg';
 
 /** Separa `expr:unidad`; el último `:` solo es unidad si la cola lo parece. */
 function separarToken(crudo: string): { expr: string; unidad?: string } {
@@ -57,9 +72,12 @@ export function renderEsquema(
   const svg = svgText.replace(TOKEN_RE, (_m, crudoRaw: string) => {
     tokens += 1;
     const crudo = crudoRaw.trim();
-    const { expr, unidad } = separarToken(crudo);
+    let { expr, unidad } = separarToken(crudo);
+    const svg = unidad === MOD_SVG;
+    if (svg) ({ expr, unidad } = separarToken(expr));
     try {
-      return formatValor(evalExpr(expr, scope), unidad);
+      const v = evalExpr(expr, scope);
+      return svg ? formatSvg(v, unidad) : formatValor(v, unidad);
     } catch {
       faltantes.push(crudo);
       return `¿${expr}?`;

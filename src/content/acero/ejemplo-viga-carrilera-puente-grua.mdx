@@ -406,6 +406,27 @@ biaxial se va a 1.30—. Y la fatiga, que aquí holga en 0.46, sube a 0.74 en se
 palanca del diseño se traslada del canal al detalle soldado. Dos números mandan en esta viga y
 ninguno es la resistencia a flexión.
 
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 156 pasos, 82 verificaciones y 62
+contrastes contra los números publicados acá. Dos piezas son cálculo propio y no cita. La
+**posición crítica del puente grúa** se obtiene barriendo el tren de dos ruedas a paso de
+5 mm: el máximo cae con las ruedas en 3,0 y 7,0 m y da $2{,}25\,$m·P bajo la primera, con
+reacción máxima $1{,}50P$ — el teorema de la carga móvil, obtenido por barrido en vez de
+recordado. Y la **sección compuesta**, que es donde estaba el hallazgo grande: como la viga
+con canal-tapa no la tabula nadie, la hoja compone desde las filas de las partes y deja
+declarado dónde queda el centroide del canal. Ese paso mostró que el par publicado no lo
+reproducía ninguna hipótesis limpia, y al componerlo bien la fatiga dejó de gobernar en
+servicio severo — la tesis de cierre se reescribió por eso.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=viga-carrilera-puente-grua)** ·
+[descargar el JSON](/planillas/viga-carrilera-puente-grua.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/viga-carrilera-puente-grua.json --md
+```
+
 [^asce]: American Society of Civil Engineers, *Minimum Design Loads and Associated Criteria
 for Buildings and Other Structures (ASCE/SEI 7)*, §4.9 "Crane Loads". Los factores de impacto
 (25 %), empuje lateral (20 %) y tracción longitudinal (10 %) provienen de §4.9.3 a §4.9.5.

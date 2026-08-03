@@ -70,7 +70,9 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
    página). Una sección más larga que una página se parte igual: eso no se
    fuerza, se acepta.
 7. **Registrar**: los hallazgos con su severidad en `AUDIT.md`, la fila de este
-   registro con pasos, verificaciones, contrastes y fecha de corrida.
+   registro con pasos, verificaciones, contrastes y fecha de corrida, y la
+   sección **`## La planilla`** al cierre del post (§ Convenciones: cómo se
+   publica un ejemplo con planilla). El enlace no se escribe: lo pone el layout.
 8. **Cerrar**: `npm run verify:planillas` (todas, no solo la nueva), `npm run
    build`, y commit del par planilla + esquema + post corregido.
 
@@ -79,6 +81,25 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 - **Independencia**: la planilla se construye desde la norma (verificada en el PDF) y los
   datos de entrada del post — nunca transcribiendo los pasos intermedios del post, que es
   verificar que el post coincide consigo mismo.
+- **La planilla es el cálculo, no el relato: cita + regla, en una línea.** Cada paso lleva
+  la cláusula que lo autoriza y el enunciado de la regla, y nada más. El **porqué**, las
+  decisiones de proyecto y las conclusiones son del post; repetirlos en la hoja la vuelve
+  ilegible justo donde tiene que ser operable. Concretamente **no van**: los párrafos que
+  explican un fenómeno, las conclusiones («gobierna el detallado, no la resistencia»), la
+  narración de un hallazgo de auditoría —eso vive en `AUDIT.md`— y las ramas que existen
+  solo como evidencia de un hallazgo ya aplicado. **Sí van**, en una línea: la cita, la
+  regla, y toda **hipótesis declarada** (por qué ψ = 1, por qué la fila delantera), porque
+  sin ella el número no se puede reconstruir. El indicador es la razón prosa/math: las de
+  gusset están en 0,07–0,20 y son el patrón; por encima de 0,45 la hoja se convirtió en
+  post. El 2026-08-01 las tres de hormigón estaban en 0,47 / 0,59 / 0,82 y se podaron a
+  0,25 / 0,41 / 0,41 sin perder una sola cita.
+  **Y por eso la hoja tiene que responder «qué controla»**, que es lo que el lector viene a
+  hacer cuando cambia un dato: al final, antes del esquema, van `u_max := max(…)`, una
+  región `program` **`gobierna`** que devuelve el nombre del estado límite que manda —una
+  cadena de `if/else if`, se recalcula sola y el esquema la puede rotular con `{{gobierna}}`—
+  y un único `u_max <= 1`. **No** una batería de booleanos «¿gobierna éste?»: cinco de ellos
+  darían `false` por diseño y habría que declararlos en `esperadoFalso`, que es justo lo que
+  esa lista no debe contener.
 - **Valores de tabla: al PDF, y en la columna de las unidades del cálculo.** Toda constante
   que venga de una tabla de la norma —$F_{nv}$, $F_y$ de un grado, un $\phi$, un coeficiente,
   una dimensión de agujero— se lee en el PDF y se declara en la planilla con su cita
@@ -97,6 +118,20 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   quedaba sin alinear. Por eso el fix no es solo cambiar el número — es dejar escrita la
   procedencia junto a él («Tabla J3.2: 54 ksi = 370 MPa, la columna métrica»), que es lo que
   impide que la próxima vuelta lo reintroduzca.
+  **En ACI la trampa no es una columna: es una edición entera.** ACI 318 se publica dos veces
+  —inch-pound y SI— y sus coeficientes empíricos **no son conversiones exactas uno del otro**:
+  ACI redondea el $2\sqrt{f'_c}$ (psi) del corte a $0{,}17\lambda\sqrt{f'_c}$ (MPa), que en
+  kgf/cm² son $0{,}53$ y $0{,}543$. La práctica chilena trabaja en kgf/cm² con la familia
+  inch-pound entera (0,53 · 0,8 · 14 · 2,1 · 1,06), así que un post puede citar una tabla de
+  la edición SI y calcular con el coeficiente de la otra sin que nada chirríe. El 2026-08-01
+  la planilla de la viga a flexión y corte encontró exactamente eso, con una `Note` que además
+  afirmaba que «es la misma ecuación; solo cambió el sistema de unidades». **El PDF en disco es
+  la edición SI, y ésa es la columna métrica**: se adoptaron 0,543 · 2,108 · 1,054 · 0,265 ·
+  3,57, se movieron diez números publicados un 2 % (ninguna conclusión cambió) y la `Note` pasó
+  a ser una tabla de dos columnas con la cita de cada una. La defensa permanente es un contraste
+  por coeficiente contra el factor exacto $\sqrt{1\,\text{MPa}/1\,\text{kgf/cm}^2} = 3{,}1933$,
+  que es lo que impide que la familia vieja vuelva a entrar en las nueve planillas de hormigón
+  que faltan.
 - **Contrastes**: un booleano por cada número publicado en las tablas del post (más los
   intermedios clave publicados en prosa), con id `c_*`, al final de la hoja bajo el
   encabezado «CONTRASTE CON EL POST». Se omiten los redundantes (un uso que es cociente
@@ -134,6 +169,31 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   corrimiento por todo el post: acá dejó los cinco números publicados intactos. Cuál de
   las dos puntas se mueve —el dato o los resultados— es decisión del autor, no de la
   planilla; lo que la planilla aporta es el número que muestra que hay que elegir.
+- **En un barrido, lo que el proyectista elegiría se elige en CADA fila.** Un barrido no es la
+  misma losa con otro número: es una losa distinta por fila, y las decisiones que cuelgan del
+  parámetro barrido —la malla, el diámetro, el número de barras— hay que rehacerlas ahí adentro.
+  Fijar una y barrer el resto mete un error que **no aparece en la fila del caso adoptado**, que
+  es la única que uno revisa, sino en los extremos, que son justo los que sostienen la forma de
+  la curva. El 2026-08-02 la planilla de la losa unidireccional encontró que el barrido de
+  espesores elegía la malla por $A_{s,min}$ y no por el mayor entre el mínimo y la flexión: de
+  18 cm para arriba manda el mínimo y da igual, pero en $h = 150$ la propia fila publica
+  «gobierna flexión, 343 mm²/m» y calculaba el $I_e$ con 286. La flecha pasó de 41,95 a **35,51**
+  mm y el uso de 4,47 a 3,79 — en el tramo empinado de la curva, que es el que decide si uno
+  sigue tanteando. El mismo error salía por otras dos bocas: un punto de la figura y un «reprueba
+  por 2,5 a **3,7** veces» que era 3,1. En la hoja se traduce en que el barrido llame a la misma
+  función de detallamiento que el caso principal, y en publicar la columna elegida.
+- **El modelo de servicio y el de resistencia tienen que ser el mismo elemento.** Es fácil que no
+  lo sean, porque vienen de capítulos distintos y nadie los pone uno al lado del otro: los
+  coeficientes tabulados de resistencia traen una condición de apoyo incorporada, y el análisis
+  elástico que uno escribe para servicio trae la que uno eligió. El 2026-08-02 la planilla de la
+  losa unidireccional encontró que el post tomaba de la Tabla 6.5.2 la fila «extremo discontinuo
+  **integral con el apoyo**» ($w_u\ell_n^2/14$) y armaba la viga de borde por $w_u\ell_n^2/24$
+  —o sea, extremo restringido— y resolvía la flecha con ese mismo extremo **rotulado**. La
+  diferencia valía **dos centímetros de losa**: el $M^+ = 1/14$ corresponde a $K \approx 0{,}847\,
+  EI/\ell$, y con ese resorte el espesor que cumple baja de 21 a 19 cm. El síntoma es de forma:
+  **un apoyo que aparece con momento en una tabla y sin momento en la otra**. Ponerle al marco de
+  la hoja un resorte parametrizado cuesta un término en la diagonal y convierte la pregunta en
+  una tabla de tres filas; cuál se adopta es del autor, pero deja de ser implícito.
 - **Un coeficiente que depende de la configuración se deriva, no se cita.** En los
   ejemplos de miembros hay factores tabulados por caso —el $C_b$ de la Ec. F1-1, un
   $K$, un $C_m$— que es tentador declarar como dato. Si el post **compara dos
@@ -187,6 +247,85 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   la fatiga **deja de tomar el control** en servicio severo. Ningún recálculo interno lo
   habría encontrado — el post cuadraba consigo mismo a partir de un par que nadie podía
   reconstruir.
+- **En hormigón la frontera se corre: casi todo es derivable, y el que manda es $d$.** El
+  equivalente de «las cuatro planchas» acá es la **disposición de barras**. En acero $A_g$, $I$
+  y $Z$ entran como fila de catálogo declarada; en hormigón no hay fila que declarar: $A_s$ sale
+  de $n\cdot A_{barra}$, la altura útil de $h - \text{rec} - d_e - d_b/2$ y el $b_w d$ es
+  geometría. Lo único que queda como frontera es el **área nominal de la barra** y el par
+  **$f'_c$ / $f_y$**. Por eso $d$ **se deriva, nunca se declara**: es la variable de la que
+  cuelgan $\phi M_n$, $V_c$, $s_{\max}$ y $A_{s,\min}$ a la vez, y un $d$ mal armado no lo caza
+  ningún recálculo interno. **Por qué es su propia regla**: el 2026-08-01 la planilla de la viga
+  a flexión y corte encontró que el post derivaba bien 53,75 cm y acto seguido lo redondeaba a
+  54 — **hacia arriba**, el lado inseguro, y justo en el uso a flexión 0,99 que es su número
+  insignia. Derivarlo movió cinco números y le devolvió al ejemplo su margen real.
+- **En una región D la frontera no es una barra: es el enrejado, y hay que cerrarlo por
+  estática.** El método puntal-tensor no tiene fórmula para el brazo: el ancho del puntal, la
+  posición de los nodos y con ellos $jd$ y $\theta$ **los elige el proyectista**. Van declarados
+  como hipótesis geométrica —el mismo estatus que el centroide del canal en la viga carrilera—
+  y, ya declarados, la planilla tiene que **comprobar que el enrejado cierra**: $\Sigma F = 0$
+  en cada nodo y el ángulo contra el mínimo del 23.2.7. **Por qué es su propia regla**: el
+  2026-08-01 la planilla de la ménsula encontró que el triángulo publicado **no cierra
+  $\Sigma H = 0$** — con $T = 18{,}04$ tonf el nodo A pide 17,27 y sobran 0,78 (4,3 %). No era un
+  error: es que $N_{uc}$ actúa 5 cm sobre el tirante y la 16.5.3.1 resuelve esa excentricidad
+  metiéndola en $M_u$ en vez de modelarla con un par vertical. El número publicado es el
+  conservador y no se movió; lo que cambió es de dónde dice el post que sale. Un contraste de
+  equilibrio por nodo es barato y es lo único que separa «el modelo da 18,0» de «el código
+  manda 18,0».
+- **En anclajes hay una tercera especie de frontera: un dato que el código RECALCULA.** En
+  la viga todo colgaba de un $d$ derivado; en la ménsula, de un enrejado declarado. En el
+  Cap. 17 el que manda es $h_{ef}$, **y no es el del plano**: la 17.6.2.1.2 dice que si los
+  anclajes quedan a menos de $1{,}5h_{ef}$ de **tres o más bordes**, el $h_{ef}$ que entra en
+  17.6.2.1 a 17.6.2.4 es $\max(c_{a,\max}/1{,}5;\ s/3)$ — y su gemela en corte, la 17.7.2.1.2,
+  hace lo mismo con $c_{a1}$ cuando los $c_{a2}$ **y** el espesor $h_a$ caen bajo $1{,}5c_{a1}$.
+  Ninguna de las dos se delata en la aritmética: la cadena publicada cuadra consigo misma a
+  partir de un $h_{ef}$ que el código no permite usar. **Contar los bordes influyentes es un
+  paso propio de la planilla, antes de escribir la primera fórmula.** El 2026-08-01 la planilla
+  del pedestal encontró que los 40 cm de embebido se leen como 16,67 —tres bordes a 25 contra
+  $1{,}5h_{ef} = 60$—, y el efecto es contraintuitivo: la capacidad **sube** un 10,5 %, porque
+  $h_{ef}$ entra tres veces en la Ec. (17.6.2.1b) y dos juegan al revés ($A_{Nc}/A_{Nco}$ salta
+  a 2,00, tocando el tope $n\,A_{Nco}$, y $\psi_{ed,N}$ vuelve a 1). Le dio al post su tesis:
+  entre 16,7 y 40 cm de embebido no se compra breakout, lo compra el ancho del pedestal.
+  Corolario: **cuando el código ofrece dos ramas de hipótesis, se calculan las dos.** La
+  R17.7.2.1 pide mirar el Caso 1 y el Caso 2 del cono de corte; calcularlos convirtió un
+  «tomamos conservadoramente la fila delantera» en «la fila delantera es la que gobierna».
+- **Una tabla de la norma no termina en la tabla: hay que leer las cláusulas que la acotan.**
+  Es la variante interna de la regla anterior —la remisión no cruza de norma, cruza de párrafo— y
+  es más fácil de pasar por alto, porque la fórmula que uno copió *es* la correcta. El 2026-08-02
+  la planilla de la zapata aislada encontró que el post aplicaba la fila (c) de la Tabla 22.5.5.1
+  y se detenía ahí, cuando la **22.5.5.1.1** acota esa misma tabla por arriba y por abajo. Acá el
+  **piso mandaba**: la fila (c) daba $3{,}69$ kgf/cm² contra los $0{,}265\sqrt{f'_c} = 4{,}19$ que
+  el código dice que no hace falta bajar, y $\phi V_c$ subía de 27,9 a **31,6 tonf** — el número
+  insignia del ejemplo, de 0,86 a **0,76**. Ningún recálculo lo caza: la cadena publicada es
+  aritméticamente correcta y además conservadora. **El síntoma que lo delata es de forma, no de
+  número**: una tabla citada por su fila (`Tabla 22.5.5.1(c)`) sin que aparezca en la hoja ninguna
+  de las subcláusulas `.1`, `.2`, `.3` que la siguen. En la planilla se traduce en declarar el
+  piso y el tope como variables propias y **dejar escrito cuál de los tres manda** (`piso_manda :=
+  v_bruto < v_piso`), que es un booleano que cuesta una línea y no puede quedar implícito.
+  Corolario sobre la tesis: acá el efecto fue **subir** la capacidad, y eso obligó a reescribir el
+  subargumento de la `Note` —el post atribuía −16 % al efecto de tamaño y con el piso son −4,4 %—.
+  Un hallazgo que afloja el cálculo puede apretar la prosa.
+- **Cuando una norma remite a otra, hay que ir a buscar la sección dedicada, no la genérica.**
+  Una cláusula que dice «esto se diseña de acuerdo con la norma de material» es una frontera
+  donde es fácil quedarse con el capítulo general que uno ya conoce. El 2026-08-02 la planilla
+  del pedestal NCh2369 encontró que la **llave de corte** —que 8.5.3 obliga a poner pero no
+  dimensiona— se verificaba con el §22.8 de aplastamiento genérico de ACI, cuando 318-25 tiene
+  desde 318-19 una sección propia, la **§17.11 *Attachments with shear lugs***. Y no es un
+  cambio de etiqueta: recorta el área efectiva a $b_{sl}\cdot 2t_{sl}$ (180 cm² de los 450
+  embebidos), penaliza el levantamiento con $\psi_{brg,sl}$, y sobre todo **agrega un modo de
+  falla que el cálculo genérico no tiene** —el cono del hormigón de la propia llave, 17.11.3—
+  que ahí daba 1,23 y no pasaba. El síntoma que lo delata: **una pieza que el post dibuja y
+  nombra pero verifica con menos chequeos que sus vecinas**. En la hoja se traduce en abrir el
+  índice del capítulo de la norma remitida antes de escribir la primera fórmula de esa pieza.
+- **En ACI, la trampa de edición no está en todos los coeficientes: hay que abrir cuál.** La
+  regla de la columna métrica no significa que todo número empírico se mueva. El 2026-08-01 la
+  planilla de la ménsula abrió el techo de la 16.5.2.4 rama por rama —(a) $0{,}2f'_c$,
+  (b) $(3{,}3+0{,}08f'_c)$, (c) 11 MPa contra los (480 + 0,08f'c) y 1600 psi de la impresión
+  inch-pound— y la diferencia resultó ser 0,18 % y 0,29 %, con la rama (a) gobernando: por ser
+  **fracción de $f'_c$**, es idéntica en las dos ediciones. Lo mismo los $\beta_s$, $\beta_c$,
+  $\beta_n$ del Cap. 23 y el $0{,}04(f'_c/f_y)$: adimensionales, insensibles. El criterio corto:
+  **el coeficiente que arrastra unidad —el que multiplica $\sqrt{f'_c}$ o suma MPa— es el que
+  hay que ir a buscar; el adimensional no.** Contrastar las ramas igual vale la pena: deja
+  escrito que se miró.
 - **`meta.esperadoFalso`**: dos usos, siempre con su razón escrita. (a) Los `false` que
   son la tesis del ejemplo («no pasa» es el punto del post). (b) Discrepancias
   encontradas, marcadas `HALLAZGO <fecha>` mientras el fix al post no se decida — nunca
@@ -201,18 +340,49 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     colores — y se guarda **aparte**, en `/esquemas/`. El post conserva su SVG
     estático (ahí los tokens saldrían crudos). Si el panel recortado solo existía
     para la planilla, se mueve a `/esquemas/` y no queda copia.
+    **Y por eso hereda sus defectos de composición**: si la revisión visual encuentra un
+    solape que no es de valor sino de disposición —un rótulo montado sobre otro, una
+    flecha que cruza una leyenda—, hay que ir a mirar la figura de la que se derivó,
+    porque casi seguro está ahí también. El 2026-08-02 la zapata aislada arregló dos en
+    `/esquemas/` y los mismos dos estaban en `/ejemplos/zapata-aislada.svg`, donde nadie
+    los había visto en tres semanas.
   - **Tokens**: `{{expr}}` acepta cualquier expresión mathjs contra el scope
     (`{{max(u_a, u_b)}}`, `{{d_v - t_fv:mm}}`). La forma con unidad convierte e
     imprime **solo el número**; la unidad la escribe el SVG con su propia tipografía
     (cm², tonf·m). Los valores salen con 4 cifras significativas, no con el redondeo
     del post. La sustitución barre **todo el archivo, comentarios incluidos**: un
     `{{expr}}` de ejemplo dentro de un `<!-- -->` también se evalúa y hace fallar
-    la corrida. **Y solo van en texto, nunca en un atributo numérico**: `formatValor` sale
-    con coma decimal a propósito —para que se note qué número puso la hoja y cuál escribió
-    el autor—, así que un `width="{{0.92*Rd:tonf}}"` se sustituye por `width="211,4"`, que
-    es SVG inválido, y la barra se dibuja con ancho cero. Los anchos y las coordenadas van
-    fijos a mano; lo paramétrico son los rótulos. El contrato de tokens pasa igual: esto
-    solo lo caza abrir el PNG.
+    la corrida. **En texto va el rótulo; en un atributo numérico va `{{expr:svg}}` y nada
+    más**: `formatValor` sale con coma decimal a propósito —para que se note qué número puso
+    la hoja y cuál escribió el autor—, así que un `width="{{0.92*Rd:tonf}}"` se sustituye por
+    `width="211,4"`, que es SVG inválido, y la barra se dibuja con ancho cero. El contrato de
+    tokens pasa igual: eso solo lo caza abrir el PNG. Por eso la forma cruda es un modificador
+    propio y explícito.
+  - **`{{expr:svg}}` — geometría calculada dentro de un atributo.** Emite punto decimal, sin
+    unidad y sin el redondeo a 4 cifras, y **vuelca una matriz Nx2 como lista de puntos**
+    (`points="{{pts_px:svg}}"` → `"40,310 52,287 …"`), que es lo que permite **dibujar una
+    curva que la hoja calculó** — el diagrama de interacción P–M se arma barriendo el eje
+    neutro, y entra al dibujo por un solo token. Se encadena con la unidad: `{{x:cm:svg}}`
+    convierte y después formatea crudo. Reglas de uso:
+    - **El mapeo a píxeles lo hace la hoja, no el motor.** Una región `program` devuelve ya
+      las coordenadas de pantalla (`y_px := y_0 - P*s_P`), así la escala y la inversión del
+      eje P quedan a la vista y auditables, que es la premisa del proyecto. El motor no sabe
+      dibujar y no tiene por qué: solo formatea.
+    - **`formatSvg` es más estricto que `formatValor`, no menos.** Lanza —o sea, el token cae
+      en `faltantes` y `verify` falla— si el valor no es finito, si llega con unidad sin
+      convertir, o si no es un escalar ni una Nx2. El caso que importa es el primero: un `NaN`
+      en la coordenada 137 escribe `NaN` en el atributo, el navegador dibuja **nada**, y eso
+      ningún booleano lo ve. El guard es lo único que lo caza.
+    - **Una curva no se revisa como un rótulo.** Puede resolver todos sus tokens y salir
+      espejada, fuera de escala o con el barrido corriendo al revés. El amarre es contrastar
+      en la hoja los **puntos que anclan** el dibujo (acá: compresión pura con su tope, el
+      balanceado y la flexión pura) contra los que el post publica, y rotularlos sobre la
+      curva: si los tres caen en su sitio, la escala y el sentido de los ejes quedan
+      verificados de paso. Lo mismo con la demanda: se contrasta su **distancia a la
+      frontera**, no solo su posición.
+    - Un barrido de 200 puntos en una región `program` con cabecera imprimiría 400 números
+      en un solo bloque; `resultToTex` lo resume como `matriz 201×2` por encima de 12
+      entradas. La variable queda íntegra en el scope: lo que se recorta es la impresión.
   - **Dónde va**: la región `image` ve el scope de su posición de lectura, así que
     va **después** de las variables que rotula. En la práctica: justo antes del
     encabezado «CONTRASTE CON EL POST», donde ya está todo definido.
@@ -238,8 +408,48 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
     así que un uso de 1,0002 sale «1» y un margen del 0,02 % desaparece. Si el
     punto del rótulo es la diferencia, se rotula la diferencia: `{{(1-u)*100}}`
     en vez de `{{u}}`. Lo que se corrige va al SVG y se vuelve a renderizar.
+  - **El ancho de la región no puede pasar de 680 px, que es el área imprimible de la A4.**
+    No es estética: `.wp-fig svg { max-width: 100% }` hace que Chromium **encoja el documento
+    entero** para que el esquema quepa, y con él encoge cada línea de texto de la hoja. El
+    2026-08-02 la losa unidireccional anunciaba 18 páginas y el PDF traía 16, con las dos
+    planillas de control cuadrando, ningún texto por encima de 88 caracteres y ningún bloque
+    más alto que la página — o sea, ninguno de los tres diagnósticos conocidos daba. El
+    esquema medía 760 px: el `h1` de 15 pt salía impreso a **13,44** (× 0,896 = 680,3/760) y
+    cada página aguantaba un 11 % más de lo que el modelo supone. A 660 px quedó en 17 = 17
+    **sin ningún salto forzado**. El síntoma que lo delata es un desfase que oscila entre 1 y 2
+    páginas con **todas las páginas del modelo llenas al 99 %**: si no hay hueco desperdiciado,
+    el modelo no está partiendo de más — está midiendo un documento que se imprime más chico.
+    Se comprueba en dos líneas leyendo el `size` de un span del PDF y comparándolo con el pt del
+    CSS. `anclajes-pedestal` y `mensula-puntal-tensor` siguen en 720 px y cuadran, pero por
+    suerte: su documento es corto y el 5,6 % de holgura no alcanza a cruzar un corte.
   - **Seguridad**: solo `/esquemas/` se inyecta inline; cualquier otra imagen va
     por `<img>`.
+- **Una región `math` es un paso, no una fórmula anidada.** Es tentador cerrar un estado
+  límite en una línea —`Rd := phi * min((min(a,b)+c+min(a,b))^2, 4*9*h^2)/(9*h^2) * min(1, …) * N_b`—
+  y el motor lo evalúa sin chistar. El problema aparece al imprimir: `usePaginacion` mide esa
+  línea en el documento de impresión y el navegador la reparte distinto, y la hoja **anuncia una
+  página que el PDF no tiene**. El 2026-08-01 la planilla del pedestal salió 12 contra 11 por
+  exactamente cuatro regiones así; partidas en pasos intermedios con nombre, cuadró sin tocar
+  nada más. El diagnóstico rápido cuando `pdf:planilla` reporta un desfase de una página es
+  correr otra planilla conocida: si ésa cuadra, el problema es la hoja y no `paginacion.ts`.
+  **El otro bloque que descuadra la cuenta es el esquema**, que es alto e imparte­ible: si el
+  desfase persiste con las fórmulas ya partidas, un salto forzado en la región `image` lo
+  resuelve y de paso le da al dibujo su propia página. Pero **se prueba, no se supone**: el
+  2026-08-01 la ménsula lo necesitó y la viga a flexión y corte no —ahí el salto dejaba una
+  página de 688 px y sin él quedó en 7 páginas parejas—. Y cuando el esquema es el que queda
+  en el borde, **antes que el salto conviene achicarlo**: el 2026-08-02 el pedestal NCh2369
+  pasó de 720×480 a 660×440 y cuadró sin salto, mientras que con salto cuadraba igual pero
+  dejaba una página talón de 14 líneas.
+- **Las líneas de texto van a ≤ 88 caracteres.** Es la otra causa de desfase de paginación, y
+  no se parece a la anterior: una línea más larga se envuelve en el documento de impresión, y
+  ahí `usePaginacion` la mide distinto de como Chromium la reparte. El error se **acumula**
+  línea a línea, así que no aparece como un salto en un bloque concreto sino como un corrimiento
+  que arranca en la página 1. **Por qué es su propia regla**: el 2026-08-02 la planilla del
+  pedestal NCh2369 anunciaba 13 páginas y traía 12; correr `anclajes-pedestal` en paralelo
+  descartó `paginacion.ts`, y partir las cuatro fórmulas anidadas —la receta del párrafo
+  anterior— **empeoró** el desfase a dos páginas. Lo que lo causaba eran 16 líneas de texto de
+  entre 89 y 99 caracteres. Las planillas que cuadran tienen 88 como máximo exacto, que es de
+  dónde sale el número.
 - **Disposición de los bloques**: la planilla se escribe con un paso vertical fijo, y eso
   vale mientras cada bloque sea una línea. No lo es: una región `program` ocupa una línea
   por instrucción —ocho, diez— y una `math` con una fracción también crece, así que el
@@ -262,6 +472,43 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   hacía falta **uno solo**, en la única sección que arrancaba al pie. El criterio
   para leer el reporte es la distancia entre marcas consecutivas: dos muy juntas
   = página talón.
+  **Y el salto no siempre es la herramienta: si al ponerlo aparece un desfase que antes
+  no estaba, el salto es la causa y hay que empujar con contenido.** El 2026-08-02 el muro
+  tenía el §13 arrancando a tres líneas del pie; el `pageBreak` lo movió pero el modelo
+  pasó a anunciar **20 páginas contra las 19 del PDF**, porque en un corte *forzado*
+  `paginacion.ts` conserva el margen y ahí el navegador no lo reproducía. Se resolvió
+  agregando dos líneas de contenido legítimo a la sección anterior —una cita que
+  faltaba—, con lo que el encabezado pasó a abrir la página siguiente **por corte
+  natural** y la cuenta volvió a 19 = 19. **Es específico de la posición, no general**:
+  en la misma hoja otros dos saltos, en el §18 y en el bloque de contrastes, cuadraron
+  sin tocar nada. Por eso se prueba uno a la vez y se vuelve a imprimir.
+- **Cómo se publica un ejemplo con planilla** (el estándar, fijado el 2026-08-02 con las 21
+  alineadas). Tres piezas, y solo una se escribe:
+  - **El enlace es automático: no se escribe.** `BlogPost.astro` pinta la caja «Planilla
+    interactiva» cuando existe `public/planillas/<id del post sin `ejemplo-`>.json`
+    (`src/lib/planillas.ts`), así que **basta con crear el archivo**. Mientras se escribió a
+    mano faltaba en **8 de las 21** —las 7 de la tanda de acero del 2026-08-01 se saltaron
+    todas juntas—: la hoja existía, cuadraba y estaba registrada acá, y el lector no tenía
+    cómo llegar a ella.
+  - **La sección se escribe una vez y se llama `## La planilla`**, al cierre del post, antes
+    de la bibliografía. Es lo único a mano, y no es el enlace: es **qué aporta la hoja que el
+    post no puede** — el booleano que decide, la variable que se deriva y mueve toda la
+    cadena, el equilibrio que cierra, el factor que se obtiene en vez de citarse. El
+    2026-08-02 convivían tres encabezados distintos (`La planilla`, `Reproducir esto con tus
+    datos`, y cuatro posts donde el enlace flotaba al final del resumen); quedaron los 21 con
+    el mismo.
+  - **Los conteos los verifica el runner, no se cuentan a mano.** Si la sección declara
+    «N pasos, M verificaciones y K contrastes», `verify:planilla` lo compara contra la hoja y
+    **falla si no cuadra**. Declararlos es opcional; que mientan, no. **Por qué hizo falta**:
+    esos números se desalinean solos —una planilla gana verificaciones en la auditoría
+    siguiente y la prosa se queda con el número viejo—, y el 2026-08-02 estaban mal en **10 de
+    los 21 posts**, con casos de 9 publicadas contra 34 reales. Es el tipo de dato que nadie
+    vuelve a mirar justamente porque parece inofensivo.
+  - **Contraste = verificación con id `c_*`.** Es lo que hace derivable el conteo anterior, y
+    la frontera es de sentido: un contraste compara contra un número **que el post publica**;
+    un chequeo interno de la hoja —un rango de tabla, un equilibrio, la colocación de una
+    curva— es una verificación pero no un contraste, y lleva id `v*` o `r*`. Tres planillas lo
+    tenían mezclado y se retagearon el 2026-08-02.
 - Si un post con planilla cambia sus números, la planilla es la que dice si siguen
   cuadrando: correr `verify:planillas` antes de publicar.
 
@@ -280,7 +527,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
 | `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
-| `ejemplo-columna-galpon-compresion` | 63 | 45 | 44 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
+| `ejemplo-columna-galpon-compresion` | 63 | 45 | 30 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-doble-angulo` | 107 | 88 | 58 | 67 | 9 (1⇱) | 3 aplicados 2026-08-01 (doblar y dividir el redondeado: 21 514 → 21 513 kgf · 0,461 → 0,460 · 0,42 → 0,41) | 2026-08-01 | ✅ |
 | `ejemplo-conexion-momento-end-plate` | 76 | 52 | 38 | 21 | 6 (1⇱) | 0 | 2026-07-31 | ✅ |
@@ -290,23 +537,23 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 15 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 23 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón
 
 | Post | Pasos | Verif. | Contrastes | Esq. | Págs. | Hallazgos | Última corrida | Estado |
 |---|---|---|---|---|---|---|---|---|
-| `ejemplo-anclajes-pedestal` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-columna-interaccion-esbeltez` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-losa-punzonamiento-momento` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-losa-unidireccional` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-mensula-puntal-tensor` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-muro-flexocompresion` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-pedestal-anclaje-nch2369` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-viga-flexion-corte` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-anclajes-pedestal` | 130 | 81 | 64 | 49 | 9 (1⇱) | 8 aplicados 2026-08-01 (el 🟠 raíz: no se aplicaba 17.6.2.1.2 —tres bordes a 25 cm < 1,5h_ef = 60 obligan a leer los 40 cm de embebido como 16,67—, que sube el breakout un 10,5 % y mueve la interacción 0,76 → 0,71 y la tesis de cierre. Más el A_brg de tuerca hex NORMAL en un post que declara PESADA, y el exponente de la Ec. 17.8.4, que es 2 y no 5/3) | 2026-08-01 | ✅ |
+| `ejemplo-columna-interaccion-esbeltez` | 119 | 41 | 21 | 144 | 9 (2⇱) | 7 aplicados 2026-08-02 (el 🟠: la curva de diseño se armaba solo con la Tabla 21.2.2 y falta la **21.2.2.3**, que la acota interpolando en P_n entre 0,90 en 0,1f'cA_g y φ_cc en P_n,bal — en C2 baja φ de 0,90 a **0,874**, φM_n de 41,4 a 40,1 y el uso de 0,68 a **0,70**. Más el d redondeado de 43,75 a 44 hacia arriba, el E_s de 2,1e6 en vez del de 20.2.2.2, el balanceado que no reproducía ninguna hipótesis, las trabas de 25.7.2.3(b) de las que cuelga el 0,80P_o, y el «uso máximo 0,68» que contradecía a su propia tabla) | 2026-08-02 | ✅ |
+| `ejemplo-losa-punzonamiento-momento` | 195 | 145 | 118 | 43 | 14 | 6 aplicados 2026-08-02 (los tres numéricos eran **un φ perdido al leer el PDF por texto**: el techo de la Tabla 8.4.2.2.4 es 0,4φv_c → 5,00 y la razón 1,97; el gatillo de 8.6.1.2 → 6,44; y el 🟠 de **18.14.5.1, que divide por φv_c** — el umbral de (a) es negativo y la ventana la fija solo el 0,50 % de 18.14.5.2(a); el §10 se reescribió. Más el 2,50 → 2,51 que cierra el #6 de 2026-07-29. La hoja resuelve el marco por rigidez directa con `lusolve`: primera planilla con el análisis estructural adentro, amarrado a los contrafácticos 1,26 y 9,74) | 2026-08-02 | ✅ |
+| `ejemplo-losa-unidireccional` | 241 | 228 | 188 | 74 | 17 | 7 aplicados 2026-08-02 (el 🟠: el post modela el apoyo exterior **rotulado** para servicio y **restringido** para resistencia —la Tabla 6.5.2 le da w·ℓn²/14 y arma la viga de borde por w·ℓn²/24—; ese M⁺ pide K ≈ 0,847 EI/ℓ y bajaría el espesor de 21 a **19 cm**. Se mantiene el rotulado por conservador y se declara: es el supuesto de mayor peso, por encima de la luz y de la ruta de I_e. Más el 0,0069 de flecha usado como operando cuando el exacto por rigidez directa es **0,006884** —30 números un 0,23 %, y el insignia 2,57 → **2,56**—, y el barrido armado con la malla del mínimo cuando bajo 17 cm manda la flexión: la fila h = 150 pasaba de 41,95 a **35,51** mm) | 2026-08-02 | ✅ |
+| `ejemplo-mensula-puntal-tensor` | 128 | 83 | 59 | 51 | 10 (1⇱) | 11 aplicados 2026-08-01 (el 🟠: 16.5.3.4/16.5.3.5 no existen en 318-25 y 16.2.2.3(b) tarifa la reacción SOSTENIDA sin mayorar → los 5,6 tonf pasan a dato de diseño. El enrejado no cerraba ΣH por 0,78 tonf, la cuantía de 23.5.1 se comparaba contra el 0,0025 de la malla ortogonal, y ℓ_dh venía de 318-19: 24 → 32 cm) + 1🔵 conservado | 2026-08-01 | ✅ |
+| `ejemplo-muro-flexocompresion` | 282 | 186 | 116 | 201 | 19 (2⇱) | 9 aplicados 2026-08-02 (el 🟠: falta la **21.2.2.3** otra vez, y acá el umbral 0,1f'cA_g = 450 tonf cae JUSTO entre las dos combinaciones —A con P_n = 616 encima, B con 432 dieciocho tonf debajo—, así que muerde sólo en A: φ 0,90 → **0,873** y el uso 0,86 → **0,89**, sin dar vuelta cuál gobierna. Más el E_s de 2,0e6 no declarado, que corría las cinco c un 0,3 %; cuatro coeficientes exhibiendo el operando SI y calculando con el de kgf/cm²; y el «+2 %» que era de M_n y en capacidad de diseño es **+3,4 %**, porque al engrosar el φ también se recupera) | 2026-08-02 | ✅ |
+| `ejemplo-pedestal-anclaje-nch2369` | 224 | 143 | 105 | 59 | 14 | 14 aplicados 2026-08-02 (dos 🟠 propios: la llave se verificaba con el §22.8 y ACI 318-25 tiene **§17.11** —A_ef,sl = b·2t = 180 cm² de los 450 y ψ_brg,sl = 0,486 bajan el aplastamiento de 0,16 a 0,41—, y **faltaba el 17.11.3**, el cono del hormigón de la propia llave, que da **1,23 ✗** y depende del ancho del pedestal, no del embebido. El §5 dejó de ser detallado prescriptivo y pasó a ser el remedio que C9.5.2 nombra. Más el 🟠 heredado: 2,51 → **2,28**) | 2026-08-02 | ✅ |
+| `ejemplo-viga-flexion-corte` | 81 | 59 | 40 | 46 | 7 | 13 aplicados 2026-08-01 (el 🟠 raíz: los coeficientes venían de la edición inch-pound —0,53 en vez de 0,543— citando tablas de la SI; movió diez números un 2 %. Y el `d` redondeado de 53,75 a 54, hacia arriba. De paso cerró el #4 de 2026-07-22: era 9.5.1.1, no 9.3.2.1) | 2026-08-01 | ✅ |
 | `ejemplo-viga-t` |  |  |  |  |  |  |  | ⬜ |
-| `ejemplo-zapata-aislada` |  |  |  |  |  |  |  | ⬜ |
+| `ejemplo-zapata-aislada` | 95 | 70 | 56 | 45 | 8 (1⇱) | 7 aplicados 2026-08-02 (el 🟠 raíz: faltaba el **piso de 22.5.5.1.1** —la fila (c) da 3,69 y el código no obliga a bajar de 0,265√f'c = 4,19—, que sube φV_c de 27,9 a 31,6 y mueve el número insignia **0,86 → 0,76**; y con él se desarma el «−16 % del efecto de tamaño», que con el piso es −4,4 %. Más la familia inch-pound afirmada como identidad —0,17 ↔ 0,53 cuando la exacta es 0,5429— y el d redondeado de 45,7 a 46, hacia arriba) | 2026-08-02 | ✅ |
 
 ### geotecnia
 
