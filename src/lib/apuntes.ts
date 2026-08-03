@@ -55,6 +55,15 @@ export const SUBSECTIONS = {
     // `src/pages/apuntes/nch432/index.astro`.
     post: 'nch432-cargas-de-viento',
   },
+  nch2369: {
+    group: 'normativas',
+    label: 'NCh 2369 — Diseño sísmico industrial',
+    author: 'Instituto Nacional de Normalización (INN)',
+    description:
+      'Apuntes didácticos de la NCh 2369:2025 (3.ª edición): la norma con que se firma un proyecto industrial en Chile — a qué obras aplica y con qué combinaciones, cómo se arma el espectro de diseño, y el 0,7R₁ que convierte el diseño por capacidad en un multiplicador.',
+    // Galería multi-nota: sin `post`, la tarjeta de /apuntes enlaza a
+    // /apuntes/nch2369 (ver `subsectionHref`).
+  },
   'puentes-grua': {
     group: 'normativas',
     label: 'Puentes grúa — cargas y viga carrilera',

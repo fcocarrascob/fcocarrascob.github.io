@@ -799,6 +799,67 @@ auditor lo confirmó por un segundo camino: barriendo $k_v$ en vez del espesor, 
 - **Licuefacción.** C10.2.1 de NCh2369 la nombra como motivo para ir a fundación profunda, pero
   el Cap. 10 no da procedimiento. Cubrirla pediría NCh433 u otra fuente.
 
+## H. NCh 2369:2025 — la norma con que se firma (subsección `/apuntes/nch2369`)
+
+Estrenada el **2026-08-03**. Existía un hueco raro: la norma se citaba en **39 posts** de todas
+las secciones y no había ni una nota que la explicara. La galería vive en
+`/apuntes/nch2369` (grupo `normativas` de `SUBSECTIONS`, `src/lib/apuntes.ts`; página en
+`src/pages/apuntes/nch2369/index.astro`, copia del patrón de los libros). Las notas se ordenan
+por el primer número de `chapter`, así que basta con nombrarlas `Caps. 1–4`, `Cap. 5`, etc.
+
+**Fuente:** el PDF de la 3.ª edición, **no** las fichas de
+`material_teorico/referencias/NCh2369-2025/`, que no están auditadas — y en esta tanda se les
+encontró un error (ver abajo). Receta: `pdfplumber`, `pg.crop((40, 50, 305, 800))` para la
+columna normativa y `(305, 50, 570, 800)` para el comentario; **página PDF = página norma + 7**.
+
+| ID | Nota | Cláusulas | Post | Figuras | Audit. |
+|----|------|-----------|:----:|:-------:|:------:|
+| H1 | **El contrato: alcance, desempeño y combinaciones** | 1–4 + Anexo B | [x] | 1 SVG a mano | ⚠️ 2026-08-03 (3 aplicados; 14 abiertos, sin 🔴 ni 🟠) |
+| H2 | **El espectro de diseño y sus tres correcciones** | 5.4 y 6.1 | [x] | 2 SVG **generados** | ⚠️ 2026-08-03 (7 aplicados; 7 abiertos, sin 🔴 ni 🟠) |
+| H3 | **El 0,7R₁: diseño por capacidad como multiplicador** | 4.1, 5.12–5.14, 8 | [x] | — (deuda) | ⚠️ 2026-08-03 (10 aplicados, incl. 1🔴; 6 abiertos) |
+
+**Novedad de infraestructura: figuras calculadas, no dibujadas.**
+`scripts/render-espectro-nch2369.mjs` (`npm run figuras:espectro`) importa
+`src/lib/sap-scripts/nch2369-spectrum.ts` —el mismo módulo que alimenta la vista previa del SAP
+Script Builder— con el patrón esbuild + `import()` de `verify-planilla.mjs`, y emite los dos SVG
+del espectro a `public/apuntes/nch2369/`. Cero JS en la página y una sola fuente de verdad entre
+el post y la herramienta. Es el primer caso en el repo de una figura de contenido que se
+regenera desde el código.
+
+**Los tres hallazgos que valen más que las notas:**
+
+1. **La Ec. (4) de la ficha del cerebro estaba mal transcrita.** El espectro vertical lleva
+   $1{,}7\,T_V/T_0$ (se **comprime** en período); la ficha decía $T_V/(1{,}7\,T_0)$ y lo glosaba
+   como «estirado por 1,7». Factor 2,89 dentro del paréntesis. El puerto TS siempre estuvo bien.
+   Corregido en `material_teorico/.../cap05-analisis-sismico.md` con nota al pie. **Confirma el
+   hallazgo G-J**: las fichas no están auditadas y los posts las citaban como fuente.
+2. **`nch2369-spectrum.ts` no implementa la rama `R = 1 → R* = 1` de la Ec. (1b)**, y el
+   backend Python vendoreado tampoco (`_r_star` en `backend_modelo_base.py`). Para $R = 1$
+   —«estructuras diseñadas para permanecer elásticas», Tabla 7 fila 1— devuelve hasta **1,5** en
+   $T \to 0$, o sea que **divide el espectro por 1,5 donde la norma no permite reducir**: hasta
+   33 % menos espectro, del lado inseguro, y en silencio. **Pendiente**: el fix va en
+   `Skills_SAP` + `npm run sync:sap-scripts`, no a mano en `vendor/` (ver CLAUDE.md).
+3. **La norma calcula $R^*$ una sola vez, con $T^*$** («el período del modo con mayor masa de
+   traslación equivalente»), no período a período. La función que el SAP Script Builder carga en
+   el modelo usa $R^*(T)$, que es más conservadora para los modos altos — un factor **3,33** en
+   $T = 0$ para el caso de la figura. No es un error, pero conviene declarar cuál se usó.
+
+**Lo que la galería queda esperando** (en orden de retorno):
+
+- [ ] **H4. Métodos de análisis y corte basal** (5.5 a 5.11): AEE, AME, modelo matemático,
+  acción vertical, análisis especiales. Engancha con D6, D11 y C2.
+- [ ] **H5. Deformaciones y equipos** (6–7): deriva, separación entre estructuras, $F_p$, $K_p$,
+  Tabla 8, $R_p$, anclajes de equipos. La Ec. (19) tiene el radical dibujado como trazo
+  vectorial — leerla del PDF con cuidado.
+- [ ] **H6. Hormigón armado** (9), con el enredo NCh430 → **DS 60**, cuya ficha ya existe en
+  `material_teorico/referencias/DS60-2011/`.
+- [ ] **H7. Fundaciones** (10) como puente a los cuatro ejemplos del bloque 5 de Geotecnia — nota
+  corta, de mapeo, para no duplicar lo publicado.
+- **Bloqueado por fuente:** cláusulas 11 a 14 (estanques y chimeneas, galpones y estanterías,
+  muelles, generación eléctrica) y los anexos informativos A, C, D y E **no están procesados**.
+- **Deuda menor:** H3 no tiene figura (un esquema de la cadena $R \to R^* \to R_1 \to 0{,}7R_1$
+  es lo que le falta al §1), y quedan 27 hallazgos 🟡/🔵 abiertos entre las tres.
+
 ## Recomendación de orden (actualizada 2026-07-14)
 
 Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;

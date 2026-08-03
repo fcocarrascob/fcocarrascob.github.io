@@ -1,0 +1,313 @@
+---
+title: "NCh 2369:2025 — el espectro de diseño y sus tres correcciones"
+description: "El espectro de diseño de NCh 2369 es el de referencia pasado por tres correcciones —I, R* y el amortiguamiento— y cada una tiene una letra chica. Los cuatro espectros de la norma y para qué sirve cada uno; el A_r = 1,4A_0 sobre el que se construyen; la clasificación de sitio con su regla de dos pasos; la rampa de R* que en período corto llega a triplicar el espectro respecto de usar R plano; y el (0,05/ξ)^0,4 del ξ = 2 % del acero soldado, que esta norma acota explícitamente a ξ entre 0,02 y 0,05 — la misma banda dentro de la cual un experimento propio lo midió conservador."
+pubDate: 2026-08-03
+tags: ["nch2369", "espectro de diseño", "diseño sísmico", "amortiguamiento", "clasificación de suelo", "factor R", "industrial"]
+subsection: "nch2369"
+chapter: "Cap. 5 — El espectro de diseño (5.1 a 5.4)"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 5.4 y 6.1 y Tablas 3 a 7 (pp. 27-31, 57-63 y 68)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+*Viene de [el contrato de la norma](/apuntes/nch2369-panorama-y-combinaciones), donde quedó
+establecido que el $I$ entra acá adentro y no en la combinación.*
+
+## Cuatro espectros, no uno
+
+Antes de cualquier fórmula hay que separar cuatro objetos que la norma llama todos «espectro»
+y que sirven para cosas distintas:
+
+| Espectro | Qué es | $\xi$ | Para qué se usa |
+|---|---|:---:|---|
+| **De referencia** | La amenaza sísmica del territorio, $T_R \approx 475$ años | 0,05 | La base de todo; y **sin dividir por $R^*$** para estimar desplazamientos (6.1) |
+| **De diseño** | El de referencia corregido por $I$, $R^*$ y $\xi$ | Tabla 7 | El diseño prescriptivo de estructuras y equipos |
+| **De sitio** | De una evaluación de amenaza en el emplazamiento | 0,05 | Análisis especiales (5.10.1) |
+| **Objetivo** | Para seleccionar y ajustar registros | 0,05 | Tiempo-historia (5.10.2 a 5.10.4) |
+
+<Note type="warning" title="El de los desplazamientos no es el de diseño">
+Es la confusión más cara de la cláusula 5. El espectro **de referencia** —sin dividir por
+$R^*$— es el que 6.1 manda usar para estimar deformaciones sísmicas. Si se calcula la deriva
+con el espectro de diseño, sale dividida por $R^*$: para un marco arriostrado con $R = 5$, eso
+es **cinco veces menos deformación** de la que la norma quiere que verifiques.
+
+Es la misma lógica de $C_d = R$ de Newmark que la
+[serie del factor R](/blog/factor-r-anatomia) desarrolla: el desplazamiento inelástico real se
+parece al elástico, no al reducido.
+</Note>
+
+## 1 · La base: $A_r = 1{,}4\,A_0$
+
+Los espectros de esta edición **no se construyen sobre $A_0$**, sino sobre la aceleración
+máxima de referencia (Tabla 3):
+
+| Zona sísmica | $A_0$ | $A_r = 1{,}4\,A_0$ |
+|:---:|:---:|:---:|
+| 1 | 0,20 g | **0,28 g** |
+| 2 | 0,30 g | **0,42 g** |
+| 3 | 0,40 g | **0,56 g** |
+
+Quien venga de la edición 2003 y arrastre $A_0$ a las ecuaciones de 5.4.2 se queda un 29 % corto.
+
+La NOTA de la Tabla 3 agrega algo útil para cualquiera que trabaje con registros: $A_0$ asociada
+a un registro «puede determinarse como $A_0 = S_a/2{,}5$, donde $S_a$ es la aceleración media
+del espectro elástico ($\xi = 5$ %) entre los períodos 0,1 s y 0,5 s». O sea que $A_0$ no es el
+PGA: es una media espectral de la meseta dividida por 2,5.
+
+## 2 · El sitio: la clasificación tiene dos pasos y una trampa
+
+La Tabla 4 define los tipos de suelo por $V_{s30}$ y período predominante $T_g$; la Tabla 6 les
+da los seis parámetros que entran a la ecuación. El procedimiento de la norma es:
+
+1. Clasificar por $V_{s30}$ → **clasificación primaria**.
+2. Verificar $T_g$. **Si no se cumple, la clasificación se reduce en un grado.**
+3. Pero el corte basal de diseño debe ser **el mayor** entre el de la clasificación reducida y
+   el de la primaria.
+
+La reducción de grado castiga, pero no se le permite *aliviar*. Y no es un tecnicismo: la
+figura de abajo muestra por qué bajar de grado puede perfectamente **bajar** el espectro en la
+zona donde está tu estructura.
+
+<Figure
+  src="/apuntes/nch2369/espectro-suelos.svg"
+  alt="Cinco espectros de referencia superpuestos para la zona sísmica 3, con A_r = 0,56 g y amortiguamiento 0,05, sin coeficiente de importancia ni R*. El eje horizontal es el período T de 0 a 3 segundos y el vertical la aceleración S_aH en g, de 0 a 1,8. El suelo A alcanza su pico de 1,39 g en T = 0,15 s y cae rápido; el B llega a 1,56 g en 0,27 s; el C es el más alto con 1,65 g en 0,35 s; el D baja a 1,37 g en 0,41 s; y el E, el más blando, tiene el pico más bajo con 1,26 g pero en T = 0,79 s y lo sostiene hasta períodos mucho más largos, quedando por encima de todos los demás desde aproximadamente T = 0,6 s. Un recuadro explica que el máximo está en el suelo C y no en el E, que sube de A a C porque S llega a 1,05 y vuelve a bajar en D y E, y que lo que sí crece de forma monótona es T_0, de modo que la meseta se corre a períodos largos y se ensancha."
+  caption="Los cinco espectros de referencia de la zona 3. El pico no crece con la blandura del suelo: el máximo está en el C. Lo que crece de forma monótona es T_0, y por eso el orden se da vuelta según dónde caiga el período de tu estructura."
+/>
+
+Los cinco picos, de la Ec. (3) con los parámetros de la Tabla 6:
+
+| Suelo | $S$ | $r$ | $T_0$ [s] | $p$ | $q$ | $T_1$ [s] | Pico ($A_r = 0{,}56$ g) |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| A | 0,90 | 4,50 | 0,15 | 1,85 | 3,00 | 0,15 | 1,39 g en T = 0,15 s |
+| B | 1,00 | 4,50 | 0,30 | 1,60 | 3,00 | 0,27 | 1,56 g en T = 0,27 s |
+| **C** | **1,05** | 4,50 | 0,40 | 1,50 | 3,00 | 0,35 | **1,65 g** en T = 0,35 s |
+| D | 1,00 | 3,50 | 0,60 | 1,00 | 2,50 | 0,41 | 1,37 g en T = 0,41 s |
+| E | 1,00 | 3,00 | 1,20 | 1,00 | 2,70 | 0,79 | 1,26 g en T = 0,79 s |
+
+Es la Tabla 6 completa: con estas seis columnas cualquiera reproduce los cinco picos desde la
+Ec. (3).
+
+**El suelo C tiene el mayor $S$ y el mayor pico** — no el E, que es el más blando. La
+amplificación de la norma no crece monótonamente con la blandura: lo que crece es $T_0$, que
+corre y ensancha la meseta. Consecuencia práctica: una estructura rígida sale **peor** en C que
+en E, y una flexible al revés. Bajar de grado por $T_g$, de C a D, *baja* el espectro para una
+estructura de período corto — y por eso existe el paso 3.
+
+<Note type="info" title="Sitios Tipo F y suelos mejorados">
+La lista de F es larga (licuables, densificables, colapsables, orgánicos de más de 3 m, finos
+saturados con LL > 80 y espesor > 20 m, sensitividad > 10, razón espectral H/V > 4,5,
+topografía irregular, y fallas corticales activas a menos de la distancia de la Tabla 5 — esto
+último **solo para Categorías III o IV**). Dos consecuencias que se olvidan: el espectro de un
+sitio F **no puede ser menor que el 75 %** del de referencia, y si el suelo se mejora, la
+demanda se recalcula con las propiedades mejoradas pero **la clasificación sigue siendo F**.
+
+La exploración pide estratigrafía hasta 30 m con al menos un sondaje con toma de muestras. Se
+exceptúa la Categoría I; la II se puede exceptuar **amplificando la demanda un 30 %** respecto
+de clasificar solo con geofísica. Ese 30 % es el precio de no hacer el sondaje, y es una cifra
+que conviene tener a mano cuando se discute el presupuesto de la campaña — el
+[informe de mecánica de suelos](/geotecnia/como-leer-un-informe-de-mecanica-de-suelos) es más
+barato.
+</Note>
+
+## 3 · Las tres correcciones
+
+<Equation label="Ec. 1a">
+$$S_a(T_H) = \frac{I\,S_{aH}(T_H)}{R^*}\left(\frac{0{,}05}{\xi}\right)^{0{,}4}$$
+</Equation>
+
+donde el espectro de referencia horizontal es
+
+<Equation label="Ec. 3">
+$$S_{aH}(T_H) = A_r S \cdot \frac{1 + r\left(\dfrac{T_H}{T_0}\right)^{p}}{1 + \left(\dfrac{T_H}{T_0}\right)^{q}}$$
+</Equation>
+
+<Figure
+  src="/apuntes/nch2369/espectro-correcciones.svg"
+  alt="Dos paneles. El panel a muestra el espectro para zona 3, suelo C, R = 5, ξ = 0,02 e I = 1,0, con cuatro curvas: la de referencia en gris a trazos que llega a 1,65 g cerca de T = 0,35 s; la de referencia dividida por R = 5 fijo, en azul claro punteado, que parte muy baja en período corto; la de referencia dividida por R*(T) en azul continuo, que en período corto queda muy por encima de la anterior; y el espectro de diseño en rojo, la anterior multiplicada por el factor de amortiguamiento 1,44. Una banda azul clara marca la zona T menor que C_r·T_1 = 0,28 s, donde la rampa de R* separa las dos curvas azules. El panel b grafica R* contra T: parte en 1,5 para T = 0 y sube linealmente hasta alcanzar R = 5 en T = C_r·T_1 = 0,28 s, quedando constante después. Una nota advierte que la norma calcula R* una sola vez, con T*, mientras que la curva del panel a lo usa período a período, que es como se carga la función en SAP2000."
+  caption="Las tres correcciones de la Ec. (1a) sobre el mismo caso. La rampa de R* en período corto es lo que separa las dos curvas azules: en T = 0 el espectro con R*(T) vale 3,33 veces el que daría R = 5 plano."
+/>
+
+### 3.1 · $I$ — el coeficiente de importancia
+
+Ya está en la [nota anterior](/apuntes/nch2369-panorama-y-combinaciones): 0,80 / 1,00 / 1,20 /
+1,20 según la categoría de la Tabla 1, con la puerta abierta a más en Categoría IV. Lo único
+que hay que recordar acá es que **vive dentro del espectro**, no en la combinación.
+
+### 3.2 · $R^*$ — la rampa que casi nadie dibuja
+
+<Equation label="Ec. 1b">
+$$
+R^* =
+\begin{cases}
+1 & R = 1\\[4pt]
+R & R \ne 1,\ T^* \ge C_r T_1\\[4pt]
+1{,}5 + \dfrac{(R-1{,}5)\,T^*}{C_r T_1} & R \ne 1,\ T^* < C_r T_1
+\end{cases}
+\qquad C_r = 0{,}16\,R
+$$
+</Equation>
+
+La rama del medio es la conocida. La de abajo es la que cambia números: **para períodos cortos,
+$R^*$ degrada linealmente desde $R$ hasta 1,5**. Una estructura rígida no accede al $R$ que la
+Tabla 7 le asigna.
+
+Con el caso de la figura —suelo C ($T_1 = 0{,}35$ s), $R = 5$— la rampa vive por debajo de
+$C_r T_1 = 0{,}16 \times 5 \times 0{,}35 = 0{,}28$ s. Y adentro de esa ventana la diferencia no
+es cosmética:
+
+| $T$ [s] | $S_{aH}$ referencia | Diseño con $R^*$ | Diseño con $R = 5$ plano | Razón |
+|:---:|:---:|:---:|:---:|:---:|
+| 0,00 | 0,588 g | **0,566 g** | 0,170 g | **3,33** |
+| 0,05 | 0,704 | 0,478 | 0,203 | 2,35 |
+| 0,10 | 0,905 | 0,475 | 0,261 | 1,82 |
+| 0,20 | 1,354 | 0,488 | 0,391 | 1,25 |
+| 0,28 | 1,592 | 0,459 | 0,459 | 1,00 |
+| 0,35 | 1,649 | 0,476 | 0,476 | 1,00 |
+
+Hay un detalle que sale de esta tabla y que vale por sí solo: **el espectro de diseño armado con
+$R^*(T)$ tiene su máximo en $T = 0$**, con 0,566 g, y no en la meseta (0,476 g en T = 0,35 s).
+La rampa da vuelta la forma del espectro: para equipos y estructuras rígidas —que es media
+planta— el punto más exigente queda en el origen. Con la otra lectura de la Ec. (1b), la de la
+letra de la norma, eso no pasa; y esa bifurcación es el asunto de la nota que sigue.
+
+<Note type="warning" title="El detalle fino: la norma calcula R* UNA vez">
+La Ec. (1b) está escrita con $T^*$, y la norma define $T^*$ como «período fundamental en la
+dirección horizontal de análisis sísmico» y $R^*$ como «factor de modificación de la respuesta
+estructural, **calculado para el período del modo con mayor masa de traslación equivalente**,
+en la dirección de análisis». Es **un valor**, no una función del período: una vez elegido, la
+curva entera se divide por él.
+
+La práctica de armar la **función** que se carga en SAP2000 con $R^*(T)$ período a período —que
+es lo que hace el generador del [SAP Script Builder](/herramientas/sap-scripts) de este sitio, y
+lo que dibuja la curva azul de la figura— no es lo que la letra dice. Es **más conservadora**
+para los modos altos: si $T^*$ cae en la meseta, la letra de la norma reduce todo por $R = 5$,
+incluidos los modos de período corto, y en $T = 0$ eso son 0,170 g contra los 0,566 g de la
+curva por período. Un factor 3,3 en el mismo punto, según cómo se lea la misma ecuación.
+
+Conviene declarar cuál de las dos se usó. No es lo mismo el espectro que la norma define que la
+función que uno carga en el modelo.
+</Note>
+
+### 3.3 · $\xi$ — el 2 % que viene de Huachipato
+
+La Tabla 7 asigna, junto con el $R$ máximo, la razón de amortiguamiento. Y para estructuras de
+acero pone **$\xi = 0{,}02$ en uniones soldadas** y 0,03 en apernadas — no el 5 % de la
+práctica internacional. Los valores más usados:
+
+| Sistema resistente (Tabla 7) | $R$ | $\xi$ |
+|---|:---:|---|
+| Estructuras diseñadas para permanecer elásticas | 1 | 0,03 |
+| Otras no incluidas o asimilables | 1,5 | 0,02 |
+| Marcos a momento **con** anclajes dúctiles | 5 | 0,02 soldadas / 0,03 apernadas |
+| Marcos a momento **sin** anclajes dúctiles | 3 | 0,02 / 0,03 |
+| Marcos arriostrados **con** anclajes dúctiles | 5 | 0,02 / 0,03 |
+| Marcos arriostrados **sin** anclajes dúctiles | 3 | 0,02 / 0,03 |
+| Galpones livianos de acero | 4 | 0,02 / 0,03 |
+| Hormigón armado, marcos y muros (dilatados) | 5 | 0,05 |
+
+Vale la pena leer esa tabla dos veces: **tener o no anclajes dúctiles vale $R = 5$ contra
+$R = 3$**, en marcos a momento y en arriostrados por igual. Un 40 % de reducción de la demanda
+sísmica que se juega en el detalle del anclaje. Eso es lo que desarrolla la
+[nota del 0,7R₁](/apuntes/nch2369-capacidad-y-07r1).
+
+La corrección por amortiguamiento es un solo factor, plano en todo el período:
+
+<Equation label="5.4.2">
+$$
+\left(\frac{0{,}05}{\xi}\right)^{0{,}4}
+\qquad
+\begin{array}{l}
+\xi = 0{,}02 \;\to\; 1{,}44 \\[2pt]
+\xi = 0{,}03 \;\to\; 1{,}23 \\[2pt]
+\xi = 0{,}05 \;\to\; 1{,}00
+\end{array}
+$$
+</Equation>
+
+Y la norma acota su validez en la misma frase:
+
+> «Esta expresión es válida sólo para valores de $\xi$ entre 0,02 y 0,05.»
+
+<Note type="tip" title="Este blog midió esa fórmula, y el resultado favorece a la cota">
+El post [El exponente 0,4](/blog/amortiguamiento-exponente) mide la corrección real con un
+barrido de 480 osciladores validado contra SAP2000, y encuentra tres cosas:
+
+1. **En la meseta de velocidad y dentro de la banda declarada, la fórmula es conservadora**:
+   sobrecorrige un 14 % en $\xi = 2$ % y un 6,6 % en el $\xi = 3$ % con que se analiza casi toda
+   estructura industrial soldada. Entrega más espectro que el real, no menos.
+2. **En período muy corto la corrección real se va a 1**: el PGA no sabe de amortiguamiento. La
+   fórmula plana dice 1,44 donde lo medido dice ≈ 1,00.
+3. **El rincón inseguro está en $\xi$ = 15–20 % con $T \le 0{,}1$ s**: ahí la fórmula reduce el
+   espectro entre un 36 % y un 43 % respecto del de $\xi = 5$ %, mientras la respuesta real solo
+   baja un 5–25 %. El déficit contra lo medido llega al **37 %**.
+
+Lo notable es que ese rincón está **fuera de la banda que la norma declara válida**. La cota
+«sólo para $\xi$ entre 0,02 y 0,05» no es un tecnicismo: es exactamente el borde a partir del
+cual la extrapolación se vuelve insegura. Quien tome el $(0{,}05/\xi)^{0{,}4}$ y lo aplique a un
+equipo con amortiguamiento alto —porque el fabricante declara 15 %— está usando la fórmula
+donde la propia norma dijo que no vale, y del lado malo.
+</Note>
+
+## 4 · El vertical, y el error de transcripción que hay que evitar
+
+<Equation label="Ec. 2">
+$$S_{a,V}(T_V) = \frac{I\,S_{aV}(T_V)}{R_V}\left(\frac{0{,}05}{\xi_V}\right)^{0{,}4}$$
+</Equation>
+
+con $R_V = 2{,}0$ y $\xi_V = 0{,}03$, salvo que se demuestre por métodos reconocidos la validez
+de valores mayores — y el uso de $\xi_V > 0{,}03$ «se debe fundamentar mediante un análisis
+racional». Nótese que **la Ec. (2) no lleva $R^*$**: el vertical se divide por $R_V$ a secas.
+
+Y el espectro de referencia vertical:
+
+<Equation label="Ec. 4">
+$$S_{aV}(T_V) = 0{,}7\,A_r S \cdot \frac{1 + r\left(1{,}7\,\dfrac{T_V}{T_0}\right)^{p}}{1 + \left(1{,}7\,\dfrac{T_V}{T_0}\right)^{q}}$$
+</Equation>
+
+<Note type="warning" title="El 1,7 va arriba, no abajo">
+Es fácil leer esta ecuación al revés — el maquetado del PDF invita a hacerlo — y escribirla como
+$T_V/(1{,}7\,T_0)$, que además tiene una glosa cómoda («el vertical es el horizontal con el
+período estirado por 1,7»). **Es al revés**: el argumento es $1{,}7\,T_V/T_0$, o sea que el
+espectro vertical se **comprime** en período, no se estira. Los dos difieren en un factor 2,89
+dentro del paréntesis, que en el numerador va elevado a $p$.
+
+En cristiano: el vertical vale 0,7 del horizontal en amplitud y **su meseta cae a períodos más
+cortos**, que es justo lo que se espera de la componente vertical. Si te sale corrida hacia la
+derecha, la transcribiste al revés.
+</Note>
+
+## 5 · De dónde salen estos espectros
+
+El comentario C5.4.2 documenta la construcción: evaluaciones de amenaza uniforme probabilísticas
+y determinísticas, más análisis estadísticos de registros de **Valparaíso 1985 (Mw 7,9), Sur del
+Perú 2001 (8,4), Tarapacá 2005 (7,8), Tocopilla 2007 (7,7), Maule 2010 (8,8), Iquique 2014 (8,1)
+y Coquimbo 2015 (8,2)**. Corresponde a $T_R = 475$ años con $\xi = 5$ %, y —esto importa— «debe
+interpretarse como la **media geométrica de componentes ortogonales horizontales**».
+
+Dos advertencias de los comentarios que conviene no perder:
+
+- **C5.4.2**: el espectro de referencia es **un nivel de amenaza mínimo y adecuado para diseño
+  estándar**, no representativo de zonas con amplificación local (sismogénica, de sitio o
+  topográfica) ni de sistemas esenciales que requieran más.
+- **C5.4.1**: esta versión **no incorpora** la sismicidad intraplaca ni los espectros de dos
+  máximos locales, porque «no existe consenso o propuestas concretas para propósitos de diseño».
+  Pero para evaluaciones formales de amenaza o análisis de desempeño «estas dos singularidades
+  pueden ser relevantes».
+
+<Note type="info" title="Reproducibilidad">
+Las dos figuras de esta nota no están dibujadas a mano: las genera
+`scripts/render-espectro-nch2369.mjs` a partir de `src/lib/sap-scripts/nch2369-spectrum.ts`, el
+mismo módulo que alimenta la vista previa del SAP Script Builder. Los parámetros de las Tablas 3
+y 6 se verificaron contra el PDF de la 3.ª edición (pp. 57 y 60) y las Ecs. (1a), (1b) y (3)
+contra las pp. 28-29. Cualquiera puede rehacer las curvas con `npm run figuras:espectro`.
+</Note>
+
+## El hilo, en una frase
+
+El espectro de diseño no es una curva: es el de referencia pasado por una división y dos
+multiplicaciones, y de las tres, la división trae doble letra chica que cambia el número por
+factores de 3 —la rampa de $R^*$ en período corto, y si se calcula una vez o período a
+período—, mientras una de las multiplicaciones trae, escrita en la misma frase, la banda fuera
+de la cual deja de valer.

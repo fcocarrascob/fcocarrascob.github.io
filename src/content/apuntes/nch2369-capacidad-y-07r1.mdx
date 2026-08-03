@@ -1,0 +1,310 @@
+---
+title: "NCh 2369:2025 — el 0,7R₁: diseño por capacidad escrito como multiplicador"
+description: "El 0,7R₁ es el eje de esta edición: aparece unas treinta veces en las cláusulas 8, 9 y 10, y es la forma en que la norma le pide diseño por capacidad a un proyecto que se analiza elástico. Los cuatro factores R y por qué el del diseño por capacidad es siempre R₁; las capacidades esperadas de 8.3.1 y su versión ASD dividida por 1,5; el techo de «la máxima carga que el sistema puede transferir» que evita el bucle infinito y que la propia norma resuelve con pushover; el 8.3.2 que prohíbe la reducción de rigidez del análisis directo; y dónde el atajo se queda corto, con la medición propia que lo pilló 38 y 74 % abajo."
+pubDate: 2026-08-03
+tags: ["nch2369", "diseño por capacidad", "0.7R1", "capacidades esperadas", "anclajes dúctiles", "acero", "industrial", "AISC 341"]
+subsection: "nch2369"
+chapter: "Cap. 8 — Capacidad esperada y el 0,7R₁"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.1, 5.12 a 5.14 y 8.1 a 8.6, con las Tablas 7 y 8 (pp. 11, 48-49, 60 y 74-90) · ANSI/AISC 341-16 Tabla A3.1"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+*Cierra el trío de entrada a la norma:
+[el contrato](/apuntes/nch2369-panorama-y-combinaciones) →
+[el espectro](/apuntes/nch2369-espectro-de-diseno) → esto.*
+
+## El problema que el 0,7R₁ resuelve
+
+El análisis entrega fuerzas ya divididas por $R^*$. Eso está bien **para el fusible**: el
+elemento que va a plastificar y disipar energía, y al que la norma le exige a cambio requisitos
+de ductilidad. Pero el resto de la estructura —la columna, la conexión, el anclaje, la
+fundación— no debe plastificar, y diseñarla con las mismas fuerzas reducidas es pedirle que
+falle antes que el fusible.
+
+El comentario general de la cláusula, **C8**, lo dice sin rodeos:
+
+> «…aquellos elementos que no se espera o no se desea que salgan del rango elástico deben ser
+> diseñados para cargas mayores (que aquellas que han sido reducidas por el factor de
+> modificación de respuesta). **En esta norma se ha optado por utilizar un factor de
+> amplificación general de las cargas reducidas igual a 0,7 R₁** para alcanzar un nivel de
+> demanda sísmica que se considera suficientemente adecuado para la realidad nacional.»
+
+Y agrega por qué la edición lo escribió explícito: la versión anterior «permitía, por ejemplo,
+el diseño de columnas utilizando cargas sísmicas reducidas por el factor $R$, situación que
+desde el punto de vista conceptual resulta inadecuado». Es decir: **esta edición cerró un hueco
+que la práctica venía usando**.
+
+<Note type="info" title="De dónde sale el 0,7 — la norma no lo dice">
+Vale la pena declararlo en vez de inventarlo: **la norma no deriva el 0,7**. Lo presenta como
+una elección —«se ha optado por utilizar un factor de amplificación general… igual a 0,7 R₁»— y
+lo justifica por su resultado: «para alcanzar un nivel de demanda sísmica que se considera
+suficientemente adecuado para la realidad nacional».
+
+Lo que sí se puede afirmar es qué hace: si el fusible se diseñó con la fuerza dividida por
+$R_1$, multiplicarla por $0{,}7R_1$ la devuelve al **70 % del nivel elástico**, no al 100 %. Es
+un diseño por capacidad *aproximado*, calibrado, y con el piso $\ge 1{,}0$ para que nunca
+reduzca.
+</Note>
+
+## 1 · Los cuatro R, y cuál es cuál
+
+Esta es la confusión más cara de la norma, porque los cuatro se parecen y hacen cosas distintas.
+
+| Símbolo | De dónde sale | Para qué sirve |
+|---|---|---|
+| $R$ | **Tabla 7**, por sistema resistente | El valor de catálogo: no divide el espectro ni entra en la amplificación por capacidad — para eso están $R^*$ y $R_1$ |
+| $R^*$ | **Ec. (1b)**, corrigiendo $R$ por período corto | Divide el espectro de diseño (Ec. 1a) |
+| $R_1$ | **Ec. (14)**, corrigiendo $R^*$ por el corte basal mínimo | **El del diseño por capacidad**: el que va en el 0,7R₁ |
+| $R_p$ | **Tabla 8** | Equipos y sus anclajes (cláusula 7) |
+
+<Equation label="Ec. 14">
+$$R_1 = R^* \cdot \min\left(\frac{Q_0}{Q_{0,\text{mín}}},\ 1\right)$$
+</Equation>
+
+La lógica de la Ec. (14) es limpia una vez que se ve. La cláusula 5.12 fija un corte basal
+mínimo:
+
+<Equation label="Ec. 12">
+$$Q_{0,\text{mín}} = 0{,}25\,\frac{I A_r S}{g}\,P$$
+</Equation>
+
+y si el análisis entrega menos, **todas** las fuerzas y esfuerzos internos se escalan por
+$Q_{0,\text{mín}}/Q_0$. Pero entonces la estructura ya no está diseñada con la reducción $R^*$
+que uno creía: está diseñada con menos reducción efectiva. La Ec. (14) contabiliza exactamente
+eso. Si el mínimo mordió, $R_1 < R^*$, y el multiplicador de capacidad baja en consecuencia.
+
+<Note type="warning" title="Tres consecuencias que se olvidan">
+1. **El escalamiento del corte mínimo no se aplica a los desplazamientos** (5.12 lo dice
+   explícito), y tampoco la reducción por corte máximo de 5.13. Las derivas se calculan con el
+   análisis, sin escalar.
+2. **Hay también un corte basal máximo** (Ec. 13), que permite *bajar* las fuerzas:
+
+   $$
+   Q_{0,\text{máx}} = 2{,}75\,\frac{I A_r S}{g\,(R+1)}\left(\frac{0{,}05}{\xi}\right)^{0{,}4} P
+   $$
+
+   Dos cosas: el denominador lleva **$R+1$**, no $R$; y a diferencia del mínimo, el máximo
+   **sí trae la corrección por amortiguamiento** (para $\xi = 0{,}02$ eso es un 44 % más de
+   techo). No aplica a estructuras con $R \le 2$, sitios Tipo F, tiempo-historia según 5.10,
+   la cláusula 13 en Categorías III o IV, ni componentes de generación eléctrica de la
+   cláusula 14.
+3. **Usar $R$ de la Tabla 7 donde va $R_1$ siempre amplifica de más**, porque
+   $R \ge R^* \ge R_1$ por construcción — y de más cuanto más mordió el mínimo. Es un error
+   conservador y caro, no peligroso. El error peligroso es el inverso: **amplificar por
+   $0{,}7R_1$ sin haber escalado antes las fuerzas** por $Q_{0,\text{mín}}/Q_0$. Hecha la cadena
+   completa, el resultado es exactamente $0{,}7\,F_{\text{elástico}}$; saltarse el escalamiento
+   deja el elemento no fusible por debajo de ese nivel.
+</Note>
+
+## 2 · Las capacidades esperadas (8.3.1)
+
+Cuando la norma dice «capacidad esperada» está hablando de la resistencia que el elemento
+**realmente va a tener**, no de la nominal: acero real, no acero mínimo especificado.
+
+En LRFD:
+
+| Cantidad | Expresión |
+|---|---|
+| Tensión de fluencia esperada | $F_{ye} = R_y F_y$ |
+| Tensión última esperada | $F_{ue} = R_t F_u$ |
+| Capacidad en tracción esperada | $T_{ye} = F_{ye} A_g$ |
+| Capacidad en compresión esperada | $P_{ne} = 1{,}14\,F_{cre} A_g$ |
+| Capacidad **residual** en compresión | $0{,}3\,P_{ne}$ |
+| Capacidad flexural esperada | $M_{pe} = F_{ye} Z$ |
+
+Y en **ASD**, la cláusula es de una línea: «corresponde a las capacidades esperadas definidas
+anteriormente para el método LRFD **divididas por 1,5**». Ahí está, otra vez, el factor del
+[Anexo B](/apuntes/nch2369-panorama-y-combinaciones).
+
+Los $R_y$ y $R_t$ salen de la Tabla A3.1 de **ANSI/AISC 341-16** para materiales certificados
+según ASTM (8.3.3). Y hay una reducción por axial que conviene tener presente:
+
+<Equation label="8.3.1">
+$$M^*_{pe} = M_{pe}\left(1 - \frac{|P|}{T_{ye}}\right)$$
+</Equation>
+
+donde $P$ es la máxima carga axial de las combinaciones de 4.5 **en las que el estado sísmico
+horizontal ya fue amplificado por $0{,}7R_1 \ge 1{,}0$**. O sea: el axial que reduce el momento
+plástico es el amplificado, no el del análisis.
+
+<Note type="tip" title="La capacidad residual del 0,3 es la que sostiene el chevron">
+$0{,}3\,P_{ne}$ no es un detalle: es lo que queda de una diagonal después de pandear, y es
+exactamente el número que fija el desbalance vertical de un marco en V o V invertida. La
+cláusula **8.6.6** lo formaliza para la viga del chevron: «el efecto sísmico en la viga se debe
+determinar por equilibrio considerando que la diagonal comprimida presenta su **capacidad
+residual** y la diagonal traccionada presenta su **capacidad esperada**». La **8.6.7** repite la
+misma hipótesis para las vigas o puntales horizontales que unen los extremos de las diagonales.
+
+Ese desbalance es el protagonista del [paño en V invertida](/acero/ejemplo-chevron-nch2369) y de
+la [medición de Ω₀](/blog/factor-r-omega0). Y la misma 8.6.6 pide algo que casi nadie modela:
+una carga transversal fuera del plano en el punto de unión con la diagonal comprimida, igual al
+**2 % de la capacidad esperada en compresión** de esa diagonal.
+</Note>
+
+## 3 · El techo: «la máxima carga que el sistema puede transferir»
+
+Sin un techo, el diseño por capacidad es un bucle infinito: amplificás la columna, y ahora la
+conexión debe resistir la columna amplificada, y la fundación la conexión, y así. La norma lo
+corta con una frase que repite en toda la cláusula 8 —y en la 9 y la 10—:
+
+> «La resistencia requerida **no necesita ser mayor que la máxima carga que el sistema puede
+> transferir** a la columna.» (8.3.4)
+
+El comentario C8.3.4 explica cómo se determina, y es más exigente de lo que la frase sugiere:
+
+- Con las **propiedades esperadas** de materiales, elementos y uniones, «de manera consistente
+  con el tipo de falla que se estudie en cada caso».
+- «Típicamente la determinación de este límite requiere el reconocimiento de mecanismos de
+  plastificación que pueden evaluarse por **metodologías no lineales (pushover, THNL, etc.)**».
+- Los límites locales que hay que mirar: pandeo de diagonales y su fluencia en tracción,
+  plastificación flexural de vigas y columnas en marcos de momento, **estiramiento de pernos de
+  anclaje**, fallas en uniones, **levantamiento de fundaciones superficiales** o fallas en
+  pilotes.
+- Y el cierre práctico: el análisis entrega valores de nivel LRFD, y «pueden realizarse las
+  verificaciones necesarias a nivel ASD dividiendo los valores obtenidos por el factor de
+  compatibilidad entre métodos (1,5)».
+
+Es decir: **la norma resuelve el bucle infinito mandándote a un pushover**. Eso convierte a la
+cláusula 8 en la razón normativa por la que este blog tiene una
+[serie sobre rótulas plásticas](/blog/rotulas-pushover-sap2000) y un
+[tutorial de pushover de punta a punta](/blog/pushover-momento-vs-arriostrado-sap2000): no es
+un ejercicio académico, es el método que la norma nombra para acotar el diseño por capacidad.
+
+<Note type="warning" title="8.3.2 — y acá NCh 2369 se pelea con AISC">
+«**No se permite ningún tipo de reducción de rigidez** en los elementos estructurales, producto
+de la aplicación de algún método de diseño por estabilidad indicado en NCh427/1, al momento de
+evaluar los efectos sísmicos mediante las metodologías elásticas expuestas en esta norma.»
+
+Traducido: la reducción $EI^* = 0{,}8\tau_b EI$ del **Método de Análisis Directo** de AISC 360
+Cap. C **no se usa** para el análisis sísmico de esta norma. Y como el análisis directo es
+inseparable de esa reducción, en la práctica queda el método de la longitud efectiva, con lo que
+eso implica: hay que afirmar un $K$.
+
+Es la razón por la que el
+[ejemplo de la viga-columna](/acero/ejemplo-viga-columna) usa $EI_x$ pleno, y por la que el
+[gusset de esquina](/acero/ejemplo-gusset-esquina-apernado) tiene que justificar su $K$ en vez
+de dejar que el análisis lo resuelva.
+</Note>
+
+## 4 · Dónde el atajo se queda corto (y cuánto)
+
+El $0{,}7R_1$ es una amplificación de **la demanda**. La capacidad esperada del fusible es una
+propiedad **del perfil que quedó instalado**. Cuando esas dos cosas se separan —porque el perfil
+lo eligió otra cosa: esbeltez, un mínimo constructivo, una serie comercial— el atajo falla, y
+falla del lado inseguro.
+
+El post [capacidad esperada](/blog/factor-r-capacidad-esperada) lo midió sobre dos chevrones
+gemelos diseñados con el mismo $R = 3$ (o sea $0{,}7R = 2{,}1$), que terminan con el **mismo
+HSS** por razones distintas:
+
+| Gemelo | $N_u$ del análisis | Atajo $0{,}7R\cdot N_u$ | Capacidad esperada $T_{ye}$ | El atajo queda |
+|---|:---:|:---:|:---:|:---:|
+| Manda la resistencia | 365 kN | 766 kN | 1 244 kN | **38 % corto** |
+| Manda la esbeltez | 151 kN | 318 kN | 1 244 kN | **74 % corto** |
+
+La capacidad esperada es la misma en los dos (1 244 kN) porque el fusible es el mismo perfil.
+El atajo se desploma en el segundo caso precisamente porque amplifica una demanda que ya no
+guarda relación con el acero que quedó puesto.
+
+(El experimento usó $0{,}7R = 2{,}1$ con el $R$ de tabla. Con el $R^* = 2{,}90$ que midió en el
+gemelo «esbeltez», el atajo normativo sería $0{,}7R_1 = 2{,}03$ y el déficit todavía mayor: 75 %.)
+
+Y el caso límite del mismo experimento es más elocuente todavía: la viga puntal del chevron, a
+la que **el análisis lineal le pide cero momento** — y $2{,}1 \times 0 = 0$. Por el mecanismo
+real esa viga recibe $2{,}2$ veces su $M_p$ nominal ($F_y Z$); dimensionarla por capacidad
+exigiría pasar de una W16×57 a una W27×94, un 65 % más de acero por metro. El $0{,}7R_1$ solo,
+sin el mecanismo, no la ve.
+
+<Note type="info" title="Por eso el techo y el multiplicador conviven">
+No son alternativas: son las dos mitades. El $0{,}7R_1$ es el camino barato y suficiente para la
+mayoría de los elementos; el techo de «la máxima carga que el sistema puede transferir» es el
+que hay que calcular cuando el multiplicador se queda corto — o cuando se queda largo y se
+quiere aprovechar el alivio. Cuál de los dos gobierna se sabe recién después de mirar el
+mecanismo.
+</Note>
+
+## 5 · Los anclajes, y el $R = 5$ que se juega ahí
+
+La Tabla 7 premia con $R = 5$ en vez de 3 a los marcos —a momento y arriostrados por igual— que
+tengan **anclajes dúctiles**. Es un 40 % menos de demanda sísmica que se decide en el detalle
+del perno.
+
+Y la norma define qué cuenta como dúctil por el material (8.2.3): los pernos de anclaje dúctiles
+«se deben fabricar con aceros cuyo alargamiento de rotura mínimo sea de **20 %** en la probeta de
+50 mm», y en todos los casos el alargamiento de rotura de un perno de anclaje «no debe ser
+inferior a **14 %**». Un perno que no llega a esos números no es un perno malo: es un perno que
+te deja en $R = 3$.
+
+La razón está en C8.5.2, y es la mejor explicación de toda la cláusula: los pernos **se diseñan
+con la solicitación sísmica reducida**, así que «es razonable esperar que dichos pernos queden
+expuestos a cargas mayores durante un evento sísmico severo». El acero dúctil y las sillas
+permiten «la fluencia en tracción y un estiramiento considerable, sin provocar la rotura del
+anclaje», y esa forma de trabajo **disipa energía sísmica**. El anclaje dúctil no es un anclaje
+más seguro: es un fusible más, y por eso vale dos puntos de $R$.
+
+<Note type="warning" title="Un fusible solo funciona si nadie plastifica antes que él">
+El mismo C8.5.2 pone la condición que hace válido todo lo anterior: «para asegurar la eventual
+fluencia en tracción de los pernos, estos deben encontrarse sujetos en ambos extremos por
+elementos que **no plastifiquen antes que ellos**. Esto se traduce en que tanto el hormigón de
+pedestales como las placas de silla y atiesadores deban diseñarse para la capacidad de fluencia
+esperada de los pernos».
+
+O sea: declarar el anclaje dúctil y quedarse con $R = 5$ **obliga** a verificar el pedestal y la
+silla contra $T_{ye}$ del perno, no contra la demanda. Es exactamente la cadena que verifican el
+[pedestal con anclaje](/hormigon/ejemplo-pedestal-anclaje-nch2369) y el
+[grupo de anclajes](/hormigon/ejemplo-anclajes-pedestal) — donde el breakout del hormigón, no el
+acero del perno, es lo que suele gobernar. Si el cono de hormigón falla primero, el fusible
+nunca fluye y el $R = 5$ era una afirmación sin respaldo.
+
+El comentario incluso cuantifica el margen, citando a Chavez (2011): bajo la configuración que
+la norma impone se logran estiramientos de **hasta 3 diámetros** sin rotura del perno — pero a
+ese nivel «el perno pierde sus reservas de ductilidad para usos posteriores y se debe considerar
+un eventual recambio». Eso es el objetivo 4.1.1 b.3) —facilitar la inspección y reparación—
+convertido en un requisito de detalle: el largo expuesto e hilo adicional de la Figura A.1 está
+ahí «para permitir el reapriete o reparación rápida de los pernos luego de un evento sísmico
+severo».
+</Note>
+
+La cláusula 8.5.1 pide conectar los apoyos que transmiten esfuerzos sísmicos «por medio de pernos
+de anclaje, llaves de corte u otros medios adecuados». Sobre la llave de corte, C8.5.3 deja
+constancia de un cambio de esta edición: la práctica chilena usaba simplificaciones conservadoras
+que «se estima producía diseños razonables al considerar que se utilizaban demandas obtenidas a
+partir de fuerzas sísmicas reducidas por el factor $R$» — y ahora que la demanda viene
+amplificada, esas simplificaciones ya no se sostienen solas. La llave tiene además su propia
+sección en ACI 318-25 (§17.11), que es la que usa el ejemplo del pedestal.
+
+## 6 · Las dos excepciones por categoría (8.3.5)
+
+La cláusula 8.3.5 pone los extremos:
+
+- **Categoría IV no puede usar las alternativas** de 8.4, 8.5, 8.6 y 8.7 en las que el estado
+  sísmico se amplifica por $0{,}7R_1 \ge 1{,}0$. Para lo más crítico, el atajo no está
+  disponible.
+- **Categoría I se puede eximir** de los requisitos de la cláusula si se diseña con $R = 1{,}5$
+  y los requisitos de NCh427/1 o NCh427/2. Para lo menor, pagar en fuerza y olvidarse del
+  detallamiento.
+
+El comentario C8.3.5 sitúa la cláusula: está orientada a «niveles de ductilidad moderados o una
+sobrerresistencia razonable» en estructuras de **Categoría II — «es decir, estructuras
+normales»**. Y el comentario general **C8**, el mismo que introdujo el 0,7R₁, advierte contra el
+abuso de las alternativas de resistencia:
+
+> «…el uso excesivo de las alternativas de resistencia para evadir requisitos de ductilidad
+> podría conducir a estructuraciones que, si bien pueden contar con resistencia elevada, no
+> necesariamente presenten mecanismos de disipación de energía claros. Esta situación podría
+> conducir a fallas frágiles o inesperadas.»
+
+Es la advertencia que cierra el círculo con la cláusula 4.1.3, que pedía «reserva de resistencia
+**y/o** capacidad de absorber energía». La norma permite comprar con resistencia lo que no se
+quiere pagar en ductilidad — y en la misma página avisa que hacerlo de más deja una estructura
+fuerte sin mecanismo.
+
+## El hilo, en una frase
+
+El $0{,}7R_1$ es lo que hace que un proyecto analizado elásticamente pueda diseñarse por
+capacidad sin correr un no lineal: un multiplicador único, con un piso en 1,0 y un techo en la
+máxima carga transferible. Funciona mientras la demanda amplificada y la capacidad instalada se
+parezcan — y deja de funcionar exactamente donde el perfil lo eligió otra cosa, o donde el
+análisis pide cero.

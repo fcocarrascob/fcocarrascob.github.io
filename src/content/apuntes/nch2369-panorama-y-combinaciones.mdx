@@ -1,0 +1,248 @@
+---
+title: "NCh 2369:2025 — el contrato: alcance, desempeño y combinaciones"
+description: "Antes de que aparezca un espectro, la NCh 2369 ya tomó tres decisiones que fijan todo lo demás: a qué obras aplica —y el criterio de delimitación es la continuidad de operación, no que el edificio sea industrial—, qué desempeño exige, y en qué formato entran las cargas. Las cláusulas 1 a 4 y el Anexo B: las categorías con su I = 0,80 a 1,20, las combinaciones ASD y LRFD con SO y SA que NCh 3171 no tiene, la regla de simultaneidad 100/30/30, y el factor 1,5 que la norma declara como criterio práctico y no como equivalencia."
+pubDate: 2026-08-03
+tags: ["nch2369", "diseño sísmico", "industrial", "combinaciones de carga", "ASD", "LRFD", "nch3171", "minería"]
+subsection: "nch2369"
+chapter: "Caps. 1–4 — Alcance, desempeño y combinaciones"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 1 a 4 y Anexo B (normativo) · NCh 3171:2017"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta que esta norma responde distinto
+
+Casi todo lo que se publica sobre diseño sísmico en Chile habla de NCh 433: edificios,
+habitacional, protección de la vida. La NCh 2369 comparte la mitad de ese objetivo y agrega
+otro que cambia el diseño entero. La cláusula 4.1.1 los declara en dos grupos:
+
+- **a) Protección de la vida en la industria** — evitar el colapso para sismos *más severos
+  que el de diseño*, evitar incendios, explosiones o emanaciones de gases y líquidos tóxicos,
+  proteger el medio ambiente, mantener operativas las vías de escape.
+- **b) Continuidad de operación de la industria** — mantener los procesos y servicios
+  esenciales, reducir al mínimo la paralización, y **facilitar la inspección y reparación de
+  los elementos dañados**.
+
+El comentario C1.1 dice explícitamente cuál de los dos manda:
+
+> «Es el segundo de esos objetivos el que caracteriza a la presente norma y, por consiguiente,
+> el que permite delimitar su aplicación.»
+
+Eso es más fuerte de lo que parece. **El criterio de aplicación no es que la obra sea
+industrial: es que su objetivo de desempeño sea la continuidad de operación.** Por eso el
+mismo C1.1 recomienda aplicarla a terminales de embarque de pasajeros, transferencia de carga,
+estaciones de servicio y almacenamiento — cosas que nadie llamaría «una planta». Y por eso
+1.2 e) manda los edificios de oficinas y casinos *del propio recinto industrial* a NCh 433,
+«cuando su desempeño sísmico no afecte otras áreas de la industria».
+
+<Note type="info" title="Qué queda fuera (cláusula 1.2)">
+Siete familias explícitas: estructuras cuyo único objetivo sea contener suelo o roca **o cuyos
+esfuerzos deriven de la cinemática del suelo** (muros de contención, túneles, ductos
+enterrados); presas y tranques de relaves; instalaciones secundarias (señalética, iluminación,
+cierres); estructuras viales; oficinas y casinos asimilables a uso residencial; centrales de
+generación por procesos distintos a los incluidos; y las líneas y subestaciones del Sistema de
+Transmisión.
+
+La primera merece atención: el muro de contención de la planta **no lo diseña esta norma**.
+Es exactamente el vacío que la [nota del muro](/geotecnia/muro-tres-verificaciones) de la
+sección de Geotecnia tiene que rellenar con Das y con criterio, y por el que un ejemplo de
+muro sísmico sigue pendiente.
+
+También conviene leer 1.1 al revés: el alcance formal son **estructuras nuevas**. El
+comentario reconoce que la filosofía «puede resultar deseable» en revisión de estructuras
+existentes o proyectos de modificación, pero avisa que usarla fuera de su alcance «debe ser
+realizado de manera responsable».
+</Note>
+
+Y hay un tercer principio que casi se pasa por alto. La cláusula 4.1.2 acepta que el análisis
+se haga con **modelos lineales**, pero manda el dimensionamiento a la norma de cada material;
+y 4.1.3 exige que las estructuras «deben tener una reserva de resistencia y/o ser capaces de
+absorber energía, más allá del límite elástico, antes de fallar». Ese *y/o* es toda la
+descomposición $R = R_\mu \cdot \Omega_0$ que la
+[serie del factor R](/blog/factor-r-anatomia) mide en cinco posts: absorber energía es
+$R_\mu$, la reserva de resistencia es $\Omega_0$. La norma pide una de las dos, o las dos.
+
+## 1 · Las categorías y el coeficiente I
+
+La cláusula 4.3.1 clasifica instalaciones, estructuras y equipos en cuatro categorías de
+ocupación y operación (Tabla 1), y 4.3.2 les asigna el coeficiente:
+
+| Categoría | Qué es | $I$ |
+|:---:|---|:---:|
+| **I** | Menores o provisionales; obras de mantención de menos de 60 días; móviles menores | **0,80** |
+| **II** | Normales, con fallas menores de reparación rápida | **1,00** |
+| **III** | Críticas o esenciales: detención prolongada, pérdida significativa de producción, servicios públicos, salas de control y eléctricas | **1,20** |
+| **IV** | Que deben **operar durante** el sismo: salas de batería, generación de emergencia, combate de incendios; peligrosas; de alta inversión y difícil reemplazo | **1,20** |
+
+Dos cosas que la tabla sola no dice:
+
+1. **III y IV comparten $I = 1{,}20$.** La diferencia entre ambas no está en el coeficiente
+   sino en el resto de la norma, y en que para Categoría IV *se permite* usar un $I$ mayor,
+   «cuyo valor se debe definir de manera consistente con los niveles de desempeño estructural
+   requeridos por cada proyecto específico». Es decir: la norma abre la puerta y deja el
+   número al proyecto.
+2. **La NOTA 1 de la Tabla 1 es una regla de contagio**: una instalación no puede clasificarse
+   por debajo del equipo o proceso más crítico que aloje o soporte, salvo que el diseño
+   demuestre que sus daños no lo afectan. Y la NOTA 2 extiende la clasificación de un equipo a
+   sus instalaciones de control, enfriamiento y energía. La categoría no se elige mirando la
+   estructura: se hereda del proceso.
+
+<Note type="warning" title="Dónde entra el I, y dónde no">
+El $I$ **no multiplica la combinación**: entra dentro del espectro de diseño, en las Ecs. (1a)
+y (2) de 5.4.1 —la horizontal y la vertical—, junto con $R^*$ y la corrección por
+amortiguamiento. Es el mismo lugar que ocupa en la
+[NCh 432 de viento](/apuntes/nch432-cargas-de-viento), dentro de $q_z$ y no en las
+combinaciones. Si se aplica dos veces, el error es del 20 % y silencioso.
+</Note>
+
+## 2 · Las combinaciones: dos cargas que NCh 3171 no tiene
+
+La cláusula 4.5.1 parte remitiendo: las combinaciones **sin** acción sísmica se definen según
+NCh 3171. Las que **sí** la incorporan son, «a lo menos», estas cuatro:
+
+<Equation label="4.5.1 · ASD">
+$$D + 0{,}75\,aL + 0{,}75\,SO + 0{,}75\,SA + 0{,}70\,E$$
+</Equation>
+
+<Equation label="4.5.1 · ASD">
+$$D + 0{,}75\,SA + 0{,}70\,E$$
+</Equation>
+
+<Equation label="4.5.1 · LRFD">
+$$1{,}2\,D + aL + SO + SA + E$$
+</Equation>
+
+<Equation label="4.5.1 · LRFD">
+$$0{,}9\,D + SA + E$$
+</Equation>
+
+<Figure
+  src="/apuntes/nch2369/combinaciones.svg"
+  alt="Diagrama en tres columnas. Columna 1, cargas nominales: D permanente, L de uso con el factor a, SO operación esperada, SA accidental del sismo, con la nota de que SO y SA no existen en NCh 3171 y las define esta norma en 4.5.1. Columna 2, la acción sísmica E: el espectro de diseño S_a de 5.4, multiplicado por I según la categoría de 4.3.2 con valores 0,80, 1,00, 1,20 y 1,20 para las categorías I a IV, y la regla de simultaneidad de 4.5.2, más o menos 1,0 Ex más o menos 0,3 Ey más o menos 0,3 Ez y sus dos permutaciones. Columna 3, los dos métodos: ASD con D + 0,75 aL + 0,75 SO + 0,75 SA + 0,70 E y D + 0,75 SA + 0,70 E; LRFD con 1,2 D + aL + SO + SA + E y 0,9 D + SA + E. Abajo, una banda sobre el factor 1,5 del Anexo B: la equivalencia entre métodos a nivel de resistencia, declarada como criterio práctico y no como equivalencia absoluta, que aparece en 8.3.1, 10.1.4 y 10.1.6."
+  caption="El I entra dentro de E, no en la combinación. SO y SA son las dos cargas que esta norma agrega y que NCh 3171 no tiene: son la huella de que el edificio produce algo."
+/>
+
+Lo que distingue estas combinaciones de las de un edificio no son los coeficientes, son **dos
+cargas nuevas**:
+
+- **SO — carga de operación esperada concurrente con el sismo de diseño.** El puente grúa que
+  está izando, el chute con material, la correa cargada.
+- **SA — carga accidental esperada producida por la ocurrencia del sismo de diseño.** Lo que
+  el sismo *provoca* en el proceso: el impacto del material que se desplaza, el golpe de
+  ariete, la carga del contenido que oscila.
+
+Y el **factor $a$**, que reduce la sobrecarga de uso «en base a la probabilidad de ocurrencia
+de su valor nominal en conjunto con el sismo de diseño». No es un número de la cláusula: la
+Tabla C-2 del comentario lo tabula por tipo de recinto.
+
+<Note type="tip" title="La segunda combinación de cada método es la del vuelco">
+Fíjate en que `D + 0,75 SA + 0,70 E` y `0,9 D + SA + E` **no tienen L ni SO**. Son las que
+gobiernan tracción en anclajes y despegue de fundaciones, porque quitan la carga gravitacional
+que estabiliza. Es el mismo mecanismo que en el
+[ejemplo de la columna de hormigón](/hormigon/ejemplo-columna-interaccion-esbeltez) hace que
+gobierne la combinación de axial *mínimo* y no la de axial máximo, y el que la
+[nota de la fundación anclada](/geotecnia/ejemplo-fundacion-anclada-nch2369) usa para el
+equilibrio al volcamiento.
+</Note>
+
+### La regla de simultaneidad (4.5.2)
+
+Las tres direcciones no se combinan por separado ni se suman: se combinan al 100 / 30 / 30, en
+las tres permutaciones y con todos los signos.
+
+<Equation label="Ec. 4.5.2">
+$$E = \pm\,1{,}0\,E_x \pm 0{,}3\,E_y \pm 0{,}3\,E_z$$
+</Equation>
+
+$$
+E = \pm\,0{,}3\,E_x \pm 1{,}0\,E_y \pm 0{,}3\,E_z
+\qquad
+E = \pm\,0{,}3\,E_x \pm 0{,}3\,E_y \pm 1{,}0\,E_z
+$$
+
+Lo que hay que notar es que **$E_z$ está adentro de la regla**. La componente vertical no es un
+caso aparte que se verifica al final: entra al 30 % en las dos combinaciones horizontales, y al
+100 % en la tercera. Y las $E_i$ son «desacopladas», calculadas según la cláusula 5 — o sea que
+cada una ya salió de su propia combinación modal, con el problema de signo que eso arrastra.
+Ese problema tiene una técnica de solución, y está desarrollada en el post de la
+[respuesta espectral modo a modo](/blog/respuesta-espectral-modal-torre-traspaso): las
+reacciones salen como magnitudes ± y el signo se recupera del modo dominante.
+
+## 3 · El factor 1,5: el puente que la norma declara imperfecto
+
+Acá está la decisión más chilena de toda la norma, y vive en el **Anexo B, que es normativo**
+(el Preámbulo lo dice: «El Anexo B forma parte de la norma»).
+
+El problema es real. En Chile el acero se ha diseñado históricamente por ASD y el hormigón
+armado no. Pero el diseño por capacidad —el corazón de la cláusula 8— necesita comparar una
+*demanda amplificada* contra una *capacidad esperada*, y esos dos números viven en escalas
+distintas según el método. El Anexo B lo resuelve declarando una equivalencia:
+
+> «Esta norma ha aceptado, a partir de una necesidad práctica y para propósitos de diseño
+> sísmico (diseño por capacidad), la definición de un factor de equivalencia entre métodos, a
+> nivel de resistencia, igual a 1,5. **Esto no se debe entender como una equivalencia absoluta,
+> sino como un criterio práctico razonable** para propósitos generales de diseño, teniendo en
+> consideración la precisión de las metodologías actuales utilizadas en el país.»
+
+Dos cosas valen la pena:
+
+1. **La norma declara su propio margen de error.** No dice «1,5 es la conversión»; dice que es
+   un criterio práctico razonable *dada la precisión de las metodologías actuales*. Es una
+   honestidad poco común en un texto normativo, y conviene citarla tal cual cuando alguien
+   pregunta por qué el número no cierra al decimal.
+2. **El Anexo B también toma partido.** Reconoce que ASD «se mantiene como aceptable dentro de
+   esta norma para todo efecto práctico», pero afirma que la racionalidad y el sustento
+   probabilístico de LRFD «es superior», y recomienda ir a un enfoque LRFD en casos que no se
+   puedan catalogar como típicos de la industria.
+
+El 1,5 no es decorativo: aparece en 8.3.1 (capacidades esperadas), en C8.3.4, en C8.7.5, y en
+10.1.4 y 10.1.6 de fundaciones. Cada vez que un post de este blog toma una capacidad esperada y
+la compara con una demanda ASD, ese factor está adentro.
+
+## 4 · El mapa: qué cláusula sostiene cada cosa ya publicada
+
+Esta norma aparece citada en cuarenta posts de este sitio sin que exista, hasta ahora, una nota
+que la explique. Este es el mapa inverso — de la cláusula al post que la ejercita:
+
+| Cláusula | De qué trata | Dónde está trabajada |
+|---|---|---|
+| 4.5 · Anexo B | Combinaciones y el factor 1,5 | esta nota |
+| 5.4 | El espectro de diseño, $R^*$, $\xi$ | [El espectro de diseño](/apuntes/nch2369-espectro-de-diseno) |
+| 5.4 · Tabla 7 | El $\xi = 2$ % del acero soldado | [El exponente 0,4 del amortiguamiento](/blog/amortiguamiento-exponente) |
+| 5.6 | Análisis modal espectral | [Respuesta espectral modo a modo](/blog/respuesta-espectral-modal-torre-traspaso) · [Ritz vs. Eigen](/blog/ritz-vs-eigen-masa-participativa-sap2000) |
+| 8.3 · 8.5 | Capacidades esperadas, el 0,7R₁, anclajes | [Capacidad y el 0,7R₁](/apuntes/nch2369-capacidad-y-07r1) · [El factor R](/blog/factor-r-anatomia) |
+| 8.6 (MAC) | Marcos arriostrados concéntricamente | [Paño en V invertida](/acero/ejemplo-chevron-nch2369) · [Ω₀ medido](/blog/factor-r-omega0) |
+| 9 | Hormigón armado, pedestales | [Pedestal con anclaje](/hormigon/ejemplo-pedestal-anclaje-nch2369) |
+| 10.1.3 / 10.1.4 | Deslizamiento, área apoyada | [Zapata de galpón](/geotecnia/ejemplo-zapata-galpon-nch2369) |
+| 10.1.5 · Ec. (25) | Rigidez de fundación | [Losa rígida o flexible](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369) |
+| 10.1.6 | Fundaciones ancladas (0,7R₁) | [Fundación anclada](/geotecnia/ejemplo-fundacion-anclada-nch2369) |
+| 10.2.4 | Fundaciones profundas, arrastre | [Pilotes con fricción negativa](/geotecnia/ejemplo-pilotes-friccion-negativa-nch2369) |
+
+Lo que **no** está cubierto ni acá ni en el blog: las cláusulas 6 y 7 (deformaciones sísmicas y
+equipos, con $F_p$, $K_p$ y la Tabla 8), 5.5 y 5.10 a 5.11 (análisis estático y análisis
+especiales), y las cláusulas 11 a 14 (estanques y chimeneas, galpones y estanterías, muelles,
+generación eléctrica). Los cortes basales mínimo y máximo y el $R_1$ —5.12 a 5.14— están en la
+[nota del 0,7R₁](/apuntes/nch2369-capacidad-y-07r1), porque es ahí donde se usan.
+
+## Lo que la norma no te da
+
+- **La zonificación exacta.** La Tabla 2 lista comunas y la Figura 2 son cuatro láminas, pero
+  la NOTA 3 de esa figura advierte: «No existe un listado de coordenadas o reglas precisas que
+  determinen los límites exactos entre las diferentes zonas sísmicas… su uso debe ser criterioso,
+  particularmente en las cercanías de los límites».
+- **El factor $a$ por recinto.** Está en la Tabla C-2 del **comentario**, no en la cláusula.
+- **Las combinaciones completas de tu proyecto.** 4.5.1 dice «a lo menos» y manda a
+  complementarlas «con otras aplicables a cada proyecto en particular». La lista de cuatro es
+  un piso, no un catálogo.
+- **Alta montaña.** La propia 4.5.1 avisa que en sitios donde las características ambientales
+  difieran de los supuestos de las normas de carga «es necesario contar con estudios
+  específicos». Es la misma advertencia que la NCh 432 hace con el viento del altiplano.
+
+## El hilo, en una frase
+
+La NCh 2369 no es NCh 433 con otro espectro: es la norma que aparece cuando al objetivo de
+proteger la vida se le suma el de **seguir produciendo el lunes**, y ese segundo objetivo es
+literalmente el criterio con que la norma decide a qué obras se aplica — con dos cargas que
+ninguna otra norma chilena define, y un puente entre métodos que ella misma declara aproximado.
