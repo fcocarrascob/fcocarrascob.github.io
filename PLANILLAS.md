@@ -525,7 +525,7 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-gusset-simple-soldado` | 71 | 46 | 28 | 16 | 6 (2⇱) | 1 aplicado 2026-07-31 (387,2 → 387,1) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-esquina-apernado` | 146 | 99 | 69 | 51 | 10 (3⇱) | 1 aplicado 2026-07-31 (Resultado 143,00 → 140,55, con el alt) | 2026-07-31 | ✅ |
 | `ejemplo-gusset-apice-chevron` | 105 | 81 | 57 | 38 | 8 (2⇱) | 1 aplicado 2026-07-31 (0,538 → 0,537) | 2026-07-31 | ✅ |
-| `ejemplo-diagonal-hss-traccion` | 41 | 34 | 25 | 26 | 4 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) | 2026-07-31 | ✅ |
+| `ejemplo-diagonal-hss-traccion` | 103 | 107 | 80 | 55 | 9 (1⇱) | 1 aplicado 2026-07-31 (56 340 kgf → 56 351) · ampliada 2026-08-03 con los actos de compresión (E3) y NCh2369 (8.6.3/8.6.4/8.6.8): 13 hallazgos, los 13 aplicados | 2026-08-03 | ✅ |
 | `ejemplo-chevron-nch2369` | 134 | 97 | 82 | 38 | 10 (2⇱) | 5 aplicados 2026-07-31 (el 🟠: la fila R₁ = 2,0 invertía el signo del desequilibrio) | 2026-07-31 | ✅ |
 | `ejemplo-columna-galpon-compresion` | 63 | 45 | 30 | 38 | 5 | 2 aplicados 2026-08-01 (el §5 confundía torsional puro con flexo-torsional, y ahora publica su cifra; «casi triplica» → ×2,6) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-conexion-apernada-corte` | 73 | 69 | 49 | 45 | 7 (4⇱) | 1 aplicado 2026-08-01 (🟠 el F_nv de la Tabla J3.2, 372 → 370 MPa: dio vuelta el 0,995 del perno extremo a 1,00) | 2026-08-01 | ✅ |

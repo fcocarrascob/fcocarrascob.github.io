@@ -1,10 +1,11 @@
 ---
-title: "Ejemplo — Diagonal HSS a tracción con conexión soldada (AISC 360-22)"
-description: "Diseño completo de una diagonal de arriostramiento de tubo estructural (HSS) ranurado a una plancha gusset concéntrica y soldado: fluencia en el área bruta, rotura por retraso de cortante (Caso 5 de la Tabla D3.1), diseño de los cordones de filete y corte de bloque. Cada paso con su referencia normativa y la tabla demanda–capacidad. La longitud de la soldadura resulta ser la palanca de todo el diseño."
+title: "Ejemplo — Diagonal HSS a tracción y compresión: el mismo tubo en los dos sentidos (AISC 360-22 + NCh2369)"
+description: "La misma diagonal de tubo estructural ranurada y soldada a un gusset, verificada en los dos sentidos y después bajo la norma chilena. En tracción gobierna el retraso de cortante (Caso 5 de la Tabla D3.1). En compresión el desenlace lo fija la longitud efectiva: con el cruce de la X como punto fijo (8.6.4) el tubo da 53.5 tonf, sin él cae a 25.1 y ni la exención de 8.6.3 lo salva. Y la 8.6.8 obliga a desarrollar T_ye = 99.3 tonf, que el área neta ranurada no puede alcanzar ni con soldadura infinita —U tendría que valer 1.166, y eso no depende del tamaño del tubo sino del par de aceros—, así que el refuerzo de la ranura solo se evita cuando el techo de 0,7R₁ muerde."
 pubDate: 2026-07-23
-tags: ["ejemplo", "acero", "tracción", "arriostramiento", "HSS", "retraso de cortante", "soldadura", "aisc360"]
+updatedDate: 2026-08-03
+tags: ["ejemplo", "acero", "tracción", "compresión", "pandeo", "longitud efectiva", "arriostramiento", "HSS", "retraso de cortante", "soldadura", "aisc360", "aisc341", "nch2369", "diseño por capacidad", "marcos arriostrados"]
 subsection: "ejemplos"
-chapter: "Cap. D — Tracción"
+chapter: "Caps. D y E + NCh2369 8.6 — Diagonal de arriostramiento"
 tema: Miembros
 ---
 
@@ -12,33 +13,57 @@ import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
 
-Una diagonal de arriostramiento en tracción es de los miembros más simples que uno diseña —
-solo aguanta un tirón axial— y a la vez uno de los que más equivoca, porque la resistencia
-casi nunca la fija el cuerpo del tubo: la fija **la conexión**. La
-[nota del Cap. D](/acero/aisc360-22-capD-traccion) explica *por qué* conviven una falla
-dúctil (fluencia) y dos frágiles (rotura del área neta efectiva y corte de bloque); acá lo
-bajamos a números —con la referencia normativa[^aisc360] de cada paso— para el caso más común
-en la práctica chilena actual: un **tubo estructural HSS ranurado a una plancha gusset
-concéntrica y soldado**. El hilo conductor es el de siempre
-—**hacer fluir el material dúctil y sobreproteger lo frágil**—, y el desenlace es que gobierna
-la rotura por retraso de cortante, controlada por la **longitud de la soldadura**.
+Una diagonal de arriostramiento se dibuja una vez y trabaja de dos maneras. Bajo el mismo
+sismo, en un ciclo tira y en el siguiente empuja, y las dos mitades del problema **no se
+parecen**: en tracción la resistencia casi nunca la fija el cuerpo del tubo sino **la
+conexión**; en compresión la fija algo que ni siquiera es una propiedad de la sección —**la
+longitud efectiva**—. Y encima de las dos, en Chile, hay una tercera capa que cambia el número:
+la NCh2369 no pide resistir la demanda del análisis, pide **desarrollar la capacidad esperada**
+del elemento.
+
+Este ejemplo recorre los tres actos sobre un mismo miembro —un **tubo estructural HSS ranurado a
+una plancha gusset concéntrica y soldado**, el detalle más común en la práctica chilena
+actual—, con la referencia normativa[^aisc360] de cada paso:
+
+1. **Tracción** (Cap. D de AISC 360-22): gobierna la rotura por retraso de cortante, y la
+   palanca es la longitud de la soldadura. Es el desarrollo de la
+   [nota del Cap. D](/acero/aisc360-22-capD-traccion) —fluencia dúctil contra dos fallas
+   frágiles— llevado a números.
+2. **Compresión** (Cap. E): el mismo tubo da 53.5 o 25.1 tonf según si el cruce de la X
+   cuenta como punto de arriostramiento. Con la demanda en 42, esa decisión es la diferencia
+   entre uso 0.79 y uso 1.67.
+3. **NCh2369:2025**[^nch]: la 8.6.4 es la que autoriza el cruce fijo; la 8.6.3 le exige a la
+   diagonal pandear dúctil; y la 8.6.8 obliga a la conexión a desarrollar $T_{ye} = 99.3$ tonf.
+   El desenlace es el más duro de los tres: **la ranura del tubo no llega a esa cifra ni con
+   soldadura infinitamente larga, y no por ser chico el tubo** — es un tope de la
+   configuración, no del tamaño.
+
+El hilo conductor es el de siempre —**hacer fluir el material dúctil y sobreproteger lo
+frágil**—, solo que la tercera capa lo vuelve explícito: deja de ser un criterio y pasa a ser
+una cifra que hay que alcanzar.
 
 ## El caso
 
-Diagonal de un marco arriostrado industrial, solicitada en tracción por la combinación
-sísmica. El tubo se ranura en sus dos paredes y recibe una plancha gusset concéntrica, unida
-con cordones de filete longitudinales. Materiales de uso corriente en Chile: tubo ASTM A500
-Gr. C y electrodo E70.
+Diagonal de un **paño arriostrado en X** de un marco industrial, solicitada alternadamente en
+tracción y compresión por la combinación sísmica. El tubo se ranura en sus dos paredes y recibe
+una plancha gusset concéntrica, unida con cordones de filete longitudinales. Materiales de uso
+corriente en Chile: tubo ASTM A500 Gr. C y electrodo E70.
 
 | Dato | Valor |
 |---|---|
 | Perfil | HSS 4×4×1/4 ($\approx$ □100×100×6) |
 | Propiedades (tabla, pared de diseño) | $A_g = 21.7$ cm², $t = 0.59$ cm, $r = 3.84$ cm, $B = H = 10.16$ cm |
-| Acero del tubo | ASTM A500 Gr. C: $F_y = 3520$ kgf/cm², $F_u = 4360$ kgf/cm² |
+| Acero del tubo | ASTM A500 Gr. C: $F_y = 3520$ kgf/cm², $F_u = 4360$ kgf/cm², $E = 2.04\times10^6$ kgf/cm² |
+| Fluencia y rotura esperadas | $R_y = 1.3$, $R_t = 1.2$ — Tabla A3.2 de AISC 341-22, por remisión de la 8.3.3[^ry] |
 | Plancha gusset | $t_p = 16$ mm (ancho de ranura $w_r = 19$ mm) |
 | Soldadura | 4 cordones de filete, pierna $w = 6$ mm (garganta $0.707w$), electrodo E70 ($F_{EXX} = 4920$ kgf/cm²) |
-| Longitud de la diagonal | $L = 4.5$ m |
+| Configuración | **Paño en X**: las dos diagonales se conectan en el cruce y una es continua ahí |
+| Longitud de la diagonal | $L = 4.5$ m entre puntos de trabajo |
+| Sistema sísmico | Tabla 7, línea 5.3: marco arriostrado con anclajes dúctiles → $R = 5$ |
+| Factor efectivo | $R_1 = 4$ por la Ec. (14), $R_1 = R\cdot\min(Q_0/Q_{0,\min};\,1)$ — sale del análisis → $0{,}7R_1 = 2.80$ |
 | Tracción de diseño (LRFD) | $P_u = 42$ tonf |
+| Compresión de diseño (LRFD) | $P_{uc} = 42$ tonf — el sismo revierte y la diagonal es la misma |
+| Axial sísmico de nivel reducido | $P_E = 42$ tonf (el axial gravitacional de una diagonal es despreciable) |
 
 <Figure
   src="/ejemplos/diagonal-hss-traccion.svg"
@@ -94,7 +119,7 @@ $$
 **Factor de retraso de cortante $U$.** Un HSS rectangular con **una plancha concéntrica pasante
 por ranuras** es el Caso 5 de la Tabla D3.1. Ojo con la edición: en AISC 360-16 esta
 configuración era el Caso 6 (que en 360-22 pasó a ser el tubo con **dos** planchas laterales) y
-la expresión de $ar{x}$ ignoraba el espesor. La de 360-22 es:
+la expresión de $\bar{x}$ ignoraba el espesor. La de 360-22 es:
 
 <Equation label="Caso 5, Tabla D3.1">
 $$
@@ -114,15 +139,15 @@ ejemplo—:
 
 <Equation label="U y área efectiva">
 $$
-U = 1 - \frac{3.59}{15} = 0.760
+U = 1 - \frac{3.5933}{15} = 0.7604
 \qquad
-A_e = 19.46 \cdot 0.760 = 14.80 \ \text{cm}^2
+A_e = 19.458 \cdot 0.7604 = 14.80 \ \text{cm}^2
 $$
 </Equation>
 
 <Equation label="Ec. D2-2">
 $$
-\phi_t P_n = 0.75 \cdot 4360 \cdot 14.80 = 48\,385 \ \text{kgf} = 48.4 \ \text{tonf}
+\phi_t P_n = 0.75 \cdot 4360 \cdot 14.797 = 48\,385 \ \text{kgf} = 48.4 \ \text{tonf}
 \;\ge\; P_u = 42 \ \text{tonf}
 $$
 </Equation>
@@ -142,7 +167,7 @@ de aporte (Ec. J2-4, con el cordón longitudinal $\theta = 0$):
 <Equation label="Ec. J2-4 (por cm de cordón)">
 $$
 \phi R_n = 0.75 \cdot 0.60 \, F_{EXX}\,(0.707\,w)
-= 0.75 \cdot 0.60 \cdot 4920 \cdot (0.707 \cdot 0.6) = 939 \ \text{kgf/cm}
+= 0.75 \cdot 0.60 \cdot 4920 \cdot (0.707 \cdot 0.6) = 939.18 \ \text{kgf/cm}
 $$
 </Equation>
 
@@ -151,7 +176,7 @@ $P_u$:
 
 <Equation label="Longitud por resistencia">
 $$
-l_{\min} = \frac{P_u}{4 \cdot \phi R_n'} = \frac{42000}{4 \cdot 939} = 11.2 \ \text{cm}
+l_{\min} = \frac{P_u}{4 \cdot \phi R_n'} = \frac{42000}{4 \cdot 939.18} = 11.2 \ \text{cm}
 $$
 </Equation>
 
@@ -198,7 +223,7 @@ $$
 
 Por encima de $P_u$ (uso **0.75**): el corte de bloque **no gobierna** cuando la soldadura es
 larga —otra razón para no escatimar en $l$—, pero queda mucho más cerca de lo que sugiere la
-primera rama: quedarse con $0.60F_uA_{nv} = 69.5$ tonf sobreestimaría la capacidad un **24 %**,
+primera rama: quedarse con $\phi\,0.60F_uA_{nv} = 69.5$ tonf sobreestimaría la capacidad un **24 %**,
 y hacia el lado inseguro. Este mismo plano de corte cubre además la rotura del **metal base**
 adyacente al cordón (Sec. J2.4), así que con él verificado la soldadura queda del lado seguro
 por ambos frentes.
@@ -210,15 +235,398 @@ $L/r \le 300$ por vibración y montaje:
 
 <Equation label="Sec. D1 (recomendado)">
 $$
-\frac{L}{r} = \frac{450}{3.84} = 117 \;\le\; 300 \quad\checkmark
+\frac{L}{r} = \frac{450}{3.84} = 117.2 \;\le\; 300 \quad\checkmark
 $$
 </Equation>
 
-Cómodo (y como la diagonal es un tubo doblemente simétrico, si la carga se invierte a
-compresión la esbeltez para pandeo es la misma $r$ en ambos ejes —ventaja del HSS sobre el
-ángulo—, cálculo que corresponde al [Cap. E](/acero/aisc360-22-capE-compresion)).
+Cómodo. Y acá está la bisagra del ejemplo: como la diagonal es un tubo **doblemente
+simétrico**, esa misma $r = 3.84$ cm sirve en los dos ejes —la ventaja del HSS sobre el
+ángulo—, así que cuando el sismo invierta la carga no habrá un eje débil escondido. Pero el
+$L/r = 117$ que en tracción era un número de servicio, en compresión es *el* número de diseño.
+Ese es el [Cap. E](/acero/aisc360-22-capE-compresion), y es el segundo acto.
+
+## 6. Compresión: el pandeo local no es el problema (Tabla B4.1a y Sec. E7)
+
+Antes de la curva de columna hay que preguntar si las paredes del tubo son **esbeltas**, porque
+si lo fueran habría que trabajar con un área efectiva reducida (Sec. E7). Para paredes de HSS
+rectangular el ancho se mide plano, descontando las esquinas; cuando no se conoce el radio, la
+Sec. B4.1b(d) —la lista de elementos atiesados— autoriza la cota práctica $b = B - 3t$, con $t$ la **pared de
+diseño**:
+
+<Equation label="Sec. B4.1b(d)">
+$$
+b = B - 3t = 10.16 - 3(0.59) = 8.39 \ \text{cm}
+\qquad
+\frac{b}{t} = \frac{8.39}{0.59} = 14.2
+$$
+</Equation>
+
+<Equation label="Tabla B4.1a, caso 6">
+$$
+\lambda_r = 1.40\sqrt{\frac{E}{F_y}} = 1.40\sqrt{\frac{2.04\times10^6}{3520}} = 33.7
+\;>\; 14.2 \quad\checkmark
+$$
+</Equation>
+
+**No esbelto**, con holgura de más del doble: no aplica E7 y se trabaja con la sección completa.
+Guarda ese $b/t = 14.2$, porque en el acto 3 se vuelve a medir contra un límite mucho más
+estrecho.
+
+## 7. Compresión: la longitud efectiva decide el ejemplo (Ec. E3-1, E3-2 y E3-4)
+
+Acá está la única decisión de proyecto real de este acto, y no es el perfil: es **cuánto vale
+$L_c$**. En un paño en X las dos diagonales se cruzan a media altura, y si ese cruce está
+conectado, la diagonal traccionada le sirve de apoyo a la comprimida. El Comentario del Apéndice
+7 de AISC 360-22[^xbrace] lo autoriza con cinco condiciones —diagonales de igual sección,
+unidas en el punto medio, con tracción y compresión de magnitud similar— que este paño cumple
+por construcción, porque las dos diagonales son el mismo tubo y el sismo las carga en
+contrafase:
+
+<Equation label="Comentario Ap. 7 §7.2 / NCh2369 8.6.4">
+$$
+L_c = 0.5\,L = 2.25 \ \text{m}
+\qquad
+\frac{L_c}{r} = \frac{225}{3.84} = 58.6
+$$
+</Equation>
+
+Con esa esbeltez, la tensión de pandeo elástico y el régimen:
+
+<Equation label="Ec. E3-4">
+$$
+F_e = \frac{\pi^2 E}{(L_c/r)^2} = \frac{\pi^2 \cdot 2.04\times10^6}{58.6^2} = 5864 \ \text{kgf/cm}^2
+\qquad
+\frac{F_y}{F_e} = \frac{3520}{5864} = 0.600 \;\le\; 2.25
+$$
+</Equation>
+
+Está del lado **inelástico** del quiebre (que en esbeltez es $4.71\sqrt{E/F_y} = 113.4$), así
+que manda la Ec. E3-2:
+
+<Equation label="Ec. E3-2">
+$$
+F_n = 0.658^{\,F_y/F_e}\,F_y = 0.658^{\,0.600} \cdot 3520 = 2738 \ \text{kgf/cm}^2
+$$
+</Equation>
+
+<Equation label="Ec. E3-1">
+$$
+\phi_c P_n = 0.90\,F_n A_g = 0.90 \cdot 2738 \cdot 21.7 = 53\,474 \ \text{kgf} = 53.5 \ \text{tonf}
+\;\ge\; P_{uc} = 42 \ \text{tonf}
+$$
+</Equation>
+
+Pasa, con uso **0.79**.
+
+<Note type="warning" title="Sin el cruce, el mismo tubo no pasa — y por un factor de 1.67">
+Vale la pena hacer el cálculo alternativo completo, porque es la lección del acto. Si el cruce
+no se conectara —o se conectara con una plancha tan esbelta que no sirviera de apoyo—, habría
+que tomar $L_c = L = 4.5$ m:
+
+| | Con el cruce fijo | Sin el cruce |
+|---|:---:|:---:|
+| $L_c/r$ | 58.6 | 117.2 |
+| $F_e$ | 5864 kgf/cm² | 1466 kgf/cm² |
+| $F_y/F_e$ | 0.600 → **inelástico** (E3-2) | 2.40 → **elástico** (E3-3) |
+| $F_n$ | 2738 kgf/cm² | $0.877F_e = 1286$ kgf/cm² |
+| $\phi_c P_n$ | **53.5 tonf** | **25.1 tonf** |
+| Uso con $P_{uc} = 42$ tonf | 0.79 ✓ | **1.67 ✗** |
+
+Es el **mismo tubo, el mismo acero y la misma demanda**: lo único que cambia es dónde se apoya.
+Y nótese qué le pasa a $F_n$ al cruzar al régimen elástico — pasa a valer $0.877F_e$, que **no
+depende de $F_y$**. Del lado elástico, subir el grado del acero no compra nada; solo compra
+acortar $L_c$ o engrosar la sección.
+</Note>
+
+<Figure
+  src="/ejemplos/diagonal-hss-compresion.svg"
+  alt="Panel izquierdo: el paño arriostrado en X con las dos diagonales de 4.5 m cruzándose a media altura, la traccionada dibujada recta y la comprimida con su forma pandeada en dos semiondas de 2.25 m, y el detalle del cruce conectado con una diagonal continua. Se acotan las dos longitudes efectivas, L_c = 2.25 m con el cruce fijo y L_c = 4.5 m sin él. Panel derecho: la curva de columna F_n contra L_c/r para F_y = 3520 kgf/cm², con la rama inelástica de la Ec. E3-2 hasta el quiebre en 113.4 y la rama elástica 0.877·F_e después; se marcan los dos puntos de operación, 58.6 con F_n = 2738 sobre la rama inelástica y 117.2 con F_n = 1286 sobre la elástica, y las capacidades resultantes 53.5 y 25.1 tonf frente a la línea de demanda P_uc = 42 tonf. Una banda señala que el límite de esbeltez de NCh2369 8.6.3, 1,5·π·√(E/F_y) = 113.4, coincide con el quiebre de AISC."
+  caption="La longitud efectiva es el ejemplo completo: el mismo tubo cae de 53.5 a 25.1 tonf según si el cruce de la X cuenta como punto de arriostramiento. El quiebre de la curva —esbeltez 113.4— es también el límite que NCh2369 8.6.3 le impone a una diagonal sismorresistente."
+/>
+
+## 8. NCh2369 8.6.4: la que autoriza el cruce, y sus condiciones
+
+Todo el acto anterior cuelga de un supuesto, así que conviene mirarlo con la norma chilena en la
+mano — porque acá no es una licencia de comentario: es **cláusula**. La 8.6.4 dice que las
+diagonales en X se deben conectar en el punto de cruce y que
+
+> *«Dicho punto se puede considerar fijo en la dirección perpendicular al plano de las diagonales
+> para los efectos de determinar la longitud de pandeo de la diagonal comprimida cuando la otra
+> esté traccionada y una de las diagonales sea continua en el cruce.»*
+
+Dos condiciones, y las dos hay que **declararlas en el plano**, no darlas por hechas: que la otra
+diagonal esté traccionada, y que **una de las dos sea continua en el cruce**. El C8.6.4 agrega
+las dos situaciones donde el permiso no corre: cuando la compresión gravitacional en las
+diagonales no es despreciable —porque entonces la comprimida puede pandear con su contraparte
+en tracción pequeña o nula— y cuando la plancha del cruce es tan esbelta que el apoyo efectivo
+recién aparece con deformaciones grandes fuera del plano. En ese segundo caso la recomendación
+es **atiesar la conexión del cruce**, que es mucho más barato que duplicar $L_c$.
+
+## 9. NCh2369 8.6.3: la diagonal comprimida tiene que ser dúctil
+
+La 8.6.3 le pone dos exigencias a toda diagonal sismorresistente que trabaje en compresión, y
+ninguna es de resistencia: son de **ductilidad**. La idea, que el propio comentario declara, es
+que los ciclos de pandeo no generen fatiga de bajo ciclaje — la diagonal no puede abollarse
+antes de haber incursionado plásticamente.
+
+**Primera, el pandeo local.** El límite de la Tabla 9 para paredes de perfiles rectangulares
+conformados en frío no se mide contra $F_y$ sino contra la fluencia **esperada**:
+
+<Equation label="Tabla 9 — pandeo local">
+$$
+\lambda_{md} = 0.76\sqrt{\frac{E}{R_yF_y}} = 0.76\sqrt{\frac{2.04\times10^6}{1.3 \cdot 3520}} = 16.05
+\;>\; \frac{b}{t} = 14.2 \quad\checkmark
+$$
+</Equation>
+
+Pasa, pero con uso **0.886**: el margen que en la Tabla B4.1a era de más del doble acá quedó en
+un 11 %. Es el mismo tubo y la misma pared; lo que se movió es el listón, de 33.7 a 16.05 — un
+factor de 2.1. Esa es, en una línea, la diferencia entre *que no se abolle bajo carga de diseño*
+y *que no se abolle después de plastificar*.
+
+**Segunda, la esbeltez global:**
+
+<Equation label="Sec. 8.6.3 — esbeltez global">
+$$
+\frac{L_c}{r} = 58.6 \;<\; 1{,}5\pi\sqrt{\frac{E}{F_y}} = 113.4 \quad\checkmark
+$$
+</Equation>
+
+<Note type="tip" title="Ese límite de NCh2369 es, exactamente, el quiebre de la curva de AISC">
+No es una coincidencia aproximada: $1{,}5\pi = 4.712$, y AISC parte el régimen inelástico del
+elástico en $4.71\sqrt{E/F_y}$. Los dos números difieren en un **0.05 %** — con $F_y = 3520$
+kgf/cm², 113.44 contra 113.39.
+
+O sea que 8.6.3, dicho en el idioma del Cap. E, está exigiendo una sola cosa: **que la diagonal
+pandee en régimen inelástico**. Y se entiende por qué. Una columna que pandea elásticamente lo
+hace a una tensión muy por debajo de $F_y$, sin haber plastificado nada; no tiene reserva
+inelástica que ofrecer, y cada ciclo la va abollando. La norma no quiere diagonales que pandeen
+"limpio": quiere diagonales que antes de pandear hayan tenido que fluir.
+
+Corolario para este ejemplo: **sin el cruce de la X, $L/r = 117.2 > 113.4$ y la 8.6.3 rechaza la
+diagonal**, aparte de que no daba por resistencia.
+</Note>
+
+**¿Y la exención?** La 8.6.3 permite eximirse de ambos requisitos si la resistencia requerida se
+determina con el estado sísmico horizontal amplificado por $0{,}7R_1 \ge 1{,}0$. Es la misma
+bifurcación de siempre —o la sección es dúctil, o se diseña para más carga— y, como en el
+[paño en V invertida](/acero/ejemplo-chevron-nch2369), **hay que verificarla**:
+
+<Equation label="La exención, verificada">
+$$
+0{,}7R_1 \cdot P_E = 2.80 \cdot 42 = 117.6 \ \text{tonf}
+\;>\;
+\phi_c P_n\big|_{L_c = L} = 25.1 \ \text{tonf}
+\qquad \text{uso } 4.68
+$$
+</Equation>
+
+Ni cerca. Sin el cruce fijo las dos puertas quedan cerradas a la vez, y el paño en X deja de ser
+una preferencia de detallamiento para volverse **la condición que hace admisible la diagonal**.
+
+## 10. NCh2369 8.6.8: la conexión ya no resiste una demanda, desarrolla una capacidad
+
+Este es el salto conceptual del acto 3, y el que da vuelta el resultado del acto 1. La 8.6.8 dice
+que las conexiones de diagonales sismorresistentes
+
+> *«se deben diseñar para resistir tanto la capacidad esperada en tracción como la capacidad
+> esperada en compresión del elemento»*,
+
+con el techo habitual: no hace falta más que la combinación con el sísmico amplificado por
+$0{,}7R_1$, ni más que la máxima carga que el sistema puede transferir. Las capacidades
+esperadas están definidas en la **8.3.1**, y no son resistencias de diseño: son estimaciones de
+la carga que el elemento traspasa cuando plastifica.
+
+<Equation label="Sec. 8.3.1 — capacidades esperadas">
+$$
+F_{ye} = R_yF_y = 4576 \ \text{kgf/cm}^2
+\qquad
+T_{ye} = F_{ye}A_g = 4576 \cdot 21.7 = 99.3 \ \text{tonf}
+$$
+</Equation>
+
+Para la compresión hay que recorrer la curva de columna evaluándola con $F_{ye}$ en lugar de
+$F_y$ —eso es $F_{cre}$— y aplicar el factor 1.14:
+
+<Equation label="Sec. 8.3.1 — compresión esperada">
+$$
+F_{cre} = 0.658^{\,F_{ye}/F_e}F_{ye} = 0.658^{\,0.780} \cdot 4576 = 3301 \ \text{kgf/cm}^2
+$$
+$$
+P_{ne} = 1.14\,F_{cre}A_g = 1.14 \cdot 3301 \cdot 21.7 = 81.7 \ \text{tonf}
+$$
+</Equation>
+
+**El techo no alcanza a morder.** El de $0{,}7R_1$ vale 117.6 tonf, por encima de las 99.3 que
+pide $T_{ye}$, así que la exigencia se queda en $T_{ye}$:
+
+<Equation label="El techo de 8.6.8">
+$$
+T_{req} = \min\left(T_{ye},\; 0{,}7R_1 P_E\right) = \min(99.3,\; 117.6) = 99.3 \ \text{tonf}
+$$
+</Equation>
+
+Y la razón es aritmética y vale como regla de bolsillo: **el techo solo alivia cuando la
+sobrerresistencia de la sección supera $0{,}7R_1$**. Acá $T_{ye}/P_E = 99.3/42 = 2.36$, por
+debajo de 2.80, así que no hay descuento. Un tubo más sobredimensionado —digamos uno elegido por
+esbeltez, con la demanda al 30 %— sí lo tendría.
+
+## 11. El tope duro: la ranura no llega, y no por el tamaño del tubo
+
+Ahora hay que llevar 99.3 tonf a través de la misma conexión que en el acto 1 daba 48.4. Lo
+primero es una concesión que la norma hace y que es fácil pasar por alto: el C8.3.1 permite usar
+$F_{ye}$ y $F_{ue}$ —no las especificadas— para evaluar
+
+> *«estados de falla que ocurren al interior de un elemento para el que se asume el desarrollo de
+> su capacidad esperada (mismo material)»*.
+
+La rotura del área neta ocurre en el tubo, que es el elemento que está desarrollando su
+capacidad: **califica**, y se calcula con $F_{ue} = R_tF_u = 1.2 \cdot 4360 = 5232$ kgf/cm². El
+cordón de filete, en cambio, es **otro material** —metal de aporte— y sigue con su $F_{EXX}$
+nominal. La cláusula dice *mismo material*, y ahí se acaba la concesión.
+
+Con esa ayuda incluida, el techo absoluto de la rotura del área neta —tomando $U = 1$, que
+equivale a una soldadura infinitamente larga— es:
+
+<Equation label="Tope con U = 1">
+$$
+\phi F_{ue}A_n = 0.75 \cdot 5232 \cdot 19.46 = 76.4 \ \text{tonf}
+\;<\; T_{req} = 99.3 \ \text{tonf}
+$$
+</Equation>
+
+**No llega.** Y no es cuestión de alargar el cordón: 76.4 tonf ya es el valor con $U = 1$, el
+límite que ninguna longitud alcanza. La pregunta obvia es si un tubo más grande lo arreglaría, y
+la respuesta es que **no, ninguno**. Escribiendo la condición en general y despejando $U$:
+
+<Equation label="El U que haría falta">
+$$
+\phi R_tF_u\,A_n\,U \;\ge\; R_yF_yA_g
+\quad\Longrightarrow\quad
+U \;\ge\; \frac{R_yF_y}{0.75\,R_tF_u}\cdot\frac{A_g}{A_n}
+\;\ge\; \frac{1.3 \cdot 3520}{0.75 \cdot 1.2 \cdot 4360} = 1.166
+$$
+</Equation>
+
+$A_g/A_n > 1$ siempre —la ranura descuenta material—, así que ni con la ranura gratis se llega:
+haría falta $U \ge 1.166$, y $U$ no puede pasar de 1. **El cociente $R_yF_y / (\phi R_tF_u)$ es
+una propiedad del par de aceros, no de la sección**: para A500 Gr. C vale 1.166, y por eso ningún
+HSS ranurado de este material puede desarrollar su propia capacidad esperada sin refuerzo. Es la
+razón por la que el detalle de la ranura reforzada aparece en los marcos arriostrados
+sismorresistentes y no en los de gravedad: no es una precaución, es una necesidad aritmética.
+
+Con una salvedad que conviene dejar dicha, porque es la única puerta que queda abierta: lo que
+acaba de demostrarse es que ningún tubo desarrolla **su propia $T_{ye}$** por la ranura. Si el
+techo de $0{,}7R_1$ **sí muerde** —el caso del §10, cuando $T_{ye}/P_E > 0{,}7R_1$ y la
+exigencia baja a $0{,}7R_1P_E$—, la cuenta se hace contra ese número menor y el refuerzo puede
+no hacer falta. En este ejemplo no ocurre (2.36 contra 2.80), pero en una diagonal muy
+sobredimensionada —elegida por esbeltez, con la demanda al 30 %— sería lo primero que hay que
+mirar antes de dibujar planchuelas.
+
+## 12. La conexión que sí califica
+
+Con el diagnóstico hecho, el detalle sale en tres pasos.
+
+**El cordón.** La demanda pasa de $P_u = 42$ a $T_{req} = 99.3$ tonf. Con los mismos 939.18 kgf/cm
+por cordón del §3, se adoptan $l_w = 30$ cm:
+
+<Equation label="Ec. J2-4, con la nueva demanda">
+$$
+\phi R_n = 4 \cdot 939.18 \cdot 30 = 112.7 \ \text{tonf}
+\;\ge\; T_{req} = 99.3 \ \text{tonf}
+\quad\text{y}\quad
+\ge P_{ne} = 81.7 \ \text{tonf} \quad\checkmark
+$$
+</Equation>
+
+**Las planchas de refuerzo.** Con $l_w = 30$ cm el retraso de cortante mejora a
+$U = 1 - 3.59/30 = 0.880$, y de ahí sale el área que hace falta:
+
+<Equation label="Área neta requerida">
+$$
+A_{e,req} = \frac{T_{req}}{\phi F_{ue}} = \frac{99\,299}{0.75 \cdot 5232} = 25.31 \ \text{cm}^2
+\qquad
+A_{n,req} = \frac{25.306}{0.8802} = 28.75 \ \text{cm}^2
+$$
+</Equation>
+
+Contra los $A_n = 19.46$ cm² del tubo ranurado faltan **9.29 cm²**, que se reponen con planchuelas
+soldadas sobre las paredes ranuradas. Ojo con el detalle: **la ranura corta también el refuerzo**,
+porque el gusset tiene que pasar, así que cada pared lleva dos planchuelas —una a cada lado de la
+ranura— y son cuatro en total. El ancho disponible a cada lado es $(B - w_r)/2 = 4.13$ cm, de
+modo que 3 cm entran holgados:
+
+<Equation label="Refuerzo adoptado — 4 planchuelas de 8 × 30 mm">
+$$
+A_{pl} = 4 \cdot 0.8 \cdot 3.0 = 9.60 \ \text{cm}^2 \;\ge\; 9.29 \quad\checkmark
+$$
+$$
+A_{n,ref} = 19.458 + 9.60 = 29.058 \ \text{cm}^2
+\qquad
+A_{e,ref} = 29.058 \cdot 0.8802 = 25.58 \ \text{cm}^2
+$$
+</Equation>
+
+<Equation label="Rotura de la sección reforzada">
+$$
+\phi F_{ue}A_{e,ref} = 0.75 \cdot 5232 \cdot 25.58 = 100.4 \ \text{tonf}
+\;\ge\; T_{req} = 99.3 \ \text{tonf}
+\qquad \text{uso } 0.99
+$$
+</Equation>
+
+**El corte de bloque**, con el cordón largo y las propiedades esperadas del mismo material:
+
+<Equation label="Ec. J4-5, con propiedades esperadas">
+$$
+A_{gv} = 4 \cdot 30 \cdot 0.59 = 70.8 \ \text{cm}^2
+\qquad
+\phi R_n = 0.75 \cdot 0.60 \cdot 4576 \cdot 70.8 = 145.8 \ \text{tonf} \quad\checkmark
+$$
+</Equation>
+
+<Note type="info" title="Lo que NO se verifica acá, y por qué">
+La fluencia del área bruta no aparece en esta lista, y su ausencia es el punto entero del diseño
+por capacidad. $\phi F_yA_g = 68.7$ tonf es **menor** que las 99.3 exigidas, y está bien que lo
+sea: esa fluencia es el **fusible**, el mecanismo dúctil que 8.6.8 da por desarrollado. Lo que la
+cláusula protege es todo lo que viene *después* del fusible —la rotura, el cordón, el bloque, el
+gusset—, que debe llegar más arriba para que el tubo alcance a estirarse.
+
+Es la inversión de perspectiva que separa el Cap. D de la NCh2369: en el acto 1, las 68.7 tonf
+eran una capacidad con la que se contaba; acá son una carga que hay que aguantar.
+
+Dos hipótesis quedan declaradas, no derivadas: (i) $U$ se toma del Caso 5 del tubo **desnudo**,
+aunque el refuerzo modifica la geometría de la sección conectada —es lo conservador, porque el
+refuerzo va sobre las paredes que ya están conectadas—; y (ii) las planchas deben desarrollarse
+con soldadura **más allá** de la sección neta crítica, detalle que este ejemplo no dimensiona.
+</Note>
+
+## 13. Lo que 8.6 pide y este ejemplo no desarrolla
+
+| Cláusula | Qué exige | Estado en este paño |
+|---|---|---|
+| **8.6.1** | Prohibido el arriostramiento solo-tracción | La X trabaja en ambos sentidos ✓ |
+| **8.6.2** | Las traccionadas dan ≥ 30 % del corte de la línea | En una X simétrica aportan ~50 % ✓ |
+| **8.6.5** | Prohibido el arriostramiento en K | No aplica (X) |
+| **8.6.6** | La viga de V o V invertida, por equilibrio | No aplica (X) — es el caso del [paño en V invertida](/acero/ejemplo-chevron-nch2369) |
+| **8.6.7** | Los puntales horizontales, con el par residual/esperada | Elemento aparte — ver el [paño en V invertida](/acero/ejemplo-chevron-nch2369) |
+| **8.6.9** | La conexión resiste el momento del pandeo, o el gusset acomoda el giro | Con tubo y gusset se va por la alternativa (b) — ver [teoría del gusset](/acero/gusset-teoria-estados-limite) y el [gusset del ápice](/acero/ejemplo-gusset-apice-chevron) |
+
+Sobre la 8.6.9 conviene una precisión, porque es la que cierra el círculo con el acto 2: el
+C8.6.9 recomienda, para diagonales de tubo con gusset, *«cuidar que la geometría de la placa
+gusset sea capaz de producir el giro plástico estable **en lugar de robustecerla**»*. Robustecer
+el gusset traslada la plastificación al elemento — y el elemento es justamente el que se acaba
+de detallar para que sea el fusible.
+
+<Figure
+  src="/ejemplos/diagonal-hss-nch2369.svg"
+  alt="Panel izquierdo: barras horizontales comparando, sobre una misma escala en tonf, la capacidad disponible de la conexión del acto 1 (48.4 tonf), el tope absoluto de la rotura del área neta con U = 1 y propiedades esperadas (76.4 tonf), la capacidad esperada en compresión P_ne (81.7 tonf), la exigencia de la cláusula 8.6.8 T_ye (99.3 tonf), el techo de 0,7R₁ que no llega a morder (117.6 tonf) y la capacidad de la sección reforzada (100.4 tonf); una llave marca la brecha de 2.05 veces entre 48.4 y 99.3, y una caja recuerda que el tope de 76.4 no lo sube ninguna soldadura ni ningún tubo mayor, porque haría falta U ≥ 1.166. Panel derecho: corte transversal del tubo HSS 4×4×1/4 con la plancha gusset de 16 mm pasando por las ranuras de 19 mm abiertas en las paredes superior e inferior, y las cuatro planchuelas de refuerzo de 8 × 30 mm soldadas sobre esas mismas paredes, una planchuela a cada lado de la ranura en cada una de las dos paredes ranuradas, acotadas en milímetros; al pie, el área neta reforzada de 29.06 cm², U = 0.880, A_e = 25.58 cm² y la capacidad resultante de 100.4 tonf frente a las 99.3 exigidas, uso 0.99."
+  caption="El acto 3 en dos imágenes: la brecha que abre la 8.6.8 —de 48.4 disponibles a 99.3 exigidas, con el tope de 76.4 que ninguna longitud de cordón supera— y el detalle que la cierra, cuatro planchuelas de refuerzo repartidas a los lados de la ranura."
+/>
 
 ## Resumen: demanda vs. capacidad
+
+**Acto 1 — tracción, AISC 360-22** (demanda $P_u = 42$ tonf, cordón $l_w = 15$ cm):
 
 | Verificación | Referencia | Naturaleza | Capacidad $\phi P_n$ | Uso |
 |---|---|:---:|:---:|:---:|
@@ -228,18 +636,65 @@ compresión la esbeltez para pandeo es la misma $r$ en ambos ejes —ventaja del
 | Corte de bloque | Ec. J4-5 ($\phi=0.75$) | frágil | $56.1$ tonf | 0.75 |
 | Esbeltez | Sec. D1 (recomendado) | servicio | $L/r \le 300$ | ✓ |
 
-**Solución:** diagonal **HSS 4×4×1/4** (A500 Gr. C) ranurada a una plancha gusset de 16 mm,
-con **4 cordones de filete de 6 mm × 15 cm** (E70). Gobierna la rotura por retraso de cortante
-(uso 0.87); el cuerpo del tubo sobra y el detallado de la soldadura —su longitud— es lo que
-fija la capacidad. Es el resultado típico de las diagonales de tracción: **el diseño se juega
-en la conexión, no en el perfil.**
+**Acto 2 — compresión, AISC 360-22** (demanda $P_{uc} = 42$ tonf):
+
+| Verificación | Referencia | Naturaleza | Capacidad / límite | Uso |
+|---|---|:---:|:---:|:---:|
+| Pandeo local de la pared | Tabla B4.1a c. 6 | estabilidad local | $b/t = 14.2 \le 33.7$ | 0.42 |
+| **Pandeo por flexión, $L_c = 0.5L$** | Ec. E3-2 ($\phi=0.90$) | **estabilidad — gobierna el acto** | $\mathbf{53.5}$ **tonf** | **0.79** |
+| *(alternativa)* pandeo con $L_c = L$ | Ec. E3-3 ($\phi=0.90$) | estabilidad | $25.1$ tonf | **1.67 ✗** |
+
+**Acto 3 — NCh2369:2025** (exigencia $T_{req} = 99.3$ tonf, cordón $l_w = 30$ cm + refuerzo):
+
+| Verificación | Referencia | Naturaleza | Capacidad / límite | Uso |
+|---|---|:---:|:---:|:---:|
+| Pandeo local, ductilidad moderada | 8.6.3 / Tabla 9 | ductilidad | $b/t = 14.2 \le \lambda_{md} = 16.05$ | 0.886 |
+| Esbeltez global | 8.6.3 | ductilidad | $L_c/r = 58.6 \le 113.4$ | 0.52 |
+| *(sin el cruce)* esbeltez global | 8.6.3 | ductilidad | $L/r = 117.2 > 113.4$ | **1.03 ✗** |
+| Rotura del área neta **sin refuerzo** | 8.6.8 + D2-2, con $U=1$ | frágil | $76.4$ tonf | **1.30 ✗** |
+| **Rotura del área neta reforzada** | 8.6.8 + D2-2 ($\phi=0.75$) | **frágil — gobierna** | $\mathbf{100.4}$ **tonf** | **0.99** |
+| Soldadura de filete | Ec. J2-4 ($\phi=0.75$) | conexión | $112.7$ tonf | 0.88 |
+| Corte de bloque | Ec. J4-5 ($\phi=0.75$) | frágil | $145.8$ tonf | 0.68 |
+
+**Solución:** diagonal **HSS 4×4×1/4** (A500 Gr. C) en **paño arriostrado en X**, con el cruce
+conectado y una diagonal continua ahí, ranurada a una plancha gusset de 16 mm. Si el marco no es
+sismorresistente, bastan **4 cordones de filete de 6 mm × 15 cm** y gobierna la rotura por
+retraso de cortante (uso 0.87). Bajo NCh2369, la misma diagonal necesita **cordones de 30 cm y
+cuatro planchuelas de refuerzo de 8 × 30 mm en la ranura**, y ahí gobierna la rotura de esa sección
+reforzada (uso 0.99).
+
+Tres lecciones, una por acto, y las tres apuntan al mismo lado:
+
+1. **En tracción, el diseño se juega en la conexión, no en el perfil** — agrandar el tubo sube
+   la fluencia, que ya sobraba.
+2. **En compresión, se juega en la longitud efectiva** — el mismo tubo vale 53.5 o 25.1 tonf
+   según si el cruce de la X está conectado. Ni el acero ni la sección se movieron.
+3. **Bajo NCh2369, se juega en el detalle de la ranura** — ningún tubo desarrolla su propia
+   $T_{ye}$ a través de una ranura, porque el $U \ge 1.166$ que haría falta es imposible para
+   cualquier tamaño. Lo único que puede evitar el refuerzo no es un perfil mayor: es que el
+   techo de $0{,}7R_1$ muerda y baje la exigencia.
+
+En ningún acto la respuesta fue "poner un perfil más grande". Es el mismo mensaje que el
+[intro del Cap. D](/acero/aisc360-22-capD-traccion) anuncia y que el diseño por capacidad
+termina de imponer: **la resistencia del miembro rara vez es lo que uno está diseñando.**
 
 ## La planilla
 
-El cálculo completo está además como planilla del canvas: 41 pasos, 34 verificaciones ✓/✗ y
-25 contrastes que comparan cada número publicado en este post contra el que la hoja calcula. La
-longitud del cordón $l_w$ va como dato a la vista — súbela a 20 cm y verás moverse $U$ y la
-rotura, que es la palanca de este ejemplo:
+El cálculo completo está además como planilla del canvas: 103 pasos, 107 verificaciones ✓/✗ y
+80 contrastes que comparan cada número publicado en este post contra el que la hoja calcula.
+Lo que la hoja aporta y el post no puede: **los tres actos comparten un solo juego de datos**,
+así que las palancas se pueden mover y ver propagarse por todo el ejemplo.
+
+Tres experimentos que valen la pena:
+
+- **$K_c$ de 0.5 a 1.0** — se apaga el cruce de la X. La compresión cae de 53.5 a 25.1 tonf, la
+  esbeltez se pasa del límite de 8.6.3, y `gobierna` cambia de estado límite.
+- **$l_w$ de 15 a 20 cm** en el acto 1 — sube $U$ y con él la rotura, que es la palanca del
+  primer acto.
+- **$b_{pl}$ de 30 a 20 mm** — el refuerzo deja de alcanzar y se ve cuál es el tope real.
+
+La hoja cierra con `u_max` y una región `gobierna` que devuelve el estado límite que manda, así
+que cualquiera de esos cambios se lee directo en una línea:
 
 **[Abrir la planilla en el canvas](/herramientas/canvas?planilla=diagonal-hss-traccion)** ·
 [descargar el JSON](/planillas/diagonal-hss-traccion.json)
@@ -249,29 +704,42 @@ cd struct_pad
 npm run verify:planilla -- public/planillas/diagonal-hss-traccion.json --md
 ```
 
-<Note type="warning" title="Alcance: esto es una verificación de resistencia, no un diseño por capacidad">
-El ejemplo dimensiona la conexión para la **demanda del análisis**, $P_u = 42$ tonf, que es lo
-que pide AISC 360-22. Si la diagonal pertenece a un marco arriostrado **sismorresistente** bajo
-NCh2369:2025, la cláusula **8.6.8** exige otra cosa: que la conexión desarrolle la **capacidad
-esperada** de la diagonal en tracción y en compresión, no la fuerza del análisis. La cota
-inferior de esa capacidad es $F_yA_g = 3520 \cdot 21.7 = 76.4$ tonf —muy por encima de las 48.4
-disponibles—, así que el detalle de este ejemplo **no calificaría**: habría que alargar la
-conexión, engrosar el tubo o agregar planchas de refuerzo en la ranura. La 8.6.9 agrega además
-que el gusset resista el momento de pandeo de la diagonal o acomode su giro plástico.
+<Note type="warning" title="Alcance: dónde termina este ejemplo">
+Los tres actos cubren **el miembro y su sección neta**. Lo que queda fuera, declarado:
 
-Esa última frase quedó como deuda de este post durante un tiempo, y ya está pagada: los estados
-límite de la plancha están en la nota [teoría del gusset](/acero/gusset-teoria-estados-limite), y
-se ejercitan con números en los ejemplos del
-[gusset soldado del ápice](/acero/ejemplo-gusset-apice-chevron) y del
-[gusset apernado de esquina](/acero/ejemplo-gusset-esquina-apernado).
+- **El gusset**, que en el acto 3 pasa a tener que transferir 99.3 tonf y acomodar el giro del
+  pandeo (8.6.9). Sus estados límite están en la nota
+  [teoría del gusset](/acero/gusset-teoria-estados-limite) y con números en el
+  [gusset soldado del ápice](/acero/ejemplo-gusset-apice-chevron) y el
+  [gusset apernado de esquina](/acero/ejemplo-gusset-esquina-apernado).
+- **La soldadura de las planchas de refuerzo** más allá de la sección neta crítica, y el
+  atiesamiento de la conexión del cruce que recomienda el C8.6.4 si la plancha resulta esbelta.
+- **El resto del paño**: la viga, los puntales y las columnas, que en un marco arriostrado se
+  diseñan también por capacidad. El [paño en V invertida](/acero/ejemplo-chevron-nch2369) hace
+  ese cálculo con la cláusula 8.6.6, que es la contraparte de ésta.
+- **La demanda misma**: $P_u = 42$ tonf entra como dato del análisis. De dónde sale el espectro y
+  qué significa el $0{,}7R_1$ está en los apuntes de
+  [NCh2369](/apuntes/nch2369-capacidad-y-07r1).
 
-Dicho de otra forma: acá se verificó la **resistencia**, que es el paso que este capítulo
-gobierna; la **jerarquía dúctil** que anuncia el intro se impone recién con la regla sísmica, y
-es una capa aparte.
+Y una advertencia de método sobre el acto 3, que es la que más cara sale de olvidar: la
+diferencia entre el acto 1 y el acto 3 **no es un factor de seguridad más alto**. Es que cambia
+la pregunta. En el primero se verifica que la conexión aguante una fuerza; en el tercero, que
+aguante *lo que el miembro puede entregarle antes de plastificar*. Por eso la respuesta del
+tercero no fue "aumentar el $\phi$" ni "subir el perfil", sino un detalle nuevo.
 </Note>
 
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
-Buildings (ANSI/AISC 360-22)*, Chicago, 2022. En Chile el diseño en acero de edificaciones
-industriales se apoya además en la NCh2369 (diseño sísmico de estructuras e instalaciones
-industriales), que introduce requisitos propios de detallamiento y de las diagonales de
-arriostramiento.
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022.
+
+[^nch]: Instituto Nacional de Normalización, *NCh2369:2025 — Diseño sísmico de estructuras e
+instalaciones industriales*, 3.ª edición, 2025.05.28. Cláusulas usadas: 8.3.1 (capacidades
+esperadas), 8.3.3 ($R_y$, $R_t$), 8.6.1 a 8.6.9 y Tabla 9. Numeración distinta a la de la
+edición 2003.
+
+[^ry]: La 8.3.3 dice que «para materiales certificados según ASTM se pueden usar los valores
+definidos en ANSI/AISC 341-16, **Tabla A3.1**». Esa tabla es la de $R_y$ y $R_t$ en la edición
+2016; en **AISC 341-22**, que es la que está en la mano, la misma tabla pasó a numerarse
+**A3.2** —la A3.1 de 341-22 es el listado de materiales admitidos—, y ahí ASTM A500/A500M Gr. C
+da $R_y = 1.3$ y $R_t = 1.2$. Vale la pena notar que el $R_y = 1.3$ que el C8.3.3 justifica para
+el acero **A36 nacional** (estudios de la U. de Chile sobre planchas) coincide con el del tubo
+A500 Gr. C importado, así que acá las dos vías dan el mismo número.
