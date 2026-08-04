@@ -203,6 +203,15 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     demandas.Pu > 0 &&
     (demandas.Mux > 0 || demandas.Muy > 0)
   ) {
+    // H1-1 necesita la capacidad del eje débil si hay momento en ese eje, aunque
+    // el usuario no haya marcado «flexión eje débil»: sin ella el término M_ry/M_cy
+    // sería una división por cero disfrazada de falla.
+    if (demandas.Muy > 0 && !flexionY) {
+      flexionY = verificarFlexionY(geom, material, props, clas);
+      warnings.push(
+        'Se calculó la flexión en el eje débil aunque no estaba marcada: H1-1 la necesita porque hay M_uy.'
+      );
+    }
     interaccion = verificarInteraccion(
       demandas.Pu,
       compresion.phiPn,

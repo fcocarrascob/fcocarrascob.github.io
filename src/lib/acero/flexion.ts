@@ -18,7 +18,7 @@
 
 import { anchoPlanoHss } from './propiedades';
 import { clasificar, kc } from './clasificacion';
-import type { Clasificacion, Estabilidad, Geom, Material, Propiedades } from './tipos';
+import type { Clase, Clasificacion, Estabilidad, Geom, Material, Propiedades } from './tipos';
 
 /** φ_b de F1(a), LRFD. */
 export const PHI_B = 0.9;
@@ -40,6 +40,15 @@ export interface ResFlexion {
   phiMn: number;
   gobierna: ModoFlexion;
   zona?: ZonaLtb;
+  /**
+   * Clase del elemento comprimido que decidió la rama de pandeo local.
+   *
+   * Lo expone el motor para que la memoria no tenga que re-derivarlo: en el eje
+   * débil de un HSS los papeles de las paredes se invierten y la clasificación
+   * del eje fuerte NO sirve — un ala compacta a flexión fuerte puede ser
+   * esbelta a flexión débil, y escribir la ecuación equivocada da otro número.
+   */
+  claseFLB?: Clase;
   /** true si la sección cae en F4/F5 u otra rama no implementada. */
   fueraDeAlcance: boolean;
   /** true si la rama que gobernó no tiene ancla en las planillas publicadas. */
@@ -194,6 +203,7 @@ function flexionIDebil(
     Mn,
     phiMn: PHI_B * Mn,
     gobierna,
+    claseFLB: gobierna === 'FLB' ? ala.clase : undefined,
     fueraDeAlcance: false,
     sinAncla: true,
     avisos: ['Flexión en el eje débil (F6): sin ancla de verificación en las planillas publicadas.'],
@@ -300,9 +310,16 @@ function flexionHssR(
 
   const Mn = Math.min(Mp, Mn_flb, Mn_wlb, Mn_ltb);
   let gobierna: ModoFlexion = 'fluencia';
-  if (Mn === Mn_flb && Mn_flb < Mp) gobierna = 'FLB';
-  else if (Mn === Mn_wlb && Mn_wlb < Mp) gobierna = 'WLB';
-  else if (Mn === Mn_ltb && Mn_ltb < Mp) gobierna = 'LTB';
+  let claseFLB: Clase | undefined;
+  if (Mn === Mn_flb && Mn_flb < Mp) {
+    gobierna = 'FLB';
+    claseFLB = ala.clase;
+  } else if (Mn === Mn_wlb && Mn_wlb < Mp) {
+    gobierna = 'WLB';
+    claseFLB = alma.clase;
+  } else if (Mn === Mn_ltb && Mn_ltb < Mp) {
+    gobierna = 'LTB';
+  }
 
   avisos.push('Flexión de HSS rectangular (F7): sin ancla de verificación en las planillas publicadas.');
 
@@ -315,6 +332,7 @@ function flexionHssR(
     phiMn: PHI_B * Mn,
     gobierna,
     zona,
+    claseFLB,
     fueraDeAlcance: false,
     sinAncla: true,
     avisos,

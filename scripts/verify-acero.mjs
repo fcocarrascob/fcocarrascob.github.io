@@ -24,11 +24,11 @@ import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-/** Compila el motor de acero (TypeScript) a un módulo importable por Node. */
-async function loadEngine() {
-  const out = path.join(tmpdir(), `acero-engine-${process.pid}.mjs`);
+/** Compila un módulo TypeScript del sitio a algo importable por Node. */
+async function bundle(entry, nombre) {
+  const out = path.join(tmpdir(), `${nombre}-${process.pid}.mjs`);
   await build({
-    entryPoints: [path.join(ROOT, 'src/lib/acero/engine-entry.ts')],
+    entryPoints: [path.join(ROOT, entry)],
     bundle: true,
     platform: 'node',
     format: 'esm',
@@ -40,7 +40,13 @@ async function loadEngine() {
   return mod;
 }
 
-const { verificarSeccion, MATERIALES } = await loadEngine();
+const { verificarSeccion, generarMemoria, MATERIALES } = await bundle(
+  'src/lib/acero/engine-entry.ts',
+  'acero-engine'
+);
+// El mismo motor mathjs que corre en /herramientas/canvas: con él se evalúan las
+// memorias generadas, que es el chequeo de doble entrada.
+const { evaluateSheet } = await bundle('src/lib/planilla-engine.ts', 'acero-worksheet');
 
 const TONF = 1000; // kgf
 const TONF_M = 100000; // kgf·cm
@@ -421,10 +427,168 @@ for (const caso of CASOS) {
   for (const w of avisos) console.log(`  ${GRIS}· ${w}${RESET}`);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Fase 2 · Matriz familia × estados sobre la MEMORIA
+//
+// Existe por un defecto real: el generador de memorias solo cubría 3 de los 7
+// estados límite, y en un HSS en flexocompresión emitía `u_tot := u_c +
+// (8/9)*u_f` sin definir nunca `u_f` — la hoja llegaba rota al canvas. No lo
+// detectó nadie porque los cuatro casos de arriba usan subconjuntos cómodos de
+// estados y ninguno combinaba HSS con interacción.
+//
+// Acá se corren las TRES familias con las SIETE verificaciones activas, y de
+// cada memoria se comprueba que:
+//   1. cubra todos los checks que el motor produjo,
+//   2. evalúe sin errores en el motor mathjs del canvas (símbolos, unidades),
+//   3. no tenga comparaciones falsas sin declarar en meta.esperadoFalso.
+// Los puntos 2 y 3 son el chequeo de doble entrada entre los dos motores.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TODOS_ESTADOS = [
+  'compresion',
+  'traccion',
+  'flexion-x',
+  'flexion-y',
+  'corte',
+  'interaccion',
+  'sismico',
+];
+
+/** Variable que cada check debe haber dejado definida en la hoja. */
+const VARIABLE_DE = {
+  compresion: 'Rd_c',
+  traccion: 'Rd_t',
+  'flexion-x': 'Rd_f',
+  'flexion-y': 'Rd_fy',
+  corte: 'Rd_v',
+  interaccion: 'u_tot',
+  'nch-ala': 'lam_md',
+  'nch-pared-b': 'lam_md',
+  'nch-pared-h': 'lam_md',
+  'nch-esbeltez': 'lam_nch',
+};
+
+const MATRIZ = [
+  {
+    titulo: 'Perfil I laminado — W250×73 con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'I', tipo: 'laminado', d: 25.3, bf: 25.4, tf: 1.42, tw: 0.86 },
+      material: A992,
+      declaradas: { Ag: 92.8, rx: 11.0, ry: 6.46 },
+      estabilidad: est({ Lcx: 1500, Lcy: 375, Lcz: 375, Lb: 375, Cb: 1, B1: 1.1 }),
+      demandas: dem({ Pu: 65 * TONF, Tu: 20 * TONF, Mux: 5 * TONF_M, Muy: 1 * TONF_M, Vu: 15 * TONF }),
+      estados: TODOS_ESTADOS,
+      traccion: { An: 80, U: 0.85 },
+    },
+  },
+  {
+    titulo: 'Perfil I armado — alma alta, con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'I', tipo: 'armado', d: 60, bf: 25, tf: 1.6, tw: 0.8 },
+      material: A992,
+      estabilidad: est({ Lcx: 600, Lcy: 300, Lcz: 300, Lb: 300, Cb: 1.2, B1: 1 }),
+      demandas: dem({ Pu: 40 * TONF, Tu: 10 * TONF, Mux: 20 * TONF_M, Muy: 2 * TONF_M, Vu: 30 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+  {
+    titulo: 'HSS rectangular — flexocompresión con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'HSS-R', B: 20, H: 30, t: 0.8 },
+      material: A500C,
+      estabilidad: est({ Lcx: 400, Lcy: 400, Lcz: 400, Lb: 400, Cb: 1, B1: 1.05 }),
+      demandas: dem({ Pu: 30 * TONF, Tu: 15 * TONF, Mux: 8 * TONF_M, Muy: 3 * TONF_M, Vu: 10 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+  {
+    titulo: 'HSS circular — con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'HSS-C', D: 21.9, t: 0.82 },
+      material: A500C,
+      estabilidad: est({ Lcx: 350, Lcy: 350, Lcz: 350, Lb: 350, Cb: 1, B1: 1 }),
+      demandas: dem({ Pu: 25 * TONF, Tu: 15 * TONF, Mux: 2 * TONF_M, Muy: 1 * TONF_M, Vu: 5 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+];
+
+console.log(`\n${GRIS}${'─'.repeat(70)}${RESET}`);
+console.log('Matriz familia × estados — cobertura y evaluación de la memoria');
+
+for (const caso of MATRIZ) {
+  console.log(`\n${caso.titulo}`);
+  let r;
+  let memoria;
+  try {
+    r = verificarSeccion(caso.entrada);
+    memoria = generarMemoria(caso.entrada, r);
+  } catch (e) {
+    console.log(`  ${ROJO}✗ ${e.message}${RESET}`);
+    fallas++;
+    total++;
+    continue;
+  }
+
+  // 1 · Cobertura: cada check del motor deja su variable en la hoja.
+  const definidas = new Set();
+  for (const reg of memoria.regions) {
+    const d = reg.src.match(/^\s*([A-Za-z_]\w*)\s*:=/);
+    if (d) definidas.add(d[1]);
+  }
+  const sinCubrir = r.checks
+    .map((c) => c.id)
+    .filter((id) => VARIABLE_DE[id] && !definidas.has(VARIABLE_DE[id]));
+  total++;
+  if (sinCubrir.length === 0) {
+    console.log(`  ${VERDE}✓${RESET} cobertura                  ${GRIS}${r.checks.length} checks, todos documentados${RESET}`);
+  } else {
+    fallas++;
+    console.log(`  ${ROJO}✗ cobertura: la memoria no documenta ${sinCubrir.join(', ')}${RESET}`);
+  }
+
+  // 2 y 3 · La hoja evaluada con el motor del canvas.
+  const res = evaluateSheet(memoria.regions);
+  const errores = [];
+  const falsasSinDeclarar = [];
+  const declaradasObsoletas = [];
+  const esperado = memoria.meta.esperadoFalso ?? {};
+  for (const reg of memoria.regions) {
+    const rr = res[reg.id];
+    if (!rr) continue;
+    if (rr.error) errores.push(`${reg.src} → ${rr.error}`);
+    if (rr.bool === false && !(reg.id in esperado)) falsasSinDeclarar.push(reg.src);
+    if (rr.bool === true && reg.id in esperado) declaradasObsoletas.push(reg.src);
+  }
+
+  for (const [etiqueta, lista] of [
+    ['sin errores de evaluación', errores],
+    ['sin comparaciones falsas no declaradas', falsasSinDeclarar],
+    ['sin excepciones obsoletas', declaradasObsoletas],
+  ]) {
+    total++;
+    if (lista.length === 0) {
+      console.log(`  ${VERDE}✓${RESET} ${etiqueta.padEnd(26)}`);
+    } else {
+      fallas++;
+      console.log(`  ${ROJO}✗ ${etiqueta}:${RESET}`);
+      for (const l of lista.slice(0, 5)) console.log(`      ${ROJO}${l}${RESET}`);
+      if (lista.length > 5) console.log(`      ${ROJO}… y ${lista.length - 5} más${RESET}`);
+    }
+  }
+
+  const nDeclaradas = Object.keys(esperado).length;
+  if (nDeclaradas > 0) {
+    console.log(`  ${GRIS}· ${nDeclaradas} comparación(es) declarada(s) como esperado-falso${RESET}`);
+  }
+}
+
 console.log('');
 if (fallas === 0) {
-  console.log(`${VERDE}${total} anclas verificadas contra 4 planillas. Todas dentro de tolerancia.${RESET}`);
+  console.log(
+    `${VERDE}${total} comprobaciones: anclas contra 4 planillas y la memoria de 4 secciones con las 7 verificaciones. Todo cuadra.${RESET}`
+  );
   process.exit(0);
 }
-console.log(`${ROJO}${fallas} de ${total} anclas fuera de tolerancia.${RESET}`);
+console.log(`${ROJO}${fallas} de ${total} comprobaciones fallaron.${RESET}`);
 process.exit(1);
