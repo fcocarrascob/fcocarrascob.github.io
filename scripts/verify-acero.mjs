@@ -374,6 +374,219 @@ const diagonalHssSinCruce = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Caso 5 · viga-hss-flexion — cinco tubos A500 Gr. C contra M_u = 20 tonf·m
+// Cap. F Sección F7 entera (F7-1, F7-2, F7-3/F7-4, F7-6, F7-8/F7-10/F7-11),
+// Tabla B4.1b casos 17 y 19, §B4.1b(d), §B4.2 y G4 en sus dos ramas de C_v2.
+//
+// Es el único caso donde NADA entra declarado: la planilla deriva todas las
+// propiedades de B, H y t, así que `declaradas` va vacío y el motor tiene que
+// reproducir también propsHssR. La pared de diseño (0,93·t_nominal, §B4.2) se
+// escribe en la geometría, que es donde el motor la espera.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MU_HSS = 20 * TONF_M;
+const VU_HSS = 10 * TONF;
+const LB_HSS = 800;
+
+/** Un tubo del barrido: entra la pared NOMINAL y sale la de diseño. */
+const tubo = (B, H, tnom) => ({
+  geom: { familia: 'HSS-R', B, H, t: 0.93 * tnom },
+  material: A500C,
+  estabilidad: est({ Lb: LB_HSS, Cb: CB_VANO_COMPLETO }),
+  demandas: dem({ Mux: MU_HSS, Vu: VU_HSS }),
+  estados: ['flexion-x', 'corte'],
+});
+
+const hssA = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso A, □250×250×10: ala compacta (Ec. F7-1)',
+  entrada: tubo(25, 25, 1.0),
+  anclas: (r) => [
+    ['t de diseño (B4.2)', 0.93 * 1.0, 0.93, 0.0005, 'cm'],
+    ['A_g (paredes rectas)', r.propiedades.Ag, 89.54, 0.005, 'cm²'],
+    ['I_x', r.propiedades.Ix, 8659, 0.5, 'cm⁴'],
+    ['S_x', r.propiedades.Sx, 692.7, 0.05, 'cm³'],
+    ['Z_x', r.propiedades.Zx, 808.6, 0.05, 'cm³'],
+    ['J (Bredt)', r.propiedades.J, 12969, 0.5, 'cm⁴'],
+    ['r_y', r.propiedades.ry, 9.83, 0.005, 'cm'],
+    ['λ_pf (B4.1b c.17)', r.clasificacion.flexion[0].lambdap, 26.96, 0.005],
+    ['λ_rf (B4.1b c.17)', r.clasificacion.flexion[0].lambdar, 33.7, 0.005],
+    ['λ_pw (B4.1b c.19)', r.clasificacion.flexion[1].lambdap, 58.26, 0.005],
+    ['λ_rw (B4.1b c.19)', r.clasificacion.flexion[1].lambdar, 137.2, 0.05],
+    ['λ_ala = (B−3t)/t', r.clasificacion.flexion[0].lambda, 23.88, 0.005],
+    ['ala compacta', r.clasificacion.claseAlaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+    ['alma compacta', r.clasificacion.claseAlmaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+    ['M_p (F7-1)', r.flexionX.Mp / TONF_M, 28.46, 0.005, 'tonf·m'],
+    ['L_p (F7-10)', r.flexionX.Lp / M, 9.87, 0.005, 'm'],
+    ['L_r (F7-11)', r.flexionX.Lr / M, 253.3, 0.05, 'm'],
+    // F7.4(a): L_b ≤ L_p, el LTB no aplica. El motor lo marca como zona plástica.
+    ['LTB no aplica', r.flexionX.zona === 'plastica' ? 1 : 0, 1, 0.5],
+    ['gobierna fluencia', r.flexionX.gobierna === 'fluencia' ? 1 : 0, 1, 0.5],
+    ['φM_n', r.flexionX.phiMn / TONF_M, 25.62, 0.005, 'tonf·m'],
+    ['u_A', MU_HSS / r.flexionX.phiMn, 0.78, 0.005],
+    ['A_w = 2·h·t (G4)', r.corte.Aw, 41.31, 0.005, 'cm²'],
+    ['C_v2 = 1 (G2-9)', r.corte.Cv, 1.0, 0.0005],
+    ['φV_n (G4-1)', r.corte.phiVn / TONF, 78.5, 0.05, 'tonf'],
+  ],
+};
+
+const hssB = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso B, □250×250×8: ala no compacta (Ec. F7-2)',
+  entrada: tubo(25, 25, 0.8),
+  anclas: (r) => [
+    ['A_g', r.propiedades.Ag, 72.19, 0.005, 'cm²'],
+    ['S_x', r.propiedades.Sx, 566.8, 0.05, 'cm³'],
+    ['Z_x', r.propiedades.Zx, 656.8, 0.05, 'cm³'],
+    ['λ_ala', r.clasificacion.flexion[0].lambda, 30.602, 0.0005],
+    ['ala no compacta', r.clasificacion.claseAlaFlexion === 'no-compacta' ? 1 : 0, 1, 0.5],
+    ['M_p', r.flexionX.Mp / TONF_M, 23.12, 0.005, 'tonf·m'],
+    ['F_y·S_x (piso de F7-2)', (A500C.Fy * r.propiedades.Sx) / TONF_M, 19.95, 0.005, 'tonf·m'],
+    ['M_n (F7-2)', r.flexionX.Mn / TONF_M, 21.41, 0.005, 'tonf·m'],
+    ['robo sobre M_p', (1 - r.flexionX.Mn / r.flexionX.Mp) * 100, 7.4, 0.005, '%'],
+    ['L_p (F7-10)', r.flexionX.Lp / M, 9.95, 0.005, 'm'],
+    ['gobierna FLB', r.flexionX.gobierna === 'FLB' ? 1 : 0, 1, 0.5],
+    ['φM_n', r.flexionX.phiMn / TONF_M, 19.27, 0.005, 'tonf·m'],
+    ['u_B (no pasa)', MU_HSS / r.flexionX.phiMn, 1.04, 0.005],
+  ],
+};
+
+const hssC = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso C, □250×250×6: ala esbelta (Ecs. F7-4 y F7-3)',
+  entrada: tubo(25, 25, 0.6),
+  anclas: (r) => [
+    ['A_g', r.propiedades.Ag, 54.55, 0.005, 'cm²'],
+    ['S_x', r.propiedades.Sx, 434.8, 0.05, 'cm³'],
+    ['λ_ala', r.clasificacion.flexion[0].lambda, 41.803, 0.0005],
+    ['ala esbelta', r.clasificacion.claseAlaFlexion === 'esbelta' ? 1 : 0, 1, 0.5],
+    ['alma compacta', r.clasificacion.claseAlmaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+    ['M_p', r.flexionX.Mp / TONF_M, 17.6, 0.005, 'tonf·m'],
+    // M_n = F_y·S_e, así que S_e sale del propio resultado: es el número que la
+    // Ec. F7-3 pone en juego, y el que la planilla contrasta contra 399,7.
+    ['S_e (F7-3)', r.flexionX.Mn / A500C.Fy, 399.7, 0.05, 'cm³'],
+    ['M_n (F7-3)', r.flexionX.Mn / TONF_M, 14.07, 0.005, 'tonf·m'],
+    ['robo sobre M_p', (1 - r.flexionX.Mn / r.flexionX.Mp) * 100, 20.1, 0.05, '%'],
+    ['L_p (F7-10)', r.flexionX.Lp / M, 10.02, 0.005, 'm'],
+    ['φM_n', r.flexionX.phiMn / TONF_M, 12.66, 0.005, 'tonf·m'],
+    ['u_C (no pasa)', MU_HSS / r.flexionX.phiMn, 1.58, 0.005],
+  ],
+};
+
+const hssD = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso D, □300×200×6: la misma A_g repartida distinto',
+  entrada: tubo(20, 30, 0.6),
+  anclas: (r) => [
+    // 250+250 = 300+200 y A_g = 2t(B+H) − 4t²: la igualdad con el caso C es
+    // exacta, no una coincidencia de redondeo. Por eso la tolerancia es cerrada.
+    ['A_g = la del caso C', r.propiedades.Ag, 54.5545, 0.0005, 'cm²'],
+    ['S_x', r.propiedades.Sx, 471.9, 0.05, 'cm³'],
+    ['Z_x', r.propiedades.Zx, 561.3, 0.05, 'cm³'],
+    ['r_y', r.propiedades.ry, 8.34, 0.005, 'cm'],
+    ['λ_ala', r.clasificacion.flexion[0].lambda, 32.84, 0.005],
+    ['λ_alma', r.clasificacion.flexion[1].lambda, 50.76, 0.005],
+    ['ala no compacta', r.clasificacion.claseAlaFlexion === 'no-compacta' ? 1 : 0, 1, 0.5],
+    ['alma compacta', r.clasificacion.claseAlmaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+    ['M_p', r.flexionX.Mp / TONF_M, 19.76, 0.005, 'tonf·m'],
+    ['M_n (F7-2)', r.flexionX.Mn / TONF_M, 17.01, 0.005, 'tonf·m'],
+    // L_p < L_b: acá F7.4(b) SÍ aplica, y con el crédito C_b la Ec. F7-8 topa en
+    // M_p. Es el hallazgo que corrigió el post: aplicar no es gobernar.
+    ['L_p (F7-10) < L_b', r.flexionX.Lp / M, 7.15, 0.005, 'm'],
+    ['L_r (F7-11)', r.flexionX.Lr / M, 186.9, 0.05, 'm'],
+    ['LTB en zona inelástica', r.flexionX.zona === 'inelastica' ? 1 : 0, 1, 0.5],
+    ['gobierna FLB, no LTB', r.flexionX.gobierna === 'FLB' ? 1 : 0, 1, 0.5],
+    ['φM_n', r.flexionX.phiMn / TONF_M, 15.31, 0.005, 'tonf·m'],
+    ['u_D (no pasa)', MU_HSS / r.flexionX.phiMn, 1.31, 0.005],
+  ],
+};
+
+/**
+ * La Ec. F7-8 ejercida de verdad, con el LTB gobernando.
+ *
+ * En los cinco tubos del post el LTB nunca gobierna —ése es justamente el punto
+ * del ejemplo—, así que `r.flexionX.Mn` nunca es el valor de F7-8 y anclarlo
+ * desde ellos no probaría nada. La planilla publica el contrafactual que sí lo
+ * fuerza: el □250×250×10 tiene el ala compacta, así que si se estira L_b hasta
+ * los 70,68 m que ella despeja, lo único que puede recortar es el LTB, y por
+ * construcción tiene que recortar el 10 % exacto de M_p.
+ *
+ * Es la comprobación más fuerte de la sección: el motor tiene que llegar al
+ * mismo punto de la recta al que la planilla llegó despejándola al revés.
+ */
+const hssALargo = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso A con L_b = 70,68 m: la Ec. F7-8 gobernando',
+  entrada: { ...tubo(25, 25, 1.0), estabilidad: est({ Lb: 70.683 * M, Cb: 1.0 }) },
+  anclas: (r) => [
+    ['L_p < L_b ≤ L_r', r.flexionX.zona === 'inelastica' ? 1 : 0, 1, 0.5],
+    ['gobierna el LTB', r.flexionX.gobierna === 'LTB' ? 1 : 0, 1, 0.5],
+    ['M_n/M_p = 0,90 (F7-8)', r.flexionX.Mn / r.flexionX.Mp, 0.9, 0.0005],
+    ['M_n', r.flexionX.Mn / TONF_M, 25.617, 0.005, 'tonf·m'],
+  ],
+};
+
+const hssE = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso E, □400×200×6: la adoptada, y la única de alma no compacta',
+  entrada: tubo(20, 40, 0.6),
+  anclas: (r) => [
+    ['A_g', r.propiedades.Ag, 65.71, 0.005, 'cm²'],
+    ['S_x', r.propiedades.Sx, 707.4, 0.05, 'cm³'],
+    ['Z_x', r.propiedades.Zx, 862.0, 0.05, 'cm³'],
+    ['J (Bredt)', r.propiedades.J, 11145, 0.5, 'cm⁴'],
+    ['r_y', r.propiedades.ry, 8.59, 0.005, 'cm'],
+    ['λ_ala', r.clasificacion.flexion[0].lambda, 32.84, 0.005],
+    ['λ_alma', r.clasificacion.flexion[1].lambda, 68.685, 0.0005],
+    ['alma NO compacta', r.clasificacion.claseAlmaFlexion === 'no-compacta' ? 1 : 0, 1, 0.5],
+    ['M_p', r.flexionX.Mp / TONF_M, 30.34, 0.005, 'tonf·m'],
+    ['L_p (F7-10)', r.flexionX.Lp / M, 6.42, 0.005, 'm'],
+    ['L_r (F7-11)', r.flexionX.Lr / M, 172.0, 0.05, 'm'],
+    ['LTB en zona inelástica', r.flexionX.zona === 'inelastica' ? 1 : 0, 1, 0.5],
+    // Manda el ala (−15,6 %) sobre el alma (−2,4 %): la Ec. F7-6 se ejerce pero
+    // no gobierna, así que su valor se contrasta en el caso propio de abajo.
+    ['gobierna FLB', r.flexionX.gobierna === 'FLB' ? 1 : 0, 1, 0.5],
+    ['M_n (F7-2)', r.flexionX.Mn / TONF_M, 25.6, 0.005, 'tonf·m'],
+    ['robo sobre M_p', (1 - r.flexionX.Mn / r.flexionX.Mp) * 100, 15.6, 0.05, '%'],
+    ['φM_n', r.flexionX.phiMn / TONF_M, 23.04, 0.005, 'tonf·m'],
+    ['u_E (pasa)', MU_HSS / r.flexionX.phiMn, 0.87, 0.005],
+    ['A_w = 2·h·t (G4)', r.corte.Aw, 42.77, 0.005, 'cm²'],
+    ['λ del alma en G4', r.corte.lambda, 68.685, 0.0005],
+    ['C_v2 < 1 (G2-10)', r.corte.Cv, 0.862, 0.0005],
+    ['φV_n (G4-1)', r.corte.phiVn / TONF, 70.1, 0.05, 'tonf'],
+    ['u_v', VU_HSS / r.corte.phiVn, 0.14, 0.005],
+  ],
+};
+
+/**
+ * La Ec. F7-6 aislada.
+ *
+ * En el □400×200×6 el alma es no compacta y la F7-6 se evalúa, pero queda
+ * tapada por el ala (−2,4 % contra −15,6 %), así que `r.flexionX.Mn` no la
+ * expone. Acá se rehace desde lo que el motor SÍ publica —M_p, S_x y la fila de
+ * la Tabla B4.1b caso 19— y se contrasta contra los 29,62 tonf·m que la
+ * planilla calcula con su propia función. Es el mismo tipo de amarre que el B₁
+ * de la viga-columna: el número se arma acá y el motor aporta sus operandos.
+ */
+const hssEAlma = {
+  planilla: 'viga-hss-flexion',
+  titulo: 'Viga HSS — caso E, la rama del alma aislada (Ec. F7-6)',
+  entrada: tubo(20, 40, 0.6),
+  anclas: (r) => {
+    const { Mp } = r.flexionX;
+    const FySx = A500C.Fy * r.propiedades.Sx;
+    const alma = r.clasificacion.flexion[1];
+    const Mn_wlb = Mp - (Mp - FySx) * ((alma.lambda - alma.lambdap) / (alma.lambdar - alma.lambdap));
+    return [
+      ['M_p − F_y·S_x', (Mp - FySx) / TONF_M, 5.441, 0.0005, 'tonf·m'],
+      ['M_n alma (F7-6)', Mn_wlb / TONF_M, 29.62, 0.005, 'tonf·m'],
+      ['costo del alma', (1 - Mn_wlb / Mp) * 100, 2.37, 0.005, '%'],
+      ['el alma no gobierna', Mn_wlb > r.flexionX.Mn ? 1 : 0, 1, 0.5],
+    ];
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const CASOS = [
   columnaGalpon,
@@ -386,6 +599,13 @@ const CASOS = [
   vigaColumnaB,
   diagonalHss,
   diagonalHssSinCruce,
+  hssA,
+  hssB,
+  hssC,
+  hssD,
+  hssALargo,
+  hssE,
+  hssEAlma,
 ];
 
 const VERDE = '\x1b[32m';
@@ -586,7 +806,7 @@ for (const caso of MATRIZ) {
 console.log('');
 if (fallas === 0) {
   console.log(
-    `${VERDE}${total} comprobaciones: anclas contra 4 planillas y la memoria de 4 secciones con las 7 verificaciones. Todo cuadra.${RESET}`
+    `${VERDE}${total} comprobaciones: anclas contra 5 planillas y la memoria de 4 secciones con las 7 verificaciones. Todo cuadra.${RESET}`
   );
   process.exit(0);
 }

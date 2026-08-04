@@ -5,8 +5,13 @@
 // G5 (HSS circular) no está implementado: se reporta como fuera de alcance en
 // vez de devolver un número aproximado.
 //
-// Sin ancla en las planillas publicadas (la única que toca G2 es la viga
-// carrilera, que es monosimétrica y queda fuera de alcance).
+// G4 está anclado en public/planillas/viga-hss-flexion.json, que lo verifica en
+// las DOS ramas de C_v2 que un tubo alcanza: C_v2 = 1 en el □250×250×10 y
+// C_v2 = 0,862 (Ec. G2-10) en el □400×200×6, cuya alma abolla antes de fluir.
+// La tercera rama, la Ec. G2-11, pediría un alma mucho más esbelta.
+//
+// G2 sigue sin ancla: la única planilla que lo toca es la viga carrilera, que es
+// monosimétrica y queda fuera de alcance.
 //
 // Puro. Unidades: kgf y cm.
 // ─────────────────────────────────────────────────────────────────────────────

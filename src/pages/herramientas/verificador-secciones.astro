@@ -78,10 +78,14 @@ const description =
           publicadas —
           <a href="/acero/ejemplo-columna-galpon-compresion" class="text-accent hover:underline">columna de galpón</a>,
           <a href="/acero/ejemplo-viga-ltb" class="text-accent hover:underline">viga LTB</a>,
-          <a href="/acero/ejemplo-viga-columna" class="text-accent hover:underline">viga-columna</a> y
-          <a href="/acero/ejemplo-diagonal-hss-traccion" class="text-accent hover:underline">diagonal HSS</a>
-          — con <code>npm run verify:acero</code>. Las ramas que ninguna planilla toca (E7, F3,
-          F6, F7, F8) se declaran sin ancla en el detalle de la verificación.
+          <a href="/acero/ejemplo-viga-columna" class="text-accent hover:underline">viga-columna</a>,
+          <a href="/acero/ejemplo-diagonal-hss-traccion" class="text-accent hover:underline">diagonal HSS</a> y
+          <a href="/acero/ejemplo-viga-hss-flexion" class="text-accent hover:underline">viga de tubo en flexión</a>
+          — con <code>npm run verify:acero</code>. La última cierra la Sección F7 entera en el eje
+          fuerte (F7-1, F7-2, F7-3/F7-4 con el módulo efectivo, F7-6 y el LTB de F7.4) más G4 en
+          sus dos ramas de C_v2. Las ramas que ninguna planilla toca —E7, F3, F6, F8, la F7-9 del
+          LTB elástico y el eje débil del HSS— se declaran sin ancla en el detalle de la
+          verificación.
         </li>
         <li>
           <strong>Unidades:</strong> geometría en cm, longitudes en m, fuerzas en tonf y momentos

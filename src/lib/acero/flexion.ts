@@ -6,9 +6,22 @@
 // cerradas contra sus posts con filas assert a precisión completa (L_p, L_r, el
 // término J·c/(S_x·h_o), la Ec. F2-4 con y sin el crédito C_b).
 //
-// F3, F6, F7 y F8 NO tienen ancla en las planillas: los cuatro casos de
-// referencia son compactos y flectan en el eje fuerte. Se implementan y el
-// resultado lo declara.
+// La cadena F7 del EJE FUERTE está anclada en public/planillas/viga-hss-flexion.json,
+// que recorre sus cinco ramas con cinco tubos contra la misma demanda: F7-1
+// (compacta), F7-2 (ala no compacta), F7-3 y F7-4 (ala esbelta, con el módulo
+// efectivo S_e y el centroide corrido), F7-6 (alma no compacta) y F7-8/F7-10/F7-11
+// (el LTB de F7.4). Queda sin ancla la F7-9 —el LTB elástico, que pide
+// L_b > L_r y en un tubo son cientos de metros— y el eje débil.
+//
+// OJO CON LA NUMERACIÓN: la edición 22 incorporó las secciones cajón y corrió
+// los números de F7 respecto de 360-16. Acá se cita la 22, que es el PDF contra
+// el que se verificó: el ancho efectivo del ala de HSS es la F7-4 (la F7-5 es la
+// de cajón), el alma no compacta la F7-6, y el LTB va de la F7-8 a la F7-11.
+// Las Ecs. F7-2 y F7-6 de la 22 son la interpolación en λ entre λ_p y λ_r; la
+// forma con los coeficientes tabulados (3,57·λ√(F_y/E) − 4,0) es la de 360-10.
+//
+// F3, F6 y F8 NO tienen ancla en las planillas: los casos de referencia que las
+// tocarían no existen. Se implementan y el resultado lo declara.
 //
 // F4 y F5 (alma no compacta o esbelta) quedan FUERA DE ALCANCE: se detectan y
 // se reportan como tales en vez de devolver un número de F2 que estaría mal.
@@ -251,13 +264,19 @@ function flexionHssR(
   const ala = clas.flexion[0];
   const alma = clas.flexion[1];
 
+  // La recta entre M_p y F_y·S que comparten la Ec. F7-2 (ala) y la F7-6 (alma):
+  // misma forma, distintos límites de la Tabla B4.1b (casos 17 y 19).
+  const interpolaNoCompacta = (lambda: number, lambdap: number, lambdar: number) =>
+    Math.min(Mp, Mp - (Mp - Fy * Sx) * ((lambda - lambdap) / (lambdar - lambdap)));
+
   // ── Pandeo local del ala (F7.2) ──
   let Mn_flb = Infinity;
   if (ala.clase === 'no-compacta') {
     // Ec. F7-2
-    Mn_flb = Math.min(Mp, Mp - (Mp - Fy * Sx) * (3.57 * ala.lambda * Math.sqrt(Fy / E) - 4.0));
+    Mn_flb = interpolaNoCompacta(ala.lambda, ala.lambdap ?? 0, ala.lambdar);
   } else if (ala.clase === 'esbelta') {
-    // Ec. F7-4: ancho efectivo del ala comprimida, y Ec. F7-3 con S_e.
+    // Ec. F7-4: ancho efectivo del ala comprimida, y Ec. F7-3 con S_e. Es la
+    // rama de HSS; la F7-5, la de sección cajón, lleva 0,34 y no se implementa.
     const b = anchoPlanoHss(g.B, g.t);
     const be = Math.min(
       b,
@@ -269,8 +288,8 @@ function flexionHssR(
   // ── Pandeo local del alma (F7.3) ──
   let Mn_wlb = Infinity;
   if (alma.clase === 'no-compacta') {
-    // Ec. F7-5
-    Mn_wlb = Math.min(Mp, Mp - (Mp - Fy * Sx) * (0.305 * alma.lambda * Math.sqrt(Fy / E) - 0.738));
+    // Ec. F7-6
+    Mn_wlb = interpolaNoCompacta(alma.lambda, alma.lambdap ?? 0, alma.lambdar);
   } else if (alma.clase === 'esbelta') {
     return {
       eje: 'x',
@@ -280,7 +299,9 @@ function flexionHssR(
       gobierna: 'WLB',
       fueraDeAlcance: true,
       sinAncla: true,
-      avisos: ['Alma de HSS esbelta: la rama de F7.3 para almas esbeltas no está implementada.'],
+      avisos: [
+        'Alma de HSS esbelta: la rama de F7.3(c) —Ec. F7-7, con el R_pg de la F5-6— no está implementada. (El User Note de F7.3 dice que no hay HSS con alma esbelta; sí puede darlo una sección cajón.)',
+      ],
     };
   }
 
@@ -291,18 +312,19 @@ function flexionHssR(
   let zona: ZonaLtb | undefined;
   if (est.Lb > 0 && J > 0 && Mp > 0) {
     const raizJA = Math.sqrt(J * Ag);
-    Lp = (0.13 * E * ry * raizJA) / Mp; // Ec. F7-12
-    Lr = (2 * E * ry * raizJA) / (0.7 * Fy * Sx); // Ec. F7-13
+    Lp = (0.13 * E * ry * raizJA) / Mp; // Ec. F7-10
+    Lr = (2 * E * ry * raizJA) / (0.7 * Fy * Sx); // Ec. F7-11
     if (est.Lb <= Lp) {
+      // F7.4(a): el estado límite no aplica.
       Mn_ltb = Mp;
       zona = 'plastica';
     } else if (est.Lb <= Lr) {
-      // Ec. F7-10
+      // Ec. F7-8
       zona = 'inelastica';
       const frac = (est.Lb - Lp) / (Lr - Lp);
       Mn_ltb = Math.min(Mp, est.Cb * (Mp - (Mp - 0.7 * Fy * Sx) * frac));
     } else {
-      // Ec. F7-11
+      // Ec. F7-9
       zona = 'elastica';
       Mn_ltb = Math.min(Mp, (2 * E * est.Cb * raizJA) / (est.Lb / ry));
     }
@@ -321,7 +343,15 @@ function flexionHssR(
     gobierna = 'LTB';
   }
 
-  avisos.push('Flexión de HSS rectangular (F7): sin ancla de verificación en las planillas publicadas.');
+  // La única rama de F7 en el eje fuerte que ninguna planilla toca es la F7-9:
+  // pide L_b > L_r, y en un tubo cerrado L_r son cientos de metros (253 m en el
+  // □250×250×10 de viga-hss-flexion). No hay esa viga, así que no hay ancla.
+  const sinAncla = zona === 'elastica';
+  if (sinAncla) {
+    avisos.push(
+      'LTB elástico de HSS (Ec. F7-9): sin ancla de verificación. Exige L_b > L_r, que en un tubo cerrado son cientos de metros — revisa la geometría antes de usar este número.'
+    );
+  }
 
   return {
     eje: 'x',
@@ -334,7 +364,7 @@ function flexionHssR(
     zona,
     claseFLB,
     fueraDeAlcance: false,
-    sinAncla: true,
+    sinAncla,
     avisos,
   };
 }
@@ -418,5 +448,15 @@ export function verificarFlexionY(
     ry: props.rx,
   };
   const r = flexionHssR(espejo, mat, propsEspejo, { Lcx: 0, Lcy: 0, Lcz: 0, Lb: 0, Cb: 1, B1: 1 }, clasificar(espejo, mat));
-  return { ...r, eje: 'y' };
+  // El ancla de F7 (viga-hss-flexion) es del eje fuerte: acá los papeles de las
+  // paredes se invierten y la clasificación no es la misma, así que se declara.
+  return {
+    ...r,
+    eje: 'y',
+    sinAncla: true,
+    avisos: [
+      ...r.avisos,
+      'Flexión de HSS rectangular en el eje débil: es la misma Sección F7 con las paredes intercambiadas, pero sin ancla de verificación en las planillas publicadas.',
+    ],
+  };
 }
