@@ -175,7 +175,7 @@ export function verificarCompresion(
   }
   if (aplicaE4 && est.Lcz <= est.Lcy && Fez < Fe) {
     avisos.push(
-      'F_ez quedó por debajo de F_e, pero E4 no aplica porque L_cz ≤ L_cy (User Note de E4). Revisá el arriostramiento a torsión.'
+      'F_ez quedó por debajo de F_e, pero E4 no aplica porque L_cz ≤ L_cy (User Note de E4). Revisa el arriostramiento a torsión.'
     );
   }
 

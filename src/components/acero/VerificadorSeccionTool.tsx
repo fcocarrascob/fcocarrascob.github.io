@@ -374,7 +374,7 @@ export default function VerificadorSeccionTool() {
           <p className="mt-2 text-xs text-muted leading-relaxed">
             Lo derivable se deriva de las planchas; lo que declares acá lo pisa. Las planchas no
             llevan los redondeos de unión ala-alma, así que dan menos área y menos módulo —
-            declarar la fila de catálogo cierra esa diferencia. Un 0 significa «usá la derivada».
+            declarar la fila de catálogo cierra esa diferencia. Un 0 significa «usa la derivada».
           </p>
           <label className="mt-2 flex items-center gap-2 text-sm">
             <input
@@ -454,7 +454,7 @@ export default function VerificadorSeccionTool() {
       <div className="space-y-4">
         {errores.length > 0 && (
           <div className="rounded-lg border border-red-300 bg-red-50 p-3">
-            <p className="text-sm font-semibold text-red-800">Revisá la geometría</p>
+            <p className="text-sm font-semibold text-red-800">Revisa la geometría</p>
             <ul className="mt-1 list-disc pl-5 text-sm text-red-700">
               {errores.map((e) => (
                 <li key={e}>{e}</li>

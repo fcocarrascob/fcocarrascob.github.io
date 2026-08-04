@@ -79,12 +79,12 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
   // esquina. Es el ítem abierto de AUDIT.md sobre el □150×150×8.
   if ((geom.familia === 'HSS-R' || geom.familia === 'HSS-C') && !declaradas?.Ag) {
     warnings.push(
-      'A_g se calculó con paredes rectas, sin los radios de esquina: SOBREESTIMA el área real (≈ +4 % en un HSS 4×4×¼). Declará el A_g de catálogo.'
+      'A_g se calculó con paredes rectas, sin los radios de esquina: SOBREESTIMA el área real (≈ +4 % en un HSS 4×4×¼). Declara el A_g de catálogo.'
     );
   }
   for (const f of resueltas.fueraDeTolerancia) {
     warnings.push(
-      `${f.clave}: las planchas dan ${(f.dif * 100).toFixed(1)} % respecto del valor declarado, más de lo que explican los redondeos de unión. Revisá la geometría o la fila de catálogo.`
+      `${f.clave}: las planchas dan ${(f.dif * 100).toFixed(1)} % respecto del valor declarado, más de lo que explican los redondeos de unión. Revisa la geometría o la fila de catálogo.`
     );
   }
 
@@ -224,7 +224,7 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     );
     if (estabilidad.B1 === 1) {
       warnings.push(
-        'B₁ = 1,0 (default). Si hay carga transversal entre apoyos o el axial es alto, el momento de segundo orden es mayor — derivalo con el Apéndice 8.'
+        'B₁ = 1,0 (default). Si hay carga transversal entre apoyos o el axial es alto, el momento de segundo orden es mayor — derívalo con el Apéndice 8.'
       );
     }
   }
@@ -239,7 +239,7 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
   let sismico: ResSismico | undefined;
   if (corre('sismico') && !compresion) {
     warnings.push(
-      'Las verificaciones sísmicas necesitan la cadena de compresión (F_e y L_c/r): activá también «Compresión».'
+      'Las verificaciones sísmicas necesitan la cadena de compresión (F_e y L_c/r): activa también «Compresión».'
     );
   }
   if (corre('sismico') && compresion) {
@@ -260,7 +260,7 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
           l.valor,
           l.limite,
           '—',
-          `${l.ref}. Solo exigible si el miembro debe ser dúctil (típicamente una diagonal de arriostramiento) — la herramienta no puede saberlo, lo decidís vos al activar esta verificación.`
+          `${l.ref}. Solo exigible si el miembro debe ser dúctil (típicamente una diagonal de arriostramiento) — la herramienta no puede saberlo, lo decides tú al activar esta verificación.`
         )
       );
     }
