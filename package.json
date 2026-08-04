@@ -14,6 +14,7 @@
     "figuras:espectro": "node scripts/render-espectro-nch2369.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
+    "verify:acero": "node scripts/verify-acero.mjs",
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
     "pdf:planilla": "node scripts/render-planilla-pdf.mjs",

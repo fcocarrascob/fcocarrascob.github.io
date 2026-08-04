@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
+import VerificadorSeccionTool from '../../components/acero/VerificadorSeccionTool.tsx';
+
+const title = 'Verificador de secciones de acero';
+const description =
+  'Capacidad y verificación de secciones de acero según AISC 360-22 (LRFD): clasificación B4.1, compresión (Cap. E), flexión (Cap. F), corte (Cap. G) e interacción (H1), más la capa sísmica de NCh2369. Perfiles I y HSS, con memoria de cálculo exportable al canvas matemático.';
+---
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+    <header class="mb-5">
+      <h1 class="text-2xl font-semibold text-ink">Verificador de secciones de acero</h1>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Ingresá una sección y sus longitudes de pandeo, y la herramienta responde una de dos
+        preguntas según el modo. En <strong>Capacidad</strong>: qué aguanta la sección —
+        φP_n, φM_n y φV_n con el estado límite que gobierna cada uno, más la clasificación de
+        cada elemento contra las Tablas B4.1a y B4.1b. En <strong>Demanda</strong>: si pasa —
+        los mismos φR_n contra P_u, M_u y V_u, con la interacción H1-1. Al final, un botón arma
+        la <strong>memoria de respaldo</strong> en el
+        <a href="/herramientas/canvas" class="text-accent hover:underline">canvas matemático</a>,
+        que recalcula la cadena entera con mathjs y contrasta cada número contra el que reportó
+        esta página.
+      </p>
+    </header>
+
+    <VerificadorSeccionTool client:only="react" />
+
+    <details class="mt-8 text-xs text-muted">
+      <summary class="cursor-pointer font-medium text-ink">Alcance, supuestos y fronteras</summary>
+      <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
+        <li>
+          <strong>Familias:</strong> perfil I doblemente simétrico (laminado o armado) y HSS
+          rectangular y circular. Canales, ángulos y secciones monosimétricas o compuestas
+          quedan fuera — para esas siguen valiendo las planillas del canvas.
+        </li>
+        <li>
+          <strong>Método:</strong> LRFD solamente. φ_c = φ_b = 0,90; φ_v = 1,00 en la puerta de
+          G2.1(a) y 0,90 fuera de ella.
+        </li>
+        <li>
+          <strong>Propiedades:</strong> lo derivable se deriva de las planchas
+          (d, b_f, t_f, t_w o B, H, t), y lo que declares en «propiedades de catálogo» lo pisa.
+          Las planchas no llevan los redondeos de unión ala-alma, así que dan alrededor de un
+          1,5&nbsp;% menos de área — declarar la fila de catálogo cierra esa diferencia, y la
+          herramienta avisa si el contraste excede lo que los redondeos explican.
+        </li>
+        <li>
+          <strong>HSS sin radios de esquina:</strong> el área de paredes rectas
+          <em>sobreestima</em> la real (≈ +4&nbsp;% en un HSS 4×4×¼). Declará el A_g del
+          fabricante; sin él la herramienta lo advierte.
+        </li>
+        <li>
+          <strong>C_b y B₁ son dato</strong>, con default 1,0. Derivarlos exige el diagrama de
+          momentos, que es del análisis y no de la sección: el C_b de la Ec. F1-1 sale de los
+          cuartos del segmento no arriostrado, y el B₁ del Apéndice 8 necesita P_e1 y C_m.
+        </li>
+        <li>
+          <strong>Tracción:</strong> D2-1 siempre; D2-2 solo si declarás A_n y U, que dependen
+          de la conexión. Sin ellos la herramienta no supone U = 1 — lo avisa.
+        </li>
+        <li>
+          <strong>Fuera de alcance, y se reporta como tal en vez de aproximarse:</strong> alma no
+          compacta o esbelta en perfil I (Secciones F4 y F5, con el factor R_pc), alma esbelta de
+          HSS, y corte de HSS circular (Sección G5).
+        </li>
+        <li>
+          <strong>Capa sísmica (NCh2369:2025):</strong> λ_md de la Tabla 9 —
+          0,40·√(E/(R_y·F_y)) para elementos no atiesados y 0,76·√(E/(R_y·F_y)) para atiesados —,
+          la esbeltez global de 8.6.3 (L_c/r &lt; 1,5π·√(E/F_y)) y las capacidades esperadas de
+          8.3.1 (F_ye = R_y·F_y, P_ne = 1,14·F_cre·A_g). Es informativa: solo aplica si el miembro
+          debe ser dúctil. La fila de la Tabla 9 para almas de perfiles I no está implementada.
+        </li>
+        <li>
+          <strong>Verificación:</strong> el motor se contrasta contra las planillas de acero
+          publicadas —
+          <a href="/acero/ejemplo-columna-galpon-compresion" class="text-accent hover:underline">columna de galpón</a>,
+          <a href="/acero/ejemplo-viga-ltb" class="text-accent hover:underline">viga LTB</a>,
+          <a href="/acero/ejemplo-viga-columna" class="text-accent hover:underline">viga-columna</a> y
+          <a href="/acero/ejemplo-diagonal-hss-traccion" class="text-accent hover:underline">diagonal HSS</a>
+          — con <code>npm run verify:acero</code>. Las ramas que ninguna planilla toca (E7, F3,
+          F6, F7, F8) se declaran sin ancla en el detalle de la verificación.
+        </li>
+        <li>
+          <strong>Unidades:</strong> geometría en cm, longitudes en m, fuerzas en tonf y momentos
+          en tonf·m. Internamente el motor trabaja en kgf y cm.
+        </li>
+      </ul>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
+      Herramienta de <strong>prediseño</strong>. No reemplaza el análisis: las longitudes
+      efectivas, C_b, B₁ y las propias demandas vienen de él.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>
