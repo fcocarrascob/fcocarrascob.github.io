@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" font-family="Segoe UI, Arial, sans-serif">
+<rect width="560" height="330" fill="#ffffff"/>
+<text x="280" y="24" font-size="14.5" text-anchor="middle" fill="#222" font-weight="bold">La malla no te da resistencia: te quita rigidez</text>
+<text x="280" y="42" font-size="11" text-anchor="middle" fill="#666">propiedades de la malla contra las exactas, 4 fibras por ala</text>
+<line x1="60" y1="260" x2="500" y2="260" stroke="#eee"/>
+<text x="54" y="263.5" font-size="10" text-anchor="end" fill="#777">0.8</text>
+<line x1="60" y1="242" x2="500" y2="242" stroke="#eee"/>
+<text x="54" y="245.5" font-size="10" text-anchor="end" fill="#777">0.82</text>
+<line x1="60" y1="224" x2="500" y2="224" stroke="#eee"/>
+<text x="54" y="227.5" font-size="10" text-anchor="end" fill="#777">0.84</text>
+<line x1="60" y1="206" x2="500" y2="206" stroke="#eee"/>
+<text x="54" y="209.5" font-size="10" text-anchor="end" fill="#777">0.86</text>
+<line x1="60" y1="188" x2="500" y2="188" stroke="#eee"/>
+<text x="54" y="191.5" font-size="10" text-anchor="end" fill="#777">0.88</text>
+<line x1="60" y1="170" x2="500" y2="170" stroke="#eee"/>
+<text x="54" y="173.5" font-size="10" text-anchor="end" fill="#777">0.9</text>
+<line x1="60" y1="152" x2="500" y2="152" stroke="#eee"/>
+<text x="54" y="155.5" font-size="10" text-anchor="end" fill="#777">0.92</text>
+<line x1="60" y1="134" x2="500" y2="134" stroke="#eee"/>
+<text x="54" y="137.5" font-size="10" text-anchor="end" fill="#777">0.94</text>
+<line x1="60" y1="116" x2="500" y2="116" stroke="#eee"/>
+<text x="54" y="119.5" font-size="10" text-anchor="end" fill="#777">0.96</text>
+<line x1="60" y1="98" x2="500" y2="98" stroke="#eee"/>
+<text x="54" y="101.5" font-size="10" text-anchor="end" fill="#777">0.98</text>
+<line x1="60" y1="80" x2="500" y2="80" stroke="#eee"/>
+<text x="54" y="83.5" font-size="10" text-anchor="end" fill="#777">1</text>
+<line x1="60" y1="62" x2="500" y2="62" stroke="#eee"/>
+<text x="54" y="65.5" font-size="10" text-anchor="end" fill="#777">1.02</text>
+<line x1="60" y1="62" x2="60" y2="260" stroke="#eee"/>
+<text x="60" y="276" font-size="10" text-anchor="middle" fill="#777">0</text>
+<line x1="115" y1="62" x2="115" y2="260" stroke="#eee"/>
+<text x="115" y="276" font-size="10" text-anchor="middle" fill="#777">5</text>
+<line x1="170" y1="62" x2="170" y2="260" stroke="#eee"/>
+<text x="170" y="276" font-size="10" text-anchor="middle" fill="#777">10</text>
+<line x1="225" y1="62" x2="225" y2="260" stroke="#eee"/>
+<text x="225" y="276" font-size="10" text-anchor="middle" fill="#777">15</text>
+<line x1="280" y1="62" x2="280" y2="260" stroke="#eee"/>
+<text x="280" y="276" font-size="10" text-anchor="middle" fill="#777">20</text>
+<line x1="335" y1="62" x2="335" y2="260" stroke="#eee"/>
+<text x="335" y="276" font-size="10" text-anchor="middle" fill="#777">25</text>
+<line x1="390" y1="62" x2="390" y2="260" stroke="#eee"/>
+<text x="390" y="276" font-size="10" text-anchor="middle" fill="#777">30</text>
+<line x1="445" y1="62" x2="445" y2="260" stroke="#eee"/>
+<text x="445" y="276" font-size="10" text-anchor="middle" fill="#777">35</text>
+<line x1="500" y1="62" x2="500" y2="260" stroke="#eee"/>
+<text x="500" y="276" font-size="10" text-anchor="middle" fill="#777">40</text>
+<line x1="60" y1="260" x2="500" y2="260" stroke="#333"/>
+<line x1="60" y1="62" x2="60" y2="260" stroke="#333"/>
+<text x="280" y="294" font-size="11" text-anchor="middle" fill="#666">fibras en el alma</text>
+<text x="6" y="54" font-size="11" text-anchor="start" fill="#666">valor de la malla / valor exacto</text>
+<polyline points="60,80 500,80" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round"/>
+<polyline points="71,195.4 82,108.9 93,92.8 104,87.2 115,84.6 126,83.2 137,82.4 148,81.8 159,81.4 170,81.2 181,81 192,80.8 203,80.7 214,80.6 225,80.5 236,80.5 247,80.4 258,80.4 269,80.3 280,80.3 291,80.3 302,80.3 313,80.2 324,80.2 335,80.2 346,80.2 357,80.2 368,80.2 379,80.2 390,80.1 401,80.1 412,80.1 423,80.1 434,80.1 445,80.1 456,80.1 467,80.1 478,80.1 489,80.1 500,80.1" fill="none" stroke="#b02a1a" stroke-width="2.2" stroke-linejoin="round"/>
+<polyline points="82,80 104,80 126,80 148,80 170,80 192,80 214,80 236,80 258,80 280,80 302,80 324,80 346,80 368,80 390,80 412,80 434,80 456,80 478,80 500,80" fill="none" stroke="#1a63a8" stroke-width="2.4" stroke-linejoin="round"/>
+<polyline points="71,246.9 93,98.5 115,86.7 137,83.4 159,82.1 181,81.4 203,81 225,80.7 247,80.6 269,80.5 291,80.4 313,80.3 335,80.3 357,80.2 379,80.2 401,80.2 423,80.2 445,80.1 467,80.1 489,80.1" fill="none" stroke="#2f7d32" stroke-width="1.6" stroke-dasharray="3 3" stroke-linejoin="round"/>
+<circle cx="71" cy="246.9" r="2.8" fill="#2f7d32"/>
+<circle cx="93" cy="98.5" r="2.8" fill="#2f7d32"/>
+<circle cx="115" cy="86.7" r="2.8" fill="#2f7d32"/>
+<circle cx="137" cy="83.4" r="2.8" fill="#2f7d32"/>
+<circle cx="159" cy="82.1" r="2.8" fill="#2f7d32"/>
+<circle cx="71" cy="246.9" r="3.5" fill="#2f7d32"/>
+<text x="81" y="250.9" font-size="10.5" text-anchor="start" fill="#2f7d32" font-weight="bold">1 fibra de alma: Mp 19 % bajo</text>
+<line x1="262" y1="196" x2="280" y2="196" stroke="#1a63a8" stroke-width="2.5"/>
+<text x="286" y="200" font-size="10.5" text-anchor="start" fill="#333">Z (→ Mp), alma par — exacto siempre</text>
+<line x1="262" y1="212" x2="280" y2="212" stroke="#2f7d32" stroke-width="2.5"/>
+<text x="286" y="216" font-size="10.5" text-anchor="start" fill="#333">Z (→ Mp), alma impar</text>
+<line x1="262" y1="228" x2="280" y2="228" stroke="#b02a1a" stroke-width="2.5"/>
+<text x="286" y="232" font-size="10.5" text-anchor="start" fill="#333">I (→ rigidez) — nunca exacto</text>
+</svg>
