@@ -1,0 +1,128 @@
+---
+title: "El momento del vano no está en la salida del elemento"
+description: "Una barra cargada con eleLoad reporta dos momentos, uno por extremo, y el máximo del vano no es ninguno de los dos: interpolar entre ellos da −16,9 kN·m donde el real es +25,3. Se verifica contra la viga apuntalada cerrada y contra rigidez directa en numpy, y de paso aparece algo menos obvio: mallar más fino no converge, muestrea."
+pubDate: 2026-08-03
+tags: ["OpenSees", "OpenSeesPy", "Laboratorio", "eleLoad", "diagrama de momentos", "momentos de empotramiento", "elementos finitos", "verificación"]
+section: "Laboratorio"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+Una barra cargada con `eleLoad ... -beamUniform` reporta **dos** momentos: uno por extremo. ¿Dónde quedó el máximo del vano?
+
+Esta es la primera nota del **laboratorio**: una serie aparte de la [escalera de verificación de Rukan](/blog/rukan-verificacion-modal-opensees/). Ahí se valida el motor contra SAP2000; acá se explora un fenómeno de análisis y se lo verifica por **dos caminos independientes** —fórmula cerrada o numpy puro, y OpenSeesPy—. Sin SAP2000 de por medio.
+
+## El caso
+
+Una viga apuntalada: empotrada en un extremo, rotulada en el otro, con carga uniforme $q$. Es hiperestática de grado 1, pero al ser prismática la redundante no depende de $EI$, así que todo sale cerrado:
+
+<Equation label="Viga apuntalada, carga uniforme">
+$$M_{\text{emp}} = \frac{qL^2}{8}, \qquad M_{\text{vano}} = \frac{9qL^2}{128} \ \text{ en } \ x = \tfrac{3}{8}L \text{ desde la rótula}$$
+</Equation>
+
+Con $L = 6$ m y $q = 10$ kN/m: 45,0 kN·m en el empotramiento y **25,3 kN·m** en el vano, a 3,75 m del empotramiento. (Hibbeler, *Structural Analysis*; las mismas expresiones están tabuladas en el AISC *Manual*, Tabla 3-22.)
+
+Con un solo elemento, OpenSees reproduce los extremos exactamente:
+
+| Magnitud | Fórmula cerrada | OpenSees | Error |
+|---|---|---|---|
+| Momento en el empotramiento [kN·m] | 45.0000 | 45.0000 | 0.0000 % |
+| Momento en la rótula [kN·m] | 0.0000 | 0.0000 | 0.00e+00 |
+| Reacción en el empotramiento [kN] | 37.5000 | 37.5000 | 0.0000 % |
+| Reacción en la rótula [kN] | 22.5000 | 22.5000 | 0.0000 % |
+| Rotación de la rótula [mrad] | 2.2500 | 2.2500 | 0.0000 % |
+
+Los extremos están perfectos. El problema es lo que hay **entre** ellos.
+
+## Lo que la recta se pierde
+
+`localForce` devuelve `[N_i, V_i, M_i, N_j, V_j, M_j]`. Con un elemento, eso son dos números: 45,0 y 0,0. Si uno dibuja el diagrama uniendo ambos con una recta —que es exactamente lo que hace un postproceso ingenuo—, en $x = 3{,}75$ m obtiene **−16,9 kN·m**. El valor real ahí es **+25,3 kN·m**.
+
+No es que la recta se quede corta: tiene el **signo cambiado**. Donde la viga tracciona abajo, el diagrama ingenuo dice que tracciona arriba.
+
+<Figure
+  src="/lab-eleload-empotramiento/fig-diagrama.svg"
+  alt="Diagrama de momento flector de una viga apuntalada de 6 m con carga uniforme de 10 kN/m. La recta gris que une las fuerzas de extremo va de −45 kN·m en el empotramiento a 0 en la rótula. La curva azul, el diagrama real, parte de −45, cruza por cero en x = 1,5 m y alcanza un máximo de +25,3 kN·m en x = 3,75 m. En ese punto la recta marca −16,9 kN·m: signo opuesto."
+  caption="En x = 3,75 m la recta entre las fuerzas de extremo marca −16,9 kN·m y el diagrama real, +25,3. La diferencia no es un refinamiento: es la parábola simplemente apoyada que falta sumar."
+/>
+
+Lo que falta es la parábola simplemente apoyada de la carga sobre el tramo. El diagrama de una barra con carga uniforme es la recta entre sus momentos de extremo **más** $q\,x(L-x)/2$:
+
+```
+  recta entre las fuerzas de extremo    -16.8750 kN·m
+  + parábola simplemente apoyada        +42.1875 kN·m
+  = diagrama real                       +25.3125 kN·m
+```
+
+| Magnitud | Fórmula cerrada (9qL²/128) | Superposición | Error |
+|---|---|---|---|
+| Momento máximo del vano [kN·m] | 25.3125 | 25.3125 | 0.0000 % |
+
+## Mallar no converge: muestrea
+
+La salida obvia es partir la barra en varios elementos. Funciona, pero no por la razón que uno supone.
+
+La solución de elementos finitos de una viga Euler-Bernoulli **prismática** con carga uniforme es *exacta en los nodos*: las funciones de forma cúbicas reproducen la solución homogénea, y el vector de cargas consistentes, el término particular. Con cuatro elementos, los momentos nodales no se aproximan al valor real — **son** el valor real:
+
+| Magnitud | M(x) exacto | OpenSees | Error |
+|---|---|---|---|
+| Momento en x = 1.50 m [kN·m] | 0.0000 | 0.0000 | 3.55e-15 |
+| Momento en x = 3.00 m [kN·m] | 22.5000 | 22.5000 | 0.0000 % |
+| Momento en x = 4.50 m [kN·m] | 22.5000 | 22.5000 | 0.0000 % |
+
+Precisión de máquina, no convergencia. Lo que la malla hace no es *afinar* la solución: es **muestrearla**. Y el máximo del vano aparece solo si un nodo cae encima —o suficientemente cerca—.
+
+<Figure
+  src="/lab-eleload-empotramiento/fig-muestreo.svg"
+  alt="Gráfico del máximo positivo del vano leído de los momentos nodales contra el número de elementos por barra, de 1 a 16. Con 1 elemento vale 0. Sube a 22,5 con 2 elementos, 25,0 con 3, baja a 22,5 con 4, y a partir de 5 oscila irregularmente en torno al valor exacto de 25,31 kN·m marcado con una línea roja de trazos, sin converger monótonamente."
+  caption="El máximo leído de los momentos nodales no converge de forma monótona: salta. Con 4 elementos (22,5) da peor que con 3 (25,0). No es error de discretización — es dónde cayeron los nodos."
+/>
+
+Que la curva **baje** al pasar de 3 a 4 elementos delata la naturaleza del asunto: no hay error de discretización que reducir, hay una función exacta que se está evaluando en puntos discretos.
+
+<Note type="tip" title="La consecuencia práctica">
+Si el postproceso interpola linealmente entre momentos de extremo, refinar la malla mejora el diagrama por muestreo y nunca del todo. Superponer la parábola lo resuelve exacto con **un** elemento. Es la razón por la que los postprocesos serios grafican la barra con su carga, no con sus extremos.
+</Note>
+
+## La otra mitad: las cargas nodales equivalentes
+
+Hay una segunda forma de meter la carga: repartirla a los nodos como **cargas nodales equivalentes**, el vector consistente $w\,[0,\ L/2,\ L^2/12,\ 0,\ L/2,\ -L^2/12]$. Mucha gente lo hace, y los desplazamientos salen idénticos:
+
+| Magnitud | Con `eleLoad` | Con cargas nodales | Error |
+|---|---|---|---|
+| Rotación de la rótula [mrad] | 2.2500 | 2.2500 | 0.0000 % |
+
+Idénticos. Por eso la trampa no se nota mirando deformaciones.
+
+Pero el momento en el empotramiento sale **15,0 kN·m** en vez de 45,0: un **67 % menos** que el de diseño. Y lo que falta no es ruido numérico:
+
+| Magnitud | Empotramiento perfecto | Diferencia observada | Error |
+|---|---|---|---|
+| Lo que falta en el momento [kN·m] | 30.0000 | 30.0000 | 0.0000 % |
+| Lo que falta en el corte [kN] | 30.0000 | 30.0000 | 0.0000 % |
+
+La diferencia es **exactamente** el vector de empotramiento perfecto, $qL/2$ y $qL^2/12$. Tiene sentido: las fuerzas de extremo se calculan como $S = k\,u - P_{eq}$, y si la carga nunca entró al elemento, $P_{eq} = 0$ y a $S$ le falta justo ese término. Los desplazamientos no se enteran porque el ensamble global sí recibió la carga; el que se entera es el elemento.
+
+<Note type="warning" title="El que firma es el momento de diseño">
+Modelar con cargas nodales equivalentes y leer las fuerzas de extremo sin devolverles el empotramiento perfecto subestima el momento del apoyo en un 67 % en este caso. No hay señal de alarma: la deformada es correcta, las reacciones globales son correctas, y el número que uno usa para dimensionar está mal.
+</Note>
+
+## El veredicto
+
+Tres cosas, en orden de cuánto duelen:
+
+1. **La carga va con `eleLoad`, no repartida a los nodos.** Si por lo que sea va repartida, hay que sumarle al elemento su vector de empotramiento perfecto antes de leer un momento de diseño.
+2. **El diagrama es la recta entre extremos más la parábola de la carga.** Con un elemento por barra alcanza y sobra, si se superpone.
+3. **Mallar es muestrear, no converger** — al menos en barras prismáticas elásticas. Refinar sirve para dibujar, no para precisión que ya se tenía.
+
+## Reproducir
+
+```bash
+python -m lab.nota01_eleload_empotramiento
+```
+
+El script está en [`lab/nota01_eleload_empotramiento.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/nota01_eleload_empotramiento.py) del repositorio de [Rukan](https://github.com/fcocarrascob/rukan). Resuelve el mismo problema con OpenSeesPy y con un ensamblador de rigidez directa en numpy que **no importa `openseespy` ni `rukan`** ([`lab/_lib/ref.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/_lib/ref.py)) — si la referencia compartiera código con lo verificado, la tabla daría error 0 % sin decir nada. Todas las tablas de este post son la salida literal del script, y corren en `pytest` como test de regresión.

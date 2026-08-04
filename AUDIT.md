@@ -47,6 +47,174 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-03 · `acero/ejemplo-diagonal-hss-traccion` · ampliación a tres actos · ⚠️ — 13 hallazgos (1🔴 3🟠 9🟡) + 5🔵 — **los 13 aplicados**
+
+**Commit auditado:** `32d9a04` (post modificado en working tree) · **Categorías cubiertas:** N U L F E C R · **Método:** ampliación del post de tracción pura a tres actos —tracción (Cap. D+J, intacta), compresión (E3 + Tabla B4.1a c.6, con el paño en X y $L_c = 0{,}5L$) y la capa NCh2369:2025 (8.6.3, 8.6.4, 8.6.8)—, con la planilla `public/planillas/diagonal-hss-traccion.json` extendida de 41 a 103 pasos y de 25 a 80 contrastes, más el esquema paramétrico (26 → 55 tokens) y dos figuras nuevas. Auditor read-only sobre el working tree, contrastando contra los PDF de NCh2369:2025, AISC 360-22 y AISC 341-22.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🔴 | N | `public/ejemplos/diagonal-hss-traccion.svg` L.61-62 | La figura del acto 1 publicaba $A_e = 14.5$ cm² y $A_n = 19.5$ cm² — valores **rancios de la cadena de 360-16** ($\bar x = 3.81$, $U = 0.746$). Al migrar al Caso 5 de 360-22 se actualizaron $\bar x$ y $U$ en el SVG pero no $A_e$. Con los propios números de la figura, $19.5 \times 0.76 = 14.82$ | 19.46 y 14.80 cm² | ✅ aplicado |
+| 2 | 🟠 | U | L.121 | `$\bar{x}$` estaba escrito con un **byte de retroceso literal** (0x08) en lugar de `\b`: KaTeX no falla, renderiza *arx* en cursiva. Única aparición en prosa de las cinco del post | `$\bar{x}$` | ✅ aplicado |
+| 3 | 🟠 | L | L.252 y label L.255 | «la nota (d) de la Tabla B4.1a autoriza $b = B-3t$». La Tabla B4.1a tiene una sola nota al pie, `[a]`, y es la de $k_c$. Verificado en el PDF: la regla está en la lista de *Stiffened Elements*, o sea **Sec. B4.1b(d)** — el ítem se imprime junto a las tablas, de ahí la confusión. El caso 6 y $\lambda_r = 1.40\sqrt{E/F_y}$ sí son de la Tabla B4.1a | `Sec. B4.1b(d)` en prosa y label | ✅ aplicado |
+| 4 | 🟠 | N | L.225 | «quedarse con $0.60F_uA_{nv} = 69.5$ tonf»: la expresión escrita da 92.6 tonf; las 69.5 llevan $\phi$. El 24 % sí cierra porque compara dos valores con $\phi$ | $\phi\,0.60F_uA_{nv}$ | ✅ aplicado |
+| 5 | 🟡 | L | L.62 | La fila atribuía a «Tabla 7, línea 5.3» tanto $R = 5$ como $R_1 = 4$. La línea 5.3 da **solo** $R = 5$; $R_1$ sale de la Ec. (14), $R_1 = R\cdot\min(Q_0/Q_{0,\min};1)$, o sea del análisis | Fila partida, como en `/acero/ejemplo-chevron-nch2369` | ✅ aplicado |
+| 6 | 🟡 | N | L.169, 178, 521, 526 | La resistencia por cm de cordón se publicaba 939 kgf/cm pero se calculaba con 939.18 | 939.18 en las cuatro apariciones | ✅ aplicado |
+| 7 | 🟡 | N | L.237 vs 4 tablas | $450/3.84$ aparecía como 117 en §5 y 117.2 en los tres actos siguientes | 117.2 en todas | ✅ aplicado |
+| 8 | 🟡 | N | L.143, 149, 540, 557 | Cuatro ecuaciones exhibían operandos redondeados que no reproducen el resultado publicado ($19.46\cdot0.760 = 14.79$ contra 14.80, etc.). Los **resultados** eran correctos —salen de la cadena sin redondear y la planilla los contrasta ✓—, pero la aritmética visible no cerraba | Exhibir los operandos con los dígitos que la cadena usa (0.7604, 19.458, 14.797, 25.306, 0.8802, 29.058); tres contrastes reafinados y tres nuevos | ✅ aplicado |
+| 9 | 🟡 | C | L.662-664 y `description` | «el refuerzo de la ranura no es opcional para ningún tamaño de tubo». Lo demostrado es que ningún tubo desarrolla **su propia $T_{ye}$** ($U \ge 1.166$, airtight); pero el propio §10 establece que el techo de $0{,}7R_1$ alivia cuando $T_{ye}/P_E > 0{,}7R_1$, y ahí $T_{req} < T_{ye}$ | Acotar la conclusión al caso en que el techo no muerde | ✅ aplicado (decisión del autor 2026-08-03): la `description`, el cierre del §11 y la lección 3 pasan a decir «ningún tubo desarrolla **su propia $T_{ye}$** por la ranura; lo único que puede evitar el refuerzo es que el techo de $0{,}7R_1$ muerda». El resultado general —$U \ge 1.166$ imposible— queda intacto |
+| 10 | 🟡 | F | L.597-603 | La tabla de cierre de 8.6 incluía 8.6.5 como «no aplica (X)» pero omitía **8.6.6**, igual de no aplicable y mencionada en la nota de alcance | Fila agregada | ✅ aplicado |
+| 11 | 🟡 | F | L.274 | El encabezado prometía «(Ec. E3-2 y E3-3)» y la sección usa labels E3-4, E3-2 y E3-1 | «(Ec. E3-1, E3-2 y E3-4)» | ✅ aplicado |
+| 12 | 🟡 | U | varias | Separador decimal mixto: coma en los coeficientes que la norma nombra así ($0{,}7R_1$, $1{,}5\pi$) y punto en los valores calculados — que es la convención declarada del sitio para los esquemas—, pero el `alt` de la fig. 2 escribía «1.5·π» con punto | `alt` alineado; la convención se mantiene y queda explícita | ✅ aplicado |
+| 13 | 🟡 | F | L.613 (`alt` fig. 3) | El `alt` decía «cuatro planchuelas … dos a cada lado de la ranura»; el cuerpo dice «una a cada lado, en cada una de las dos paredes» | `alt` redactado como el cuerpo | ✅ aplicado |
+
+**Hallazgo de método (el que justifica la pasada):** los hallazgos 1, 2, 4, 6 y 7 son **del acto 1**, o sea del post que ya había pasado dos auditorías contra los PDF (2026-07-23 y 2026-07-26) y una por planilla (2026-07-31). El 🔴 sobrevivió porque **la planilla no ve las figuras estáticas**: contrastaba `A_e = 14.80` contra el texto, y el SVG decía 14.5 desde la migración 360-16 → 360-22. Lo que lo destapó fue extender la hoja y volver a leer el post entero — un recordatorio de que el contraste automático delimita, no agota.
+
+**Verificado y correcto (recalculado con Python, y las citas abiertas en los PDF):** los tres actos completos. *Acto 1* — $\phi F_yA_g = 68\,746$ kgf; $A_n = 19.458$; $\bar x = 3.5933$ (y se comprobó **analíticamente** que la fórmula del Caso 5 es el centroide de la media sección con espesor incluido); $U = 0.7604$; rotura 48 385 kgf (uso 0.87, gobierna); filete 939.18 kgf/cm; $l_{\min} = 11.18$; soldadura 56 351 kgf; bloque 56 074 kgf; sobreestimación de la primera rama 24 %; $l = 20 \to U = 0.8203$, 52.2 tonf. *Acto 2* — $b = 8.39$, $b/t = 14.22$, $\lambda_r = 33.70$ (uso 0.42); $L_c/r = 58.59$, $F_e = 5864$, $F_y/F_e = 0.600 \le 2.25$, $F_n = 2738$, $\phi_cP_n = 53\,474$ kgf (uso 0.785); sin cruce $L/r = 117.19$, $F_e = 1466$, $F_y/F_e = 2.40$, $0.877F_e = 1286$, 25.1 tonf (uso 1.673). Quiebre $4.71\sqrt{E/F_y} = 113.387$ contra $1{,}5\pi\sqrt{E/F_y} = 113.445$: **0.0507 %** — la afirmación de que el límite de 8.6.3 *es* el quiebre elástico/inelástico de AISC queda verificada. *Acto 3* — $\lambda_{md} = 16.047$ (uso 0.886; listón 33.703/16.047 = 2.099 → «factor 2.1»); $F_{ye} = 4576$, $T_{ye} = 99\,299$ kgf; $F_{cre} = 3301$, $P_{ne} = 81.66$; $0{,}7R_1P_E = 117.6$ y $T_{ye}/P_E = 2.364 < 2.80$ → el techo no muerde ✓; exención $117.6/25.1 = 4.685$; $F_{ue} = 5232$; tope con $U = 1$: 76.4 tonf (uso 1.30); $U_{req} = 1.1662$; cordón 112.7 tonf; $U_{30} = 0.8803$; $A_{e,req} = 25.306$, $A_{n,req} = 28.75$, déficit 9.29, ancho disponible 4.13 cm ≥ 3.0 ✓, $A_{pl} = 9.60$, $A_{e,ref} = 25.58$, 100.4 tonf (uso 0.99); bloque 145.8 tonf; brecha $99.3/48.4 = 2.05$.
+
+*Citas normativas abiertas en los PDF de disco:* Tabla D3.1 Caso 5 de 360-22 (*«Round and rectangular HSS with single concentric gusset through slots in the HSS»*) con $\bar x$ y $U$ idénticos a los del post, y la renumeración 360-16 → 360-22 correcta; D2-1, D2-2, D3-1, E3-1 a E3-4, J2-4, J4-5, J4.3, D1, E7 y Tabla B4.1a c. 6. **Comentario Comm. 7.2 «Braced Frames»**: la licencia de $L_c = 0{,}5L$ y sus condiciones son exactas. **NCh2369:2025**: 8.6.4, 8.6.8, C8.3.1 y 8.3.3 están citadas **literalmente, palabra por palabra**; 8.3.1 ($F_{ye}$, $F_{ue}$, $T_{ye}$, $P_{ne} = 1{,}14F_{cre}A_g$), 8.6.3 con su exención, Tabla 9 fila de paredes de HSS conformado en frío ($0{,}76\sqrt{E/R_yF_y}$), Tabla 7 línea 5.3, y los resúmenes de 8.6.1/8.6.2/8.6.5/8.6.7/C8.6.9 fieles al texto. **AISC 341-22 Tabla A3.2**: A500 Gr. C → $R_y = 1{,}3$, $R_t = 1{,}2$ ✓ (y la nota al pie del post explica bien la renumeración A3.1 → A3.2 entre 341-16 y 341-22).
+
+*Estructura y activos* — frontmatter válido contra el schema Zod de `acero`; §1–13 correlativos; los 3 `src` de figura existen; los 8 enlaces internos resuelven y ninguno es `draft: true`; los conteos que el post publica (103 / 107 / 80) coinciden con `verify:planilla`, que corre limpio con 55 tokens de esquema resueltos; el canvas anuncia 9 páginas y el PDF trae 9.
+
+**No verificable:** 🔵 $P_u = P_{uc} = P_E = 42$ tonf (dato del análisis, aislado en la nota de alcance). 🔵 $R_1 = 4$ (depende de $Q_0/Q_{0,\min}$ del modelo). 🔵 la factibilidad de taller del detalle (la geometría sí cierra: $30+19+30 = 79 \le 101.6$ mm). 🔵 los límites de tamaño de filete de J2.2b contra la pared de 5.9 mm, que el ejemplo no discute. 🔵 `tema: Miembros` mientras el hermano `/acero/ejemplo-chevron-nch2369` usa `'Marcos arriostrados'` — ahora que el post tiene un acto completo de marco arriostrado, el chip lo esconde de ese filtro. **Decisión del autor 2026-08-03: se mantiene `Miembros`** — la columna vertebral del post sigue siendo el diseño de un miembro (Caps. D y E) y ahí hace par con la columna de galpón y la viga-columna; el acto 3 es la capa normativa sobre ese miembro, no un ejemplo de sistema.
+
+### 2026-08-03 · estreno de la subsección `apuntes/nch2369` (3 notas) · ⚠️ — 47 hallazgos (1🔴 · 6🟠 · 21🟡 · 19🔵) — **el 🔴, los 6 🟠 y 8 🟡 aplicados**
+
+**Commit auditado:** `88a3f7a` · **Método:** tres auditores en paralelo, uno por nota, cada uno
+contra el **PDF de NCh 2369:2025 (3.ª ed., 2025.05.28)** con `pdfplumber` recortando la columna
+normativa `(40, 50, 305, 800)` y la de comentarios `(305, 50, 570, 800)`, offset página PDF =
+página norma + 7. **No se usaron las fichas de `material_teorico/referencias/NCh2369-2025/`**:
+no están auditadas y ya se les encontró un error de transcripción (ver más abajo).
+
+**Lo que resistió.** Los tres auditores recalcularon de forma independiente y **no desmintieron
+ninguna tesis**. En particular: las cuatro combinaciones de 4.5.1 coinciden carácter a carácter
+en las tres apariciones (ecuaciones, `alt` y SVG); los 30 valores de la Tabla 6 coinciden uno a
+uno con `SOIL_PARAMS` del módulo TS; los 24 números de la tabla de la rampa de $R^*$ se
+reprodujeron replicando el módulo en Python; y **la Ec. (4) del espectro vertical es
+`1,7·T_V/T_0`**, confirmado en el PDF — o sea que la advertencia del post es correcta y **la
+ficha del cerebro es la que está mal**.
+
+#### `apuntes/nch2369-panorama-y-combinaciones` · ⚠️ 17 hallazgos (1🟠 · 8🟡 · 8🔵)
+
+| # | Sev | Cat | Hallazgo | Estado |
+|---|-----|-----|----------|--------|
+| 1 | 🟠 | C | «y el contrario del que ocupa en ASCE 7»: sin respaldo y falso en su lectura natural — en sísmico ASCE 7 pone $I_e$ dentro de $C_s$, el mismo lugar que la Ec. (1a) | ✅ aplicado (se eliminó la comparación; se agregó la Ec. 2) |
+| 2 | 🟡 | L | El 1,5 en 10.1.4 está en el **comentario** C10.1.4, no en la disposición; en 10.1.6 sí es normativo | ⬜ |
+| 3 | 🟡 | L | La cita de 4.1.3 no era textual («tengan/sean» por «deben tener/ser capaces de») | ✅ aplicado |
+| 4 | 🟡 | L | La Tabla C-2 tabula el factor $a$ por «tipo de **instalación**», no por «tipo de recinto» | ⬜ |
+| 5 | 🟡 | F | Labels de `Equation` duplicados (dos `4.5.1 · ASD`, dos `4.5.1 · LRFD`) y un `Ec. 4.5.2` que antepone «Ec.» a un número de cláusula | ⬜ |
+| 6 | 🟡 | F | Las tres ecuaciones de 4.5.2 partidas entre un `Equation` y un `$$` crudo sin label | ⬜ |
+| 7 | 🟡 | C | 1.2 e) **excluye** oficinas y casinos y dice que «se **pueden** diseñar» por NCh433: es permisivo, no imperativo | ⬜ |
+| 8 | 🟡 | U | `100/30/30` en `description` contra `100 / 30 / 30` en el cuerpo | ⬜ |
+| 9 | 🟡 | L | El resumen de 4.1.1 a.2) omitía «explosiones» | ✅ aplicado |
+| 10 | 🔵 | N | «cuarenta posts»: el conteo real es 39 (42 archivos menos las 3 notas del propio trío) | ⬜ |
+| 11 | 🔵 | F | El `alt` de la banda del 1,5 no menciona C8.3.4 ni C8.7.5, que el SVG sí muestra | ⬜ |
+| 12 | 🔵 | C | Los ejemplos de SA son del autor; C4.5.1 da dos que nadie adivina (interrupción del suministro eléctrico, acción de interruptores de protección) | ⬜ |
+| 13 | 🔵 | U | El enlace renombra «El exponente 0.4» como «0,4» — primer roce entre la coma de `apuntes` y el punto de `blog` | ⬜ |
+| 14 | 🔵 | L | `/blog/rukan-verificacion-galpon-3d` llama a esto «100/30» (dos direcciones); acá es «100/30/30» con $E_z$ | ⬜ |
+| 15 | 🔵 | R | El `source` declara «cláusulas 1 a 4 y Anexo B» pero el mapa cita 5.4, 8.3, 10.1-10.2 y 6-7 | ⬜ |
+| 16 | 🔵 | C | «sin que exista, hasta ahora, una nota que la explique» envejece el mismo día que se publica el trío | ⬜ |
+| 17 | 🔵 | N | El $I$ también multiplica la Ec. (2), el espectro vertical | ✅ aplicado |
+
+**Verificado y correcto:** las cuatro combinaciones de 4.5.1 y sus definiciones, incluida la cita
+textual del factor $a$, el «a lo menos» y el párrafo de alta montaña · las tres ecuaciones de
+4.5.2 y que C4.5.2 confirma que son independientes y con todos los signos · $I$ = 0,80/1,00/1,20/
+1,20 y la puerta abierta en Categoría IV · Tabla 1 con sus dos NOTAS · las **siete** familias de
+1.2 · la cita central de C1.1 sobre la continuidad de operación como criterio de delimitación,
+**exacta** · 4.1.1/4.1.2/4.1.3 · la cita del 1,5 del Anexo B, **textual**, y que el Preámbulo dice
+«El Anexo B forma parte de la norma» · el 20 % del doble conteo del $I$ · el 1,5 en 8.3.1, C8.3.4,
+C8.7.5 y 10.1.6 · las once filas del mapa, una a una · los 16 enlaces internos resuelven y ninguno
+es draft · frontmatter válido contra el schema Zod.
+
+**No verificable:** «SO y SA que NCh 3171 no tiene» — el PDF local de NCh 3171 está rasterizado y
+no hay OCR; queda sostenido por la propia NCh 2369 (C4.5.1 y Anexo B B.1 lo afirman con esas
+palabras). La ubicación del $I$ en ASCE 7 — no hay PDF en disco (origen del hallazgo 1).
+
+**Planilla del canvas:** **no** · 0 verificaciones demanda–capacidad: es una lectura normativa,
+sin cadena de cálculo ni veredicto ✓/✗ posible.
+
+#### `apuntes/nch2369-espectro-de-diseno` · ⚠️ 14 hallazgos (4🟠 · 4🟡 · 6🔵)
+
+| # | Sev | Cat | Hallazgo | Estado |
+|---|-----|-----|----------|--------|
+| 1 | 🟠 | N | El 36–43 % tenía la base cambiada: es cuánto **reduce la fórmula** respecto de $\xi = 5$ %, no el déficit contra lo medido (que es 37 %) | ✅ aplicado |
+| 2 | 🟠 | C | «el espectro de diseño tiene su máximo en $T = 0$» solo vale para la función con $R^*(T)$; bajo la letra de la norma el máximo está en la meseta — y la Note siguiente lo dice, así que el post se contradecía a dos párrafos | ✅ aplicado |
+| 3 | 🟠 | L | La advertencia de la sismicidad intraplaca es de **C5.4.1**, no de C5.4.2 | ✅ aplicado |
+| 4 | 🟠 | N | «tres divisiones y una multiplicación, y de las cuatro»: la Ec. (1a) tiene **una** división y **dos** multiplicaciones | ✅ aplicado |
+| 5 | 🟡 | U | `^{0,4}` en math mode: la coma es puntuación y KaTeX mete espacio fino; la convención del repo es `^{0{,}4}` | ✅ aplicado (4 lugares + 1 en la nota hermana) |
+| 6 | 🟡 | R | La tabla de picos publicaba solo $S$, $T_0$ y $T_1$; la Ec. (3) también necesita $r$, $p$ y $q$ | ✅ aplicado (Tabla 6 completa) |
+| 7 | 🟡 | U | La unidad `g` solo en la primera fila de la tabla de la rampa | ⬜ |
+| 8 | 🟡 | F | El `source` declaraba 5.1–5.4 pero el post no toca 5.1–5.3 y sí usa 6.1 y 5.4.3 | ✅ aplicado |
+| 9 | 🔵 | R | La Note de reproducibilidad no lista las Ecs. (2) y (4) entre las verificadas (el auditor las verificó: correctas) | ⬜ |
+| 10 | 🔵 | N | El `alt` dice que E cruza «desde T ≈ 0,6 s»; el cruce real es 0,64 s | ⬜ |
+| 11 | 🔵 | N | Bajar de C a D sube el espectro en una ventana estrecha, 0,014 s < T < 0,079 s | ⬜ |
+| 12 | 🔵 | L | 6.1 no usa el de referencia «directamente»: lo corrige por $\xi$ e $I$; lo que se salta es $R^*$ | ✅ aplicado |
+| 13 | 🔵 | L | La fila «Hormigón armado, marcos y muros (dilatados)» comprime 6.1 y 6.3; el «(dilatados)» es solo de 6.1 | ⬜ |
+| 14 | 🔵 | F | Los labels de `Equation` no son correlativos (1a → 3 → 1b → 5.4.2 → 2 → 4): deliberado, son los de la norma | ⬜ (decisión) |
+
+**Verificado y correcto:** Ecs. (1a), (1b), (2), (3) y (4) transcritas exactas contra el PDF ·
+**la Ec. (4) lleva `1,7·T_V/T_0`**, confirmado, y recalculado su efecto (pico vertical del suelo C
+en 1,1545 g a T = 0,2032 s = 0,7 × pico horizontal en 0,3454/1,7) · Tabla 3 y el «29 % corto» ·
+los 30 valores de la Tabla 6 contra `SOIL_PARAMS` · las filas citadas de la Tabla 7 y el 40 % ·
+la regla de dos pasos y el 30 % de amplificación por saltarse el sondaje · los nueve ítems de
+sitios F y el piso del 75 % · C5.4.2 con los siete registros y sus magnitudes · 6.1 · la cota
+«válida sólo para valores de ξ entre 0,02 y 0,05», textual · **los 24 números de la tabla de la
+rampa** y los cinco picos, recalculados en Python · $C_rT_1 = 0{,}28$ s, $R/1{,}5 = 3{,}33$,
+$(0{,}05/0{,}02)^{0,4} = 1{,}4427$ · las cifras citadas del post de amortiguamiento (+14 %, +6,6 %,
+el 1,44 contra ≈1,00) · las dos figuras existen y sus `alt` describen lo que los SVG dibujan · los
+seis enlaces internos resuelven.
+
+**No verificable:** que `npm run figuras:espectro` regenere exactamente esos SVG (el auditor es
+read-only); el contenido de los SVG sí se verificó contra los números. Y «quien venga de la
+edición 2003»: no hay PDF de la 2003 en disco — el Preámbulo de la 2025 dice que reemplaza a la
+**2023**.
+
+**Planilla del canvas:** parcial · la cadena es cerrada y reproducible, pero el post entrega
+demanda (un espectro) sin veredicto ✓/✗ ni factor de uso, y ningún post de `/apuntes` tiene
+planilla hoy.
+
+#### `apuntes/nch2369-capacidad-y-07r1` · ⚠️ 16 hallazgos (1🔴 · 4🟠 · 7🟡 · 4🔵)
+
+| # | Sev | Cat | Hallazgo | Estado |
+|---|-----|-----|----------|--------|
+| 1 | 🔴 | N C | «Usar $R$ donde va $R_1$ … no conservador cuando el corte mínimo mordió» está **invertido**: $R \ge R^* \ge R_1$ **siempre** por construcción, así que sustituir $R_1$ por $R$ solo puede aumentar el multiplicador — es conservador, y más cuanto más mordió el mínimo | ✅ aplicado (se invirtió y se nombró el error que sí es peligroso: amplificar sin escalar antes) |
+| 2 | 🟠 | N | La Ec. (13) se citaba sin $(0{,}05/\xi)^{0,4}$ ni $P$; para $\xi = 0{,}02$ el grupo citado queda 44 % bajo el techo real | ✅ aplicado (ecuación completa + la asimetría con la Ec. 12) |
+| 3 | 🟠 | L C | El desbalance del chevron es **8.6.6**, no 8.6.7 (que trata los puntales horizontales); la frase «la misma 8.6.6» delataba el salto | ✅ aplicado |
+| 4 | 🟠 | L R | **No existe C8.1**: ambas citas en bloque son del comentario general **C8** (pp. 74-75) | ✅ aplicado |
+| 5 | 🟠 | E C | El hermano declaraba «no está cubierto … 5.10 a 5.14», pero esta nota cubre 5.12, 5.13 y 5.14 | ✅ aplicado en el hermano |
+| 6 | 🟡 | N C | §1 dice que el multiplicador «es siempre $R_1$» y §4 usa $0{,}7R = 2{,}1$ sin puente; en el gemelo esbeltez $R^* = 2{,}90$ → $0{,}7R_1 = 2{,}03$ y el déficit sube a 75 % | ✅ aplicado |
+| 7 | 🟡 | N U | $151 \times 2{,}1 = 317{,}1$, no 318; el desvío viene del post fuente | ⬜ |
+| 8 | 🟡 | N C | «$R$ no entra directo en ninguna fórmula de diseño» se contradice con la Ec. (13) —$(R+1)$— y con la Ec. (1b) | ✅ aplicado |
+| 9 | 🟡 | F | `Figure` importado y nunca usado (el post no tiene figuras, a diferencia de los hermanos) | ✅ aplicado (import eliminado; la figura queda como deuda) |
+| 10 | 🟡 | L | La cita de 4.1.3 no es literal | ⬜ |
+| 11 | 🟡 | L | «NCh 427/1» con espacio contra `NCh427/1` en la norma y en 6 de 7 usos del repo | ✅ aplicado |
+| 12 | 🟡 | U | $2{,}2\,M_p$ con $M_p$ sin definir en un post que acaba de definir $M_{pe}$ y $M^*_{pe}$ | ✅ aplicado |
+| 13 | 🔵 | N | El «40 % menos de demanda» es exacto sobre $R$, pero lo que divide el espectro es $R^*$ y la rampa comprime esa diferencia | ⬜ |
+| 14 | 🔵 | R | El `source` no declaraba Tabla 7, Tabla 8 ni 4.1 | ✅ aplicado |
+| 15 | 🔵 | U | «1 244 kN» con espacio de miles acá contra «1244 kN» en el post fuente | ⬜ |
+| 16 | 🔵 | L | Las citas conservan la coma de la norma y el cuerpo también, contra el punto del `blog` — división de casa ya establecida | ⬜ (no tocar) |
+
+**Verificado y correcto:** Ecs. (12) y (14) idénticas, incluido que el mínimo no lleva corrección
+por amortiguamiento · los cinco casos donde 5.13 no aplica, ninguno sobra ni falta · que ni el
+escalamiento del mínimo ni la reducción del máximo se aplican a desplazamientos · las **seis**
+capacidades esperadas de 8.3.1 con el 1,14 y el 0,3 exactos · $M^*_{pe}$ y el origen de su $P$ ·
+«divididas por 1,5», literal (y C8.3.1 agrega que «el factor de compatibilidad entre métodos es en
+esencia φ = 1,5») · 8.3.3 con la Tabla A3.1 de AISC 341-16 · **8.3.2** literal, y C8.3.2 respalda
+las dos consecuencias deducidas («no se permite el uso del Análisis Directo en el contexto del
+diseño sismorresistente nacional» + «debe realizarse un análisis de pandeo para definir K») ·
+8.3.4 y los cuatro puntos de C8.3.4 con su lista completa de límites locales · 8.3.5 · 8.2.3 con
+el 20 % y el 14 % · las seis citas de C8.5.2/C8.5.3, incluidos Chavez (2011) y los 3 diámetros ·
+8.6.6 (el 2 %) y 8.6.7 · Tabla 7 filas 5.1-5.4 («a momento y arriostrados por igual» es exacto) ·
+**28 ocurrencias de `0,7R` en las cláusulas 8-10** (35 en toda la norma): «unas treinta» es
+honesto · toda la aritmética del §4, incluidos $Z$ = 1 721 y 4 556 cm³ de la W16×57 y la W27×94 ·
+los 11 enlaces internos resuelven.
+
+**No verificable:** los 365/151 kN, el $R^* = 2{,}90$ y el $2{,}2\,M_p$ vienen del modelo SAP2000
+del experimento del factor R; se contrastaron contra el post fuente, no contra el modelo.
+
+**Planilla del canvas:** parcial · la cadena normativa es cerrada, pero el post **no trae un caso
+numérico propio**: la planilla tendría que inventar el caso o importarlo del chevron, que ya
+tiene la suya.
+
 ### 2026-08-02 · `hormigon/ejemplo-losa-punzonamiento-momento` · planilla · ✅ — 6 hallazgos (2🟠 · 3🟡 · 1🔵) — **los 6 aplicados**
 
 **Commit auditado:** `c7dad33` · **Método:** contraste de planillas. Planilla construida desde el PDF de **ACI 318-25, edición SI** con las cláusulas a la vista —**6.4.3.2**; Tabla **6.6.3.1.1(a)**; **8.2.4**(a)(b); Tabla **8.3.1.1** con sus notas y el piso de 125 mm de 8.3.1.1(a); **8.4.2.2.2/.2.3**, Tabla **8.4.2.2.4** con R8.4.2.2.4; **8.4.4.2.2/.2.3** con R8.4.4.2.3; **8.5.1.1**(d); **8.6.1.1/.6.1.2** con R8.6.1.2; **8.7.2.2**; **18.14.5.1**(a)(b) con la Fig. R18.14.5.1 y **18.14.5.2**(a); Tabla **19.2.4.1**; **20.2.2.2**; Tabla **21.2.1**(b), Tabla **21.2.2**; **22.6.2.1**; **22.6.3.1**; **22.6.4.1**; Tabla **22.6.5.2** con su nota (i); **22.6.5.3** con R22.6.5.3; **22.5.5.1.3**— y desde los datos declarados del post (`public/planillas/losa-punzonamiento-momento.json`: 195 pasos, 145 verificaciones, 118 contrastes, 43 tokens de esquema, 14 páginas A4 sin saltos forzados).
@@ -3125,7 +3293,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `ejemplo-viga-ltb` | 2026-08-01 | ⚠️ | 0 (1 aplicado: 1🟡) · planilla ✅ 31 contrastes, 3🟡 aplicados (escalar el redondeado, las dos cadenas: $F_{cr}$ 1458 → 1453 · $\phi_bM_n$ del caso B 51,0 → **50,9** y $M_n$ 56,7 → 56,6 · «casi triplica» → «×2.7») — los dos $C_b$ derivados de la Ec. F1-1, no citados |
 | `ejemplo-columna-galpon-compresion` | 2026-08-01 | ⚠️ | 0 (2 aplicados: 1🟡 1🔵) · planilla ✅ 44 contrastes, 2 aplicados (🟡 el §5 confundía pandeo torsional puro con flexo-torsional: E4 no alcanza a esta W porque $L_{cz} = L_{cy}$, y ahora publica su cifra, $F_e \approx 8\,100$ = 7,5× el del eje fuerte · 🟡 «casi triplica» → «×2.6») + 1🔵 conservado (los 79 344 kgf de E3-1, producto del $F_n$ redondeado contra 79 309 exactos; se mantiene por el fix de julio) — primera planilla de miembros: estrena las propiedades derivadas de las planchas |
 | `ejemplo-viga-carrilera-puente-grua` | 2026-08-01 | ✅ | 17 (0🔴 0🟠 · 11🟡 6🔵) · 2.ª pasada: 9 aplicados (1🔴 4🟠 4🟡) · planilla ✅ 62 contrastes, 13 hallazgos, **los 13 aplicados**: la Ec. A-3-1 con la constante de 360-16 y el exponente 1/3; la flecha lateral que era la vertical escalada; y la sección compuesta, que ninguna hipótesis reproducía — al componerla bien la fatiga baja a 0,96 y **deja de tomar el control en servicio severo**, así que la tesis de cierre se reescribió. De paso **invalidó el #17 de la 2.ª pasada**: la Categoría C del post es correcta, fila 5.8 de la Tabla A-3.1 |
-| `ejemplo-diagonal-hss-traccion` | 2026-07-31 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) · planilla ✅ 25 contrastes, 1 aplicado |
+| `ejemplo-diagonal-hss-traccion` | 2026-08-03 | ⚠️ | 6 (0🔴 0🟠 · 4🟡 2🔵) · 2.ª pasada: 9 aplicados (2🔴 4🟠 3🔵) · planilla ✅ 25 contrastes, 1 aplicado · **ampliación a tres actos 2026-08-03: 13 hallazgos (1🔴 3🟠 9🟡), los 13 aplicados — el 9 acotando la tesis; el `tema` se mantiene en Miembros** |
 | `aisc360-22-capB-requisitos-de-diseno` | — | — | — |
 | `aisc360-22-capD-traccion` | — | — | — |
 | `aisc360-22-capE-compresion` | — | — | — |
@@ -3154,10 +3322,13 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `terzaghi-vs-ecuacion-general` | 2026-07-26 | ⚠️ | 11 (0🔴 1🟠 · 6🟡 4🔵) |
 | `tres-coeficientes-del-mismo-suelo` | 2026-07-26 | ⚠️ | 10 (0🔴 1🟠 · 7🟡 2🔵) |
 
-### `apuntes` — apuntes (26)
+### `apuntes` — apuntes (29)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `nch2369-panorama-y-combinaciones` | 2026-08-03 | ⚠️ | 14 (0🔴 0🟠 · 6🟡 8🔵) · 3 aplicados (1🟠 2🟡) |
+| `nch2369-espectro-de-diseno` | 2026-08-03 | ⚠️ | 7 (0🔴 0🟠 · 1🟡 6🔵) · 7 aplicados (4🟠 3🟡) |
+| `nch2369-capacidad-y-07r1` | 2026-08-03 | ⚠️ | 6 (0🔴 0🟠 · 2🟡 4🔵) · 10 aplicados (1🔴 4🟠 5🟡) |
 | `deep-learning-with-python-cap12-deteccion-de-objetos` | 2026-07-26 | ⚠️ | 12 (0🔴 2🟠 · 8🟡 2🔵) |
 | `deep-learning-with-python-cap13-series-de-tiempo` | 2026-07-26 | ❌ | 13 (1🔴 5🟠 · 6🟡 1🔵) |
 | `deep-learning-with-python-cap14-clasificacion-de-texto` | 2026-07-26 | ⚠️ | 14 (0🔴 3🟠 · 7🟡 4🔵) |

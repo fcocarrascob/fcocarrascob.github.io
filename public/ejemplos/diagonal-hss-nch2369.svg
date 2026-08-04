@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 470" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="840" height="470" fill="#ffffff"/>
+  <defs>
+    <marker id="an" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#666"/>
+    </marker>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#a7b3bf" stroke-width="1.3"/>
+    </pattern>
+  </defs>
+
+  <!-- ══════════ PANEL IZQUIERDO · la brecha de 8.6.8 ══════════ -->
+  <text x="212" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">La brecha que abre la cláusula 8.6.8</text>
+
+  <!-- eje vertical: x0 = 150, escala 2.3 px/tonf -->
+  <line x1="150" y1="56" x2="150" y2="298" stroke="#333" stroke-width="1.2"/>
+  <line x1="150" y1="298" x2="418" y2="298" stroke="#bbb" stroke-width="1"/>
+  <g font-size="9.5" fill="#777" text-anchor="middle">
+    <line x1="150" y1="298" x2="150" y2="303" stroke="#bbb"/><text x="150" y="315">0</text>
+    <line x1="219" y1="298" x2="219" y2="303" stroke="#bbb"/><text x="219" y="315">30</text>
+    <line x1="288" y1="298" x2="288" y2="303" stroke="#bbb"/><text x="288" y="315">60</text>
+    <line x1="357" y1="298" x2="357" y2="303" stroke="#bbb"/><text x="357" y="315">90</text>
+  </g>
+  <text x="418" y="315" font-size="9.5" text-anchor="end" fill="#777">tonf</text>
+
+  <!-- línea de exigencia T_ye -->
+  <line x1="378" y1="56" x2="378" y2="192" stroke="#1c7c3c" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <line x1="378" y1="232" x2="378" y2="290" stroke="#1c7c3c" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+  <!-- barras -->
+  <rect x="150" y="66" width="111" height="22" fill="#c0392b" opacity="0.85"/>
+  <text x="144" y="81" font-size="10" text-anchor="end" fill="#444">acto 1, disponible</text>
+  <text x="267" y="81" font-size="10.5" fill="#c0392b" font-weight="bold">48.4</text>
+
+  <rect x="150" y="100" width="176" height="22" fill="#e08b00" opacity="0.85"/>
+  <text x="144" y="115" font-size="10" text-anchor="end" fill="#444">tope con U = 1</text>
+  <text x="332" y="115" font-size="10.5" fill="#a56a00" font-weight="bold">76.4</text>
+
+  <rect x="150" y="134" width="188" height="22" fill="#1a63a8" opacity="0.75"/>
+  <text x="144" y="149" font-size="10" text-anchor="end" fill="#444">P_ne (compresión)</text>
+  <text x="344" y="149" font-size="10.5" fill="#1a63a8" font-weight="bold">81.7</text>
+
+  <rect x="150" y="168" width="228" height="22" fill="#1c7c3c"/>
+  <text x="144" y="183" font-size="10" text-anchor="end" fill="#222" font-weight="bold">T_ye — lo exigido</text>
+  <text x="384" y="183" font-size="10.5" fill="#1c7c3c" font-weight="bold">99.3</text>
+
+  <text x="416" y="200" font-size="9.5" text-anchor="end" fill="#7a8ba0">117.6 — el techo no muerde</text>
+  <rect x="150" y="204" width="270" height="22" fill="none" stroke="#7a8ba0" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <text x="144" y="219" font-size="10" text-anchor="end" fill="#444">techo 0,7R₁</text>
+
+  <rect x="150" y="240" width="231" height="22" fill="#1c7c3c" opacity="0.42"/>
+  <text x="144" y="255" font-size="10" text-anchor="end" fill="#444">con refuerzo ✓</text>
+  <text x="387" y="255" font-size="10.5" fill="#1c7c3c" font-weight="bold">100.4</text>
+
+  <!-- la brecha, bajo las barras -->
+  <line x1="261" y1="278" x2="261" y2="288" stroke="#888" stroke-width="0.9"/>
+  <line x1="378" y1="278" x2="378" y2="288" stroke="#888" stroke-width="0.9"/>
+  <line x1="261" y1="283" x2="378" y2="283" stroke="#888" stroke-width="1.3" marker-start="url(#an)" marker-end="url(#an)"/>
+  <text x="319" y="277" font-size="10" text-anchor="middle" fill="#666" font-weight="bold">la brecha: ×2.05</text>
+
+  <!-- caja del tope duro -->
+  <rect x="56" y="336" width="362" height="98" rx="4" fill="#fdf6ee" stroke="#e8c9a0"/>
+  <text x="70" y="356" font-size="10.5" fill="#a56a00" font-weight="bold">El tope de 76.4 no lo sube ninguna soldadura</text>
+  <text x="70" y="374" font-size="9.8" fill="#7d5320">ya está calculado con U = 1, o sea con cordón infinito.</text>
+  <text x="70" y="390" font-size="9.8" fill="#7d5320">Y tampoco lo sube un tubo mayor: haría falta</text>
+  <text x="70" y="412" font-size="11.5" fill="#7d5320" font-weight="bold">U ≥ R_y·F_y / (0.75·R_t·F_u) = 1.166 &gt; 1</text>
+  <text x="70" y="427" font-size="9.3" fill="#a08060">— y U no puede pasar de 1, sea cual sea la sección</text>
+
+  <!-- ══════════ PANEL DERECHO · el corte reforzado ══════════ -->
+  <text x="628" y="26" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El detalle que cierra la brecha</text>
+  <text x="628" y="43" font-size="10" text-anchor="middle" fill="#888">corte transversal · la ranura corta también el refuerzo</text>
+
+  <!-- acotados superiores -->
+  <line x1="539" y1="70" x2="605" y2="70" stroke="#1c7c3c" stroke-width="0.9" marker-start="url(#an)" marker-end="url(#an)"/>
+  <text x="572" y="65" font-size="9.5" text-anchor="middle" fill="#1c7c3c">30</text>
+  <line x1="651" y1="70" x2="717" y2="70" stroke="#1c7c3c" stroke-width="0.9" marker-start="url(#an)" marker-end="url(#an)"/>
+  <text x="684" y="65" font-size="9.5" text-anchor="middle" fill="#1c7c3c">30</text>
+  <text x="628" y="65" font-size="9.5" text-anchor="middle" fill="#c0392b">19</text>
+
+  <!-- gusset pasante (16 mm → 35 px) -->
+  <rect x="610" y="82" width="35" height="300" fill="url(#hatch)" stroke="#5a6b7c" stroke-width="1.3"/>
+
+  <!-- tubo: exterior 224 px (2.2 px/mm), pared 13 px -->
+  <path d="M516,104 H740 V328 H516 Z M529,117 H727 V315 H529 Z" fill="#e9eef3" stroke="#333" stroke-width="1.8" fill-rule="evenodd"/>
+
+  <!-- la ranura: se borra la pared donde pasa el gusset y se marcan sus bordes -->
+  <rect x="607" y="102" width="42" height="17" fill="#ffffff"/>
+  <rect x="607" y="313" width="42" height="17" fill="#ffffff"/>
+  <g stroke="#c0392b" stroke-width="1.8">
+    <line x1="607" y1="104" x2="607" y2="117"/><line x1="649" y1="104" x2="649" y2="117"/>
+    <line x1="607" y1="315" x2="607" y2="328"/><line x1="649" y1="315" x2="649" y2="328"/>
+  </g>
+
+  <!-- planchuelas de refuerzo 8 × 30 mm → 17.6 × 66 px, dos por pared ranurada -->
+  <g fill="#1c7c3c" opacity="0.82">
+    <rect x="539" y="86" width="66" height="18"/>
+    <rect x="651" y="86" width="66" height="18"/>
+    <rect x="539" y="328" width="66" height="18"/>
+    <rect x="651" y="328" width="66" height="18"/>
+  </g>
+
+  <!-- acotado B -->
+  <line x1="766" y1="104" x2="766" y2="328" stroke="#888" stroke-width="0.9" marker-start="url(#an)" marker-end="url(#an)"/>
+  <text x="774" y="212" font-size="10" fill="#666">B = 101.6</text>
+
+  <!-- leyendas laterales -->
+  <text x="774" y="94" font-size="9.5" fill="#1c7c3c" font-weight="bold">4 planchuelas</text>
+  <text x="774" y="106" font-size="9.5" fill="#1c7c3c">de 8 × 30 mm</text>
+  <text x="510" y="368" font-size="9.5" fill="#5a6b7c">gusset t_p = 16 mm</text>
+  <text x="510" y="381" font-size="9" fill="#999">cotas en mm</text>
+
+  <!-- banda de resultado -->
+  <rect x="452" y="392" width="376" height="66" rx="4" fill="#f0f7f2" stroke="#a9cdb6"/>
+  <text x="464" y="410" font-size="9.8" fill="#2f5c40">A_n = 19.46 + 9.60 = 29.06 cm²   ·   U = 1 − 3.59/30 = 0.880</text>
+  <text x="464" y="426" font-size="9.8" fill="#2f5c40">A_e = 25.58 cm²   ·   φ F_ue A_e = 0.75 · 5232 · 25.58 = 100.4 tonf</text>
+  <text x="464" y="447" font-size="11.5" fill="#1c7c3c" font-weight="bold">100.4 ≥ T_ye = 99.3 tonf   →   uso 0.99 ✓</text>
+</svg>

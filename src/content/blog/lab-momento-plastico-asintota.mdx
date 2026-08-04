@@ -1,0 +1,167 @@
+---
+title: "Mp = Z·Fy es una asíntota que nunca se toca"
+description: "El momento plástico no es un valor que la sección alcance: es el límite al que tiende cuando la curvatura se va a infinito. En un perfil I la asíntota es benigna —98,3 % de Mp a dos veces la curvatura de fluencia, contra 91,7 % de un rectángulo— y ahí está la razón de fondo del factor de forma. De paso aparece algo menos obvio sobre secciones de fibras: la malla acierta la resistencia y se equivoca en la rigidez."
+pubDate: 2026-08-03
+tags: ["OpenSees", "OpenSeesPy", "Laboratorio", "momento-curvatura", "momento plástico", "factor de forma", "secciones de fibras", "acero", "verificación"]
+section: "Laboratorio"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+$M_p = Z F_y$ se escribe sin pensarlo y se usa como si fuera un valor que la sección alcanza. ¿A qué curvatura lo alcanza?
+
+Segunda nota del **laboratorio**, la serie que corre en paralelo a la [escalera de verificación de Rukan](/blog/rukan-verificacion-modal-opensees/) y que empezó con [el momento del vano que no está en la salida del elemento](/blog/lab-eleload-empotramiento/). La regla es la misma: el fenómeno se resuelve por **dos caminos independientes** —fórmula cerrada o numpy puro, y OpenSeesPy— y la tabla es la salida literal del script.
+
+## El caso
+
+Un perfil H soldado de galpón, en flexión pura, con material elastoplástico perfecto. La sección se define por sus planchas y no por una tabla de perfiles, así que todas las propiedades salen de la geometría declarada: ala 200 × 12 mm, alma de 6 mm, alto total 400 mm, $F_y = 250$ MPa y $E = 200$ GPa.
+
+```
+  Z  =    1,143,264 mm³        Mp = Fy·Z =   285.8 kN·m
+  S  =    1,036,445 mm³        My = Fy·S =   259.1 kN·m
+  I  =  207,289,088 mm⁴        φ_y = 0.00625 1/m
+  Z/S = 1.1031   → entre My y Mp queda un 10.3 % de momento.
+```
+
+La curvatura no aparece en ninguna de esas fórmulas, y ese es exactamente el problema. Para meterla hay que integrar la sección. Con $d = h/2$ la semialtura, $a = d - t_f$ el borde interior del ala y $c = \varepsilon_y/\varphi$ la semiprofundidad del núcleo elástico, conviene escribir $M$ como el **déficit** respecto del bloque totalmente plastificado: dentro del núcleo la tensión vale $F_y\,y/c$ en vez de $F_y$, así que a cada fibra le falta $F_y(1 - y/c)$.
+
+<Equation label="Momento a curvatura φ, elastoplástico perfecto">
+$$M(\varphi) = M_p - 2F_y\int_0^{c}\left(1 - \frac{y}{c}\right) y\, b(y)\, dy$$
+</Equation>
+
+Integrando con $b(y) = t_w$ dentro del alma y $b(y) = b_f$ dentro del ala salen tres tramos, según dónde caiga el núcleo:
+
+$$
+\begin{aligned}
+c \geq d: \quad & M = EI\varphi \\
+a < c < d: \quad & M = F_y\left[Z - 2\left(t_w\left(\tfrac{a^2}{2} - \tfrac{a^3}{3c}\right) + b_f\left(\tfrac{c^2-a^2}{2} - \tfrac{c^2}{3} + \tfrac{a^3}{3c}\right)\right)\right] \\
+c \leq a: \quad & M = F_y\left[Z - \tfrac{t_w c^2}{3}\right]
+\end{aligned}
+$$
+
+No hay fuente que citar acá: esto no es una disposición normativa sino mecánica de sección, sale de equilibrio, Navier y la ley constitutiva. Derivarla la deja auditable. Y cierra en sus dos límites, que es la primera verificación: en $c = a$ el segundo tramo se reduce al tercero, y en $c = d$ se reduce a $F_y S = M_y$.
+
+En OpenSees el mismo problema es una `section Fiber` sobre un `zeroLengthSection` con dos nodos coincidentes, empujada por control de curvatura. El material es `ElasticPP`, que nombra exactamente la ley que asume la fórmula. Con 20 fibras por ala y 40 en el alma:
+
+| Magnitud | Geometría exacta | OpenSees | Error |
+|---|---|---|---|
+| Rigidez a flexión EI [kN·m²] | 41457.8176 | 41454.4665 | 0.0081 % |
+| Momento a la primera fluencia My [kN·m] | 259.1114 | 259.0904 | 0.0081 % |
+
+## Mp no se alcanza: se aproxima
+
+Mirando la fórmula, la respuesta a la pregunta inicial es incómoda: **nunca**. El núcleo elástico mide $c = \varepsilon_y/\varphi$, y eso es positivo para toda curvatura finita. Siempre queda una franja de material sin plastificar, así que el déficit nunca se anula: decae como $1/\varphi^2$, pero no llega a cero. $M_p$ es el límite, no un valor.
+
+| Magnitud | Fórmula cerrada | OpenSees | Error |
+|---|---|---|---|
+| M/Mp a φ = 1.0 φ_y | 0.9066 | 0.9065 | 0.0081 % |
+| M/Mp a φ = 1.5 φ_y | 0.9689 | 0.9688 | 0.0063 % |
+| M/Mp a φ = 2.0 φ_y | 0.9825 | 0.9825 | 0.0018 % |
+| M/Mp a φ = 5.0 φ_y | 0.9972 | 0.9972 | 0.0044 % |
+| M/Mp a φ = 10.0 φ_y | 0.9993 | 0.9992 | 0.0065 % |
+
+Pero la segunda lectura de esa tabla desarma a la primera. A **dos veces** la curvatura de fluencia ya hay 98,3 % de $M_p$, y a cinco veces, 99,7 %. La asíntota existe y es inalcanzable, y al mismo tiempo es **irrelevante**: la sección entra en el último 2 % de su capacidad apenas pasa el codo.
+
+<Figure
+  src="/lab-momento-plastico-asintota/fig-asintota.svg"
+  alt="Momento normalizado M/Mp contra curvatura normalizada φ/φy, de 0 a 6. Una línea gris de trazos marca Mp = Z·Fy en 1,0. La curva azul del perfil H soldado sube casi vertical hasta 0,907 en φy y luego se aplana: 0,983 en 2φy y 0,997 en 5φy, acercándose a la línea gris sin tocarla. La curva verde del rectángulo macizo sube más lento: 0,667 en φy y 0,917 en 2φy. Los puntos rojos de OpenSees caen exactamente sobre la curva azul."
+  caption="Las dos curvas tienden a Mp sin alcanzarlo, pero el perfil I llega al 98 % a dos veces la curvatura de fluencia y el rectángulo macizo recién al 92 %. La distancia entre ambas es el factor de forma."
+/>
+
+## Por qué el I llega tan rápido
+
+El contraste con un rectángulo macizo del mismo ancho y alto explica el porqué:
+
+```
+  φ/φ_y      H soldado    rectángulo
+    1.0       0.9066       0.6667
+    2.0       0.9825       0.9167
+    5.0       0.9972       0.9867
+   10.0       0.9993       0.9967
+
+  factor de forma Z/S:  1.1031  vs  1.5000
+```
+
+Son los mismos dos números de siempre, vistos de otra forma. El factor de forma $Z/S$ mide cuánto momento queda **por sobre** la primera fluencia, y esa reserva viene de redistribuir tensión desde el núcleo hacia afuera. Un rectángulo tiene la mitad de su área en la mitad interior de la altura, donde a curvatura baja la tensión es baja: le sobra material que redistribuir, y por eso su reserva es del 50 % y le cuesta cobrarla. Un perfil I ya puso el material en las alas. No tiene casi nada que redistribuir —10,3 %— y por eso lo cobra de inmediato.
+
+<Note type="tip" title="Lo que esto justifica">
+El diseño en acero usa $M_p$ directo, sin corregir por curvatura, y esta es la razón de fondo: en un perfil I la asíntota se toca prácticamente en el codo. En una plancha, una platabanda o cualquier sección maciza, en cambio, el tramo de transición es largo y la ductilidad de curvatura que hay que exigir para movilizar $M_p$ es mucho mayor.
+</Note>
+
+## De paso: la malla no te da resistencia
+
+Al preparar la comparación aparece algo menos obvio sobre las secciones de fibras.
+
+Una fibra rectangular ubicada en el centroide de su franja reproduce $\int y\, dA$ **exactamente**: $A\,y_c = b(y_2^2 - y_1^2)/2$, que es la integral, no una aproximación. Como $M_p = F_y Z$ y $Z = \int |y|\, dA$, la consecuencia es que **el momento plástico de una sección de fibras sale exacto con una sola fibra por ala**:
+
+| Magnitud | Z exacto | Suma de fibras | Error |
+|---|---|---|---|
+| Z de la malla 1×2 [mm³] | 1143264.0 | 1143264.0 | 0.0000 % |
+| Z de la malla 2×8 [mm³] | 1143264.0 | 1143264.0 | 0.0000 % |
+| Z de la malla 4×16 [mm³] | 1143264.0 | 1143264.0 | 0.0000 % |
+| Z de la malla 20×40 [mm³] | 1143264.0 | 1143264.0 | 0.0000 % |
+
+Con una trampa. La igualdad vale para $\int y\, dA$, y $Z$ es $\int |y|\, dA$: si una franja **cruza el eje neutro**, $|y|$ deja de ser lineal dentro de ella y la exactitud se pierde. Eso ocurre exactamente cuando el alma lleva un número **impar** de fibras:
+
+| Magnitud | Z exacto | Suma de fibras | Error |
+|---|---|---|---|
+| Z con 1 fibra de alma [mm³] | 1143264.0 | 931200.0 | 18.5490 % |
+| Z con 3 fibras de alma [mm³] | 1143264.0 | 1119701.3 | 2.0610 % |
+| Z con 5 fibras de alma [mm³] | 1143264.0 | 1134781.4 | 0.7420 % |
+| Z con 9 fibras de alma [mm³] | 1143264.0 | 1140645.9 | 0.2290 % |
+
+Con **una** fibra de alma el $M_p$ del modelo sale 19 % bajo, porque esa única fibra está centrada en $y = 0$ y no aporta momento: el alma entera desaparece del cálculo.
+
+Y lo que la malla sí cambia siempre es la rigidez. A cada franja le falta su término de Steiner $b t^3/12$, así que $\sum A_i y_i^2 < \int y^2 dA$ sin excepción. Lo interesante es dónde:
+
+```
+  malla (ala×alma)     I_malla/I
+     1 ×  2            0.96767
+    20 ×  2            0.96794
+     1 ×  8            0.99772
+     1 × 40            0.99964
+    20 × 40            0.99992
+```
+
+Refinar el ala de 1 a 20 fibras mueve la rigidez en un 0,03 %. Refinar el alma de 2 a 40 la mueve en un 3 %. El déficit lo dominan las franjas **más altas**, no las más tensionadas — que es justo al revés de donde el instinto manda poner las fibras.
+
+<Figure
+  src="/lab-momento-plastico-asintota/fig-malla.svg"
+  alt="Propiedades de la sección de fibras divididas por las exactas, contra el número de fibras del alma de 1 a 40, con 4 fibras por ala. La línea azul de Z, con alma par, es plana en 1,000 desde 2 fibras. Los puntos verdes de Z con alma impar arrancan en 0,815 con una fibra y suben acercándose a 1 sin llegar. La curva roja de I parte en 0,87 y sube monótona hasta 0,9996 con 40 fibras, siempre por debajo de 1."
+  caption="Con alma par, Z —y por lo tanto Mp— es exacto desde dos fibras. Con alma impar nunca lo es. La inercia, en cambio, siempre queda por debajo: refinar compra rigidez, no resistencia."
+/>
+
+Que los tres caminos cierren es lo que permite afirmar todo esto. La suma de fibras en numpy predice lo que da el motor, malla por malla:
+
+| Magnitud | Fibras en numpy | OpenSees | Error |
+|---|---|---|---|
+| M a 5 φ_y con malla 2×8 [kN·m] | 284.4492 | 284.4492 | 0.0000 % |
+| M a 5 φ_y con malla 4×16 [kN·m] | 284.9359 | 284.9359 | 0.0000 % |
+| M a 5 φ_y con malla 8×32 [kN·m] | 285.0167 | 285.0167 | 0.0000 % |
+| M a 5 φ_y con malla 20×40 [kN·m] | 285.0035 | 285.0035 | 0.0000 % |
+
+O sea: la brecha contra la fórmula cerrada es discretización, y no un problema del motor.
+
+<Note type="warning" title="La columna modelada es más blanda que la real">
+Una sección de fibras con el alma gruesamente mallada acierta la resistencia y subestima la rigidez. En un pushover eso alarga el período, corre el desplazamiento de fluencia y cambia la demanda — todo sin que ningún número de resistencia se vea mal. Si el modelo se usa para desplazamientos, el alma es lo primero que hay que refinar.
+</Note>
+
+## El veredicto
+
+Tres cosas, en orden de cuánto duelen:
+
+1. **El alma va con un número par de fibras.** Con alma impar el $M_p$ del modelo sale bajo, y con una sola fibra sale 19 % bajo, en silencio.
+2. **Refinar la malla compra rigidez, no resistencia** — y la compra en el alma, no en las alas. Al revés de donde el instinto la pone.
+3. **$M_p$ es una asíntota, y en un perfil I eso no importa.** A dos veces la curvatura de fluencia hay 98 % de $M_p$. En secciones macizas sí importa: ahí movilizar $M_p$ pide bastante más ductilidad de curvatura.
+
+## Reproducir
+
+```bash
+python -m lab.nota02_momento_curvatura_acero
+```
+
+El script está en [`lab/nota02_momento_curvatura_acero.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/nota02_momento_curvatura_acero.py) del repositorio de [Rukan](https://github.com/fcocarrascob/rukan). Resuelve la misma sección tres veces: la fórmula cerrada integrada a mano, una suma de fibras en numpy y la `section Fiber` de OpenSeesPy. Las dos referencias viven en [`lab/_lib/ref.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/_lib/ref.py), que **no importa `openseespy` ni `rukan`** — si la referencia compartiera código con lo verificado, la tabla daría error 0 % sin decir nada. Todas las tablas de este post son la salida literal del script, y corren en `pytest` como test de regresión.

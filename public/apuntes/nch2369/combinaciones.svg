@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="430" fill="#ffffff"/>
+
+  <text x="500" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">Dónde entra cada cosa en la combinación sísmica</text>
+  <text x="500" y="48" font-size="12" text-anchor="middle" fill="#6b7280">NCh 2369:2025, cláusulas 4.3.2, 4.5.1, 4.5.2 y Anexo B (normativo)</text>
+
+  <!-- columna 1: cargas nominales -->
+  <rect x="40" y="76" width="212" height="176" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="52" y="100" font-size="12.5" fill="#222" font-weight="bold">1 · Cargas nominales</text>
+  <text x="52" y="124" font-size="11.5" fill="#333">D — permanente</text>
+  <text x="52" y="143" font-size="11.5" fill="#333">L — de uso (entra con el factor a)</text>
+  <text x="52" y="162" font-size="11.5" fill="#333">SO — operación esperada</text>
+  <text x="52" y="181" font-size="11.5" fill="#333">SA — accidental del sismo</text>
+  <text x="52" y="209" font-size="10.5" fill="#6b7280">SO y SA no existen en NCh 3171:</text>
+  <text x="52" y="223" font-size="10.5" fill="#6b7280">las define esta norma, en 4.5.1. Son</text>
+  <text x="52" y="237" font-size="10.5" fill="#6b7280">la huella de que el edificio produce.</text>
+
+  <!-- columna 2: la accion sismica -->
+  <rect x="302" y="76" width="250" height="176" rx="6" fill="#eff6ff" stroke="#93b4dd"/>
+  <text x="314" y="100" font-size="12.5" fill="#1a63a8" font-weight="bold">2 · E — la acción sísmica</text>
+  <text x="314" y="124" font-size="11.5" fill="#333">Espectro de diseño S_a (5.4)</text>
+  <text x="314" y="143" font-size="11.5" fill="#333">× I según la categoría (4.3.2)</text>
+  <text x="314" y="161" font-size="10.5" fill="#6b7280">I = 0,80 · 1,00 · 1,20 · 1,20 (cat. I a IV)</text>
+  <text x="314" y="189" font-size="11.5" fill="#333">Simultaneidad direccional (4.5.2):</text>
+  <text x="314" y="209" font-size="11.5" fill="#1a63a8">± 1,0 Ex ± 0,3 Ey ± 0,3 Ez</text>
+  <text x="314" y="228" font-size="10.5" fill="#6b7280">y las dos permutaciones que ponen</text>
+  <text x="314" y="242" font-size="10.5" fill="#6b7280">el 1,0 en «y» y en «z».</text>
+
+  <!-- columna 3: los dos metodos -->
+  <rect x="602" y="76" width="358" height="80" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="614" y="98" font-size="12.5" fill="#222" font-weight="bold">3a · Método ASD</text>
+  <text x="614" y="120" font-size="11.5" fill="#333">D + 0,75 aL + 0,75 SO + 0,75 SA + 0,70 E</text>
+  <text x="614" y="140" font-size="11.5" fill="#333">D + 0,75 SA + 0,70 E</text>
+
+  <rect x="602" y="172" width="358" height="80" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="614" y="194" font-size="12.5" fill="#222" font-weight="bold">3b · Método LRFD</text>
+  <text x="614" y="216" font-size="11.5" fill="#333">1,2 D + aL + SO + SA + E</text>
+  <text x="614" y="236" font-size="11.5" fill="#333">0,9 D + SA + E</text>
+
+  <!-- flechas -->
+  <line x1="256" y1="164" x2="296" y2="164" stroke="#6b7280" stroke-width="1.5" marker-end="url(#fl)"/>
+  <line x1="556" y1="130" x2="596" y2="116" stroke="#6b7280" stroke-width="1.5" marker-end="url(#fl)"/>
+  <line x1="556" y1="196" x2="596" y2="212" stroke="#6b7280" stroke-width="1.5" marker-end="url(#fl)"/>
+
+  <!-- el 1,5 -->
+  <rect x="40" y="288" width="920" height="120" rx="6" fill="#fef6ee" stroke="#e0a96d"/>
+  <text x="60" y="314" font-size="12.5" fill="#b35c0e" font-weight="bold">El factor 1,5 — el puente entre los dos métodos (Anexo B, normativo)</text>
+  <text x="60" y="338" font-size="11.5" fill="#333">Las dos listas de arriba no son la misma cosa escrita distinto: una entrega cargas de servicio y la otra, cargas mayoradas.</text>
+  <text x="60" y="357" font-size="11.5" fill="#333">Para poder pedir «la capacidad esperada» sin cambiar de método a mitad de cálculo, la norma acepta una equivalencia</text>
+  <text x="60" y="376" font-size="11.5" fill="#333">entre ambos <tspan font-weight="bold">a nivel de resistencia, igual a 1,5</tspan> — y advierte que «no se debe entender como una equivalencia absoluta,</text>
+  <text x="60" y="395" font-size="11.5" fill="#333">sino como un criterio práctico razonable». Aparece en 8.3.1, 10.1.4 y 10.1.6, y en los comentarios C8.3.4 y C8.7.5.</text>
+</svg>
