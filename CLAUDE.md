@@ -2,11 +2,26 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Idioma — español neutro, siempre
+
+**Todo el español que se escriba aquí es español neutro: el de segunda persona `tú`, sin voseo y sin regionalismos.** Aplica a todo —posts y contenido MDX, textos de UI, mensajes de error, comentarios de código, mensajes de commit, y las respuestas al usuario en el chat— e igual a agentes y subagentes.
+
+En concreto:
+
+- **`tú`, nunca `vos`**: «si no puedes abrir el PDF», no «si no podés»; «ten en cuenta», no «tené en cuenta». Los imperativos son `usa`, `revisa`, `escribe`, `mira`, `abre`.
+- **Nada de `vosotros`** tampoco: el plural es `ustedes`.
+- **Sin regionalismos** de ningún país, incluido Chile: nada de «al tiro», «cachai», «harto», «pololear», «ojo que». Si una palabra delata de dónde es quien escribe, se cambia por la neutra.
+- **Vocabulario técnico estándar**: `computadora`/`equipo`, `archivo`, `enlace`, `pantalla`. Los términos de ingeniería y los nombres de norma se dejan como los usa la norma (`viga`, `losa`, `zapata`, `alma`, `ala`, `pandeo lateral-torsional`).
+
+Por qué: el sitio se lee desde toda Latinoamérica y España, y el voseo lo marca como material de un solo país. El neutro no es más frío —la voz sigue siendo directa y en primera persona del plural cuando corresponde—, solo deja de excluir.
+
+Si un texto ya publicado tiene voseo o un regionalismo, se corrige en el mismo commit en que se lo toca.
+
 ## Fuentes normativas — regla no negociable
 
 **Toda ecuación, coeficiente o valor de tabla que se cite —en un post, en una planilla del canvas o en el código de un motor— se lee del PDF de la norma antes de escribirse. Nunca de memoria, y nunca solo de las fichas de `material_teorico`.**
 
-Aplica igual a agentes y subagentes. Si no podés abrir el PDF, no escribas el número: dilo.
+Aplica igual a agentes y subagentes. Si no puedes abrir el PDF, no escribas el número: dilo.
 
 ### Las ediciones vigentes, y las únicas que se citan
 
