@@ -40,10 +40,16 @@ const RESET = '\x1b[0m';
  * cualquiera de las dos.
  */
 const FUENTES = [
-  { prefijo: 'src/lib/acero/', normas: ['aisc360-22'] },
-  { prefijo: 'src/lib/placaBase', normas: ['aisc360-22', 'aci318-25'] },
-  { prefijo: 'src/lib/zapata', normas: ['aci318-25'] },
+  { prefijo: 'src/lib/acero/', normas: ['aisc360-22'], zona: 'motor' },
+  { prefijo: 'src/lib/placaBase', normas: ['aisc360-22', 'aci318-25'], zona: 'motor' },
+  { prefijo: 'src/lib/zapata', normas: ['aci318-25'], zona: 'motor' },
+  // Los posts entran al mismo control: una ecuación mal citada en una nota o en
+  // un ejemplo la ve el lector, que es peor que si vive solo en el código.
+  { prefijo: 'src/content/acero/', normas: ['aisc360-22', 'aisc341-22'], zona: 'post' },
+  { prefijo: 'src/content/hormigon/', normas: ['aci318-25'], zona: 'post' },
 ];
+
+const RAICES = ['src/lib', 'src/content'];
 
 const indice = JSON.parse(await readFile(path.join(ROOT, 'data', 'normas-indice.json'), 'utf8'));
 
@@ -53,7 +59,17 @@ const indice = JSON.parse(await readFile(path.join(ROOT, 'data', 'normas-indice.
 // de un artículo. Sin esto, prosa como «H1-1 necesita la capacidad del eje
 // débil» se contaría como cita de una ecuación que no existe (las reales son
 // H1-1a y H1-1b) y el script gritaría por un comentario bien escrito.
-const TAG = String.raw`[A-L]\d{0,2}-\d{1,2}[ab]?`;
+// Dos formas conviven y hay que reconocer las dos:
+//
+//   · capítulo — «F4-9b», «J3-6c». El sufijo va hasta `d`: la J3-6 se abre en
+//     a/b (aplastamiento) y c/d (desgarre), y con `[ab]?` una cita CORRECTA de
+//     un post se leía como huérfana.
+//   · apéndice — «A-8-3», «A-3-1M». Tres partes, y la M final es la versión
+//     métrica, que es la que este sitio cita siempre.
+//
+// El apéndice va primero en la alternancia: si no, «A-3-1M» se leería como el
+// tag de capítulo «A-3» y perdería la mitad.
+const TAG = String.raw`(?:[A-H]-\d{1,2}-\d{1,2}[A-Za-z]?|[A-L]\d{0,2}-\d{1,2}[a-d]?)`;
 const DETECTORES = [
   new RegExp(String.raw`\((${TAG})\)`, 'g'),
   new RegExp(String.raw`\bEcs?\.\s*(${TAG})`, 'g'),
@@ -62,17 +78,17 @@ const DETECTORES = [
   new RegExp(String.raw`\b(?:la|las|de la)\s+(${TAG})\b`, 'g'),
 ];
 
-async function archivosTs(dir) {
+async function archivos(dir) {
   const out = [];
   for (const e of await readdir(path.join(ROOT, dir), { withFileTypes: true })) {
     const rel = path.posix.join(dir, e.name);
-    if (e.isDirectory()) out.push(...(await archivosTs(rel)));
-    else if (e.name.endsWith('.ts') || e.name.endsWith('.tsx')) out.push(rel);
+    if (e.isDirectory()) out.push(...(await archivos(rel)));
+    else if (/\.(ts|tsx|mdx)$/.test(e.name)) out.push(rel);
   }
   return out;
 }
 
-const todos = await archivosTs('src/lib');
+const todos = (await Promise.all(RAICES.map(archivos))).flat();
 /** Map<`${norma}|${tag}`, {tag, normas, sitios[]}> */
 const citas = new Map();
 const huerfanas = [];
@@ -89,14 +105,25 @@ for (const rel of todos) {
       for (const m of linea.matchAll(re)) encontrados.add(m[1]);
     }
     for (const tag of encontrados) {
-      const donde = fuente.normas.find((k) => indice.normas[k]?.ecuaciones[tag]);
+      let donde = fuente.normas.find((k) => indice.normas[k]?.ecuaciones[tag]);
       const sitio = `${rel}:${n + 1}`;
+      // Referencia a la FAMILIA: «H1-1» no existe, pero H1-1a y H1-1b sí, y
+      // nombrar el par por su raíz es uso corriente. Se acepta y se marca.
+      // No afloja el chequeo real: el F7-12 de 360-16 sigue cayendo, porque no
+      // existe ninguna F7-12a que lo respalde.
+      let familia = false;
+      if (!donde) {
+        donde = fuente.normas.find((k) =>
+          ['a', 'b'].some((s) => indice.normas[k]?.ecuaciones[tag + s])
+        );
+        familia = Boolean(donde);
+      }
       if (!donde) {
         huerfanas.push({ tag, sitio, normas: fuente.normas, linea: linea.trim() });
         continue;
       }
       const clave = `${donde}|${tag}`;
-      if (!citas.has(clave)) citas.set(clave, { norma: donde, tag, sitios: [] });
+      if (!citas.has(clave)) citas.set(clave, { norma: donde, tag, sitios: [], familia });
       citas.get(clave).sitios.push(sitio);
     }
   }
@@ -128,7 +155,41 @@ if (huerfanas.length > 0) {
 // que se regenera entero se vacía solo y deja de ser una fuente de verdad.
 
 const DESTINO = path.join(ROOT, 'ECUACIONES.md');
-const FILA = /^\|\s*`?([A-L]\d{0,2}-\d{1,2}[ab]?)`?\s*\|[^|]*\|([^|]*)\|([^|]*)\|/;
+
+/**
+ * Las dos ULTIMAS celdas de la fila son las humanas, se lea la tabla con las
+ * columnas que se lea. Parsear por posición desde la izquierda ataba el archivo
+ * a un número de columnas y se rompía al agregar una.
+ */
+function celdasDeFila(linea) {
+  const m = linea.match(/^\|\s*`?([A-L]\d{0,2}-\d{1,2}[a-d]?)`?\s*\|(.*)\|\s*$/);
+  if (!m) return null;
+  const celdas = m[2].split('|').map((s) => s.trim());
+  if (celdas.length < 2) return null;
+  return { tag: m[1], ancla: celdas.at(-2), revisada: celdas.at(-1) };
+}
+
+/**
+ * Si la ecuación está citada en el motor, en la memoria, o en las dos.
+ *
+ * Es lo que decide si tiene DOBLE ENTRADA: el motor TS y la cadena que la
+ * memoria hace evaluar a mathjs son dos implementaciones independientes, y una
+ * ecuación que solo vive en una no está contrastada contra nada aunque su
+ * número se vea bien. Ojo con qué mide: mide la CITA, no la implementación. Una
+ * fila `motor` puede significar que la memoria sí la calcula pero sin escribir
+ * su número — que también hay que arreglar, porque la regla de citar aplica a
+ * las dos.
+ */
+function dobleEntrada(sitios) {
+  const mem = sitios.some((s) => s.includes('memoria.ts'));
+  const motor = sitios.some((s) => s.startsWith('src/lib/') && !s.includes('memoria.ts'));
+  if (mem && motor) return '✅';
+  if (mem) return '`solo memoria`';
+  if (motor) return '`solo motor`';
+  // Ni motor ni memoria: la cita solo un post. No es que le falte una
+  // implementación — es que no hay ninguna, y su número no lo comprueba nada.
+  return '`solo prosa`';
+}
 
 async function columnasHumanas() {
   const previo = new Map();
@@ -142,8 +203,8 @@ async function columnasHumanas() {
   for (const linea of texto.split('\n')) {
     const h = linea.match(/^##\s+.*`([a-z0-9-]+)`/);
     if (h) norma = h[1];
-    const m = linea.match(FILA);
-    if (m && norma) previo.set(`${norma}|${m[1]}`, { ancla: m[2].trim(), revisada: m[3].trim() });
+    const c = celdasDeFila(linea);
+    if (c && norma) previo.set(`${norma}|${c.tag}`, { ancla: c.ancla, revisada: c.revisada });
   }
   return previo;
 }
@@ -178,9 +239,15 @@ if (ESCRIBIR) {
   L.push('- **Ec.** — la etiqueta citada. Que exista en la edición vigente lo verifica el');
   L.push('  script y no admite falso positivo: es el chequeo que habría cazado el');
   L.push('  `F7-12/F7-13` de 360-16 el día que se escribió.');
-  L.push('- **Dónde** — todos los sitios del código que la citan. Más de uno es lo normal y');
-  L.push('  lo deseable: el motor y la memoria son dos implementaciones, y una ecuación que');
-  L.push('  vive en una sola no tiene doble entrada aunque el número se vea bien.');
+  L.push('- **Dónde** — todos los sitios que la citan: motores (`acero/…`) y posts');
+  L.push('  (`acero/ejemplo-…mdx`). Los posts entran al mismo control porque una ecuación mal');
+  L.push('  citada en una nota la ve el lector, que es peor que si vive solo en el código.');
+  L.push('- **Doble entrada** — si la citan las DOS implementaciones: el motor TS y la cadena');
+  L.push('  que la memoria hace evaluar a mathjs. Una ecuación que vive en una sola no está');
+  L.push('  contrastada contra nada aunque su número se vea bien. `solo prosa` es que ningún');
+  L.push('  motor la implementa: aparece en un post y nada comprueba su número. Lo deriva el');
+  L.push('  script, y mide la CITA, no la implementación: un `solo motor` puede significar que');
+  L.push('  la memoria sí la calcula pero sin escribir su número, que también hay que arreglar.');
   L.push('- **Ancla** — qué fija su valor. `planilla:<slug>` si una planilla publicada la');
   L.push('  cierra, `continuidad` si la fija una identidad en una frontera de tabla, `—` si');
   L.push('  no la fija nada. Las filas con `—` son el backlog de riesgo.');
@@ -221,6 +288,14 @@ if (ESCRIBIR) {
     L.push(sinAncla.map((c) => `\`${c.tag}\``).join(' · '));
     L.push('');
   }
+  const sinDoble = [...citas.values()].filter((c) => dobleEntrada(c.sitios) !== '✅').sort(orden);
+  if (sinDoble.length > 0) {
+    L.push(`**Sin doble entrada (${sinDoble.length}).** Las cita una sola de las dos`);
+    L.push('implementaciones, así que ningún contraste las mira:');
+    L.push('');
+    L.push(sinDoble.map((c) => `\`${c.tag}\` ${dobleEntrada(c.sitios).replace(/`/g, '')}`).join(' · '));
+    L.push('');
+  }
   if (sinRevisarLista.length > 0) {
     L.push(`**Sin revisar contra el PDF (${sinRevisarLista.length}).** Nadie abrió todavía la página`);
     L.push('rasterizada para comparar la forma algebraica y el origen del coeficiente:');
@@ -235,12 +310,15 @@ if (ESCRIBIR) {
     L.push('');
     L.push(`PDF: \`${meta.pdf}\``);
     L.push('');
-    L.push('| Ec. | Dónde | Ancla | Revisada |');
-    L.push('|---|---|---|---|');
+    L.push('| Ec. | Dónde | Doble entrada | Ancla | Revisada |');
+    L.push('|---|---|---|---|---|');
     for (const c of lista.sort(orden)) {
       const h = previo.get(`${clave}|${c.tag}`) ?? { ancla: '—', revisada: '⬜' };
-      const sitios = c.sitios.map((s) => `\`${s.replace('src/lib/', '')}\``).join(' ');
-      L.push(`| \`${c.tag}\` | ${sitios} | ${h.ancla || '—'} | ${h.revisada || '⬜'} |`);
+      const sitios = c.sitios.map((s) => `\`${s.replace(/^src\/(lib|content)\//, '')}\``).join(' ');
+      const etiqueta = c.familia ? `\`${c.tag}\` *(familia)*` : `\`${c.tag}\``;
+      L.push(
+        `| ${etiqueta} | ${sitios} | ${dobleEntrada(c.sitios)} | ${h.ancla || '—'} | ${h.revisada || '⬜'} |`
+      );
     }
     L.push('');
   }
@@ -251,7 +329,7 @@ if (ESCRIBIR) {
   L.push('Su fuente son las extracciones de `material_teorico/_procesamiento/raw/normas`,');
   L.push('cuyo inventario de etiquetas se contrastó contra el PDF: para AISC 360-22 coinciden');
   L.push('EXACTO en los ocho capítulos ingeridos (B 2, C 3, D 5, E 30, F 105, G 25, H 16,');
-  L.push('J 39). Los Caps. I y K no están ingeridos y ninguna herramienta los toca.');
+  L.push('J 41). Los Caps. I y K no están ingeridos y ninguna herramienta los toca.');
   L.push('');
 
   await writeFile(DESTINO, L.join('\n'), 'utf8');

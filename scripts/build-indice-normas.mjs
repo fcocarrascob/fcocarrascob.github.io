@@ -10,10 +10,10 @@
 // revisable, y regenerarlo es un paso deliberado que deja diff.
 //
 // LA FUENTE SON LAS EXTRACCIONES DE material_teorico, no el PDF, y eso está
-// verificado: para AISC 360-22 el inventario de etiquetas de los Caps. B, C, D,
-// E, F, G y H coincide EXACTO con el del PDF (2, 3, 5, 30, 105, 25 y 16
-// etiquetas respectivamente). Los Caps. I y K no están ingeridos, y ninguna
-// herramienta del sitio los toca.
+// verificado: para AISC 360-22 el inventario de etiquetas coincide EXACTO con
+// el del PDF en los ocho capítulos ingeridos — B 2, C 3, D 5, E 30, F 105,
+// G 25, H 16 y J 41. Los Caps. I y K no están ingeridos, y ninguna herramienta
+// del sitio los toca.
 //
 // Ojo con dos artefactos de la extracción, ya contemplados en el regex:
 //   · la J4-5 sale escrita «(J 4-5)», con un espacio después de la letra;
@@ -58,10 +58,16 @@ const NORMAS = {
 };
 
 // Los `\s?` son por la «(J 4-5)», donde la extracción mete un espacio ENTRE la
-// letra y el dígito del capítulo; el sufijo a/b por las F4-6a/F4-6b.
+// letra y el dígito del capítulo.
+//
+// El sufijo va HASTA d, no hasta b: la J3-6 se abre en J3-6a/b (aplastamiento)
+// y J3-6c/d (desgarre). Con `[ab]?` faltaban las dos últimas, y el contraste
+// contra el PDF no lo detectaba porque corría el MISMO regex de los dos lados
+// — los dos equivocados igual, que es exactamente el modo de falla que este
+// aparato existe para cerrar.
 const PATRONES = {
-  aisc: /\(([A-L])\s?(\d{0,2})\s?-\s?(\d{1,2})([ab])?\)/g,
-  aci: /\((\d{1,2}(?:\.\d{1,2}){2,3})([a-c])?\)/g,
+  aisc: /\(([A-L])\s?(\d{0,2})\s?-\s?(\d{1,2})([a-d])?\)/g,
+  aci: /\((\d{1,2}(?:\.\d{1,2}){2,3})([a-d])?\)/g,
 };
 
 /** Las etiquetas del comentario van como «(C-F4-1)» y el regex no las toma. */
@@ -74,6 +80,17 @@ function extraer(texto, patron) {
     );
   }
   return out;
+}
+
+// Los apéndices NO están en las extracciones de la wiki, y los posts publicados
+// los citan: la Ec. A-3-1M (fatiga, viga carrilera) y las A-8-3/A-8-5 (el B₁ de
+// segundo orden). Salen del PDF con `python scripts/extraer-tags-pdf.py`, que
+// deja data/normas-apendices.json, y se fusionan acá.
+let apendices = {};
+try {
+  apendices = JSON.parse(await readFile(path.join(ROOT, 'data', 'normas-apendices.json'), 'utf8'));
+} catch {
+  console.warn('· sin data/normas-apendices.json — corré `python scripts/extraer-tags-pdf.py`');
 }
 
 const indice = { generado: new Date().toISOString().slice(0, 10), fuente: RAW, normas: {} };
@@ -97,6 +114,9 @@ for (const [clave, cfg] of Object.entries(NORMAS)) {
     }
   }
 
+  const deApendice = apendices[clave] ?? {};
+  for (const [tag, origen] of Object.entries(deApendice)) ecuaciones[tag] ??= origen;
+
   indice.normas[clave] = {
     nombre: cfg.nombre,
     pdf: cfg.pdf,
@@ -104,7 +124,12 @@ for (const [clave, cfg] of Object.entries(NORMAS)) {
     archivos: archivos.sort(),
     ecuaciones,
   };
-  console.log(`${cfg.nombre.padEnd(18)} ${Object.keys(ecuaciones).length} ecuaciones · ${archivos.length} archivos`);
+  const nApe = Object.keys(deApendice).length;
+  console.log(
+    `${cfg.nombre.padEnd(18)} ${Object.keys(ecuaciones).length} ecuaciones` +
+      ` · ${archivos.length} archivos` +
+      (nApe ? ` · ${nApe} de apéndices (del PDF)` : '')
+  );
 }
 
 const destino = path.join(ROOT, 'data', 'normas-indice.json');
