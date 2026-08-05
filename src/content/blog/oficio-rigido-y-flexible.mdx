@@ -1,0 +1,120 @@
+---
+title: "Rígido y flexible no son adjetivos: son una razón"
+description: "«La zapata es rígida», «la conexión es rígida», «el diafragma es rígido». Ninguna de las tres es una propiedad del objeto: las tres son un cociente entre su rigidez y la de otra cosa, y cada norma elige un cociente distinto. Con los tres umbrales que se citan de memoria —Kr ≳ 0,5, λL ≤ 1, Ks·L/EI ≥ 20— y lo que tienen en común: dos son convención antes que fenómeno, y ninguno cae sobre un codo de la curva."
+pubDate: 2026-08-05
+tags: ["oficio", "rigidez relativa", "NCh2369", "AISC 360-22", "fundaciones", "conexiones", "diafragma", "modelación"]
+norm: "NCh2369:2025 / AISC 360-22"
+section: "Oficio"
+---
+
+import Note from '../../components/content/Note.astro';
+
+«La zapata es rígida.» «Esa conexión es rígida.» «El diafragma es rígido.» Las tres frases se
+dicen igual y ninguna significa lo mismo, porque en las tres falta la segunda mitad: **rígida
+respecto de qué**.
+
+Ninguna de esas clasificaciones es una propiedad del objeto. Todas son un **cociente** entre la
+rigidez del objeto y la rigidez de aquello contra lo que trabaja, y lo interesante es que cada
+norma elige un cociente distinto para el mismo objeto.
+
+## Los tres cocientes que uno usa todas las semanas
+
+| Objeto | Adimensional | Es rígido si | De dónde sale |
+|---|---|---|---|
+| Zapata / losa de fundación | $K_r = \dfrac{E_c T^3}{k_s B^4}$ | $K_r \gtrsim 0{,}5$ | Criterio de libro (Bowles) |
+| Fundación superficial | $\lambda L$, con $\lambda = \sqrt[4]{\dfrac{k_v}{4EI}}$ — Ec. (25) | $\lambda L \le 1$ | NCh2369:2025 §10.1.4 |
+| Conexión viga-columna | $\dfrac{K_s L}{EI}$ | $\ge 20$ → FR · $\le 2$ → simple | Comentario a AISC 360-22 §B3.4 |
+
+Mira la columna del medio en las tres filas. En las tres hay una rigidez enfrentada a la de su
+contraparte —el suelo bajo la zapata, la viga a la que llega la conexión—, pero **no siempre del
+mismo lado del cociente**. En $K_r$ y en $K_s L/EI$ la pieza va arriba, y por eso «rígido» es un
+número **grande**. En $\lambda L$ la relación está invertida y además bajo una raíz cuarta —el
+balasto arriba, el $EI$ de la pieza abajo—, así que ahí «rígido» es un número **chico**. Es la
+misma pregunta escrita al revés, y por eso conviene mirar el sentido del criterio antes que su
+valor.
+
+Lo que no cambia es la consecuencia: el mismo objeto, contra una contraparte distinta, cambia de
+adjetivo sin que nadie lo toque.
+
+Es literal: una zapata de 60 cm sobre roca puede ser flexible y la misma zapata sobre un limo
+blando, rígida. La rigidez que cambió no es la de la zapata.
+
+## Lo que la práctica no suele mirar: dos de esos tres números no son normativos
+
+El $K_r \gtrsim 0{,}5$ es un criterio de libro. El **20** y el **2** de las conexiones están en el
+*Comentario* a §B3.4 de AISC 360-22 —página 16.1-320—, con la redacción «es aceptable considerar»,
+no «se debe». Y el $K_s$ que aparece ahí no es la rigidez inicial de la conexión sino la **secante
+a cargas de servicio**, $K_s = M_s/\theta_s$, precisamente porque el Comentario aclara que muchas
+conexiones no tienen una rigidez inicial confiable.
+
+El único de los tres que es cláusula es el de NCh2369. Y ese, además, **no decide cómo se comporta
+la fundación: decide qué verificación te aplica.** Si clasifica como rígida corresponden los
+mínimos de área apoyada de §10.1.4; si no, §10.1.5 manda tratarla como flexible, sin mínimo de
+área, pero verificando que la superestructura tolere el levantamiento.
+
+<Note type="tip" title="Por qué importa la distinción">
+Un umbral normativo es una frontera entre dos procedimientos: cruzarla cambia lo que tienes que
+demostrar. Un umbral de libro es una frontera entre dos modelos: cruzarla cambia cuánto se
+equivoca tu simplificación. Se citan igual, en la misma reunión, y no obligan a lo mismo.
+</Note>
+
+## Y ninguno de los umbrales cae sobre un codo
+
+Esta es la parte que más cuesta internalizar. Uno usa los umbrales como si al cruzarlos pasara
+algo, y lo que muestran los dos experimentos publicados acá es que **no pasa nada en particular**:
+
+- En el barrido de 350 geometrías de fundaciones, el criterio de libro dice rígida desde
+  $K_r \approx 0{,}5$, pero la presión **recién se vuelve uniforme en $K_r \approx 1$**: entre 0,5
+  y 1 las zapatas todavía concentran un 20–30 %. La fórmula rígida queda excelente (error del orden
+  del 1 %) recién desde $K_r \ge 1$ —
+  [cuándo confiar en la fórmula rígida](/blog/cuando-confiar-formula-rigida/).
+- En el laboratorio de la zapata, el error de la hipótesis plana crece como $\lambda L^4$ — o sea
+  que abajo de 0,5 es despreciable, pero **en el umbral mismo ya vale 32 %** con la carga
+  concentrada al centro (repartida sobre una losa, 2 %; con carga excéntrica, −18 %). O sea que el
+  umbral no tiene un error único asociado, y la curva tampoco tiene ningún codo ahí —
+  [cuándo la zapata deja de ser rígida](/blog/lab-zapata-rigida-flexible/).
+
+Los umbrales son cortes administrativos sobre una transición suave. Sirven para decidir qué
+procedimiento aplicar, no para creer que a un lado el modelo es exacto y al otro es basura.
+
+## El caso raro: el criterio está escrito para otro objeto
+
+Vale la pena mirar el resultado más incómodo de esa segunda nota, que además depende de una
+decisión de lectura: **qué es la $L$**. Para una zapata aislada la Tabla 10 de la norma la define
+como la **zarpa**, no como el largo de la zapata. En una zapata corriente —$B = 3$ m, canto 0,60 m,
+columna de 0,50 m, o sea zarpa de 1,25 m— sale $\lambda L \approx 0{,}46$: rígida con holgura.
+Metiendo el largo entero, 3 m, el mismo cálculo da 1,09 y la clasifica flexible. Es el veredicto
+opuesto, y la nota fuente llama a esa lectura «la equivocación que más caro sale».
+
+Con la $L$ correcta, para que esa zapata **dejara** de ser rígida habría que adelgazarla a 0,21 m,
+que no es una zapata que alguien construya.
+
+Las tres geometrías de losa del mismo estudio, en cambio, no clasifican como rígidas con ese mismo
+canto de 0,60 m.
+
+O sea: **el criterio no está escrito para la zapata aislada, está escrito para la losa.** Eso
+explica que §10.1.4 hable de «análisis estructural de la losa» justo después de dar la ecuación. Y
+explica por qué evaluarlo en una zapata aislada casi siempre confirma lo que ya suponías — lo cual
+no lo hace inútil, pero sí cambia dónde conviene mirarlo con atención.
+
+## El cuarto caso, el que no tiene número acá
+
+El diafragma. Rígido reparte el corte a los elementos verticales **por rigidez relativa**, más el
+término torsional si hay excentricidad en planta; flexible lo reparte **por área tributaria**. Son
+dos repartos distintos del mismo corte, y el default del programa decide cuál te toca.
+
+No pongo el umbral porque el criterio cuantitativo vive en normas que no tengo abiertas mientras
+escribo esto, y acá los números se leen de la fuente o no se escriben. Pero la forma es la misma de
+los otros tres: rigidez del diafragma en su plano contra rigidez de lo que lo arriostra.
+
+## Lo que queda
+
+Cuando alguien —o tú mismo en una memoria— escriba «es rígida», la pregunta completa tiene tres
+partes:
+
+1. **¿Respecto de qué?** Toda clasificación de rigidez es un cociente. Si no puedes nombrar el
+   denominador, no tienes una clasificación.
+2. **¿El umbral es cláusula o es criterio de libro?** Uno te obliga a un procedimiento, el otro te
+   informa de un error de modelo. Se citan con la misma cara.
+3. **¿Cuánto vale el error justo del otro lado?** Porque la transición es continua, y el número que
+   importa para decidir no es el veredicto sino el margen.

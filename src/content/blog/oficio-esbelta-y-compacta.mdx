@@ -1,0 +1,139 @@
+---
+title: "Una sección puede ser esbelta y compacta a la vez"
+description: "«La sección es compacta» no es una propiedad del perfil: es el veredicto de una de dos tablas que ni siquiera tienen las mismas columnas. En AISC 360-22, la misma alma es esbelta a compresión (B4.1a, caso 5) y compacta a flexión (B4.1b, caso 15) en toda una banda —siempre 2,52 veces de ancho, para cualquier acero—, y en el ala la sorpresa corre al revés. Con el detalle de por qué el b = B − 3t de los HSS se cita mal."
+pubDate: 2026-08-05
+tags: ["oficio", "AISC 360-22", "clasificación de secciones", "pandeo local", "esbeltez", "HSS", "acero"]
+norm: "AISC 360-22"
+section: "Oficio"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Alguien te pasa un perfil y te dice «es compacta». La pregunta que falta es **¿compacta para
+qué?**, porque esa palabra no describe al perfil: describe el resultado de consultar una tabla, y
+en AISC 360-22 hay dos.
+
+## Son dos tablas, y ni siquiera tienen las mismas columnas
+
+La **Tabla B4.1a** se titula *Width-to-Thickness Ratios: Compression Elements — Members Subjected
+to Axial Compression*. Tiene **una sola** columna de límite: $\lambda_r$, la frontera no
+esbelta/esbelta.
+
+La **Tabla B4.1b** dice *Members Subjected to Flexure*, y tiene **dos**: $\lambda_p$
+(compacta/no compacta) y $\lambda_r$ (no compacta/esbelta).
+
+Ese detalle de formato es la mitad del asunto: **«compacta» es una palabra que solo existe en
+flexión.** En compresión uniforme no hay secciones compactas — hay esbeltas y no esbeltas, y nada
+más. Son dos preguntas distintas: en compresión, si el elemento pandea localmente antes de que la
+sección llegue a $F_y$; en flexión, si además de llegar a $M_p$ lo **sostiene** mientras la
+sección rota.
+
+Así que un perfil no tiene una clasificación. Tiene dos, y ninguna implica la otra.
+
+## El alma: esbelta a compresión, compacta a flexión
+
+Para el alma de un perfil I doblemente simétrico, laminado o armado, los límites son:
+
+| | Tabla | Caso | Límite |
+|---|---|---|---|
+| Compresión | B4.1a | 5 | $\lambda_r = 1{,}49\sqrt{E/F_y}$ |
+| Flexión | B4.1b | 15 | $\lambda_p = 3{,}76\sqrt{E/F_y}$ · $\lambda_r = 5{,}70\sqrt{E/F_y}$ |
+
+Entre $1{,}49$ y $3{,}76$ hay una banda entera de almas que son **esbeltas a compresión y
+compactas a flexión**. Y el ancho de esa banda es siempre el mismo: $3{,}76/1{,}49 = 2{,}52$, un
+número que no depende del acero ni del módulo, porque los dos límites llevan el mismo
+$\sqrt{E/F_y}$.
+
+En valores concretos:
+
+| $F_y$ | $\sqrt{E/F_y}$ | Esbelta a compresión si $h/t_w >$ | Compacta a flexión si $h/t_w <$ |
+|---|---|---|---|
+| 250 MPa | 28,3 | 42,1 | 106,4 |
+| 345 MPa | 24,1 | 35,9 | 90,5 |
+
+Con $E = 200\,000$ MPa, que es el valor que la propia Tabla B4.1a declara al pie.
+
+Tomemos la H soldada de galpón que ya usamos en
+[el laboratorio del momento plástico](/blog/lab-momento-plastico-asintota/): alas de 200 × 12 mm,
+alma de 6 mm, alto total 400 mm, $F_y = 250$ MPa. El alma libre mide
+$h = 400 - 2(12) = 376$ mm, así que $h/t_w = 62{,}7$.
+
+- **A compresión**: $62{,}7 > 42{,}1$ → **esbelta**. El Capítulo E te manda a E7 y la columna se
+  verifica con área efectiva, no con el área bruta.
+- **A flexión**: $62{,}7 < 106{,}4$ → **compacta**. El Capítulo F te deja en F2, con $M_p$
+  completo.
+
+<Figure
+  src="/oficio-esbelta-y-compacta/fig-dos-tablas.svg"
+  alt="Dos ejes horizontales de esbeltez normalizada por la raíz de E sobre Fy. Arriba, compresión: zona verde no esbelta hasta 1,49 y zona roja esbelta desde ahí. Abajo, flexión: zona verde compacta hasta 3,76, ámbar no compacta hasta 5,70 y roja esbelta después. Una línea vertical de trazos marca el alma del ejemplo en 2,22, que cae en la zona roja de arriba y en la verde de abajo."
+  caption="La misma alma en las dos tablas. Con h/tw = 62,7 y Fy = 250 MPa, el punto normalizado cae en 2,22: pasado el λr de compresión (1,49) y muy por debajo del λp de flexión (3,76). Entre esas dos rayas vive toda la banda donde un alma es esbelta y compacta al mismo tiempo, y su ancho —2,52— es el mismo para cualquier acero."
+/>
+
+No es una inconsistencia de la norma, es física distinta. A compresión uniforme **toda** el alma
+está a $F_y$ y no hay nada que estabilice la zona que quiere pandear. En flexión, la mitad del
+alma está traccionada y el gradiente de tensiones sostiene a la parte comprimida. La misma chapa
+aguanta dos veces y media más antes de pandear cuando la solicitación tiene gradiente.
+
+## El ala: la misma sorpresa, al revés
+
+Es tentador quedarse con «flexión es más permisiva». No lo es — depende del elemento. Para el ala
+de un perfil I laminado:
+
+| | Tabla | Caso | Límite |
+|---|---|---|---|
+| Compresión | B4.1a | 1 | $\lambda_r = 0{,}56\sqrt{E/F_y}$ |
+| Flexión | B4.1b | 10 | $\lambda_p = 0{,}38\sqrt{E/F_y}$ · $\lambda_r = 1{,}00\sqrt{E/F_y}$ |
+
+Acá el $\lambda_p$ de flexión (0,38) es **menor** que el $\lambda_r$ de compresión (0,56). O sea:
+entre 0,38 y 0,56 hay alas que son **no compactas a flexión** y sin embargo **no esbeltas a
+compresión**. La banda mide $0{,}56/0{,}38 = 1{,}47$, y apunta al otro lado.
+
+En el alma la flexión perdona 2,52 veces; en el ala castiga 1,47 veces antes. Cualquier regla de
+bolsillo del tipo «si pasa en compresión, pasa en flexión» falla en una de las dos.
+
+## Y una cláusula que se cita mal por dónde está impresa
+
+El $b = B - 3t$ de los HSS rectangulares. El texto exacto de la norma es que, para alas de HSS
+rectangulares, $b$ es la distancia libre entre almas menos el radio interior de esquina a cada
+lado — y que **si el radio de esquina no se conoce**, $b$ y $h$ se toman como la dimensión
+exterior correspondiente menos tres veces el espesor.
+
+Ese párrafo está impreso al pie de la página de la Tabla B4.1b (16.1-22), junto a los ítems (e),
+(f) y (g), y de ahí sale la costumbre de citarlo como «nota al pie de la Tabla B4.1b».
+
+<Note type="warning" title="No es una nota de la tabla">
+Es el ítem **(d) del texto de §B4.1b, *Stiffened Elements*** —que no es la Tabla B4.1b, aunque se
+llamen casi igual—, y define $b$ y $h$ para todo el uso posterior: también cuando clasificas ese
+mismo HSS **a compresión** con la Tabla B4.1a, que está en la página anterior.
+
+Leerlo como una nota de la tabla de flexión lleva a clasificar el tubo comprimido con la dimensión
+exterior, que es la que viene rotulada en el catálogo. Como $b/t = B/t - 3$ exacto, el veredicto se
+voltea en una ventana de tres unidades justo encima del límite. Con $F_y = 345$ MPa, la pared de
+HSS tiene $\lambda_r = 1{,}40\sqrt{E/F_y} = 33{,}7$, así que un tubo con $B/t = 36$ da $b/t = 33{,}0$
+—**no esbelto**— y leído mal da 36,0, que es **esbelto**. El error va hacia el lado conservador, así
+que no se te va a caer nada: lo que te va a pasar es mandar a E7, con su área efectiva y su $P_n$
+recortado, un tubo que la norma clasifica como no esbelto.
+</Note>
+
+## Lo práctico
+
+Tres cosas quedan:
+
+1. **Clasificar una vez y arrastrar el veredicto es el error.** El mismo perfil tiene dos
+   clasificaciones, y hay que pedirle a la herramienta las dos. Vale la pena mirar cómo lo resuelve
+   el [verificador de secciones](/herramientas/verificador-secciones) de este sitio: devuelve una
+   fila por elemento y por solicitación, precisamente porque no hay forma de resumirlo en un
+   adjetivo.
+2. **Lo que cambia no es cosmético.** Esbelta a compresión te manda a E7 y baja $P_n$ por área
+   efectiva. No compacta a flexión te saca de F2 y mete la interpolación de F3/F4. Son capítulos
+   distintos, no correcciones.
+3. **Nada te va a avisar.** Cada capítulo hace bien su trabajo con la clasificación que le
+   entregues; si le entregas la de la otra tabla, el cálculo corre igual y el número sale
+   plausible. Es de la misma familia que los
+   [cinco errores que no dan ninguna alarma](/blog/oficio-errores-sin-alarma/).
+
+---
+
+*Los coeficientes de este post se leyeron de las páginas 16.1-21, 16.1-22 y 16.1-23 de AISC 360-22
+(Specification for Structural Steel Buildings, 1 de agosto de 2022).*

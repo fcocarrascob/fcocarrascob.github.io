@@ -860,6 +860,86 @@ regenera desde el código.
 - **Deuda menor:** H3 no tiene figura (un esquema de la cadena $R \to R^* \to R_1 \to 0{,}7R_1$
   es lo que le falta al §1), y quedan 27 hallazgos 🟡/🔵 abiertos entre las tres.
 
+## I. Sección «Oficio» — la línea corta de práctica (estrenada 2026-08-05)
+
+Diseño completo en `docs/superpowers/specs/2026-08-05-seccion-oficio-design.md`.
+
+El blog tenía un formato dominante muy pesado (experimento paramétrico + referencia cerrada + mapa
+de error) y ninguna línea que se leyera rápido. La sección `Fundamentos` —que tenía **un solo
+post**, `capacidad-vs-resistencia`, y ya era esa voz— **se renombró a `Oficio`** y aloja la línea
+nueva. No se creó una sección aparte: `section` en blog es texto libre, `contarTemas()` deriva los
+chips de lo publicado y no hay ruta por sección, así que el renombre fue una línea de frontmatter
+sin URLs rotas.
+
+**Público**: ingeniero con 2–5 años. **Formato**: 800–1.500 palabras, una idea por post, SVG solo
+cuando el esquema haga un trabajo que el texto no puede. **Fuente**: destilar lo ya publicado +
+cálculo nuevo y corto + lectura crítica de norma; la anécdota de oficina queda fuera porque no es
+verificable desde el repo.
+
+Tres formatos recurrentes, reconocibles desde el título:
+
+| Formato | Promesa | Cierre obligado |
+|---|---|---|
+| **El número, la banda y dónde se rompe** | Una magnitud que se cita de memoria: valor típico, banda real medida y la frontera donde deja de valer | El enlace al post que mide cada cifra |
+| **Qué dice de verdad esa cláusula** | Una disposición que se aplica en automático, leída del PDF vigente | Qué cambia en la planilla de quien la heredó |
+| **El error que no da alarma** | Un modelo que equilibra perfecto y está mal | Cómo se detecta en 10 minutos |
+
+Regla del formato de bolsillo: **un número por post**.
+
+**PDF** = exige abrir la norma vigente antes de escribir un valor (regla no negociable de
+`CLAUDE.md`). El resto destila cifras ya publicadas y verificadas acá: el trabajo es la compresión y
+el enlace, no el recálculo.
+
+| ID | Post | Formato | PDF | Estado |
+|----|------|---------|:---:|:------:|
+| I1 | **Cinco errores que no dan ninguna alarma** (`oficio-errores-sin-alarma`) | error sin alarma | — | [x] 2026-08-05 |
+| I2 | **Rígido y flexible no son adjetivos: son una razón** (`oficio-rigido-y-flexible`) | criterio | sí (§B3.4) | [x] 2026-08-05 |
+| I3 | **Una sección puede ser esbelta y compacta a la vez** (`oficio-esbelta-y-compacta`) | cláusula | sí (B4.1a/b) | [x] 2026-08-05 |
+| I4 | ¿Es creíble el período que te devolvió el modelo? | bolsillo | — | [ ] |
+| I5 | θ = 0,10: cuándo P-Delta deja de ser un detalle | bolsillo | — | [ ] |
+| I6 | e = L/6: el kern y la presión que la lineal no ve | bolsillo | — | [ ] *(riesgo de solape)* |
+| I7 | Cuántos modos son suficientes | bolsillo | — | [ ] |
+| I8 | El corte de losas se cayó a la mitad y nadie avisó | cláusula | sí | [ ] |
+| I9 | El espesor de tabla no es un mínimo: es el diseño | cláusula | sí | [ ] |
+| I10 | El φ de anclajes que usa tu planilla ya no existe | cláusula | sí | [ ] |
+| I11 | Los factores de uso no son comparables entre sí | criterio | — | [ ] |
+| I12 | La revisión de 10 minutos antes de creerle a un modelo | error sin alarma | — | [ ] |
+
+**I1 es el que define la sección**: sus cinco casos ya están medidos en este blog —la zapata con
+resortes lineales que inventa −116 kPa de tracción con equilibrio exacto (D8), Eigen que devuelve
+corte basal **0 tonf** sin un solo mensaje (D11), el factor de escala 386.089 del caso RS (D6), la
+rótula M3 que sobre-predice 16 % e **invierte la secuencia de daño** de modo que el resultado
+*parece* diseño por capacidad (D2), y el `R = 1` del espectro NCh2369 que reduce donde la norma lo
+prohíbe (hallazgo H2)—, así que no pide experimento nuevo.
+
+**I6 está marcado con riesgo**: es el que más se solapa con lo publicado (D8 y el laboratorio de la
+zapata). Se escribe solo si el enfoque queda en el número; si no, cae.
+
+**Deuda que abre I10**: `src/lib/placaBaseAnchorage.ts` sigue en φ = 0,70 y en la regla lineal ≤ 1,2
+de 318-19 — el mismo ítem pendiente de la sección A.
+
+**Tanda de estreno (2026-08-05): I1, I2 e I3 publicados.** Build verde, 176 páginas. Notas de la
+tanda:
+
+- **I2 salió sin SVG.** El plan pedía un eje adimensional con las cuatro fronteras superpuestas, y
+  al escribirlo quedó claro que **no son conmensurables** ($K_r$, $\lambda L$ y $K_sL/EI$ miden
+  cosas distintas): superponerlas habría sugerido una comparación que no existe. La tabla de tres
+  filas hace el trabajo. I3 **sí** lleva figura
+  (`public/oficio-esbelta-y-compacta/fig-dos-tablas.svg`), que ahí el eje sí es común.
+- **I2 dejó el diafragma sin umbral**, declarándolo en el texto: el criterio cuantitativo está en
+  normas que no estaban disponibles al escribir, y la regla de fuentes manda no escribir el número.
+  Queda como ampliación si aparece la fuente.
+- **I1 publica un bug vivo del repo** (la rama `R = 1` que falta en `rStar()`,
+  `src/lib/sap-scripts/nch2369-spectrum.ts:60`) como su quinto caso. Mientras el fix siga pendiente,
+  el post y el código no coinciden — el arreglo va en `Skills_SAP` + `npm run sync:sap-scripts`.
+- **Los tres quedan sin `/auditar`**.
+
+**Rutas desactualizadas en `CLAUDE.md`** (encontrado en esta tanda): la unidad `F:` no existe en la
+máquina. Las normas están en
+`C:\Users\francisco.carrasco\OneDrive - PSC INGENIERÍA SpA\Escritorio\Documentos\Normas\` y
+`material_teorico` en `C:\Proyectos_Python\material_teorico`. Además **PyMuPDF no está instalado**:
+la rasterización de esta tanda se hizo con `pypdfium2` + `PIL`, que sí están.
+
 ## Recomendación de orden (actualizada 2026-07-14)
 
 Publicado a la fecha: **serie Fundaciones** completa (5 posts, jun 2026); A1–A3, B1–B2;

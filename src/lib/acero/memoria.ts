@@ -186,7 +186,7 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
     items.push(m(`H := ${dato(geom.H)} cm`));
     items.push(t('t es la pared de DISEÑO, no la nominal (B4.2)'));
     items.push(m(`t_d := ${dato(geom.t)} cm`));
-    items.push(t('Tabla B4.1a nota (d): sin radio de esquina conocido, b = B − 3t'));
+    items.push(t('§B4.1b(d): sin radio de esquina conocido, b = B − 3t'));
     items.push(m('b_w := B - 3*t_d = cm'));
     items.push(m('h_w := H - 3*t_d = cm'));
     items.push(m('lam_w := b_w/t_d ='));

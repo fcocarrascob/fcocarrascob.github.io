@@ -1,0 +1,165 @@
+---
+title: "Cinco errores que no dan ninguna alarma"
+description: "El error que importa hoy no rompe el análisis: lo completa mal. El solver converge, el equilibrio cuadra a la última cifra y el número que sale a la memoria está mal. Cinco casos documentados en este blog —el suelo que se cuelga de la zapata, el corte basal que vale cero, el factor de escala del espectro, la rótula que da vuelta el capacity design y un bug del código de este sitio— y las cuatro preguntas que los cazan."
+pubDate: 2026-08-05
+tags: ["oficio", "revisión", "SAP2000", "modelación", "hipótesis", "NCh2369", "pushover", "masa participativa", "fundaciones"]
+section: "Oficio"
+---
+
+import Note from '../../components/content/Note.astro';
+
+Un modelo que se cae es un buen modelo: te avisa. El que hay que temer es el otro — el que corre,
+converge, cierra el equilibrio a la última cifra y entrega un número plausible que está mal.
+
+Ese es el error de esta época. Ya casi nadie se equivoca sumando: eso lo hace el computador, y lo
+hace mejor que tú. Los errores que quedan son de **hipótesis mal completada**, y tienen una
+propiedad incómoda en común: no producen ningún síntoma. No hay warning, no hay residual que no
+converge, no hay reacción absurda. El análisis hace exactamente lo que le pediste; el problema es
+lo que le pediste.
+
+Van cinco, todos documentados en este blog, con sus números — cuatro medidos en un modelo y uno
+leído en el código. El quinto es de este sitio, y está acá por la misma razón que los otros cuatro.
+
+## 1. El suelo que se cuelga de la zapata
+
+Modelas el suelo bajo una zapata con resortes lineales, que es lo que uno hace desde siempre.
+Mientras la resultante viva dentro del kern —$e \le L/6$— esa hipótesis es **exacta**, no
+aproximada. Fuera del kern deja de serlo, y no lo dice.
+
+Lo que pasa es que el resorte del borde descargado se pone en tracción y **tira la zapata hacia
+abajo**. Con esa ayuda que el suelo no puede dar, el modelo reparte la compresión sobre toda la
+base y entrega un $q_{max}$ menor que el real: −6 % en $e/L = 0{,}25$, −16 % en 0,30 y **−49 % en
+0,40**, con tracciones ficticias de hasta −116 kPa en el borde opuesto.
+
+Y todo esto con el equilibrio **perfectamente cuadrado**: $\sum R$ exacto, resultante en su sitio,
+convergencia limpia. La curva de error tampoco tiene un escalón que avise — el modelo pasa de
+exacto a inservible de forma suave.
+
+**Cómo se caza**: mirando el *signo* de las reacciones de los resortes, no su magnitud. Un resorte
+en tracción invalida la lectura del $q_{max}$ — cuánto, depende de la excentricidad: −6 % en
+$e/L = 0{,}25$ está dentro del ruido del propio $k_v$, y −49 % en 0,40 ya no es un modelo.
+
+→ [Resortes de solo compresión: el despegue de una zapata](/blog/zapata-solo-compresion-sap2000/)
+
+## 2. El corte basal que vale cero
+
+Un marco de ocho pisos con vigas de piso flexibles cargando equipos pesados. Los modos de rebote
+vertical de esas vigas caen en períodos **más largos** que los laterales —0,90 s contra 0,53 s—, o
+sea en frecuencias más bajas, y **Eigen** entrega los modos por frecuencia creciente. Así que el
+análisis modal por defecto gasta sus primeros ocho modos en el bosque vertical, donde la masa
+participativa horizontal es **0 %**.
+
+Le pides el espectro con esos ocho modos y el corte basal en X da **0,0 tonf**. Con 40 modos da
+130,06. Con ocho vectores de **Ritz**, 130,06 otra vez.
+
+Nada en la pantalla dice que algo anda mal: el análisis corrió, los ocho modos existen, tienen
+períodos razonables y formas modales dibujables. Es un resultado, no un error.
+
+**Cómo se caza**: leyendo la masa participativa **por dirección**, no el total acumulado. El 90 %
+que exige la norma es 90 % en la dirección del sismo que estás corriendo.
+
+→ [Vectores Ritz vs Eigen: la masa participativa que no capturas](/blog/ritz-vs-eigen-masa-participativa-sap2000/)
+
+## 3. El 386,089
+
+El más burdo de los cinco, y por eso mismo el que más se cuela. El factor de escala del caso
+*Response Spectrum* trae por defecto **386,089** —el campo lo muestra como `386.089`, con el punto
+decimal del formato en-US—, que es $g$ en pulgadas por segundo al cuadrado. Si tu modelo está en
+metros, el número es **9,80665**.
+
+Dejar el default escala el espectro completo por $386{,}089 / 9{,}80665 = 39{,}4$. No es un
+error de modelación: es un error de unidades disfrazado de campo de formulario, y sobrevive porque
+el resultado **sigue pareciendo un análisis** — mismas formas modales, misma distribución de
+corte, todo consistente consigo mismo.
+
+Tiene un hermano todavía más callado: si el amortiguamiento del caso difiere del de la función
+espectral, SAP corrige el espectro por la diferencia sin decir nada.
+
+**Cómo se caza**: el cociente entre el corte basal y el peso sísmico. Un $V/W$ casi cuarenta veces
+lo razonable —o cuarenta veces menor— se ve en un segundo, y no necesitas saber cuánto *debería*
+dar para saber que ese no es.
+
+→ [Cómo arma SAP2000 la respuesta espectral modo a modo](/blog/respuesta-espectral-modal-torre-traspaso/)
+
+## 4. La rótula que da vuelta el capacity design
+
+Este es el peligroso, porque el error no solo no avisa: **confirma la hipótesis que querías ver**.
+
+En un pushover, la rótula de momento `M3` ignora el axial. En una columna eso sobre-predice la
+capacidad un **16 %** (meseta en 160 kN contra 139 kN con interacción P-M), lo que ya es
+suficiente. Pero lo grave es lo otro: **invierte la secuencia de daño**.
+
+Con la rótula M3 rotulan primero los dos extremos de viga y después las bases de columna. Es
+decir, el pushover dibuja un mecanismo viga-primero — exactamente la jerarquía que el diseño por
+capacidad busca, y exactamente lo que uno espera ver en la lámina. Con la interacción P-M real, la
+primera rótula es la **base de la columna de sotavento**, la que el vuelco comprime, y las
+columnas ceden antes que las vigas.
+
+Mismo modelo, misma carga, mismo solver. Uno de los dos resultados es una felicitación falsa.
+
+**Cómo se caza**: asignando interacción P-M en cualquier elemento con axial significativo, y
+desconfiando cuando el mecanismo sale demasiado parecido al del libro.
+
+→ [Rótulas plásticas en pushover: por qué la rótula M3 miente en las columnas](/blog/rotulas-pushover-sap2000/)
+
+## 5. Y uno de este blog: `R = 1` que igual reduce
+
+Los cuatro anteriores son trampas de una herramienta comercial. Este es de código propio, y por
+eso cierra mejor la lista.
+
+El módulo que genera el espectro de NCh2369 en este sitio —el mismo que alimenta la vista previa
+del generador de scripts y las figuras de la nota del espectro— implementa la rampa de $R^*$ en
+período corto, pero **sin la rama $R = 1$**. La Ec. (1b) de la norma dice que si $R = 1$ entonces
+$R^* = 1$: es la fila de las estructuras que se diseñan para permanecer elásticas, y no se reduce
+nada. El código, en cambio, interpola desde 1,5 y devuelve hasta **1,5** cuando $T \to 0$.
+
+O sea: divide el espectro por hasta 1,5 justo donde la norma no permite dividir. Hasta **33 %
+menos demanda**, del lado inseguro, en silencio, para el caso en que el usuario pidió
+explícitamente no reducir.
+
+Nadie lo habría encontrado corriendo el generador, porque el resultado es un espectro con forma de
+espectro. Apareció al escribir la nota de la norma, poniendo la ecuación del PDF al lado de la
+función del código. El arreglo está pendiente.
+
+→ [El espectro de diseño y sus tres correcciones](/apuntes/nch2369-espectro-de-diseno/)
+
+<Note type="warning" title="El código propio no está exento">
+Es fácil leer los cuatro primeros como «cuidado con SAP2000». El quinto está acá para desarmar esa
+lectura: la propiedad peligrosa no es del software, es del tipo de error. Una hipótesis mal
+completada se ve igual de razonable escrita por Computers &amp; Structures que escrita por ti.
+</Note>
+
+## El patrón, y las tres preguntas
+
+Los cinco comparten forma:
+
+- **Ninguno viola el equilibrio.** Los cinco cierran la estática a la última cifra significativa.
+- **Ninguno produce un mensaje.** No hay advertencia que ignorar, así que no sirve de nada ser
+  disciplinado leyendo el log.
+- **Ninguno es una operación mal hecha.** Todos son una hipótesis incompleta: el suelo que puede
+  traccionar, los modos que no participan, la unidad del factor, el axial que no entra en la
+  rótula, la rama que falta.
+- **Todos empeoran cuando el resultado es plausible.** El caso 4 llega al extremo de producir
+  justo el mecanismo que uno quería confirmar.
+
+De ahí sale lo práctico. La revisión que caza estos errores **no es aritmética** —esa la hace el
+solver mejor que tú— sino de hipótesis, y cabe en tres preguntas:
+
+1. **¿El material puede hacer lo que el modelo le está pidiendo?** El suelo no tracciona. La
+   columna comprimida no tiene el momento de la columna descargada.
+2. **¿Estoy mirando la magnitud correcta, o una que se le parece?** Masa participativa por
+   dirección y no acumulada. Signo de la reacción y no su magnitud. El esfuerzo interno y no la
+   reacción de apoyo.
+3. **¿Las unidades del número que escribí son las del modelo?** Es la pregunta tonta, y es la que
+   más veces salva.
+4. **¿La fórmula que implementé es la que está publicada?** Esta no la contesta ninguna corrida:
+   pide poner la ecuación de la norma al lado de la función, línea por línea. Es la única que caza
+   el quinto caso, y por eso está acá.
+
+Ninguna de las cuatro exige rehacer el cálculo. Las cuatro se contestan en diez minutos, que es
+bastante menos de lo que cuesta explicar después por qué el corte basal era cero.
+
+Y sirve tener presente la asimetría de fondo: verificar que cada elemento resiste lo suyo no dice
+nada sobre **cuál falla primero**, que es una pregunta distinta y necesita su propio método —
+[capacidad o resistencia](/blog/capacidad-vs-resistencia/). El caso 4 es exactamente esa pregunta
+respondida al revés por un modelo que corrió sin quejarse.

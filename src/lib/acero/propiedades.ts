@@ -28,8 +28,9 @@ export function alturaAlma(d: number, tf: number): number {
 /**
  * Ancho plano de una pared de HSS rectangular.
  *
- * Tabla B4.1a nota (d): sin radio de esquina conocido, `b = B − 3t` con `t` la
- * pared de diseño (B4.2).
+ * §B4.1b(d) —el texto de *Stiffened Elements*, no una nota de la Tabla B4.1b—:
+ * sin radio de esquina conocido, `b = B − 3t` con `t` la pared de diseño (B4.2).
+ * Aplica también al clasificar a compresión con la Tabla B4.1a.
  */
 export function anchoPlanoHss(lado: number, t: number): number {
   return lado - 3 * t;

@@ -203,7 +203,7 @@ export default function VerificadorSeccionTool() {
       pos(v.B, 'B');
       pos(v.H, 'H');
       pos(v.tR, 't');
-      if (Math.min(v.B, v.H) <= 3 * v.tR) e.push('El lado menor debe superar 3·t (nota (d) de la Tabla B4.1a).');
+      if (Math.min(v.B, v.H) <= 3 * v.tR) e.push('El lado menor debe superar 3·t (§B4.1b(d)).');
     } else {
       pos(v.Dext, 'D');
       pos(v.tC, 't');

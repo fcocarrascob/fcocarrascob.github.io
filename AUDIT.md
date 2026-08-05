@@ -47,6 +47,98 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### Nota de consolidación — tanda «Oficio» (2026-08-05)
+
+Los tres posts de estreno de la sección `Oficio` se auditaron en paralelo, un `auditor` por post, y
+ninguno de los tres recibió herramienta `Bash`. Eso deja **una brecha que sí se cerró desde la
+orquestación**: el auditor de `oficio-esbelta-y-compacta` no pudo abrir el PDF de AISC 360-22 y
+declaró como «no verificable» todo lo leído de la norma. Esas páginas **sí se rasterizaron y se
+miraron** al escribir el post (`pypdfium2` + `PIL`, índices base 0 88/89/90 = 16.1-21/22/23), y el
+resultado se registra acá para que no quede como deuda:
+
+- Tabla B4.1a tiene **una sola** columna de límite ($\lambda_r$); B4.1b tiene $\lambda_p$ y
+  $\lambda_r$ — confirmado.
+- Coeficientes y casos confirmados: 1,49 (caso 5) y 0,56 (caso 1) en B4.1a; 3,76 y 5,70 (caso 15),
+  0,38 y 1,00 (caso 10) en B4.1b.
+- El pie de la Tabla B4.1a dice literalmente `E = modulus of elasticity of steel = 29,000 ksi
+  (200 000 MPa)` — o sea que declara **las dos** unidades. El post cita el valor SI, que es
+  correcto, aunque la frase «el valor que la propia tabla declara al pie» convendría matizarla.
+- Los ítems (d) a (g) están impresos al pie de 16.1-22, bajo la Tabla B4.1b — confirmado, y es
+  exactamente el motivo de la confusión que el post denuncia.
+- **Hallazgo 10 resuelto**: los dos títulos dicen *Members **Subjected** to…*, tal como los cita el
+  post. No hay nada que corregir.
+
+Queda en pie, en cambio, el hallazgo 8 de `oficio-rigido-y-flexible` (la cita a 16.1-320): esa
+página también se leyó rasterizada, y confirma $K_s = M_s/\theta_s$ secante a cargas de servicio,
+el umbral $K_sL/EI \ge 20$ para FR y $\le 2$ para simple, la redacción «it is acceptable to
+consider», y que $L$ y $EI$ son los de la **viga**. Lo que el post atribuye al Comentario como
+*motivo* de usar la secante también está impreso ahí. Se marca verificado.
+
+### 2026-08-05 · `blog/oficio-errores-sin-alarma` · post nuevo · ❌ 11 hallazgos (1🔴 4🟠 · 5🟡 1🔵)
+
+**Commit auditado:** `7ae6f53` (post nuevo en working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/C | L.46-47 | «Los modos de rebote vertical caen en **períodos más bajos** que los laterales». La fuente mide lo contrario: vertical $T \approx 0{,}90$ s, lateral $T_1 = 0{,}529$ s. Además la causalidad queda invertida: Eigen ordena por frecuencia creciente, así que con períodos más bajos saldrían **últimos**, no primeros — la premisa contradice la conclusión de la misma frase | «caen en períodos **más largos** —frecuencias más bajas— que los laterales (0,90 s contra 0,53 s)» | ✅ aplicado |
+| 2 | 🟠 | C | L.3 y L.142-151 | La `description` promete «las tres preguntas que **los** cazan», pero ninguna de las tres pega en el caso 5: el propio post dice que apareció «poniendo la ecuación del PDF al lado de la función del código», que es un cuarto método fuera de la lista | Agregar una cuarta pregunta o acotar la promesa a los cuatro primeros | ✅ aplicado (cuarta pregunta: «¿la fórmula que implementé es la que está publicada?») |
+| 3 | 🟠 | N/L | L.45 | «Un marco de ocho pisos con **losas flexibles**». El modelo fuente no tiene losas: es un marco **plano** con una viga por nivel, simplemente apoyada, con cinco masas de equipo de 12 tonf | «con **vigas de piso** flexibles cargando equipos pesados» | ✅ aplicado |
+| 4 | 🟠 | C | L.38-39 | «Un solo resorte en tracción **invalida la corrida completa**» es más fuerte que la fuente, que gradúa: en $e/L \le 0{,}25$ el error es −6 %, «dentro del ruido de $k_v$». El post cita ese −6 % dos párrafos antes, así que la regla absoluta contradice su propio número | Graduar el veredicto por excentricidad, como la fuente | ✅ aplicado |
+| 5 | 🟠 | U | L.61, L.64 vs L.67 | El mismo número con dos separadores decimales: `386.089` (punto) contra $386{,}089$ (coma) tres líneas más abajo. El post usa coma en todo lo demás, así que en es-CL «386.089» se lee como trescientos ochenta y seis mil | Unificar en `386,089`, o declarar que es la grafía en-US del campo de la GUI | ✅ aplicado (las dos: coma en el texto y la grafía del campo declarada) |
+| 6 | 🟡 | N | L.86 | El 16 % es fiel al titular de la fuente, pero el par redondeado no lo reproduce: $160/139 - 1 = 15{,}1\%$. La fuente mide 160,4 y 138,8 → 15,56 % → 16 % | Citar 160,4 y 138,8 kN para que el 16 % sea recalculable | ⬜ |
+| 7 | 🟡 | N/L | L.67, L.75-76 | (a) $386{,}089/9{,}80665 = 39{,}37$, la fuente dice «39.4×» y el post «≈ 39»; (b) «una trigésima parte» — el recíproco es 1/39,37 = 0,0254, una **cuadragésima** parte | «≈ 39,4» y «una cuadragésima parte» | ⬜ |
+| 8 | 🟡 | C | L.20 y L.3 | «todos **medidos** en este blog». El caso 5 no está medido (es lectura de código contra la Ec. (1b), y el «hasta 33 %» es analítico); el caso 3 tampoco (default de GUI y conversión de unidades) | «todos documentados» o «cuatro medidos y uno leído en el código» | ⬜ |
+| 9 | 🟡 | C | L.113-115 | El «hasta 33 % menos demanda» es correcto en magnitud pero no declara su alcance: con $R = 1$ la rampa mal aplicada vive solo en $T < 0{,}16\,T_1$, o sea 0,024 s (suelo A) a 0,126 s (suelo E) | Agregar la banda — y es justo donde caen los equipos rígidos | ⬜ |
+| 10 | 🟡 | F | cuerpo | Ancho de línea ~97-98 columnas contra ~92-93 de los posts hermanos y ~85-88 del resto del blog | Reflowear a ~90 col | ⬜ |
+| 11 | 🔵 | R | L.107-111 | El caso 5 acusa un bug propio sin nombrar archivo ni función. Y **el mismo bug está en el backend Python vendorizado** (`vendor/modelo_base/backend_modelo_base.py`, `_r_star()`), que es lo que corre en SAP2000: decir «alimenta la vista previa» subestima el alcance | Nombrar `rStar()` y aclarar que el arreglo son dos lugares (TS + Python) | ⬜ |
+
+**Verificado y correcto:** los cinco casos contra su post fuente, cifra por cifra y con el redondeo — −6/−16/−49 % y −116 kPa (D8); 0,0 y 130,06 tonf con Eigen-8/Eigen-40/Ritz-8 (D11); 386,089 y 9,80665 y el «hermano callado» del amortiguamiento (D6); el 16 % y la inversión de la secuencia a base de columna de sotavento (D2). El caso 5 se recalculó sobre el código: `rStar(T, 1, t1)` en $T = 0$ devuelve exactamente 1,5 y $1 - 1/1{,}5 = 33\%$; la Ec. (1b) publicada sí tiene la rama $R^* = 1$; y el formulario permite $R = 1$, así que el caso es alcanzable. Los seis enlaces resuelven y ninguno es borrador. Frontmatter válido, jerarquía de encabezados limpia, tuteo consistente sin voseo.
+
+**Planilla del canvas:** no · **0 verificaciones demanda–capacidad** — es un destilado editorial, no una cadena de cálculo: no hay factor de uso ni veredicto ✓/✗. Las dos únicas operaciones cerradas ($386{,}089/9{,}80665$ y $1 - 1/1{,}5$) no justifican una hoja.
+
+### 2026-08-05 · `blog/oficio-rigido-y-flexible` · post nuevo · ❌ 10 hallazgos (1🔴 2🟠 · 4🟡 3🔵)
+
+**Commit auditado:** `7ae6f53` (post nuevo en working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N/C | L.28–30 | «En las tres, arriba está la rigidez de la pieza y abajo la de su contraparte» es **falso para $\lambda L$**: la Ec. (25) es $\lambda = \sqrt[4]{k_v/(4EI)}$, o sea el **suelo arriba y la pieza abajo**, y bajo raíz cuarta. Por eso esa fila es la única cuyo veredicto corre al revés (rígida si $\lambda L \le 1$). Un lector que aplique la regla enunciada invierte la clasificación | Reescribir declarando que el cociente no siempre va del mismo lado, y mostrar la Ec. (25) en la fila 2 — hoy es la única celda sin fórmula | ✅ aplicado (las dos; de paso cae el 🟡 #5) |
+| 2 | 🟠 | N/R | L.74–77 | «$B = 3$ m, canto 0,60 m → $\lambda L \approx 0{,}46$» no se reproduce: con $L = B = 3$ m sale **1,09 → flexible**, el veredicto opuesto. El 0,46 exige $L$ = zarpa = 1,25 m. La nota fuente llama a la lectura $L = B$ «la equivocación que más caro sale» | Nombrar la $L$: zarpa 1,25 m → 0,46; largo entero → 1,09 | ✅ aplicado (los dos veredictos, y la Tabla 10 como fuente de la $L$) |
+| 3 | 🟠 | N | L.64–67 | «en el umbral mismo ya vale 32 %» omite el calificador de la fuente: es 32 % **en la carga centrada**; en el caso excéntrico vale −18 % y en la losa apenas 2 % | Declarar el caso — refuerza la tesis: el umbral no tiene un error único asociado | ✅ aplicado (32 % centrada, 2 % losa, −18 % excéntrica) |
+| 4 | 🟡 | L | L.26, L.37 | `FR` sin desarrollar y sin su par `PR`. Dar solo 20 y 2 sugiere dicotomía: entre 2 y 20 la conexión es parcialmente restringida, que es el caso más común | «≥ 20 → totalmente restringida (FR) · ≤ 2 → simple · entre medio, parcialmente restringida (PR)» | ⬜ |
+| 5 | 🟡 | F | L.28 | «Mira las tres columnas del medio» — la tabla tiene cuatro columnas; lo que hay que mirar son las tres **filas** de la columna del medio | «Mira la columna del medio en las tres filas» | ⬜ |
+| 6 | 🟡 | U | L.24, L.29 vs L.39–40 | $k_s$ (balasto) y $K_s$ (rigidez secante de la conexión) conviven distinguidos solo por la caja de la letra, y ambos aparecen en la misma tabla | Advertirlo al pasar, o renombrar el balasto a $k_v$ como lo llama NCh2369 | ⬜ |
+| 7 | 🟡 | C/F | L.3 vs L.35, L.54 | El `description` promete «dos son convención antes que fenómeno», pero el cuerpo dice «dos no son normativos» y el cierre dice que **los tres** son cortes administrativos. Y «ninguno cae sobre un codo» se sostiene con los dos experimentos de fundaciones; del 20/2 de AISC el post no mide nada | Alinear el `description` y acotar el alcance a los dos umbrales medidos | ⬜ |
+| 8 | 🔵 | R | L.37–41 | Cita AISC no verificable desde la sesión del auditor (sin `Bash`, sin poppler): página 16.1-320, redacción «es aceptable considerar» y el motivo declarado de usar la secante | **Cerrado en la consolidación**: las tres cosas se confirmaron rasterizando 16.1-320 | ✅ verificado |
+| 9 | 🔵 | R | cierre | El post hermano cierra con línea de procedencia en cursiva; acá la de AISC va inline y la de NCh2369 no aparece | Cerrar con la misma línea, citando Bowles, NCh2369:2025 y AISC 360-22 p. 16.1-320 | ⬜ |
+| 10 | 🔵 | C | L.93–94 | «normas que no tengo abiertas mientras escribo esto» cumple la regla de no inventar el umbral, pero deja al lector sin saber dónde buscarlo y fecha el texto | Nombrar la norma sin dar el número | ⬜ |
+
+**Verificado y correcto:** la cadena $\lambda L$ completa, recalculada desde $E$, $k_v$ e $I$: $\lambda = 0{,}3649$ m⁻¹ → $\lambda L = 0{,}4561$ (zarpa) y 1,0947 ($L = B$); espesor umbral 0,211 m; las tres geometrías de losa por encima de 1 con el mismo canto de 0,60 m. Los cuatro números heredados del barrido de 350 geometrías coinciden literalmente ($K_r \gtrsim 0{,}5$ de Bowles, 20–30 % entre 0,5 y 1, ~1 % desde $K_r \ge 1$). El ejemplo de la roca y el limo resultó **literalmente cierto en las dos métricas**, no solo retórico. La distinción cláusula vs criterio de libro es correcta, y la consecuencia normativa (§10.1.4 vs §10.1.5) coincide punto por punto con la nota fuente. La sección del diafragma no contiene ningún umbral numérico, como se pidió. Cero voseo.
+
+**Planilla del canvas:** no · **0 verificaciones demanda–capacidad** — post de criterio: sus tres cocientes son umbrales *citados*, no calculados. La candidata natural a planilla es la nota fuente `lab-zapata-rigida-flexible` (un clasificador de rigidez de fundación), no este post.
+
+### 2026-08-05 · `blog/oficio-esbelta-y-compacta` · post nuevo · ⚠️ 11 hallazgos (0🔴 5🟠 · 3🟡 3🔵)
+
+**Commit auditado:** `7ae6f53` (post nuevo en working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.92 | «en el ala castiga un **47 %** antes» tiene la base invertida: 47 % es la razón $0{,}56/0{,}38 = 1{,}47$; la reducción real es $1 - 0{,}38/0{,}56 = 32\%$. Y la mitad izquierda de la frase sí usa razón, así que las dos mitades no son comparables | «en el alma la flexión perdona 2,52 veces; en el ala castiga 1,47 veces antes» | ✅ aplicado |
+| 2 | 🟠 | C/N | L.109–113 | El ejemplo $B/t = 25$ no puede producir la consecuencia que el párrafo anuncia: $\lambda_r$ de pared de HSS es $1{,}40\sqrt{E/F_y}$ = 33,7 con $F_y = 345$, y tanto 25,0 como 22,0 quedan muy por debajo. El veredicto solo se voltea con $B/t \in [33{,}7;\ 36{,}7)$, porque $b/t = B/t - 3$ exacto | Usar $B/t = 36$ con $F_y = 345$ (real 33,0 no esbelto; mal citado 36,0 esbelto), o declarar que el 25 es solo ilustración de magnitud | ✅ aplicado (el $B/t = 36$, y declarada la ventana de 3 unidades) |
+| 3 | 🟠 | U/F | `fig-dos-tablas.svg` L.37, 38, 51 | Tres entidades apuntan a codepoints equivocados: `&#8377;` es **₹ (rupia india)**, no subíndice `w` → la figura imprime «h/t₹»; `&#8342;` es **ₖ**, no `y` → imprime «Fₖ = 250 MPa» y «λ / √(E/Fₖ)». Las otras 20 figuras del repo usan `<tspan>` | Cambiar a `h/t<tspan font-size="9" dy="2.5">w</tspan>` y `F<tspan …>y</tspan>` | ✅ aplicado (3 ocurrencias; SVG revalidado: el texto ahora lee «h/tw», «Fy» y «λ / √(E/Fy)») |
+| 4 | 🟠 | L | L.102–106 | Colisión de notación sin desactivar, justo en el párrafo cuya tesis es que dos rótulos parecidos no son la misma cosa: «Tabla B4.1b» y «§B4.1b» (que es el apartado *Stiffened Elements*) significan objetos distintos y el texto no lo advierte | «el ítem (d) del texto de §B4.1b, *Stiffened Elements* — que no es la Tabla B4.1b» | ✅ aplicado |
+| 5 | 🟠 | L | Fuera del post: `src/lib/acero/propiedades.ts:31`, `memoria.ts:189`, `VerificadorSeccionTool.tsx:206` | El post denuncia que la cláusula se cita mal como nota de tabla, y **el motor de este sitio la cita exactamente así**: «Tabla B4.1a nota (d)» ×2 y «nota (d) de la Tabla B4.1a» en un mensaje visible. El post enlaza a esa herramienta como el ejemplo de hacerlo bien, y `memoria.ts` imprime la atribución errónea en la memoria generada | Unificar los tres strings a «§B4.1b(d)» antes de publicar, o el post contradice al producto que recomienda | ✅ aplicado (`propiedades.ts:31`, `memoria.ts:189`, `VerificadorSeccionTool.tsx:206`) |
+| 6 | 🟡 | N | L.52, L.64 | `106,4` sale de multiplicar por la raíz ya redondeada; con la raíz exacta da **106,3**. Y el método es inconsistente en la misma fila: `42,1` sí usa la raíz exacta | `106,4` → `106,3` | ⬜ |
+| 7 | 🟡 | N/L | L.43–44, L.70, L.3 | 2,52 se presenta como «el **ancho** de la banda». 2,52 es la **razón** entre extremos; el ancho en el eje que dibuja la figura es $3{,}76 - 1{,}49 = 2{,}27$, y ese sí depende del acero | «la banda abarca un factor 2,52, y esa razón no depende del acero» | ⬜ |
+| 8 | 🟡 | U | L.41, L.86 | El separador entre los dos límites de B4.1b es un `·`, que en una celda llena de fórmulas se lee como multiplicación | Separar con `;` o partir en dos columnas λp / λr | ⬜ |
+| 9 | 🔵 | F | L.69 (`alt`) | El `alt` omite los rótulos «Tabla B4.1a, caso 5» y «Tabla B4.1b, caso 15» que la figura sí muestra: un lector no vidente no recibe la referencia normativa que ancla el gráfico | Añadirlos | ⬜ |
+| 10 | 🔵 | L | L.19–20, L.23 | Duda sobre *Subjected* vs *Subject* en los títulos en inglés | **Cerrado en la consolidación**: la página impresa dice *Subjected* en ambos. Nada que corregir | ✅ verificado |
+| 11 | 🔵 | F | L.50 | «Compacta a flexión si $h/t_w <$» — la norma define compacta con **≤** | `<` → `\le` | ⬜ |
+
+**Verificado y correcto:** la aritmética entera, rehecha a mano — $\sqrt{800} = 28{,}28$, $\sqrt{579{,}7} = 24{,}08$, los cuatro límites, $3{,}76/1{,}49 = 2{,}52$, $0{,}56/0{,}38 = 1{,}47$, $h = 376$ mm, $h/t_w = 62{,}7$ y los dos veredictos. La geometría del ejemplo coincide literalmente con `lab-momento-plastico-asintota`. En el HSS, $b/t = 22{,}0$ exacto y la sobreestimación del 14 % con la base correcta. La **figura entera** cuadra: fronteras en 271,6 / 487,2 / 671,5 y marcador en 340,5 = 2,2158 (el valor sin redondear, mejor que el 2,22 del texto). Los seis coeficientes y los cuatro números de caso están corroborados de forma independiente por `src/lib/acero/clasificacion.ts` — y, desde la consolidación, contra la página rasterizada. Los encadenamientos normativos son correctos: esbelta a compresión → E7; alma no compacta → F4, ala no compacta → F3. Cero voseo.
+
+**Planilla del canvas:** **parcial** · no la tiene · **2 verificaciones explícitas** (62,7 vs 42,1 → esbelta; 62,7 vs 106,3 → compacta) **+ 1 implícita** (22,0 vs $1{,}40\sqrt{E/F_y}$). La cadena es **cerrada**: de $E$, $F_y$ y las cuatro planchas salen los cuatro límites y los dos veredictos, sin nada que venga de un modelo. La reserva no es técnica sino de duplicación: `/herramientas/verificador-secciones` ya hace esto y el post lo enlaza, así que la planilla solo aporta como la versión *a mano y auditable*. Habría que declarar como dato de entrada los coeficientes tabulados, $E = 200\,000$ MPa y la geometría.
+
 ### 2026-08-05 · `blog/lab-zapata-sin-traccion` · post nuevo · ⚠️ 12 hallazgos (0🔴 1🟠 · 7🟡 4🔵) — **los 12 aplicados**
 
 **Commit auditado:** `402c830` (post nuevo en working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -3280,6 +3372,9 @@ Estado de auditoría por post. `—` = nunca auditado.
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
 | `capacidad-vs-resistencia` | 2026-07-29 | ⚠️ | 16 (0🔴 0🟠 · 12🟡 4🔵) · 4 aplicados (1🔴 3🟠) |
+| `oficio-errores-sin-alarma` | 2026-08-05 | ⚠️ | 6 (0🔴 0🟠 · 5🟡 1🔵) · 5 aplicados (1🔴 4🟠) |
+| `oficio-rigido-y-flexible` | 2026-08-05 | ⚠️ | 5 (0🔴 0🟠 · 3🟡 2🔵) · 3 aplicados (1🔴 2🟠) + 1 verificado, 1🟡 caído con el 🔴 |
+| `oficio-esbelta-y-compacta` | 2026-08-05 | ⚠️ | 5 (0🔴 0🟠 · 3🟡 2🔵) · 5 aplicados (5🟠) + 1 verificado |
 | `harness-estructural-e1-tools-que-calculan` | 2026-07-26 | ⚠️ | 24 (1🔴 4🟠 · 14🟡 5🔵) |
 | `harness-estructural-e2-elegir-motor` | 2026-07-26 | ⚠️ | 15 (0🔴 7🟠 · 6🟡 2🔵) |
 | `harness-estructural-e3-rag-con-cita` | 2026-07-26 | ❌ | 13 (1🔴 5🟠 · 4🟡 3🔵) |
