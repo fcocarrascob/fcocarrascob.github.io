@@ -1,0 +1,227 @@
+---
+title: "Cuándo la zapata deja de ser rígida"
+description: "El reparto triangular de la nota anterior valía porque la zapata era rígida. NCh2369:2025 §10.1.4 pone número a eso con la Ec. (25), y la L que hay que meterle no es el largo de la zapata: la Tabla 10 dice que para una zapata aislada es la zarpa. Con esa lectura la misma zapata da λL = 0,46 —rígida—; leyendo el largo entero, 1,09 —flexible—. Medido el eje λL con dos solvers independientes aparecen otras dos: con la carga perfectamente centrada una fundación flexible igual levanta los bordes —por curvatura, no por volcamiento—, que es justo por qué §10.1.5 la exime del mínimo de área apoyada; y en el umbral mismo el error del reparto plano ya vale 32 %."
+pubDate: 2026-08-05
+tags: ["OpenSees", "OpenSeesPy", "Laboratorio", "fundaciones", "zapatas", "presiones de contacto", "NCh2369", "rigidez relativa", "análisis no lineal", "verificación"]
+section: "Laboratorio"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+La [nota anterior](/blog/lab-zapata-sin-traccion/) mostró que el reparto de presiones bajo una zapata **rígida** no contiene el módulo de balasto: sale de equilibrio más la hipótesis de contacto plano, y con $k_s$ variando cien a uno la presión no se movía. Pero esa nota dio la rigidez por supuesta — la zapata era un cuerpo rígido por decreto, con un $EI$ más de dos mil veces el de una zapata real.
+
+¿Dónde deja de valer eso? ¿Y quién decide si una fundación es rígida?
+
+Cuarta nota del **laboratorio**, la serie que resuelve cada fenómeno por **dos caminos independientes** y publica la salida literal del script. Acá los dos caminos son numpy puro y OpenSeesPy — y el primero de los dos resulta ser el que la propia norma pone de ejemplo.
+
+<Note type="info" title="Lo que este blog ya dijo sobre esto">
+El criterio de rigidez de NCh2369 ya se aplicó en [el ejemplo de la losa de sala eléctrica](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369/), que es donde está desarrollada la trampa de la Tabla 10 —«no define una longitud de cálculo por fundación: define una por zona»— y el despeje del espesor necesario. Acá esa lectura **se usa, no se descubre**.
+
+Y el eje de rigidez relativa tiene su propia serie: [«Cuándo confiar en la fórmula rígida»](/blog/cuando-confiar-formula-rigida/) lo midió con 5250 análisis en SAP2000 usando $K_r = E_c T^3/(k_s B^4)$. Es la misma escala que la de la norma, con el puente $(\lambda B)^4 = 3/K_r$ — y volveremos sobre eso, porque los dos umbrales no coinciden. Ese post **ya encontró** que una zapata muy flexible levanta los bordes bajo carga axial pura; acá esa observación se reencuentra desde otro motor y se conecta con lo que la norma hace con ella.
+
+Lo que esta nota agrega: el barrido resuelto por **dos solvers independientes** sobre el eje $\lambda L$ de la propia norma, y la lectura de por qué §10.1.5 exime a las flexibles del mínimo de área apoyada.
+</Note>
+
+## Lo que dice la norma
+
+**NCh2369:2025 §10.1.4** clasifica una fundación superficial como rígida con un solo número:
+
+<Equation label="NCh2369:2025 §10.1.4, Ec. (25)">
+$$L\sqrt[4]{\frac{k_v}{4EI}} \leq 1$$
+</Equation>
+
+donde, con las palabras de la norma: $I = e^3/12$ es el momento de inercia **por unidad de longitud** de fundación (m³); $e$ es la altura o espesor de la fundación (m); $E$ el módulo de deformación del material constitutivo de la fundación (tonf/m²); $k_v$ la rigidez vertical **sísmica** del suelo (tonf/m³); y $L$ la **longitud de cálculo definida en la Tabla 10**.
+
+Es la forma clásica de la viga sobre fundación elástica, con el umbral puesto exactamente en 1. Llamando $\lambda = \sqrt[4]{k_v/(4EI)}$ —que tiene unidades de $1/\text{longitud}$— el criterio se lee $\lambda L \leq 1$, y de acá en adelante $\lambda L$ es el eje de toda la nota.
+
+Tres advertencias antes de seguir, las tres son trampas reales:
+
+<Note type="warning" title="La misma letra para dos cosas, y dos balastos que no son el mismo">
+La norma llama $e$ al **espesor**. Das y la nota anterior llaman $e$ a la **excentricidad**. En esta nota conviven las dos magnitudes, así que acá el espesor se escribe *espesor* y la excentricidad sigue siendo $e$ — pero quien vaya al PDF se va a topar con la colisión.
+
+El $k_v$ de la Ec. (25) es el $k_s$ de la nota anterior, con un matiz que conviene no barrer: la norma lo pide **sísmico**, y acá se adopta el mismo valor estático de 30 000 kN/m³. Es un supuesto, no una equivalencia — y como se verá, $\lambda L$ va con $k_v^{1/4}$, así que no es inocuo.
+
+Y aunque la norma la escribe en tonf, la Ec. (25) es **homogénea dimensionalmente**: $k_v/(EI)$ tiene unidades de $1/L^4$. Sirve cualquier sistema consistente; acá se trabaja en kN y m.
+</Note>
+
+La consecuencia de la clasificación no es cosmética. **§10.1.5** dice que las fundaciones que no clasifiquen como rígidas «se deben tratar como flexibles», y que las flexibles «no requieren cumplir un nivel mínimo de área apoyada» — el 80 % y el 50 % de §10.1.4 que la nota anterior desmenuzó. En su reemplazo se debe verificar «si el nivel y distribución de los levantamientos puede ser tolerado por la superestructura».
+
+O sea que la Ec. (25) decide cuál de dos chequeos distintos te aplica. Y tiene $k_v$ adentro: **el balasto no cambia el reparto de una zapata rígida, pero decide si podés tratarla como rígida.**
+
+## Los dos caminos
+
+El caso es la zapata de la nota anterior: corrida, $B = 3{,}0$ m, analizada por metro de ancho, $Q = 600$ kN, sobre **256 resortes** verticales que no toman tracción, con $k_v = 30\,000$ kN/m³. (La malla no es un detalle: la nota anterior mostró que con pocos resortes $q_{\text{máx}}$ sale baja, y del lado inseguro.) Lo que la nota anterior no necesitaba y esta sí: una **columna de 0,50 m** —porque de ahí sale la $L$ de la Tabla 10— y un **espesor de 0,60 m**. El módulo del hormigón, $E = 2{,}35 \times 10^7$ kN/m², es dato de entrada del modelo: la Ec. (25) lo pide y acá se declara, no se deriva de ninguna norma.
+
+La **referencia** es un solver de rigidez directa en numpy puro: viga sobre cama de resortes, con el contacto resuelto por **conjunto activo** —se resuelve con todos los resortes puestos, se apagan los que quedaron traccionados, y se repite hasta que el conjunto deja de cambiar—. Lo interesante es que ese algoritmo no lo elegí yo: es el que §10.1.4 pone como ejemplo, junto con la precaución que sí ordena, para una fundación que no clasifica como rígida:
+
+> …el análisis estructural de la losa requiere la utilización de métodos o análisis numéricos, que incorporen, por ejemplo, una cama de resortes, teniendo la precaución de verificar que en el análisis no resulten resortes traccionados. **De existir resortes traccionados, éstos se deben anular.**
+
+La cama de resortes es «por ejemplo»; anular los traccionados es lo que la norma manda. El solver de referencia hace exactamente las dos cosas.
+
+El **motor** es OpenSeesPy con `uniaxialMaterial('ENT', ...)` y análisis no lineal, igual que la nota anterior, barriendo el espesor. Los dos reciben el mismo vector de cargas nodales —$Q$ repartida sobre la huella real de la columna, más el momento $Q \cdot e$— porque eso es dato de entrada, no método. Ninguna otra línea es compartida: el módulo de referencia no importa `openseespy` ni `rukan`.
+
+El barrido se parametriza en $\lambda L$, que es el número de la norma, y el espesor es solo la manera de moverlo. Conviene tener a la vista cuánto espesor es cada punto:
+
+```
+  λL = 0.25   espesor  1.338 m
+  λL = 0.46   espesor  0.600 m
+  λL = 1.00   espesor  0.211 m
+  λL = 1.50   espesor  0.123 m
+  λL = 2.00   espesor  0.084 m
+  λL = 3.00   espesor  0.049 m
+```
+
+Solo el segundo renglón es una zapata: es la de 0,60 m del caso. Con esta zarpa de 1,25 m la zapata deja de ser rígida recién por debajo de **0,211 m** de espesor, y **los tres últimos renglones no existen** — el extremo del barrido, $\lambda L = 3$, es una losa de 3 m con 5 cm de canto. Ese extremo hay que leerlo por analogía dimensional con la losa de verdad, que alcanza $\lambda L = 2{,}19$ con 0,60 m de espesor y 6 m de luz, y a la que se llega al final.
+
+## El límite rígido: la nota anterior es el caso $\lambda L \to 0$
+
+| Magnitud | Fórmula cerrada (Das §16.7) | Viga sobre resortes, λL = 0,05 | Error |
+|---|---|---|---|
+| q_máx, carga centrada — OpenSees [kPa] | 200.0000 | 200.0005 | 0.0002 % |
+| q_máx, carga e/B = 0,233 — OpenSees [kPa] | 500.0000 | 499.9892 | 0.0022 % |
+| q_máx, carga centrada — numpy [kPa] | 200.0000 | 199.8705 | 0.0647 % |
+| q_máx, carga e/B = 0,233 — numpy [kPa] | 500.0000 | 499.7910 | 0.0418 % |
+
+Con $\lambda L = 0{,}05$ —que no es un espesor de zapata sino la manera de escribir «cuerpo rígido» en la escala de esta nota, del mismo orden que la idealización de la anterior— los dos caminos nuevos vuelven al trapecio y al triángulo cerrados de Das. La nota anterior queda encajada adentro de esta como caso límite.
+
+(Las tablas de esta nota son la salida literal del script, así que van con punto decimal; la prosa usa coma.)
+
+## La verificación
+
+| Magnitud | numpy (conjunto activo) | OpenSees (resortes ENT) | Error |
+|---|---|---|---|
+| q_máx con λL = 0.25 [kPa] | 200.3099 | 200.3099 | 0.0000 % |
+| q_máx con λL = 0.46 [kPa] | 203.4004 | 203.4004 | 0.0000 % |
+| q_máx con λL = 1.00 [kPa] | 263.5153 | 263.5153 | 0.0000 % |
+| q_máx con λL = 1.50 [kPa] | 382.2559 | 382.2559 | 0.0000 % |
+| q_máx con λL = 2.00 [kPa] | 500.1233 | 500.1233 | 0.0000 % |
+| q_máx con λL = 3.00 [kPa] | 713.5063 | 713.5063 | 0.0000 % |
+
+Carga centrada, todo el barrido, dos solvers que no comparten una línea: el mismo número a cuatro decimales. Conviene tener clara la división del trabajo en lo que sigue, porque las dos cosas viven en tablas parecidas: **que los dos caminos coincidan es la verificación; la distancia al reparto plano es el hallazgo.**
+
+## Lo que el reparto plano no puede ni nombrar
+
+La carga está en el **centro exacto**: excentricidad cero, momento cero.
+
+```
+  λL = 0.25   apoyado 100.0 %   q_máx  200.31 kPa  (1.00× el Q/A de 200 kPa)
+  λL = 0.46   apoyado 100.0 %   q_máx  203.40 kPa  (1.02× el Q/A de 200 kPa)
+  λL = 1.00   apoyado 100.0 %   q_máx  263.52 kPa  (1.32× el Q/A de 200 kPa)
+  λL = 1.50   apoyado  88.7 %   q_máx  382.26 kPa  (1.91× el Q/A de 200 kPa)
+  λL = 2.00   apoyado  67.6 %   q_máx  500.12 kPa  (2.50× el Q/A de 200 kPa)  ← no cumple el 80 % de §10.1.4
+  λL = 3.00   apoyado  46.5 %   q_máx  713.51 kPa  (3.57× el Q/A de 200 kPa)  ← no cumple ni el 50 %
+```
+
+Sin excentricidad ninguna, la fundación flexible **igual se despega**. No es volcamiento —la resultante cae en el centro geométrico— sino la zapata que se curva y levanta los bordes. Y con $\lambda L = 3$ apoya el 46,5 % de su base: reprobaría el mínimo de área apoyada de §10.1.4, siendo una fundación perfectamente centrada y perfectamente estable.
+
+El fenómeno no es nuevo acá: el [experimento en SAP2000](/blog/cuando-confiar-formula-rigida/) ya lo había encontrado —«una zapata muy flexible se ahueca tanto que sus bordes se levantan incluso sin momento»— con 350 geometrías tridimensionales y otro programa. Que dos modelos independientes lo reproduzcan es la mejor noticia posible. (Aquel post reporta casos con apenas un 67 % de la base en contacto; el parecido con el 67,6 % de la fila $\lambda L = 2$ de acá es casualidad — son extremos de barridos distintos sobre modelos distintos.)
+
+Lo que se agrega acá es ponerlo sobre el eje $\lambda L$ de la norma y cruzarlo con el mínimo de área apoyada, que es donde el fenómeno deja de ser una curiosidad y pasa a decidir un chequeo.
+
+Y lo que hace es preciso: ahí se ve por qué §10.1.5 **exime** a las flexibles del mínimo de área apoyada en vez de simplemente relajarlo. El área apoyada es un buen indicador de **volcamiento de cuerpo rígido**; aplicada a una fundación flexible mide otra cosa —curvatura— y la confunde con inestabilidad. Por eso la norma se lo saca de encima y lo cambia por *tolerancia al levantamiento*, que es la pregunta que sí corresponde.
+
+<Figure
+  src="/lab-zapata-rigida-flexible/fig-perfiles.svg"
+  alt="Dos gráficos lado a lado de presión de contacto contra la posición x a lo largo de una zapata de 3 m, con el eje vertical q en kPa de 0 a 1000. En el panel izquierdo, carga centrada: la curva de λL = 0,25 es una recta horizontal en 200 kPa que coincide con la línea gris de trazos del reparto plano; la de λL = 1 es una loma suave que llega a 263,5 en el centro y baja a unos 105 en los bordes; la de λL = 2 es una campana que llega a 500,1 y toca cero cerca de x = 0,5 y x = 2,5; la de λL = 3 es una campana angosta y alta de 713,5 que solo apoya entre 0,81 y 2,19 m. En el panel derecho, e/B = 0,233: la curva de λL = 0,25 sigue exactamente el triángulo gris de trazos de Das, que arranca en x = 0,6 y sube a 500 en el borde derecho; la de λL = 1 es más baja y arranca más tarde; las de λL = 2 y 3 son campanas altas y angostas con el pico cerca de x = 2,1, que llegan a 651,4 y 977,2."
+  caption="El mismo modelo de resortes ENT en los dos casos de carga, cambiando solo el espesor. El reparto plano de referencia va en gris de trazos, dibujado encima: en λL = 0,25 queda exactamente sobre la curva del modelo —por eso se ve el trazo alternando gris y azul— y a partir de ahí las dos se separan."
+/>
+
+Con la carga excéntrica de la nota anterior —$e/B = 0{,}233$, el 80 % apoyado de §10.1.4— pasa algo menos lineal:
+
+| Magnitud | Triángulo de Das | Viga sobre resortes | Error |
+|---|---|---|---|
+| q_máx excéntrica, λL = 0.25 [kPa] | 500.0000 | 499.5464 | 0.0907 % |
+| q_máx excéntrica, λL = 0.46 [kPa] | 500.0000 | 495.1259 | 0.9748 % |
+| q_máx excéntrica, λL = 1.00 [kPa] | 500.0000 | 410.1097 | 17.9781 % |
+| q_máx excéntrica, λL = 1.50 [kPa] | 500.0000 | 488.8158 | 2.2368 % |
+| q_máx excéntrica, λL = 2.00 [kPa] | 500.0000 | 651.3732 | 30.2746 % |
+| q_máx excéntrica, λL = 3.00 [kPa] | 500.0000 | 977.2306 | 95.4461 % |
+
+La columna «Error» va sin signo —el script la imprime en valor absoluto— y acá el signo es medio hallazgo, así que se lee en la columna del medio:
+
+```
+  λL = 0.25   q_máx   499.55 kPa   vs 500 del triángulo   → del lado seguro (sobrestima)
+  λL = 0.46   q_máx   495.13 kPa   vs 500 del triángulo   → del lado seguro (sobrestima)
+  λL = 1.00   q_máx   410.11 kPa   vs 500 del triángulo   → del lado seguro (sobrestima)
+  λL = 1.50   q_máx   488.82 kPa   vs 500 del triángulo   → del lado seguro (sobrestima)
+  λL = 2.00   q_máx   651.37 kPa   vs 500 del triángulo   → del lado INSEGURO (subestima)
+  λL = 3.00   q_máx   977.23 kPa   vs 500 del triángulo   → del lado INSEGURO (subestima)
+```
+
+El error **no es monótono**. Alrededor de $\lambda L = 1$ la zapata que se flexiona alivia el pico del triángulo —un 18 % por debajo en $\lambda L = 1$, y hasta un 22 % en el mínimo de la curva, cerca de $\lambda L = 1{,}1$— y el reparto plano queda del lado seguro. Pasado eso la carga se concentra bajo la columna y la cosa se da vuelta: en $\lambda L = 3$ el triángulo de Das se queda en 500 kPa contra 977 reales, o sea que subestima en un factor 1,95.
+
+<Figure
+  src="/lab-zapata-rigida-flexible/fig-error.svg"
+  alt="Gráfico de la desviación porcentual de q máx respecto de la hipótesis de distribución plana, contra λL de 0 a 4. La banda verde claro a la izquierda marca λL ≤ 1, la zona rígida, con una vertical verde de trazos en λL = 1. La curva azul de la carga centrada arranca pegada a cero, cruza el umbral en +32 % y sigue subiendo hasta +346 % en λL = 4. La curva roja del caso excéntrico baja primero hasta unos −22 % cerca de λL = 1,1, vuelve a cruzar el cero cerca de 1,5 y sube hasta +160 % en λL = 4. Puntos circulares del motor OpenSees caen exactamente sobre las dos curvas de numpy. Abajo del eje, dos marcas: zarpa λL = 0,46 y si L fuera B, 1,09."
+  caption="Los puntos son OpenSees y las curvas son numpy: los dos caminos, superpuestos. Mientras el error es chico crece como λL⁴, así que abajo de 0,5 es despreciable — pero en el umbral mismo ya vale 32 % en la carga centrada, y la curva no tiene ningún codo ahí."
+/>
+
+<Note type="warning" title="El umbral no es donde el reparto plano se rompe">
+Es tentador leer la figura como que el 1 marca el quiebre, y no es eso lo que dicen los números. **En $\lambda L = 1$ exacto el error de la carga centrada ya vale 31,8 %** (263,5 contra 200), y en la excéntrica −18 %. La curva no tiene codo ahí: crece como $\lambda L^4$ mientras el error es chico —hasta $\lambda L \approx 0{,}8$— y después se va aplanando. Lo que el umbral separa no es «vale / no vale», sino el régimen donde el error es chico para las fundaciones reales —la zapata del caso, con $\lambda L = 0{,}46$, se equivoca un 1,7 %— del régimen donde hay que analizar.
+
+Y cuánto vale el error **en** el umbral depende fuerte de cómo esté repartida la carga: en [el ejemplo de la losa](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369/), con tres líneas de columnas y peso propio sobre 14 m, ahí mismo la hipótesis plana se equivoca solo un 2 %. Acá, con toda la carga concentrada en el centro de una franja de 3 m, un 32 %. Las dos mediciones son correctas, y justamente por eso el umbral **no** se puede leer como «acá el error se vuelve despreciable»: no hay un único error asociado a $\lambda L = 1$.
+
+Vale la pena contrastarlo con lo que este blog midió por otro camino: el experimento de las [5250 simulaciones](/blog/cuando-confiar-formula-rigida/) puso el corte en $K_r \geq 1$, y por el puente $(\lambda B)^4 = 3/K_r$ eso equivale a $\lambda B = \sqrt[4]{3} = 1{,}32$, o sea $\lambda L \approx 0{,}55$ con la zarpa de este caso — donde el error vale 3,5 %. **El criterio de la norma es bastante más permisivo que el que sale de medir el error.** Las dos cosas son defendibles porque no responden la misma pregunta: la norma decide qué procedimiento de verificación te aplica, el experimento decide cuánto te equivocás en $q_{\text{máx}}$.
+
+(El puente es exacto entre las dos definiciones, pero la traducción de umbrales es de orden de magnitud y no una identidad entre modelos: $K_r$ se midió sobre placas cuadradas en 3D y acá $\lambda L$ es una franja de un metro.)
+
+(De paso, el puente explica un número de más arriba: $\lambda B = 1{,}09$ para esta zapata es exactamente el $\lambda L$ que sale de leer mal la Tabla 10 — leer $L = B$ es, sin querer, calcular la rigidez relativa del experimento en vez del criterio de la norma.)
+</Note>
+
+## Y ahora, quién es $L$
+
+Todo lo anterior está en la escala de $\lambda L$. Para saber en qué punto de ese eje cae una zapata concreta hay que leer la Tabla 10 — y ahí conviene ser cuidadoso, por lo que ya mostró [el ejemplo de la losa](/geotecnia/ejemplo-losa-rigida-o-flexible-nch2369/): la tabla da una $L$ por zona, no por fundación.
+
+**Tabla 10 — «Longitud de cálculo para elementos de fundación»** da cuatro filas: la **zarpa**, cuya $L$ es «la distancia entre el borde de la fundación y el borde exterior de la columna o muro»; la zona interior de la fundación **entre columnas** o **entre muros paralelos**, cuya $L$ es la mayor luz libre entre elementos consecutivos con axiales que no difieran en más de 50 %; y el **paño de losa delimitado por un mínimo de 3 muros**, con $L = 1{,}2\,l_x$ si el paño es abierto y $L = 0{,}95\,l_x$ si es cerrado, siendo $l_x$ el lado menor.
+
+Para una zapata aislada con una columna, la única fila que aplica es **zarpa**. O sea que $L$ es el voladizo, no el largo de la zapata. Y eso no es un matiz:
+
+| Lectura de L | L [m] | λL | Ec. (25) | Espesor que exigiría |
+|---|---|---|---|---|
+| Tabla 10, fila «Zarpa» — la que aplica | 1.25 | 0.4561 | ≤ 1 → **rígida** | 0.211 m |
+| El largo de la zapata (lectura equivocada) | 3.00 | 1.0947 | > 1 → **flexible** | 0.677 m |
+
+Misma zapata, mismo suelo, mismo espesor, veredicto opuesto. La última columna es el espesor al que cada lectura daría $\lambda L = 1$: leer mal la $L$ pide una zapata **3,2 veces más gruesa**, porque $\lambda L$ va con $L$ a la primera potencia y con el espesor a la $-3/4$.
+
+Y el balasto, que no movía un milímetro el reparto de la zapata rígida, sí mueve esto:
+
+| k_v | λL (L de zarpa) | Ec. (25) | Espesor al que λL = 1 |
+|---|---|---|---|
+| k_v × 0.1 = 3 000 kN/m³ | 0.2565 | rígida | 0.098 m |
+| k_v × 1 = 30 000 kN/m³ | 0.4561 | rígida | 0.211 m |
+| k_v × 10 = 300 000 kN/m³ | 0.8111 | rígida | 0.454 m |
+
+Cien a uno en $k_v$ mueve el espesor umbral en un factor 4,6 —va con $k_v^{1/3}$— y $\lambda L$ en 3,2. Esta zapata aguanta el rango entero sin salirse de rígida, pero una más delgada no. Y no es una preocupación mía: el propio comentario **C10.1.5** recomienda, para fundaciones flexibles, «considerar en los análisis la potencial variación de los parámetros de mayor influencia (por ejemplo, rigidez)», con una banda acotada por un *lower bound* y un *upper bound*.
+
+<Note type="tip" title="Para qué está escrito el criterio">
+| Elemento (Tabla 10) | L [m] | λL | Ec. (25) |
+|---|---|---|---|
+| Zarpa — zapata B = 3 m, columna 0.50 m | 1.25 | 0.456 | rígida |
+| Losa entre columnas con luz libre de 6 m | 6.00 | 2.189 | **flexible** |
+| Paño de losa con 3 muros, lx = 5 m → L = 1,2 lx | 6.00 | 2.189 | **flexible** |
+| Paño de losa cerrado, lx = 5 m → L = 0,95 lx | 4.75 | 1.733 | **flexible** |
+
+Con el mismo espesor de 0,60 m y el mismo suelo, la zapata aislada es rígida con holgura y las tres geometrías de losa no lo son. Para volver flexible a la zapata habría que adelgazarla a 0,21 m, que no es una zapata que nadie construya. **El criterio no está escrito para la zapata aislada: está escrito para la losa**, que es donde $\lambda L$ se pasa de 1 sola. Lo cual explica de paso por qué §10.1.4 habla de «análisis estructural de la losa» justo después de dar la Ec. (25).
+</Note>
+
+## El veredicto
+
+1. **Para la zapata aislada corriente, el reparto plano vale — y ahora con número.** $\lambda L \approx 0{,}46$ deja a la zapata de la nota anterior bien adentro de la zona rígida, con un 1,7 % de error en $q_{\text{máx}}$: su triángulo y su independencia de $k_s$ se sostienen. La Ec. (25) es barata de evaluar y conviene evaluarla en vez de suponerla.
+2. **Pero el umbral no es donde el reparto plano se rompe.** En $\lambda L = 1$ el error ya vale 32 %, y el criterio que sale de medirlo —el $K_r \geq 1$ del [experimento en SAP2000](/blog/cuando-confiar-formula-rigida/), equivalente a $\lambda L \approx 0{,}55$ acá— es bastante más exigente. La Ec. (25) decide qué procedimiento te aplica, no cuánto te equivocás.
+3. **$L$ es la zarpa, no el largo de la zapata.** Es la equivocación que más caro sale de las que aparecen acá: da vuelta la clasificación de una zapata perfectamente normal, y con ella cuál de los dos regímenes de §10.1.4 / §10.1.5 aplica.
+4. **En fundación flexible, el área apoyada mide otra cosa.** Una losa con la carga centrada puede levantar los bordes por pura curvatura y «reprobar» un criterio pensado para volcamiento. §10.1.5 la exime por eso, no por indulgencia — y lo cambia por verificar que la superestructura tolere el levantamiento, que es la pregunta correcta.
+5. **Y el balasto vuelve por la ventana.** No entra en el reparto de la zapata rígida, como mostró la nota anterior. Entra en la Ec. (25), que es la que decide si tenés derecho a usar ese reparto.
+
+## Reproducir
+
+```bash
+python -m lab.nota04_zapata_rigida_flexible
+```
+
+El script está en [`lab/nota04_zapata_rigida_flexible.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/nota04_zapata_rigida_flexible.py) del repositorio de [Rukan](https://github.com/fcocarrascob/rukan). Resuelve el mismo problema dos veces: la viga sobre resortes por rigidez directa y conjunto activo en [`lab/_lib/ref.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/_lib/ref.py) —que **no importa `openseespy` ni `rukan`**— y la cama de resortes `ENT` de OpenSeesPy. Todas las tablas de este post son la salida literal del script, y corren en `pytest` como test de regresión. El equilibrio se verifica en cada corrida: la resultante de las presiones tiene que dar $Q$.
+
+La Ec. (25) y la Tabla 10 se transcribieron de las **páginas rasterizadas** del PDF de NCh2369:2025, 3.ª edición —pp. 125 y 131 del archivo, impresas 118 y 124—, no de la capa de texto, que destruye la disposición del radical y del cociente. §10.1.5, la cláusula que exime a las flexibles del mínimo de área apoyada, está en la p. 129 del archivo (impresa 122).
