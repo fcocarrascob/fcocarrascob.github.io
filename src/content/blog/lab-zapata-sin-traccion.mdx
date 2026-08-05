@@ -1,0 +1,199 @@
+---
+title: "El triángulo bajo la zapata no depende de la rigidez del suelo"
+description: "Cuando la resultante sale del núcleo central la zapata se despega y la presión pasa a repartirse en triángulo. Lo que sorprende es que ese reparto no contiene el módulo de balasto: con k_s variando cien veces, q_máx no se mueve y lo que escala es el asentamiento. De paso aparecen dos cosas peores: con pocos resortes la presión sale baja del lado inseguro, y la superposición de casos de carga deja de valer. Y lo que NCh2369:2025 acota no es el tercio central, sino el área apoyada."
+pubDate: 2026-08-05
+tags: ["OpenSees", "OpenSeesPy", "Laboratorio", "fundaciones", "zapatas", "presiones de contacto", "NCh2369", "análisis no lineal", "verificación"]
+section: "Laboratorio"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+## La pregunta
+
+El suelo no tracciona. Si a una zapata se le pone momento suficiente, un borde deja de apoyar. ¿Qué presión queda abajo — y cuánto de esa respuesta depende de la rigidez que uno le suponga al suelo? Y, de paso, qué es lo que la norma chilena acota de verdad, que no es lo que dice la regla de oficina.
+
+Tercera nota del **laboratorio**, la serie que corre en paralelo a la [escalera de verificación de Rukan](/blog/rukan-verificacion-modal-opensees/) y que ya pasó por [el momento del vano](/blog/lab-eleload-empotramiento/) y por [la asíntota de $M_p$](/blog/lab-momento-plastico-asintota/). La regla es la misma: el fenómeno se resuelve por **dos caminos independientes** —fórmula cerrada citada a su fuente, y OpenSeesPy— y la tabla es la salida literal del script.
+
+## El caso
+
+Zapata corrida **rígida**, de $B = 3{,}0$ m en la dirección de la excentricidad, analizada por metro de ancho. Carga vertical $Q = 600$ kN y momento $M$, sobre una cama de resortes verticales que **no toman tracción**: `uniaxialMaterial('ENT', tag, k)`, elástico en compresión y de rigidez nula en tracción. La rigidez de cada resorte es $k_s$ por su área tributaria — con **media** área en los dos nodos de borde, o la reacción total no da $Q$.
+
+Los dos números que el modelo necesita y la fórmula cerrada no: el balasto base es $k_s = 30\,000$ kN/m³ —que, se verá, solo fija el asentamiento— y la zapata se idealiza como cuerpo rígido con $EI = 1{,}0 \times 10^9$ kN·m², unas 2200 veces la de una zapata real de 0,6 m de canto. La base va dividida en 256 resortes salvo donde se diga otra cosa.
+
+Que el material no tome tracción vuelve el problema **no lineal**, así que el análisis va con `Newton` en pasos de carga. Nadie le dice al modelo dónde termina el contacto: eso es lo que tiene que encontrar solo.
+
+La referencia son las ecuaciones de Das. Mientras la resultante cae dentro del núcleo central el contacto es total y el reparto es lineal; pasado $e = B/6$ la segunda daría tracción, el suelo no la toma, y la zapata se despega:
+
+<Equation label="Das, §16.7, Ecs. (16.20), (16.21) y (16.22)">
+$$
+\begin{aligned}
+e \leq B/6: \quad & q_{\text{máx}} = \frac{Q}{BL}\left(1 + \frac{6e}{B}\right), \qquad q_{\text{mín}} = \frac{Q}{BL}\left(1 - \frac{6e}{B}\right) \\[4pt]
+e > B/6: \quad & q_{\text{máx}} = \frac{4Q}{3L(B - 2e)}
+\end{aligned}
+$$
+</Equation>
+
+La **longitud de contacto** no está tabulada, pero sale de la propia Ec. (16.22) por estática, sin agregar hipótesis: la resultante del triángulo vale $\tfrac{1}{2}q_{\text{máx}}\,a\,L$ y tiene que igualar a $Q$, de donde $a = 3(B/2 - e)$. Es lo mismo que exigir que el centroide del triángulo, a $a/3$ del borde, caiga bajo la línea de acción de $Q$.
+
+## El modelo encuentra el eje neutro solo
+
+| Magnitud | Fórmula cerrada (Das §16.7) | Resortes ENT | Error |
+|---|---|---|---|
+| q_máx con e/B = 0.1000 (dentro del núcleo) [kPa] | 320.0000 | 319.9938 | 0.0019 % |
+| q_máx con e/B = 0.1667 (borde del núcleo) [kPa] | 400.0000 | 399.9912 | 0.0022 % |
+| q_máx con e/B = 0.2333 (80 % apoyado — §10.1.4 menores) [kPa] | 500.0000 | 499.9878 | 0.0024 % |
+| q_máx con e/B = 0.3333 (50 % apoyado — §10.1.4 mayores) [kPa] | 800.0000 | 799.9507 | 0.0062 % |
+
+| Magnitud | a/B = 3/2 − 3e/B | Resortes en compresión | Error |
+|---|---|---|---|
+| Fracción apoyada con e/B = 0.1000 [—] | 1.0000 | 1.0000 | 0.0000 % |
+| Fracción apoyada con e/B = 0.1667 [—] | 1.0000 | 1.0000 | 0.0000 % |
+| Fracción apoyada con e/B = 0.2333 [—] | 0.8000 | 0.7988 | 0.1465 % |
+| Fracción apoyada con e/B = 0.3333 [—] | 0.5000 | 0.5020 | 0.3906 % |
+
+Las dos últimas filas de cada tabla son la rama del triángulo. La fracción apoyada no cierra tan fino como la presión porque en el modelo está **cuantizada** al paso de los resortes: con 256 divisiones el contacto no puede terminar en cualquier lado, sino cada 11,7 mm.
+
+(Las tablas de esta nota son la salida literal del script, así que van con punto decimal; la prosa usa coma.)
+
+<Figure
+  src="/lab-zapata-sin-traccion/fig-regimenes.svg"
+  alt="Tres diagramas de presión de contacto lado a lado bajo una zapata rígida de 3 m, con la resultante Q marcada con una flecha roja cada vez más corrida hacia la derecha. En el primero, e/B = 0,10, el bloque azul es un trapecio que cubre toda la base, con q máx = 320 kPa y apoyado 100 %. En el segundo, e/B = 0,233, el bloque es un triángulo que arranca a un quinto de la base; el tramo izquierdo va con línea de trazos y la palabra despegado, q máx = 500 kPa y apoyado 80 %. En el tercero, e/B = 0,333, el triángulo cubre solo la mitad derecha y es mucho más alto: q máx = 800 kPa y apoyado 50 %."
+  caption="Los tres regímenes salen del mismo modelo de resortes, cambiando solo el momento: el perfil dibujado es la presión que reportan los resortes nodo por nodo. Entre el primer panel y el último —el límite del 50 % apoyado— la presión máxima se multiplica por 2,5."
+/>
+
+## El reparto no sabe cuánto vale el suelo
+
+Acá está lo que da título a la nota. Se corre el mismo caso con el suelo diez veces más blando y diez veces más rígido — un rango de cien a uno:
+
+| Magnitud | Fórmula cerrada | Resortes ENT | Error |
+|---|---|---|---|
+| q_máx con k_s × 0.1 [kPa] | 500.0000 | 499.9897 | 0.0021 % |
+| q_máx con k_s × 1 [kPa] | 500.0000 | 499.9878 | 0.0024 % |
+| q_máx con k_s × 10 [kPa] | 500.0000 | 499.9688 | 0.0062 % |
+
+La fórmula cerrada **no tiene $k_s$ adentro** — mirala de nuevo, no aparece — y el modelo, que sí lo tiene, da lo mismo en todo el rango. Lo que escala con el suelo es otra cosa:
+
+```
+  k_s ×  0.1    asentamiento   62.500 mm    giro  69.4420 mrad
+  k_s ×    1    asentamiento    6.250 mm    giro   6.9443 mrad
+  k_s ×   10    asentamiento    0.625 mm    giro   0.6945 mrad
+
+  Dividir k_s por 10 multiplica el asentamiento por 10.0000 y la presión por 1.0000.
+  El extremo blando es un suelo en el que nadie fundaría —62 mm de asentamiento
+  y 4° de giro— y ni aun ahí la presión se mueve.
+```
+
+Exacto, no aproximado. La razón es que para una zapata **rígida** el reparto sale de equilibrio y de la hipótesis de contacto lineal: dos ecuaciones, dos incógnitas, y ninguna rigidez adentro. $k_s$ decide cuánto baja la zapata y cuánto gira, no cómo se reparte la presión bajo ella.
+
+<Note type="tip" title="Dónde sí importa el balasto">
+Discutir el valor de $k_s$ para obtener presiones bajo una zapata rígida es discutir la nada. Importa para el asentamiento, para el giro que le transmite a la columna, y para el reparto de esfuerzos internos de una fundación **flexible** —una losa de fundación, una viga de fundación larga—, donde la hipótesis de contacto lineal ya no vale. Esta nota no cubre ese caso.
+</Note>
+
+## De paso: con pocos resortes la presión sale baja
+
+| Magnitud | Fórmula cerrada | Resortes ENT | Error |
+|---|---|---|---|
+| q_máx con 4 divisiones [kPa] | 500.0000 | 467.6901 | 6.4620 % |
+| q_máx con 8 divisiones [kPa] | 500.0000 | 491.1607 | 1.7679 % |
+| q_máx con 16 divisiones [kPa] | 500.0000 | 497.3228 | 0.5354 % |
+| q_máx con 32 divisiones [kPa] | 500.0000 | 499.4142 | 0.1172 % |
+| q_máx con 64 divisiones [kPa] | 500.0000 | 499.8395 | 0.0321 % |
+
+La columna «Error» va sin signo —`report.py` la imprime en valor absoluto— pero acá el signo es el hallazgo, y se lee en la columna del medio: los cinco valores están **por debajo** de 500. El error se cierra como $1/N^2$ y es negativo en las cinco mallas. Con cuatro resortes falta un 6,5 % de presión, y falta del lado inseguro: el modelo grosero dice que la zapata está más holgada de lo que está. Hermano del muestreo de la [nota 01](/blog/lab-eleload-empotramiento/), con una diferencia que importa: allá los momentos nodales eran exactos y solo faltaba el máximo entre nodos; acá el número que se lee **en** el nodo ya está mal, porque el eje neutro tiene que caer en algún lado y solo puede caer entre resortes.
+
+## La superposición se murió y nadie avisó
+
+Dos casos de carga, cada uno resuelto bien:
+
+| Magnitud | Fórmula cerrada | Resortes ENT | Error |
+|---|---|---|---|
+| Caso A — Q = 400 kN, e = 0.00 m [kPa] | 133.3333 | 133.3343 | 0.0008 % |
+| Caso B — Q = 200 kN, e = 0.90 m [kPa] | 222.2222 | 222.2146 | 0.0034 % |
+| Combinación A+B — Q = 600 kN, e = 0.30 m [kPa] | 320.0000 | 319.9938 | 0.0019 % |
+
+Los tres análisis cierran contra la fórmula cerrada. El problema aparece al **sumarlos**, que es lo que hace cualquier planilla que toma las presiones de cada caso del modelo y las combina:
+
+```
+  sumando las presiones de cada caso      355.55 kPa
+  analizando la combinación               319.99 kPa
+  la suma se pasa en                       11.11 %
+```
+
+Y el área apoyada da vuelta el veredicto, no solo el número:
+
+```
+  caso B solo           60.0 % apoyado   → no cumple el 80 % de §10.1.4
+  combinación A+B      100.0 % apoyado   → cumple con holgura
+```
+
+Por casos, la zapata parece levantarse en un 40 % de su base. Analizada de verdad, apoya entera. No es que la suma sea conservadora y listo: es que **no significa nada**, y puede errar para cualquier lado según qué caso lleve la carga vertical.
+
+Que la culpa es del suelo y no del modelo se comprueba cambiando una sola palabra, `ENT` por `Elastic`:
+
+| Magnitud | Suma de casos | Combinación analizada | Error |
+|---|---|---|---|
+| Presión en el borde comprimido [kPa] | 319.9938 | 319.9938 | 0.0000 % |
+
+Con resortes que sí traccionan, la superposición vuelve a valer a precisión de máquina. Misma zapata, misma malla, mismo solver.
+
+El mismo fenómeno visto desde el otro motor —con links `Gap` en vez de resortes `ENT`— está en [la zapata que solo toma compresión en SAP2000](/blog/zapata-solo-compresion-sap2000/).
+
+## Lo que pide la norma no es el tercio central
+
+Acá conviene ir al texto, porque la regla de oficina y la regla escrita no son la misma. La regla de oficina es el **tercio central**: el núcleo central de una sección rectangular, $e \leq B/6$, que es exactamente donde el contacto sigue siendo total.
+
+**NCh2369:2025 §10.1.4** —«Estabilidad de fundaciones superficiales rígidas **no ancladas**»— no habla de excentricidad: acota el **área apoyada**. Para fundaciones estándar *menores* exige, «para las combinaciones de cargas definidas en 4.5, considerando el Método ASD», que «se debe encontrar apoyada por lo menos el **80 %** del área bajo cada fundación»; para las *mayores* —las que se incorporan explícitamente al modelo con interacción suelo-estructura— baja el requisito al **50 %**, y el comentario explica el canje: metodologías de análisis más completas se compensan con criterios de estabilidad menos conservadores.
+
+Las palabras «tercio central» y «núcleo central» no aparecen en las 248 páginas de la norma. Y ACI 318-25 tampoco ayuda: su §13.2.6.1 remite el *bearing*, el volcamiento y el deslizamiento al código general del edificio, y no prescribe ninguna distribución de presiones.
+
+Poner las tres cosas en la misma escala es aritmética sobre $a/B = 3/2 - 3e/B$ —**derivación propia, no texto normativo**— y da esto:
+
+| Criterio | Área apoyada | e/B |
+|---|---|---|
+| Contacto total (tercio central) | 100 % | 0,167 |
+| NCh2369 §10.1.4, estándar menores | 80 % | 0,233 |
+| NCh2369 §10.1.4, estándar mayores | 50 % | 0,333 |
+
+O sea: **la regla del tercio central es más exigente que la norma vigente, y no es la regla de la norma.** Deja fuera un rango de excentricidad que NCh2369 admite explícitamente.
+
+Eso no la vuelve inútil — es donde la fórmula del trapecio sigue siendo válida:
+
+<Figure
+  src="/lab-zapata-sin-traccion/fig-qmax.svg"
+  alt="Gráfico de la presión máxima contra e/B, de 0 a 0,35, para una zapata rígida de 3 m con 600 kN. Una recta gris de trazos es la fórmula del trapecio Q/(BL)(1+6e/B), que arranca en 200 kPa y sube hasta unos 620. La curva azul de q máx real coincide con ella hasta e/B = 0,167 y después se despega hacia arriba, acelerando: llega a 800 kPa en e/B = 0,333, donde la recta gris marca 600. Un segmento rojo vertical une ambos puntos, rotulado −25 %. Tres verticales de trazos marcan el núcleo central en 0,167, el 80 % apoyado en 0,233 y el 50 % en 0,333."
+  caption="Pasado el núcleo central las dos expresiones se separan, y la del trapecio queda por debajo. En el límite que NCh2369 admite para fundaciones estándar mayores, subestima la presión máxima en un 25 %."
+/>
+
+Y el levantamiento no se queda en la estabilidad rotacional: **§10.1.3** escribe la resistencia al deslizamiento con el **área en compresión** $A_c$ adentro. Pero hay que mirar cuál de las dos ecuaciones aplica, porque no dicen lo mismo.
+
+En suelo **drenado**, Ec. (22), $A_c$ multiplica solo el término de cohesión — el de roce va con $N'$, la resultante normal, que vale $Q$ se levante o no un borde. Y la propia cláusula agrega que «en Ecuación (22) no se debe considerar el efecto de la cohesión, salvo que el suelo presente cementación». O sea que ahí el despegue **no toca** la resistencia al deslizamiento.
+
+En suelo **no drenado**, Ec. (23), la resistencia es $s_u A_c$ más el empuje pasivo movilizado: toda proporcional al área en compresión. Ahí sí, levantar el 40 % de la base te saca el 40 % de lo que el sello podía tomar en corte, y el mismo momento que te despegó es el que viene acompañado del corte basal que hay que resistir.
+
+Y el comentario C10.1.4 pone al levantamiento entre los estados límite «de naturaleza frágil, de baja ductilidad, o que generen una pérdida de control de la respuesta».
+
+<Note type="warning" title="Dos salidas de escape, y lo que esta nota no cubre">
+El mínimo de área apoyada **no aplica** a dos casos que la propia norma exime: las fundaciones **flexibles** (§10.1.5, que en su lugar piden verificar si la superestructura tolera el levantamiento) y las **ancladas** (§10.1.6, a cambio de diseñar los anclajes con el sísmico amplificado por $0{,}7R_1 \geq 1{,}0$).
+
+Y todo lo de arriba es excentricidad en **una** dirección, sobre zapata rígida. La excentricidad bidireccional es otro problema —Das lo resuelve por área efectiva de Meyerhof en §16.9— y la zapata flexible, otro más.
+</Note>
+
+## El veredicto
+
+Tres cosas, en orden de cuánto duelen:
+
+1. **La superposición no vale.** Cada combinación de carga hay que correrla completa. Sumar las presiones de los casos dio acá un 11 % de más, y dio vuelta el cumplimiento del área apoyada mínima — que es el chequeo que la norma pide.
+2. **El tercio central no es el criterio de NCh2369:2025.** Lo que §10.1.4 acota es el área apoyada: 80 % en fundaciones estándar menores, 50 % en mayores. Y pasado el núcleo, seguir usando $Q/A \pm M/S$ subestima $q_{\text{máx}}$ — un 25 % en el límite del 50 %.
+3. **El reparto es estática, no rigidez.** Para zapata rígida, $q_{\text{máx}}$ no depende de $k_s$. Si un informe discute el balasto para justificar presiones de contacto, está discutiendo el parámetro equivocado — y si el modelo tiene pocos resortes, la presión que reporta sale baja.
+
+## Reproducir
+
+```bash
+python -m lab.nota03_zapata_sin_traccion
+```
+
+El script está en [`lab/nota03_zapata_sin_traccion.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/nota03_zapata_sin_traccion.py) del repositorio de [Rukan](https://github.com/fcocarrascob/rukan). Resuelve el mismo problema dos veces: la fórmula cerrada de Das y la cama de resortes `ENT` de OpenSeesPy con análisis no lineal. La referencia vive en [`lab/_lib/ref.py`](https://github.com/fcocarrascob/rukan/blob/main/lab/_lib/ref.py), que **no importa `openseespy` ni `rukan`** — si la referencia compartiera código con lo verificado, la tabla daría error 0 % sin decir nada. Todas las tablas de este post son la salida literal del script, y corren en `pytest` como test de regresión.
+
+Las ecuaciones de Das se transcribieron de la **página rasterizada** del PDF (§16.7, pp. 490-492), no de la capa de texto: ahí `q_máx` sale como `qm´x` y el `≤` se pierde. Las disposiciones de NCh2369:2025 citadas acá —§10.1.3, §10.1.4, §10.1.5, §10.1.6 y el comentario C10.1.4— se leyeron igual, en las páginas rasterizadas de la 3.ª edición de 2025.
