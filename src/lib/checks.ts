@@ -7,6 +7,17 @@
 // Puro, sin dependencias.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Qué mide el check.
+ *
+ * `resistencia` es demanda contra capacidad, y su ratio es un uso comparable
+ * con el de cualquier otro estado límite. `esbeltez` es una razón geométrica
+ * contra un límite normativo (λ ≤ λ_md): también da un cociente ≤ 1, pero NO
+ * es un uso — mezclarlo en el ranking hace que una esbeltez pueda reportarse
+ * como «la verificación que gobierna» al lado de usos de flexión.
+ */
+export type ClaseCheck = 'resistencia' | 'esbeltez';
+
 export interface CheckResult {
   id: string;
   nombre: string;
@@ -21,6 +32,8 @@ export interface CheckResult {
    * La tabla de resultados lo convierte en link a la sección correspondiente.
    */
   ref?: string;
+  /** Default `resistencia`: es lo que era todo antes de que existieran las esbelteces. */
+  clase?: ClaseCheck;
 }
 
 /**
@@ -34,8 +47,9 @@ export function check(
   capacidad: number,
   unidad: string,
   detalle: string,
-  ref?: string
+  ref?: string,
+  clase: ClaseCheck = 'resistencia'
 ): CheckResult {
   const ratio = capacidad > 0 ? demanda / capacidad : demanda > 0 ? Infinity : 0;
-  return { id, nombre, demanda, capacidad, ratio, ok: ratio <= 1, unidad, detalle, ref };
+  return { id, nombre, demanda, capacidad, ratio, ok: ratio <= 1, unidad, detalle, ref, clase };
 }

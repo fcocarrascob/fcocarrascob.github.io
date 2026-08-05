@@ -98,6 +98,13 @@ function corteHssR(g: Extract<Geom, { familia: 'HSS-R' }>, mat: Material): ResCo
   return { Aw, lambda, Cv: Cv2, phiV: 0.9, Vn, phiVn: 0.9 * Vn, fueraDeAlcance: false, avisos: [] };
 }
 
+/**
+ * `props` no se usa, y es a propósito: el área de corte del Cap. G se DEFINE
+ * desde la geometría (A_w = d·t_w en G2.1, A_w = 2·h·t en G4), no es un valor
+ * tabulado que una fila de catálogo pueda pisar. Declarar A_g o I_x no cambia
+ * el corte, y el parámetro se mantiene para que la firma sea la misma que la de
+ * las demás verificaciones.
+ */
 export function verificarCorte(g: Geom, mat: Material, props: Propiedades): ResCorte {
   void props;
   switch (g.familia) {

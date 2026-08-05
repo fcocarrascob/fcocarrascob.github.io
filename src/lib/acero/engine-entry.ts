@@ -5,7 +5,16 @@ export { verificarSeccion } from './seccion';
 export { derivarPropiedades, resolverPropiedades, MATERIALES } from './propiedades';
 export { clasificar, esbeltecesElementos } from './clasificacion';
 export { verificarCompresion, tensionNominal } from './compresion';
-export { verificarFlexionX, verificarFlexionY, longitudLp, longitudLr } from './flexion';
+export {
+  verificarFlexionX,
+  verificarFlexionY,
+  longitudLp,
+  longitudLr,
+  factorAw,
+  factorRpc,
+  factorRpg,
+  radioEfectivoRt,
+} from './flexion';
 export { verificarCorte } from './corte';
 export { verificarTraccion } from './traccion';
 export { verificarInteraccion } from './interaccion';

@@ -238,7 +238,12 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
   // W460×74 de la planilla viga-ltb.
   const cComp = r.clasificacion.compresion;
   const cFlex = r.clasificacion.flexion;
-  const hayClasificacion = r.compresion || (r.flexionX && !r.flexionX.fueraDeAlcance);
+  // El bloque de flexión define lam_pf / lam_fala / lam_pw / lam_falma, que los
+  // emisores de los DOS ejes referencian. Colgarlo solo de flexionX dejaba la
+  // hoja rota cuando se pedía únicamente el eje débil.
+  const hayFlexion =
+    (r.flexionX && !r.flexionX.fueraDeAlcance) || (r.flexionY && !r.flexionY.fueraDeAlcance);
+  const hayClasificacion = r.compresion || hayFlexion;
   if (hayClasificacion) items.push(banner(`${++n} · CLASIFICACIÓN DE LA SECCIÓN`));
 
   if (r.compresion) {
@@ -253,7 +258,7 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
     }
   }
 
-  if (r.flexionX && !r.flexionX.fueraDeAlcance) {
+  if (hayFlexion) {
     items.push(t(`Flexión — ${cFlex[0].ref}. Es la OTRA tabla, no la de compresión:`));
     if (cFlex[0].lambdap !== undefined) {
       items.push(m(`lam_pf := ${sigCoef(cFlex[0].lambdap, material.E, material.Fy)} =`));
@@ -373,7 +378,131 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
       banner(`${++n} · FLEXIÓN EJE ${eje === 'x' ? 'FUERTE' : 'DÉBIL'} (Cap. F)`)
     );
 
-    if (geom.familia === 'I' && eje === 'x') {
+    if (geom.familia === 'I' && eje === 'x' && (f.seccion === 'F4' || f.seccion === 'F5')) {
+      // ── Secciones F4 y F5 ──
+      // Comparten los ingredientes (a_w, r_t, L_p) y se separan en el factor:
+      // F4 plastifica el alma con R_pc sobre M_yc, F5 la descuenta con R_pg.
+      const esF4 = f.seccion === 'F4';
+      items.push(
+        t(
+          esF4
+            ? 'El alma es NO COMPACTA: no rige la F2 sino la Sección F4, con el factor de plastificación del alma R_pc.'
+            : 'El alma es ESBELTA: rige la Sección F5, con el factor de reducción R_pg. El alma abolla y deja de aportar.'
+        )
+      );
+      items.push(t('F4 y F5 acotan M_p a 1,6·F_y·S_x, un tope que la Ec. F2-1 no lleva:'));
+      items.push(m(`${Mp} := min(F_y*${Z}, 1.6*F_y*${S}) = tonf*m`));
+      items.push(t('Ec. F4-4 y Ec. F4-6a (S_xt = S_xc en doblemente simétrico):'));
+      items.push(m(`M_yc := F_y*${S} = tonf*m`));
+      items.push(m('F_L := 0.7*F_y = kgf/cm^2'));
+      items.push(t('Ecs. F4-12 y F4-11 — el alma entra al radio de giro con un sexto de su área:'));
+      items.push(m('a_w := h_pl*t_w/(b_f*t_f) ='));
+      items.push(m('r_t := b_f/sqrt(12*(1 + a_w/6)) = cm'));
+
+      if (esF4) {
+        items.push(m(`lamr_w := ${sigCoef(cFlex[1].lambdar, material.E, material.Fy)} =`));
+        items.push(t('Ec. F4-9b — R_pc interpola entre M_p/M_yc y 1 según cuánto pasa λ_pw:'));
+        items.push(m('Rpc_tope := M_p/M_yc ='));
+        items.push(
+          m('Rpc_0 := Rpc_tope - (Rpc_tope - 1)*((lam_falma - lam_pw)/(lamr_w - lam_pw)) =')
+        );
+        items.push(m('R_pc := min(Rpc_tope, Rpc_0) ='));
+        items.push(m('M_cfy := R_pc*M_yc = tonf*m'));
+      } else {
+        items.push(t('Ec. F5-6 — a_w acotado a 10, y R_pg vale 1 mientras h_c/t_w ≤ 5,7·√(E/F_y):'));
+        items.push(m('aw_t := min(a_w, 10) ='));
+        items.push(
+          m('Rpg_0 := 1 - (aw_t/(1200 + 300*aw_t))*(lam_falma - 5.7*sqrt(E/F_y)) =')
+        );
+        items.push(m('R_pg := min(1, Rpg_0) ='));
+        items.push(t('Ec. F5-1:'));
+        items.push(m(`M_cfy := R_pg*F_y*${S} = tonf*m`));
+      }
+
+      // ── LTB ──
+      items.push(
+        t(
+          esF4
+            ? 'Ecs. F4-7 y F4-8, con r_t en lugar del r_ts de la F2:'
+            : 'Ec. F4-7 (que F5.2 reusa) y Ec. F5-5:'
+        )
+      );
+      items.push(m('L_p := 1.1*r_t*sqrt(E/F_y) = cm'));
+      if (esF4) {
+        items.push(m(`rzc := J/(${S}*h_o) =`));
+        items.push(
+          m('L_r := 1.95*r_t*(E/F_L)*sqrt(rzc + sqrt(rzc^2 + 6.76*(F_L/E)^2)) = cm')
+        );
+      } else {
+        items.push(m('L_r := pi*r_t*sqrt(E/(0.7*F_y)) = cm'));
+      }
+
+      if (f.zona === 'plastica') {
+        items.push(t('L_b ≤ L_p → el LTB no aplica.'));
+        items.push(m('L_b <= L_p ='));
+        items.push(m('Mn_ltb := M_cfy = tonf*m'));
+      } else if (esF4 && f.zona === 'inelastica') {
+        items.push(t('L_p < L_b ≤ L_r → Ec. F4-2, la recta entre R_pc·M_yc y F_L·S_xc.'));
+        items.push(m('L_b > L_p ='));
+        items.push(m('frac := (L_b - L_p)/(L_r - L_p) ='));
+        items.push(m(`corch := M_cfy - (M_cfy - F_L*${S})*frac = tonf*m`));
+        items.push(m('Mn_ltb := min(M_cfy, C_b*corch) = tonf*m'));
+      } else if (esF4) {
+        items.push(t('L_b > L_r → Ecs. F4-3 y F4-5.'));
+        items.push(m('L_b > L_r ='));
+        items.push(m('q_f := (L_b/r_t)^2 ='));
+        items.push(m('F_cr := C_b*pi^2*E/q_f*sqrt(1 + 0.078*rzc*q_f) = kgf/cm^2'));
+        items.push(m(`Mn_ltb := min(F_cr*${S}, M_cfy) = tonf*m`));
+      } else if (f.zona === 'inelastica') {
+        items.push(t('L_p < L_b ≤ L_r → Ecs. F5-3 y F5-2.'));
+        items.push(m('L_b > L_p ='));
+        items.push(m('frac := (L_b - L_p)/(L_r - L_p) ='));
+        items.push(m('F_cr := min(F_y, C_b*(F_y - 0.3*F_y*frac)) = kgf/cm^2'));
+        items.push(m(`Mn_ltb := R_pg*F_cr*${S} = tonf*m`));
+      } else {
+        items.push(t('L_b > L_r → Ecs. F5-4 y F5-2.'));
+        items.push(m('L_b > L_r ='));
+        items.push(m('F_cr := min(F_y, C_b*pi^2*E/(L_b/r_t)^2) = kgf/cm^2'));
+        items.push(m(`Mn_ltb := R_pg*F_cr*${S} = tonf*m`));
+      }
+
+      // ── Pandeo local del ala ──
+      const alaF4 = cFlex[0];
+      if (alaF4.clase === 'compacta') {
+        items.push(t('Ala compacta: el pandeo local del ala no aplica.'));
+        items.push(m(`${Mn} := min(M_cfy, Mn_ltb) = tonf*m`));
+      } else {
+        items.push(m(`lamr_f := ${sigCoef(alaF4.lambdar, material.E, material.Fy)} =`));
+        items.push(m('k_c := min(0.76, max(0.35, 4/sqrt(lam_falma))) ='));
+        if (alaF4.clase === 'no-compacta' && esF4) {
+          items.push(t('Ala no compacta: Ec. F4-13.'));
+          items.push(
+            m(
+              `Mn_flb := M_cfy - (M_cfy - F_L*${S})*((lam_fala - lam_pf)/(lamr_f - lam_pf)) = tonf*m`
+            )
+          );
+        } else if (esF4) {
+          items.push(t('Ala esbelta: Ec. F4-14.'));
+          items.push(m(`Mn_flb := 0.9*E*k_c*${S}/lam_fala^2 = tonf*m`));
+        } else if (alaF4.clase === 'no-compacta') {
+          items.push(t('Ala no compacta: Ecs. F5-8 y F5-7.'));
+          items.push(
+            m('Fcr_f := F_y - 0.3*F_y*((lam_fala - lam_pf)/(lamr_f - lam_pf)) = kgf/cm^2')
+          );
+          items.push(m(`Mn_flb := R_pg*Fcr_f*${S} = tonf*m`));
+        } else {
+          items.push(t('Ala esbelta: Ecs. F5-9 y F5-7.'));
+          items.push(m('Fcr_f := 0.9*E*k_c/lam_fala^2 = kgf/cm^2'));
+          items.push(m(`Mn_flb := R_pg*Fcr_f*${S} = tonf*m`));
+        }
+        items.push(m(`${Mn} := min(M_cfy, Mn_ltb, Mn_flb) = tonf*m`));
+      }
+      items.push(
+        t(
+          'La fluencia del ala traccionada (F4.4 / F5.4) no aplica: en doblemente simétrico S_xt = S_xc.'
+        )
+      );
+    } else if (geom.familia === 'I' && eje === 'x') {
       items.push(t('Ec. F2-1:'));
       items.push(m(`${Mp} := F_y*${Z} = tonf*m`));
       items.push(m(`Rd_p := phi*${Mp} = tonf*m`));
@@ -423,10 +552,14 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
         items.push(m(`${Mn} := ${Mp} = tonf*m`));
       }
     } else if (geom.familia === 'HSS-R') {
-      // La pared comprimida y el canto del módulo cambian con el eje.
-      const bPlano = eje === 'x' ? 'b_w' : 'h_w';
+      // La pared comprimida y el canto del módulo cambian con el eje. En el
+      // eje débil los papeles se invierten: la pared B pasa a ser el «alma» y
+      // la H el «ala», y el radio que usa el LTB de F7.4 es el del OTRO eje.
+      const bPlano = eje === 'x' ? 'b_w' : 'h_w'; // ala comprimida
+      const hPlano = eje === 'x' ? 'h_w' : 'b_w'; // alma
       const canto = eje === 'x' ? 'H' : 'B';
       const Iej = eje === 'x' ? 'I_x' : 'I_y';
+      const radioLtb = eje === 'x' ? 'r_y' : 'r_x';
       items.push(t('Ec. F7-1:'));
       items.push(m(`${Mp} := F_y*${Z} = tonf*m`));
       if (f.gobierna === 'FLB' && f.claseFLB === 'esbelta') {
@@ -445,24 +578,44 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
         items.push(m(`Se${s} := Ief${s}/(${canto}/2 - yn${s}) = cm^3`));
         items.push(m(`${Mn} := F_y*Se${s} = tonf*m`));
       } else if (f.gobierna === 'FLB') {
-        items.push(t('Ala no compacta: Ec. F7-2, con su tope M_p.'));
+        // Ec. F7-2 de la edición 22: la interpolación en λ entre λ_p y λ_r de
+        // la Tabla B4.1b. La forma con coeficientes tabulados
+        // (3,57·λ·√(F_y/E) − 4,0) es la de 360-10 y daba 0,04 % de diferencia
+        // contra el motor — suficiente para fallar un ancla.
+        items.push(t('Ala no compacta: Ec. F7-2, la recta entre λ_p y λ_r, con su tope M_p.'));
+        items.push(m(`lamr_f${s} := ${sigCoef(cFlex[0].lambdar, material.E, material.Fy)} =`));
         items.push(
-          m(`${Mn} := min(${Mp}, ${Mp} - (${Mp} - F_y*${S})*(3.57*${lamComp}*sqrt(F_y/E) - 4.0)) = tonf*m`)
+          m(
+            `${Mn} := min(${Mp}, ${Mp} - (${Mp} - F_y*${S})*((${lamComp} - lam_pf)/(lamr_f${s} - lam_pf))) = tonf*m`
+          )
+        );
+      } else if (f.gobierna === 'WLB' && f.Rpg === undefined) {
+        items.push(t('Alma no compacta: Ec. F7-6, la misma recta con los límites del alma.'));
+        items.push(m(`lamr_w${s} := ${sigCoef(cFlex[1].lambdar, material.E, material.Fy)} =`));
+        items.push(
+          m(
+            `${Mn} := min(${Mp}, ${Mp} - (${Mp} - F_y*${S})*((${lamAlma} - lam_pw)/(lamr_w${s} - lam_pw))) = tonf*m`
+          )
         );
       } else if (f.gobierna === 'WLB') {
-        items.push(t('Alma no compacta: Ec. F7-5, con su tope M_p.'));
+        // Ec. F7-7, con el R_pg de la F5-6 y a_w = 2·h·t/(b·t).
+        items.push(t('Alma esbelta: Ec. F7-7, con el R_pg de la Ec. F5-6.'));
+        items.push(m(`aw${s} := 2*${hPlano}*t_d/(${bPlano}*t_d) =`));
         items.push(
-          m(`${Mn} := min(${Mp}, ${Mp} - (${Mp} - F_y*${S})*(0.305*${lamAlma}*sqrt(F_y/E) - 0.738)) = tonf*m`)
+          m(
+            `Rpg${s} := min(1, 1 - (min(aw${s},10)/(1200 + 300*min(aw${s},10)))*(${lamAlma} - 5.7*sqrt(E/F_y))) =`
+          )
         );
+        items.push(m(`${Mn} := Rpg${s}*F_y*${S} = tonf*m`));
       } else if (f.gobierna === 'LTB') {
-        items.push(t('Ecs. F7-12 y F7-13, y la rama de F7.4 que corresponde:'));
-        items.push(m('Lp_h := 0.13*E*r_y*sqrt(J*A_g)/M_p = cm'));
-        items.push(m(`Lr_h := 2*E*r_y*sqrt(J*A_g)/(0.7*F_y*${S}) = cm`));
+        items.push(t('Ecs. F7-10 y F7-11, y la rama de F7.4 que corresponde:'));
+        items.push(m(`Lp_h${s} := 0.13*E*${radioLtb}*sqrt(J*A_g)/${Mp} = cm`));
+        items.push(m(`Lr_h${s} := 2*E*${radioLtb}*sqrt(J*A_g)/(0.7*F_y*${S}) = cm`));
         items.push(
           m(
             f.zona === 'inelastica'
-              ? `${Mn} := min(${Mp}, C_b*(${Mp} - (${Mp} - 0.7*F_y*${S})*((L_b - Lp_h)/(Lr_h - Lp_h)))) = tonf*m`
-              : `${Mn} := min(${Mp}, 2*E*C_b*sqrt(J*A_g)/(L_b/r_y)) = tonf*m`
+              ? `${Mn} := min(${Mp}, C_b*(${Mp} - (${Mp} - 0.7*F_y*${S})*((L_b - Lp_h${s})/(Lr_h${s} - Lp_h${s})))) = tonf*m`
+              : `${Mn} := min(${Mp}, 2*E*C_b*sqrt(J*A_g)/(L_b/${radioLtb})) = tonf*m`
           )
         );
       } else {
@@ -595,6 +748,17 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
     else pushFalso(m('lam <= lam_nch ='), `Esbeltez global L_c/r = ${sig(esb?.valor ?? 0, 4)} supera 1,5π·√(E/F_y).`);
   }
 
+  // ── Lo que la hoja no cubre ──
+  // Se dice, no se omite: antes los estados fuera de alcance se saltaban en
+  // silencio y la memoria parecía completa.
+  if (r.noVerificados.length > 0) {
+    items.push(banner('LO QUE ESTA MEMORIA NO CUBRE'));
+    items.push(
+      t('Se pidieron estos estados límite y la herramienta no pudo verificarlos:')
+    );
+    for (const nv of r.noVerificados) items.push(t(`· ${nv.nombre} — ${nv.motivo}`));
+  }
+
   // ── Contraste contra el motor ──
   items.push(banner('CONTRASTE CONTRA LA HERRAMIENTA'));
   items.push(
@@ -616,6 +780,16 @@ export function generarMemoria(entrada: EntradaVerificacion, r: ResultadoSeccion
     if (geom.familia === 'I' && r.flexionX.Lp !== undefined) {
       items.push(m(`abs(L_p - ${sig(r.flexionX.Lp)} cm) < 0.5 cm =`));
       items.push(m(`abs(L_r - ${sig(r.flexionX.Lr ?? 0)} cm) < 0.5 cm =`));
+    }
+    // Los factores de F4 y F5 son lo nuevo de esta cadena: si los dos motores
+    // discrepan, discrepan acá antes que en el momento resultante.
+    if (r.flexionX.Rpc !== undefined) {
+      items.push(m(`abs(R_pc - ${sig(r.flexionX.Rpc)}) < 0.0005 =`));
+      items.push(m(`abs(r_t - ${sig(r.flexionX.rt ?? 0)} cm) < 0.005 cm =`));
+    }
+    if (r.flexionX.Rpg !== undefined && geom.familia === 'I') {
+      items.push(m(`abs(R_pg - ${sig(r.flexionX.Rpg)}) < 0.0005 =`));
+      items.push(m(`abs(r_t - ${sig(r.flexionX.rt ?? 0)} cm) < 0.005 cm =`));
     }
     items.push(m(`abs(Rd_f - ${sig(r.flexionX.phiMn / TONF_M)} tonf*m) < 0.05 tonf*m =`));
   }

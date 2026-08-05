@@ -3,8 +3,15 @@
 // placaBaseChecks.ts: arma propiedades, clasificación, capacidades y la lista
 // de CheckResult, más los avisos.
 //
-// Los tres modos de la herramienta (capacidad, demanda, comparador) son ESTE
-// motor: capacidad es demanda con las demandas en cero.
+// Los dos modos de la herramienta (capacidad y demanda) son ESTE motor:
+// capacidad es demanda con las demandas en cero.
+//
+// El veredicto tiene TRES valores, no dos. `okGlobal` se calculaba como
+// `checks.every(c => c.ok)`, pero los estados fuera de alcance no agregan su
+// check al array: el `every` no veía la fila que faltaba y devolvía true. Un
+// perfil armado de alma no compacta salía «pasa» sin haberse verificado a
+// flexión. Ahora eso es `incompleto`, y lo que no se verificó viaja en
+// `noVerificados` para que la UI pueda nombrarlo.
 //
 // Puro. Unidades: kgf y cm; momentos en kgf·cm.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -31,7 +38,28 @@ const REF = {
   F: 'aisc360-22-capF-flexion',
   G: 'aisc360-22-capG-corte',
   H: 'aisc360-22-capH-fuerzas-combinadas',
+  NCH: 'nch2369-2025-cap08-estructuras-de-acero',
 } as const;
+
+/**
+ * Un estado límite que se pidió y no se pudo verificar.
+ *
+ * Existe porque suprimir el check y devolver `okGlobal` calculado sobre los que
+ * quedaron es mentir: el `every` no ve la fila que falta y responde «pasa».
+ */
+export interface EstadoNoVerificado {
+  estado: EstadoLimite;
+  nombre: string;
+  motivo: string;
+}
+
+/**
+ * `pasa` / `no-pasa` son el veredicto de siempre. `incompleto` es el tercero
+ * que faltaba: se pidió un estado límite, la sección cae en una rama que la
+ * herramienta no implementa, y el resultado NO puede pintarse verde aunque el
+ * resto de los checks cierren.
+ */
+export type Veredicto = 'pasa' | 'no-pasa' | 'incompleto';
 
 export interface ResultadoSeccion {
   propiedades: Propiedades;
@@ -46,10 +74,18 @@ export interface ResultadoSeccion {
   traccion?: { phiPn: number; gobierna: string; avisos: string[] };
   checks: CheckResult[];
   warnings: string[];
+  /** Estados pedidos que no se pudieron verificar. Vacío es lo normal. */
+  noVerificados: EstadoNoVerificado[];
+  veredicto: Veredicto;
+  /**
+   * true solo si TODOS los checks de resistencia y esbeltez pasan Y no quedó
+   * ningún estado sin verificar. Un `false` puede significar «no pasa» o
+   * «no se pudo verificar»: para distinguirlos está `veredicto`.
+   */
   okGlobal: boolean;
-  /** El uso más alto de todos los checks corridos. */
+  /** El uso más alto de los checks de RESISTENCIA (las esbelteces no son usos). */
   usoMaximo: number;
-  /** Nombre de la verificación que gobierna. */
+  /** Nombre de la verificación de resistencia que gobierna. */
   gobierna: string;
 }
 
@@ -74,6 +110,7 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
 
   const checks: CheckResult[] = [];
   const warnings: string[] = [];
+  const noVerificados: EstadoNoVerificado[] = [];
 
   // El área de paredes rectas sobreestima la real del HSS, que lleva radios de
   // esquina. Es el ítem abierto de AUDIT.md sobre el □150×150×8.
@@ -139,12 +176,19 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     flexionX = verificarFlexionX(geom, material, props, estabilidad, clas);
     warnings.push(...flexionX.avisos);
     if (flexionX.fueraDeAlcance) {
+      noVerificados.push({
+        estado: 'flexion-x',
+        nombre: 'Flexión eje fuerte (Cap. F)',
+        motivo: flexionX.avisos[0] ?? 'La sección cae en una rama del Cap. F que no está implementada.',
+      });
       warnings.push('La flexión en el eje fuerte quedó fuera de alcance: el resultado no es utilizable.');
     } else {
       checks.push(
         check(
           'flexion-x',
-          'Flexión eje fuerte (F2/F3/F7/F8)',
+          // El rótulo nombra la sección que DE VERDAD resolvió el caso: con F4
+          // y F5 en juego, una lista de todas las posibles ya no informa.
+          `Flexión eje fuerte (Sec. ${flexionX.seccion})`,
           (estabilidad.B1 * demandas.Mux) / TONF_M,
           flexionX.phiMn / TONF_M,
           'tonf·m',
@@ -163,7 +207,7 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     checks.push(
       check(
         'flexion-y',
-        'Flexión eje débil (F6/F7)',
+        `Flexión eje débil (Sec. ${flexionY.seccion})`,
         demandas.Muy / TONF_M,
         flexionY.phiMn / TONF_M,
         'tonf·m',
@@ -178,7 +222,13 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
   if (corre('corte')) {
     corte = verificarCorte(geom, material, props);
     warnings.push(...corte.avisos);
-    if (!corte.fueraDeAlcance) {
+    if (corte.fueraDeAlcance) {
+      noVerificados.push({
+        estado: 'corte',
+        nombre: 'Corte (Cap. G)',
+        motivo: corte.avisos[0] ?? 'El corte de esta familia no está implementado.',
+      });
+    } else {
       checks.push(
         check(
           'corte',
@@ -194,47 +244,82 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
   }
 
   // ── Interacción (Sec. H1) ──
+  //
+  // H1.1 es flexión + COMPRESIÓN y H1.2 flexión + TRACCIÓN. Las dos usan las
+  // MISMAS Ecs. H1-1a y H1-1b; lo que cambia es qué es P_c: la capacidad del
+  // Cap. E en H1.1, la del Cap. D en H1.2. Antes solo corría la primera, así
+  // que una diagonal traccionada con momento no recibía ninguna interacción.
   let interaccion: ResInteraccion | undefined;
-  if (
-    corre('interaccion') &&
-    compresion &&
-    flexionX &&
-    !flexionX.fueraDeAlcance &&
-    demandas.Pu > 0 &&
-    (demandas.Mux > 0 || demandas.Muy > 0)
-  ) {
-    // H1-1 necesita la capacidad del eje débil si hay momento en ese eje, aunque
-    // el usuario no haya marcado «flexión eje débil»: sin ella el término M_ry/M_cy
-    // sería una división por cero disfrazada de falla.
-    if (demandas.Muy > 0 && !flexionY) {
-      flexionY = verificarFlexionY(geom, material, props, clas);
+  const hayMomento = demandas.Mux > 0 || demandas.Muy > 0;
+  const enTraccion = demandas.Tu > 0 && demandas.Pu <= 0;
+  if (corre('interaccion') && hayMomento && (demandas.Pu > 0 || enTraccion)) {
+    // La capacidad axial que corresponde según el signo del axial.
+    const axial = enTraccion
+      ? { Pr: demandas.Tu, Pc: traccion?.phiPn, falta: 'Tracción', seccion: 'H1.2' as const }
+      : { Pr: demandas.Pu, Pc: compresion?.phiPn, falta: 'Compresión', seccion: 'H1.1' as const };
+
+    if (axial.Pc === undefined) {
       warnings.push(
-        'Se calculó la flexión en el eje débil aunque no estaba marcada: H1-1 la necesita porque hay M_uy.'
+        `La interacción ${axial.seccion} necesita la capacidad axial: activa también «${axial.falta}».`
       );
-    }
-    interaccion = verificarInteraccion(
-      demandas.Pu,
-      compresion.phiPn,
-      estabilidad.B1 * demandas.Mux,
-      flexionX.phiMn,
-      demandas.Muy,
-      flexionY ? flexionY.phiMn : 0
-    );
-    checks.push(
-      check(
-        'interaccion',
-        `Interacción (${interaccion.ecuacion})`,
-        interaccion.u,
-        1,
-        '—',
-        `u_P = ${interaccion.uP.toFixed(3)}, u_Mx = ${interaccion.uMx.toFixed(3)}${interaccion.uMy > 0 ? `, u_My = ${interaccion.uMy.toFixed(3)}` : ''}. B₁ = ${estabilidad.B1.toFixed(2)}.`,
-        REF.H
-      )
-    );
-    if (estabilidad.B1 === 1) {
-      warnings.push(
-        'B₁ = 1,0 (default). Si hay carga transversal entre apoyos o el axial es alto, el momento de segundo orden es mayor — derívalo con el Apéndice 8.'
+      noVerificados.push({
+        estado: 'interaccion',
+        nombre: `Interacción (${axial.seccion})`,
+        motivo: `Falta la capacidad axial del estado «${axial.falta}», que la interacción usa como P_c.`,
+      });
+    } else if (!flexionX || flexionX.fueraDeAlcance) {
+      noVerificados.push({
+        estado: 'interaccion',
+        nombre: `Interacción (${axial.seccion})`,
+        motivo: flexionX
+          ? 'La flexión en el eje fuerte quedó fuera de alcance, así que M_cx no existe.'
+          : 'Falta la capacidad a flexión del eje fuerte: activa también «Flexión eje fuerte».',
+      });
+    } else {
+      // H1-1 necesita la capacidad del eje débil si hay momento en ese eje, aunque
+      // el usuario no haya marcado «flexión eje débil»: sin ella el término M_ry/M_cy
+      // sería una división por cero disfrazada de falla.
+      if (demandas.Muy > 0 && !flexionY) {
+        flexionY = verificarFlexionY(geom, material, props, clas);
+        warnings.push(
+          'Se calculó la flexión en el eje débil aunque no estaba marcada: H1-1 la necesita porque hay M_uy.'
+        );
+      }
+      // B₁ es un amplificador de segundo orden por compresión: en tracción el
+      // axial ENDEREZA el miembro y no hay P-δ que amplificar.
+      const amplif = enTraccion ? 1 : estabilidad.B1;
+      interaccion = verificarInteraccion(
+        axial.Pr,
+        axial.Pc,
+        amplif * demandas.Mux,
+        flexionX.phiMn,
+        demandas.Muy,
+        flexionY ? flexionY.phiMn : 0
       );
+      checks.push(
+        check(
+          'interaccion',
+          `Interacción (${axial.seccion}, ${interaccion.ecuacion})`,
+          interaccion.u,
+          1,
+          '—',
+          `u_P = ${interaccion.uP.toFixed(3)}, u_Mx = ${interaccion.uMx.toFixed(3)}${interaccion.uMy > 0 ? `, u_My = ${interaccion.uMy.toFixed(3)}` : ''}. ${
+            enTraccion
+              ? 'P_c es la capacidad a tracción del Cap. D (H1.2).'
+              : `B₁ = ${estabilidad.B1.toFixed(2)}.`
+          }`,
+          REF.H
+        )
+      );
+      if (enTraccion) {
+        warnings.push(
+          'H1.2 permite multiplicar C_b por √(1 + αP_r/P_ey) cuando la tracción actúa junto con la flexión (Ec. H1-2). No se aplica: es un crédito opcional y depende del diagrama de momentos.'
+        );
+      } else if (estabilidad.B1 === 1) {
+        warnings.push(
+          'B₁ = 1,0 (default). Si hay carga transversal entre apoyos o el axial es alto, el momento de segundo orden es mayor — derívalo con el Apéndice 8.'
+        );
+      }
     }
   }
 
@@ -250,6 +335,11 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     warnings.push(
       'Las verificaciones sísmicas necesitan la cadena de compresión (F_e y L_c/r): activa también «Compresión».'
     );
+    noVerificados.push({
+      estado: 'sismico',
+      nombre: 'Capa sísmica (NCh2369)',
+      motivo: 'Necesita F_e y L_c/r de la cadena de compresión, que no se corrió.',
+    });
   }
   if (corre('sismico') && compresion) {
     sismico = verificarSismico(
@@ -269,17 +359,29 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
           l.valor,
           l.limite,
           '—',
-          `${l.ref}. Solo exigible si el miembro debe ser dúctil (típicamente una diagonal de arriostramiento) — la herramienta no puede saberlo, lo decides tú al activar esta verificación.`
+          `${l.ref}. Solo exigible si el miembro debe ser dúctil (típicamente una diagonal de arriostramiento) — la herramienta no puede saberlo, lo decides tú al activar esta verificación.`,
+          REF.NCH,
+          // No es un uso: es una razón geométrica contra un límite. Si entrara
+          // al ranking, una esbeltez podría reportarse como «la verificación
+          // que gobierna» al lado de un uso de flexión, que no es comparable.
+          'esbeltez'
         )
       );
     }
   }
 
-  const conDemanda = checks.filter((c) => Number.isFinite(c.ratio) && c.demanda > 0);
+  const conDemanda = checks.filter(
+    (c) => c.clase !== 'esbeltez' && Number.isFinite(c.ratio) && c.demanda > 0
+  );
   const peor = conDemanda.reduce<CheckResult | null>(
     (a, b) => (a === null || b.ratio > a.ratio ? b : a),
     null
   );
+
+  // Un estado pedido que no se pudo verificar NO puede salir verde: pesa más
+  // que el `every`, porque el `every` solo ve las filas que sí se emitieron.
+  const todosOk = checks.every((c) => c.ok);
+  const veredicto: Veredicto = noVerificados.length > 0 ? 'incompleto' : todosOk ? 'pasa' : 'no-pasa';
 
   return {
     propiedades: props,
@@ -294,7 +396,9 @@ export function verificarSeccion(entrada: EntradaVerificacion): ResultadoSeccion
     traccion,
     checks,
     warnings,
-    okGlobal: checks.every((c) => c.ok),
+    noVerificados,
+    veredicto,
+    okGlobal: veredicto === 'pasa',
     usoMaximo: peor ? peor.ratio : 0,
     gobierna: peor ? peor.nombre : '—',
   };

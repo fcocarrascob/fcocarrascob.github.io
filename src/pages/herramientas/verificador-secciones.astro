@@ -62,9 +62,31 @@ const description =
           de la conexión. Sin ellos la herramienta no supone U = 1 — lo avisa.
         </li>
         <li>
-          <strong>Fuera de alcance, y se reporta como tal en vez de aproximarse:</strong> alma no
-          compacta o esbelta en perfil I (Secciones F4 y F5, con el factor R_pc), alma esbelta de
-          HSS, y corte de HSS circular (Sección G5).
+          <strong>Interacción en los dos signos del axial:</strong> H1.1 con compresión y
+          <strong>H1.2 con tracción</strong>, que usa las mismas Ecs. H1-1a y H1-1b cambiando
+          P_c por la capacidad del Cap. D. En tracción no se aplica B₁ —el axial endereza, no hay
+          P-δ que amplificar— ni el crédito opcional de C_b·√(1 + αP_r/P_ey) de la Ec. H1-2.
+        </li>
+        <li>
+          <strong>Alma no compacta o esbelta en perfil I:</strong> se resuelve con las
+          <strong>Secciones F4 y F5</strong> — el factor de plastificación R_pc de la Ec. F4-9b
+          cuando el alma es no compacta, y el de reducción R_pg de la F5-6 cuando es esbelta.
+          Es el caso del perfil H soldado corriente, que antes quedaba fuera de alcance. Solo
+          para el perfil <em>doblemente simétrico</em>: la simetría simple de F4, con sus
+          S_xc ≠ S_xt y la fluencia del ala traccionada, sigue fuera.
+        </li>
+        <li>
+          <strong>Un alma esbelta suele pedir atiesadores, y eso es Capítulo G:</strong> el campo
+          de tracción (G3) y los atiesadores transversales (G2.3) <em>no</em> están
+          implementados — el corte se calcula siempre con k_v de alma sin atiesar. F5 te da la
+          flexión; el corte de esa misma viga armada es otra conversación.
+        </li>
+        <li>
+          <strong>Fuera de alcance, y se reporta como tal en vez de aproximarse:</strong> corte de
+          HSS circular (Sección G5) y la sección cajón con alma <em>y</em> ala esbeltas, que el
+          User Note de F7.3(c) declara no cubierta por la Especificación. Cuando algo queda sin
+          verificar, el veredicto no dice «pasa»: dice <strong>«incompleto»</strong> y nombra lo
+          que faltó.
         </li>
         <li>
           <strong>Capa sísmica (NCh2369:2025):</strong> λ_md de la Tabla 9 —
@@ -86,6 +108,15 @@ const description =
           sus dos ramas de C_v2. Las ramas que ninguna planilla toca —E7, F3, F6, F8, la F7-9 del
           LTB elástico y el eje débil del HSS— se declaran sin ancla en el detalle de la
           verificación.
+        </li>
+        <li>
+          <strong>F4 y F5 se anclan distinto</strong>, porque ninguna planilla las toca: por las
+          <em>identidades de continuidad</em> en las fronteras de la Tabla B4.1b. En λ = λ_pw la
+          Ec. F4-9b da R_pc = M_p/M_yc y F4 tiene que entregar el mismo M_p que la F2-1, que la
+          viga LTB sí ancla; en λ = λ_rw da R_pc = 1 y la F5-6 da R_pg = 1, así que F4 y F5 se
+          juntan en F_y·S_xc. Se comprueba cruzando cada frontera con el mismo perfil y solo el
+          espesor de alma cambiado, más una transcripción independiente de las ecuaciones desde
+          el PDF de la norma. El detalle de cada verificación lo declara.
         </li>
         <li>
           <strong>Unidades:</strong> geometría en cm, longitudes en m, fuerzas en tonf y momentos

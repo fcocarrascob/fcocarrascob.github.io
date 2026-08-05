@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { verificarSeccion } from '../../lib/acero/seccion';
+import { verificarSeccion, type Veredicto } from '../../lib/acero/seccion';
 import { MATERIALES, type MaterialKey } from '../../lib/acero/propiedades';
 import { generarMemoria, abrirEnCanvas, descargarMemoria } from '../../lib/acero/memoria';
 import type {
@@ -118,6 +118,17 @@ const CLASE_COLOR: Record<string, string> = {
   compacta: 'text-emerald-700',
   'no-compacta': 'text-amber-700',
   esbelta: 'text-red-700',
+};
+
+/**
+ * Tres estados, no dos. «Incompleto» es ámbar a propósito: pintarlo verde
+ * porque los checks que sí se corrieron pasan es exactamente el defecto que
+ * este veredicto vino a cerrar.
+ */
+const VEREDICTO: Record<Veredicto, { etiqueta: string; color: string }> = {
+  pasa: { etiqueta: '✓ pasa', color: 'text-emerald-700' },
+  'no-pasa': { etiqueta: '✗ no pasa', color: 'text-red-700' },
+  incompleto: { etiqueta: '⚠ incompleto', color: 'text-amber-700' },
 };
 
 // ── Campos ───────────────────────────────────────────────────────────────────
@@ -250,14 +261,38 @@ export default function VerificadorSeccionTool() {
     [geom, declaradas, v]
   );
 
-  const resultado = useMemo(() => {
-    if (errores.length > 0) return null;
+  // El motor puede lanzar (geometrías degeneradas, o el guardián de símbolos de
+  // la memoria). Tragarse la excepción dejaba la pantalla en blanco sin decir
+  // por qué: el mensaje viaja junto al resultado y se pinta en el panel rojo.
+  const { resultado, fallo } = useMemo<{
+    resultado: ReturnType<typeof verificarSeccion> | null;
+    fallo: string | null;
+  }>(() => {
+    if (errores.length > 0) return { resultado: null, fallo: null };
     try {
-      return verificarSeccion(entrada);
-    } catch {
-      return null;
+      return { resultado: verificarSeccion(entrada), fallo: null };
+    } catch (err) {
+      return { resultado: null, fallo: err instanceof Error ? err.message : String(err) };
     }
   }, [entrada, errores]);
+
+  const [falloMemoria, setFalloMemoria] = useState<string | null>(null);
+
+  /**
+   * Arma la memoria una sola vez por click y entrega el resultado a quien
+   * corresponda. `generarMemoria` LANZA a propósito cuando su guardián de
+   * símbolos detecta una región que usa algo no definido: sin este manejo, el
+   * click reventaba sin decir nada.
+   */
+  const conMemoria = (accion: (hoja: ReturnType<typeof generarMemoria>) => void) => {
+    if (!resultado) return;
+    try {
+      accion(generarMemoria(entrada, resultado));
+      setFalloMemoria(null);
+    } catch (err) {
+      setFalloMemoria(err instanceof Error ? err.message : String(err));
+    }
+  };
 
   const toggleEstado = (id: EstadoLimite) =>
     set(
@@ -463,6 +498,16 @@ export default function VerificadorSeccionTool() {
           </div>
         )}
 
+        {fallo && (
+          <div className="rounded-lg border border-red-300 bg-red-50 p-3">
+            <p className="text-sm font-semibold text-red-800">El cálculo se detuvo</p>
+            <p className="mt-1 text-sm text-red-700">{fallo}</p>
+            <p className="mt-1 text-xs text-red-600">
+              Es un error del motor, no de tus datos. Si se repite con esta geometría, vale reportarlo.
+            </p>
+          </div>
+        )}
+
         {resultado && p && (
           <>
             <div className="rounded-lg border border-border bg-surface p-3">
@@ -540,13 +585,37 @@ export default function VerificadorSeccionTool() {
                   {v.modo === 'capacidad' ? 'Capacidades de diseño' : 'Verificaciones'}
                 </h2>
                 {v.modo === 'demanda' && (
-                  <span className={`text-sm font-semibold ${resultado.okGlobal ? 'text-emerald-700' : 'text-red-700'}`}>
-                    {resultado.okGlobal ? '✓ pasa' : '✗ no pasa'} · uso máx {fmt(resultado.usoMaximo, 2)}
+                  <span className={`text-sm font-semibold ${VEREDICTO[resultado.veredicto].color}`}>
+                    {VEREDICTO[resultado.veredicto].etiqueta} · uso máx {fmt(resultado.usoMaximo, 2)}
                   </span>
                 )}
               </div>
+
+              {/* Lo que se pidió y no se pudo verificar va ACÁ, junto al
+                  veredicto, y no en el bloque de avisos del final: es lo que
+                  decide si el resultado se puede usar. */}
+              {resultado.noVerificados.length > 0 && (
+                <div className="mt-2 rounded border border-amber-300 bg-amber-50 p-2">
+                  <p className="text-xs font-semibold text-amber-800">
+                    {resultado.noVerificados.length === 1
+                      ? 'Una verificación pedida no se pudo hacer'
+                      : `${resultado.noVerificados.length} verificaciones pedidas no se pudieron hacer`}
+                    {v.modo === 'capacidad' ? '' : ' — el veredicto de arriba no las incluye'}
+                  </p>
+                  <ul className="mt-1 list-disc space-y-0.5 pl-5 text-xs leading-relaxed text-amber-900">
+                    {resultado.noVerificados.map((n) => (
+                      <li key={n.estado}>
+                        <span className="font-medium">{n.nombre}:</span> {n.motivo}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="mt-2 space-y-2">
-                {resultado.checks.map((c) => (
+                {resultado.checks
+                  .filter((c) => c.clase !== 'esbeltez')
+                  .map((c) => (
                   <div key={c.id} className="rounded border border-border bg-white p-2">
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="text-sm font-medium text-ink">
@@ -580,6 +649,47 @@ export default function VerificadorSeccionTool() {
               </div>
             </div>
 
+            {/* Las esbelteces sísmicas van en su propio bloque: son razones
+                geométricas contra un límite, no demanda contra capacidad, y en
+                la lista de arriba se leían como si fueran un uso más. */}
+            {resultado.checks.some((c) => c.clase === 'esbeltez') && (
+              <div className="rounded-lg border border-border bg-surface p-3">
+                <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">
+                  Esbelteces sísmicas (NCh2369)
+                </h2>
+                <p className="mt-1 text-xs text-muted">
+                  No son usos: son λ contra su límite. No entran en el «uso máx» ni en la verificación
+                  que gobierna.
+                </p>
+                <div className="mt-2 space-y-2">
+                  {resultado.checks
+                    .filter((c) => c.clase === 'esbeltez')
+                    .map((c) => (
+                      <div key={c.id} className="rounded border border-border bg-white p-2">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="text-sm font-medium text-ink">
+                            {c.ref ? (
+                              <a href={`/acero/${c.ref}`} className="text-accent hover:underline">
+                                {c.nombre}
+                              </a>
+                            ) : (
+                              c.nombre
+                            )}
+                          </span>
+                          <span className="font-mono text-sm text-ink">
+                            λ = {fmt(c.demanda, 2)} / {fmt(c.capacidad, 2)}{' '}
+                            <span className={c.ok ? 'text-emerald-700' : 'text-red-700'}>
+                              {c.ok ? '✓' : '✗'}
+                            </span>
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-muted leading-relaxed">{c.detalle}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
             {resultado.warnings.length > 0 && (
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
                 <h2 className="text-xs font-semibold uppercase tracking-wide text-amber-800">
@@ -596,19 +706,30 @@ export default function VerificadorSeccionTool() {
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => abrirEnCanvas(generarMemoria(entrada, resultado))}
+                onClick={() => conMemoria(abrirEnCanvas)}
                 className="rounded border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
               >
                 Abrir memoria en el canvas
               </button>
               <button
                 type="button"
-                onClick={() => descargarMemoria(generarMemoria(entrada, resultado))}
+                onClick={() => conMemoria(descargarMemoria)}
                 className="rounded border border-border bg-white px-3 py-1.5 text-sm font-medium text-ink hover:border-accent"
               >
                 Descargar memoria .json
               </button>
             </div>
+
+            {falloMemoria && (
+              <div className="rounded-lg border border-red-300 bg-red-50 p-3">
+                <p className="text-sm font-semibold text-red-800">No se pudo armar la memoria</p>
+                <p className="mt-1 text-sm text-red-700">{falloMemoria}</p>
+                <p className="mt-1 text-xs text-red-600">
+                  El generador se detiene antes de entregar una hoja rota: prefiere no darte nada
+                  que darte una planilla con regiones en rojo.
+                </p>
+              </div>
+            )}
           </>
         )}
       </div>

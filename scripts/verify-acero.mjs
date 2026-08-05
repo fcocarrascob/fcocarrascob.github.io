@@ -6,6 +6,12 @@
 // post que publican. Reproducirlas es la prueba de que el motor dice lo mismo
 // que el sitio ya afirma — no hay casos de prueba inventados acá.
 //
+// Con una excepción DECLARADA, que empieza en el caso 18: las Secciones F4 y
+// F5 no las toca ninguna planilla. Ahí el ancla son las identidades de
+// continuidad en las fronteras de la Tabla B4.1b —que no dependen de ninguna
+// implementación— más una transcripción independiente de las ecuaciones desde
+// el PDF. Cada caso declara de dónde sale su ancla en el campo `ancla`.
+//
 //   npm run verify:acero
 //
 // Cada ancla usa el valor Y la tolerancia que declara la planilla de origen.
@@ -40,7 +46,7 @@ async function bundle(entry, nombre) {
   return mod;
 }
 
-const { verificarSeccion, generarMemoria, MATERIALES } = await bundle(
+const { verificarSeccion, generarMemoria, MATERIALES, factorRpc, factorRpg } = await bundle(
   'src/lib/acero/engine-entry.ts',
   'acero-engine'
 );
@@ -588,6 +594,441 @@ const hssEAlma = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Casos 18-23 · Secciones F4 y F5 — perfil I armado de alma no compacta y esbelta
+//
+// EL ORIGEN DEL ANCLA ES OTRO, y conviene decirlo: ninguna planilla del repo
+// toca F4/F5, así que acá el oráculo no es una hoja publicada. Son dos cosas:
+//
+//   1. IDENTIDADES DE CONTINUIDAD, que no dependen de ninguna implementación.
+//      En λ = λ_pw la Ec. F4-9b da R_pc = M_p/M_yc, así que F4 entrega el mismo
+//      M_p que la F2-1 —que viga-ltb sí tiene anclado—; en λ = λ_rw da
+//      R_pc = 1 y la Ec. F5-6 da R_pg = 1, así que F4 y F5 se juntan en
+//      F_y·S_xc. Se comprueban CRUZANDO la frontera con el mismo contorno y
+//      solo el espesor de alma cambiado: si el despacho introdujera un salto,
+//      aparecería acá. Es el recurso del contrafactual con que se ancló la
+//      Ec. F7-8 (caso 15).
+//
+//   2. Una transcripción independiente de las Ecs. F4-1…F4-14 y F5-1…F5-9,
+//      hecha en Python leyendo el PDF (A360-22W-ewr.pdf, págs. 16.1-56 a
+//      16.1-61). Es una segunda implementación, no una segunda lectura del
+//      mismo código, que es lo mismo que hace la memoria con mathjs.
+//
+// El perfil de los tres primeros casos es un armado alto y de alma delgada:
+// exactamente el perfil H soldado de la práctica chilena, que es donde la
+// herramienta se declaraba fuera de alcance.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Perfil armado con el alma que se pida, para barrer la frontera. */
+const armado = (d, bf, tf, tw) => ({ familia: 'I', tipo: 'armado', d, bf, tf, tw });
+
+const F4_GEOM = armado(120, 30, 2.0, 1.0); // h/t_w = 116 → alma no compacta
+const F5_GEOM = armado(150, 30, 2.0, 0.8); // h/t_w = 182,5 → alma esbelta
+
+const f4Plastico = {
+  ancla: 'continuidad + transcripción del PDF (Sec. F4)',
+  titulo: 'F4 · alma no compacta, L_b ≤ L_p — armado 1200×300, alma 10 mm',
+  entrada: {
+    geom: F4_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 1.5 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['λ_w = h/t_w', r.clasificacion.flexion[1].lambda, 116, 0.0005],
+      ['λ_pw (B4.1b c.15)', r.clasificacion.flexion[1].lambdap, 90.517301, 0.0005],
+      ['λ_rw (B4.1b c.15)', r.clasificacion.flexion[1].lambdar, 137.220377, 0.0005],
+      ['alma NO compacta', r.clasificacion.claseAlmaFlexion === 'no-compacta' ? 1 : 0, 1, 0.5],
+      ['despacha a F4', f.seccion === 'F4' ? 1 : 0, 1, 0.5],
+      ['ala compacta (sin FLB)', r.clasificacion.claseAlaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+      ['a_w (F4-12)', f.aw, 1.933333, 5e-6],
+      ['r_t (F4-11)', f.rt, 7.531447, 5e-6, 'cm'],
+      ['S_x (planchas)', r.propiedades.Sx, 9130.5778, 0.0005, 'cm³'],
+      ['M_p con tope 1,6·F_y·S_x', f.Mp / TONF_M, 367.628800, 5e-5, 'tonf·m'],
+      ['M_yc (F4-4)', f.Myc / TONF_M, 321.396338, 5e-5, 'tonf·m'],
+      ['R_pc (F4-9b)', f.Rpc, 1.06536025, 5e-7],
+      ['R_pc < M_p/M_yc', f.Rpc < f.Mp / f.Myc ? 1 : 0, 1, 0.5],
+      ['F_L (F4-6a)', f.FL, 0.7 * A992.Fy, 0.005, 'kgf/cm²'],
+      ['L_p (F4-7)', f.Lp, 199.4412, 0.0005, 'cm'],
+      ['L_r (F4-8)', f.Lr, 701.7460, 0.0005, 'cm'],
+      ['zona plástica (L_b ≤ L_p)', f.zona === 'plastica' ? 1 : 0, 1, 0.5],
+      // Con el alma no compacta la sección YA NO alcanza M_p: ese es el punto
+      // de F4, y es lo que la herramienta antes no podía decir.
+      ['M_n = R_pc·M_yc (F4-1)', f.Mn / TONF_M, 342.402883, 5e-5, 'tonf·m'],
+      ['M_n/M_p — no llega a M_p', f.Mn / f.Mp, 0.93138210, 5e-7],
+      ['φM_n', f.phiMn / TONF_M, 308.162595, 5e-5, 'tonf·m'],
+    ];
+  },
+};
+
+const f4LtbInelastico = {
+  ancla: 'continuidad + transcripción del PDF (Ec. F4-2)',
+  titulo: 'F4 · el mismo armado con L_b = 4 m — LTB inelástico (Ec. F4-2)',
+  entrada: {
+    geom: F4_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 4 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['L_p < L_b ≤ L_r', f.zona === 'inelastica' ? 1 : 0, 1, 0.5],
+      ['gobierna LTB', f.gobierna === 'LTB' ? 1 : 0, 1, 0.5],
+      ['M_n (F4-2)', f.Mn / TONF_M, 295.51759293, 5e-5, 'tonf·m'],
+      ['φM_n', f.phiMn / TONF_M, 265.96583363, 5e-5, 'tonf·m'],
+      ['robo del LTB sobre R_pc·M_yc', 1 - f.Mn / (f.Rpc * f.Myc), 0.13693018, 5e-7],
+    ];
+  },
+};
+
+const f4LtbElastico = {
+  ancla: 'continuidad + transcripción del PDF (Ecs. F4-3 y F4-5)',
+  titulo: 'F4 · el mismo armado con L_b = 12 m — LTB elástico (Ecs. F4-3 y F4-5)',
+  entrada: {
+    geom: F4_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 12 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['L_b > L_r', f.zona === 'elastica' ? 1 : 0, 1, 0.5],
+      ['gobierna LTB', f.gobierna === 'LTB' ? 1 : 0, 1, 0.5],
+      ['M_n (F4-3 con F_cr de F4-5)', f.Mn / TONF_M, 84.64551967, 5e-5, 'tonf·m'],
+      ['φM_n', f.phiMn / TONF_M, 76.18096771, 5e-5, 'tonf·m'],
+      // L_b = 12 m es 6 veces L_p: el LTB se lleva las tres cuartas partes.
+      ['robo del LTB sobre R_pc·M_yc', 1 - f.Mn / (f.Rpc * f.Myc), 0.75278970, 5e-7],
+    ];
+  },
+};
+
+const f5Plastico = {
+  ancla: 'continuidad + transcripción del PDF (Sec. F5)',
+  titulo: 'F5 · alma esbelta, L_b ≤ L_p — armado 1500×300, alma 8 mm',
+  entrada: {
+    geom: F5_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 1.5 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['λ_w = h/t_w', r.clasificacion.flexion[1].lambda, 182.5, 0.0005],
+      ['alma ESBELTA', r.clasificacion.claseAlmaFlexion === 'esbelta' ? 1 : 0, 1, 0.5],
+      ['despacha a F5', f.seccion === 'F5' ? 1 : 0, 1, 0.5],
+      ['a_w (F4-12)', f.aw, 1.946667, 5e-6],
+      ['r_t (F4-11)', f.rt, 7.525126, 5e-6, 'cm'],
+      ['R_pg (F5-6)', f.Rpg, 0.95059174, 5e-7],
+      ['R_pg < 1 — el alma descuenta', f.Rpg < 1 ? 1 : 0, 1, 0.5],
+      ['L_p (F4-7, que F5.2 reusa)', f.Lp, 199.2738, 0.0005, 'cm'],
+      ['L_r (F5-5)', f.Lr, 680.2340, 0.0005, 'cm'],
+      ['M_n = R_pg·F_y·S_xc (F5-1)', f.Mn / TONF_M, 385.752382, 5e-5, 'tonf·m'],
+      ['φM_n', f.phiMn / TONF_M, 347.177144, 5e-5, 'tonf·m'],
+      // La F5-5 es MÁS CORTA que la F4-8 sobre la misma sección: el alma
+      // esbelta pierde el término torsional, así que el LTB llega antes.
+      ['L_r de F5 < L_r de F4 sobre el mismo perfil', f.Lr < 701.7460 ? 1 : 0, 1, 0.5],
+    ];
+  },
+};
+
+const f5LtbInelastico = {
+  ancla: 'continuidad + transcripción del PDF (Ecs. F5-3 y F5-2)',
+  titulo: 'F5 · el mismo armado con L_b = 4 m — LTB inelástico (Ecs. F5-3 y F5-2)',
+  entrada: {
+    geom: F5_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 4 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['L_p < L_b ≤ L_r', f.zona === 'inelastica' ? 1 : 0, 1, 0.5],
+      ['R_pg no cambia con L_b', f.Rpg, 0.95059174, 5e-7],
+      ['M_n = R_pg·F_cr·S_xc (F5-2)', f.Mn / TONF_M, 337.45487038, 5e-5, 'tonf·m'],
+      ['φM_n', f.phiMn / TONF_M, 303.70938334, 5e-5, 'tonf·m'],
+    ];
+  },
+};
+
+/**
+ * Continuidad en λ_pw: el MISMO contorno con el alma a cada lado de la
+ * frontera. A la izquierda despacha a F2 y da M_p; a la derecha despacha a F4
+ * con R_pc ≈ M_p/M_yc y tiene que dar casi lo mismo. Un salto acá sería un
+ * error de despacho o de la Ec. F4-9b.
+ */
+const continuidadLamPw = {
+  ancla: 'identidad de continuidad en la frontera λ_pw (no depende de la implementación)',
+  titulo: 'Continuidad F2 ↔ F4 en λ_pw — el mismo perfil a cada lado',
+  entrada: {
+    geom: armado(120, 30, 2.0, 116 / 89.92), // λ_w = 89,92 < λ_pw
+    material: A992,
+    estabilidad: est({ Lb: 1.0 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const izq = r.flexionX; // lado F2
+    const der = verificarSeccion({
+      geom: armado(120, 30, 2.0, 116 / 90.6), // λ_w = 90,60 > λ_pw
+      material: A992,
+      estabilidad: est({ Lb: 1.0 * M }),
+      demandas: dem({}),
+      estados: ['flexion-x'],
+    }).flexionX;
+    return [
+      ['λ_w izquierda', r.clasificacion.flexion[1].lambda, 89.92, 0.0005],
+      ['izquierda → F2', izq.seccion === 'F2' ? 1 : 0, 1, 0.5],
+      ['derecha → F4', der.seccion === 'F4' ? 1 : 0, 1, 0.5],
+      ['F2: M_n = M_p', izq.Mn / izq.Mp, 1, 1e-9],
+      ['F4: M_n/M_p', der.Mn / der.Mp, 0.99974361, 5e-7],
+      // El salto al cruzar la frontera: 0,026 %, que es lo que separa a λ_pw de
+      // λ_w = 90,60. Si el despacho estuviera mal, sería del 10 %.
+      ['salto relativo en λ_pw', Math.abs(izq.Mn / izq.Mp - der.Mn / der.Mp), 0, 5e-4],
+      ['R_pc casi igual a M_p/M_yc', Math.abs(der.Rpc / (der.Mp / der.Myc) - 1), 0, 5e-4],
+    ];
+  },
+};
+
+/**
+ * Continuidad en λ_rw: a la izquierda F4 con R_pc → 1, a la derecha F5 con
+ * R_pg → 1. Las dos ramas tienen que converger a la fluencia del ala
+ * comprimida, F_y·S_xc, por caminos distintos.
+ */
+const continuidadLamRw = {
+  ancla: 'identidad de continuidad en la frontera λ_rw (no depende de la implementación)',
+  titulo: 'Continuidad F4 ↔ F5 en λ_rw — R_pc → 1 y R_pg → 1',
+  entrada: {
+    geom: armado(120, 30, 2.0, 116 / 137.0), // λ_w = 137,0 < λ_rw
+    material: A992,
+    estabilidad: est({ Lb: 1.0 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const izq = r.flexionX; // lado F4
+    const der = verificarSeccion({
+      geom: armado(120, 30, 2.0, 116 / 137.4), // λ_w = 137,4 > λ_rw
+      material: A992,
+      estabilidad: est({ Lb: 1.0 * M }),
+      demandas: dem({}),
+      estados: ['flexion-x'],
+    }).flexionX;
+    // En los dos lados `Myc` es F_y·S_xc: en F4 por la Ec. F4-4 y en F5 porque
+    // es el operando de la F5-1. Es el punto al que ambas ramas convergen.
+    return [
+      ['izquierda → F4', izq.seccion === 'F4' ? 1 : 0, 1, 0.5],
+      ['derecha → F5', der.seccion === 'F5' ? 1 : 0, 1, 0.5],
+      ['R_pc → 1', izq.Rpc, 1.00060608, 5e-7],
+      ['R_pg → 1', der.Rpg, 0.99982648, 5e-7],
+      ['F4: M_n/(F_y·S_xc)', izq.Mn / izq.Myc, 1.00060608, 5e-7],
+      ['F5: M_n/(F_y·S_xc)', der.Mn / der.Myc, 0.99982648, 5e-7],
+      // Los dos caminos llegan al mismo punto: menos de 0,1 % de separación
+      // sobre una frontera que las dos secciones cruzan con ecuaciones distintas.
+      ['salto relativo en λ_rw', Math.abs(izq.Mn / izq.Myc - der.Mn / der.Myc), 0, 2e-3],
+    ];
+  },
+};
+
+/**
+ * Las identidades que la norma garantiza, evaluadas directamente sobre los
+ * helpers exportados. No pasan por ninguna sección: son las Ecs. F4-9a/F4-9b y
+ * F5-6 en sus puntos notables.
+ */
+const identidadesFactores = {
+  ancla: 'Ecs. F4-9a, F4-9b y F5-6 en sus puntos notables',
+  titulo: 'Identidades de R_pc (F4-9) y R_pg (F5-6)',
+  entrada: {
+    geom: F4_GEOM,
+    material: A992,
+    estabilidad: est({ Lb: 1.0 * M }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: () => {
+    const { Fy, E } = A992;
+    const lamPw = 3.76 * Math.sqrt(E / Fy);
+    const lamRw = 5.7 * Math.sqrt(E / Fy);
+    const Mp = 1000;
+    const Myc = 850; // M_p/M_yc = 1,17647…
+    return [
+      // F4-9a: en λ = λ_pw el factor vale exactamente el tope M_p/M_yc, y la
+      // F4-1 devuelve M_p — el mismo número que la F2-1.
+      ['R_pc(λ_pw) = M_p/M_yc', factorRpc(Mp, Myc, lamPw, lamPw, lamRw), Mp / Myc, 1e-12],
+      ['R_pc(λ_pw)·M_yc = M_p', factorRpc(Mp, Myc, lamPw, lamPw, lamRw) * Myc, Mp, 1e-9],
+      // F4-9b: en λ = λ_rw la recta llega a 1 exacto.
+      ['R_pc(λ_rw) = 1', factorRpc(Mp, Myc, lamRw, lamPw, lamRw), 1, 1e-12],
+      // Y nunca supera el tope, aunque λ quede por debajo de λ_pw.
+      ['R_pc acotado por M_p/M_yc', factorRpc(Mp, Myc, 0.5 * lamPw, lamPw, lamRw), Mp / Myc, 1e-12],
+      // F5-6: R_pg = 1 exacto en h_c/t_w = 5,7·√(E/F_y), que ES λ_rw, y por eso
+      // F5 se junta con F4 justo ahí.
+      ['R_pg(λ_rw) = 1', factorRpg(2, lamRw * 1, 1, E, Fy), 1, 1e-12],
+      ['R_pg acotado a 1 por debajo', factorRpg(2, 0.5 * lamRw, 1, E, Fy), 1, 1e-12],
+      // Y baja monótonamente al crecer el alma.
+      ['R_pg(1,3·λ_rw) < 1', factorRpg(2, 1.3 * lamRw, 1, E, Fy) < 1 ? 1 : 0, 1, 0.5],
+      [
+        'R_pg más chico con a_w mayor',
+        factorRpg(8, 1.3 * lamRw, 1, E, Fy) < factorRpg(2, 1.3 * lamRw, 1, E, Fy) ? 1 : 0,
+        1,
+        0.5,
+      ],
+      // El tope a_w ≤ 10 de la F5-6: por encima el factor deja de cambiar.
+      [
+        'a_w acotado a 10',
+        factorRpg(50, 1.3 * lamRw, 1, E, Fy) - factorRpg(10, 1.3 * lamRw, 1, E, Fy),
+        0,
+        1e-12,
+      ],
+    ];
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Casos 24-26 · El veredicto no puede mentir, y la F7-7
+//
+// `okGlobal` se calculaba como `checks.every(c => c.ok)`, pero un estado fuera
+// de alcance NO agrega su check al array: el `every` no veía la fila que
+// faltaba y devolvía true. Estos casos fijan que eso ya no pasa.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const veredictoIncompleto = {
+  ancla: 'el contrato del veredicto (no hay planilla que lo fije)',
+  titulo: 'Veredicto · corte de HSS circular (G5) fuera de alcance → «incompleto»',
+  entrada: {
+    geom: { familia: 'HSS-C', D: 21.9, t: 0.82 },
+    material: A500C,
+    estabilidad: est({ Lb: 350 }),
+    // Demandas chicas a propósito: TODO lo que sí se verifica pasa holgado.
+    demandas: dem({ Mux: 1 * TONF_M, Vu: 2 * TONF }),
+    estados: ['flexion-x', 'corte'],
+  },
+  anclas: (r) => [
+    ['G5 no está implementado', r.corte.fueraDeAlcance ? 1 : 0, 1, 0.5],
+    ['el corte NO emite check', r.checks.some((c) => c.id === 'corte') ? 1 : 0, 0, 0.5],
+    ['todos los checks emitidos pasan', r.checks.every((c) => c.ok) ? 1 : 0, 1, 0.5],
+    // Acá estaba el defecto: con todos los checks en verde, el every daba true.
+    ['veredicto = incompleto', r.veredicto === 'incompleto' ? 1 : 0, 1, 0.5],
+    ['okGlobal = false pese al every', r.okGlobal ? 1 : 0, 0, 0.5],
+    ['noVerificados lo nombra', r.noVerificados.some((n) => n.estado === 'corte') ? 1 : 0, 1, 0.5],
+  ],
+};
+
+const veredictoPasa = {
+  ancla: 'el contrato del veredicto (no hay planilla que lo fije)',
+  titulo: 'Veredicto · el mismo tubo sin pedir corte → «pasa»',
+  entrada: {
+    geom: { familia: 'HSS-C', D: 21.9, t: 0.82 },
+    material: A500C,
+    estabilidad: est({ Lb: 350 }),
+    demandas: dem({ Mux: 1 * TONF_M }),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => [
+    ['sin estados suprimidos', r.noVerificados.length, 0, 0.5],
+    ['veredicto = pasa', r.veredicto === 'pasa' ? 1 : 0, 1, 0.5],
+    ['okGlobal = true', r.okGlobal ? 1 : 0, 1, 0.5],
+  ],
+};
+
+/**
+ * La Ec. F7-7 (alma esbelta de HSS) usa el MISMO R_pg de la F5-6 con
+ * a_w = 2ht/(bt_f). El User Note de F7.3 avisa que no existen HSS con alma
+ * esbelta —esto es una sección cajón armada—, pero la ecuación está en la norma
+ * y ahora se aplica en vez de declararse fuera de alcance.
+ */
+const f77AlmaEsbelta = {
+  ancla: 'Ec. F7-7 con el R_pg de la F5-6, transcritas del PDF',
+  titulo: 'F7-7 · cajón de alma esbelta y ala compacta — 140×715×5',
+  entrada: {
+    geom: { familia: 'HSS-R', B: 14, H: 71.5, t: 0.5 },
+    material: A500C,
+    estabilidad: est({ Lb: 0 }),
+    demandas: dem({}),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => {
+    const f = r.flexionX;
+    return [
+      ['λ_ala = (B−3t)/t', r.clasificacion.flexion[0].lambda, 25, 0.0005],
+      ['ala compacta', r.clasificacion.claseAlaFlexion === 'compacta' ? 1 : 0, 1, 0.5],
+      ['λ_alma = (H−3t)/t', r.clasificacion.flexion[1].lambda, 140, 0.0005],
+      ['alma esbelta', r.clasificacion.claseAlmaFlexion === 'esbelta' ? 1 : 0, 1, 0.5],
+      ['YA NO es fuera de alcance', f.fueraDeAlcance ? 1 : 0, 0, 0.5],
+      // a_w = 2·h·t/(b·t) = 2·70/12,5 = 11,2, que la F5-6 acota a 10.
+      ['a_w antes del tope', f.aw, 11.2, 5e-7],
+      ['R_pg (F5-6 vía F7-7)', f.Rpg, 0.99338188, 5e-7],
+      ['gobierna el alma', f.gobierna === 'WLB' ? 1 : 0, 1, 0.5],
+      ['M_n = R_pg·F_y·S (F7-7)', f.Mn, f.Rpg * A500C.Fy * r.propiedades.Sx, 1e-6],
+    ];
+  },
+};
+
+const f77DobleEsbelta = {
+  ancla: 'User Note de F7.3(c) — la Especificación no lo cubre',
+  titulo: 'F7 · cajón con alma Y ala esbeltas → sigue fuera de alcance',
+  entrada: {
+    geom: { familia: 'HSS-R', B: 30, H: 71.5, t: 0.5 },
+    material: A500C,
+    estabilidad: est({ Lb: 0 }),
+    demandas: dem({ Mux: 1 * TONF_M }),
+    estados: ['flexion-x'],
+  },
+  anclas: (r) => [
+    ['ala esbelta', r.clasificacion.claseAlaFlexion === 'esbelta' ? 1 : 0, 1, 0.5],
+    ['alma esbelta', r.clasificacion.claseAlmaFlexion === 'esbelta' ? 1 : 0, 1, 0.5],
+    ['fuera de alcance', r.flexionX.fueraDeAlcance ? 1 : 0, 1, 0.5],
+    ['veredicto = incompleto', r.veredicto === 'incompleto' ? 1 : 0, 1, 0.5],
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Caso 27 · H1.2 — flexión con TRACCIÓN
+//
+// El gate de la interacción exigía P_u > 0, así que una diagonal traccionada
+// con momento no recibía ninguna verificación de interacción. H1.2 usa las
+// MISMAS Ecs. H1-1a/H1-1b con P_c del Cap. D en vez del Cap. E.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const h12TraccionFlexion = {
+  ancla: 'Sec. H1.2 del PDF + la cadena D2/F7 que diagonal-hss-traccion ancla',
+  titulo: 'H1.2 · HSS 4×4×¼ traccionado con momento',
+  entrada: {
+    geom: { familia: 'HSS-R', B: 10.16, H: 10.16, t: 0.58 },
+    material: A500C,
+    declaradas: { Ag: 21.7, rx: 3.84, ry: 3.84 },
+    estabilidad: est({ Lb: 0 }),
+    demandas: dem({ Tu: 40 * TONF, Mux: 1.5 * TONF_M }),
+    estados: ['traccion', 'flexion-x', 'interaccion'],
+  },
+  anclas: (r) => {
+    const i = r.interaccion;
+    const inter = r.checks.find((c) => c.id === 'interaccion');
+    return [
+      ['la interacción SÍ corre con T_u', i ? 1 : 0, 1, 0.5],
+      ['cita H1.2, no H1.1', inter.nombre.includes('H1.2') ? 1 : 0, 1, 0.5],
+      // φ_t·F_y·A_g de la Ec. D2-1: la misma que diagonal-hss-traccion ancla en
+      // 68,7 tonf sobre este perfil.
+      ['P_c = φ_t·P_n (D2-1)', r.traccion.phiPn / TONF, 68.7456, 5e-5, 'tonf'],
+      ['u_P = T_u/P_c', i.uP, (40 * TONF) / r.traccion.phiPn, 1e-9],
+      ['u_P ≥ 0,2 → H1-1a', i.ecuacion === 'H1-1a' ? 1 : 0, 1, 0.5],
+      ['u = u_P + (8/9)·u_Mx', i.u, i.uP + (8 / 9) * i.uMx, 1e-9],
+      // B₁ amplifica el P-δ de la COMPRESIÓN: en tracción el axial endereza, y
+      // aplicarlo sería castigar de más.
+      ['B₁ no entra en tracción', i.uMx, (1.5 * TONF_M) / r.flexionX.phiMn, 1e-9],
+    ];
+  },
+};
+
 const CASOS = [
   columnaGalpon,
   columnaGalponArriostrada,
@@ -606,6 +1047,19 @@ const CASOS = [
   hssALargo,
   hssE,
   hssEAlma,
+  f4Plastico,
+  f4LtbInelastico,
+  f4LtbElastico,
+  f5Plastico,
+  f5LtbInelastico,
+  continuidadLamPw,
+  continuidadLamRw,
+  identidadesFactores,
+  veredictoIncompleto,
+  veredictoPasa,
+  f77AlmaEsbelta,
+  f77DobleEsbelta,
+  h12TraccionFlexion,
 ];
 
 const VERDE = '\x1b[32m';
@@ -618,7 +1072,9 @@ let total = 0;
 
 for (const caso of CASOS) {
   console.log(`\n${caso.titulo}`);
-  console.log(`${GRIS}  ancla: public/planillas/${caso.planilla}.json${RESET}`);
+  console.log(
+    `${GRIS}  ancla: ${caso.ancla ?? `public/planillas/${caso.planilla}.json`}${RESET}`
+  );
 
   let r;
   try {
@@ -731,6 +1187,42 @@ const MATRIZ = [
       estados: TODOS_ESTADOS,
     },
   },
+  // Las dos secciones nuevas pasan por acá porque es donde la memoria vuelve a
+  // calcular la cadena con mathjs y la contrasta contra el motor: es la segunda
+  // implementación que F4 y F5 no tienen en ninguna planilla.
+  {
+    titulo: 'Perfil I armado — ALMA NO COMPACTA (F4), con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'I', tipo: 'armado', d: 120, bf: 30, tf: 2.0, tw: 1.0 },
+      material: A992,
+      estabilidad: est({ Lcx: 1200, Lcy: 600, Lcz: 600, Lb: 600, Cb: 1.14, B1: 1.08 }),
+      demandas: dem({ Pu: 60 * TONF, Tu: 25 * TONF, Mux: 120 * TONF_M, Muy: 5 * TONF_M, Vu: 60 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+  {
+    titulo: 'Perfil I armado — ALMA ESBELTA (F5), con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'I', tipo: 'armado', d: 150, bf: 30, tf: 2.0, tw: 0.8 },
+      material: A992,
+      estabilidad: est({ Lcx: 1500, Lcy: 500, Lcz: 500, Lb: 500, Cb: 1.3, B1: 1.02 }),
+      demandas: dem({ Pu: 40 * TONF, Tu: 20 * TONF, Mux: 150 * TONF_M, Muy: 4 * TONF_M, Vu: 50 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+  // Solo el eje débil. Existe porque el bloque de clasificación de la memoria
+  // colgaba de flexionX: pedir únicamente flexion-y dejaba lam_pf/lam_fala sin
+  // definir y el guardián de símbolos hacía fallar la generación.
+  {
+    titulo: 'HSS rectangular — SOLO flexión eje débil',
+    entrada: {
+      geom: { familia: 'HSS-R', B: 20, H: 30, t: 0.8 },
+      material: A500C,
+      estabilidad: est({ Lb: 400, Cb: 1 }),
+      demandas: dem({ Muy: 3 * TONF_M }),
+      estados: ['flexion-y'],
+    },
+  },
 ];
 
 console.log(`\n${GRIS}${'─'.repeat(70)}${RESET}`);
@@ -806,7 +1298,7 @@ for (const caso of MATRIZ) {
 console.log('');
 if (fallas === 0) {
   console.log(
-    `${VERDE}${total} comprobaciones: anclas contra 5 planillas y la memoria de 4 secciones con las 7 verificaciones. Todo cuadra.${RESET}`
+    `${VERDE}${total} comprobaciones: anclas contra 5 planillas, las identidades de continuidad de F4/F5 y la memoria de ${MATRIZ.length} secciones. Todo cuadra.${RESET}`
   );
   process.exit(0);
 }
