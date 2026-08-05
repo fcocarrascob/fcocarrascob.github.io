@@ -48,12 +48,12 @@ ecuación —destruye el cociente y convierte φ en `f`—, así que se rasteriz
 | `no implementada` | 2 |
 | `planilla:viga-columna` | 2 |
 
-**Sin ancla de ningún tipo (61).** Están implementadas y nada fija su
-valor: ni una planilla publicada, ni una identidad de continuidad. Un error acá
+**Implementadas y sin ancla (24).** Algún motor las calcula y nada fija
+su valor: ni una planilla publicada, ni una identidad de continuidad. Un error acá
 nunca se manifestó, así que es el backlog de mayor riesgo (van por número, no por
 prioridad):
 
-`A-3-1M` · `A-8-3` · `A-8-5` · `B3-1` · `B3-2` · `E4-1` · `E4-3` · `E7-1` · `E7-2` · `E7-3` · `E7-5` · `E7-7` · `F2-8a` · `F3-1` · `F3-2` · `F6-1` · `F6-2` · `F6-3` · `F6-4` · `F7-7` · `F7-9` · `F8-1` · `F8-2` · `F8-3` · `F8-4` · `F13-1` · `G2-1` · `G2-2` · `G2-3` · `G2-4` · `G2-7` · `G2-9` · `G2-11` · `G4-1` · `H1-1` · `H2-1` · `H3-1` · `H3-6` · `J2-4` · `J2-5` · `J2-6` · `J3-1` · `J3-3a` · `J3-4` · `J3-6a` · `J3-6b` · `J3-6c` · `J3-6d` · `J4-1` · `J4-2` · `J4-3` · `J4-4` · `J4-5` · `J4-6` · `J10-1` · `J10-2` · `J10-4` · `J10-9` · `J10-10` · `J10-11` · `J10-12`
+`E7-2` · `E7-3` · `E7-5` · `E7-7` · `F3-1` · `F3-2` · `F6-1` · `F6-2` · `F6-3` · `F6-4` · `F7-7` · `F7-9` · `F8-1` · `F8-2` · `F8-3` · `F8-4` · `G2-1` · `G2-2` · `G2-3` · `G2-4` · `G2-9` · `G2-11` · `G4-1` · `H1-1`
 
 **Sin doble entrada (41).** Las cita una sola de las dos
 implementaciones, así que ningún contraste las mira:

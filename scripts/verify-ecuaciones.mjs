@@ -269,7 +269,12 @@ if (ESCRIBIR) {
   const revisada = (c) => (previo.get(`${c.norma}|${c.tag}`)?.revisada ?? '⬜').trim() || '⬜';
   const reparto = new Map();
   for (const c of citas.values()) reparto.set(conAncla(c), (reparto.get(conAncla(c)) ?? 0) + 1);
-  const sinAncla = [...citas.values()].filter((c) => conAncla(c) === '—').sort(orden);
+  // «Sin ancla» solo tiene sentido para lo que ALGÚN motor implementa: una
+  // ecuación que únicamente aparece en un post no tiene valor que anclar, tiene
+  // el problema anterior —no la calcula nadie— y ya se cuenta en `solo prosa`.
+  const sinAncla = [...citas.values()]
+    .filter((c) => conAncla(c) === '—' && dobleEntrada(c.sitios) !== '`solo prosa`')
+    .sort(orden);
   const sinRevisarLista = [...citas.values()].filter((c) => revisada(c) === '⬜').sort(orden);
 
   L.push('## Estado');
@@ -281,8 +286,8 @@ if (ESCRIBIR) {
   for (const [k, v] of [...reparto].sort((a, b) => b[1] - a[1])) L.push(`| ${k} | ${v} |`);
   L.push('');
   if (sinAncla.length > 0) {
-    L.push(`**Sin ancla de ningún tipo (${sinAncla.length}).** Están implementadas y nada fija su`);
-    L.push('valor: ni una planilla publicada, ni una identidad de continuidad. Un error acá');
+    L.push(`**Implementadas y sin ancla (${sinAncla.length}).** Algún motor las calcula y nada fija`);
+    L.push('su valor: ni una planilla publicada, ni una identidad de continuidad. Un error acá');
     L.push('nunca se manifestó, así que es el backlog de mayor riesgo (van por número, no por');
     L.push('prioridad):');
     L.push('');
