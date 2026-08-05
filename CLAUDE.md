@@ -2,6 +2,66 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Fuentes normativas — regla no negociable
+
+**Toda ecuación, coeficiente o valor de tabla que se cite —en un post, en una planilla del canvas o en el código de un motor— se lee del PDF de la norma antes de escribirse. Nunca de memoria, y nunca solo de las fichas de `material_teorico`.**
+
+Aplica igual a agentes y subagentes. Si no podés abrir el PDF, no escribas el número: dilo.
+
+### Las ediciones vigentes, y las únicas que se citan
+
+| Norma | Edición | PDF |
+|---|---|---|
+| AISC 360 | **360-22** | `F:\OneDrive\Ingenieria\Normas\A360-22W-ewr.pdf` |
+| AISC 341 | **341-22** | `F:\OneDrive\Ingenieria\Normas\A341-22W-oke.pdf` |
+| ACI 318 | **318-25 (SI)** | `F:\OneDrive\Ingenieria\Normas\ACI 318-25_SI.pdf` |
+| NCh2369 | **2025, 3.ª ed.** | `F:\OneDrive\Ingenieria\Normas\NCh 2369 - 3°Edición 2025.05.28.pdf` |
+
+Citar una edición distinta es un hallazgo, no una variante: AISC 360-10 y ACI 318-19 están en disco y sirven para explicar de dónde viene algo, nunca como fuente de un número nuevo.
+
+### Cómo se lee el PDF (importa, y es contraintuitivo)
+
+Los PDF tienen capa de texto, pero **la capa de texto NO sirve para leer una ecuación**: destruye la disposición del cociente y de los subíndices —una fracción sale como una columna de símbolos sueltos— y **convierte φ en `f`** (en el Cap. H de 360-22, `φcPn` se extrae como `fcPn`). Quien reconstruya una fórmula desde ese texto está completando de memoria justo lo que la regla quiere evitar.
+
+Entonces, dos usos distintos:
+
+- **Texto extraído** (PyMuPDF, `page.get_text()`): para *ubicar* la sección, listar qué ecuaciones existen en un capítulo y leer prosa, definiciones y User Notes.
+- **Página rasterizada** (PyMuPDF `page.get_pixmap()` a PNG, y **mirarla**): para transcribir la ecuación. `pdftoppm` no está instalado, así que la ruta es PyMuPDF.
+
+### Las fichas de `material_teorico` son un mapa, no una fuente
+
+`F:\Proyectos_Python\material_teorico\referencias\` sirve para ubicar rápido la sección y entender el contexto. No está auditado: ya hubo al menos una ficha con una ecuación mal transcrita que varios posts citaban como fuente. Si la ficha y el PDF discrepan, **manda el PDF** y la ficha se corrige en el mismo commit.
+
+### Por qué la regla es tan dura
+
+El error típico no es aritmético, es de transcripción, y por eso ninguna revisión de resultados lo encuentra. El caso testigo: las Ecs. F7-2 y F7-6 vivieron en el motor con los coeficientes tabulados de **360-10** (`3,57·λ·√(F_y/E) − 4,0`) donde la 22 escribe la interpolación entre λ_p y λ_r. Son la misma recta redondeada: coinciden al **0,04 %**, la aritmética cerraba consigo misma, y sobrevivió a la auditoría de varios posts. Solo apareció al confrontar dos implementaciones. Después reapareció intacta en `memoria.ts`, que nadie había mirado.
+
+### El libro mayor: `ECUACIONES.md`
+
+Toda ecuación implementada en un motor tiene su fila: de qué norma y edición sale, dónde vive en el código, con qué se ancla y cuándo se leyó en el PDF.
+
+```bash
+npm run indice:normas        # regenera data/normas-indice.json (qué ecuaciones EXISTEN)
+npm run verify:ecuaciones    # falla si el código cita una que no existe en la edición vigente
+npm run ecuaciones           # además regenera ECUACIONES.md
+```
+
+El reparto de trabajo importa: **que el número exista es mecánico y lo decide el script** —no admite falso positivo, y es lo que habría cazado el `F7-12/F7-13` el día que se escribió—. Que la **forma algebraica** sea la de la edición vigente y que el coeficiente venga de la tabla correcta **no lo decide ningún script**: pide abrir la página rasterizada, y se registra a mano en la columna «Revisada», que el generador preserva y nunca pisa.
+
+El índice se construye desde las extracciones de `material_teorico/_procesamiento/raw/normas`, que **sí sirven** para inventariar (a diferencia de `page.get_text()`, conservan la fracción y el φ). Su inventario está contrastado contra el PDF: para AISC 360-22 coincide exacto en los ocho capítulos ingeridos.
+
+### Al citar
+
+Siempre **número de ecuación + edición**, y la cita se verifica igual que el número: el `F7-12/F7-13` que arrastraba `memoria.ts` era la numeración de 360-16, que la 22 corrió al insertar las secciones cajón.
+
+Gotchas ya registrados en el repo, que valen como recordatorio de qué tipo de cosa buscar:
+
+- **Renumeración de F7 entre 360-16 y 360-22** (el ancho efectivo del ala de HSS es F7-4, el alma no compacta F7-6, el LTB va de F7-8 a F7-11).
+- **B4.1a ≠ B4.1b**: son dos tablas y dicen cosas distintas; un alma puede ser esbelta a compresión y compacta a flexión.
+- **`b = B − 3t` es texto de §B4.1b(d)**, no una nota al pie de la Tabla B4.1b.
+- **La Ec. (19.2.3.1) está impresa con errata en la edición SI de ACI 318-25** (0,062 en vez de 0,62).
+- **ACI 318-19 removió el DDM y el marco equivalente**, y renumeró γ_f, γ_v y J_c.
+
 ## Commands
 
 ```bash

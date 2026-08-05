@@ -14,12 +14,16 @@
     "figuras:espectro": "node scripts/render-espectro-nch2369.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
+    "verify:acero": "node scripts/verify-acero.mjs",
+    "indice:normas": "node scripts/build-indice-normas.mjs",
+    "verify:ecuaciones": "node scripts/verify-ecuaciones.mjs",
+    "ecuaciones": "node scripts/verify-ecuaciones.mjs --escribir",
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
     "pdf:planilla": "node scripts/render-planilla-pdf.mjs",
-    "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-carrilera-puente-grua viga-ltb viga-columna viga-flexion-corte mensula-puntal-tensor columna-interaccion-esbeltez",
+    "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-carrilera-puente-grua viga-ltb viga-columna viga-hss-flexion viga-flexion-corte mensula-puntal-tensor columna-interaccion-esbeltez",
     "reflow:planilla": "node scripts/reflow-planilla.mjs",
-    "reflow:planillas": "node scripts/reflow-planilla.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-carrilera-puente-grua viga-ltb viga-columna viga-flexion-corte mensula-puntal-tensor columna-interaccion-esbeltez"
+    "reflow:planillas": "node scripts/reflow-planilla.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-carrilera-puente-grua viga-ltb viga-columna viga-hss-flexion viga-flexion-corte mensula-puntal-tensor columna-interaccion-esbeltez"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.3",
@@ -38,6 +42,7 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
-    "esbuild": "^0.27.7"
+    "esbuild": "^0.27.7",
+    "playwright": "^1.62.1"
   }
 }

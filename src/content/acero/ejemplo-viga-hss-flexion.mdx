@@ -1,0 +1,389 @@
+---
+title: "Ejemplo — Viga de tubo HSS rectangular en flexión (AISC 360-22)"
+description: "Verificación a flexión de una viga de tubo rectangular por la Sección F7: las tres ramas del pandeo local del ala (compacta, no compacta y esbelta con módulo efectivo S_e), el pandeo local del alma y el LTB de F7.4. Cinco secciones contra la misma demanda que la viga W del ejemplo de LTB: tres espesores sobre el mismo contorno □250×250 y dos tubos rectangulares. En el tubo cerrado el LTB no gobierna en ninguna —en las tres secciones cuadradas ni siquiera aplica, porque L_p es más largo que el vano— y lo que diseña es el ancho de pared."
+pubDate: 2026-08-04
+tags: ["ejemplo", "acero", "flexión", "vigas", "HSS", "tubo", "pandeo local", "ancho efectivo", "aisc360"]
+subsection: "ejemplos"
+chapter: "Cap. F — Flexión"
+tema: Miembros
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+En la [viga W del ejemplo de LTB](/acero/ejemplo-viga-ltb), una W460×74 de 8 m **no pasaba**
+arriostrada solo en los apoyos y sobraba al agregar un arriostre a media luz: el pandeo
+lateral-torsional se llevaba el 64 % de la capacidad y la palanca del diseño era la distancia
+entre arriostres. Este ejemplo resuelve **la misma viga con un tubo**, y sale al revés. El tubo
+cerrado tiene una rigidez torsional de otro orden, así que el LTB **no llega a gobernar en ninguna
+de las cinco secciones**: en las tres cuadradas la Sección F7.4 dice directamente que no aplica, y
+en las dos rectangulares aplica y no alcanza a recortar. El que decide pasa a ser el **ancho de
+pared**.
+
+La [nota del Cap. F](/acero/aisc360-22-capF-flexion) cuenta el marco; acá lo bajamos a números
+—con la referencia normativa[^aisc360] de cada paso— recorriendo las tres ramas del pandeo local
+del ala de la Sección F7.2 sobre el mismo contorno, con solo el espesor cambiando.
+
+## El caso
+
+La misma viga de piso del ejemplo hermano: 8 m simplemente apoyada, carga gravitacional
+distribuida, **sin ningún arriostre lateral intermedio**. Se estudian cinco tubos: tres espesores
+sobre el contorno cuadrado □250×250 y dos rectangulares que mueven ancho a peralte.
+
+| Dato | Valor |
+|---|---|
+| Acero | ASTM A500 Gr. C: $F_y = 3520$ kgf/cm², $E = 2.04\times10^6$ kgf/cm² |
+| Luz | $L = 8.0$ m, simplemente apoyada, $L_b = L$ |
+| Carga (factorada) | $w = 2.5$ tonf/m → $M_u = wL^2/8 = 20$ tonf·m, $V_u = wL/2 = 10$ tonf |
+| Casos A, B, C | □250×250 con pared nominal de 10, 8 y 6 mm |
+| Casos D, E | □300×200×6 y □400×200×6 (□$H\times B\times t$: primero el peralte) |
+| Pared de diseño | $t = 0.93\,t_{nom}$ (§B4.2), o sea 9.30, 7.44 y 5.58 mm |
+| Factores | $\phi_b = 0.90$ (F1(a)), $\phi_v = 0.90$ (G1) |
+
+<Figure
+  src="/ejemplos/viga-hss-flexion.svg"
+  alt="Arriba a la izquierda, la viga de 8 m simplemente apoyada con carga distribuida y sin arriostres intermedios, con L_b = 8 m menor que L_p = 9.87 m. A la derecha, una caja que explica por qué el LTB desaparece en el tubo: J es 251 veces el de la W460×74, L_p es más largo que el vano, y perder el 10 % de M_p exigiría L_b = 70.7 m. En el medio, las cinco secciones dibujadas a escala con su λ y su clase: □250×250×10 compacta, ×8 no compacta, ×6 esbelta, □300×200×6 no compacta y □400×200×6 no compacta con alma también no compacta. Abajo, el detalle del ancho efectivo del □250×250×6 y un gráfico de barras de φM_n contra M_u = 20 tonf·m con el contorno punteado de φM_p, donde solo pasan el □250×250×10 (uso 0.78) y el □400×200×6 (uso 0.87)."
+  caption="Las cinco secciones contra la misma demanda. El contorno punteado de las barras es el φM_p que la sección tiene y que la Sección F7 no deja usar: el □250×250×6 pierde el 20 % antes de empezar. El LTB, que en la viga W gobernaba, acá no gobierna en ninguna."
+/>
+
+<Note type="info" title="Por qué el tubo invierte la pregunta">
+En un perfil I laminado el ala y el alma son compactas casi siempre, así que la Sección F2 —fluencia
+contra LTB— es lo único que compite y el diseño se juega en $L_b$. En un tubo pasa lo contrario: la
+sección cerrada mata el LTB, pero las paredes son **planchas delgadas comprimidas en toda su
+extensión**, y ahí la Sección F7 cobra. El mismo problema, la otra mitad del Capítulo F.
+</Note>
+
+## 1. De $B$, $H$ y $t$ a las propiedades
+
+El *Manual* tabula las propiedades de los tubos, pero acá se derivan de las tres cotas para poder
+barrer el espesor. El tubo se modela como dos alas $B \times t$ y dos almas $(H-2t) \times t$:
+
+<Equation label="Área e inercia">
+$$
+A_g = BH - (B-2t)(H-2t) = 25 \cdot 25 - 23.14^2 = 89.54 \ \text{cm}^2
+\qquad
+I_x = \frac{BH^3 - (B-2t)(H-2t)^3}{12} = 8659 \ \text{cm}^4
+$$
+</Equation>
+
+De ahí salen $S_x = I_x/(H/2) = 692.7$ cm³, $Z_x = 808.6$ cm³ y $r_y = \sqrt{I_y/A_g} = 9.83$ cm.
+La rigidez torsional del tubo cerrado sale de Bredt sobre la línea media, y es el número que
+después mata el LTB:
+
+<Equation label="Torsión de Bredt">
+$$
+J = \frac{4A_m^2\,t}{p} = \frac{4(B-t)^2(H-t)^2 t}{2(B-t)+2(H-t)} = 12\,969 \ \text{cm}^4
+$$
+</Equation>
+
+<Note type="warning" title="Dos espesores distintos, y no son intercambiables">
+El §B4.2 dice que en un HSS fabricado bajo A500 —o sea, casi todo el tubo del mercado— la **pared
+de diseño** es $0.93$ veces la nominal; solo A1085/A1065 y las secciones cajón usan la nominal.
+Todas las propiedades de arriba van con la pared de diseño ($t = 9.30$ mm para el ×10).
+
+Pero la **masa** no: el acero que se compra y se suelda es el de la pared nominal. Con
+$A_{g,nom} = 25^2 - 23^2 = 96$ cm² y $\rho_s = 7850$ kg/m³, el □250×250×10 pesa
+$96\times10^{-4}\,\text{m}^2 \cdot 7850 = 75.4$ kg/m, no los 70.3 que daría el área de diseño.
+Confundirlos subestima el peso un 7 %.
+</Note>
+
+## 2. Clasificación de las paredes (Tabla B4.1b)
+
+Los límites salen de dos filas distintas: el **caso 17** para el ala (la pared comprimida de ancho
+$B$) y el **caso 19** para el alma (la de altura $H$). Son mucho más severos en el ala:
+
+<Equation label="Tabla B4.1b, casos 17 y 19">
+$$
+\text{ala: } \lambda_p = 1.12\sqrt{E/F_y} = 26.96, \quad \lambda_r = 1.40\sqrt{E/F_y} = 33.70
+\qquad
+\text{alma: } \lambda_p = 58.26, \quad \lambda_r = 137.2
+$$
+</Equation>
+
+El ancho que entra en $\lambda$ no es el exterior, y la regla no está en la tabla sino en el texto
+que la acompaña: el **§B4.1b(d)** pide el ancho libre entre paredes menos el radio interior de cada
+esquina y, si el radio no se conoce, la dimensión exterior **menos tres veces el espesor**:
+
+<Equation label="§B4.1b(d)">
+$$
+b = B - 3t \qquad h = H - 3t \qquad \lambda_{ala} = \frac{b}{t}, \quad \lambda_{alma} = \frac{h}{t}
+$$
+</Equation>
+
+Con eso, los tres espesores del mismo contorno □250×250 caen cada uno en una clase distinta:
+
+| Caso | $t$ diseño | $b = B-3t$ | $\lambda_{ala}$ | Clase del ala |
+|:---|:---:|:---:|:---:|:---|
+| A · □250×250×10 | 0.930 cm | 22.21 cm | **23.88** | compacta ($< 26.96$) |
+| B · □250×250×8 | 0.744 cm | 22.77 cm | **30.60** | no compacta |
+| C · □250×250×6 | 0.558 cm | 23.33 cm | **41.80** | esbelta ($> 33.70$) |
+
+Dos milímetros de pared mueven $\lambda$ de 23.88 a 30.60, y otros dos a 41.80. Las almas de los
+tres son compactas por lejos (la misma $\lambda$ contra un $\lambda_p$ de 58.26): en un tubo
+cuadrado el alma nunca es el problema.
+
+## 3. Caso A: ala compacta, la sección entera (Ec. F7-1)
+
+Con ala y alma compactas, F7.2(a) y F7.3(a) dicen que el pandeo local **no aplica**, y queda solo
+la fluencia:
+
+<Equation label="Ec. F7-1">
+$$
+M_n = M_p = F_y Z_x = 3520 \cdot 808.6 = 2\,846\,300 \ \text{kgf·cm} = 28.46 \ \text{tonf·m}
+\quad(\phi_b M_n = 25.62 \ \text{tonf·m})
+$$
+</Equation>
+
+Pasa con **uso 0.78**, y pesa 75.4 kg/m. Guarda ese número: es el tubo caro del ejemplo.
+
+## 4. Caso B: ala no compacta (Ec. F7-2)
+
+Con $\lambda_p < \lambda \le \lambda_r$ la sección ya no llega a $M_p$: baja en recta hasta el
+momento de primera fluencia $F_y S_x$, que es el piso de la rama.
+
+<Equation label="Ec. F7-2">
+$$
+M_n = M_p - \left(M_p - F_y S_x\right)\frac{\lambda - \lambda_{pf}}{\lambda_{rf} - \lambda_{pf}}
+= 23.12 - 3.168\,\frac{30.602 - 26.963}{33.703 - 26.963} = 21.41 \ \text{tonf·m}
+$$
+</Equation>
+
+El robo es del **7.40 %** de $M_p$, y alcanza para dar vuelta el resultado: $\phi_b M_n = 19.27$
+tonf·m contra $M_u = 20$, **uso 1.04**. **No pasa** — y por un 4 %. El mismo contorno, el mismo
+acero, la misma carga; dos milímetros de pared.
+
+Fíjate dónde se pierde: $\phi_b M_p = 20.81$ tonf·m ya estaba apenas sobre la demanda, y el
+descuento de F7-2 lo hunde. Un tubo cuadrado de 250 mm con 8 mm de pared **no es una viga de 8 m**
+para esta carga, aunque su momento plástico casi lo sea.
+
+## 5. Caso C: ala esbelta, y el módulo efectivo (Ecs. F7-4 y F7-3)
+
+Pasado $\lambda_r$ la pared abolla antes de fluir, y la norma deja de tarifar con un descuento
+sobre $M_p$: **borra parte del ala**. La Ec. F7-4 da qué ancho sigue siendo efectivo.
+
+<Equation label="Ec. F7-4">
+$$
+b_e = 1.92\,t\sqrt{\frac{E}{F_y}}\left[1 - \frac{0.38}{b/t}\sqrt{\frac{E}{F_y}}\right]
+= 25.79\,\bigl[1 - 0.2188\bigr] = 20.15 \ \text{cm} \;\le\; b = 23.33 \ \text{cm}
+$$
+</Equation>
+
+Se pierde una franja de $23.33 - 20.15 = 3.179$ cm —el **13.6 %** del ancho plano—, que son
+$3.179 \cdot 0.558 = 1.774$ cm² de acero que dejan de contar.
+
+<Note type="tip" title="La franja sale del ancho plano, no de la pared entera">
+$b_e$ es una porción de $b = B - 3t$, no de $B$. El modelo de ancho efectivo dice que una plancha
+rigidizada, después de abollar, sigue trabajando en dos tiras junto a sus **bordes apoyados**: acá,
+las esquinas del tubo, que son el apoyo del ala y no pandean. Sacar la franja del ancho exterior
+$B$ daría $S_e = 381.3$ cm³ en vez de 399.7 —**el atajo se queda un 4.6 % por debajo** del valor
+correcto, justo en el número que gobierna—, así que no es un matiz de redacción.
+</Note>
+
+Como el área desaparece **arriba y no abajo**, la sección deja de ser simétrica: el centroide baja
+y la fibra comprimida se aleja. Con $A_{ef} = 52.78$ cm² y el brazo del ala $H/2 - t/2 = 12.221$ cm:
+
+<Equation label="Centroide de la sección efectiva">
+$$
+\bar{y} = -\frac{1.774 \cdot 12.221}{52.78} = -0.411 \ \text{cm}
+\qquad
+I_{ef} = 5160.9 \ \text{cm}^4
+\qquad
+y_{comp} = 12.5 + 0.411 = 12.911 \ \text{cm}
+$$
+</Equation>
+
+El módulo efectivo se refiere a la fibra comprimida, que es la menor de las dos ($S_e = 399.7$ contra
+$426.9$ cm³ del lado traccionado):
+
+<Equation label="Ec. F7-3">
+$$
+S_e = \frac{I_{ef}}{y_{comp}} = \frac{5160.9}{12.911} = 399.7 \ \text{cm}^3
+\qquad
+M_n = F_y S_e = 3520 \cdot 399.7 = 14.07 \ \text{tonf·m}
+$$
+</Equation>
+
+$S_e$ es un **8.06 %** menor que el $S_x = 434.8$ cm³ bruto, pero el recorte contra $M_p$ es del
+**20.1 %**, porque además se perdió toda la reserva plástica. $\phi_b M_n = 12.66$ tonf·m,
+**uso 1.58**: ni cerca.
+
+## 6. El LTB que no ocurre en el tubo cuadrado (Sección F7.4)
+
+Acá está la inversión respecto de la viga W. Las dos longitudes límite de F7.4 dependen de
+$\sqrt{J A_g}$, y en una sección cerrada ese término es enorme:
+
+<Equation label="Ec. F7-10">
+$$
+L_p = 0.13\,E\,r_y\frac{\sqrt{JA_g}}{M_p}
+= 0.13 \cdot 2.04\times10^6 \cdot 9.834 \cdot \frac{1077.6}{2\,846\,300} = 987 \ \text{cm} = 9.87 \ \text{m}
+$$
+</Equation>
+
+<Equation label="Ec. F7-11">
+$$
+L_r = 2E\,r_y\frac{\sqrt{JA_g}}{0.7F_y S_x} = 25\,330 \ \text{cm} = 253.3 \ \text{m}
+$$
+</Equation>
+
+$L_p = 9.87$ m es **más largo que el vano entero**. Como $L_b = 8.0$ m $\le L_p$, aplica F7.4(a) y
+el pandeo lateral-torsional queda descartado sin calcular nada más. Lo mismo pasa en los otros dos
+tubos cuadrados: $L_p = 9.95$ m en el ×8 y $10.02$ m en el ×6. El *User Note* de F7.4 lo dice
+además en palabras: *en secciones cuadradas el LTB no ocurre.*
+
+Para ver la magnitud, despejemos la Ec. F7-8 hacia atrás: ¿cuánto habría que separar los arriostres
+para perder apenas el 10 % de $M_p$? Con $0.7F_yS_x = 17.07$ tonf·m,
+
+<Equation label="Contrafactual de la Ec. F7-8">
+$$
+\frac{L_b - L_p}{L_r - L_p} = \frac{0.10\,M_p}{M_p - 0.7F_yS_x} = \frac{2.846}{11.395} = 0.2498
+\;\Rightarrow\;
+L_b = 9.87 + 0.2498\,(253.3 - 9.87) = 70.7 \ \text{m}
+$$
+</Equation>
+
+Setenta metros. La W460×74 del ejemplo hermano tenía $L_p = 1.78$ m —el tubo lo multiplica por
+**5.56**— y a $L_b = 8$ m ya había perdido el 64 %. La diferencia está en $J$: los 12 969 cm⁴ del
+tubo son **251 veces** los 51.6 cm⁴ del perfil abierto. La rama elástica, Ec. F7-9, exigiría
+$L_b > L_r = 253$ m: no existe esa viga.
+
+## 7. Dónde poner el acero: los casos D y E
+
+Si el que diseña es el ancho de pared, la salida no es solo engrosarla. El □300×200×6 tiene la
+**misma área exacta** que el □250×250×6 —$250+250 = 300+200$, así que con la misma pared
+$A_g = 54.55$ cm² en los dos— y los mismos 46.0 kg/m. Lo único que cambia es dónde está el material:
+
+| | □250×250×6 (C) | □300×200×6 (D) |
+|:---|:---:|:---:|
+| $\lambda_{ala} = (B-3t)/t$ | 41.80 — **esbelta** | 32.84 — no compacta |
+| $Z_x$ | 500.1 cm³ | 561.3 cm³ |
+| Rama de F7.2 | Ecs. F7-4 y F7-3 | Ec. F7-2 |
+| Recorte sobre $M_p$ | −20.1 % | −13.9 % |
+| $\phi_b M_n$ | 12.66 tonf·m | **15.31 tonf·m** |
+
+Angostar el ala de 25 a 20 cm la saca del rango esbelto, y de paso sube $Z_x$: **+20.9 %** de
+capacidad con el mismo acero. Sigue sin pasar (uso 1.31), pero marca la dirección.
+
+Y con el tubo ya no cuadrado, el LTB entra por primera vez en la ventana de F7.4(b): $r_y$ baja de
+9.98 a 8.34 cm y $L_p$, de 10.02 a **7.15 m**, por debajo de los 8 m de vano. No cambia nada —la
+Ec. F7-8 con $C_b = 1.136$ vuelve a topar en $M_p$, y aun con $C_b = 1.0$ el recorte sería del
+0.20 %—, pero deja de ser cierto que la cláusula no aplique.
+
+Llevándolo hasta el □400×200×6 —misma pared, 55.4 kg/m— aparece por primera vez el resto de la
+Sección F7. El **alma** deja de ser compacta ($\lambda = 38.326/0.558 = 68.68 > 58.26$) y entra la
+Ec. F7-6, con la misma forma que la F7-2 pero con los límites del caso 19:
+
+<Equation label="Ec. F7-6">
+$$
+M_n = M_p - \left(M_p - F_y S_x\right)\frac{\lambda - \lambda_{pw}}{\lambda_{rw} - \lambda_{pw}}
+= 30.34 - 5.441\,\frac{68.685 - 58.258}{137.220 - 58.258} = 29.62 \ \text{tonf·m}
+$$
+</Equation>
+
+El alma cuesta apenas un **2.37 %**: el $\lambda_p$ del caso 19 está tan arriba que una pared de
+400 mm con 6 mm de espesor apenas lo cruza. Manda igual el ala, con la Ec. F7-2:
+$M_n = 25.60$ tonf·m, un −15.6 % de $M_p$.
+
+Y el LTB queda más adentro todavía de la ventana de F7.4(b): $L_p$ cae a 6.42 m $< L_b = 8$ m. Pero
+con el crédito por gradiente —$C_b = 1.136$, derivado de la parábola $M(x) = wx(L-x)/2$ como en el
+ejemplo hermano— la Ec. F7-8 vuelve a topar en $M_p$. Aun tomando $C_b = 1.0$ el recorte sería del
+**0.41 %**. En un tubo, el LTB puede aplicar, pero no llega a ser el estado límite que decide.
+
+$\phi_b M_n = 23.04$ tonf·m, **uso 0.87**: pasa, con **26.5 % menos de acero** que el □250×250×10
+que también pasaba.
+
+## 8. El corte (Sección G4)
+
+G4 toma las dos paredes paralelas a la fuerza, con el mismo ancho plano de la Tabla B4.1b, y el
+$C_{v2}$ de G2.2 con $k_v = 5$. En el caso A, $\lambda_{alma} = 23.88$ está muy por debajo de
+$1.10\sqrt{k_vE/F_y} = 59.21$, así que $C_{v2} = 1$ y no hay abolladura:
+
+<Equation label="Ec. G4-1">
+$$
+\phi_v V_n = \phi_v\,0.6F_y A_w C_{v2} = 0.90 \cdot 0.6 \cdot 3520 \cdot 41.31 \cdot 1.0 = 78.5 \ \text{tonf}
+$$
+</Equation>
+
+El □400×200×6 es el único de los cinco cuya alma abolla antes de fluir: con $\lambda = 68.68$ cae
+entre $59.21$ y $1.37\sqrt{k_vE/F_y} = 73.75$, así que $C_{v2} = 59.21/68.68 = 0.862$ y
+$\phi_v V_n = 70.1$ tonf. Contra $V_u = 10$ tonf el uso es 0.14: el corte no gobierna en ninguna,
+pero es la misma esbeltez de alma la que ya había activado la Ec. F7-6.
+
+## Resumen: demanda vs. capacidad
+
+| Sección | Masa | $\lambda_{ala}$ | Estado límite que gobierna | $\phi_b M_n$ | Uso |
+|:---|:---:|:---:|:---|:---:|:---:|
+| A · □250×250×10 | 75.4 kg/m | 23.88 | fluencia — Ec. F7-1 | $25.62$ tonf·m | 0.78 |
+| **B · □250×250×8** | 60.8 kg/m | 30.60 | **pandeo local del ala — Ec. F7-2** | $\mathbf{19.27}$ **tonf·m** | **1.04** |
+| **C · □250×250×6** | 46.0 kg/m | 41.80 | **ala esbelta — Ecs. F7-4 y F7-3** | $\mathbf{12.66}$ **tonf·m** | **1.58** |
+| **D · □300×200×6** | 46.0 kg/m | 32.84 | **pandeo local del ala — Ec. F7-2** | $\mathbf{15.31}$ **tonf·m** | **1.31** |
+| **E · □400×200×6** | 55.4 kg/m | 32.84 | pandeo local del ala — Ec. F7-2 | $23.04$ tonf·m | **0.87** |
+| E · corte | — | — | corte del alma — Ec. G4-1 ($C_{v2} = 0.862$) | $70.1$ tonf | 0.14 |
+
+**Solución:** tubo **□400×200×6** (A500 Gr. C) de 8 m, sin arriostres intermedios; resiste
+$M_u = 20$ tonf·m con uso 0.87 y 55.4 kg/m. Si solo hay tubo cuadrado disponible, el □250×250×10
+también pasa, con uso 0.78 y **36 % más de acero**.
+
+<Note type="tip" title="La palanca del tubo está en el ancho de pared, no en el arriostramiento">
+Es el espejo del ejemplo de LTB. Allá $\phi_b M_p$ sobraba por lejos y el problema era $L_b$; acá
+$L_b$ no mueve la aguja —en las tres secciones cuadradas $L_p$ es más largo que el vano, y en las
+dos rectangulares la Ec. F7-8 topa igual en $M_p$— y el problema es cuánto de $M_p$ deja usar la
+Sección F7:
+
+| Sección | $\phi_b M_p$ | $\phi_b M_n$ | Lo que F7 se lleva |
+|:---|:---:|:---:|:---:|
+| □250×250×10 | 25.62 | 25.62 | — |
+| □250×250×8 | 20.81 | 19.27 | −7.4 % |
+| □250×250×6 | 15.84 | 12.66 | −20.1 % |
+
+Y por eso la pared delgada **no sale más barata por kilo**: el □250×250×6 rinde 0.28 tonf·m por
+cada kg/m y el □400×200×6, con la misma pared, rinde 0.42. Lo que se ahorra en espesor lo cobra
+$\lambda$.
+</Note>
+
+<Note type="warning" title="Dónde falla esto">
+Las propiedades salen de **paredes rectas, sin radios de esquina**, que es la única geometría
+derivable de $B$, $H$ y $t$. Un tubo real tiene menos área: con la hipótesis corriente
+$r_{ext} = 2t$ y $r_{int} = t$, cada esquina pierde $(1-\pi/4)(r_{ext}^2 - r_{int}^2)$ y el
+□400×200×6 se queda con **1.22 % menos de $A_g$** y hasta **1.86 % menos de $Z_x$** (cota superior,
+con todo el material en la fibra extrema). $J$ arrastra el mismo supuesto, y de él cuelga
+$L_p \propto \sqrt{J}$: un sesgo de esa magnitud lo mueve menos de un 2 %, que el margen
+$L_p/L_b = 1.23$ del caso A absorbe con holgura. Es el lado inseguro, no da vuelta ningún veredicto
+de acá, y desaparece en cuanto se declare la fila del catálogo.
+
+La clasificación, en cambio, va para el otro lado: con el radio conocido, el §B4.1b(d) pide
+$b = (B-2t) - 2r_{int}$, que con $r_{int} = t$ da $B - 4t = 17.77$ cm, **menos** que el
+$B - 3t = 18.33$ que usa el cálculo. O sea que la convención por defecto exagera $\lambda$, y ahí
+está del lado seguro.
+
+Tampoco está verificada la **disponibilidad comercial** de los perfiles: son contornos nominales,
+no filas de una ficha de fabricante chilena.
+</Note>
+
+## La planilla
+
+El cálculo completo está además como planilla del canvas: 219 pasos, 174 verificaciones y 134
+contrastes contra los números publicados acá. Las cinco secciones **no se calculan cinco veces**:
+la hoja declara una vez las funciones de sección ($A_g$, $I_x$, $Z_x$, $J$, el ancho plano) y las
+de la Sección F7 (F7-2, F7-4, F7-6, F7-8, F7-10, F7-11), y cada caso las llama con sus tres cotas.
+Eso es lo que hace que el barrido de espesor sea comparable: ninguna fila puede haber rehecho una
+fórmula por su cuenta, y la del □300×200×6 no se obtiene escalando la del cuadrado.
+
+La hoja cierra además dos cosas que el post solo afirma: que $A_g$ del □300×200×6 es **exactamente**
+la del □250×250×6 —un booleano, no un redondeo coincidente— y que el módulo efectivo del caso C
+manda por la fibra comprimida y no por la traccionada. Y el $C_b$ no se cita: se deriva evaluando
+la parábola de momentos en los cuartos del tramo no arriostrado, igual que en el ejemplo de LTB.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=viga-hss-flexion)** ·
+[descargar el JSON](/planillas/viga-hss-flexion.json)
+
+```bash
+cd struct_pad
+npm run verify:planilla -- public/planillas/viga-hss-flexion.json --md
+```
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+Buildings (ANSI/AISC 360-22)*, Chicago, 2022. La numeración de la Sección F7 cambió respecto de
+360-16 al incorporarse las secciones cajón: en la edición 22 el ancho efectivo del ala de HSS es la
+Ec. F7-4 (la F7-5 es la de cajón, con 0.34 en vez de 0.38), el alma no compacta es la F7-6, y el
+LTB de F7.4 son las Ecs. F7-8 a F7-11.

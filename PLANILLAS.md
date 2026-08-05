@@ -536,8 +536,9 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-carrilera-puente-grua` | 156 | 82 | 62 | 41 | 12 (1↱) | 13 aplicados 2026-08-01 (la Ec. A-3-1 con el C_f de 360-16 y el exponente 1/3; la flecha lateral que era la vertical escalada; y la sección compuesta, que ninguna hipótesis reproducía — al componerla bien la fatiga deja de gobernar en servicio severo y **la tesis de cierre se reescribió**) | 2026-08-01 | ✅ |
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
+| `ejemplo-viga-hss-flexion` | 219 | 174 | 134 | 107 | 16 (1⇱) | 12 aplicados 2026-08-04 sobre el post recién escrito (el 🟠: «el LTB **no aplica**» sin acotar, cuando en los dos tubos rectangulares sí aplica F7.4(b) —L_p = 7,15 y 6,42 m < L_b— y lo que pasa es que no llega a recortar; y la cita `§B4.1b(d)`, que no es una nota al pie de la Tabla B4.1b sino texto de la sección, alineada con el hallazgo 3 de `diagonal-hss-traccion`) | 2026-08-04 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 23 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 24 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón

@@ -15,17 +15,11 @@ import {
   type SolverResult,
 } from './placaBase';
 import { anchorageChecks } from './placaBaseAnchorage';
+import { check, type CheckResult } from './checks';
 
-export interface CheckResult {
-  id: string;
-  nombre: string;
-  demanda: number;
-  capacidad: number;
-  ratio: number;
-  ok: boolean;
-  unidad: string;
-  detalle: string;
-}
+// La forma de una verificación vive en checks.ts, compartida con el verificador
+// de secciones de acero. Se re-exporta acá para no tocar los consumidores.
+export type { CheckResult };
 
 export interface PlacaDerived {
   ex: number; // excentricidad Muy/Pu [cm] (Infinity si Pu = 0)
@@ -72,18 +66,6 @@ function minEdgeJ34(dRod: number): number {
   const dIn = dRod / 2.54;
   for (const [dd, e] of J34) if (dIn <= dd + 1e-6) return e * 2.54;
   return 1.25 * dRod;
-}
-
-function check(
-  id: string,
-  nombre: string,
-  demanda: number,
-  capacidad: number,
-  unidad: string,
-  detalle: string
-): CheckResult {
-  const ratio = capacidad > 0 ? demanda / capacidad : demanda > 0 ? Infinity : 0;
-  return { id, nombre, demanda, capacidad, ratio, ok: ratio <= 1, unidad, detalle };
 }
 
 // ── Flexión de la placa (DG1) ────────────────────────────────────────────────

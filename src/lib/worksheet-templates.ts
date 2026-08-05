@@ -4,7 +4,10 @@
 // que el scope compartido se resuelva sin sorpresas (evita el cruce de columnas
 // del orden por filas de evaluateSheet).
 
-import type { Region, RegionKind } from './worksheet';
+import type { Region } from './worksheet';
+// Los constructores de regiones viven en worksheet-layout.ts, compartidos con
+// el generador de memorias del verificador de secciones.
+import { layout, m, p, t, type Item } from './worksheet-layout';
 
 export interface Template {
   id: string;
@@ -12,28 +15,6 @@ export interface Template {
   norma: string;
   descripcion: string;
   regions: Region[];
-}
-
-interface Item {
-  kind: RegionKind;
-  src: string;
-}
-const m = (src: string): Item => ({ kind: 'math', src });
-const t = (src: string): Item => ({ kind: 'text', src });
-const p = (src: string): Item => ({ kind: 'program', src });
-
-/**
- * Coloca los ítems en una columna, calculando `y` según el alto de cada región
- * (las de programa/multilínea ocupan más). Devuelve regiones listas para la hoja.
- */
-function layout(idPrefix: string, x: number, y0: number, items: Item[]): Region[] {
-  let y = y0;
-  return items.map((it, i) => {
-    const region: Region = { id: `${idPrefix}-${i}`, kind: it.kind, x, y, src: it.src };
-    const lines = it.src.split('\n').length;
-    y += lines > 1 ? lines * 22 + 28 : 46;
-    return region;
-  });
 }
 
 // --- Viga de hormigón armado: flexión + cortante (ACI 318-25, Cap. 9) ---------
