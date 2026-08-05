@@ -1,12 +1,12 @@
 /**
- * Espectro de diseño NCh2369 — puerto puro a TypeScript.
+ * Espectro de diseño NCh2369:2025 — implementación pura, sin dependencias.
  *
- * Reimplementa la fórmula (no la lógica de conexión a SAP2000) de
- * `compute_spectrum` / `compute_nch_spectrum` / `compute_vertical_spectrum` en
- * vendor/modelo_base/backend_modelo_base.py, para poder graficar el espectro
- * en el navegador sin abrir SAP2000. El script Python generado sigue siendo
- * la fuente de verdad para lo que realmente se escribe en el modelo SAP2000;
- * esto es solo una vista previa.
+ * Nació como puerto del backend Python del constructor de scripts SAP2000, que
+ * se retiró del sitio el 2026-08-05. Hoy es código propio y su único consumidor
+ * es `scripts/render-espectro-nch2369.mjs`, que dibuja las dos figuras de la
+ * nota /apuntes/nch2369-espectro-de-diseno. Verificado contra el PDF de la
+ * 3.ª edición: Tabla 3 (p. 57), Tabla 6 (p. 60), Ecs. (1a), (1b) y (3)
+ * (pp. 28-29).
  */
 
 export type SeismicZone = 1 | 2 | 3;
@@ -56,8 +56,18 @@ function spectrumShape(
   return (scaleFactor * ar * sp.S * num) / den;
 }
 
-/** R* — factor de reducción corregido por período corto (interpolación lineal 1.5 -> R). */
+/**
+ * R* — factor de reducción corregido por período corto, Ec. (1b).
+ *
+ * La rama `R = 1` es la primera de la ecuación y NO es un caso degenerado del
+ * resto: son las estructuras que se diseñan para permanecer elásticas (Tabla 7,
+ * primera fila), donde no se reduce nada. Sin ella la interpolación arranca en
+ * 1,5 y devuelve hasta 1,5 en T → 0, o sea que divide el espectro por 1,5 justo
+ * donde la norma lo prohíbe — 33 % menos demanda, en silencio y del lado
+ * inseguro. Faltaba, y el post /blog/oficio-errores-sin-alarma la cuenta.
+ */
 function rStar(T: number, R: number, t1: number): number {
+  if (R <= 1) return 1;
   const limit = 0.16 * R * t1;
   if (limit <= 0 || T >= limit) return R;
   return 1.5 + (R - 1.5) * (T / limit);

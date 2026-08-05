@@ -30,9 +30,8 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
   por fila (⚠) y «ver caso →» al formulario. La física (pesos → N_tot →
   adimensionales) quedó extraída a `deriveZapata()`/`envelopeWarnings()` en la lib
   pura, compartida por formulario y barrido.
-- [ ] **A4. Siguiente sub-tool de SAP Scripts** — agregar la próxima herramienta del
-  catálogo (`src/lib/sap-scripts/catalog.ts`) vendoreando desde Skills_SAP, con
-  `modelo-base` como referencia de implementación.
+- [x] ~~**A4. Siguiente sub-tool de SAP Scripts**~~ — **cancelado y retirado el 2026-08-05**
+  (ver sección J): la herramienta entera salió del sitio.
 
 ## B. Posts
 
@@ -209,7 +208,7 @@ en un caso concreto, con la API de SAP2000. No llevan barrido paramétrico ni su
   correa sin diagonal) para generar acoplamiento torsión-traslación real — modo 1
   (T=0.859 s) mezcla 55.5 % X con 26.8 % torsión, modo 3 (T=0.398 s) es más torsional
   (56.4 %) que traslacional (29.2 %). Espectro NCh2369 reutilizando
-  `nch2369-spectrum.ts` (mismo módulo del SAP Script Builder) vía `Func.FuncRS.SetUser`.
+  `nch2369-spectrum.ts` (hoy en `src/lib/`) vía `Func.FuncRS.SetUser`.
   Verificado a mano: Amplitudᵢ = Γᵢ·S_a(Tᵢ)/ωᵢ² (Γᵢ = `UX`/`ModalMass` de *Modal
   Participation Factors*) coincide con `U1Amp` a 0.2 % en 4 modos; corte basal
   reconstruido modo a modo (`Ux`·M_tot·Sa) combinado por SRSS y CQC (Der Kiureghian,
@@ -820,11 +819,11 @@ columna normativa y `(305, 50, 570, 800)` para el comentario; **página PDF = p�
 
 **Novedad de infraestructura: figuras calculadas, no dibujadas.**
 `scripts/render-espectro-nch2369.mjs` (`npm run figuras:espectro`) importa
-`src/lib/sap-scripts/nch2369-spectrum.ts` —el mismo módulo que alimenta la vista previa del SAP
-Script Builder— con el patrón esbuild + `import()` de `verify-planilla.mjs`, y emite los dos SVG
-del espectro a `public/apuntes/nch2369/`. Cero JS en la página y una sola fuente de verdad entre
-el post y la herramienta. Es el primer caso en el repo de una figura de contenido que se
-regenera desde el código.
+`src/lib/nch2369-spectrum.ts` con el patrón esbuild + `import()` de `verify-planilla.mjs`, y emite
+los dos SVG del espectro a `public/apuntes/nch2369/`. Cero JS en la página y una sola fuente de
+verdad entre la nota y el código. Es el primer caso en el repo de una figura de contenido que se
+regenera desde el código. (El módulo vivía en `src/lib/sap-scripts/`; se mudó al retirar la
+herramienta el 2026-08-05 — sección J.)
 
 **Los tres hallazgos que valen más que las notas:**
 
@@ -833,16 +832,19 @@ regenera desde el código.
    como «estirado por 1,7». Factor 2,89 dentro del paréntesis. El puerto TS siempre estuvo bien.
    Corregido en `material_teorico/.../cap05-analisis-sismico.md` con nota al pie. **Confirma el
    hallazgo G-J**: las fichas no están auditadas y los posts las citaban como fuente.
-2. **`nch2369-spectrum.ts` no implementa la rama `R = 1 → R* = 1` de la Ec. (1b)**, y el
+2. **`nch2369-spectrum.ts` no implementaba la rama `R = 1 → R* = 1` de la Ec. (1b)**, y el
    backend Python vendoreado tampoco (`_r_star` en `backend_modelo_base.py`). Para $R = 1$
-   —«estructuras diseñadas para permanecer elásticas», Tabla 7 fila 1— devuelve hasta **1,5** en
-   $T \to 0$, o sea que **divide el espectro por 1,5 donde la norma no permite reducir**: hasta
-   33 % menos espectro, del lado inseguro, y en silencio. **Pendiente**: el fix va en
-   `Skills_SAP` + `npm run sync:sap-scripts`, no a mano en `vendor/` (ver CLAUDE.md).
+   —«estructuras diseñadas para permanecer elásticas», Tabla 7 fila 1— devolvía hasta **1,5** en
+   $T \to 0$, o sea que **dividía el espectro por 1,5 donde la norma no permite reducir**: hasta
+   33 % menos espectro, del lado inseguro, y en silencio. **✅ CORREGIDO el 2026-08-05** (sección
+   J): el fix ya no va por `Skills_SAP` porque el backend vendoreado se borró con la herramienta;
+   la rama está en `src/lib/nch2369-spectrum.ts`. Verificado regenerando las dos figuras: salen
+   **byte-idénticas**, o sea que el bug nunca alcanzaba a una figura publicada — vivía en la rama
+   que solo tocaba quien pidiera $R = 1$ en el formulario, que ya no existe.
 3. **La norma calcula $R^*$ una sola vez, con $T^*$** («el período del modo con mayor masa de
-   traslación equivalente»), no período a período. La función que el SAP Script Builder carga en
-   el modelo usa $R^*(T)$, que es más conservadora para los modos altos — un factor **3,33** en
-   $T = 0$ para el caso de la figura. No es un error, pero conviene declarar cuál se usó.
+   traslación equivalente»), no período a período. La curva que se dibuja en la figura usa
+   $R^*(T)$, que es más conservadora para los modos altos — un factor **3,33** en $T = 0$ para el
+   caso de la figura. No es un error, pero conviene declarar cuál se usó.
 
 **Lo que la galería queda esperando** (en orden de retorno):
 
@@ -909,8 +911,9 @@ el enlace, no el recálculo.
 resortes lineales que inventa −116 kPa de tracción con equilibrio exacto (D8), Eigen que devuelve
 corte basal **0 tonf** sin un solo mensaje (D11), el factor de escala 386.089 del caso RS (D6), la
 rótula M3 que sobre-predice 16 % e **invierte la secuencia de daño** de modo que el resultado
-*parece* diseño por capacidad (D2), y el `R = 1` del espectro NCh2369 que reduce donde la norma lo
-prohíbe (hallazgo H2)—, así que no pide experimento nuevo.
+*parece* diseño por capacidad (D2), y el `R = 1` del espectro NCh2369 que reducía donde la norma lo
+prohíbe (hallazgo H2, **corregido el 2026-08-05**; el caso 5 del post se reescribió en pasado)—,
+así que no pide experimento nuevo.
 
 **I6 está marcado con riesgo**: es el que más se solapa con lo publicado (D8 y el laboratorio de la
 zapata). Se escribe solo si el enfoque queda en el número; si no, cae.
@@ -929,16 +932,59 @@ tanda:
 - **I2 dejó el diafragma sin umbral**, declarándolo en el texto: el criterio cuantitativo está en
   normas que no estaban disponibles al escribir, y la regla de fuentes manda no escribir el número.
   Queda como ampliación si aparece la fuente.
-- **I1 publica un bug vivo del repo** (la rama `R = 1` que falta en `rStar()`,
-  `src/lib/sap-scripts/nch2369-spectrum.ts:60`) como su quinto caso. Mientras el fix siga pendiente,
-  el post y el código no coinciden — el arreglo va en `Skills_SAP` + `npm run sync:sap-scripts`.
-- **Los tres quedan sin `/auditar`**.
+- **I1 publicaba un bug vivo del repo** (la rama `R = 1` que faltaba en `rStar()`) como su quinto
+  caso. **Cerrado el mismo día**: al retirar la herramienta (sección J) el arreglo dejó de depender
+  de `Skills_SAP` y se hizo en `src/lib/nch2369-spectrum.ts`; el caso 5 del post está reescrito en
+  pasado y ahora cuenta el ciclo completo, incluido que la verificación fue regenerar las figuras y
+  comprobar que no se movían.
+- **Los tres auditados el 2026-08-05**: 32 hallazgos (2🔴 · 11🟠 · 12🟡 · 7🔵). Los 13 🔴/🟠
+  aplicados; el detalle en `AUDIT.md`.
 
 **Rutas desactualizadas en `CLAUDE.md`** (encontrado en esta tanda): la unidad `F:` no existe en la
 máquina. Las normas están en
 `C:\Users\francisco.carrasco\OneDrive - PSC INGENIERÍA SpA\Escritorio\Documentos\Normas\` y
 `material_teorico` en `C:\Proyectos_Python\material_teorico`. Además **PyMuPDF no está instalado**:
 la rasterización de esta tanda se hizo con `pypdfium2` + `PIL`, que sí están.
+
+## J. Retiro de las herramientas SAP2000 (2026-08-05)
+
+Se sacaron del sitio **`/herramientas/sap-scripts`** (el constructor de scripts) y
+**`/herramientas/mcp-sap2000`** (la documentación del servidor MCP). Las dos eran la cara web de
+`fcocarrascob/Skills_SAP`, un repo independiente que vincula SAP2000 con Python: ese trabajo tiene
+su propio lugar y el sitio estaba pagando el costo de mantener la copia sincronizada.
+
+**El detonante fue normativo.** El generador vendorizaba `_r_star()` del backend Python, sin la
+rama `R = 1 → R* = 1` de la Ec. (1b) — y el `.py` que el usuario descargaba y corría contra su
+modelo llevaba ese error adentro. La regla del repo mandaba corregir aguas arriba, en `Skills_SAP`
++ `npm run sync:sap-scripts`, o sea que **una corrección normativa del sitio dependía de un repo
+externo**. Retirando la herramienta, esa atadura desaparece.
+
+**Lo que se encontró al ejecutarlo:**
+
+- **El submódulo ya no existía.** `.gitmodules` estaba vacío y no había carpeta `vendor/`, así que
+  `npm run sync:sap-scripts` llevaba tiempo sin poder correr. La herramienta ya estaba huérfana de
+  su fuente y nadie se había enterado.
+- **El bug nunca alcanzó una figura publicada.** `render-espectro-nch2369.mjs` pide la curva de
+  referencia con `applyRStar = false` y la de diseño con `R = 5`, así que `rStar()` nunca se
+  llamaba con `R = 1`. Verificado regenerando los dos SVG después del arreglo: **byte-idénticos**.
+- **`nch2369-spectrum.ts` no era de la herramienta.** Vivía en `src/lib/sap-scripts/` pero su
+  trabajo real es dibujar las figuras de la nota del espectro. Se mudó a `src/lib/`, dejó de ser un
+  puerto de Python vendorizado y ahí se le agregó la rama que faltaba — un `if` de una línea.
+
+**Qué quedó:**
+
+- `src/lib/nch2369-spectrum.ts`, con la Ec. (1b) completa y un solo consumidor
+  (`npm run figuras:espectro`).
+- El contenido de MCP SAP2000 sobrevive como post: `blog/mcp-sap2000-como-esta-armado.mdx`,
+  sección SAP2000. **No es la transcripción de la página** —eso era material de referencia y
+  envejece mal— sino las tres decisiones de diseño que la sostienen: el registry de 136 funciones
+  verificadas, el sandbox de ejecución y la convención ByRef del OAPI. Declarado como instantánea
+  fechada, con el repo como fuente.
+- `CLAUDE.md` reemplazó la sección del Script Builder por una nota de retiro con la regla nueva:
+  **no reintroducir una dependencia de `Skills_SAP` desde este repo** — se enlaza, no se vendoriza.
+
+**Efecto en el sitio**: `/herramientas` baja de siete tarjetas a cinco; el build, de 176 páginas a
+174 (menos tres páginas, más el post).
 
 ## Recomendación de orden (actualizada 2026-07-14)
 
@@ -957,8 +1003,7 @@ experimentos, jul 2026). Lo que sigue:
    espectral de C3, conecta con el generador de espectros y termina en el surrogate de
    campo (POD del perfil de deriva).
 5. **D9 / D10** (pandeo lineal, diafragma rígido vs flexible) como intercalados técnicos
-   de un modelo entre experimentos; **A4** (sub-tool SAP Scripts) cuando convenga algo
-   mecánico y acotado.
+   de un modelo entre experimentos. (A4 ya no está: la herramienta se retiró — sección J.)
 6. **E6 (densificaciones del factor R)** y **densificación de C1** (fase 5) solo si otro
    experimento las pide; si no, se dejan caer.
 

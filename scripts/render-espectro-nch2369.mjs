@@ -4,10 +4,8 @@
 //   npm run figuras:espectro
 //
 // Los SVG salen CALCULADOS, no dibujados a mano: las curvas vienen de
-// `src/lib/sap-scripts/nch2369-spectrum.ts`, el mismo módulo que ya alimenta la
-// vista previa del SAP Script Builder. Así el post y la herramienta no pueden
-// divergir, y si alguien corrige un parámetro de la Tabla 6 las figuras se
-// rehacen solas.
+// `src/lib/nch2369-spectrum.ts`. Así la nota no puede divergir del código, y si
+// alguien corrige un parámetro de la Tabla 6 las figuras se rehacen solas.
 //
 // Emite a public/apuntes/nch2369/:
 //   espectro-suelos.svg        los 5 espectros de referencia (Ec. 3), zona 3
@@ -33,7 +31,7 @@ const OUT_DIR = path.join(ROOT, 'public/apuntes/nch2369');
 async function loadSpectrum() {
   const out = path.join(tmpdir(), `nch2369-spectrum-${process.pid}.mjs`);
   await build({
-    entryPoints: [path.join(ROOT, 'src/lib/sap-scripts/nch2369-spectrum.ts')],
+    entryPoints: [path.join(ROOT, 'src/lib/nch2369-spectrum.ts')],
     bundle: true,
     platform: 'node',
     format: 'esm',
@@ -171,7 +169,7 @@ function figuraSuelos() {
   <text x="740" y="${82 + 5 * 34 + 68}" font-size="10.5" fill="${SUAVE}">períodos largos y se ensancha, así que</text>
   <text x="740" y="${82 + 5 * 34 + 82}" font-size="10.5" fill="${SUAVE}">una estructura flexible sale peor parada</text>
   <text x="740" y="${82 + 5 * 34 + 96}" font-size="10.5" fill="${SUAVE}">en E que en C, y al revés si es rígida.</text>
-  <text x="78" y="450" font-size="10.5" fill="${SUAVE}">Calculado con src/lib/sap-scripts/nch2369-spectrum.ts · parámetros de la Tabla 6 (NCh2369:2025, p. 60)</text>
+  <text x="78" y="450" font-size="10.5" fill="${SUAVE}">Calculado con src/lib/nch2369-spectrum.ts · parámetros de la Tabla 6 (NCh2369:2025, p. 60)</text>
 </svg>
 `;
 }
@@ -273,7 +271,7 @@ function figuraCorrecciones() {
   <text x="610" y="462" font-size="10.5" fill="${TINTA}" font-weight="bold">Ojo: la norma calcula R* UNA vez, con T*.</text>
   <text x="610" y="477" font-size="10.5" fill="${SUAVE}">La curva azul de (a) usa R*(T) período a período,</text>
   <text x="610" y="491" font-size="10.5" fill="${SUAVE}">que es como se carga la función en SAP2000.</text>
-  <text x="68" y="491" font-size="10.5" fill="${SUAVE}">Calculado con src/lib/sap-scripts/nch2369-spectrum.ts</text>
+  <text x="68" y="491" font-size="10.5" fill="${SUAVE}">Calculado con src/lib/nch2369-spectrum.ts</text>
   <text x="68" y="505" font-size="10.5" fill="${SUAVE}">Ecs. (1a), (1b) y (3) de NCh2369:2025 (pp. 28-29)</text>
 </svg>
 `;

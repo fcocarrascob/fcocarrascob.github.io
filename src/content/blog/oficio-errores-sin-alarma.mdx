@@ -107,19 +107,25 @@ desconfiando cuando el mecanismo sale demasiado parecido al del libro.
 Los cuatro anteriores son trampas de una herramienta comercial. Este es de código propio, y por
 eso cierra mejor la lista.
 
-El módulo que genera el espectro de NCh2369 en este sitio —el mismo que alimenta la vista previa
-del generador de scripts y las figuras de la nota del espectro— implementa la rampa de $R^*$ en
-período corto, pero **sin la rama $R = 1$**. La Ec. (1b) de la norma dice que si $R = 1$ entonces
-$R^* = 1$: es la fila de las estructuras que se diseñan para permanecer elásticas, y no se reduce
-nada. El código, en cambio, interpola desde 1,5 y devuelve hasta **1,5** cuando $T \to 0$.
+El módulo que genera el espectro de NCh2369 en este sitio —el que dibuja las figuras de la nota del
+espectro— implementaba la rampa de $R^*$ en período corto **sin la rama $R = 1$**. La Ec. (1b) de
+la norma dice que si $R = 1$ entonces $R^* = 1$: es la fila de las estructuras que se diseñan para
+permanecer elásticas, y no se reduce nada. El código, en cambio, interpolaba desde 1,5 y devolvía
+hasta **1,5** cuando $T \to 0$.
 
-O sea: divide el espectro por hasta 1,5 justo donde la norma no permite dividir. Hasta **33 %
+O sea: dividía el espectro por hasta 1,5 justo donde la norma no permite dividir. Hasta **33 %
 menos demanda**, del lado inseguro, en silencio, para el caso en que el usuario pidió
 explícitamente no reducir.
 
-Nadie lo habría encontrado corriendo el generador, porque el resultado es un espectro con forma de
-espectro. Apareció al escribir la nota de la norma, poniendo la ecuación del PDF al lado de la
-función del código. El arreglo está pendiente.
+Nadie lo habría encontrado corriéndolo, porque el resultado es un espectro con forma de espectro.
+Apareció al escribir la nota de la norma, poniendo la ecuación del PDF al lado de la función del
+código — y esa es toda la técnica. Ya está corregido.
+
+Dos detalles del cierre que valen más que el bug. Uno: las figuras publicadas **nunca estuvieron
+mal**, porque piden la curva de referencia sin aplicar $R^*$ y la de diseño con $R = 5$; el error
+vivía en una rama que ninguna de las dos alcanzaba, esperando al primer lector que pidiera $R = 1$.
+Y dos: verificarlo fue regenerar las dos figuras después del arreglo y comprobar que salían
+**byte-idénticas**. Cuando un fix es correcto, lo que no debía moverse no se mueve.
 
 → [El espectro de diseño y sus tres correcciones](/apuntes/nch2369-espectro-de-diseno/)
 
@@ -138,7 +144,7 @@ Los cinco comparten forma:
   disciplinado leyendo el log.
 - **Ninguno es una operación mal hecha.** Todos son una hipótesis incompleta: el suelo que puede
   traccionar, los modos que no participan, la unidad del factor, el axial que no entra en la
-  rótula, la rama que falta.
+  rótula, la rama que faltaba.
 - **Todos empeoran cuando el resultado es plausible.** El caso 4 llega al extremo de producir
   justo el mecanismo que uno quería confirmar.
 

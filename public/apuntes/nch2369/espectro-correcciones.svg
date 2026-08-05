@@ -77,6 +77,6 @@
   <text x="610" y="462" font-size="10.5" fill="#333" font-weight="bold">Ojo: la norma calcula R* UNA vez, con T*.</text>
   <text x="610" y="477" font-size="10.5" fill="#6b7280">La curva azul de (a) usa R*(T) período a período,</text>
   <text x="610" y="491" font-size="10.5" fill="#6b7280">que es como se carga la función en SAP2000.</text>
-  <text x="68" y="491" font-size="10.5" fill="#6b7280">Calculado con src/lib/sap-scripts/nch2369-spectrum.ts</text>
+  <text x="68" y="491" font-size="10.5" fill="#6b7280">Calculado con src/lib/nch2369-spectrum.ts</text>
   <text x="68" y="505" font-size="10.5" fill="#6b7280">Ecs. (1a), (1b) y (3) de NCh2369:2025 (pp. 28-29)</text>
 </svg>

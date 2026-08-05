@@ -4,10 +4,10 @@
 //
 //   npm run indice:normas
 //
-// ¿Por qué un índice versionado y no leer el PDF en cada corrida? Mismo criterio
-// que `sync:sap-scripts`: la fuente vive fuera del repo (los PDF en OneDrive, las
-// extracciones en material_teorico), así que se congela acá un artefacto chico y
-// revisable, y regenerarlo es un paso deliberado que deja diff.
+// ¿Por qué un índice versionado y no leer el PDF en cada corrida? Porque la
+// fuente vive fuera del repo (los PDF en OneDrive, las extracciones en
+// material_teorico), así que se congela acá un artefacto chico y revisable, y
+// regenerarlo es un paso deliberado que deja diff.
 //
 // LA FUENTE SON LAS EXTRACCIONES DE material_teorico, no el PDF, y eso está
 // verificado: para AISC 360-22 el inventario de etiquetas coincide EXACTO con

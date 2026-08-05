@@ -61,5 +61,5 @@
   <text x="740" y="320" font-size="10.5" fill="#6b7280">períodos largos y se ensancha, así que</text>
   <text x="740" y="334" font-size="10.5" fill="#6b7280">una estructura flexible sale peor parada</text>
   <text x="740" y="348" font-size="10.5" fill="#6b7280">en E que en C, y al revés si es rígida.</text>
-  <text x="78" y="450" font-size="10.5" fill="#6b7280">Calculado con src/lib/sap-scripts/nch2369-spectrum.ts · parámetros de la Tabla 6 (NCh2369:2025, p. 60)</text>
+  <text x="78" y="450" font-size="10.5" fill="#6b7280">Calculado con src/lib/nch2369-spectrum.ts · parámetros de la Tabla 6 (NCh2369:2025, p. 60)</text>
 </svg>

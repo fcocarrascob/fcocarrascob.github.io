@@ -10,7 +10,6 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:sap-scripts": "node scripts/sync-sap-scripts.mjs",
     "figuras:espectro": "node scripts/render-espectro-nch2369.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",

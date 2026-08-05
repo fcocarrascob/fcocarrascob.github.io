@@ -179,9 +179,9 @@ estructural, **calculado para el período del modo con mayor masa de traslación
 en la dirección de análisis». Es **un valor**, no una función del período: una vez elegido, la
 curva entera se divide por él.
 
-La práctica de armar la **función** que se carga en SAP2000 con $R^*(T)$ período a período —que
-es lo que hace el generador del [SAP Script Builder](/herramientas/sap-scripts) de este sitio, y
-lo que dibuja la curva azul de la figura— no es lo que la letra dice. Es **más conservadora**
+La práctica de armar la **función** que se carga en SAP2000 con $R^*(T)$ período a período —que es
+lo que dibuja la curva azul de la figura, y lo que hacen los generadores de espectro que uno
+encuentra por ahí— no es lo que la letra dice. Es **más conservadora**
 para los modos altos: si $T^*$ cae en la meseta, la letra de la norma reduce todo por $R = 5$,
 incluidos los modos de período corto, y en $T = 0$ eso son 0,170 g contra los 0,566 g de la
 curva por período. Un factor 3,3 en el mismo punto, según cómo se lea la misma ecuación.
@@ -298,10 +298,9 @@ Dos advertencias de los comentarios que conviene no perder:
 
 <Note type="info" title="Reproducibilidad">
 Las dos figuras de esta nota no están dibujadas a mano: las genera
-`scripts/render-espectro-nch2369.mjs` a partir de `src/lib/sap-scripts/nch2369-spectrum.ts`, el
-mismo módulo que alimenta la vista previa del SAP Script Builder. Los parámetros de las Tablas 3
-y 6 se verificaron contra el PDF de la 3.ª edición (pp. 57 y 60) y las Ecs. (1a), (1b) y (3)
-contra las pp. 28-29. Cualquiera puede rehacer las curvas con `npm run figuras:espectro`.
+`scripts/render-espectro-nch2369.mjs` a partir de `src/lib/nch2369-spectrum.ts`. Los parámetros de
+las Tablas 3 y 6 se verificaron contra el PDF de la 3.ª edición (pp. 57 y 60) y las Ecs. (1a), (1b)
+y (3) contra las pp. 28-29. Cualquiera puede rehacer las curvas con `npm run figuras:espectro`.
 </Note>
 
 ## El hilo, en una frase

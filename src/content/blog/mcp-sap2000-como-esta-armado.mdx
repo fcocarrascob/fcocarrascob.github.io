@@ -1,0 +1,136 @@
+---
+title: "Un servidor MCP para SAP2000: las tres decisiones que lo hacen funcionar"
+description: "Conectar un agente de IA a SAP2000 por COM es fácil de empezar y difícil de sostener. Las tres piezas que hacen la diferencia no son la conexión: son el registry de 136 funciones verificadas contra el programa real, el sandbox que decide qué puede correr el agente en tu máquina, y la convención ByRef del OAPI — la que rompe todo script ingenuo. Instantánea de agosto de 2026 de un repo que sigue su propio camino."
+pubDate: 2026-08-05
+tags: ["SAP2000", "MCP", "OAPI", "COM", "automatización", "agentes", "Python"]
+section: "SAP2000"
+---
+
+import Note from '../../components/content/Note.astro';
+
+Automatizar SAP2000 desde Python es viejo: la OAPI existe hace años y se maneja por COM. Lo nuevo
+es poner un agente de IA en el medio, y ahí la parte difícil deja de ser la conexión.
+
+Esta nota describe cómo está armado
+[`fcocarrascob/Skills_SAP`](https://github.com/fcocarrascob/Skills_SAP), el servidor
+[MCP](https://modelcontextprotocol.io) que uso para eso: qué decisiones lo sostienen y por qué
+cada una está donde está. No es documentación —esa vive en el repo, que sigue cambiando— sino la
+parte que no envejece: el razonamiento.
+
+<Note type="info" title="Instantánea, no documentación">
+Esto describe el estado del repo al **5 de agosto de 2026**. Los números y los nombres de módulo
+van a moverse; el repo es la fuente. Lo que se mantiene son las tres decisiones.
+</Note>
+
+## El problema real
+
+La tentación es obvia: el modelo de lenguaje sabe Python, la OAPI es Python, que escriba el script.
+Y funciona en la demo. Lo que pasa después es lo interesante:
+
+- **Inventa firmas.** La OAPI tiene cientos de funciones con nombres parecidos y argumentos que no
+  se adivinan. Un modelo que no las tiene delante completa con lo que suena bien, y el resultado
+  corre y falla en silencio o revienta con un código de error sin texto.
+- **Lo que escribe se ejecuta en tu máquina, contra tu modelo.** No es un sandbox de juguete: es un
+  `.sdb` con trabajo adentro.
+- **Y la convención de retorno de la API no es la que cualquiera asumiría.**
+
+Las tres piezas de abajo responden una a cada cosa.
+
+## 1. La convención ByRef, que es el gotcha de verdad
+
+La OAPI viene de un mundo de parámetros **por referencia**. Vía COM en Python, eso se traduce en
+que las funciones no devuelven lo que uno espera: devuelven una **tupla** donde los valores de
+salida aparecen primero y **el último elemento es siempre el código de retorno**, con 0 = éxito.
+
+```python
+raw = SapModel.PointObj.AddCartesian(5, 3, 2, "", "PT1")
+point_name = raw[0]   # salida ByRef
+ret_code = raw[-1]    # código de retorno, siempre el último
+assert ret_code == 0, f"AddCartesian falló: {ret_code}"
+```
+
+Quien no sabe esto escribe `if SapModel.PointObj.AddCartesian(...) == 0:` y obtiene una comparación
+entre una tupla y un entero, que en Python es simplemente `False` — sin excepción, sin aviso. El
+script sigue, el modelo queda a medias, y el error aparece tres pasos después con otra cara.
+
+Es exactamente el tipo de error del que hablo en
+[cinco errores que no dan ninguna alarma](/blog/oficio-errores-sin-alarma/): nada se rompe, todo
+«corre». Por eso el patrón de todos los scripts del repo es afirmar el código de retorno en cada
+llamada, no al final.
+
+## 2. El registry: 136 funciones verificadas contra el programa real
+
+La respuesta a la alucinación de firmas no es un prompt más largo. Es una base de datos.
+
+El repo mantiene un **registry de 136 funciones** repartidas en 18 categorías, y lo que las
+distingue es que cada una fue **ejecutada contra SAP2000 de verdad** antes de entrar. Cada entrada
+guarda la firma completa, el layout ByRef —qué sale en cada posición de la tupla—, un wrapper
+ejecutable y notas de uso.
+
+| Categoría | Funciones | Ejemplo |
+|---|---:|---|
+| `Database_Tables` | 37 | lectura, escritura y exportación |
+| `Object_Model` | 22 | `AddCartesian`, `Count` |
+| `PropFrame` | 13 | `SetRectangle`, `SetISection` |
+| `PropMaterial` | 10 | `SetMaterial`, `SetMPIsotropic` |
+| `RespCombo` | 10 | `Add`, `SetCaseList` |
+| `Design` | 9 | `StartDesign`, `SetCode` |
+| resto (12 categorías) | 35 | `Analyze`, `Constraints`, `Functions`, … |
+
+El desbalance de esa tabla cuenta una historia. `Database_Tables` tiene 37 entradas porque **el
+OAPI no expone todo**: hay cosas que solo se pueden tocar por las tablas internas. Es lo que me
+pasó al asignar rótulas plásticas —`SetHingeAssigns` no existe— y terminé
+[asignándolas por DatabaseTables](/blog/rotulas-pushover-sap2000/). Cada una de esas 37 entradas
+es una tarde de reverse-engineering que no hay que repetir.
+
+La regla del registry es simple: **si no se verificó contra el programa, no entra**. Una función
+mal documentada en el registry es peor que ninguna, porque el agente le cree.
+
+## 3. El sandbox: qué se le permite correr al agente
+
+El agente genera código y ese código se ejecuta. La decisión no es *si* aislarlo sino *cuánto*.
+
+El ejecutor inyecta lo que el script necesita (`SapModel`, `SapObject`, `result`, `sap_temp_dir`) y
+bloquea la familia de imports con la que un script podría salirse de su carril: `os`, `subprocess`,
+`sys`, `shutil`, `pathlib`, `socket`, `http`, `ctypes`, `pickle`. Quedan permitidos los de cálculo:
+`math`, `json`, `datetime`, `decimal`, `collections`, `itertools`, `functools`. Timeout de 120
+segundos.
+
+La lista de bloqueados es la parte pensada. No busca contener a un atacante —el agente no es
+hostil— sino contener un **error**: un script que iba a guardar un CSV y termina escribiendo donde
+no debe, o uno que se cuelga esperando una respuesta de red mientras SAP2000 queda tomado. El
+timeout está por la misma razón: un análisis que no converge no debe dejar el COM colgado.
+
+Los 120 segundos son el número que más he tenido que revisar, porque un análisis pesado los pasa de
+largo. Es el parámetro a mirar primero si algo «no responde».
+
+## El patrón de nueve fases
+
+Todos los scripts siguen la misma forma, y eso no es estética: es lo que hace que un script escrito
+por un agente sea revisable por una persona.
+
+1. Inicializar el modelo · 2. Materiales · 3. Secciones · 4. Geometría · 5. Restricciones ·
+6. Cargas · 7. Análisis · 8. Extraer resultados · 9. **Verificar**
+
+La novena es la que importa. Un script que termina en «análisis completado» no dice nada; uno que
+termina comparando el momento extraído contra $wL^2/8$ calculado a mano sí. Es la misma disciplina
+de la [escalera de verificación de Rukan](/blog/rukan-verificacion-modal-opensees/): la referencia
+independiente es lo único que separa un modelo de una animación.
+
+## Lo que las tres tienen en común
+
+Puestas juntas, las tres decisiones dicen lo mismo desde ángulos distintos: **el puente entre el
+agente y el programa de análisis se sostiene sobre lo verificado, no sobre lo generado.**
+
+El registry existe porque la documentación no basta —hay que haber ejecutado la función—; el
+sandbox, porque el código no se queda en la pantalla, se ejecuta contra un modelo real; y la fase
+nueve, porque un resultado sin referencia independiente no es un resultado. Ninguna de las tres
+hace al agente más inteligente. Las tres reducen la superficie donde puede equivocarse sin que
+nadie lo note.
+
+Es la misma idea que sostiene cualquier automatización de cálculo, con o sin modelos de lenguaje en
+el medio: lo que da confianza no es la herramienta, es lo que la herramienta no puede inventar.
+
+Si te interesa el otro lado del mismo problema —hacer esto con modelos corriendo localmente y sin
+servicios externos— esa es la serie del
+[harness estructural](/blog/harness-estructural-e5-sap2000-solo-lectura/).
