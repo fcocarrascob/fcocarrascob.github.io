@@ -190,9 +190,10 @@ function flexionIF2(
   let Mn_flb = Infinity;
   const ala = clas.flexion[0];
   if (ala.clase === 'no-compacta') {
+    // Ec. F3-1: la recta entre M_p y 0,7·F_y·S_x sobre la esbeltez del ala.
     const frac = (ala.lambda - (ala.lambdap ?? 0)) / (ala.lambdar - (ala.lambdap ?? 0));
     Mn_flb = Mp - (Mp - M07) * frac;
-    avisos.push('Ala no compacta: rige también el pandeo local del ala (F3.2). Sin ancla de verificación.');
+    avisos.push('Ala no compacta: rige también el pandeo local del ala (Ec. F3-1). Sin ancla de verificación.');
   } else if (ala.clase === 'esbelta') {
     Mn_flb = (0.9 * E * kc(clas.flexion[1].lambda) * Sx) / ala.lambda ** 2;
     avisos.push('Ala esbelta: rige el pandeo local del ala (Ec. F3-2). Sin ancla de verificación.');

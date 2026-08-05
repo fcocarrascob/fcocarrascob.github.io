@@ -53,6 +53,11 @@ export function tensionNominal(Fe: number, Fy: number): number {
   return q <= 2.25 ? Fy * Math.pow(0.658, q) : 0.877 * Fe;
 }
 
+/**
+ * φ_c·P_n de la Ec. E3-1, con el área efectiva de E7 donde aplique.
+ * Se cita acá porque es la ecuación que cierra el capítulo.
+ */
+
 /** Coeficientes c1 y c2 de la Tabla E7.1. */
 function coefsE7(atiesado: boolean): { c1: number; c2: number } {
   return atiesado ? { c1: 0.18, c2: 1.31 } : { c1: 0.22, c2: 1.49 };
@@ -114,10 +119,11 @@ function areaEfectiva(
     return { Ae: Math.max(0, props.Ag - perdida), aplico: true };
   }
 
-  // HSS circular: E7.2 da el área efectiva directa, no un ancho efectivo.
+  // HSS circular: la Sec. E7.2 da el área efectiva directa con la Ec. E7-7, no
+  // un ancho efectivo como el resto del capítulo.
   const dt = g.D / g.t;
   if (dt <= (0.11 * E) / Fy) return { Ae: props.Ag, aplico: false };
-  const factor = (0.038 * E) / (Fy * dt) + 2 / 3;
+  const factor = (0.038 * E) / (Fy * dt) + 2 / 3; // Ec. E7-7
   return { Ae: Math.min(props.Ag, factor * props.Ag), aplico: true };
 }
 

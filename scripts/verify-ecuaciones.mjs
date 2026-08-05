@@ -73,8 +73,9 @@ const TAG = String.raw`(?:[A-H]-\d{1,2}-\d{1,2}[A-Za-z]?|[A-L]\d{0,2}-\d{1,2}[a-
 const DETECTORES = [
   new RegExp(String.raw`\((${TAG})\)`, 'g'),
   new RegExp(String.raw`\bEcs?\.\s*(${TAG})`, 'g'),
-  // «Ecs. F2-3 y F2-4», «F4-9a, F4-9b o F4-10», «de la F7-8 a la F7-11»
-  new RegExp(String.raw`(?:\by\b|\bo\b|,|\ba la\b)\s*(${TAG})`, 'g'),
+  // «Ecs. F2-3 y F2-4», «F4-9a, F4-9b o F4-10», «de la F7-8 a la F7-11»,
+  // «Ecs. E7-2/E7-3» — la barra separa una cita tanto como la coma.
+  new RegExp(String.raw`(?:\by\b|\bo\b|,|/|\ba la\b)\s*(${TAG})`, 'g'),
   new RegExp(String.raw`\b(?:la|las|de la)\s+(${TAG})\b`, 'g'),
 ];
 

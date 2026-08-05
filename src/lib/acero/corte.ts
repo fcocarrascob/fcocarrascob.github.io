@@ -48,6 +48,7 @@ function corteI(
   const Aw = g.d * g.tw;
 
   // G2.1(a): la puerta que da φ_v = 1,00 — la cumple casi todo perfil laminado.
+  // Con ella C_v1 = 1 (Ec. G2-2) y la Ec. G2-1 queda en 0,6·F_y·A_w.
   if (lambda <= 2.24 * Math.sqrt(E / Fy)) {
     const Vn = 0.6 * Fy * Aw;
     return {
@@ -62,6 +63,7 @@ function corteI(
     };
   }
 
+  // C_v1 por las Ecs. G2-3 y G2-4, y el corte nominal por la Ec. G2-1.
   const raizKv = Math.sqrt((KV_SIN_ATIESADORES * E) / Fy);
   const Cv1 = lambda <= 1.1 * raizKv ? 1 : (1.1 * raizKv) / lambda;
   const Vn = 0.6 * Fy * Aw * Cv1;
@@ -88,12 +90,14 @@ function corteHssR(g: Extract<Geom, { familia: 'HSS-R' }>, mat: Material): ResCo
   const kv = 5;
   const raizKv = Math.sqrt((kv * E) / Fy);
 
-  // C_v2 de G2.2.
+  // C_v2 de la Sec. G2.2, en sus tres ramas: Ec. G2-9 sin abolladura, Ec. G2-10
+  // inelástica y Ec. G2-11 elástica.
   let Cv2: number;
   if (lambda <= 1.1 * raizKv) Cv2 = 1;
   else if (lambda <= 1.37 * raizKv) Cv2 = (1.1 * raizKv) / lambda;
   else Cv2 = (1.51 * kv * E) / (lambda ** 2 * Fy);
 
+  // Ec. G4-1, que tiene la misma forma que la G2-1 con A_w de las dos paredes.
   const Vn = 0.6 * Fy * Aw * Cv2;
   return { Aw, lambda, Cv: Cv2, phiV: 0.9, Vn, phiVn: 0.9 * Vn, fueraDeAlcance: false, avisos: [] };
 }

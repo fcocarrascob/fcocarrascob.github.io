@@ -1210,6 +1210,33 @@ const MATRIZ = [
       estados: TODOS_ESTADOS,
     },
   },
+  // Ala NO compacta en perfil I. El bloque F2 de la memoria no emitía el pandeo
+  // local del ala (Sec. F3.2) y ningún caso lo recorría: todos traían el ala
+  // compacta, así que la hoja escribía el M_n del LTB sin el recorte de la F3-1.
+  {
+    titulo: 'Perfil I laminado — ALA NO COMPACTA (F3-1), con las 7 verificaciones',
+    entrada: {
+      geom: { familia: 'I', tipo: 'laminado', d: 50, bf: 30, tf: 1.0, tw: 0.8 },
+      material: A992,
+      estabilidad: est({ Lcx: 800, Lcy: 400, Lcz: 400, Lb: 400, Cb: 1.1, B1: 1.05 }),
+      demandas: dem({ Pu: 30 * TONF, Tu: 15 * TONF, Mux: 25 * TONF_M, Muy: 3 * TONF_M, Vu: 20 * TONF }),
+      estados: TODOS_ESTADOS,
+    },
+  },
+  // Interacción por TRACCIÓN (H1.2). El bloque de interacción de la memoria
+  // escribía `u_c`, que solo existe si corrió compresión: por este camino la
+  // hoja llegaba rota y ningún caso lo recorría, porque todos traían P_u > 0.
+  {
+    titulo: 'HSS rectangular — H1.2, interacción por TRACCIÓN (sin compresión)',
+    entrada: {
+      geom: { familia: 'HSS-R', B: 10.16, H: 10.16, t: 0.58 },
+      material: A500C,
+      declaradas: { Ag: 21.7, rx: 3.84, ry: 3.84 },
+      estabilidad: est({ Lb: 0, Cb: 1 }),
+      demandas: dem({ Tu: 40 * TONF, Mux: 1.5 * TONF_M }),
+      estados: ['traccion', 'flexion-x', 'interaccion'],
+    },
+  },
   // Solo el eje débil. Existe porque el bloque de clasificación de la memoria
   // colgaba de flexionX: pedir únicamente flexion-y dejaba lam_pf/lam_fala sin
   // definir y el guardián de símbolos hacía fallar la generación.
