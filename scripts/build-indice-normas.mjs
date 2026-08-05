@@ -1,0 +1,112 @@
+#!/usr/bin/env node
+// Construye data/normas-indice.json: el inventario de qué ecuaciones EXISTEN en
+// cada norma, por edición.
+//
+//   npm run indice:normas
+//
+// ¿Por qué un índice versionado y no leer el PDF en cada corrida? Mismo criterio
+// que `sync:sap-scripts`: la fuente vive fuera del repo (los PDF en OneDrive, las
+// extracciones en material_teorico), así que se congela acá un artefacto chico y
+// revisable, y regenerarlo es un paso deliberado que deja diff.
+//
+// LA FUENTE SON LAS EXTRACCIONES DE material_teorico, no el PDF, y eso está
+// verificado: para AISC 360-22 el inventario de etiquetas de los Caps. B, C, D,
+// E, F, G y H coincide EXACTO con el del PDF (2, 3, 5, 30, 105, 25 y 16
+// etiquetas respectivamente). Los Caps. I y K no están ingeridos, y ninguna
+// herramienta del sitio los toca.
+//
+// Ojo con dos artefactos de la extracción, ya contemplados en el regex:
+//   · la J4-5 sale escrita «(J 4-5)», con un espacio después de la letra;
+//   · Ω se degrada a W en algunos párrafos (no afecta a las etiquetas).
+//
+// El índice dice qué ecuaciones EXISTEN. No dice qué dicen: para transcribir una
+// ecuación sigue mandando la página rasterizada del PDF (ver CLAUDE.md).
+
+import { readFile, writeFile, readdir } from 'node:fs/promises';
+import path from 'node:path';
+
+const ROOT = path.resolve(import.meta.dirname, '..');
+const RAW = 'F:/Proyectos_Python/material_teorico/_procesamiento/raw/normas';
+
+/**
+ * Las normas que el sitio cita, con la edición vigente de CLAUDE.md.
+ *
+ * `patron` distingue las dos formas de numerar: AISC etiqueta por capítulo
+ * («F4-9b») y ACI por sección («22.5.1.10a»). Las letras de AISC COLISIONAN
+ * entre 360 y 341 —la E3-1 existe en las dos y son ecuaciones distintas—, que es
+ * justo por lo que el índice va por norma y no en un solo saco.
+ */
+const NORMAS = {
+  'aisc360-22': {
+    nombre: 'AISC 360-22',
+    pdf: 'F:/OneDrive/Ingenieria/Normas/A360-22W-ewr.pdf',
+    dir: 'aisc360-22',
+    patron: 'aisc',
+  },
+  'aisc341-22': {
+    nombre: 'AISC 341-22',
+    pdf: 'F:/OneDrive/Ingenieria/Normas/A341-22W-oke.pdf',
+    dir: 'aisc341-22',
+    patron: 'aisc',
+  },
+  'aci318-25': {
+    nombre: 'ACI 318-25 (SI)',
+    pdf: 'F:/OneDrive/Ingenieria/Normas/ACI 318-25_SI.pdf',
+    dir: 'aci318-25',
+    patron: 'aci',
+  },
+};
+
+// Los `\s?` son por la «(J 4-5)», donde la extracción mete un espacio ENTRE la
+// letra y el dígito del capítulo; el sufijo a/b por las F4-6a/F4-6b.
+const PATRONES = {
+  aisc: /\(([A-L])\s?(\d{0,2})\s?-\s?(\d{1,2})([ab])?\)/g,
+  aci: /\((\d{1,2}(?:\.\d{1,2}){2,3})([a-c])?\)/g,
+};
+
+/** Las etiquetas del comentario van como «(C-F4-1)» y el regex no las toma. */
+function extraer(texto, patron) {
+  const re = new RegExp(PATRONES[patron].source, 'g');
+  const out = [];
+  for (const m of texto.matchAll(re)) {
+    out.push(
+      patron === 'aisc' ? `${m[1]}${m[2]}-${m[3]}${m[4] ?? ''}` : `${m[1]}${m[2] ?? ''}`
+    );
+  }
+  return out;
+}
+
+const indice = { generado: new Date().toISOString().slice(0, 10), fuente: RAW, normas: {} };
+
+for (const [clave, cfg] of Object.entries(NORMAS)) {
+  const dir = path.join(RAW, cfg.dir);
+  let archivos;
+  try {
+    archivos = (await readdir(dir)).filter((f) => f.endsWith('.txt') && !f.startsWith('com'));
+  } catch {
+    console.error(`✗ no se pudo leer ${dir} — ¿está montado material_teorico?`);
+    process.exit(1);
+  }
+
+  const ecuaciones = {};
+  for (const f of archivos.sort()) {
+    const texto = await readFile(path.join(dir, f), 'utf8');
+    for (const tag of extraer(texto, cfg.patron)) {
+      // La primera aparición gana: es donde la norma la define.
+      if (!ecuaciones[tag]) ecuaciones[tag] = f;
+    }
+  }
+
+  indice.normas[clave] = {
+    nombre: cfg.nombre,
+    pdf: cfg.pdf,
+    patron: cfg.patron,
+    archivos: archivos.sort(),
+    ecuaciones,
+  };
+  console.log(`${cfg.nombre.padEnd(18)} ${Object.keys(ecuaciones).length} ecuaciones · ${archivos.length} archivos`);
+}
+
+const destino = path.join(ROOT, 'data', 'normas-indice.json');
+await writeFile(destino, JSON.stringify(indice, null, 2) + '\n', 'utf8');
+console.log(`\n→ ${path.relative(ROOT, destino)}`);

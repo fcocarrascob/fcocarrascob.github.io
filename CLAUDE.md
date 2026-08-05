@@ -36,6 +36,20 @@ Entonces, dos usos distintos:
 
 El error típico no es aritmético, es de transcripción, y por eso ninguna revisión de resultados lo encuentra. El caso testigo: las Ecs. F7-2 y F7-6 vivieron en el motor con los coeficientes tabulados de **360-10** (`3,57·λ·√(F_y/E) − 4,0`) donde la 22 escribe la interpolación entre λ_p y λ_r. Son la misma recta redondeada: coinciden al **0,04 %**, la aritmética cerraba consigo misma, y sobrevivió a la auditoría de varios posts. Solo apareció al confrontar dos implementaciones. Después reapareció intacta en `memoria.ts`, que nadie había mirado.
 
+### El libro mayor: `ECUACIONES.md`
+
+Toda ecuación implementada en un motor tiene su fila: de qué norma y edición sale, dónde vive en el código, con qué se ancla y cuándo se leyó en el PDF.
+
+```bash
+npm run indice:normas        # regenera data/normas-indice.json (qué ecuaciones EXISTEN)
+npm run verify:ecuaciones    # falla si el código cita una que no existe en la edición vigente
+npm run ecuaciones           # además regenera ECUACIONES.md
+```
+
+El reparto de trabajo importa: **que el número exista es mecánico y lo decide el script** —no admite falso positivo, y es lo que habría cazado el `F7-12/F7-13` el día que se escribió—. Que la **forma algebraica** sea la de la edición vigente y que el coeficiente venga de la tabla correcta **no lo decide ningún script**: pide abrir la página rasterizada, y se registra a mano en la columna «Revisada», que el generador preserva y nunca pisa.
+
+El índice se construye desde las extracciones de `material_teorico/_procesamiento/raw/normas`, que **sí sirven** para inventariar (a diferencia de `page.get_text()`, conservan la fracción y el φ). Su inventario está contrastado contra el PDF: para AISC 360-22 coincide exacto en los ocho capítulos ingeridos.
+
 ### Al citar
 
 Siempre **número de ecuación + edición**, y la cita se verifica igual que el número: el `F7-12/F7-13` que arrastraba `memoria.ts` era la numeración de 360-16, que la 22 corrió al insertar las secciones cajón.
