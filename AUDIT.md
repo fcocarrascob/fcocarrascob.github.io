@@ -47,6 +47,41 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-06 · `acero/predimensionamiento-columna-comprimida` · ⚠️ 11 hallazgos
+
+**Commit:** `2678770` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; recalculó las tres filas a mano contra `compresion.ts` y `propiedades.ts` y coinciden a la última cifra publicada)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.108-109 | «$0.658^{2.25} = 0.3899$ y $0.877/2.25 = 0.3898$, iguales al **0.03 %**». Sin redondear son 0.3899494 y 0.3897778 → Δ relativa **0.044 %**. El 0.03 % sale de comparar las dos cifras ya redondeadas a 4 decimales: un porcentaje calculado sobre el redondeo, no sobre el dato | Publicar 0.38995 contra 0.38978 y decir 0.04 % | ✅ aplicado en `56cf30f` |
+| 2 | 🟠 | U/L | L.69 contra L.182, 186-187, 194-195 | Colisión de símbolo: §1 define $\lambda_c$ **adimensional** (frontera 1.5) y «Dónde miente» usa $\lambda_x = 136.4$ para $L_c/r$ **dimensional**, sin definirlo. Un lector que venga de §1 lee 136.4 como si fuera $\lambda_c$, que valdría 1.80 | Escribir $(L_c/r)_x$ en tabla y prosa, o declarar la equivalencia | ✅ aplicado en `56cf30f` (notación $(L_c/r)$ + párrafo que da el factor $\pi\sqrt{E/F_y} = 75.63$) |
+| 3 | 🟡 | L | L.113 | «pandeo **flexional**»: el resto del sitio dice «pandeo **por flexión**» (`aisc360-22-capE-compresion`, `ejemplo-columna-galpon-compresion`). «flexional» solo existe acá y como valor del enum `ModoCompresion` del motor | «pandeo por flexión» en prosa | ✅ aplicado en `56cf30f` (la columna «Gobierna» de la tabla también, para no dejar dos registros) |
+| 4 | 🟡 | C/L | L.191-192 | «Todo el error de las otras dos filas viene de mirar **un solo modo**». Para la fila 2 no: $x$ e $y$ son el mismo estado límite (§E3) y el error es de **eje**, no de modo — que es justo lo que dice la `Note` de abajo | «una sola esbeltez: un solo eje en la fila 2, un solo modo en la fila 3» | ✅ aplicado en `56cf30f` |
+| 5 | 🟡 | C | L.3 (`description`) | «el atajo … **pide 190 % más de columna de la que hay**» invierte la dirección: el atajo pide **menos** área de la necesaria. Refuerza la lectura equivocada el paralelo con el post de la viga, donde «pide 11 % más de alma» sí describe un atajo que sobrepide | «declara admisibles 229.74 tonf sobre una columna que aguanta 79.31» | ✅ aplicado en `56cf30f` |
+| 6 | 🟡 | F | L.108-109 | Matemática en línea partida por un salto de línea (`$0.877/2.25 =\n0.3898$`), único caso en todo `src/content/` | Reacomodar la línea | ✅ aplicado en `56cf30f` · verificado: 351 expresiones KaTeX en el HTML, 0 `katex-error` |
+| 7 | 🔵 | R | L.188 | La fila torsional (205.84 tonf) **no se puede rehacer con lo que el post declara**: su $F_{ez}$ necesita $J$, $C_w$, $I_x+I_y$ y $G$, ninguno publicado | Declararlo o enlazar al ejemplo de galpón | ✅ aplicado en `56cf30f` (párrafo explícito + enlace) |
+| 8 | 🔵 | C | `title` contra «El orden» | El título promete «se elige por el radio de giro» y «El orden» cierra con «la decisión que no se deshace es elegir $\rho$». El post sostiene ambas y no las reconcilia | Media frase que reparta el trabajo | ✅ aplicado en `56cf30f` («$\rho$ rompe la circularidad, $r$ elige el perfil») |
+| 9 | 🔵 | F | §5 contra «El orden» | §5 se titula «la puerta que deja aplicar todo lo anterior» y «El orden» la manda al final. Es correcto, pero contrasta con el post de la viga —donde la puerta de §G2.1(a) va primero— y se lee como incoherencia | Una cláusula que explique por qué | ✅ aplicado en `56cf30f` (título y viñeta: va última por fuerza, se mide sobre un perfil concreto) |
+| 10 | 🔵 | L | L.212 | «gastar el rato» — coloquial y poco idiomático en neutro | «invertir el tiempo» | ✅ aplicado en `56cf30f` |
+| 11 | 🔵 | N | L.133 | «$r_x = 11.0$ y $r_y = 6.46$ — el eje fuerte tiene **casi el doble** de radio». 11.0/6.46 = 1.70 | «un 70 % más de radio» | ✅ aplicado en `56cf30f` |
+
+**Verificado y correcto:**
+- **Álgebra adimensional paso a paso.** $F_y/F_e = \lambda_c^2$ ✓; E3-2 y E3-3 se vuelven $\rho = 0.658^{\lambda_c^2}$ y $\rho = 0.877/\lambda_c^2$ ✓; la inversión $(L_c/r)_{max} = \pi\sqrt{E/F_y}\sqrt{\ln\rho/\ln 0.658}$ ✓ (ambos logaritmos negativos, cociente positivo). Chequeo cruzado: con $\rho = 0.3899$ el despeje da 113.45 contra el $4.71\sqrt{E/F_y} = 113.39$ de la tabla — coinciden al 0.05 %, que es el redondeo 4.71 vs 4.7124.
+- **$4.71 = 1.5\pi$** ($1.5\pi = 4.712389$) ✓ y $\lambda_c = 1.5 \Rightarrow F_y/F_e = 2.25$ ✓. Dominio $\rho \ge 0.38995$, escribir 0.39 es el lado conservador ✓; inversión de E3-3 $\lambda_c = \sqrt{0.877/\rho}$ ✓.
+- **Toda la tabla rehecha a mano**: $(L_c/r)_y = 58.05 \to 58.0$ ✓; $(L_c/r)_x = 136.36 \to 136.4$ ✓; $113.39 \to 113.4$ ✓; $F_{ey} = 5974.9$, $F_n = 2750.8 \to 2751$ ✓, $\phi P_n = 229\,744 \to 229.74$ tonf ✓; $F_{ex} = 1082.8$, $F_n = 949.6 \to 950$ ✓, $79\,309 \to 79.31$ ✓; uso 2.8968 → 2.897 ✓ y +189.7 % ✓; $2751/950 = 2.90$ ✓. Fila torsional con $J = 53.548$, $C_w = 553\,014$, $I_x+I_y = 14\,987.5$, $G = 787\,200$: $F_{ez} = 4133.3$, $F_n = 2464.6$, $\phi P_n = 205\,841 \to 205.84$ ✓, uso 1.116 ✓.
+- **Fila 1 «exacta»**: con $L_{cz} = L_{cy}$ el motor no mete el torsional al mínimo (`compresion.ts:166`, `est.Lcz > est.Lcy`), gobierna flexión en $y$ y devuelve el mismo 229.74 ✓. La afirmación «no es una aproximación, es la Ec. E3-2» es correcta.
+- **Coherencia con `ejemplo-columna-galpon-compresion`**: misma W250×73, mismos $A_g$, $r_x$, $r_y$, $F_e = 1083$, $F_n = 950$, $\phi P_n = 79.3$ tonf, misma frontera ✓.
+- **Normativa cruzada** con el motor y la nota de capítulo: $\phi_c = 0.90$ ✓; «$P_n$ es el menor de los tres modos» ✓; User Note de §E3 sobre $L_{cz} > L_{cy}$ ✓ (es la puerta que implementa `compresion.ts:166`); User Note bajo E3-4 sobre las dos desigualdades equivalentes ✓; B4.1a con una sola columna $\lambda_r$ ✓, casos 1 y 5 ✓.
+- **F/E/U/idioma**: frontmatter válido; sin H1; los tres enlaces internos existen y no son draft; punto decimal consistente; `×` en las designaciones; `tú` sin voseo ✓.
+- **Reproducibilidad**: el id `columna-compresion` existe en `SERVILLETAS`, y la anécdota de la fila 1 rechazada por la guardia está respaldada por el comentario de `verify-servilletas.mjs`.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- El auditor no tuvo shell y no pudo rasterizar ni correr la guardia. Ambas cosas **sí se hicieron**: `npm run verify:servilletas` devuelve 11/11 y las tres filas de la tabla son su salida literal; y las páginas 16.1-38, -39, -40, -41 y 16.1-21 se rasterizaron con `pypdfium2` y se miraron el 2026-08-06.
+- **El punto que pidió cerrar —las dos User Notes de §E2— se leyó en la página 16.1-40 rasterizada.** Están en §E2 y dicen exactamente: $L_c/r$ «preferably should not exceed 200» para miembros diseñados a compresión, y la esbeltez del miembro «as fabricated—taken as the fabricated length of the member divided by the least radius of gyration» «preferably should not exceed 300». El post no inventa una tercera y las declara como recomendación ✓.
+- `npm run build` verde: 177 páginas, y la página de este post trae 351 expresiones KaTeX con 0 `katex-error`.
+
+**Planilla del canvas:** parcial · no la tiene · 3 verificaciones demanda–capacidad + 4 relaciones despejadas. Las dos filas de flexión son cadena cerrada con lo que el post declara; la torsional no ($J$, $C_w$, $I_x+I_y$, $G$). Si se genera, `ρ` entra como dato —es la tesis del post— y la fila torsional apunta a la planilla `columna-galpon-compresion`.
+
 ### 2026-08-06 · `acero/predimensionamiento-viga-flexion` · ⚠️ 11 hallazgos
 
 **Commit:** `1e9de8e` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell ni rasterizado, así que rehízo las dos tablas analíticamente desde F2-2/F2-3/F2-4 y G2-1/G2-4 en vez de correr `verify:servilletas` — coinciden al centésimo)
@@ -3476,10 +3511,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (24)
+### `acero` — acero (AISC 360-22) (25)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `predimensionamiento-columna-comprimida` | 2026-08-06 | ⚠️ | 0 · 11 aplicados (2🟠 4🟡 5🔵) · sin planilla (parcial) |
 | `predimensionamiento-viga-flexion` | 2026-08-06 | ⚠️ | 0 · 12 aplicados (4🟠 7🟡 1🔵) · sin planilla (parcial) |
 | `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |
 | `ejemplo-gusset-simple-apernado` | 2026-07-31 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano · planilla ✅ 23 contrastes, 2 aplicados |
