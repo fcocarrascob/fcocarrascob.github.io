@@ -1,0 +1,304 @@
+---
+title: "Predimensionamiento — Diagonal: la esbeltez decide antes que la tracción"
+description: "Una diagonal se dimensiona pensando en la tracción y la manda otra cosa. AISC 360-22 §D1 dice literalmente que no hay límite máximo de esbeltez para miembros en tracción: el techo viene de NCh2369:2025 8.6.3, que lo escribe como 1.5π√(E/F_y). Ese número no es arbitrario — es la misma frontera E3(a)/E3(b) de AISC, exacta contra la forma F_y/F_e ≤ 2.25 que la norma imprime en esa misma línea (el 4.71 es 1.5π redondeado), o sea λ_c = 1.5, y su significado es que la diagonal conserva al menos el 39 % de F_y en compresión. La otra trampa está en la tracción misma: la fluencia gobierna solo si A_e/A_g > 1.2·F_y/F_u, que para A500 Gr. C es 0.969 — un umbral que casi ninguna conexión de extremo alcanza, y por debajo el atajo queda del lado inseguro."
+pubDate: 2026-08-06
+tags: ["predimensionamiento", "acero", "tracción", "compresión", "diagonales", "arriostramiento", "esbeltez", "aisc360", "nch2369", "servilleta"]
+subsection: "predimensionamiento"
+chapter: "Caps. D y E + NCh2369 8.6"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+Una diagonal de arriostramiento es el elemento más simple del edificio: una barra con carga axial
+y nada más. Y es el que más veces se predimensiona en el orden equivocado. Uno la piensa
+traccionada —para eso está, para tomar el corte sísmico— dimensiona por tracción, y descubre
+después que el perfil lo fijó otra cosa.
+
+Dos cosas, en realidad, y ninguna es la fluencia. Una viga o una columna se despejan de una sola
+norma; acá el techo lo pone una norma distinta de la que da la resistencia, y encontrar dónde está
+escrito es la mitad del trabajo.
+
+## Las servilletas, de un vistazo
+
+| § | Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|---|
+| 1 | Área por fluencia $A_{g,req}$ | $A_{g,req} = \dfrac{T_u}{0.90\,F_y}$ | Ec. D2-1, con $\phi_t = 0.90$ | — |
+| 2 | Área neta efectiva $(A_n U)_{req}$ | $(A_n U)_{req} = \dfrac{T_u}{0.75\,F_u}$ | Ecs. D2-2 y D3-1, con $\phi_t = 0.75$ | $U$ sale de la Tabla D3.1 |
+| 3 | Cuál de las dos manda | gobierna la fluencia si $\dfrac{A_e}{A_g} > 1.2\,\dfrac{F_y}{F_u}$ | álgebra propia | — |
+| 4 | Radio de giro $r_{min}$ | $r_{min} = \dfrac{L_c}{1.5\pi\sqrt{E/F_y}}$ | NCh2369:2025, 8.6.3 | diagonal sismorresistente **de plano vertical** que trabaja en compresión, salvo la exención de 8.6.3 |
+| 5 | Área por compresión $A_{g,req}$ | $A_{g,req} = \dfrac{P_u}{\phi_c\, \rho\, F_y}$ | Ec. E3-1, con $\phi_c = 0.90$ | con el $\rho$ de tu esbeltez real; 0.38995 es el piso que la fila 4 te garantiza |
+
+La columna § dice en qué sección se deriva cada una. **El orden de aplicación es el inverso** —
+$4 \to 5 \to 1 \to 3$— y esa inversión es la tesis del post: la esbeltez va primero y la tracción
+al final. La fila 3 no es una verificación del miembro sino lo que le vas a exigir a la conexión.
+
+Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
+
+## El caso
+
+Una diagonal de un marco arriostrado concéntrico, sismorresistente, que trabaja en los dos
+sentidos: tracción en un ciclo, compresión en el otro.
+
+| Tienes | No tienes |
+|---|---|
+| La demanda axial $T_u$ y $P_u$ del análisis | El perfil: $A_g$, $A_n$, $r$ |
+| La longitud entre nudos de la diagonal | $L_c$, si el arriostramiento es en X |
+| El acero: $F_y$, $F_u$, $E$ | $U$ (Tabla D3.1), que depende de una conexión que aún no existe |
+
+Las dos últimas filas son el problema de fondo del post, y no se resuelven: se acotan. Que $L_c$
+no sea dato en una X viene de 8.6.4, que permite considerar fijo el punto de cruce en la
+dirección perpendicular al plano cuando las diagonales se conectan ahí y una es continua — y esa
+decisión cambia la longitud de pandeo, no un decimal.
+
+## De dónde sale cada una
+
+### 1. Tracción por fluencia: la que todos escriben
+
+<Equation label="Ec. D2-1">
+$$
+P_n = F_y A_g \qquad \phi_t = 0.90
+$$
+</Equation>
+
+<Equation label="Despeje de D2-1">
+$$
+A_{g,req} = \frac{T_u}{\phi_t F_y} = \frac{T_u}{0.90\,F_y}
+$$
+</Equation>
+
+### 2. Tracción por rotura: la que suele gobernar
+
+§D2 dice que la resistencia es **el menor** valor entre los dos estados límite, y el segundo
+castiga el área neta con un factor de resistencia más bajo:
+
+<Equation label="Ecs. D2-2 y D3-1">
+$$
+P_n = F_u A_e \qquad A_e = A_n U \qquad \phi_t = 0.75
+$$
+</Equation>
+
+<Equation label="Despeje de D2-2">
+$$
+(A_n U)_{req} = \frac{T_u}{0.75\,F_u}
+$$
+</Equation>
+
+### 3. Cuál de las dos gobierna, sin calcular ninguna
+
+Iguala las dos capacidades de diseño y despeja el cociente entre áreas. Es álgebra de una línea y
+es lo más útil del post:
+
+<Equation label="Álgebra propia">
+$$
+0.90\,F_y A_g \;<\; 0.75\,F_u A_e
+\qquad\Longleftrightarrow\qquad
+\frac{A_e}{A_g} \;>\; 1.2\,\frac{F_y}{F_u}
+$$
+</Equation>
+
+**Por encima de ese cociente gobierna la fluencia; por debajo, la rotura.** El umbral no depende
+del perfil ni de la carga: solo de la razón $F_y/F_u$ del acero.
+
+Y ahí está la sorpresa. $A_e/A_g$ nunca puede pasar de 1 —el área neta efectiva es como mucho la
+bruta—, así que el margen es estrechísimo. Para un A500 Gr. C, $1.2 \times 3520/4360 = 0.969$:
+hay que conservar el 97 % del área bruta después de perforaciones y retraso de cortante para que
+la falla dúctil sea la que manda. Una diagonal con conexión de extremo real rara vez llega.
+
+<Note type="warning" title="Lo que esto significa para el diseño">
+La fluencia en área bruta es la falla que avisa; la rotura en área neta es frágil. Que el umbral
+esté tan cerca de 1 quiere decir que **conseguir la falla dúctil es un requisito de la conexión,
+no del miembro**. Y no lo arreglas subiendo de perfil: el umbral no depende de $A_g$, pero
+$A_e/A_g$ sí empeora, porque la excentricidad $\bar{x}$ de la conexión crece con la sección y
+$U = 1 - \bar{x}/l$ baja con ella.
+</Note>
+
+### 4. La esbeltez, que no viene de AISC
+
+Acá está lo que sorprende al buscarlo. AISC 360-22 §D1 se titula «Slenderness Limitations» y dice,
+completo:
+
+> *«There is no maximum slenderness limit for members in tension.»*
+
+Su User Note recomienda que la esbeltez del miembro *tal como se fabrica* no exceda 300, y aclara
+que la sugerencia no aplica a barras redondas. Recomendación, no cláusula, y no es lo que
+gobierna una diagonal sísmica.
+
+El techo real está en NCh2369:2025 8.6.3, que exige que las diagonales sismorresistentes de
+planos verticales que trabajen en compresión tengan razones ancho/espesor menores que el
+$\lambda_{md}$ de su Tabla 9, y que **la esbeltez global sea menor que $1.5\pi\sqrt{E/F_y}$**.
+
+<Equation label="Despeje de NCh2369 8.6.3">
+$$
+r_{min} = \frac{L_c}{1.5\pi\sqrt{E/F_y}}
+$$
+</Equation>
+
+### 5. Ese $1.5\pi$ ya lo conoces
+
+La forma en que NCh2369 escribe el límite dice algo que el número decimal esconde. Define la
+esbeltez adimensional
+
+<Equation label="Álgebra propia">
+$$
+\lambda_c = \frac{L_c/r}{\pi\sqrt{E/F_y}}
+$$
+</Equation>
+
+y sustitúyela en la Ec. E3-4: como $F_e = \pi^2 E/(L_c/r)^2$, sale $F_y/F_e = \lambda_c^2$. La
+frontera entre las ramas inelástica y elástica del Cap. E —que la Ec. E3-2 pone en
+$F_y/F_e \le 2.25$— es entonces $\lambda_c = 1.5$.
+
+**Son el mismo límite**, y la coincidencia es exacta —no aproximada— contra la segunda forma en
+que AISC lo imprime. §E3 escribe la puerta dos veces en la misma línea: «$L_c/r \le
+4.71\sqrt{E/F_y}$ (or $F_y/F_e \le 2.25$)». La segunda es la exacta, porque $F_y/F_e =
+\lambda_c^2$ y $1.5^2 = 2.25$ sin redondeo alguno. La primera es esa misma frontera pasada a
+decimal: $1.5\pi = 4.7124$, que AISC trunca a 4.71 y NCh2369 deja en su forma cerrada.
+
+Falta un paso para llegar a capacidad. La rama inelástica es la Ec. E3-2,
+$F_n = \left(0.658^{\,F_y/F_e}\right) F_y$, y con $F_y/F_e = \lambda_c^2$ la fracción de $F_y$ que
+sobrevive queda en función de una sola variable: $\rho = F_n/F_y = 0.658^{\,\lambda_c^2}$. Como es
+decreciente en $\lambda_c$, el techo de esbeltez es un piso de capacidad:
+
+<Equation label="Álgebra propia">
+$$
+\frac{L_c}{r} < 1.5\pi\sqrt{\frac{E}{F_y}}
+\qquad\Longleftrightarrow\qquad
+\lambda_c < 1.5
+\qquad\Longleftrightarrow\qquad
+\rho = \frac{F_n}{F_y} > 0.658^{\,2.25} = 0.38995
+$$
+</Equation>
+
+El límite de esbeltez de la norma chilena no es un tope arbitrario de fabricación: es la
+exigencia de que **la diagonal no sea una columna de pandeo elástico**. Traducido a capacidad, le
+garantiza al menos el 39 % de $F_y$ en compresión. Esa es la servilleta que hay que recordar de
+las cinco.
+
+La curva de columna completa en esta forma adimensional —las dos ramas, su inversión y qué
+esbeltez pide cada valor de $\rho$— está desarrollada en el
+[post de la columna](/acero/predimensionamiento-columna-comprimida). Acá alcanza con el valor en
+la frontera.
+
+<Note type="tip" title="Referencia normativa">
+$\phi_t = 0.90$ para fluencia y $\phi_t = 0.75$ para rotura salen de §D2, cada uno junto a su
+ecuación. $A_e = A_n U$ es la Ec. D3-1 y $U$ sale de la Tabla D3.1. §D3 agrega que en secciones
+abiertas $U$ no necesita ser menor que la razón entre el área del elemento conectado y el área
+bruta del miembro — **y que eso no aplica a secciones cerradas como los HSS**, que es justo lo
+que se usa de diagonal. El límite de esbeltez y el $\lambda_{md}$ de la Tabla 9 son de
+NCh2369:2025, 8.6.3. Para la compresión, $\phi_c = 0.90$ sale de §E1 y $A_{g,req} = P_u/(\phi_c
+\rho F_y)$ es el despeje de la Ec. E3-1, con $\rho = F_n/F_y$ de las Ecs. E3-2 y E3-3.
+</Note>
+
+## Lo que la servilleta no ve
+
+- **$U$, y por lo tanto $A_n U$.** Es el término que decide la servilleta 3 y depende de una
+  conexión que en predimensionamiento no existe. Lo único honesto es acotarlo: si la diagonal es
+  HSS, no tienes ni siquiera el piso de §D3.
+- **La rotura en bloque de corte (§J4.3)**, que en diagonales apernadas compite de igual a igual
+  con la rotura en área neta.
+- **El resto de 8.6.** La 8.6.1 no permite arriostramientos que solo resistan tracción salvo en
+  galpones livianos por 12.2; la 8.6.2 exige que las diagonales traccionadas de una línea aporten
+  al menos el 30 % del corte de esa línea; y la propia 8.6.3 exime **de sus dos exigencias** —el
+  $\lambda_{md}$ y la esbeltez— a las diagonales cuya resistencia requerida se determina con las
+  combinaciones de 4.5 en las que el estado de carga sísmico horizontal se amplificó por
+  $0.7R_1 \ge 1.0$.
+- **El $\lambda_{md}$ de la Tabla 9**, que es un límite ancho/espesor y no de esbeltez global.
+
+## Dónde miente
+
+Servilleta contra la verificación completa, con el criterio de siempre: el uso es la demanda que
+el atajo declara admisible dividida por la capacidad que el motor calcula. **1.000 es exacto;
+sobre 1.000 es una diagonal que no pasa.**
+
+Sección HSS 4×4×1/4 (≈ □100×100×6) de acero A500 Gr. C, la del
+[ejemplo de diagonal](/acero/ejemplo-diagonal-hss-traccion): $A_g = 21.7$ cm², $r = 3.84$ cm,
+$F_y = 3520$, $F_u = 4360$ y $E = 2.04\times10^6$ kgf/cm², con $\phi_c = 0.90$. El umbral de la
+servilleta 3 vale $1.2 F_y/F_u = 0.969$.
+
+**Tracción**, con el atajo que mira solo la fluencia:
+
+| $A_e/A_g$ | Servilleta | Motor | Uso | Gobierna | Veredicto |
+|---|---|---|---|---|---|
+| 1.00 — soldada a tope, sin retraso ni perforaciones | 68.75 tonf | 68.75 tonf | 1.000 | fluencia | exacta |
+| 0.97 — justo sobre el umbral | 68.75 | 68.75 | 1.000 | fluencia | exacta |
+| 0.90 — un 7 % bajo el umbral | 68.75 | 63.86 | 1.076 | rotura | insegura, +7.6 % |
+| 0.75 — ranurada y soldada, con retraso de cortante | 68.75 | 53.22 | 1.292 | rotura | insegura, +29.2 % |
+
+El atajo es exacto mientras la fluencia gobierne, y cruza al lado inseguro entre las filas
+segunda y tercera — o sea que los cuatro casos **acotan** el umbral entre 0.90 y 0.97, que es lo
+que el álgebra de la servilleta 3 predice. Y ojo con la última fila: no es el caso más
+desfavorable posible. El detalle real del ejemplo enlazado, con su $\bar{x}$ y su largo de
+soldadura, da $A_e/A_g = 0.68$.
+
+**Compresión**, tomando el techo de 8.6.3 al pie de la letra:
+
+| Esbeltez | Servilleta | Motor | Uso | $\rho = F_n/F_y$ | Veredicto |
+|---|---|---|---|---|---|
+| $L_c/r = 1.5\pi\sqrt{E/F_y} = 113.4$, el techo | 26.81 tonf | 26.81 tonf | 1.000 | 0.3899 | exacta |
+| $L_c/r = 0.75\pi\sqrt{E/F_y} = 56.7$, la mitad | 26.81 | 54.32 | 0.494 | 0.7902 | conservadora, −50.6 % |
+
+La primera fila es la confirmación numérica de la servilleta 5: **en el techo exacto de NCh2369,
+el motor devuelve $\rho = 0.3899$** — el $0.658^{2.25}$ derivado arriba. Dos normas, dos
+redacciones, un solo número.
+
+<Note type="info" title="Ese caso cae justo sobre el filo, y por eso vale mirarlo dos veces">
+Con la sección de la tabla, $1.5\pi\sqrt{E/F_y} = 113.44$ y $4.71\sqrt{E/F_y} = 113.39$: el caso
+queda cinco centésimas **pasado** la forma decimal de la puerta, y exactamente **sobre** la forma
+$F_y/F_e = 2.25$. El motor decide por la segunda —que es la exacta— y entrega la rama inelástica,
+$0.658^{2.25} = 0.38995$. Por la forma decimal habría caído a la rama elástica y dado
+$0.877/2.25 = 0.38978$: 0.04 % de diferencia, y es toda la discontinuidad que el redondeo del
+4.71 introduce en la curva.
+</Note>
+
+La segunda fila mide lo que se compra al alejarse del techo: a la mitad de la esbeltez límite el
+$\rho$ sube de 0.39 a 0.79, o sea que la diagonal duplica su capacidad a compresión. Por eso
+diseñar pegado al límite de 8.6.3 es legal y caro a la vez.
+
+## El orden
+
+- **Primero, $r_{min}$ desde 8.6.3.** Es el techo, es de otra norma, y no se negocia. Descarta
+  familias enteras antes de que hayas mirado ninguna carga.
+- **Después, la compresión**, con $A_{g,req} = P_u/(\phi_c \rho F_y)$ y el $\rho$ que esa
+  esbeltez te deja. Como 8.6.3 te mantiene en la rama inelástica, $\rho \ge 0.39$ está
+  garantizado — y sabes exactamente cuánto más tienes si bajas la esbeltez.
+- **Luego, la tracción por fluencia**, con la servilleta 1. A esta altura suele sobrar: es la
+  consecuencia de haber dimensionado por esbeltez y compresión.
+- **Al final, el umbral $A_e/A_g > 1.2 F_y/F_u$**, que no es una verificación del miembro sino la
+  especificación de lo que le vas a exigir a la conexión.
+
+La diagonal invierte el orden intuitivo de punta a punta. Se la piensa como un elemento en
+tracción y **la fluencia en tracción es lo último que se revisa**; se busca su límite de esbeltez
+en AISC y el límite está en NCh2369; y la decisión que fija el perfil no es una resistencia sino
+una esbeltez.
+
+Cuidado con leer eso como que la tracción no importa: importa, pero cambia de dueño. La rotura en
+área neta efectiva puede gobernar el diseño completo —en el ejemplo enlazado lo hace, con 48.4
+tonf contra 53.5 de compresión— y no la controlas eligiendo el perfil. La controlas
+especificando la conexión.
+
+## Reproducir
+
+```bash
+npm run verify:servilletas -- diagonal-traccion diagonal-esbeltez
+```
+
+El script corre el despeje de esta nota y la verificación completa de `src/lib/acero/` sobre cada
+caso, y **falla si alguno cambia de lado**. Los cuatro casos de tracción barren el umbral 0.969
+por los dos lados a propósito: si alguna vez deja de estar donde el álgebra dice, el script lo
+dice antes que el lector.
+
+---
+
+*Las ecuaciones y los factores de resistencia de esta nota se leyeron en la página rasterizada de
+AISC 360-22[^aisc360] el 6 de agosto de 2026: §D1 con su User Note, §D2 y la Ec. D2-1 en la
+p. 16.1-32; la Ec. D2-2, §D3 y la Ec. D3-1 en la 16.1-33; §E1 en la 16.1-38 y las Ecs. E3-2 a
+E3-4 en las 16.1-40 y 16.1-41. El límite de esbeltez y el $\lambda_{md}$ de la Tabla 9 se leyeron
+en la p. 87 de NCh2369:2025[^nch2369], 3.ª edición. El umbral $A_e/A_g > 1.2 F_y/F_u$ y la
+equivalencia entre $1.5\pi\sqrt{E/F_y}$ y $\lambda_c = 1.5$ son derivación propia.*
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+    Buildings*, ANSI/AISC 360-22, 1 de agosto de 2022.
+
+[^nch2369]: Instituto Nacional de Normalización, *NCh2369 — Diseño sísmico de estructuras e
+    instalaciones industriales*, 3.ª edición, 2025.

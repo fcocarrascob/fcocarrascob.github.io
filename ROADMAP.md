@@ -946,6 +946,72 @@ máquina. Las normas están en
 `material_teorico` en `C:\Proyectos_Python\material_teorico`. Además **PyMuPDF no está instalado**:
 la rasterización de esta tanda se hizo con `pypdfium2` + `PIL`, que sí están.
 
+## K. Subsección «Predimensionamiento» de Acero (estrenada 2026-08-06)
+
+`/acero/predimensionamiento`. Diseño en
+`docs/superpowers/specs/2026-08-06-predimensionamiento-acero-design.md`.
+
+**La idea en una línea:** el Cap. F responde «dada esta sección, cuánto momento aguanta», y al
+elegir el perfil la pregunta va al revés. Despejar la ecuación normativa hacia la variable que uno
+elige no pierde nada mientras se respete la condición que la habilita — y decir dónde deja de valer
+es lo que separa esto de una regla de dedo.
+
+Tres decisiones que acotan la sección, y conviene no reabrirlas sin motivo: **sin barridos**
+(la relación se deriva, no se ajusta), **en forma literal** (sin instanciar `F_y`; el valor está en
+el despeje, no en un coeficiente memorizable) y **el motor solo valida** (mide el desvío del atajo,
+no genera la relación). Fuera de alcance: catálogo de perfiles, herramienta nueva, y réplica en
+Hormigón o Geotecnia hasta que el formato se pruebe.
+
+**La guardia:** `npm run verify:servilletas` corre el despeje y la verificación completa sobre el
+mismo caso. Cada caso **declara** si el atajo es exacto, conservador o inseguro, y el script falla
+si alguno cambia de lado. Las tablas de «Dónde miente» de los posts son su salida, así que el post
+no puede envejecer en silencio.
+
+| # | Post | Estado |
+|---|---|---|
+| K1 | **Viga a flexión** — `Z_x` por momento, `r_y` por `L_b`, `d·t_w` por corte, `I_x` por flecha (Caps. F y G) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) |
+| K2 | **Columna comprimida** — se elige por el radio de giro, no por el área (Cap. E) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) |
+| K3 | **Diagonal de arriostramiento** — la esbeltez decide antes que la tracción (Caps. D y E + NCh2369 8.6) | ✅ publicado 2026-08-06 · auditado (13 hallazgos, 0🔴, todos aplicados) |
+
+La guardia cubre las cuatro servilletas con casos a ambos lados de cada frontera: **17/17**.
+
+**Capa de lectura rápida (2026-08-06).** Los tres abren con `## En una servilleta`: la tabla de
+sus relaciones en orden de aplicación, con de dónde sale cada una y qué la habilita. El cuerpo no
+se recortó —está en el rango de la colección, 1841–2235 palabras contra 1744 del ejemplo de LTB y
+2157 de la nota del Cap. F— sino que se **estratificó**: la servilleta arriba, su justificación
+abajo. En la misma pasada quedaron autocontenidos: se cerraron las dos dependencias de K3 hacia
+K2 inlineando la definición de `λ_c`, y se quitaron los tres enlaces de cortesía. Los de
+procedencia se quedan, que son los que dicen dónde se verificó cada número.
+
+**Los hallazgos**, que valen como muestra de lo que la sección encuentra:
+
+- **El corte no lleva φ.** §G1(a) fija `φ_v = 0,90` «except Section G2.1(a)», y esa excepción pone
+  `φ_v = 1,00` con `C_v1 = 1,0`. En la rama que cubre a casi todo perfil laminado el despeje queda
+  sin factor, y aplicarle 0,90 por costumbre pide 11 % más de alma que la que la norma exige.
+- **El `L/360` no está en la Specification.** El Capítulo L completo son dos páginas y su §L2 es una
+  sola frase sin ningún número. Por la regla de fuentes, `δ_adm` queda como dato del lector.
+- **`F_n` no es `F_cr`.** El Cap. E de 360-22 escribe `P_n = F_n A_g`; `F_cr` es notación de 360-16
+  que sobrevive en el Cap. F. Mismo tipo de arrastre entre ediciones que el `F7-12/F7-13`.
+- **El límite de esbeltez de NCh2369 8.6.3 es la frontera de rama de AISC E3.** La norma chilena lo
+  escribe `1,5π√(E/F_y)` y AISC lo imprime dos veces en la misma línea de §E3(a): como
+  `4,71√(E/F_y)` —que es ese `1,5π` redondeado— y como `F_y/F_e ≤ 2,25`, que es la forma exacta.
+  Significa que **la diagonal no puede ser una columna de pandeo elástico**, y le garantiza al
+  menos el 39 % de `F_y` en compresión (`ρ = 0,658^2,25 = 0,38995`, medido por el motor).
+- **La fluencia en tracción gobierna solo si `A_e/A_g > 1,2·F_y/F_u`.** Para A500 Gr. C eso es
+  **0,969**: hay que conservar el 97 % del área bruta. Conseguir la falla dúctil es un requisito de
+  la conexión, no del miembro — y subir de perfil lo empeora.
+- **Arrastre de edición cazado de paso:** `aisc360-22-capD-traccion.mdx` citaba la User Note de §D1
+  con la redacción de **360-16** («rods or hangers» → «varillas y colgadores»). La 22 eliminó
+  «hangers», agregó «as fabricated» y define el cociente sobre el **menor** radio de giro.
+
+**Deuda:** ninguno de los tres tiene planilla del canvas. La auditoría marcó K1 y K2 *parciales* —la
+hoja no puede reproducir la columna «Motor» sin publicar F2-2/F2-3/F2-4 o E4-2— y **K3 como la
+candidata más fuerte**: ahí las 22 celdas de las dos tablas son forma cerrada.
+
+**Libro mayor:** el trabajo llevó `ECUACIONES.md` de 90 a 68 ecuaciones sin revisar. 22 filas leídas
+en página rasterizada el 2026-08-06: F1-1, F2-1 a F2-8b, G2-1 a G2-4, E3-1 a E3-4, E4-1, E4-2,
+D2-1, D2-2 y D3-1.
+
 ## J. Retiro de las herramientas SAP2000 (2026-08-05)
 
 Se sacaron del sitio **`/herramientas/sap-scripts`** (el constructor de scripts) y

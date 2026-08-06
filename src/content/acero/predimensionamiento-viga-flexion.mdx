@@ -1,0 +1,311 @@
+---
+title: "Predimensionamiento — Viga a flexión: las cuatro relaciones que eligen el perfil"
+description: "Las ecuaciones del Cap. F de AISC 360-22 están escritas para verificar una sección que ya elegiste. Despejadas hacia la otra variable dan cuatro relaciones que la eligen: Z_x por momento, r_y por la longitud arriostrada, d·t_w por corte e I por flecha. La del corte no lleva φ —§G1(a) exceptúa a §G2.1(a), donde φ_v = 1.00 y C_v1 = 1.0— así que aplicarle 0.90 por costumbre pide 11 % más de alma que la que la norma exige. La de flexión es exacta mientras L_b ≤ L_p y se vuelve insegura apenas lo cruza: en una W460×74 pide 8.9 % de más a L_b = 2.5 m y 213 % a 8 m. Y el L/360 de la flecha no está en la Specification: el Capítulo L completo son dos páginas y su §L2 es una sola frase sin ningún número."
+pubDate: 2026-08-06
+tags: ["predimensionamiento", "acero", "flexión", "corte", "vigas", "aisc360", "servilleta"]
+subsection: "predimensionamiento"
+chapter: "Caps. F y G — Flexión y corte"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+Cada ecuación del Capítulo F responde la misma pregunta: *dada esta sección, ¿cuánto momento
+aguanta?* Es exactamente la pregunta correcta para verificar, y exactamente la inversa de la que
+tienes cuando el perfil todavía no existe. En ese momento tienes $M_u$, $V_u$, la luz y el
+esquema de arriostramiento; lo único que te falta es la sección que la norma da por conocida.
+
+Predimensionar no es aproximar. Es **despejar la misma ecuación hacia la otra variable**, y el
+resultado no pierde nada mientras se respete la condición que la habilita. La
+[nota del Cap. F](/acero/aisc360-22-capF-flexion) cuenta *por qué* existe cada estado límite;
+acá los damos vuelta uno por uno, y —esto es lo que hace útil al atajo— decimos dónde deja de
+valer y de qué lado se cae.
+
+## Las servilletas, de un vistazo
+
+| § | Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|---|
+| 1 | Módulo plástico $Z_{x,req}$ | $Z_{x,req} = \dfrac{M_u}{\phi_b F_y}$ | Ec. F2-1, con $\phi_b = 0.90$ | perfil I doblemente simétrico, eje mayor, compacto **y** $L_b \le L_p = 1.76\,r_y\sqrt{E/F_y}$ |
+| 2 | Radio de giro $r_{y,req}$ | $r_{y,req} = \dfrac{L_b}{1.76\sqrt{E/F_y}}$ | despeje de la Ec. F2-5 | alcance de §F2 — y es la fila que hace cierto el $L_b \le L_p$ de la anterior |
+| 3 | Área de alma $(d\,t_w)_{req}$ | $(d\,t_w)_{req} = \dfrac{V_u}{0.6 F_y}$ | Ec. G2-1 en la rama §G2.1(a) | laminado **y** $h/t_w \le 2.24\sqrt{E/F_y}$ |
+| 4 | Inercia $I_{x,req}$ | $I_{x,req} = \dfrac{5 w_{serv} L^4}{384\,E\,\delta_{adm}}$ | mecánica, no norma | $\delta_{adm}$ lo fija tu proyecto |
+
+La columna § dice en qué sección se deriva cada una. **El orden de aplicación es otro**:
+$r_{y,req} \to Z_{x,req} \to (d\,t_w)_{req} \to I_{x,req}$, y el porqué está en «El orden», al
+final. La del alma no lleva ningún factor de resistencia: eso es lo único contraintuitivo de las
+cuatro.
+
+Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
+
+## El caso
+
+Una viga de piso simplemente apoyada, con carga distribuida. Lo que tienes y lo que no:
+
+| Tienes | No tienes |
+|---|---|
+| La luz $L$ y la carga factorada $w_u$, y con ellas $M_u$ y $V_u$ | El perfil: es lo que estás por elegir |
+| La carga de servicio $w_{serv}$, que es otra combinación | $Z_x$, $r_y$, $d$, $t_w$, $I_x$ |
+| El esquema de arriostramiento del ala comprimida, o sea $L_b$ | $C_b$, que necesita el diagrama de momentos del tramo |
+| El acero: $F_y$, $F_u$, $E$, y el límite de flecha de tu proyecto | — |
+
+Las dos primeras filas son cargas distintas y conviene no confundirlas: las tres primeras
+servilletas son de resistencia y corren con $w_u$; la cuarta es de servicio y corre con
+$w_{serv}$. Usar la factorada en la flecha infla $I_{x,req}$ en el mismo factor de la
+combinación.
+
+Que no tengas $C_b$ importa más de lo que parece, y vuelve al final. Al predimensionar el único
+valor defendible es $C_b = 1.0$, que es el conservador de la Ec. F1-1.
+
+## De dónde sale cada una
+
+### 1. El módulo plástico que necesitas
+
+La resistencia nominal por fluencia es el momento plástico:
+
+<Equation label="Ec. F2-1">
+$$
+M_n = M_p = F_y Z_x
+$$
+</Equation>
+
+Con $\phi_b = 0.90$ de §F1(a), la condición de diseño $M_u \le \phi_b M_n$ se despeja sola. El
+paso es álgebra propia, no una cita:
+
+<Equation label="Despeje de F2-1">
+$$
+Z_{x,req} = \frac{M_u}{\phi_b F_y}
+$$
+</Equation>
+
+**Qué la habilita.** El alcance de §F2 son perfiles I doblemente simétricos flectados en el eje
+mayor con **alma y ala compactas** según B4.1 para flexión — o sea $b/t \le 0.38\sqrt{E/F_y}$ en
+el ala (Tabla B4.1b, caso 10) y $h/t_w \le 3.76\sqrt{E/F_y}$ en el alma (caso 15). Y, además,
+que no gobierne el pandeo lateral-torsional, que es la servilleta siguiente.
+
+### 2. El radio de giro que te deja usar la anterior
+
+La §F2.2(a) es tajante, y conviene leerla literal: *«When $L_b \le L_p$, the limit state of
+lateral-torsional buckling does not apply»*. No es que el LTB descuente poco: no aplica. Y $L_p$
+tiene forma cerrada:
+
+<Equation label="Ec. F2-5">
+$$
+L_p = 1.76\, r_y \sqrt{\frac{E}{F_y}}
+$$
+</Equation>
+
+Despejada hacia lo que eliges:
+
+<Equation label="Despeje de F2-5">
+$$
+r_{y,req} = \frac{L_b}{1.76\sqrt{E/F_y}}
+$$
+</Equation>
+
+Esto todavía no es una dimensión: $r_y$ no se ve en un plano. Pero para un perfil I doblemente
+simétrico se acota con puro álgebra. Despreciando el aporte del alma a $I_y$, con dos alas
+rectangulares $I_y \approx t_f b_f^3/6$ y $A_g = 2 b_f t_f + h t_w$:
+
+<Equation label="Álgebra propia">
+$$
+r_y^2 = \frac{I_y}{A_g} \approx \frac{b_f^2}{12\left(1 + \dfrac{h\,t_w}{2 b_f t_f}\right)}
+\qquad\Longrightarrow\qquad
+r_y \le \frac{b_f}{\sqrt{12}}
+$$
+</Equation>
+
+El techo se alcanzaría solo con alma de área nula, así que es una cota estricta y siempre
+holgada. Pero dice lo que importa: **$r_y$ lo pone el ancho del ala, y el alma solo lo
+empeora.** El peralte no aparece. En la W460×74 del ejemplo de LTB, $b_f/\sqrt{12} = 5.48$ cm
+contra un $r_y$ real de 4.19 cm: el 76 % del techo.
+
+<Note type="warning" title="La cota descarta, no dimensiona">
+Es una condición **necesaria**, y leerla al revés es el error fácil. Si $b_f < \sqrt{12}\,
+r_{y,req}$ la familia queda descartada y no hay que seguir mirándola. Pero cumplirla no
+garantiza nada: como el $r_y$ real anda por el 76 % del techo, un perfil que cumple la
+desigualdad justo llega con un cuarto de menos del $r_y$ que necesitas. Sirve para tachar
+familias rápido; el veredicto lo da el $r_y$ de catálogo.
+</Note>
+
+<Note type="tip" title="Referencia normativa">
+$\phi_b = 0.90$ (LRFD) sale de §F1(a); $E = 200\,000$ MPa está declarado bajo la Ec. F2-4. Los
+límites $\lambda_p$ son de la Tabla B4.1b, casos 10 (alas de I laminados, $b/t$) y 15 (almas de
+I doblemente simétricos, $h/t_w$). La cota $r_y \le b_f/\sqrt{12}$ es derivación propia y no
+aparece en la norma.
+</Note>
+
+### 3. El alma que pide el corte, y el φ que no está
+
+<Equation label="Ec. G2-1">
+$$
+V_n = 0.6 F_y A_w C_{v1}
+$$
+</Equation>
+
+Dos definiciones de §G2.1 hacen todo el trabajo. La primera: $A_w$ es *«the overall depth times
+the web thickness»*, o sea $d\,t_w$ — el peralte **total**, no el alma libre. La segunda es la
+que casi nadie aplica bien. §G1(a) fija $\phi_v = 0.90$ *«for all provisions in this chapter
+except Section G2.1(a)»*, y esa excepción dice, para almas de perfiles I **laminados** con
+$h/t_w \le 2.24\sqrt{E/F_y}$:
+
+<Equation label="§G2.1(a) y Ec. G2-2">
+$$
+\phi_v = 1.00 \ \text{(LRFD)} \qquad\text{y}\qquad C_{v1} = 1.0
+$$
+</Equation>
+
+Con $\phi_v = 1$ y $C_{v1} = 1$, el despeje se queda **sin ningún factor**:
+
+<Equation label="Despeje de G2-1">
+$$
+(d\,t_w)_{req} = \frac{V_u}{0.6 F_y}
+$$
+</Equation>
+
+**Qué la habilita.** Perfil laminado y $h/t_w \le 2.24\sqrt{E/F_y}$. La User Note de §G2.1(a)
+delimita el alcance con nombre y apellido: todos los perfiles W, S y HP de ASTM A6/A6M vigentes
+cumplen ese criterio para $F_y = 345$ MPa, salvo ocho —W44×230, W40×149, W36×135, W33×118,
+W30×90, W24×55, W16×26 y W12×14—. Es decir, casi siempre.
+
+Aplicarle $\phi = 0.90$ por costumbre no sale gratis: pide **11 % más de alma** que
+la que la norma exige, y en una viga que ya cerró por flexión ese espesor se paga en peso sin
+comprar nada.
+
+### 4. La rigidez que la norma no te va a dar
+
+La flecha suele ser lo que dimensiona una viga de piso, y acá la servilleta se sale de AISC 360.
+Para carga uniforme y apoyo simple, la flecha máxima es una identidad de resistencia de
+materiales, no una cláusula. Y corre con la carga de **servicio**, no con la factorada:
+
+<Equation label="Mecánica, no norma">
+$$
+\delta_{max} = \frac{5 w_{serv} L^4}{384 E I_x}
+\qquad\Longrightarrow\qquad
+I_{x,req} = \frac{5 w_{serv} L^4}{384 E \delta_{adm}}
+$$
+</Equation>
+
+Y $\delta_{adm}$ no sale de la Specification. El Capítulo L completo —«Design for
+Serviceability»— son **dos páginas**, y su §L2 es una sola frase:
+
+> *«Deflections in structural members and structural systems shall be limited so as not to impair
+> the serviceability of the structure.»*
+
+Eso es todo. Ningún número, ninguna tabla. §L1 dice que los valores límite *«shall be chosen with
+due regard to the intended function of the structure»* y su User Note remite al Apéndice C de
+ASCE/SEI 7. El $L/360$ que todos escribimos en la memoria de cálculo viene del código de
+edificación del proyecto, no de AISC 360-22.
+
+<Note type="warning" title="Por qué esto no es un detalle de pedantería">
+Es la única de las cuatro relaciones cuyo criterio **lo pones tú**, y suele ser la que gobierna.
+Si heredas una planilla, el $\delta_{adm}$ que trae es una decisión de otro proyecto disfrazada
+de constante.
+</Note>
+
+## Lo que la servilleta no ve
+
+Tres cosas, y ninguna es un descuido: son el precio explícito del atajo.
+
+- **La zona $L_p < L_b \le L_r$.** Ahí no es que la viga no sirva: la Ec. F2-2 interpola entre
+  $M_p$ y $0.7 F_y S_x$, y el crédito $C_b$ recupera parte. La servilleta 1 simplemente no lo
+  modela, y por eso la 2 no es opcional.
+- **El pandeo local**, si la sección no es compacta. Fuera del alcance de §F2 mandan las §F3 a
+  §F5, con sus propias reducciones.
+- **Qué peralte pedir.** $Z_{x,req}$ no elige $d$. Dos perfiles con el mismo $Z_x$ y peraltes
+  distintos pesan distinto, y el más peraltado casi siempre pesa menos — pero eso lo decide el
+  catálogo, no esta ecuación.
+
+## Dónde miente
+
+Las dos servilletas con condición de validez, contrastadas contra la verificación completa del
+motor del sitio. El uso es la demanda que el atajo declara admisible dividida por la capacidad
+que el motor calcula: **1.000 es el atajo exacto, y sobre 1.000 es una sección que no pasa.**
+
+Sección W460×74 de acero A992, la misma del [ejemplo de LTB](/acero/ejemplo-viga-ltb) y con sus
+mismas propiedades declaradas: $d = 45.7$, $b_f = 19.0$, $t_f = 1.45$, $t_w = 0.9$ cm;
+$Z_x = 1655$ cm³, $S_x = 1457$ cm³, $r_y = 4.19$ cm; $F_y = 3520$ y $E = 2.04\times10^6$
+kgf/cm². De ahí salen $L_p = 1.78$ m y $L_r = 5.16$ m. $C_b = 1.0$, que es lo único que sabes
+al predimensionar:
+
+| $L_b$ | Servilleta | Motor | Uso | Veredicto |
+|---|---|---|---|---|
+| 1.0 m | 52.43 tonf·m | 52.43 tonf·m | 1.000 | exacta |
+| 1.75 m | 52.43 | 52.43 | 1.000 | exacta |
+| 2.5 m | 52.43 | 48.13 | 1.089 | insegura, +8.9 % |
+| 4.0 m | 52.43 | 39.22 | 1.337 | insegura, +33.7 % |
+| 8.0 m | 52.43 | 16.77 | 3.127 | insegura, +212.7 % |
+| 4.0 m, con el $C_b = 50/44$ real del vano | 52.43 | 44.57 | 1.176 | insegura, +17.6 % |
+
+La última fila es la que conviene mirar dos veces: el $C_b$ real de un vano simplemente apoyado
+con carga uniforme devuelve la mitad del error a $L_b = 4$ m, y aun así quedan 17.6 puntos de
+sección que no existe. **El $C_b$ es un descuento sobre el LTB, no un permiso para ignorarlo.**
+
+Ese $C_b = 50/44 = 1.136$ es el de una viga de 4 m arriostrada solo en sus apoyos. En el
+[ejemplo de LTB](/acero/ejemplo-viga-ltb) los mismos 4 m son medio vano de una viga de 8 m, el
+gradiente de momentos es más fuerte y el $C_b$ sube a 1.299 — por eso ahí la capacidad a
+$L_b = 4$ m es 50.9 y acá 44.57. Es la misma sección y la misma ecuación; lo que cambia es de
+qué tramo se toman los cuartos de la Ec. F1-1.
+
+Y el corte, donde la frontera no es de longitud sino la puerta de §G2.1(a), que tiene **dos
+hojas**: perfil laminado **y** $h/t_w \le 2.24\sqrt{E/F_y} = 53.9$. El caso de abajo pierde las
+dos a la vez:
+
+| Sección | Servilleta | Motor | Uso | Veredicto |
+|---|---|---|---|---|
+| W460×74 laminada, $h/t_w = 47.6$, dentro de §G2.1(a) | 86.87 tonf | 86.87 tonf | 1.000 | exacta |
+| Armada 900×250, ala 20 mm y alma 8 mm, $h/t_w = 107.5$ | 152.06 | 77.91 | 1.952 | insegura, +95.2 % |
+
+Al salir de §G2.1(a) se pagan las dos cosas a la vez: $\phi_v$ baja a 0.90 y $C_{v1}$ cae a
+0.569 por la Ec. G2-4, con $k_v = 5.34$ de alma sin atiesadores transversales (§G2.1(b)(1)). La
+servilleta del corte no se degrada suave — **se cae por un escalón**, y por eso su condición de
+validez es la que hay que verificar primero, no la última.
+
+<Note type="info" title="Sobre el h/t_w = 47.6">
+El ejemplo de LTB publica $h/t_w = 45.2$, que es el valor de catálogo: la norma define $h$ como
+la distancia libre entre alas **menos el filete**. El motor lo deriva de las cuatro planchas,
+donde el filete no existe, y obtiene $d - 2t_f = 42.8$ cm. Es el lado conservador, y ambos
+valores quedan holgadamente bajo el límite $2.24\sqrt{E/F_y} = 53.9$.
+</Note>
+
+## El orden
+
+Las cuatro relaciones no son una lista: son una secuencia, y el orden importa porque una decisión
+mata más alternativas que las otras.
+
+- **Primero, la de $r_y$** (servilleta 2), usando $b_f \ge \sqrt{12}\, r_{y,req}$ para tachar
+  familias rápido. Va primero porque es la que elige **familia** y no tamaño: $r_y$ sale del
+  ancho del ala, así que subir de peralte dentro de la misma serie no la arregla. Si esta no
+  cierra, todo lo que calcules después está en la zona donde la del módulo plástico miente.
+- **Después, la de $Z_x$** (servilleta 1), desde $M_u$. Recién ahora, y ya sabiendo que vale.
+- **Luego, la del alma** (servilleta 3), desde $V_u$. Rara vez gobierna en vigas de piso de luz
+  normal; gobierna en luces cortas muy cargadas, que es justo donde uno no la revisa. Para esta
+  sección el corte pasa a mandar bajo unos 2.4 m de luz.
+- **Al final, la de la flecha** (servilleta 4), desde $\delta_{adm}$. Última por orden de
+  cálculo, pero suele ser la que manda — y la única cuyo criterio no está en la norma.
+
+La decisión que no se deshace es **la de $r_y$**. Las otras tres se arreglan subiendo de tamaño
+dentro de la familia; esa te obliga a cambiar de familia, o a poner un arriostre más y volver a
+empezar. Que casi siempre es lo barato: mover $L_b$ cuesta un perfil secundario, y bajar de
+$L_b = 4$ m a $L_b = 1.75$ m en la tabla de arriba vale 13.2 tonf·m de capacidad sobre la misma
+viga.
+
+## Reproducir
+
+```bash
+npm run verify:servilletas -- viga-flexion viga-corte
+```
+
+El script corre los dos caminos sobre cada caso —el despeje de esta nota y la verificación
+completa de `src/lib/acero/`— y **falla si alguno cambia de lado**: si un caso declarado exacto
+se desvía, o si uno declarado inseguro deja de serlo. Las tablas de arriba son su salida.
+
+---
+
+*Las ecuaciones, los factores de resistencia y los límites de tabla de esta nota se leyeron en la
+página rasterizada de AISC 360-22[^aisc360] el 6 de agosto de 2026: §F1(a) y Ec. F1-1 en la
+p. 16.1-52; §F2, Ec. F2-1 y §F2.2(a) en la 16.1-53; Ec. F2-5 en la 16.1-54; §G1(a) y Ec. G2-1 en
+la 16.1-75; §G2.1(a), Ecs. G2-2 y G2-4 y su User Note en la 16.1-76; la Tabla B4.1b en las
+16.1-22 y 16.1-23; y el Capítulo L completo en las 16.1-174 y 16.1-175.*
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+    Buildings*, ANSI/AISC 360-22, 1 de agosto de 2022.

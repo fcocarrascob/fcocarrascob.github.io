@@ -47,6 +47,152 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-06 · `acero/predimensionamiento-*` (los tres) · re-auditoría de la capa de lectura rápida · ⚠️ 12 hallazgos
+
+**Commit:** `e1897ed` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (las 13 filas de las tres tablas nuevas contrastadas término a término contra sus `Equation`, y las 22 celdas de «Dónde miente» rehechas analíticamente)
+
+**Por qué esta pasada.** El cambio no tocó ningún número ni ninguna derivación: agregó a cada post
+una tabla-resumen arriba que **repite** las relaciones que el cuerpo deriva, renombró
+`## Las servilletas` a `## De dónde sale cada una`, y cerró el autocontenido. El riesgo declarado
+era uno solo —que una fila divergiera de su `Equation`, un hallazgo de categoría N que ningún
+script detecta— y **no se materializó**. Lo que el auditor encontró es otra cosa, y es más
+interesante: el formato nuevo trajo dos trampas propias.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | F·L | diagonal L.24-30 contra L.171, 190, 212, 225, 236, 260 | **La trampa del orden.** La tabla se ordenó por aplicación y el cuerpo numera «servilleta N» por exposición: «la servilleta 1» (fluencia) es la fila 3, «la servilleta 3» (el umbral) es la fila 5, y dentro de «El orden» conviven «Primero, $r_{min}$» (fila 1) y «servilleta 1» apuntando a otra cosa | Tabla en orden de derivación con columna `§`, y el orden de aplicación en prosa | ✅ aplicado en `c81928f` — en las tres, y la regla quedó escrita en el spec |
+| 2 | 🟠 | F | columna L.25-30 contra L.181, 206 | **La trampa del recuento.** La tabla tiene 4 filas y el post cuenta 5 servilletas: «fuera de la puerta de la servilleta 5» manda a una fila que no existe, y «la $\lambda_c$ de la servilleta 1» a una fila que solo habla de $\rho$ | Agregar la fila de la puerta B4.1a | ✅ aplicado en `c81928f` — filas numeradas = secciones numeradas, verificado con grep en los tres |
+| 3 | 🟡 | R·C | diagonal §5 | La §5 casi es autosuficiente, pero el display final introduce el 0.658 y el exponente **sin que la Ec. E3-2 esté escrita en ninguna parte del post**: el 39 % que es la tesis no se puede seguir sin venir del post de la columna | Escribir E3-2 antes del display | ✅ aplicado en `c81928f` |
+| 4 | 🟡 | L | diagonal L.131, 229, 251 | Sobreviven tres «§8.6.3» contra la convención del sitio y contra el propio post — resto de un fix declarado aplicado ese mismo día | Quitarlos | ✅ aplicado en `c81928f` · verificado: 0 ocurrencias de `§8.6` en los tres |
+| 5 | 🟡 | F·C | viga, filas 1 y 2 | Dos celdas «Vale si» que no responden su columna: la fila 2 dice «es la condición de la fila anterior», que es circular; la fila 1 pierde la mitad del alcance de §F2 («perfiles I doblemente simétricos flectados en el eje mayor») | Completar ambas | ✅ aplicado en `c81928f` |
+| 6 | 🟡 | F·N | diagonal, fila 2 | Dos φ con número y el tercero simbólico en la misma tabla: $\phi_c$ sin valor donde $\phi_t$ sí lo lleva | «Ec. E3-1, con $\phi_c = 0.90$» | ✅ aplicado en `c81928f` |
+| 7 | 🟡 | C·F | diagonal, fila 1 | La condición se come dos cosas que el cuerpo sí declara: «de planos verticales» y la exención de 8.6.3 (combinaciones de 4.5 con el sismo amplificado por $0.7R_1$). Ambos recortes van al lado conservador | Completar la celda | ✅ aplicado en `c81928f` |
+| 8 | 🟡 | U | los tres | Las tablas dejan caer los subíndices `req`/`min` que el cuerpo usa, y no de forma pareja. El caso que más pesa: «$r = L_c/(1.5\pi\sqrt{E/F_y})$» con signo igual, cuando 8.6.3 impone $r > r_{min}$ | Mismo símbolo que la `Equation` de origen | ✅ aplicado en `c81928f` |
+| 9 | 🟡 | L | los tres, encabezado | «Servilleta» pasó a nombrar dos cosas: el encabezado «En una servilleta» (la tabla entera) y «la servilleta 3» (una relación), que es la acepción que fija `SUBSECTIONS` en `src/lib/acero.ts` | Encabezado que no equivoque | ✅ aplicado en `c81928f` → «Las servilletas, de un vistazo» |
+| 10 | 🔵 | F·C | viga fila 1, columna fila 2 | Las tablas se venden como suficientes («si viniste solo por eso, ya está») pero usan $L_p$ y $\lambda_c$, que solo el cuerpo define | Definirlos en la celda | ✅ aplicado en `c81928f` |
+| 11 | 🔵 | N | diagonal | «$0.658^{2.25} = 0.39$»: el valor es 0.38995, y como **0.38995 < 0.39** la garantía «$\rho \ge 0.39$» es 0.013 % optimista. Mismo tipo de deriva que el hallazgo #1 de la auditoría de la columna | Publicar 0.38995 | ✅ aplicado en `c81928f` |
+| 12 | 🔵 | C | diagonal, fila 2 | «con $\rho \ge 0.39$» leído solo se puede tomar como licencia para meter cualquier $\rho \ge 0.39$; lo correcto es el $\rho$ de la esbeltez real, y 0.39 es el **piso** | «con el $\rho$ de tu esbeltez; 0.38995 es el piso» | ✅ aplicado en `c81928f` |
+
+**Verificado y correcto:**
+- **Las 13 filas × 4 columnas contra sus `Equation`, término a término.** Numeradores, denominadores, coeficientes y exponentes coinciden **exactamente** en las 13. **Ninguna discrepancia de relación** — que era el riesgo por el que se pidió esta auditoría.
+- **Los factores de resistencia, uno por uno y sin cruces**: $\phi_b = 0.90$ solo en la fila de F2-1; $\phi_c = 0.90$ solo en la de E3-1; $\phi_t = 0.90$ en D2-1 y $0.75$ en D2-2; **la fila del corte sin φ**, con el párrafo que lo señala. El umbral de la diagonal es consistente con sus propios φ: $0.90/0.75 = 1.2$ exacto.
+- **Existencia de cada ecuación de la columna «Sale de»** contra `data/normas-indice.json` ✓, y los límites de B4.1a (0.56, 1.49) y B4.1b (0.38, 3.76) coherentes con lo que el post les adjudica.
+- **Toda la aritmética de los tres posts, rehecha**: $L_p = 1.78$, $L_r = 5.16$, 52.43 / 48.13 / 39.22 / 16.77 / 44.57 tonf·m; 86.87 / 152.06 / 77.91 tonf y $C_{v1} = 0.5693$; $b_f/\sqrt{12} = 5.4848$ y el 76.4 %; 229.74 / 79.31 / 205.84 tonf, $F_n$ 2751 y 950, usos 2.897 y 1.116; $1.2 F_y/F_u = 0.96881$, 68.75 / 63.86 / 53.22 tonf, $\rho$ 0.38995 y 0.79025, 26.81 y 54.32 tonf. Todo cuadra.
+- **Cruces con los tres ejemplos enlazados**, recalculados contra archivo y no supuestos: `ejemplo-viga-ltb` ($C_b = 1.299$, 50.9, $h/t_w = 45.2$), `ejemplo-columna-galpon-compresion` (229.7, 79.3, 136, 58) y `ejemplo-diagonal-hss-traccion` (48.4, 53.5, $A_e/A_g = 0.682$).
+- **Renombre**: ningún ancla `#las-servilletas` en el repo, así que el rename no rompió enlaces ✓. **Enlaces**: los 8 que quedan resuelven a archivos existentes y ninguno es draft; los 3 de cortesía retirados no dejaron referencia huérfana ✓.
+- **Formato MDX**: los 26 `<Equation>` llevan `label` y el recuento `$$`/`<Equation>` da 27/27/24 exacto — **ningún display suelto** ✓. Punto decimal, `×` en designaciones, `tú` sin voseo ✓.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- Sin shell no corrió la guardia ni rasterizó. **17/17** tras los fixes, y `npm run build` verde: 178 páginas con 0 `katex-error` en las tres (393 / 399 / 320 expresiones). Las transcripciones normativas quedan como las cerró la auditoría del mismo día, que sí rasterizó.
+- Control extra añadido a mano tras esta pasada: **filas numeradas de la tabla = secciones `###` numeradas** en los tres. Es el chequeo que caza el hallazgo #2 y ahora está escrito en el spec.
+
+**Planilla del canvas:** sin cambio de dictamen (parcial en viga y columna, candidata en diagonal). La tabla nueva **facilita** la eventual planilla: su columna «Vale si» es literalmente la lista de veredictos ✓/✗ que la hoja tendría que emitir.
+
+### 2026-08-06 · `acero/predimensionamiento-diagonal-arriostramiento` · ⚠️ 13 hallazgos
+
+**Commit:** `92c716b` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; reconstruyó las 22 celdas de las dos tablas desde las definiciones de caso y el código de `traccion.ts`/`compresion.ts`, y todas coinciden)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | R | L.171-174, 190-193 | Para reproducir 113.4, 56.7, 26.81 y 54.32 hacen falta $E$ y $\phi_c$, que no aparecen en ninguna parte del post. Los dos hermanos sí declaran $E$ en esa misma línea | Agregarlos a la línea de propiedades | ✅ aplicado en `db3c566` |
+| 2 | 🟡 | C | L.190-193, 207-210 | La compresión es la mitad de la tesis y es el único paso de «El orden» sin relación escrita: $A_{g,req} = P_u/(\phi_c\rho F_y)$ vive en el post de la columna y no se enlaza | Escribirla y enlazarla | ✅ aplicado en `db3c566` (en la `Note` normativa y en «El orden») |
+| 3 | 🟡 | C·N | L.182, 186 | «es el umbral 0.969 **medido**»: los cuatro casos lo **acotan** entre 0.90 y 0.97, no lo miden. Y 0.90 no está «apenas» bajo el umbral, está un 7.1 % bajo. Además `TOL_EXACTA = 0.005` impide que el script resuelva el umbral | «acotado entre 0.90 y 0.97»; «un 7 % por debajo» | ✅ aplicado en `db3c566` |
+| 4 | 🟡 | N | L.3 | «es **exactamente** el $4.71\sqrt{E/F_y}$» — no lo es: $1.5\pi = 4.71239$ contra 4.71 impreso, 0.05 %. La identidad **sí** es exacta contra la otra forma que AISC imprime en la misma línea, «(or $F_y/F_e \le 2.25$)» | Reformular apoyándose en la forma 2.25 | ✅ aplicado en `db3c566` — se reescribió la servilleta 5 entera sobre esa base, que además es un mejor argumento |
+| 5 | 🟡 | L | L.171 | «HSS 100×100×6»: el ejemplo enlazado y el motor la llaman **HSS 4×4×1/4**, con «(≈ □100×100×6)» como aproximación | Usar la designación del ejemplo | ✅ aplicado en `db3c566` |
+| 6 | 🟡 | L·F | L.7, 107, 148, 158-162, 188, 202-208 | El post antepone `§` a las cláusulas de NCh2369; ningún otro post del sitio lo hace (`ejemplo-diagonal-hss-traccion`, `ejemplo-chevron-nch2369`, `ejemplo-gusset-esquina-apernado` escriben «8.6.3»). El `§` está reservado a AISC | Quitarlo de las cláusulas NCh, incluido el `chapter` | ✅ aplicado en `db3c566` |
+| 7 | 🟡 | C | L.160-162 | Dos imprecisiones sobre la exención de 8.6.3: exime de **sus dos exigencias** (no solo del límite de esbeltez), y lo amplificado por $0.7R_1$ es el estado de carga sísmico horizontal **dentro** de las combinaciones de 4.5, no las combinaciones | Reformular | ✅ aplicado en `db3c566` |
+| 8 | 🟡 | C·R | L.31 | «La longitud de la diagonal, y con ella $L_c$» entra en «Tienes». En una X, $L_c$ **no** es dato: depende de 8.6.4, y el ejemplo enlazado mide que esa decisión vale 53.5 contra 25.1 tonf sobre el mismo tubo | Moverlo a «No tienes» | ✅ aplicado en `db3c566` (con la remisión a 8.6.4) |
+| 9 | 🟡 | C | L.216-218 | «la tracción es lo último que se revisa»: en el ejemplo enlazado, con esta misma sección, el estado que gobierna es de tracción (rotura 48.4 contra compresión 53.5). El post ya trae el matiz correcto y la frase de cierre lo borra | «la **fluencia** en tracción es lo último» | ✅ aplicado en `db3c566` (más un párrafo que devuelve el matiz) |
+| 10 | 🔵 | L | L.183, L.3 | «ranurada y **apernada**» mezcla dos detalles: la ranura con gusset pasante es soldada. El caso soldado real del ejemplo da $A_e/A_g = 0.68$, peor que la peor fila de la tabla | Renombrar, y mencionar el 0.68 | ✅ aplicado en `db3c566` (post y `verify-servilletas.mjs`) |
+| 11 | 🔵 | C | L.93 | «subir $A_g$ mueve el cociente en tu contra» es cierto pero el post no lo sostiene: el umbral $1.2F_y/F_u$ no depende de $A_g$ | Dar la razón: $\bar{x}$ crece con la sección y $U = 1-\bar{x}/l$ baja | ✅ aplicado en `db3c566` |
+| 12 | 🔵 | R | L.192, 195-196 | El $\rho = 0.3899$ depende de qué puerta usa el motor: `tensionNominal()` decide con $F_y/F_e \le 2.25$, no con el 4.71. En el techo de NCh las dos discrepan ($113.44 > 113.39$) y el caso queda justo sobre el filo | Decirlo en el post | ✅ aplicado en `db3c566` — con `Note` propia; el 0.04 % de discontinuidad que el redondeo del 4.71 introduce en la curva es ahora contenido del post |
+| 13 | 🔵 | E·L | *fuera del post*: `acero/aisc360-22-capD-traccion.mdx:200` | La nota del Cap. D dice «$L/r \le 300$ (salvo **varillas y colgadores**)», que es la redacción de **360-16** («rods or hangers»). La 22 eliminó «hangers», agregó «as fabricated» y define el cociente como longitud fabricada sobre el **menor** radio de giro | Corregir la nota del Cap. D | ✅ aplicado en `db3c566` (se reescribió el párrafo con la cita literal de D1 y su User Note de la 22) |
+
+**Verificado y correcto:**
+- **Álgebra del umbral**: $0.90F_yA_g < 0.75F_uA_e \Leftrightarrow A_e/A_g > 1.2F_y/F_u$ ✓; $1.2 \times 3520/4360 = 0.96881 \to 0.969$ ✓; «conservar el 97 %» ✓.
+- **Tabla de tracción, las 12 celdas**: servilleta $0.9 \times 3520 \times 21.7 = 68.75$ tonf ✓ en las cuatro filas; rotura $0.75 \times 4360 \times A_e$ → 70.96 / 68.83 / 63.86 / 53.22; motor = mín(fluencia, rotura) ✓; usos 1.000 / 1.000 / 1.076 / 1.292 ✓; +7.6 % y +29.2 % ✓. En 0.97 la rotura da 68.83, un 0.12 % sobre la fluencia — el umbral está donde el álgebra dice.
+- **Tabla de compresión, las 10 celdas**: $1.5\pi\sqrt{E/F_y} = 113.44 \to 113.4$ ✓ y su mitad 56.7 ✓; $\rho = 0.658^{2.25} = 0.389949 \to 0.3899$ ✓; $\phi P_n = 26\,807 \to 26.81$ tonf ✓; a la mitad $\rho = 0.790226 \to 0.7902$ ✓, $54\,325 \to 54.32$ ✓, uso 0.4935 → 0.494 ✓, −50.6 % ✓, «duplica su capacidad» = 2.026 ✓.
+- **La equivalencia $1.5\pi\sqrt{E/F_y} \Leftrightarrow \lambda_c = 1.5 \Leftrightarrow \rho > 0.39$** ✓, y §E3 imprime la puerta como «$L_c/r \le 4.71\sqrt{E/F_y}$ (or $F_y/F_e \le 2.25$)», así que «frontera E3(a)/E3(b)» es la designación correcta.
+- **AISC §D1** citado literal y completo ✓; su User Note con «as fabricated» y «does not apply to rods» ✓. **§D2 y §D3**: «lower value», D2-1 con $\phi_t = 0.90$, D2-2 con $\phi_t = 0.75$, D3-1 con $U$ de la Tabla D3.1, y el piso de $U$ que **no** aplica a secciones cerradas ✓ — la `Note` normativa es exacta.
+- **NCh2369:2025 8.6**: 8.6.1 con su remisión a 12.2 ✓; 8.6.2 con el 30 % ✓; 8.6.3 con $\lambda_{md}$ de la Tabla 9 y $1{,}5\pi\sqrt{E/F_y}$ ✓ — transcripción exacta y sin adjudicarle nada más; la exención cita 4.5 y $0{,}7R_1 \ge 1{,}0$ ✓. Que $\lambda_{md}$ es ancho/espesor y no esbeltez global ✓.
+- **F/E/U/idioma**: frontmatter válido; sin H1; los tres enlaces internos existen y no son draft; punto decimal; `×` en las designaciones; `tú` sin voseo ✓.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- Sin shell no corrió `verify:servilletas` ni rasterizó. Ambas cosas **sí se hicieron**: la guardia da 17/17 sobre las cuatro servilletas de la subsección, y las páginas 16.1-32, -33, -38, -40, -41 de AISC 360-22 y la p. 87 de NCh2369:2025 se rasterizaron con `pypdfium2` y se miraron el 2026-08-06. El post declara esa lectura en su cierre.
+- `npm run build` verde: 178 páginas, y la página de este post trae 244 expresiones KaTeX con 0 `katex-error`.
+
+**Planilla del canvas:** sí · no la tiene · 4 verificaciones reproducibles + 2 que piden dato externo. La cadena es cerrada: incluso la columna «Motor» de las dos tablas es forma cerrada —$\min(0.9F_yA_g,\ 0.75F_uA_nU)$ y $0.9F_nA_g$—, así que la hoja podría reproducir las 22 celdas publicadas. Entrarían como dato: $U$ y $A_n$ (Tabla D3.1 y la conexión), $L_c$ (decisión de proyecto vía 8.6.4), $\lambda_{md}$ (Tabla 9), $A_g$ y $r$ (catálogo) y el material. Es la candidata más fuerte de la subsección.
+
+### 2026-08-06 · `acero/predimensionamiento-columna-comprimida` · ⚠️ 11 hallazgos
+
+**Commit:** `2678770` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; recalculó las tres filas a mano contra `compresion.ts` y `propiedades.ts` y coinciden a la última cifra publicada)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.108-109 | «$0.658^{2.25} = 0.3899$ y $0.877/2.25 = 0.3898$, iguales al **0.03 %**». Sin redondear son 0.3899494 y 0.3897778 → Δ relativa **0.044 %**. El 0.03 % sale de comparar las dos cifras ya redondeadas a 4 decimales: un porcentaje calculado sobre el redondeo, no sobre el dato | Publicar 0.38995 contra 0.38978 y decir 0.04 % | ✅ aplicado en `56cf30f` |
+| 2 | 🟠 | U/L | L.69 contra L.182, 186-187, 194-195 | Colisión de símbolo: §1 define $\lambda_c$ **adimensional** (frontera 1.5) y «Dónde miente» usa $\lambda_x = 136.4$ para $L_c/r$ **dimensional**, sin definirlo. Un lector que venga de §1 lee 136.4 como si fuera $\lambda_c$, que valdría 1.80 | Escribir $(L_c/r)_x$ en tabla y prosa, o declarar la equivalencia | ✅ aplicado en `56cf30f` (notación $(L_c/r)$ + párrafo que da el factor $\pi\sqrt{E/F_y} = 75.63$) |
+| 3 | 🟡 | L | L.113 | «pandeo **flexional**»: el resto del sitio dice «pandeo **por flexión**» (`aisc360-22-capE-compresion`, `ejemplo-columna-galpon-compresion`). «flexional» solo existe acá y como valor del enum `ModoCompresion` del motor | «pandeo por flexión» en prosa | ✅ aplicado en `56cf30f` (la columna «Gobierna» de la tabla también, para no dejar dos registros) |
+| 4 | 🟡 | C/L | L.191-192 | «Todo el error de las otras dos filas viene de mirar **un solo modo**». Para la fila 2 no: $x$ e $y$ son el mismo estado límite (§E3) y el error es de **eje**, no de modo — que es justo lo que dice la `Note` de abajo | «una sola esbeltez: un solo eje en la fila 2, un solo modo en la fila 3» | ✅ aplicado en `56cf30f` |
+| 5 | 🟡 | C | L.3 (`description`) | «el atajo … **pide 190 % más de columna de la que hay**» invierte la dirección: el atajo pide **menos** área de la necesaria. Refuerza la lectura equivocada el paralelo con el post de la viga, donde «pide 11 % más de alma» sí describe un atajo que sobrepide | «declara admisibles 229.74 tonf sobre una columna que aguanta 79.31» | ✅ aplicado en `56cf30f` |
+| 6 | 🟡 | F | L.108-109 | Matemática en línea partida por un salto de línea (`$0.877/2.25 =\n0.3898$`), único caso en todo `src/content/` | Reacomodar la línea | ✅ aplicado en `56cf30f` · verificado: 351 expresiones KaTeX en el HTML, 0 `katex-error` |
+| 7 | 🔵 | R | L.188 | La fila torsional (205.84 tonf) **no se puede rehacer con lo que el post declara**: su $F_{ez}$ necesita $J$, $C_w$, $I_x+I_y$ y $G$, ninguno publicado | Declararlo o enlazar al ejemplo de galpón | ✅ aplicado en `56cf30f` (párrafo explícito + enlace) |
+| 8 | 🔵 | C | `title` contra «El orden» | El título promete «se elige por el radio de giro» y «El orden» cierra con «la decisión que no se deshace es elegir $\rho$». El post sostiene ambas y no las reconcilia | Media frase que reparta el trabajo | ✅ aplicado en `56cf30f` («$\rho$ rompe la circularidad, $r$ elige el perfil») |
+| 9 | 🔵 | F | §5 contra «El orden» | §5 se titula «la puerta que deja aplicar todo lo anterior» y «El orden» la manda al final. Es correcto, pero contrasta con el post de la viga —donde la puerta de §G2.1(a) va primero— y se lee como incoherencia | Una cláusula que explique por qué | ✅ aplicado en `56cf30f` (título y viñeta: va última por fuerza, se mide sobre un perfil concreto) |
+| 10 | 🔵 | L | L.212 | «gastar el rato» — coloquial y poco idiomático en neutro | «invertir el tiempo» | ✅ aplicado en `56cf30f` |
+| 11 | 🔵 | N | L.133 | «$r_x = 11.0$ y $r_y = 6.46$ — el eje fuerte tiene **casi el doble** de radio». 11.0/6.46 = 1.70 | «un 70 % más de radio» | ✅ aplicado en `56cf30f` |
+
+**Verificado y correcto:**
+- **Álgebra adimensional paso a paso.** $F_y/F_e = \lambda_c^2$ ✓; E3-2 y E3-3 se vuelven $\rho = 0.658^{\lambda_c^2}$ y $\rho = 0.877/\lambda_c^2$ ✓; la inversión $(L_c/r)_{max} = \pi\sqrt{E/F_y}\sqrt{\ln\rho/\ln 0.658}$ ✓ (ambos logaritmos negativos, cociente positivo). Chequeo cruzado: con $\rho = 0.3899$ el despeje da 113.45 contra el $4.71\sqrt{E/F_y} = 113.39$ de la tabla — coinciden al 0.05 %, que es el redondeo 4.71 vs 4.7124.
+- **$4.71 = 1.5\pi$** ($1.5\pi = 4.712389$) ✓ y $\lambda_c = 1.5 \Rightarrow F_y/F_e = 2.25$ ✓. Dominio $\rho \ge 0.38995$, escribir 0.39 es el lado conservador ✓; inversión de E3-3 $\lambda_c = \sqrt{0.877/\rho}$ ✓.
+- **Toda la tabla rehecha a mano**: $(L_c/r)_y = 58.05 \to 58.0$ ✓; $(L_c/r)_x = 136.36 \to 136.4$ ✓; $113.39 \to 113.4$ ✓; $F_{ey} = 5974.9$, $F_n = 2750.8 \to 2751$ ✓, $\phi P_n = 229\,744 \to 229.74$ tonf ✓; $F_{ex} = 1082.8$, $F_n = 949.6 \to 950$ ✓, $79\,309 \to 79.31$ ✓; uso 2.8968 → 2.897 ✓ y +189.7 % ✓; $2751/950 = 2.90$ ✓. Fila torsional con $J = 53.548$, $C_w = 553\,014$, $I_x+I_y = 14\,987.5$, $G = 787\,200$: $F_{ez} = 4133.3$, $F_n = 2464.6$, $\phi P_n = 205\,841 \to 205.84$ ✓, uso 1.116 ✓.
+- **Fila 1 «exacta»**: con $L_{cz} = L_{cy}$ el motor no mete el torsional al mínimo (`compresion.ts:166`, `est.Lcz > est.Lcy`), gobierna flexión en $y$ y devuelve el mismo 229.74 ✓. La afirmación «no es una aproximación, es la Ec. E3-2» es correcta.
+- **Coherencia con `ejemplo-columna-galpon-compresion`**: misma W250×73, mismos $A_g$, $r_x$, $r_y$, $F_e = 1083$, $F_n = 950$, $\phi P_n = 79.3$ tonf, misma frontera ✓.
+- **Normativa cruzada** con el motor y la nota de capítulo: $\phi_c = 0.90$ ✓; «$P_n$ es el menor de los tres modos» ✓; User Note de §E3 sobre $L_{cz} > L_{cy}$ ✓ (es la puerta que implementa `compresion.ts:166`); User Note bajo E3-4 sobre las dos desigualdades equivalentes ✓; B4.1a con una sola columna $\lambda_r$ ✓, casos 1 y 5 ✓.
+- **F/E/U/idioma**: frontmatter válido; sin H1; los tres enlaces internos existen y no son draft; punto decimal consistente; `×` en las designaciones; `tú` sin voseo ✓.
+- **Reproducibilidad**: el id `columna-compresion` existe en `SERVILLETAS`, y la anécdota de la fila 1 rechazada por la guardia está respaldada por el comentario de `verify-servilletas.mjs`.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- El auditor no tuvo shell y no pudo rasterizar ni correr la guardia. Ambas cosas **sí se hicieron**: `npm run verify:servilletas` devuelve 11/11 y las tres filas de la tabla son su salida literal; y las páginas 16.1-38, -39, -40, -41 y 16.1-21 se rasterizaron con `pypdfium2` y se miraron el 2026-08-06.
+- **El punto que pidió cerrar —las dos User Notes de §E2— se leyó en la página 16.1-40 rasterizada.** Están en §E2 y dicen exactamente: $L_c/r$ «preferably should not exceed 200» para miembros diseñados a compresión, y la esbeltez del miembro «as fabricated—taken as the fabricated length of the member divided by the least radius of gyration» «preferably should not exceed 300». El post no inventa una tercera y las declara como recomendación ✓.
+- `npm run build` verde: 177 páginas, y la página de este post trae 351 expresiones KaTeX con 0 `katex-error`.
+
+**Planilla del canvas:** parcial · no la tiene · 3 verificaciones demanda–capacidad + 4 relaciones despejadas. Las dos filas de flexión son cadena cerrada con lo que el post declara; la torsional no ($J$, $C_w$, $I_x+I_y$, $G$). Si se genera, `ρ` entra como dato —es la tesis del post— y la fila torsional apunta a la planilla `columna-galpon-compresion`.
+
+### 2026-08-06 · `acero/predimensionamiento-viga-flexion` · ⚠️ 11 hallazgos
+
+**Commit:** `1e9de8e` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell ni rasterizado, así que rehízo las dos tablas analíticamente desde F2-2/F2-3/F2-4 y G2-1/G2-4 en vez de correr `verify:servilletas` — coinciden al centésimo)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | L.232 | «$r_{y,req}$ desde $L_b$, **o su versión visible** $b_f \ge \sqrt{12}\,r_{y,req}$» presenta la cota como equivalente, y solo es **necesaria**. Como $r_y \le b_f/\sqrt{12}$, un $b_f$ que cumple justo la desigualdad entrega un $r_y$ real del orden del 76 % de $r_{y,req}$ —el propio 76 % que el post mide en la W460×74—, o sea ~24 % corto | Decir que **descarta, no dimensiona**: si $b_f < \sqrt{12}\,r_{y,req}$ la familia queda fuera; cumplirla no garantiza nada, y hay que volver al $r_y$ de catálogo | ✅ aplicado en `937acbc` (con `Note` propia en la servilleta 2) |
+| 2 | 🟠 | N | L.30 vs L.149-155 | «El caso» define $w$ como **la carga factorada**; §4 usa el mismo símbolo en $\delta_{max}=5wL^4/(384EI_x)$. La flecha se verifica con carga de servicio: aplicado literal, $I_{x,req}$ sale ~1.4–1.6× de más | Renombrar a $w_{serv}$ en la Ec. de flecha y agregar la carga de servicio a la columna «Tienes» | ✅ aplicado en `937acbc` (ahora $w_u$ y $w_{serv}$, con párrafo que separa resistencia de servicio) |
+| 3 | 🟠 | C | L.203-207 | La fila «4.0 m, con $C_b = 50/44$» da 44.57 tonf·m, pero el ejemplo de LTB —enlazado como «la misma sección»— publica 50.9 para $L_b = 4$ m con $C_b = 1.299$. Ambos correctos, pero son configuraciones distintas (vano completo contra medio vano de 8 m) | Una frase que distinga de qué tramo se toman los cuartos de F1-1 | ✅ aplicado en `937acbc` |
+| 4 | 🟠 | N | L.98-99 | «$b_f/\sqrt{12} = 5.49$ cm». Con $b_f = 19.0$: $19.0/3.4641016 = 5.4848$ → **5.48** | Cambiar a 5.48 cm | ✅ aplicado en `937acbc` |
+| 5 | 🟡 | R | L.216-217 | «$C_{v1}$ cae a 0.569 por la Ec. G2-4» no es reproducible sin $k_v$: el 0.569 supone alma sin atiesadores, $k_v = 5.34$ (§G2.1(b)(1)) | Declarar $k_v$ junto al 0.569 | ✅ aplicado en `937acbc` |
+| 6 | 🟡 | R | L.98, L.193-194, L.211-214 | Los datos de entrada de los números publicados no están en el post: $b_f$, $d$, $t_w$, $t_f$, y $F_y$/$E$ en kgf·cm (el post solo da MPa y todos sus resultados en tonf·m) | Una fila de propiedades declaradas al abrir «Dónde miente» | ✅ aplicado en `937acbc` |
+| 7 | 🟡 | C | L.209 y L.211-214 | «la frontera es de tipo de perfil y no de longitud»: el caso tabulado cruza **las dos** puertas de §G2.1(a) a la vez, así que no aísla el tipo de perfil. Un lector puede concluir que un W laminado con $h/t_w = 107$ sigue dentro | Nombrar las dos hojas de la puerta y decir que el caso pierde ambas | ✅ aplicado en `937acbc` |
+| 8 | 🟡 | F | L.157-158 vs L.263 | El cuerpo dice que el Capítulo L «son **dos páginas**» y el pie cita una sola | Citar el rango | ✅ aplicado en `937acbc` — se rasterizó además 16.1-175 para que la cita sea cierta: es §L4 a §L7 y la página termina a media altura |
+| 9 | 🟡 | F | L.122-124 | Único display sin `Equation` ni label, y es justo el que el pie cita como Ec. G2-2 | Envolverlo en `<Equation>` | ✅ aplicado en `937acbc` (label `§G2.1(a) y Ec. G2-2`) |
+| 10 | 🟡 | F | L.179-180 vs L.232-241 | Dos numeraciones para las mismas cuatro relaciones; el cierre «la decisión que no se deshace es **la 1**» queda ambiguo | Nombrar en vez de numerar en «El orden» | ✅ aplicado en `937acbc` |
+| 11 | 🟡 | L | L.139 | «no es conservador **de gratis**» — coloquialismo | «no sale gratis» | ✅ aplicado en `937acbc` |
+
+**Verificado y correcto:**
+- **Despejes.** Los cuatro son la inversa exacta de la relación citada, con coherencia dimensional.
+- **El álgebra de la cota de $r_y$.** $I_y \approx t_f b_f^3/6$, $A_g = 2b_ft_f + ht_w$ → $r_y^2 = b_f^2/[12(1+ht_w/(2b_ft_f))]$ ✓. Es más fuerte de lo que el post reclama: incluyendo el $ht_w^3/12$ del alma, la cota sigue valiendo siempre que $t_w \le b_f$. Instancia W460×74: $r_y \approx 4.21$ contra 4.19 de catálogo ✓, y 76.4 % ✓.
+- **Tabla de flexión, recalculada entera** (F2-2 con $M_p = 5\,825\,600$ kgf·cm, $0.7F_yS_x = 3\,590\,048$, $L_p = 177.53$ cm, $L_r = 516.4$ cm): 48.13 / 39.22 / 44.57 y, por F2-3/F2-4, 16.77 a 8 m — coinciden al centésimo. Usos y desvíos ✓. El «213 %» de la `description` es el 212.7 redondeado ✓.
+- **Tabla de corte.** 86.87 ✓, 152.06 ✓, $C_{v1} = 0.5693$ ✓, 77.91 ✓, uso 1.952 ✓.
+- **Límites de esbeltez.** $47.56 \to 47.6$ ✓; $2.24\sqrt{E/F_y} = 53.93$ ✓; $3.76\sqrt{\cdot} = 90.5$ y $0.38\sqrt{\cdot} = 9.15$ ✓. La `Note` del $h/t_w$ **no contradice** a `ejemplo-viga-ltb`: el catálogo resta el filete y el motor no, así que 47.6 es cota superior de 45.2 → conservador ✓.
+- **El 11 % del φ**, «13.2 tonf·m» y «devuelve la mitad del error» ✓. **$C_b = 50/44$** por F1-1 sobre la parábola del vano ✓.
+- **«El corte gobierna en luces cortas»**: para esta sección el cruce está en $L = 2.4$ m ✓ — se incorporó al post como dato.
+- **F/E/U.** Frontmatter válido contra el schema; sin H1; enlaces internos existen y no son draft; punto decimal consistente; `×` en las designaciones; español neutro y tuteo, sin voseo.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- El auditor no tuvo rasterizado (`F:` no está montada en esta máquina y no hay `pdftoppm`), así que declaró «no verificable» todas las transcripciones normativas. **Sí se rasterizaron y se miraron** al escribir el post, con `pypdfium2` sobre el PDF en su ubicación vigente: §F1(a) y F1-1 (16.1-52); §F2, F2-1 a F2-4 y §F2.2(a) (16.1-53); F2-5 a F2-8b (16.1-54); §G1(a) y G2-1 (16.1-75); §G2.1(a), G2-2 a G2-5 y su User Note (16.1-76); Tabla B4.1b casos 10-21 (16.1-22 y 16.1-23); Capítulo L completo (16.1-174 y 16.1-175).
+- **La cita de §L2 se re-leyó a propósito**, porque el auditor sospechaba que le faltaba «under appropriate service load combinations». Esa cláusula **no está** en 360-22: §L2 es una sola frase y termina en «…impair the serviceability of the structure». La cita del post queda como está.
+- 🔵 El spec decía «regala 10 % de alma» donde el post dice 11 %. Corregido el spec en `937acbc`.
+
+**Planilla del canvas:** parcial · no la tiene · 4 despejes + 4 verificaciones de condición de validez — con $M_u$, $V_u$, $w_{serv}$, $L$, $L_b$, $\delta_{adm}$, $F_y$ y $E$ la hoja entrega las cuatro cantidades requeridas y los cuatro veredictos ✓/✗ ($L_b \le L_p$, $b/t \le 0.38\sqrt{E/F_y}$, $h/t_w \le 3.76\sqrt{E/F_y}$ y $h/t_w \le 2.24\sqrt{E/F_y}$). **No** puede reproducir la columna «Motor» de «Dónde miente», que exige F2-2/F2-3/F2-4 y G2-4 con $k_v$ — ecuaciones que el post deliberadamente no publica. Si se genera, lo natural es que cubra «Las servilletas» y deje «Dónde miente» apuntando a la planilla `viga-ltb`.
+
 ### Nota de consolidación — tanda «Oficio» (2026-08-05)
 
 Los tres posts de estreno de la sección `Oficio` se auditaron en paralelo, un `auditor` por post, y
@@ -3441,10 +3587,13 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (23)
+### `acero` — acero (AISC 360-22) (26)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 (×2) | ⚠️ | 0 · 13 + 9 aplicados · sin planilla (candidata) |
+| `predimensionamiento-columna-comprimida` | 2026-08-06 (×2) | ⚠️ | 0 · 11 + 4 aplicados · sin planilla (parcial) |
+| `predimensionamiento-viga-flexion` | 2026-08-06 (×2) | ⚠️ | 0 · 12 + 4 aplicados · sin planilla (parcial) |
 | `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |
 | `ejemplo-gusset-simple-apernado` | 2026-07-31 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano · planilla ✅ 23 contrastes, 2 aplicados |
 | `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
