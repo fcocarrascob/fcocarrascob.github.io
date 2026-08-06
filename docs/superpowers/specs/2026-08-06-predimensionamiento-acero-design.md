@@ -54,8 +54,9 @@ Formato fijo, reconocible desde el índice:
 | Sección | Qué hace |
 |---|---|
 | *(apertura sin H2)* | La dirección en que la norma escribe contra la que uno usa al diseñar, con enlace a la nota de capítulo que cuenta el porqué |
+| `## En una servilleta` | **La tabla que es el post.** Una fila por relación, en **orden de aplicación**: qué necesitas · la relación · de dónde sale · qué la habilita. Cierra con «Si viniste solo por eso, ya está» |
 | `## El caso` | Qué elemento, qué datos tienes en la mano, qué te falta todavía |
-| `## Las servilletas` | N relaciones numeradas. Cada una: la ecuación como la norma la escribe (`Equation` con su label), el despeje declarado como álgebra propia, y la condición sin la cual no vale |
+| `## De dónde sale cada una` | N relaciones numeradas. Cada una: la ecuación como la norma la escribe (`Equation` con su label), el despeje declarado como álgebra propia, y la condición sin la cual no vale |
 | `## Lo que la servilleta no ve` | El estado límite que el atajo omite, y por qué se puede posponer |
 | `## Dónde miente` | Tabla *caso · servilleta · motor completo · desvío % · ¿del lado seguro?* |
 | `## El orden` | En qué secuencia se aplican y qué decisión no se deshace |
@@ -63,6 +64,32 @@ Formato fijo, reconocible desde el índice:
 
 La columna que importa en «Dónde miente» es la última: un atajo conservador y uno inseguro son
 animales distintos, y un porcentaje solo no distingue.
+
+### Por qué el resumen va arriba y no abajo
+
+Las notas de capítulo cierran con «Resumen de verificaciones para X» y los ejemplos con «Resumen:
+demanda vs. capacidad». Acá el resumen abre, porque el género es distinto: estos posts se
+**consultan**, no se leen. Un post que promete «servilleta» y entrega 2000 palabras obliga a
+buscar la carga útil, y las relaciones estaban repartidas en cientos de palabras de prosa.
+
+El precio es que la tabla **repite** lo que el cuerpo deriva, o sea que hay dos lugares que
+pueden divergir. Una discrepancia entre una fila y su `Equation` es un hallazgo de categoría N.
+Por eso **toda edición de una relación toca los dos sitios**, y la auditoría de estos posts
+incluye ese contraste explícitamente.
+
+### Autocontenido: qué enlace se queda y cuál no
+
+Ningún post exige leer otro para aplicarse. Pero eso no significa cero enlaces: se distinguen
+tres tipos, y solo uno sobra.
+
+| Tipo | Qué hace | Decisión |
+|---|---|---|
+| **Procedencia** | Dice dónde se verificó el número — el ejemplo cuya planilla lo ancla, la nota de capítulo que explica el fenómeno | **Se queda.** Es la trazabilidad que usa la auditoría |
+| **Contraste** | «Acá esta puerta va última; en el otro post va primero, y por esto» | **Se queda** si aporta entendimiento propio |
+| **Cortesía** | Solo avisa que el post hermano existe | **Se va.** El texto se queda, el enlace no |
+
+Una **dependencia** —un enlace sin el cual el argumento no se sostiene— no es un tipo válido: se
+cierra inlineando lo que haga falta, y el enlace se degrada a procedencia.
 
 ## La validación: `scripts/verify-servilletas.mjs`
 

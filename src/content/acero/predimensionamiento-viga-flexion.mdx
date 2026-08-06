@@ -21,6 +21,20 @@ resultado no pierde nada mientras se respete la condición que la habilita. La
 acá los damos vuelta uno por uno, y —esto es lo que hace útil al atajo— decimos dónde deja de
 valer y de qué lado se cae.
 
+## En una servilleta
+
+| Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|
+| Módulo plástico $Z_x$ | $Z_x = \dfrac{M_u}{\phi_b F_y}$ | Ec. F2-1, con $\phi_b = 0.90$ | sección compacta **y** $L_b \le L_p$ |
+| Radio de giro $r_y$ | $r_y = \dfrac{L_b}{1.76\sqrt{E/F_y}}$ | despeje de la Ec. F2-5 | es la condición de la fila anterior |
+| Área de alma $d\,t_w$ | $d\,t_w = \dfrac{V_u}{0.6 F_y}$ | Ec. G2-1 en la rama §G2.1(a) | laminado **y** $h/t_w \le 2.24\sqrt{E/F_y}$ |
+| Inercia $I_x$ | $I_x = \dfrac{5 w_{serv} L^4}{384\,E\,\delta_{adm}}$ | mecánica, no norma | $\delta_{adm}$ lo fija tu proyecto |
+
+Se aplican en el orden $r_y \to Z_x \to d\,t_w \to I_x$, y la del alma no lleva ningún factor de
+resistencia: eso es lo único contraintuitivo de las cuatro.
+
+Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
+
 ## El caso
 
 Una viga de piso simplemente apoyada, con carga distribuida. Lo que tienes y lo que no:
@@ -40,7 +54,7 @@ combinación.
 Que no tengas $C_b$ importa más de lo que parece, y vuelve al final. Al predimensionar el único
 valor defendible es $C_b = 1.0$, que es el conservador de la Ec. F1-1.
 
-## Las servilletas
+## De dónde sale cada una
 
 ### 1. El módulo plástico que necesitas
 

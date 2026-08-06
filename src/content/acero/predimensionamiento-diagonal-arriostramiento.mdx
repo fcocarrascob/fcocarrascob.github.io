@@ -15,10 +15,25 @@ y nada más. Y es el que más veces se predimensiona en el orden equivocado. Uno
 traccionada —para eso está, para tomar el corte sísmico— dimensiona por tracción, y descubre
 después que el perfil lo fijó otra cosa.
 
-Dos cosas, en realidad, y ninguna es la fluencia. La [viga](/acero/predimensionamiento-viga-flexion)
-y la [columna](/acero/predimensionamiento-columna-comprimida) despejan ecuaciones de una sola
+Dos cosas, en realidad, y ninguna es la fluencia. Una viga o una columna se despejan de una sola
 norma; acá el techo lo pone una norma distinta de la que da la resistencia, y encontrar dónde está
 escrito es la mitad del trabajo.
+
+## En una servilleta
+
+| Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|
+| Radio de giro $r$ | $r = \dfrac{L_c}{1.5\pi\sqrt{E/F_y}}$ | NCh2369:2025, 8.6.3 | diagonal sismorresistente que trabaja en compresión |
+| Área por compresión | $A_g = \dfrac{P_u}{\phi_c\, \rho\, F_y}$, con $\rho \ge 0.39$ | Ec. E3-1 y la fila anterior | el $\rho \ge 0.39$ te lo garantiza esa esbeltez |
+| Área por fluencia | $A_g = \dfrac{T_u}{0.90\,F_y}$ | Ec. D2-1 | — |
+| Área neta efectiva | $A_n U = \dfrac{T_u}{0.75\,F_u}$ | Ecs. D2-2 y D3-1 | $U$ sale de la Tabla D3.1 |
+| Cuál de las dos manda | gobierna la fluencia si $\dfrac{A_e}{A_g} > 1.2\,\dfrac{F_y}{F_u}$ | álgebra propia | — |
+
+Las filas están en orden de aplicación, y ese orden es la tesis del post: **la esbeltez va
+primero y la tracción al final.** La última fila no es una verificación del miembro sino lo que
+le vas a exigir a la conexión.
+
+Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
 
 ## El caso
 
@@ -36,7 +51,7 @@ no sea dato en una X viene de 8.6.4, que permite considerar fijo el punto de cru
 dirección perpendicular al plano cuando las diagonales se conectan ahí y una es continua — y esa
 decisión cambia la longitud de pandeo, no un decimal.
 
-## Las servilletas
+## De dónde sale cada una
 
 ### 1. Tracción por fluencia: la que todos escriben
 
@@ -121,10 +136,18 @@ $$
 
 ### 5. Ese $1.5\pi$ ya lo conoces
 
-La forma en que NCh2369 escribe el límite dice algo que el número decimal esconde. En el
-[post de la columna](/acero/predimensionamiento-columna-comprimida) la frontera entre las ramas
-inelástica y elástica del Cap. E resultó ser $\lambda_c = 1.5$ con
-$\lambda_c = (L_c/r)/(\pi\sqrt{E/F_y})$.
+La forma en que NCh2369 escribe el límite dice algo que el número decimal esconde. Define la
+esbeltez adimensional
+
+<Equation label="Álgebra propia">
+$$
+\lambda_c = \frac{L_c/r}{\pi\sqrt{E/F_y}}
+$$
+</Equation>
+
+y sustitúyela en la Ec. E3-4: como $F_e = \pi^2 E/(L_c/r)^2$, sale $F_y/F_e = \lambda_c^2$. La
+frontera entre las ramas inelástica y elástica del Cap. E —que la Ec. E3-2 pone en
+$F_y/F_e \le 2.25$— es entonces $\lambda_c = 1.5$.
 
 **Son el mismo límite**, y la coincidencia es exacta —no aproximada— contra la segunda forma en
 que AISC lo imprime. §E3 escribe la puerta dos veces en la misma línea: «$L_c/r \le
@@ -147,14 +170,19 @@ exigencia de que **la diagonal no sea una columna de pandeo elástico**. Traduci
 garantiza al menos el 39 % de $F_y$ en compresión. Esa es la servilleta que hay que recordar de
 las cinco.
 
+La curva de columna completa en esta forma adimensional —las dos ramas, su inversión y qué
+esbeltez pide cada valor de $\rho$— está desarrollada en el
+[post de la columna](/acero/predimensionamiento-columna-comprimida). Acá alcanza con el valor en
+la frontera.
+
 <Note type="tip" title="Referencia normativa">
 $\phi_t = 0.90$ para fluencia y $\phi_t = 0.75$ para rotura salen de §D2, cada uno junto a su
 ecuación. $A_e = A_n U$ es la Ec. D3-1 y $U$ sale de la Tabla D3.1. §D3 agrega que en secciones
 abiertas $U$ no necesita ser menor que la razón entre el área del elemento conectado y el área
 bruta del miembro — **y que eso no aplica a secciones cerradas como los HSS**, que es justo lo
 que se usa de diagonal. El límite de esbeltez y el $\lambda_{md}$ de la Tabla 9 son de
-NCh2369:2025, 8.6.3. Para la compresión, $\phi_c = 0.90$ de §E1 y $A_{g,req} = P_u/(\phi_c \rho
-F_y)$, que es la [servilleta 4 del post de la columna](/acero/predimensionamiento-columna-comprimida).
+NCh2369:2025, 8.6.3. Para la compresión, $\phi_c = 0.90$ sale de §E1 y $A_{g,req} = P_u/(\phi_c
+\rho F_y)$ es el despeje de la Ec. E3-1, con $\rho = F_n/F_y$ de las Ecs. E3-2 y E3-3.
 </Note>
 
 ## Lo que la servilleta no ve

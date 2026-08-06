@@ -975,6 +975,14 @@ no puede envejecer en silencio.
 
 La guardia cubre las cuatro servilletas con casos a ambos lados de cada frontera: **17/17**.
 
+**Capa de lectura rápida (2026-08-06).** Los tres abren con `## En una servilleta`: la tabla de
+sus relaciones en orden de aplicación, con de dónde sale cada una y qué la habilita. El cuerpo no
+se recortó —está en el rango de la colección, 1841–2235 palabras contra 1744 del ejemplo de LTB y
+2157 de la nota del Cap. F— sino que se **estratificó**: la servilleta arriba, su justificación
+abajo. En la misma pasada quedaron autocontenidos: se cerraron las dos dependencias de K3 hacia
+K2 inlineando la definición de `λ_c`, y se quitaron los tres enlaces de cortesía. Los de
+procedencia se quedan, que son los que dicen dónde se verificó cada número.
+
 **Los hallazgos**, que valen como muestra de lo que la sección encuentra:
 
 - **El corte no lleva φ.** §G1(a) fija `φ_v = 0,90` «except Section G2.1(a)», y esa excepción pone
