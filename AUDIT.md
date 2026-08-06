@@ -47,6 +47,41 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-06 · `acero/predimensionamiento-viga-flexion` · ⚠️ 11 hallazgos
+
+**Commit:** `1e9de8e` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell ni rasterizado, así que rehízo las dos tablas analíticamente desde F2-2/F2-3/F2-4 y G2-1/G2-4 en vez de correr `verify:servilletas` — coinciden al centésimo)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | C | L.232 | «$r_{y,req}$ desde $L_b$, **o su versión visible** $b_f \ge \sqrt{12}\,r_{y,req}$» presenta la cota como equivalente, y solo es **necesaria**. Como $r_y \le b_f/\sqrt{12}$, un $b_f$ que cumple justo la desigualdad entrega un $r_y$ real del orden del 76 % de $r_{y,req}$ —el propio 76 % que el post mide en la W460×74—, o sea ~24 % corto | Decir que **descarta, no dimensiona**: si $b_f < \sqrt{12}\,r_{y,req}$ la familia queda fuera; cumplirla no garantiza nada, y hay que volver al $r_y$ de catálogo | ✅ aplicado en `937acbc` (con `Note` propia en la servilleta 2) |
+| 2 | 🟠 | N | L.30 vs L.149-155 | «El caso» define $w$ como **la carga factorada**; §4 usa el mismo símbolo en $\delta_{max}=5wL^4/(384EI_x)$. La flecha se verifica con carga de servicio: aplicado literal, $I_{x,req}$ sale ~1.4–1.6× de más | Renombrar a $w_{serv}$ en la Ec. de flecha y agregar la carga de servicio a la columna «Tienes» | ✅ aplicado en `937acbc` (ahora $w_u$ y $w_{serv}$, con párrafo que separa resistencia de servicio) |
+| 3 | 🟠 | C | L.203-207 | La fila «4.0 m, con $C_b = 50/44$» da 44.57 tonf·m, pero el ejemplo de LTB —enlazado como «la misma sección»— publica 50.9 para $L_b = 4$ m con $C_b = 1.299$. Ambos correctos, pero son configuraciones distintas (vano completo contra medio vano de 8 m) | Una frase que distinga de qué tramo se toman los cuartos de F1-1 | ✅ aplicado en `937acbc` |
+| 4 | 🟠 | N | L.98-99 | «$b_f/\sqrt{12} = 5.49$ cm». Con $b_f = 19.0$: $19.0/3.4641016 = 5.4848$ → **5.48** | Cambiar a 5.48 cm | ✅ aplicado en `937acbc` |
+| 5 | 🟡 | R | L.216-217 | «$C_{v1}$ cae a 0.569 por la Ec. G2-4» no es reproducible sin $k_v$: el 0.569 supone alma sin atiesadores, $k_v = 5.34$ (§G2.1(b)(1)) | Declarar $k_v$ junto al 0.569 | ✅ aplicado en `937acbc` |
+| 6 | 🟡 | R | L.98, L.193-194, L.211-214 | Los datos de entrada de los números publicados no están en el post: $b_f$, $d$, $t_w$, $t_f$, y $F_y$/$E$ en kgf·cm (el post solo da MPa y todos sus resultados en tonf·m) | Una fila de propiedades declaradas al abrir «Dónde miente» | ✅ aplicado en `937acbc` |
+| 7 | 🟡 | C | L.209 y L.211-214 | «la frontera es de tipo de perfil y no de longitud»: el caso tabulado cruza **las dos** puertas de §G2.1(a) a la vez, así que no aísla el tipo de perfil. Un lector puede concluir que un W laminado con $h/t_w = 107$ sigue dentro | Nombrar las dos hojas de la puerta y decir que el caso pierde ambas | ✅ aplicado en `937acbc` |
+| 8 | 🟡 | F | L.157-158 vs L.263 | El cuerpo dice que el Capítulo L «son **dos páginas**» y el pie cita una sola | Citar el rango | ✅ aplicado en `937acbc` — se rasterizó además 16.1-175 para que la cita sea cierta: es §L4 a §L7 y la página termina a media altura |
+| 9 | 🟡 | F | L.122-124 | Único display sin `Equation` ni label, y es justo el que el pie cita como Ec. G2-2 | Envolverlo en `<Equation>` | ✅ aplicado en `937acbc` (label `§G2.1(a) y Ec. G2-2`) |
+| 10 | 🟡 | F | L.179-180 vs L.232-241 | Dos numeraciones para las mismas cuatro relaciones; el cierre «la decisión que no se deshace es **la 1**» queda ambiguo | Nombrar en vez de numerar en «El orden» | ✅ aplicado en `937acbc` |
+| 11 | 🟡 | L | L.139 | «no es conservador **de gratis**» — coloquialismo | «no sale gratis» | ✅ aplicado en `937acbc` |
+
+**Verificado y correcto:**
+- **Despejes.** Los cuatro son la inversa exacta de la relación citada, con coherencia dimensional.
+- **El álgebra de la cota de $r_y$.** $I_y \approx t_f b_f^3/6$, $A_g = 2b_ft_f + ht_w$ → $r_y^2 = b_f^2/[12(1+ht_w/(2b_ft_f))]$ ✓. Es más fuerte de lo que el post reclama: incluyendo el $ht_w^3/12$ del alma, la cota sigue valiendo siempre que $t_w \le b_f$. Instancia W460×74: $r_y \approx 4.21$ contra 4.19 de catálogo ✓, y 76.4 % ✓.
+- **Tabla de flexión, recalculada entera** (F2-2 con $M_p = 5\,825\,600$ kgf·cm, $0.7F_yS_x = 3\,590\,048$, $L_p = 177.53$ cm, $L_r = 516.4$ cm): 48.13 / 39.22 / 44.57 y, por F2-3/F2-4, 16.77 a 8 m — coinciden al centésimo. Usos y desvíos ✓. El «213 %» de la `description` es el 212.7 redondeado ✓.
+- **Tabla de corte.** 86.87 ✓, 152.06 ✓, $C_{v1} = 0.5693$ ✓, 77.91 ✓, uso 1.952 ✓.
+- **Límites de esbeltez.** $47.56 \to 47.6$ ✓; $2.24\sqrt{E/F_y} = 53.93$ ✓; $3.76\sqrt{\cdot} = 90.5$ y $0.38\sqrt{\cdot} = 9.15$ ✓. La `Note` del $h/t_w$ **no contradice** a `ejemplo-viga-ltb`: el catálogo resta el filete y el motor no, así que 47.6 es cota superior de 45.2 → conservador ✓.
+- **El 11 % del φ**, «13.2 tonf·m» y «devuelve la mitad del error» ✓. **$C_b = 50/44$** por F1-1 sobre la parábola del vano ✓.
+- **«El corte gobierna en luces cortas»**: para esta sección el cruce está en $L = 2.4$ m ✓ — se incorporó al post como dato.
+- **F/E/U.** Frontmatter válido contra el schema; sin H1; enlaces internos existen y no son draft; punto decimal consistente; `×` en las designaciones; español neutro y tuteo, sin voseo.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- El auditor no tuvo rasterizado (`F:` no está montada en esta máquina y no hay `pdftoppm`), así que declaró «no verificable» todas las transcripciones normativas. **Sí se rasterizaron y se miraron** al escribir el post, con `pypdfium2` sobre el PDF en su ubicación vigente: §F1(a) y F1-1 (16.1-52); §F2, F2-1 a F2-4 y §F2.2(a) (16.1-53); F2-5 a F2-8b (16.1-54); §G1(a) y G2-1 (16.1-75); §G2.1(a), G2-2 a G2-5 y su User Note (16.1-76); Tabla B4.1b casos 10-21 (16.1-22 y 16.1-23); Capítulo L completo (16.1-174 y 16.1-175).
+- **La cita de §L2 se re-leyó a propósito**, porque el auditor sospechaba que le faltaba «under appropriate service load combinations». Esa cláusula **no está** en 360-22: §L2 es una sola frase y termina en «…impair the serviceability of the structure». La cita del post queda como está.
+- 🔵 El spec decía «regala 10 % de alma» donde el post dice 11 %. Corregido el spec en `937acbc`.
+
+**Planilla del canvas:** parcial · no la tiene · 4 despejes + 4 verificaciones de condición de validez — con $M_u$, $V_u$, $w_{serv}$, $L$, $L_b$, $\delta_{adm}$, $F_y$ y $E$ la hoja entrega las cuatro cantidades requeridas y los cuatro veredictos ✓/✗ ($L_b \le L_p$, $b/t \le 0.38\sqrt{E/F_y}$, $h/t_w \le 3.76\sqrt{E/F_y}$ y $h/t_w \le 2.24\sqrt{E/F_y}$). **No** puede reproducir la columna «Motor» de «Dónde miente», que exige F2-2/F2-3/F2-4 y G2-4 con $k_v$ — ecuaciones que el post deliberadamente no publica. Si se genera, lo natural es que cubra «Las servilletas» y deje «Dónde miente» apuntando a la planilla `viga-ltb`.
+
 ### Nota de consolidación — tanda «Oficio» (2026-08-05)
 
 Los tres posts de estreno de la sección `Oficio` se auditaron en paralelo, un `auditor` por post, y
@@ -3441,10 +3476,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (23)
+### `acero` — acero (AISC 360-22) (24)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `predimensionamiento-viga-flexion` | 2026-08-06 | ⚠️ | 0 · 12 aplicados (4🟠 7🟡 1🔵) · sin planilla (parcial) |
 | `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |
 | `ejemplo-gusset-simple-apernado` | 2026-07-31 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano · planilla ✅ 23 contrastes, 2 aplicados |
 | `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
