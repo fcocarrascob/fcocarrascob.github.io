@@ -64,6 +64,7 @@ const TONF_M = 100000; // kgf·cm
 const M = 100; // cm
 
 const A992 = MATERIALES.A992;
+const A500C = MATERIALES.A500_C;
 
 const est = (o) => ({ Lcx: 0, Lcy: 0, Lcz: 0, Lb: 0, Cb: 1, B1: 1, ...o });
 const dem = (o) => ({ Pu: 0, Tu: 0, Mux: 0, Muy: 0, Vu: 0, ...o });
@@ -280,6 +281,94 @@ const columnaCasos = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Servilletas de la diagonal — A_g,req = T_u/(φ_t F_y)   [Ec. D2-1 + §D2]
+//                              r_mín  = L_c/(1,5π√(E/F_y))  [NCh2369 §8.6.3]
+//
+// Dos atajos distintos y dos formas de mentir.
+//
+// El de tracción toma solo la fluencia en área bruta, que es lo que uno mira.
+// El motor además calcula la rotura en área neta efectiva (Ec. D2-2, φ_t = 0,75),
+// y el post publica el umbral A_e/A_g > 1,2 F_y/F_u que decide cuál gobierna.
+// Los casos barren ese umbral por los dos lados.
+//
+// El de esbeltez toma el límite de NCh2369 §8.6.3 al pie de la letra y verifica
+// la consecuencia que el post afirma: en el límite, 1,5π√(E/F_y) es λ_c = 1,5, o
+// sea la frontera E3(a)/E3(b), y la diagonal conserva ρ = F_n/F_y ≈ 0,39.
+//
+// La sección es el HSS de `/acero/ejemplo-diagonal-hss-traccion`.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PHI_T_FLUENCIA = 0.9;
+
+const HSS100X100X6 = {
+  geom: { familia: 'HSS-R', B: 10.16, H: 10.16, t: 0.59 },
+  material: A500C,
+  declaradas: { Ag: 21.7, rx: 3.84, ry: 3.84 },
+};
+
+const TU_SERVILLETA = PHI_T_FLUENCIA * A500C.Fy * HSS100X100X6.declaradas.Ag;
+
+/** A_e/A_g por encima del cual gobierna la fluencia: 1,2·F_y/F_u. Álgebra propia. */
+const UMBRAL_AE_AG = (1.2 * A500C.Fy) / A500C.Fu;
+
+/** Arma un caso de tracción con un A_e/A_g dado. */
+function casoTraccion(nombre, cocienteAeAg, esperado) {
+  const Ag = HSS100X100X6.declaradas.Ag;
+  return {
+    nombre,
+    esperado,
+    cocienteAeAg,
+    entrada: {
+      ...HSS100X100X6,
+      estabilidad: est({}),
+      demandas: dem({ Tu: TU_SERVILLETA }),
+      // U = 1 y todo el ajuste en A_n, para que el cociente sea el del nombre.
+      traccion: { An: cocienteAeAg * Ag, U: 1.0 },
+      estados: ['traccion'],
+    },
+  };
+}
+
+const diagonalTraccionCasos = [
+  casoTraccion('A_e/A_g = 1,00 (soldada a tope, sin retraso ni perforaciones)', 1.0, 'exacta'),
+  casoTraccion('A_e/A_g = 0,97 (justo sobre el umbral 1,2·F_y/F_u)', 0.97, 'exacta'),
+  casoTraccion('A_e/A_g = 0,90 (apenas bajo el umbral)', 0.9, 'insegura'),
+  casoTraccion('A_e/A_g = 0,75 (ranurada y apernada, con retraso de cortante)', 0.75, 'insegura'),
+];
+
+// Esbeltez exactamente en el techo de NCh2369 §8.6.3, y un poco por debajo.
+const LAMBDA_NCH = 1.5 * Math.PI * Math.sqrt(A500C.E / A500C.Fy);
+
+const diagonalCompresionCasos = [
+  {
+    nombre: 'Justo en el techo de §8.6.3: λ = 1,5π√(E/F_y)',
+    esperado: 'exacta',
+    entrada: {
+      ...HSS100X100X6,
+      estabilidad: est({
+        Lcx: LAMBDA_NCH * HSS100X100X6.declaradas.rx,
+        Lcy: LAMBDA_NCH * HSS100X100X6.declaradas.ry,
+      }),
+      demandas: dem({ Pu: 0.9 * 0.39 * A500C.Fy * HSS100X100X6.declaradas.Ag }),
+      estados: ['compresion'],
+    },
+  },
+  {
+    nombre: 'Mitad de ese techo: λ = 0,75π√(E/F_y)',
+    esperado: 'conservadora',
+    entrada: {
+      ...HSS100X100X6,
+      estabilidad: est({
+        Lcx: 0.5 * LAMBDA_NCH * HSS100X100X6.declaradas.rx,
+        Lcy: 0.5 * LAMBDA_NCH * HSS100X100X6.declaradas.ry,
+      }),
+      demandas: dem({ Pu: 0.9 * 0.39 * A500C.Fy * HSS100X100X6.declaradas.Ag }),
+      estados: ['compresion'],
+    },
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SERVILLETAS = [
   {
@@ -315,6 +404,30 @@ const SERVILLETAS = [
     escala: TONF,
     extra: (r) =>
       `λ_y = ${r.compresion.lambdaY.toFixed(1)} · λ_x = ${r.compresion.lambdaX.toFixed(1)} · λ_lím = ${r.compresion.lambdaLim.toFixed(1)} · F_n = ${r.compresion.Fn.toFixed(0)} kgf/cm² · ${r.compresion.gobierna}`,
+  },
+  {
+    id: 'diagonal-traccion',
+    titulo: 'Diagonal en tracción · A_g,req = T_u/(φ_t F_y), solo fluencia',
+    post: 'predimensionamiento-diagonal-arriostramiento',
+    casos: diagonalTraccionCasos,
+    demanda: (c) => c.entrada.demandas.Tu,
+    capacidad: (r) => r.traccion.phiPn,
+    unidad: 'tonf',
+    escala: TONF,
+    extra: (r, c) =>
+      `A_e/A_g = ${c.cocienteAeAg.toFixed(2)} · umbral 1,2·F_y/F_u = ${UMBRAL_AE_AG.toFixed(3)} · gobierna ${r.traccion.gobierna}`,
+  },
+  {
+    id: 'diagonal-esbeltez',
+    titulo: 'Diagonal en compresión · el techo de NCh2369 §8.6.3 es λ_c = 1,5',
+    post: 'predimensionamiento-diagonal-arriostramiento',
+    casos: diagonalCompresionCasos,
+    demanda: (c) => c.entrada.demandas.Pu,
+    capacidad: (r) => r.compresion.phiPn,
+    unidad: 'tonf',
+    escala: TONF,
+    extra: (r) =>
+      `λ = ${r.compresion.lambdaY.toFixed(1)} · λ_lím(4,71) = ${r.compresion.lambdaLim.toFixed(1)} · ρ = F_n/F_y = ${(r.compresion.Fn / A500C.Fy).toFixed(4)}`,
   },
 ];
 
@@ -367,7 +480,7 @@ for (const s of aCorrer) {
     if (!ok) {
       console.log(`   ↑ el post declara «${caso.esperado}» y el motor dice «${real}»`);
     }
-    if (s.extra) console.log(`   ${' '.repeat(46)} ${s.extra(r)}`);
+    if (s.extra) console.log(`   ${' '.repeat(46)} ${s.extra(r, caso)}`);
   }
 }
 
