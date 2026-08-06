@@ -47,6 +47,41 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-06 · `acero/predimensionamiento-diagonal-arriostramiento` · ⚠️ 13 hallazgos
+
+**Commit:** `92c716b` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; reconstruyó las 22 celdas de las dos tablas desde las definiciones de caso y el código de `traccion.ts`/`compresion.ts`, y todas coinciden)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | R | L.171-174, 190-193 | Para reproducir 113.4, 56.7, 26.81 y 54.32 hacen falta $E$ y $\phi_c$, que no aparecen en ninguna parte del post. Los dos hermanos sí declaran $E$ en esa misma línea | Agregarlos a la línea de propiedades | ✅ aplicado en `db3c566` |
+| 2 | 🟡 | C | L.190-193, 207-210 | La compresión es la mitad de la tesis y es el único paso de «El orden» sin relación escrita: $A_{g,req} = P_u/(\phi_c\rho F_y)$ vive en el post de la columna y no se enlaza | Escribirla y enlazarla | ✅ aplicado en `db3c566` (en la `Note` normativa y en «El orden») |
+| 3 | 🟡 | C·N | L.182, 186 | «es el umbral 0.969 **medido**»: los cuatro casos lo **acotan** entre 0.90 y 0.97, no lo miden. Y 0.90 no está «apenas» bajo el umbral, está un 7.1 % bajo. Además `TOL_EXACTA = 0.005` impide que el script resuelva el umbral | «acotado entre 0.90 y 0.97»; «un 7 % por debajo» | ✅ aplicado en `db3c566` |
+| 4 | 🟡 | N | L.3 | «es **exactamente** el $4.71\sqrt{E/F_y}$» — no lo es: $1.5\pi = 4.71239$ contra 4.71 impreso, 0.05 %. La identidad **sí** es exacta contra la otra forma que AISC imprime en la misma línea, «(or $F_y/F_e \le 2.25$)» | Reformular apoyándose en la forma 2.25 | ✅ aplicado en `db3c566` — se reescribió la servilleta 5 entera sobre esa base, que además es un mejor argumento |
+| 5 | 🟡 | L | L.171 | «HSS 100×100×6»: el ejemplo enlazado y el motor la llaman **HSS 4×4×1/4**, con «(≈ □100×100×6)» como aproximación | Usar la designación del ejemplo | ✅ aplicado en `db3c566` |
+| 6 | 🟡 | L·F | L.7, 107, 148, 158-162, 188, 202-208 | El post antepone `§` a las cláusulas de NCh2369; ningún otro post del sitio lo hace (`ejemplo-diagonal-hss-traccion`, `ejemplo-chevron-nch2369`, `ejemplo-gusset-esquina-apernado` escriben «8.6.3»). El `§` está reservado a AISC | Quitarlo de las cláusulas NCh, incluido el `chapter` | ✅ aplicado en `db3c566` |
+| 7 | 🟡 | C | L.160-162 | Dos imprecisiones sobre la exención de 8.6.3: exime de **sus dos exigencias** (no solo del límite de esbeltez), y lo amplificado por $0.7R_1$ es el estado de carga sísmico horizontal **dentro** de las combinaciones de 4.5, no las combinaciones | Reformular | ✅ aplicado en `db3c566` |
+| 8 | 🟡 | C·R | L.31 | «La longitud de la diagonal, y con ella $L_c$» entra en «Tienes». En una X, $L_c$ **no** es dato: depende de 8.6.4, y el ejemplo enlazado mide que esa decisión vale 53.5 contra 25.1 tonf sobre el mismo tubo | Moverlo a «No tienes» | ✅ aplicado en `db3c566` (con la remisión a 8.6.4) |
+| 9 | 🟡 | C | L.216-218 | «la tracción es lo último que se revisa»: en el ejemplo enlazado, con esta misma sección, el estado que gobierna es de tracción (rotura 48.4 contra compresión 53.5). El post ya trae el matiz correcto y la frase de cierre lo borra | «la **fluencia** en tracción es lo último» | ✅ aplicado en `db3c566` (más un párrafo que devuelve el matiz) |
+| 10 | 🔵 | L | L.183, L.3 | «ranurada y **apernada**» mezcla dos detalles: la ranura con gusset pasante es soldada. El caso soldado real del ejemplo da $A_e/A_g = 0.68$, peor que la peor fila de la tabla | Renombrar, y mencionar el 0.68 | ✅ aplicado en `db3c566` (post y `verify-servilletas.mjs`) |
+| 11 | 🔵 | C | L.93 | «subir $A_g$ mueve el cociente en tu contra» es cierto pero el post no lo sostiene: el umbral $1.2F_y/F_u$ no depende de $A_g$ | Dar la razón: $\bar{x}$ crece con la sección y $U = 1-\bar{x}/l$ baja | ✅ aplicado en `db3c566` |
+| 12 | 🔵 | R | L.192, 195-196 | El $\rho = 0.3899$ depende de qué puerta usa el motor: `tensionNominal()` decide con $F_y/F_e \le 2.25$, no con el 4.71. En el techo de NCh las dos discrepan ($113.44 > 113.39$) y el caso queda justo sobre el filo | Decirlo en el post | ✅ aplicado en `db3c566` — con `Note` propia; el 0.04 % de discontinuidad que el redondeo del 4.71 introduce en la curva es ahora contenido del post |
+| 13 | 🔵 | E·L | *fuera del post*: `acero/aisc360-22-capD-traccion.mdx:200` | La nota del Cap. D dice «$L/r \le 300$ (salvo **varillas y colgadores**)», que es la redacción de **360-16** («rods or hangers»). La 22 eliminó «hangers», agregó «as fabricated» y define el cociente como longitud fabricada sobre el **menor** radio de giro | Corregir la nota del Cap. D | ✅ aplicado en `db3c566` (se reescribió el párrafo con la cita literal de D1 y su User Note de la 22) |
+
+**Verificado y correcto:**
+- **Álgebra del umbral**: $0.90F_yA_g < 0.75F_uA_e \Leftrightarrow A_e/A_g > 1.2F_y/F_u$ ✓; $1.2 \times 3520/4360 = 0.96881 \to 0.969$ ✓; «conservar el 97 %» ✓.
+- **Tabla de tracción, las 12 celdas**: servilleta $0.9 \times 3520 \times 21.7 = 68.75$ tonf ✓ en las cuatro filas; rotura $0.75 \times 4360 \times A_e$ → 70.96 / 68.83 / 63.86 / 53.22; motor = mín(fluencia, rotura) ✓; usos 1.000 / 1.000 / 1.076 / 1.292 ✓; +7.6 % y +29.2 % ✓. En 0.97 la rotura da 68.83, un 0.12 % sobre la fluencia — el umbral está donde el álgebra dice.
+- **Tabla de compresión, las 10 celdas**: $1.5\pi\sqrt{E/F_y} = 113.44 \to 113.4$ ✓ y su mitad 56.7 ✓; $\rho = 0.658^{2.25} = 0.389949 \to 0.3899$ ✓; $\phi P_n = 26\,807 \to 26.81$ tonf ✓; a la mitad $\rho = 0.790226 \to 0.7902$ ✓, $54\,325 \to 54.32$ ✓, uso 0.4935 → 0.494 ✓, −50.6 % ✓, «duplica su capacidad» = 2.026 ✓.
+- **La equivalencia $1.5\pi\sqrt{E/F_y} \Leftrightarrow \lambda_c = 1.5 \Leftrightarrow \rho > 0.39$** ✓, y §E3 imprime la puerta como «$L_c/r \le 4.71\sqrt{E/F_y}$ (or $F_y/F_e \le 2.25$)», así que «frontera E3(a)/E3(b)» es la designación correcta.
+- **AISC §D1** citado literal y completo ✓; su User Note con «as fabricated» y «does not apply to rods» ✓. **§D2 y §D3**: «lower value», D2-1 con $\phi_t = 0.90$, D2-2 con $\phi_t = 0.75$, D3-1 con $U$ de la Tabla D3.1, y el piso de $U$ que **no** aplica a secciones cerradas ✓ — la `Note` normativa es exacta.
+- **NCh2369:2025 8.6**: 8.6.1 con su remisión a 12.2 ✓; 8.6.2 con el 30 % ✓; 8.6.3 con $\lambda_{md}$ de la Tabla 9 y $1{,}5\pi\sqrt{E/F_y}$ ✓ — transcripción exacta y sin adjudicarle nada más; la exención cita 4.5 y $0{,}7R_1 \ge 1{,}0$ ✓. Que $\lambda_{md}$ es ancho/espesor y no esbeltez global ✓.
+- **F/E/U/idioma**: frontmatter válido; sin H1; los tres enlaces internos existen y no son draft; punto decimal; `×` en las designaciones; `tú` sin voseo ✓.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- Sin shell no corrió `verify:servilletas` ni rasterizó. Ambas cosas **sí se hicieron**: la guardia da 17/17 sobre las cuatro servilletas de la subsección, y las páginas 16.1-32, -33, -38, -40, -41 de AISC 360-22 y la p. 87 de NCh2369:2025 se rasterizaron con `pypdfium2` y se miraron el 2026-08-06. El post declara esa lectura en su cierre.
+- `npm run build` verde: 178 páginas, y la página de este post trae 244 expresiones KaTeX con 0 `katex-error`.
+
+**Planilla del canvas:** sí · no la tiene · 4 verificaciones reproducibles + 2 que piden dato externo. La cadena es cerrada: incluso la columna «Motor» de las dos tablas es forma cerrada —$\min(0.9F_yA_g,\ 0.75F_uA_nU)$ y $0.9F_nA_g$—, así que la hoja podría reproducir las 22 celdas publicadas. Entrarían como dato: $U$ y $A_n$ (Tabla D3.1 y la conexión), $L_c$ (decisión de proyecto vía 8.6.4), $\lambda_{md}$ (Tabla 9), $A_g$ y $r$ (catálogo) y el material. Es la candidata más fuerte de la subsección.
+
 ### 2026-08-06 · `acero/predimensionamiento-columna-comprimida` · ⚠️ 11 hallazgos
 
 **Commit:** `2678770` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; recalculó las tres filas a mano contra `compresion.ts` y `propiedades.ts` y coinciden a la última cifra publicada)
@@ -3511,10 +3546,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (25)
+### `acero` — acero (AISC 360-22) (26)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 | ⚠️ | 0 · 13 aplicados (1🟠 8🟡 4🔵) · sin planilla (candidata) |
 | `predimensionamiento-columna-comprimida` | 2026-08-06 | ⚠️ | 0 · 11 aplicados (2🟠 4🟡 5🔵) · sin planilla (parcial) |
 | `predimensionamiento-viga-flexion` | 2026-08-06 | ⚠️ | 0 · 12 aplicados (4🟠 7🟡 1🔵) · sin planilla (parcial) |
 | `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |

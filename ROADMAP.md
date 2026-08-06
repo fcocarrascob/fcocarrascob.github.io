@@ -969,11 +969,13 @@ no puede envejecer en silencio.
 
 | # | Post | Estado |
 |---|---|---|
-| K1 | **Viga a flexión** — `Z_x` por momento, `r_y` por `L_b`, `d·t_w` por corte, `I_x` por flecha (Caps. F y G) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) · 8/8 casos en la guardia |
-| K2 | **Columna comprimida** — se elige por el radio de giro, no por el área (Cap. E) | 🔜 Cap. E ya rasterizado: E3-1 (`P_n = F_n A_g`), E3-2, E3-3 y las dos User Notes de §E2 (200 y 300). Falta E3-4 y el `φ_c` de §E1 |
-| K3 | **Diagonal de arriostramiento** — la esbeltez decide antes que la tracción (Caps. D y E + NCh2369 §8.6) | 🔜 sin empezar |
+| K1 | **Viga a flexión** — `Z_x` por momento, `r_y` por `L_b`, `d·t_w` por corte, `I_x` por flecha (Caps. F y G) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) |
+| K2 | **Columna comprimida** — se elige por el radio de giro, no por el área (Cap. E) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) |
+| K3 | **Diagonal de arriostramiento** — la esbeltez decide antes que la tracción (Caps. D y E + NCh2369 8.6) | ✅ publicado 2026-08-06 · auditado (13 hallazgos, 0🔴, todos aplicados) |
 
-**Hallazgos de K1**, que valen como muestra de lo que la sección puede encontrar:
+La guardia cubre las cuatro servilletas con casos a ambos lados de cada frontera: **17/17**.
+
+**Los hallazgos**, que valen como muestra de lo que la sección encuentra:
 
 - **El corte no lleva φ.** §G1(a) fija `φ_v = 0,90` «except Section G2.1(a)», y esa excepción pone
   `φ_v = 1,00` con `C_v1 = 1,0`. En la rama que cubre a casi todo perfil laminado el despeje queda
@@ -981,11 +983,26 @@ no puede envejecer en silencio.
 - **El `L/360` no está en la Specification.** El Capítulo L completo son dos páginas y su §L2 es una
   sola frase sin ningún número. Por la regla de fuentes, `δ_adm` queda como dato del lector.
 - **`F_n` no es `F_cr`.** El Cap. E de 360-22 escribe `P_n = F_n A_g`; `F_cr` es notación de 360-16
-  que sobrevive en el Cap. F. Es el mismo tipo de arrastre entre ediciones que el `F7-12/F7-13`.
+  que sobrevive en el Cap. F. Mismo tipo de arrastre entre ediciones que el `F7-12/F7-13`.
+- **El límite de esbeltez de NCh2369 8.6.3 es la frontera de rama de AISC E3.** La norma chilena lo
+  escribe `1,5π√(E/F_y)` y AISC lo imprime dos veces en la misma línea de §E3(a): como
+  `4,71√(E/F_y)` —que es ese `1,5π` redondeado— y como `F_y/F_e ≤ 2,25`, que es la forma exacta.
+  Significa que **la diagonal no puede ser una columna de pandeo elástico**, y le garantiza al
+  menos el 39 % de `F_y` en compresión (`ρ = 0,658^2,25 = 0,38995`, medido por el motor).
+- **La fluencia en tracción gobierna solo si `A_e/A_g > 1,2·F_y/F_u`.** Para A500 Gr. C eso es
+  **0,969**: hay que conservar el 97 % del área bruta. Conseguir la falla dúctil es un requisito de
+  la conexión, no del miembro — y subir de perfil lo empeora.
+- **Arrastre de edición cazado de paso:** `aisc360-22-capD-traccion.mdx` citaba la User Note de §D1
+  con la redacción de **360-16** («rods or hangers» → «varillas y colgadores»). La 22 eliminó
+  «hangers», agregó «as fabricated» y define el cociente sobre el **menor** radio de giro.
 
-**Deuda:** K1 no tiene planilla del canvas. La auditoría la marcó *parcial* — la hoja puede cubrir
-«Las servilletas» entera, pero no la columna «Motor» de «Dónde miente», que exige F2-2/F2-3/F2-4 y
-G2-4 con `k_v`, ecuaciones que el post deliberadamente no publica.
+**Deuda:** ninguno de los tres tiene planilla del canvas. La auditoría marcó K1 y K2 *parciales* —la
+hoja no puede reproducir la columna «Motor» sin publicar F2-2/F2-3/F2-4 o E4-2— y **K3 como la
+candidata más fuerte**: ahí las 22 celdas de las dos tablas son forma cerrada.
+
+**Libro mayor:** el trabajo llevó `ECUACIONES.md` de 90 a 68 ecuaciones sin revisar. 22 filas leídas
+en página rasterizada el 2026-08-06: F1-1, F2-1 a F2-8b, G2-1 a G2-4, E3-1 a E3-4, E4-1, E4-2,
+D2-1, D2-2 y D3-1.
 
 ## J. Retiro de las herramientas SAP2000 (2026-08-05)
 
