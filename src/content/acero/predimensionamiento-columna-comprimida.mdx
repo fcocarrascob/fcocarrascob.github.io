@@ -1,0 +1,244 @@
+---
+title: "Predimensionamiento — Columna comprimida: se elige por el radio de giro, no por el área"
+description: "Dimensionar una columna con el Cap. E de AISC 360-22 es circular: A_g depende de F_n, que depende de L_c/r, que depende del perfil que todavía no eliges. La circularidad se rompe decidiendo primero qué fracción de F_y vas a conservar. Con la variable adimensional λ_c = (L_c/r)/(π√(E/F_y)) las Ecs. E3-2 y E3-3 se vuelven una sola curva —F_n/F_y = 0.658^(λ_c²) y 0.877/λ_c²— y se invierten en un paso. De paso, el 4.71 de la frontera es 1.5π, y las dos ramas se encuentran en el 39 % de F_y. La trampa: el eje que gobierna es el de mayor L_c/r, no el de menor r — en una W250×73 de galpón con K_x = 2.0 el atajo mirado solo en el eje débil pide 190 % más de columna de la que hay."
+pubDate: 2026-08-06
+tags: ["predimensionamiento", "acero", "compresión", "columnas", "pandeo", "esbeltez", "aisc360", "servilleta"]
+subsection: "predimensionamiento"
+chapter: "Cap. E — Compresión"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+La [viga se despeja de frente](/acero/predimensionamiento-viga-flexion): $M_n = F_y Z_x$ tiene
+una sola incógnita y sale sola. La columna no. $A_{g,req}$ depende de $F_n$, que depende de
+$L_c/r$, que depende de $r$, que es una propiedad del perfil que todavía no eliges. La ecuación
+se muerde la cola, y por eso mucha gente predimensiona columnas iterando a ojo.
+
+La circularidad se rompe en un punto, y no es donde uno espera. No se rompe estimando $r$: se
+rompe decidiendo **qué fracción de $F_y$ estás dispuesto a conservar**. Esa fracción es una
+decisión tuya, no un resultado del cálculo, y una vez fijada todo lo demás sale en cadena. La
+[nota del Cap. E](/acero/aisc360-22-capE-compresion) cuenta el fenómeno; acá se da vuelta.
+
+## El caso
+
+Una columna comprimida, sin momento — el caso puro del Capítulo E.
+
+| Tienes | No tienes |
+|---|---|
+| La carga axial factorada $P_u$ | El perfil, que es lo que estás por elegir |
+| La longitud efectiva $L_c = KL$ **de cada eje**, que sale del análisis | $r_x$, $r_y$, $A_g$ |
+| El acero: $F_y$, $E$ | $F_n$, que necesita la esbeltez que aún no existe |
+
+Que $L_c$ sea distinto por eje es lo normal, no la excepción: un galpón con la columna
+arriostrada por el eje débil a media altura y libre por el eje fuerte tiene $L_{cx}$ varias veces
+mayor que $L_{cy}$. Esa asimetría es el corazón del post.
+
+## Las servilletas
+
+### 1. La curva de columna es una sola, y no tiene unidades
+
+El Cap. E parte de tres ecuaciones que parecen tres cosas distintas:
+
+<Equation label="Ec. E3-1">
+$$
+P_n = F_n A_g
+$$
+</Equation>
+
+<Equation label="Ecs. E3-2 y E3-3">
+$$
+F_n = \left(0.658^{\,F_y/F_e}\right) F_y
+\quad\text{si } \frac{L_c}{r} \le 4.71\sqrt{\frac{E}{F_y}}
+\qquad\qquad
+F_n = 0.877\,F_e
+\quad\text{si no}
+$$
+</Equation>
+
+<Equation label="Ec. E3-4">
+$$
+F_e = \frac{\pi^2 E}{\left(\dfrac{L_c}{r}\right)^{2}}
+$$
+</Equation>
+
+Ahora sustituye la tercera en las otras dos. Define la esbeltez adimensional
+
+<Equation label="Álgebra propia">
+$$
+\lambda_c = \frac{L_c/r}{\pi\sqrt{E/F_y}}
+\qquad\Longrightarrow\qquad
+\frac{F_y}{F_e} = \lambda_c^{\,2}
+$$
+</Equation>
+
+y las dos ramas se convierten en una sola curva sin unidades, donde $\rho = F_n/F_y$ es
+directamente la fracción de $F_y$ que sobrevive:
+
+<Equation label="Álgebra propia">
+$$
+\rho = 0.658^{\,\lambda_c^{2}} \quad (\lambda_c \le 1.5)
+\qquad\qquad
+\rho = \frac{0.877}{\lambda_c^{2}} \quad (\lambda_c > 1.5)
+$$
+</Equation>
+
+**La frontera cae en $\lambda_c = 1.5$ exacto**, porque $4.71 = 1.5\pi$ salvo redondeo
+($1.5\pi = 4.7124$). Ese es el origen del número que la norma imprime, y explica también la
+segunda forma de escribir la misma frontera: $F_y/F_e = \lambda_c^2 = 1.5^2 = 2.25$. La User
+Note bajo la Ec. E3-4 dice justamente que las dos desigualdades dan el mismo resultado.
+
+### 2. La esbeltez que te deja conservar lo que decidiste
+
+Con la curva en esa forma, invertirla es despejar un exponente:
+
+<Equation label="Despeje de E3-2">
+$$
+\left(\frac{L_c}{r}\right)_{max} = \pi\sqrt{\frac{E}{F_y}}\;
+\sqrt{\frac{\ln \rho}{\ln 0.658}}
+$$
+</Equation>
+
+Eliges $\rho$ —cuánto de $F_y$ quieres conservar— y te devuelve la esbeltez máxima que lo
+permite. Es la única ecuación del post que hay que leer dos veces, y la que hace todo el trabajo.
+
+**Qué la habilita.** El despeje sale de la rama inelástica, así que vale mientras
+$\lambda_c \le 1.5$, o sea $\rho \ge 0.39$. Debajo de eso ya estás en la rama elástica y la
+inversión correcta es la de la Ec. E3-3, $\lambda_c = \sqrt{0.877/\rho}$. Que las dos ramas se
+encuentren ahí no es casualidad de la aritmética: $0.658^{2.25} = 0.3899$ y $0.877/2.25 =
+0.3898$, iguales al 0.03 %.
+
+<Note type="tip" title="Referencia normativa">
+$\phi_c = 0.90$ (LRFD) sale de §E1, que además dice algo que la servilleta no puede cumplir:
+$P_n$ es **el menor** valor entre pandeo flexional, torsional y flexo-torsional. Las Ecs. E3-1 a
+E3-4 y su frontera $4.71\sqrt{E/F_y}$ son de §E3, que aplica a miembros **sin elementos
+esbeltos**. $E = 200\,000$ MPa está declarado bajo la Ec. E3-4.
+</Note>
+
+### 3. El radio de giro, y el eje que de verdad manda
+
+<Equation label="Despeje de la definición de esbeltez">
+$$
+r_{req} = \frac{L_c}{(L_c/r)_{max}}
+$$
+</Equation>
+
+Trivial como álgebra, y es donde se pierde la mitad de los predimensionamientos. **Hay un
+$r_{req}$ por eje, y cada uno lleva el $L_c$ de su eje.** El que gobierna no es el eje de menor
+$r$: es el de **mayor $L_c/r$**. Son cosas distintas en cuanto $K$ o el arriostramiento difieren
+entre ejes, que es casi siempre.
+
+Es exactamente lo que mide el [ejemplo de la columna de
+galpón](/acero/ejemplo-columna-galpon-compresion): una W250×73 con $r_x = 11.0$ cm y
+$r_y = 6.46$ cm — el eje fuerte tiene casi el doble de radio — y aun así gobierna el eje fuerte,
+porque su $L_c$ es cuatro veces mayor.
+
+### 4. El área, ya sin circularidad
+
+<Equation label="Despeje de E3-1">
+$$
+A_{g,req} = \frac{P_u}{\phi_c\, \rho\, F_y}
+$$
+</Equation>
+
+Con $\rho$ ya fijado por decisión y no por iteración, esta es una división.
+
+### 5. La puerta que deja aplicar todo lo anterior
+
+Las Ecs. E3-1 a E3-4 son de §E3, «Flexural Buckling of Members **Without Slender Elements**». Si
+algún elemento es esbelto, el que manda es §E7 y $A_g$ se reemplaza por un área efectiva menor.
+La frontera es la Tabla B4.1a, que a diferencia de la B4.1b tiene **una sola columna de límite**,
+$\lambda_r$:
+
+<Equation label="Tabla B4.1a, casos 1 y 5">
+$$
+\text{ala: } \frac{b_f}{2t_f} \le 0.56\sqrt{E/F_y}
+\qquad
+\text{alma: } \frac{h}{t_w} \le 1.49\sqrt{E/F_y}
+$$
+</Equation>
+
+## Lo que la servilleta no ve
+
+- **El pandeo torsional y el flexo-torsional (§E4).** §E1 dice que $P_n$ es el **menor** de los
+  tres modos, y esta servilleta calcula uno. §E4 gobierna sobre todo cuando la longitud no
+  arriostrada a torsión supera la lateral, que es su User Note explícita en §E3.
+- **Los elementos esbeltos (§E7).** Fuera de la puerta de la servilleta 5, $A_g$ deja de ser el
+  área que trabaja.
+- **Qué perfil concreto tiene ese $r$.** $r_{req}$ y $A_{g,req}$ acotan la búsqueda; el catálogo
+  la cierra. Y rara vez el perfil más liviano que cumple $A_{g,req}$ es el mismo que cumple
+  $r_{req}$.
+
+## Dónde miente
+
+Servilleta contra la verificación completa, con el mismo criterio del post de la viga: el uso es
+la demanda que el atajo declara admisible dividida por la capacidad que el motor calcula.
+**1.000 es el atajo exacto; sobre 1.000 es una columna que no pasa.**
+
+Sección W250×73 de acero A992, la del ejemplo de galpón y con sus propiedades declaradas:
+$d = 25.3$, $b_f = 25.4$, $t_f = 1.42$, $t_w = 0.86$ cm; $A_g = 92.8$ cm², $r_x = 11.0$ cm,
+$r_y = 6.46$ cm; $F_y = 3520$ y $E = 2.04\times10^6$ kgf/cm². La frontera de rama está en
+$4.71\sqrt{E/F_y} = 113.4$. En los tres casos la servilleta mira solo el eje débil, con
+$\lambda_y = 58.0$:
+
+| Configuración | Servilleta | Motor | Uso | Gobierna de verdad | Veredicto |
+|---|---|---|---|---|---|
+| $L_{cx} = L_{cy} = L_{cz} = 3.75$ m | 229.74 tonf | 229.74 tonf | 1.000 | flexional-y, $\lambda_y = 58.0$ | exacta |
+| Galpón: $K_x = 2.0$ sobre 7.5 m, arriostrada a 3.75 m | 229.74 | 79.31 | 2.897 | flexional-x, $\lambda_x = 136.4$ | insegura, +189.7 % |
+| $L_{cz} = 2 L_{cy}$ (torsional mayor que lateral) | 229.74 | 205.84 | 1.116 | torsional | insegura, +11.6 % |
+
+La primera fila dice algo importante: cuando el eje débil gobierna de verdad, **la servilleta no
+es una aproximación, es la Ec. E3-2**. No pierde nada. Todo el error de las otras dos filas viene
+de mirar un solo modo, no de haber simplificado la curva.
+
+Y la segunda es la que duele. La columna del galpón tiene $\lambda_x = 136.4$ contra
+$\lambda_y = 58.0$: cruzó la frontera de 113.4 y cayó a la rama elástica, donde $F_n$ baja de
+2751 a 950 kgf/cm². El atajo mirado en el eje equivocado declara admisibles 229.74 tonf sobre una
+columna que aguanta 79.31. **No es un error de precisión: es un factor de 2.9.**
+
+<Note type="warning" title="Por qué el eje débil engaña">
+Uno mira $r_y < r_x$ y concluye que el eje débil es el crítico. Es cierto solo si $L_{cx} =
+L_{cy}$. En cuanto $K_x L_x$ crece —columna de galpón, marco no arriostrado, cualquier cosa con
+$K > 1$ en un eje— el eje fuerte puede gobernar con holgura. La comparación se hace sobre
+$L_c/r$, nunca sobre $r$.
+</Note>
+
+## El orden
+
+- **Primero, elige $\rho$.** Es la decisión que rompe la circularidad, y es política, no cálculo:
+  cuánto de $F_y$ estás dispuesto a pagar en esbeltez. Todo lo demás sale de acá.
+- **Después, $(L_c/r)_{max}$** desde $\rho$, con el despeje de la servilleta 2.
+- **Luego, $r_{req}$ por cada eje**, cada uno con su propio $L_c$. Compara los $L_c/r$, no los
+  $r$. Este paso descarta familias enteras y es donde conviene gastar el rato.
+- **Después, $A_{g,req}$**, que a esta altura es una división.
+- **Al final, la puerta de la Tabla B4.1a**, para confirmar que estabas en §E3 y no en §E7.
+
+La decisión que no se deshace es la primera. Bajar $\rho$ te compra perfiles más livianos y más
+esbeltos; subirlo te compra columnas rechonchas y caras. Y hay un techo que no es tuyo: la User
+Note de §E2 dice que $L_c/r$ **preferentemente no debería exceder 200** en miembros diseñados a
+compresión, y que la esbeltez del miembro *tal como se fabrica* —longitud fabricada sobre el
+menor radio de giro— **preferentemente no debería exceder 300**. Son dos límites distintos, y son
+recomendación, no cláusula.
+
+## Reproducir
+
+```bash
+npm run verify:servilletas -- columna-compresion
+```
+
+El script corre el despeje de esta nota y la verificación completa de `src/lib/acero/` sobre cada
+caso, y **falla si alguno cambia de lado**. Vale contarlo: la primera fila de la tabla estaba
+declarada como «conservadora» cuando se escribió el caso, y la guardia la rechazó — es exacta.
+Esa es exactamente la clase de suposición que el script existe para no dejar pasar.
+
+---
+
+*Las ecuaciones, los factores de resistencia y los límites de tabla de esta nota se leyeron en la
+página rasterizada de AISC 360-22[^aisc360] el 6 de agosto de 2026: §E1 en la p. 16.1-38; la
+Tabla User Note E1.1 en la 16.1-39; §E2 con sus dos User Notes y §E3 con las Ecs. E3-1, E3-2 y
+E3-3 en la 16.1-40; la Ec. E3-4, su User Note y §E4 en la 16.1-41; y la Tabla B4.1a en la
+16.1-21. Las formas adimensionales, la inversión de la Ec. E3-2 y la identidad
+$4.71 = 1.5\pi$ son derivación propia.*
+
+[^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
+    Buildings*, ANSI/AISC 360-22, 1 de agosto de 2022.

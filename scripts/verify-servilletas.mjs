@@ -207,6 +207,79 @@ const corteCasos = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Servilleta de columna — A_g,req = P_u/(φ_c ρ F_y), con ρ = F_n/F_y leído del
+// eje débil.                                    [Ecs. E3-1 a E3-4 + §E1]
+//
+// El atajo que el post publica calcula ρ desde UNA sola esbeltez: la del eje
+// débil, que es la que uno mira. Tomarlo al pie de la letra significa declarar
+// admisible P_u = φ_c · F_n(L_cy/r_y) · A_g, y preguntarle al motor —que mira
+// los dos ejes y además E4— cuánta capacidad hay de verdad.
+//
+// La sección es la W250×73 de `/acero/ejemplo-columna-galpon-compresion`, con
+// las propiedades declaradas de su planilla.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PHI_C = 0.9;
+
+const W250X73 = {
+  geom: { familia: 'I', tipo: 'laminado', d: 25.3, bf: 25.4, tf: 1.42, tw: 0.86 },
+  material: A992,
+  declaradas: { Ag: 92.8, rx: 11.0, ry: 6.46 },
+};
+
+/** F_n de las Ecs. E3-2 y E3-3 a partir de una sola esbeltez. */
+function fnFlexural(lambda, mat) {
+  const Fe = (Math.PI ** 2 * mat.E) / lambda ** 2;
+  const lambdaLim = 4.71 * Math.sqrt(mat.E / mat.Fy);
+  return lambda <= lambdaLim ? 0.658 ** (mat.Fy / Fe) * mat.Fy : 0.877 * Fe;
+}
+
+/** Lo que la servilleta declara admisible mirando solo el eje débil. */
+function puServilleta(Lcy) {
+  const lambdaY = Lcy / W250X73.declaradas.ry;
+  return PHI_C * fnFlexural(lambdaY, A992) * W250X73.declaradas.Ag;
+}
+
+const columnaCasos = [
+  {
+    // Exacta, no conservadora: cuando el eje débil gobierna de verdad, la
+    // servilleta ES la Ec. E3-2 y no pierde nada. Declararla «conservadora»
+    // fue el primer error que cazó esta guardia.
+    nombre: 'Arriostrada igual en los dos ejes (L_cx = L_cy)',
+    esperado: 'exacta',
+    Lcy: 3.75 * M,
+    entrada: {
+      ...W250X73,
+      estabilidad: est({ Lcx: 3.75 * M, Lcy: 3.75 * M, Lcz: 3.75 * M }),
+      demandas: dem({ Pu: puServilleta(3.75 * M) }),
+      estados: ['compresion'],
+    },
+  },
+  {
+    nombre: 'Columna de galpón: K_x = 2,0 sobre 7,5 m, arriostrada a 3,75 m',
+    esperado: 'insegura',
+    Lcy: 3.75 * M,
+    entrada: {
+      ...W250X73,
+      estabilidad: est({ Lcx: 2.0 * 7.5 * M, Lcy: 3.75 * M, Lcz: 3.75 * M }),
+      demandas: dem({ Pu: puServilleta(3.75 * M) }),
+      estados: ['compresion'],
+    },
+  },
+  {
+    nombre: 'Longitud torsional mayor que la lateral (L_cz = 2·L_cy)',
+    esperado: 'insegura',
+    Lcy: 3.75 * M,
+    entrada: {
+      ...W250X73,
+      estabilidad: est({ Lcx: 3.75 * M, Lcy: 3.75 * M, Lcz: 7.5 * M }),
+      demandas: dem({ Pu: puServilleta(3.75 * M) }),
+      estados: ['compresion'],
+    },
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const SERVILLETAS = [
   {
@@ -230,6 +303,18 @@ const SERVILLETAS = [
     unidad: 'tonf',
     escala: TONF,
     extra: (r) => `h/t_w = ${r.corte.lambda.toFixed(1)} · C_v1 = ${r.corte.Cv.toFixed(3)} · φ_v = ${r.corte.phiV.toFixed(2)}`,
+  },
+  {
+    id: 'columna-compresion',
+    titulo: 'Columna comprimida · A_g,req = P_u/(φ_c ρ F_y), con ρ del eje débil',
+    post: 'predimensionamiento-columna-comprimida',
+    casos: columnaCasos,
+    demanda: (c) => c.entrada.demandas.Pu,
+    capacidad: (r) => r.compresion.phiPn,
+    unidad: 'tonf',
+    escala: TONF,
+    extra: (r) =>
+      `λ_y = ${r.compresion.lambdaY.toFixed(1)} · λ_x = ${r.compresion.lambdaX.toFixed(1)} · λ_lím = ${r.compresion.lambdaLim.toFixed(1)} · F_n = ${r.compresion.Fn.toFixed(0)} kgf/cm² · ${r.compresion.gobierna}`,
   },
 ];
 
