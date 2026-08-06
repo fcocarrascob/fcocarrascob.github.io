@@ -102,7 +102,7 @@ Las cuatro servilletas, todas leídas en página rasterizada el 2026-08-06:
 **El hallazgo del post está en la #3.** §G1(a) fija `\phi_v = 0{,}90` *«for all provisions in this
 chapter except Section G2.1(a)»*, y §G2.1(a) fija `\phi_v = 1{,}00` con `C_{v1} = 1{,}0` (Ec. G2-2).
 En la rama que cubre a casi todo perfil laminado, la servilleta del corte **no lleva φ**: aplicarle
-0,90 por costumbre regala 10 % de alma. La User Note de §G2.1(a) delimita el alcance con nombre y
+0,90 por costumbre pide 11 % más de alma que la que la norma exige. La User Note de §G2.1(a) delimita el alcance con nombre y
 apellido — todos los W, S y HP de ASTM A6/A6M vigentes salvo ocho perfiles listados, para
 `F_y = 345` MPa.
 

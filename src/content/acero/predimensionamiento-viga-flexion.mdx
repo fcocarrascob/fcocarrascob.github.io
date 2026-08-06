@@ -27,10 +27,15 @@ Una viga de piso simplemente apoyada, con carga distribuida. Lo que tienes y lo 
 
 | Tienes | No tienes |
 |---|---|
-| La luz $L$ y la carga factorada $w$, y con ellas $M_u$ y $V_u$ | El perfil: es lo que estás por elegir |
-| El esquema de arriostramiento del ala comprimida, o sea $L_b$ | $Z_x$, $r_y$, $d$, $t_w$, $I_x$ |
-| El acero: $F_y$, $F_u$, $E$ | $C_b$, que necesita el diagrama de momentos del tramo |
-| El límite de flecha de tu proyecto | — |
+| La luz $L$ y la carga factorada $w_u$, y con ellas $M_u$ y $V_u$ | El perfil: es lo que estás por elegir |
+| La carga de servicio $w_{serv}$, que es otra combinación | $Z_x$, $r_y$, $d$, $t_w$, $I_x$ |
+| El esquema de arriostramiento del ala comprimida, o sea $L_b$ | $C_b$, que necesita el diagrama de momentos del tramo |
+| El acero: $F_y$, $F_u$, $E$, y el límite de flecha de tu proyecto | — |
+
+Las dos primeras filas son cargas distintas y conviene no confundirlas: las tres primeras
+servilletas son de resistencia y corren con $w_u$; la cuarta es de servicio y corre con
+$w_{serv}$. Usar la factorada en la flecha infla $I_{x,req}$ en el mismo factor de la
+combinación.
 
 Que no tengas $C_b$ importa más de lo que parece, y vuelve al final. Al predimensionar el único
 valor defendible es $C_b = 1.0$, que es el conservador de la Ec. F1-1.
@@ -95,8 +100,16 @@ $$
 
 El techo se alcanzaría solo con alma de área nula, así que es una cota estricta y siempre
 holgada. Pero dice lo que importa: **$r_y$ lo pone el ancho del ala, y el alma solo lo
-empeora.** El peralte no aparece. En la W460×74 del ejemplo de LTB, $b_f/\sqrt{12} = 5.49$ cm
+empeora.** El peralte no aparece. En la W460×74 del ejemplo de LTB, $b_f/\sqrt{12} = 5.48$ cm
 contra un $r_y$ real de 4.19 cm: el 76 % del techo.
+
+<Note type="warning" title="La cota descarta, no dimensiona">
+Es una condición **necesaria**, y leerla al revés es el error fácil. Si $b_f < \sqrt{12}\,
+r_{y,req}$ la familia queda descartada y no hay que seguir mirándola. Pero cumplirla no
+garantiza nada: como el $r_y$ real anda por el 76 % del techo, un perfil que cumple la
+desigualdad justo llega con un cuarto de menos del $r_y$ que necesitas. Sirve para tachar
+familias rápido; el veredicto lo da el $r_y$ de catálogo.
+</Note>
 
 <Note type="tip" title="Referencia normativa">
 $\phi_b = 0.90$ (LRFD) sale de §F1(a); $E = 200\,000$ MPa está declarado bajo la Ec. F2-4. Los
@@ -119,9 +132,11 @@ que casi nadie aplica bien. §G1(a) fija $\phi_v = 0.90$ *«for all provisions i
 except Section G2.1(a)»*, y esa excepción dice, para almas de perfiles I **laminados** con
 $h/t_w \le 2.24\sqrt{E/F_y}$:
 
+<Equation label="§G2.1(a) y Ec. G2-2">
 $$
 \phi_v = 1.00 \ \text{(LRFD)} \qquad\text{y}\qquad C_{v1} = 1.0
 $$
+</Equation>
 
 Con $\phi_v = 1$ y $C_{v1} = 1$, el despeje se queda **sin ningún factor**:
 
@@ -136,7 +151,7 @@ delimita el alcance con nombre y apellido: todos los perfiles W, S y HP de ASTM 
 cumplen ese criterio para $F_y = 345$ MPa, salvo ocho —W44×230, W40×149, W36×135, W33×118,
 W30×90, W24×55, W16×26 y W12×14—. Es decir, casi siempre.
 
-Aplicarle $\phi = 0.90$ por costumbre no es conservador de gratis: pide **11 % más de alma** que
+Aplicarle $\phi = 0.90$ por costumbre no sale gratis: pide **11 % más de alma** que
 la que la norma exige, y en una viga que ya cerró por flexión ese espesor se paga en peso sin
 comprar nada.
 
@@ -144,13 +159,13 @@ comprar nada.
 
 La flecha suele ser lo que dimensiona una viga de piso, y acá la servilleta se sale de AISC 360.
 Para carga uniforme y apoyo simple, la flecha máxima es una identidad de resistencia de
-materiales, no una cláusula:
+materiales, no una cláusula. Y corre con la carga de **servicio**, no con la factorada:
 
 <Equation label="Mecánica, no norma">
 $$
-\delta_{max} = \frac{5 w L^4}{384 E I_x}
+\delta_{max} = \frac{5 w_{serv} L^4}{384 E I_x}
 \qquad\Longrightarrow\qquad
-I_{x,req} = \frac{5 w L^4}{384 E \delta_{adm}}
+I_{x,req} = \frac{5 w_{serv} L^4}{384 E \delta_{adm}}
 $$
 </Equation>
 
@@ -190,8 +205,11 @@ Las dos servilletas con condición de validez, contrastadas contra la verificaci
 motor del sitio. El uso es la demanda que el atajo declara admisible dividida por la capacidad
 que el motor calcula: **1.000 es el atajo exacto, y sobre 1.000 es una sección que no pasa.**
 
-Sección W460×74 de acero A992, la misma del [ejemplo de LTB](/acero/ejemplo-viga-ltb), con
-$L_p = 1.78$ m y $L_r = 5.16$ m. $C_b = 1.0$, que es lo único que sabes al predimensionar:
+Sección W460×74 de acero A992, la misma del [ejemplo de LTB](/acero/ejemplo-viga-ltb) y con sus
+mismas propiedades declaradas: $d = 45.7$, $b_f = 19.0$, $t_f = 1.45$, $t_w = 0.9$ cm;
+$Z_x = 1655$ cm³, $S_x = 1457$ cm³, $r_y = 4.19$ cm; $F_y = 3520$ y $E = 2.04\times10^6$
+kgf/cm². De ahí salen $L_p = 1.78$ m y $L_r = 5.16$ m. $C_b = 1.0$, que es lo único que sabes
+al predimensionar:
 
 | $L_b$ | Servilleta | Motor | Uso | Veredicto |
 |---|---|---|---|---|
@@ -206,16 +224,25 @@ La última fila es la que conviene mirar dos veces: el $C_b$ real de un vano sim
 con carga uniforme devuelve la mitad del error a $L_b = 4$ m, y aun así quedan 17.6 puntos de
 sección que no existe. **El $C_b$ es un descuento sobre el LTB, no un permiso para ignorarlo.**
 
-Y el corte, donde la frontera es de tipo de perfil y no de longitud:
+Ese $C_b = 50/44 = 1.136$ es el de una viga de 4 m arriostrada solo en sus apoyos. En el
+[ejemplo de LTB](/acero/ejemplo-viga-ltb) los mismos 4 m son medio vano de una viga de 8 m, el
+gradiente de momentos es más fuerte y el $C_b$ sube a 1.299 — por eso ahí la capacidad a
+$L_b = 4$ m es 50.9 y acá 44.57. Es la misma sección y la misma ecuación; lo que cambia es de
+qué tramo se toman los cuartos de la Ec. F1-1.
+
+Y el corte, donde la frontera no es de longitud sino la puerta de §G2.1(a), que tiene **dos
+hojas**: perfil laminado **y** $h/t_w \le 2.24\sqrt{E/F_y} = 53.9$. El caso de abajo pierde las
+dos a la vez:
 
 | Sección | Servilleta | Motor | Uso | Veredicto |
 |---|---|---|---|---|
 | W460×74 laminada, $h/t_w = 47.6$, dentro de §G2.1(a) | 86.87 tonf | 86.87 tonf | 1.000 | exacta |
-| Armada 900×250 de alma 8 mm, $h/t_w = 107.5$ | 152.06 | 77.91 | 1.952 | insegura, +95.2 % |
+| Armada 900×250, ala 20 mm y alma 8 mm, $h/t_w = 107.5$ | 152.06 | 77.91 | 1.952 | insegura, +95.2 % |
 
 Al salir de §G2.1(a) se pagan las dos cosas a la vez: $\phi_v$ baja a 0.90 y $C_{v1}$ cae a
-0.569 por la Ec. G2-4. La servilleta del corte no se degrada suave — **se cae por un escalón**, y
-por eso su condición de validez es la que hay que verificar primero, no la última.
+0.569 por la Ec. G2-4, con $k_v = 5.34$ de alma sin atiesadores transversales (§G2.1(b)(1)). La
+servilleta del corte no se degrada suave — **se cae por un escalón**, y por eso su condición de
+validez es la que hay que verificar primero, no la última.
 
 <Note type="info" title="Sobre el h/t_w = 47.6">
 El ejemplo de LTB publica $h/t_w = 45.2$, que es el valor de catálogo: la norma define $h$ como
@@ -229,20 +256,22 @@ valores quedan holgadamente bajo el límite $2.24\sqrt{E/F_y} = 53.9$.
 Las cuatro relaciones no son una lista: son una secuencia, y el orden importa porque una decisión
 mata más alternativas que las otras.
 
-1. **$r_{y,req}$ desde $L_b$**, o su versión visible $b_f \ge \sqrt{12}\, r_{y,req}$. Va primero
-   porque es la que elige **familia** y no tamaño: $r_y$ sale del ancho del ala, así que subir de
-   peralte dentro de la misma serie no la arregla. Si esta no cierra, todo lo que calcules
-   después está en la zona donde la servilleta 1 miente.
-2. **$Z_{x,req}$ desde $M_u$.** Recién ahora, y ya sabiendo que vale.
-3. **$(d\,t_w)_{req}$ desde $V_u$.** Rara vez gobierna en vigas de piso de luz normal; gobierna
-   en luces cortas muy cargadas, que es justo donde uno no la revisa.
-4. **$I_{x,req}$ desde $\delta_{adm}$.** Al final por orden de cálculo, pero suele ser la que
-   manda — y la única cuyo criterio no está en la norma.
+- **Primero, la de $r_y$** (servilleta 2), usando $b_f \ge \sqrt{12}\, r_{y,req}$ para tachar
+  familias rápido. Va primero porque es la que elige **familia** y no tamaño: $r_y$ sale del
+  ancho del ala, así que subir de peralte dentro de la misma serie no la arregla. Si esta no
+  cierra, todo lo que calcules después está en la zona donde la del módulo plástico miente.
+- **Después, la de $Z_x$** (servilleta 1), desde $M_u$. Recién ahora, y ya sabiendo que vale.
+- **Luego, la del alma** (servilleta 3), desde $V_u$. Rara vez gobierna en vigas de piso de luz
+  normal; gobierna en luces cortas muy cargadas, que es justo donde uno no la revisa. Para esta
+  sección el corte pasa a mandar bajo unos 2.4 m de luz.
+- **Al final, la de la flecha** (servilleta 4), desde $\delta_{adm}$. Última por orden de
+  cálculo, pero suele ser la que manda — y la única cuyo criterio no está en la norma.
 
-La decisión que no se deshace es la 1. Las otras tres se arreglan subiendo de tamaño dentro de la
-familia; esa te obliga a cambiar de familia, o a poner un arriostre más y volver a empezar. Que
-casi siempre es lo barato: mover $L_b$ cuesta un perfil secundario, y bajar de $L_b = 4$ m a
-$L_b = 1.75$ m en la tabla de arriba vale 13.2 tonf·m de capacidad sobre la misma viga.
+La decisión que no se deshace es **la de $r_y$**. Las otras tres se arreglan subiendo de tamaño
+dentro de la familia; esa te obliga a cambiar de familia, o a poner un arriostre más y volver a
+empezar. Que casi siempre es lo barato: mover $L_b$ cuesta un perfil secundario, y bajar de
+$L_b = 4$ m a $L_b = 1.75$ m en la tabla de arriba vale 13.2 tonf·m de capacidad sobre la misma
+viga.
 
 ## Reproducir
 
@@ -260,7 +289,7 @@ se desvía, o si uno declarado inseguro deja de serlo. Las tablas de arriba son 
 página rasterizada de AISC 360-22[^aisc360] el 6 de agosto de 2026: §F1(a) y Ec. F1-1 en la
 p. 16.1-52; §F2, Ec. F2-1 y §F2.2(a) en la 16.1-53; Ec. F2-5 en la 16.1-54; §G1(a) y Ec. G2-1 en
 la 16.1-75; §G2.1(a), Ecs. G2-2 y G2-4 y su User Note en la 16.1-76; la Tabla B4.1b en las
-16.1-22 y 16.1-23; y el Capítulo L completo en la 16.1-174.*
+16.1-22 y 16.1-23; y el Capítulo L completo en las 16.1-174 y 16.1-175.*
 
 [^aisc360]: American Institute of Steel Construction, *Specification for Structural Steel
     Buildings*, ANSI/AISC 360-22, 1 de agosto de 2022.
