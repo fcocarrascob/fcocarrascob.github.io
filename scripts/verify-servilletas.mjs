@@ -332,8 +332,8 @@ function casoTraccion(nombre, cocienteAeAg, esperado) {
 const diagonalTraccionCasos = [
   casoTraccion('A_e/A_g = 1,00 (soldada a tope, sin retraso ni perforaciones)', 1.0, 'exacta'),
   casoTraccion('A_e/A_g = 0,97 (justo sobre el umbral 1,2·F_y/F_u)', 0.97, 'exacta'),
-  casoTraccion('A_e/A_g = 0,90 (apenas bajo el umbral)', 0.9, 'insegura'),
-  casoTraccion('A_e/A_g = 0,75 (ranurada y apernada, con retraso de cortante)', 0.75, 'insegura'),
+  casoTraccion('A_e/A_g = 0,90 (un 7 % bajo el umbral)', 0.9, 'insegura'),
+  casoTraccion('A_e/A_g = 0,75 (ranurada y soldada, con retraso de cortante)', 0.75, 'insegura'),
 ];
 
 // Esbeltez exactamente en el techo de NCh2369 §8.6.3, y un poco por debajo.
