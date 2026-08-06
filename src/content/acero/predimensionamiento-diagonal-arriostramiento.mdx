@@ -19,19 +19,19 @@ Dos cosas, en realidad, y ninguna es la fluencia. Una viga o una columna se desp
 norma; acá el techo lo pone una norma distinta de la que da la resistencia, y encontrar dónde está
 escrito es la mitad del trabajo.
 
-## En una servilleta
+## Las servilletas, de un vistazo
 
-| Qué necesitas | Relación | Sale de | Vale si |
-|---|---|---|---|
-| Radio de giro $r$ | $r = \dfrac{L_c}{1.5\pi\sqrt{E/F_y}}$ | NCh2369:2025, 8.6.3 | diagonal sismorresistente que trabaja en compresión |
-| Área por compresión | $A_g = \dfrac{P_u}{\phi_c\, \rho\, F_y}$, con $\rho \ge 0.39$ | Ec. E3-1 y la fila anterior | el $\rho \ge 0.39$ te lo garantiza esa esbeltez |
-| Área por fluencia | $A_g = \dfrac{T_u}{0.90\,F_y}$ | Ec. D2-1 | — |
-| Área neta efectiva | $A_n U = \dfrac{T_u}{0.75\,F_u}$ | Ecs. D2-2 y D3-1 | $U$ sale de la Tabla D3.1 |
-| Cuál de las dos manda | gobierna la fluencia si $\dfrac{A_e}{A_g} > 1.2\,\dfrac{F_y}{F_u}$ | álgebra propia | — |
+| § | Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|---|
+| 1 | Área por fluencia $A_{g,req}$ | $A_{g,req} = \dfrac{T_u}{0.90\,F_y}$ | Ec. D2-1, con $\phi_t = 0.90$ | — |
+| 2 | Área neta efectiva $(A_n U)_{req}$ | $(A_n U)_{req} = \dfrac{T_u}{0.75\,F_u}$ | Ecs. D2-2 y D3-1, con $\phi_t = 0.75$ | $U$ sale de la Tabla D3.1 |
+| 3 | Cuál de las dos manda | gobierna la fluencia si $\dfrac{A_e}{A_g} > 1.2\,\dfrac{F_y}{F_u}$ | álgebra propia | — |
+| 4 | Radio de giro $r_{min}$ | $r_{min} = \dfrac{L_c}{1.5\pi\sqrt{E/F_y}}$ | NCh2369:2025, 8.6.3 | diagonal sismorresistente **de plano vertical** que trabaja en compresión, salvo la exención de 8.6.3 |
+| 5 | Área por compresión $A_{g,req}$ | $A_{g,req} = \dfrac{P_u}{\phi_c\, \rho\, F_y}$ | Ec. E3-1, con $\phi_c = 0.90$ | con el $\rho$ de tu esbeltez real; 0.38995 es el piso que la fila 4 te garantiza |
 
-Las filas están en orden de aplicación, y ese orden es la tesis del post: **la esbeltez va
-primero y la tracción al final.** La última fila no es una verificación del miembro sino lo que
-le vas a exigir a la conexión.
+La columna § dice en qué sección se deriva cada una. **El orden de aplicación es el inverso** —
+$4 \to 5 \to 1 \to 3$— y esa inversión es la tesis del post: la esbeltez va primero y la tracción
+al final. La fila 3 no es una verificación del miembro sino lo que le vas a exigir a la conexión.
 
 Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
 
@@ -103,7 +103,7 @@ del perfil ni de la carga: solo de la razón $F_y/F_u$ del acero.
 Y ahí está la sorpresa. $A_e/A_g$ nunca puede pasar de 1 —el área neta efectiva es como mucho la
 bruta—, así que el margen es estrechísimo. Para un A500 Gr. C, $1.2 \times 3520/4360 = 0.969$:
 hay que conservar el 97 % del área bruta después de perforaciones y retraso de cortante para que
-la falla dúctil sea la que manda. Una diagonal ranurada y apernada rara vez llega.
+la falla dúctil sea la que manda. Una diagonal con conexión de extremo real rara vez llega.
 
 <Note type="warning" title="Lo que esto significa para el diseño">
 La fluencia en área bruta es la falla que avisa; la rotura en área neta es frágil. Que el umbral
@@ -128,7 +128,7 @@ El techo real está en NCh2369:2025 8.6.3, que exige que las diagonales sismorre
 planos verticales que trabajen en compresión tengan razones ancho/espesor menores que el
 $\lambda_{md}$ de su Tabla 9, y que **la esbeltez global sea menor que $1.5\pi\sqrt{E/F_y}$**.
 
-<Equation label="Despeje de NCh2369 §8.6.3">
+<Equation label="Despeje de NCh2369 8.6.3">
 $$
 r_{min} = \frac{L_c}{1.5\pi\sqrt{E/F_y}}
 $$
@@ -155,13 +155,18 @@ que AISC lo imprime. §E3 escribe la puerta dos veces en la misma línea: «$L_c
 \lambda_c^2$ y $1.5^2 = 2.25$ sin redondeo alguno. La primera es esa misma frontera pasada a
 decimal: $1.5\pi = 4.7124$, que AISC trunca a 4.71 y NCh2369 deja en su forma cerrada.
 
+Falta un paso para llegar a capacidad. La rama inelástica es la Ec. E3-2,
+$F_n = \left(0.658^{\,F_y/F_e}\right) F_y$, y con $F_y/F_e = \lambda_c^2$ la fracción de $F_y$ que
+sobrevive queda en función de una sola variable: $\rho = F_n/F_y = 0.658^{\,\lambda_c^2}$. Como es
+decreciente en $\lambda_c$, el techo de esbeltez es un piso de capacidad:
+
 <Equation label="Álgebra propia">
 $$
 \frac{L_c}{r} < 1.5\pi\sqrt{\frac{E}{F_y}}
 \qquad\Longleftrightarrow\qquad
 \lambda_c < 1.5
 \qquad\Longleftrightarrow\qquad
-\rho = \frac{F_n}{F_y} > 0.658^{\,2.25} = 0.39
+\rho = \frac{F_n}{F_y} > 0.658^{\,2.25} = 0.38995
 $$
 </Equation>
 
@@ -226,7 +231,7 @@ que el álgebra de la servilleta 3 predice. Y ojo con la última fila: no es el 
 desfavorable posible. El detalle real del ejemplo enlazado, con su $\bar{x}$ y su largo de
 soldadura, da $A_e/A_g = 0.68$.
 
-**Compresión**, tomando el techo de §8.6.3 al pie de la letra:
+**Compresión**, tomando el techo de 8.6.3 al pie de la letra:
 
 | Esbeltez | Servilleta | Motor | Uso | $\rho = F_n/F_y$ | Veredicto |
 |---|---|---|---|---|---|
@@ -248,7 +253,7 @@ $0.877/2.25 = 0.38978$: 0.04 % de diferencia, y es toda la discontinuidad que el
 
 La segunda fila mide lo que se compra al alejarse del techo: a la mitad de la esbeltez límite el
 $\rho$ sube de 0.39 a 0.79, o sea que la diagonal duplica su capacidad a compresión. Por eso
-diseñar pegado al límite de §8.6.3 es legal y caro a la vez.
+diseñar pegado al límite de 8.6.3 es legal y caro a la vez.
 
 ## El orden
 

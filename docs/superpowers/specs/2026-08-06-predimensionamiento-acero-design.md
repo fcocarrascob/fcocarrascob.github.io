@@ -54,7 +54,7 @@ Formato fijo, reconocible desde el índice:
 | Sección | Qué hace |
 |---|---|
 | *(apertura sin H2)* | La dirección en que la norma escribe contra la que uno usa al diseñar, con enlace a la nota de capítulo que cuenta el porqué |
-| `## En una servilleta` | **La tabla que es el post.** Una fila por relación, en **orden de aplicación**: qué necesitas · la relación · de dónde sale · qué la habilita. Cierra con «Si viniste solo por eso, ya está» |
+| `## Las servilletas, de un vistazo` | **La tabla que es el post.** Una fila por relación, en el **orden en que el cuerpo las deriva**, con una columna `§` que apunta a su sección: § · qué necesitas · la relación · de dónde sale · qué la habilita. El **orden de aplicación** —que suele ser otro— va en la prosa de abajo. Cierra con «Si viniste solo por eso, ya está» |
 | `## El caso` | Qué elemento, qué datos tienes en la mano, qué te falta todavía |
 | `## De dónde sale cada una` | N relaciones numeradas. Cada una: la ecuación como la norma la escribe (`Equation` con su label), el despeje declarado como álgebra propia, y la condición sin la cual no vale |
 | `## Lo que la servilleta no ve` | El estado límite que el atajo omite, y por qué se puede posponer |
@@ -76,6 +76,15 @@ El precio es que la tabla **repite** lo que el cuerpo deriva, o sea que hay dos 
 pueden divergir. Una discrepancia entre una fila y su `Equation` es un hallazgo de categoría N.
 Por eso **toda edición de una relación toca los dos sitios**, y la auditoría de estos posts
 incluye ese contraste explícitamente.
+
+**Dos trampas de este formato, ambas cazadas en la primera auditoría del bloque:**
+
+1. **El orden.** La tabla ordenada por aplicación y el cuerpo numerado por exposición se
+   contradicen en cuanto no coinciden: «la servilleta 1» del cuerpo pasa a ser la fila 3 de la
+   tabla. Por eso la tabla va **en orden de derivación**, con columna `§`, y el orden de
+   aplicación se dice en prosa. Es una regla del formato, no una preferencia.
+2. **El recuento.** Si el post tiene N secciones, la tabla tiene N filas. Una tabla con menos
+   deja punteros del cuerpo apuntando al vacío.
 
 ### Autocontenido: qué enlace se queda y cuál no
 

@@ -20,18 +20,20 @@ rompe decidiendo **qué fracción de $F_y$ estás dispuesto a conservar**. Esa f
 decisión tuya, no un resultado del cálculo, y una vez fijada todo lo demás sale en cadena. La
 [nota del Cap. E](/acero/aisc360-22-capE-compresion) cuenta el fenómeno; acá se da vuelta.
 
-## En una servilleta
+## Las servilletas, de un vistazo
 
-| Qué necesitas | Relación | Sale de | Vale si |
-|---|---|---|---|
-| La fracción $\rho = F_n/F_y$ | la eliges tú | decisión de diseño, no cálculo | $\rho \ge 0.39$ para usar la fila siguiente |
-| Esbeltez máxima | $\left(\dfrac{L_c}{r}\right)_{max} = \pi\sqrt{\dfrac{E}{F_y}}\;\sqrt{\dfrac{\ln \rho}{\ln 0.658}}$ | despeje de la Ec. E3-2 | rama inelástica, o sea $\lambda_c \le 1.5$ |
-| Radio de giro $r$ | $r_{req} = \dfrac{L_c}{(L_c/r)_{max}}$ | definición de esbeltez | **uno por eje**, cada uno con su propio $L_c$ |
-| Área $A_g$ | $A_g = \dfrac{P_u}{\phi_c\, \rho\, F_y}$ | despeje de la Ec. E3-1, con $\phi_c = 0.90$ | sin elementos esbeltos (Tabla B4.1a) |
+| § | Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|---|
+| 1 | La fracción $\rho = F_n/F_y$ | la eliges tú | decisión de diseño, no cálculo | $\rho \ge 0.39$, o sea $\lambda_c = \dfrac{L_c/r}{\pi\sqrt{E/F_y}} \le 1.5$ |
+| 2 | Esbeltez máxima | $\left(\dfrac{L_c}{r}\right)_{max} = \pi\sqrt{\dfrac{E}{F_y}}\;\sqrt{\dfrac{\ln \rho}{\ln 0.658}}$ | despeje de la Ec. E3-2 | rama inelástica, o sea $\lambda_c \le 1.5$ |
+| 3 | Radio de giro $r_{req}$ | $r_{req} = \dfrac{L_c}{(L_c/r)_{max}}$ | definición de esbeltez | **uno por eje**, cada uno con su propio $L_c$ |
+| 4 | Área $A_{g,req}$ | $A_{g,req} = \dfrac{P_u}{\phi_c\, \rho\, F_y}$ | despeje de la Ec. E3-1, con $\phi_c = 0.90$ | sin elementos esbeltos — lo confirma la fila 5 |
+| 5 | La puerta de §E3 | $\dfrac{b_f}{2t_f} \le 0.56\sqrt{\dfrac{E}{F_y}}$ y $\dfrac{h}{t_w} \le 1.49\sqrt{\dfrac{E}{F_y}}$ | Tabla B4.1a, casos 1 y 5 | se mide sobre un perfil concreto, así que se verifica al final |
 
-Ese orden es el que rompe la circularidad, y no es negociable: sin $\rho$ fijado de antemano, las
-otras tres se muerden la cola. Y la comparación entre ejes se hace sobre $L_c/r$, **nunca** sobre
-$r$.
+La columna § dice en qué sección se deriva cada una, y acá coincide con el orden de aplicación.
+Ese orden es el que rompe la circularidad y no es negociable: sin $\rho$ fijado de antemano, las
+tres siguientes se muerden la cola. Y la comparación entre ejes se hace sobre $L_c/r$, **nunca**
+sobre $r$.
 
 Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
 

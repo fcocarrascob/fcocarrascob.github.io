@@ -21,17 +21,19 @@ resultado no pierde nada mientras se respete la condición que la habilita. La
 acá los damos vuelta uno por uno, y —esto es lo que hace útil al atajo— decimos dónde deja de
 valer y de qué lado se cae.
 
-## En una servilleta
+## Las servilletas, de un vistazo
 
-| Qué necesitas | Relación | Sale de | Vale si |
-|---|---|---|---|
-| Módulo plástico $Z_x$ | $Z_x = \dfrac{M_u}{\phi_b F_y}$ | Ec. F2-1, con $\phi_b = 0.90$ | sección compacta **y** $L_b \le L_p$ |
-| Radio de giro $r_y$ | $r_y = \dfrac{L_b}{1.76\sqrt{E/F_y}}$ | despeje de la Ec. F2-5 | es la condición de la fila anterior |
-| Área de alma $d\,t_w$ | $d\,t_w = \dfrac{V_u}{0.6 F_y}$ | Ec. G2-1 en la rama §G2.1(a) | laminado **y** $h/t_w \le 2.24\sqrt{E/F_y}$ |
-| Inercia $I_x$ | $I_x = \dfrac{5 w_{serv} L^4}{384\,E\,\delta_{adm}}$ | mecánica, no norma | $\delta_{adm}$ lo fija tu proyecto |
+| § | Qué necesitas | Relación | Sale de | Vale si |
+|---|---|---|---|---|
+| 1 | Módulo plástico $Z_{x,req}$ | $Z_{x,req} = \dfrac{M_u}{\phi_b F_y}$ | Ec. F2-1, con $\phi_b = 0.90$ | perfil I doblemente simétrico, eje mayor, compacto **y** $L_b \le L_p = 1.76\,r_y\sqrt{E/F_y}$ |
+| 2 | Radio de giro $r_{y,req}$ | $r_{y,req} = \dfrac{L_b}{1.76\sqrt{E/F_y}}$ | despeje de la Ec. F2-5 | alcance de §F2 — y es la fila que hace cierto el $L_b \le L_p$ de la anterior |
+| 3 | Área de alma $(d\,t_w)_{req}$ | $(d\,t_w)_{req} = \dfrac{V_u}{0.6 F_y}$ | Ec. G2-1 en la rama §G2.1(a) | laminado **y** $h/t_w \le 2.24\sqrt{E/F_y}$ |
+| 4 | Inercia $I_{x,req}$ | $I_{x,req} = \dfrac{5 w_{serv} L^4}{384\,E\,\delta_{adm}}$ | mecánica, no norma | $\delta_{adm}$ lo fija tu proyecto |
 
-Se aplican en el orden $r_y \to Z_x \to d\,t_w \to I_x$, y la del alma no lleva ningún factor de
-resistencia: eso es lo único contraintuitivo de las cuatro.
+La columna § dice en qué sección se deriva cada una. **El orden de aplicación es otro**:
+$r_{y,req} \to Z_{x,req} \to (d\,t_w)_{req} \to I_{x,req}$, y el porqué está en «El orden», al
+final. La del alma no lleva ningún factor de resistencia: eso es lo único contraintuitivo de las
+cuatro.
 
 Si viniste solo por eso, ya está. Lo que sigue es de dónde sale cada una y dónde deja de valer.
 
