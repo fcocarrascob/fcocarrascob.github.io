@@ -946,6 +946,47 @@ máquina. Las normas están en
 `material_teorico` en `C:\Proyectos_Python\material_teorico`. Además **PyMuPDF no está instalado**:
 la rasterización de esta tanda se hizo con `pypdfium2` + `PIL`, que sí están.
 
+## K. Subsección «Predimensionamiento» de Acero (estrenada 2026-08-06)
+
+`/acero/predimensionamiento`. Diseño en
+`docs/superpowers/specs/2026-08-06-predimensionamiento-acero-design.md`.
+
+**La idea en una línea:** el Cap. F responde «dada esta sección, cuánto momento aguanta», y al
+elegir el perfil la pregunta va al revés. Despejar la ecuación normativa hacia la variable que uno
+elige no pierde nada mientras se respete la condición que la habilita — y decir dónde deja de valer
+es lo que separa esto de una regla de dedo.
+
+Tres decisiones que acotan la sección, y conviene no reabrirlas sin motivo: **sin barridos**
+(la relación se deriva, no se ajusta), **en forma literal** (sin instanciar `F_y`; el valor está en
+el despeje, no en un coeficiente memorizable) y **el motor solo valida** (mide el desvío del atajo,
+no genera la relación). Fuera de alcance: catálogo de perfiles, herramienta nueva, y réplica en
+Hormigón o Geotecnia hasta que el formato se pruebe.
+
+**La guardia:** `npm run verify:servilletas` corre el despeje y la verificación completa sobre el
+mismo caso. Cada caso **declara** si el atajo es exacto, conservador o inseguro, y el script falla
+si alguno cambia de lado. Las tablas de «Dónde miente» de los posts son su salida, así que el post
+no puede envejecer en silencio.
+
+| # | Post | Estado |
+|---|---|---|
+| K1 | **Viga a flexión** — `Z_x` por momento, `r_y` por `L_b`, `d·t_w` por corte, `I_x` por flecha (Caps. F y G) | ✅ publicado 2026-08-06 · auditado (11 hallazgos, 0🔴, todos aplicados) · 8/8 casos en la guardia |
+| K2 | **Columna comprimida** — se elige por el radio de giro, no por el área (Cap. E) | 🔜 Cap. E ya rasterizado: E3-1 (`P_n = F_n A_g`), E3-2, E3-3 y las dos User Notes de §E2 (200 y 300). Falta E3-4 y el `φ_c` de §E1 |
+| K3 | **Diagonal de arriostramiento** — la esbeltez decide antes que la tracción (Caps. D y E + NCh2369 §8.6) | 🔜 sin empezar |
+
+**Hallazgos de K1**, que valen como muestra de lo que la sección puede encontrar:
+
+- **El corte no lleva φ.** §G1(a) fija `φ_v = 0,90` «except Section G2.1(a)», y esa excepción pone
+  `φ_v = 1,00` con `C_v1 = 1,0`. En la rama que cubre a casi todo perfil laminado el despeje queda
+  sin factor, y aplicarle 0,90 por costumbre pide 11 % más de alma que la que la norma exige.
+- **El `L/360` no está en la Specification.** El Capítulo L completo son dos páginas y su §L2 es una
+  sola frase sin ningún número. Por la regla de fuentes, `δ_adm` queda como dato del lector.
+- **`F_n` no es `F_cr`.** El Cap. E de 360-22 escribe `P_n = F_n A_g`; `F_cr` es notación de 360-16
+  que sobrevive en el Cap. F. Es el mismo tipo de arrastre entre ediciones que el `F7-12/F7-13`.
+
+**Deuda:** K1 no tiene planilla del canvas. La auditoría la marcó *parcial* — la hoja puede cubrir
+«Las servilletas» entera, pero no la columna «Motor» de «Dónde miente», que exige F2-2/F2-3/F2-4 y
+G2-4 con `k_v`, ecuaciones que el post deliberadamente no publica.
+
 ## J. Retiro de las herramientas SAP2000 (2026-08-05)
 
 Se sacaron del sitio **`/herramientas/sap-scripts`** (el constructor de scripts) y

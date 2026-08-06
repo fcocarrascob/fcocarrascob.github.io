@@ -120,12 +120,20 @@ como dato del proyecto del lector.
 ### 2. Columna comprimida — Cap. E
 
 Tesis: el área es lo que uno cree elegir y **el radio de giro es lo que decide**. `A_{g,req}` depende
-de `F_{cr}`, que depende de `L_c/r`, que ya depende del perfil; la única entrada limpia es `r`.
+de `F_n`, que depende de `L_c/r`, que ya depende del perfil; la única entrada limpia es `r`.
+
+**Ojo con el símbolo:** en 360-22 el Cap. E escribe `P_n = F_n A_g` (Ec. E3-1) — `F_n`, no `F_{cr}`.
+`F_{cr}` es la notación de 360-16 y sobrevive en el Cap. F (Ec. F2-4). Confundirlas es exactamente
+el tipo de arrastre entre ediciones que la regla de fuentes existe para atajar.
 
 La relación central es la fracción de `F_y` que sobrevive, escrita como función de una sola variable
-adimensional a partir de E3-2/E3-3. Es derivable, no recordada: «para conservar la mitad de `F_y`
-necesitas `L_c/r \le X`» sale exacto del despeje. El `L_c/r \le 200` de la User Note de §E2 sí es
-texto normativo y se cita como User Note.
+adimensional a partir de E3-2 (`F_n = 0{,}658^{F_y/F_e} F_y`) y E3-3 (`F_n = 0{,}877 F_e`), cuya
+frontera es `L_c/r = 4{,}71\sqrt{E/F_y}`, o equivalentemente `F_y/F_e = 2{,}25`. Es derivable, no
+recordada: «para conservar la mitad de `F_y` necesitas `L_c/r \le X`» sale exacto del despeje.
+
+De la User Note de §E2 salen dos límites, no uno: `L_c/r` **preferentemente ≤ 200** para miembros
+diseñados a compresión, y la esbeltez del miembro *tal como se fabrica* —longitud fabricada sobre el
+menor radio de giro— **preferentemente ≤ 300**. Ambos se citan como User Note, no como cláusula.
 
 *Dónde miente*: el eje que gobierna cuando `K_x \ne K_y`, que `ejemplo-columna-galpon-compresion` ya
 mide.
