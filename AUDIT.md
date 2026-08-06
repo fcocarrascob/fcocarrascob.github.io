@@ -47,6 +47,47 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-06 · `acero/predimensionamiento-*` (los tres) · re-auditoría de la capa de lectura rápida · ⚠️ 12 hallazgos
+
+**Commit:** `e1897ed` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (las 13 filas de las tres tablas nuevas contrastadas término a término contra sus `Equation`, y las 22 celdas de «Dónde miente» rehechas analíticamente)
+
+**Por qué esta pasada.** El cambio no tocó ningún número ni ninguna derivación: agregó a cada post
+una tabla-resumen arriba que **repite** las relaciones que el cuerpo deriva, renombró
+`## Las servilletas` a `## De dónde sale cada una`, y cerró el autocontenido. El riesgo declarado
+era uno solo —que una fila divergiera de su `Equation`, un hallazgo de categoría N que ningún
+script detecta— y **no se materializó**. Lo que el auditor encontró es otra cosa, y es más
+interesante: el formato nuevo trajo dos trampas propias.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | F·L | diagonal L.24-30 contra L.171, 190, 212, 225, 236, 260 | **La trampa del orden.** La tabla se ordenó por aplicación y el cuerpo numera «servilleta N» por exposición: «la servilleta 1» (fluencia) es la fila 3, «la servilleta 3» (el umbral) es la fila 5, y dentro de «El orden» conviven «Primero, $r_{min}$» (fila 1) y «servilleta 1» apuntando a otra cosa | Tabla en orden de derivación con columna `§`, y el orden de aplicación en prosa | ✅ aplicado en `c81928f` — en las tres, y la regla quedó escrita en el spec |
+| 2 | 🟠 | F | columna L.25-30 contra L.181, 206 | **La trampa del recuento.** La tabla tiene 4 filas y el post cuenta 5 servilletas: «fuera de la puerta de la servilleta 5» manda a una fila que no existe, y «la $\lambda_c$ de la servilleta 1» a una fila que solo habla de $\rho$ | Agregar la fila de la puerta B4.1a | ✅ aplicado en `c81928f` — filas numeradas = secciones numeradas, verificado con grep en los tres |
+| 3 | 🟡 | R·C | diagonal §5 | La §5 casi es autosuficiente, pero el display final introduce el 0.658 y el exponente **sin que la Ec. E3-2 esté escrita en ninguna parte del post**: el 39 % que es la tesis no se puede seguir sin venir del post de la columna | Escribir E3-2 antes del display | ✅ aplicado en `c81928f` |
+| 4 | 🟡 | L | diagonal L.131, 229, 251 | Sobreviven tres «§8.6.3» contra la convención del sitio y contra el propio post — resto de un fix declarado aplicado ese mismo día | Quitarlos | ✅ aplicado en `c81928f` · verificado: 0 ocurrencias de `§8.6` en los tres |
+| 5 | 🟡 | F·C | viga, filas 1 y 2 | Dos celdas «Vale si» que no responden su columna: la fila 2 dice «es la condición de la fila anterior», que es circular; la fila 1 pierde la mitad del alcance de §F2 («perfiles I doblemente simétricos flectados en el eje mayor») | Completar ambas | ✅ aplicado en `c81928f` |
+| 6 | 🟡 | F·N | diagonal, fila 2 | Dos φ con número y el tercero simbólico en la misma tabla: $\phi_c$ sin valor donde $\phi_t$ sí lo lleva | «Ec. E3-1, con $\phi_c = 0.90$» | ✅ aplicado en `c81928f` |
+| 7 | 🟡 | C·F | diagonal, fila 1 | La condición se come dos cosas que el cuerpo sí declara: «de planos verticales» y la exención de 8.6.3 (combinaciones de 4.5 con el sismo amplificado por $0.7R_1$). Ambos recortes van al lado conservador | Completar la celda | ✅ aplicado en `c81928f` |
+| 8 | 🟡 | U | los tres | Las tablas dejan caer los subíndices `req`/`min` que el cuerpo usa, y no de forma pareja. El caso que más pesa: «$r = L_c/(1.5\pi\sqrt{E/F_y})$» con signo igual, cuando 8.6.3 impone $r > r_{min}$ | Mismo símbolo que la `Equation` de origen | ✅ aplicado en `c81928f` |
+| 9 | 🟡 | L | los tres, encabezado | «Servilleta» pasó a nombrar dos cosas: el encabezado «En una servilleta» (la tabla entera) y «la servilleta 3» (una relación), que es la acepción que fija `SUBSECTIONS` en `src/lib/acero.ts` | Encabezado que no equivoque | ✅ aplicado en `c81928f` → «Las servilletas, de un vistazo» |
+| 10 | 🔵 | F·C | viga fila 1, columna fila 2 | Las tablas se venden como suficientes («si viniste solo por eso, ya está») pero usan $L_p$ y $\lambda_c$, que solo el cuerpo define | Definirlos en la celda | ✅ aplicado en `c81928f` |
+| 11 | 🔵 | N | diagonal | «$0.658^{2.25} = 0.39$»: el valor es 0.38995, y como **0.38995 < 0.39** la garantía «$\rho \ge 0.39$» es 0.013 % optimista. Mismo tipo de deriva que el hallazgo #1 de la auditoría de la columna | Publicar 0.38995 | ✅ aplicado en `c81928f` |
+| 12 | 🔵 | C | diagonal, fila 2 | «con $\rho \ge 0.39$» leído solo se puede tomar como licencia para meter cualquier $\rho \ge 0.39$; lo correcto es el $\rho$ de la esbeltez real, y 0.39 es el **piso** | «con el $\rho$ de tu esbeltez; 0.38995 es el piso» | ✅ aplicado en `c81928f` |
+
+**Verificado y correcto:**
+- **Las 13 filas × 4 columnas contra sus `Equation`, término a término.** Numeradores, denominadores, coeficientes y exponentes coinciden **exactamente** en las 13. **Ninguna discrepancia de relación** — que era el riesgo por el que se pidió esta auditoría.
+- **Los factores de resistencia, uno por uno y sin cruces**: $\phi_b = 0.90$ solo en la fila de F2-1; $\phi_c = 0.90$ solo en la de E3-1; $\phi_t = 0.90$ en D2-1 y $0.75$ en D2-2; **la fila del corte sin φ**, con el párrafo que lo señala. El umbral de la diagonal es consistente con sus propios φ: $0.90/0.75 = 1.2$ exacto.
+- **Existencia de cada ecuación de la columna «Sale de»** contra `data/normas-indice.json` ✓, y los límites de B4.1a (0.56, 1.49) y B4.1b (0.38, 3.76) coherentes con lo que el post les adjudica.
+- **Toda la aritmética de los tres posts, rehecha**: $L_p = 1.78$, $L_r = 5.16$, 52.43 / 48.13 / 39.22 / 16.77 / 44.57 tonf·m; 86.87 / 152.06 / 77.91 tonf y $C_{v1} = 0.5693$; $b_f/\sqrt{12} = 5.4848$ y el 76.4 %; 229.74 / 79.31 / 205.84 tonf, $F_n$ 2751 y 950, usos 2.897 y 1.116; $1.2 F_y/F_u = 0.96881$, 68.75 / 63.86 / 53.22 tonf, $\rho$ 0.38995 y 0.79025, 26.81 y 54.32 tonf. Todo cuadra.
+- **Cruces con los tres ejemplos enlazados**, recalculados contra archivo y no supuestos: `ejemplo-viga-ltb` ($C_b = 1.299$, 50.9, $h/t_w = 45.2$), `ejemplo-columna-galpon-compresion` (229.7, 79.3, 136, 58) y `ejemplo-diagonal-hss-traccion` (48.4, 53.5, $A_e/A_g = 0.682$).
+- **Renombre**: ningún ancla `#las-servilletas` en el repo, así que el rename no rompió enlaces ✓. **Enlaces**: los 8 que quedan resuelven a archivos existentes y ninguno es draft; los 3 de cortesía retirados no dejaron referencia huérfana ✓.
+- **Formato MDX**: los 26 `<Equation>` llevan `label` y el recuento `$$`/`<Equation>` da 27/27/24 exacto — **ningún display suelto** ✓. Punto decimal, `×` en designaciones, `tú` sin voseo ✓.
+
+**No verificable por el auditor, cerrado desde la orquestación:**
+- Sin shell no corrió la guardia ni rasterizó. **17/17** tras los fixes, y `npm run build` verde: 178 páginas con 0 `katex-error` en las tres (393 / 399 / 320 expresiones). Las transcripciones normativas quedan como las cerró la auditoría del mismo día, que sí rasterizó.
+- Control extra añadido a mano tras esta pasada: **filas numeradas de la tabla = secciones `###` numeradas** en los tres. Es el chequeo que caza el hallazgo #2 y ahora está escrito en el spec.
+
+**Planilla del canvas:** sin cambio de dictamen (parcial en viga y columna, candidata en diagonal). La tabla nueva **facilita** la eventual planilla: su columna «Vale si» es literalmente la lista de veredictos ✓/✗ que la hoja tendría que emitir.
+
 ### 2026-08-06 · `acero/predimensionamiento-diagonal-arriostramiento` · ⚠️ 13 hallazgos
 
 **Commit:** `92c716b` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (el auditor no tuvo shell; reconstruyó las 22 celdas de las dos tablas desde las definiciones de caso y el código de `traccion.ts`/`compresion.ts`, y todas coinciden)
@@ -3550,9 +3591,9 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
-| `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 | ⚠️ | 0 · 13 aplicados (1🟠 8🟡 4🔵) · sin planilla (candidata) |
-| `predimensionamiento-columna-comprimida` | 2026-08-06 | ⚠️ | 0 · 11 aplicados (2🟠 4🟡 5🔵) · sin planilla (parcial) |
-| `predimensionamiento-viga-flexion` | 2026-08-06 | ⚠️ | 0 · 12 aplicados (4🟠 7🟡 1🔵) · sin planilla (parcial) |
+| `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 (×2) | ⚠️ | 0 · 13 + 9 aplicados · sin planilla (candidata) |
+| `predimensionamiento-columna-comprimida` | 2026-08-06 (×2) | ⚠️ | 0 · 11 + 4 aplicados · sin planilla (parcial) |
+| `predimensionamiento-viga-flexion` | 2026-08-06 (×2) | ⚠️ | 0 · 12 + 4 aplicados · sin planilla (parcial) |
 | `ejemplo-gusset-simple-soldado` | 2026-07-31 | ⚠️ | 4 (0🔴 0🟠 · 3🟡 1🔵) · 17 aplicados (1🔴 4🟠 8🟡 4🔵) · planilla ✅ 28 contrastes, 2 aplicados |
 | `ejemplo-gusset-simple-apernado` | 2026-07-31 | ⚠️ | 3 (0🔴 0🟠 · 2🟡 1🔵) · 23 aplicados (4🔴 11🟠 6🟡 2🔵) · re-tocado por el 🔴 del hermano · planilla ✅ 23 contrastes, 2 aplicados |
 | `ejemplo-gusset-esquina-apernado` | 2026-07-31 | ⚠️ | 12 (0🔴 0🟠 · 10🟡 2🔵) · 7 aplicados (2🔴 5🟠) · planilla ✅ 69 contrastes, 2 aplicados (1🟠) |
