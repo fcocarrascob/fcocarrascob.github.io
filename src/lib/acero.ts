@@ -13,6 +13,15 @@ export const SUBSECTIONS = {
     description:
       'Ejemplos trabajados paso a paso: diseño de elementos de acero según AISC 360-22, con la referencia normativa de cada ecuación y la verificación completa demanda–capacidad.',
   },
+  predimensionamiento: {
+    label: 'Predimensionamiento',
+    norm: 'AISC 360-22 · NCh2369:2025',
+    description:
+      'Las ecuaciones de la norma despejadas hacia la variable que uno elige: qué pedirle a un ' +
+      'perfil antes de calcularlo. Una servilleta acá es una ecuación despejada, no una regla de ' +
+      'dedo, y siempre viaja con la condición que la habilita y con la medida de cuánto se ' +
+      'desvía de la verificación completa.',
+  },
   teoria: {
     label: 'Teoría y fenómenos',
     norm: 'Fenómenos y estados límite',
