@@ -82,7 +82,7 @@ interface Coord { x: number; y: number }
 const round1 = (v: number) => Math.round(v * 10) / 10;
 
 // Enlace de cada verificación a su sección en la nota teórica.
-const NOTE_URL = '/blog/placas-base-sap2000';
+const NOTE_URL = '/acero/placas-base-sap2000';
 const THEORY: Record<string, { sec: string; hash: string }> = {
   aplastamiento: { sec: '§2', hash: '2-aplastamiento-del-hormigón--aisc-360-j8' },
   'flexion-compresion': { sec: '§3.1', hash: '31-lado-comprimido-voladizos-m-y-n' },
@@ -357,7 +357,7 @@ export default function PlacaBaseTool() {
         (https://fcocarrascob.github.io/herramientas/placa-base). Verificación LRFD según
         AISC 360-22, Design Guide 1 y ACI 318-25 Cap. 17. La base teórica, las ecuaciones
         (Ecs. 1–21) y los supuestos de cada verificación están documentados en
-        https://fcocarrascob.github.io/blog/placas-base-sap2000 — las referencias §n de la
+        https://fcocarrascob.github.io/acero/placas-base-sap2000 — las referencias §n de la
         tabla de verificaciones apuntan a sus secciones.
       </p>
       <h2 className="mt-4 mb-1 text-sm font-semibold text-ink">Datos de entrada</h2>

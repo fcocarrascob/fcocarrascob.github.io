@@ -36,7 +36,7 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
 ## B. Posts
 
 - [x] **B1. Ejemplo trabajado de placa base** (hecho 2026-07-04):
-  `src/content/blog/placa-base-ejemplo-trabajado.mdx` — el caso por defecto de la
+  `src/content/acero/placa-base-ejemplo-trabajado.mdx` — el caso por defecto de la
   herramienta con Mux = 12 tonf·m (e = 30 cm, excentricidad grande) resuelto a mano con
   la DG1 y con la herramienta. Núcleo: mismo equilibrio con distinto brazo de la
   resultante (37.7 vs 34.2 cm → T +51 % en el elástico; flexión de placa +28 % en la
