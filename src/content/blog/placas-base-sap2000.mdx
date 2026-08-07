@@ -441,17 +441,32 @@ $$
 traccionados:
 
 <Note type="info" title="El exponente 1.5 no siempre es el que corresponde">
-ACI 318 §17.6.2.2.3 permite una segunda forma de $N_b$, con exponente **5/3** en vez de 1,5, para
-anclajes **embebidos con cabeza** cuya profundidad efectiva esté entre 11 y 25 pulgadas —o sea,
-aproximadamente **entre 28 y 64 cm**, que es el rango de un pedestal industrial corriente—. La
-DG1 3.ª ed. §4.3.2.2 la señala como un aumento *"de hasta un 14 %"*, y su propio Ejemplo 4.7-5 la
-usa con $h_{ef} = 12$ in.
+ACI 318-25 **§17.6.2.2.3** da una segunda forma de $N_b$, con exponente **5/3** en vez de 1,5:
 
-La herramienta calcula siempre con $h_{ef}^{1.5}$, así que en ese rango de embebido **es
-conservadora en el breakout**. No se implementó todavía porque la constante que acompaña al
-exponente 5/3 solo se leyó en unidades pulgada-libra, y convertirla a mano es exactamente el tipo
-de paso que produce errores de transcripción difíciles de detectar: hay que tomarla de la edición
-SI de ACI 318.
+$$N_b = 3{,}9\,\lambda_a\sqrt{f'_c}\;h_{ef}^{5/3} \qquad \text{para } 280\ \text{mm} \le h_{ef} \le 635\ \text{mm}$$
+
+El propio §17.6.2.2.1 la anuncia: *"shall be calculated by Eq. (17.6.2.2.1), **except as permitted
+in 17.6.2.2.3**"*. Y el rango cubre justo el embebido de un pedestal industrial corriente.
+
+Tres condiciones que conviene no saltarse:
+
+- Aplica solo a **anclajes preinstalados con cabeza** (*single cast-in headed studs and headed
+  bolts*). Para postinstalados con socavado *"puede ser apropiada"*, pero su uso **debe
+  justificarse con ensayos** conforme a §17.5.1.5.
+- **Puede ser no conservadora para $h_{ef} > 635$ mm** si la presión de aplastamiento sobre la
+  cabeza del anclaje está en o cerca del límite de la Ec. 17.6.3.2.2a. Ese es el motivo del tope
+  superior del rango, no un corte arbitrario.
+- **La ganancia no es uniforme.** Es **nula en 280 mm** y llega a **+14,3 %** recién en 635 mm:
+
+  | $h_{ef}$ (mm) | 280 | 350 | 400 | 500 | 600 | 635 |
+  |---|---:|---:|---:|---:|---:|---:|
+  | Ganancia sobre $h_{ef}^{1{,}5}$ | −0,2 % | +3,5 % | +5,9 % | +9,9 % | +13,3 % | +14,3 % |
+
+  El *"hasta un 14 %"* con que la DG1 3.ª ed. §4.3.2.2 la resume es el **techo**, no el valor
+  típico. Aplicarla con embebidos cerca de 280 mm no aporta nada.
+
+La herramienta calcula siempre con $h_{ef}^{1.5}$, así que en ese rango **es conservadora en el
+breakout**, y cada vez más a medida que crece el embebido.
 </Note>
 
 <Equation label="Ec. 16">
