@@ -100,6 +100,19 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   y un único `u_max <= 1`. **No** una batería de booleanos «¿gobierna éste?»: cinco de ellos
   darían `false` por diseño y habría que declararlos en `esperadoFalso`, que es justo lo que
   esa lista no debe contener.
+- **Una variable no se puede llamar como una unidad, y la que muerde es `m`.** El motor evalúa
+  con mathjs, donde `4 m` son cuatro metros — salvo que la hoja haya definido antes una variable
+  `m`, y entonces son `4·m`. No falla: **devuelve otro número**. El 2026-08-07 la planilla de
+  rigidez rotacional cayó en esto en su primera corrida: la DG1 llama `m` al voladizo de la placa
+  del lado comprimido, y con `m = 8,25 cm` la altura de columna `L_col := 4 m` pasó a valer 33 cm.
+  El índice β·L/EI salió **12,1 veces más chico** del que corresponde, y lo único que lo delató
+  fue que el contraste contra el post no cuadraba. Un barrido de las 25 hojas publicadas no
+  encontró ningún otro caso, así que esto es prevención, no reparación.
+  El arreglo es de nombre y de contrato a la vez: la variable pasa a `m_vol` **con una línea de
+  texto que dice por qué** —si no, el próximo que transcriba la Ec. C-11 desde el PDF la va a
+  volver a llamar `m`—, y `verify-planilla.mjs` chequea el patrón `<número> <identificador>`
+  contra las variables definidas en la hoja. Ojo con que el peligro es **solo** ese patrón sin
+  `*`: `2*h` con `h` definida es lo que el autor quiere y no se toca.
 - **Valores de tabla: al PDF, y en la columna de las unidades del cálculo.** Toda constante
   que venga de una tabla de la norma —$F_{nv}$, $F_y$ de un grado, un $\phi$, un coeficiente,
   una dimensión de agujero— se lee en el PDF y se declara en la planilla con su cita
