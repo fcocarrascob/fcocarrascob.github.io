@@ -132,6 +132,24 @@ Each collection has its own query wrapper — **import from these, don't call `g
 
 Both wrappers filter drafts and sort by `pubDate` descending.
 
+### `ejemplos/` — memos de cálculo, fuera del sitio
+
+`ejemplos/` en la raíz **no es una colección y no llega al build**: ningún glob de
+`src/content.config.ts` la alcanza. Son memos de cálculo compactos —`.md` plano, techo de 150
+líneas y ~100 palabras de prosa por paso, sin componentes ni figuras ni planilla— que se acumulan
+sin publicarse, para poder resolver un caso y guardarlo antes de decidir si merece un ejemplo
+publicado.
+
+El contrato del formato está en **`ejemplos/README.md`**: léelo antes de escribir uno. Lo esencial:
+pasos numerados con la ecuación y su reemplazo numérico, prosa mínima, supuestos numerados `S1, S2…`
+citables desde los pasos, y una tabla de referencias donde **cada cláusula declara si se leyó en el
+PDF**. Un memo con referencias pendientes no se promueve a post. La plantilla en blanco es
+`ejemplos/_PLANTILLA.md` y lo acumulado se lista en `ejemplos/INDICE.md`.
+
+Un memo se promueve cuando el caso tiene una tesis que enseñe algo, no cuando el cálculo está
+completo; promoverlo significa reescribirlo al formato publicado, y **no cambia los ejemplos ya
+publicados**.
+
 ## Math Syntax (content)
 
 KaTeX renders at build time — the HTML ships pre-rendered, no client JS needed (only KaTeX CSS).
