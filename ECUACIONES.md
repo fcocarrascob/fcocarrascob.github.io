@@ -35,11 +35,11 @@ ecuación —destruye el cociente y convierte φ en `f`—, así que se rasteriz
 
 ## Estado
 
-125 ecuaciones citadas · 55 revisadas contra el PDF rasterizado.
+126 ecuaciones citadas · 58 revisadas contra el PDF rasterizado.
 
 | Ancla | Ecuaciones |
 |---|---:|
-| — | 64 |
+| — | 65 |
 | `continuidad λ_pw/λ_rw` | 23 |
 | `planilla:viga-hss-flexion` | 9 |
 | `planilla:placa-base-rigidez-rotacional` | 9 |
@@ -56,15 +56,15 @@ prioridad):
 
 `E7-2` · `E7-3` · `E7-5` · `E7-7` · `F3-1` · `F3-2` · `F6-1` · `F6-2` · `F6-3` · `F6-4` · `F7-7` · `F7-9` · `F8-1` · `F8-2` · `F8-3` · `F8-4` · `G2-1` · `G2-2` · `G2-3` · `G2-4` · `G2-9` · `G2-11` · `G4-1` · `H1-1`
 
-**Sin doble entrada (53).** Las cita una sola de las dos
+**Sin doble entrada (54).** Las cita una sola de las dos
 implementaciones, así que ningún contraste las mira:
 
-`A-3-1M` solo prosa · `A-8-3` solo prosa · `A-8-5` solo prosa · `B3-1` solo prosa · `B3-2` solo prosa · `C-1` solo prosa · `C-4` solo prosa · `C-5` solo prosa · `C-6` solo prosa · `C-7` solo prosa · `C-8` solo prosa · `C-9` solo prosa · `C-10` solo prosa · `C-11` solo prosa · `C-12` solo prosa · `C-17` solo prosa · `C-18` solo prosa · `E4-1` solo prosa · `E4-3` solo prosa · `E7-1` solo prosa · `F1-1` solo motor · `F2-8a` solo prosa · `F7-5` solo motor · `F13-1` solo prosa · `G2-7` solo prosa · `H1-1` solo motor · `H1-2` solo motor · `H2-1` solo prosa · `H3-1` solo prosa · `H3-6` solo prosa · `J2-4` solo prosa · `J2-5` solo prosa · `J2-6` solo prosa · `J3-1` solo prosa · `J3-3a` solo prosa · `J3-4` solo prosa · `J3-6a` solo prosa · `J3-6b` solo prosa · `J3-6c` solo prosa · `J3-6d` solo prosa · `J4-1` solo prosa · `J4-2` solo prosa · `J4-3` solo prosa · `J4-4` solo prosa · `J4-5` solo prosa · `J4-6` solo prosa · `J10-1` solo prosa · `J10-2` solo prosa · `J10-4` solo prosa · `J10-9` solo prosa · `J10-10` solo prosa · `J10-11` solo prosa · `J10-12` solo prosa
+`A-3-1M` solo prosa · `A-8-3` solo prosa · `A-8-5` solo prosa · `B3-1` solo prosa · `B3-2` solo prosa · `C-1` solo prosa · `C-4` solo prosa · `C-5` solo prosa · `C-6` solo prosa · `C-7` solo prosa · `C-8` solo prosa · `C-9` solo prosa · `C-10` solo prosa · `C-11` solo prosa · `C-12` solo prosa · `C-17` solo prosa · `C-18` solo prosa · `E4-1` solo prosa · `E4-3` solo prosa · `E7-1` solo prosa · `F1-1` solo motor · `F2-8a` solo prosa · `F7-5` solo motor · `F13-1` solo prosa · `G2-7` solo prosa · `H1-1` solo motor · `H1-2` solo motor · `H2-1` solo prosa · `H3-1` solo prosa · `H3-6` solo prosa · `J2-4` solo prosa · `J2-5` solo prosa · `J2-6` solo prosa · `J3-1` solo prosa · `J3-3a` solo prosa · `J3-4` solo prosa · `J3-6a` solo prosa · `J3-6b` solo prosa · `J3-6c` solo prosa · `J3-6d` solo prosa · `J4-1` solo prosa · `J4-2` solo prosa · `J4-3` solo prosa · `J4-4` solo prosa · `J4-5` solo prosa · `J4-6` solo prosa · `J8-2` solo prosa · `J10-1` solo prosa · `J10-2` solo prosa · `J10-4` solo prosa · `J10-9` solo prosa · `J10-10` solo prosa · `J10-11` solo prosa · `J10-12` solo prosa
 
-**Sin revisar contra el PDF (70).** Nadie abrió todavía la página
+**Sin revisar contra el PDF (68).** Nadie abrió todavía la página
 rasterizada para comparar la forma algebraica y el origen del coeficiente:
 
-`A-3-1M` · `A-8-3` · `A-8-5` · `B3-1` · `B3-2` · `C-17` · `C-18` · `E4-3` · `E7-1` · `E7-2` · `E7-3` · `E7-5` · `E7-7` · `F3-1` · `F3-2` · `F6-1` · `F6-2` · `F6-3` · `F6-4` · `F7-1` · `F7-2` · `F7-3` · `F7-4` · `F7-5` · `F7-6` · `F7-7` · `F7-8` · `F7-9` · `F7-10` · `F7-11` · `F8-1` · `F8-2` · `F8-3` · `F8-4` · `F13-1` · `G2-7` · `G2-9` · `G2-10` · `G2-11` · `G4-1` · `H1-1` · `H1-1a` · `H1-1b` · `H1-2` · `H2-1` · `H3-1` · `H3-6` · `J2-4` · `J2-5` · `J2-6` · `J3-1` · `J3-3a` · `J3-4` · `J3-6a` · `J3-6b` · `J3-6c` · `J3-6d` · `J4-1` · `J4-2` · `J4-3` · `J4-4` · `J4-5` · `J4-6` · `J10-1` · `J10-2` · `J10-4` · `J10-9` · `J10-10` · `J10-11` · `J10-12`
+`A-3-1M` · `A-8-3` · `A-8-5` · `B3-1` · `B3-2` · `C-17` · `C-18` · `E4-3` · `E7-1` · `E7-2` · `E7-3` · `E7-5` · `E7-7` · `F3-1` · `F3-2` · `F6-1` · `F6-2` · `F6-3` · `F6-4` · `F7-1` · `F7-2` · `F7-3` · `F7-4` · `F7-5` · `F7-6` · `F7-7` · `F7-8` · `F7-9` · `F7-10` · `F7-11` · `F8-1` · `F8-2` · `F8-3` · `F8-4` · `F13-1` · `G2-7` · `G2-9` · `G2-10` · `G2-11` · `G4-1` · `H1-1` · `H1-1a` · `H1-1b` · `H1-2` · `H2-1` · `H3-1` · `H3-6` · `J2-4` · `J2-5` · `J2-6` · `J3-4` · `J3-6a` · `J3-6b` · `J3-6c` · `J3-6d` · `J4-1` · `J4-2` · `J4-3` · `J4-4` · `J4-5` · `J4-6` · `J10-1` · `J10-2` · `J10-4` · `J10-9` · `J10-10` · `J10-11` · `J10-12`
 
 ## AISC 360-22 — `aisc360-22`
 
@@ -165,8 +165,8 @@ PDF: `F:/OneDrive/Ingenieria/Normas/A360-22W-ewr.pdf`
 | `J2-4` | `acero/aisc360-22-capJ-conexiones.mdx:124` `acero/ejemplo-conexion-momento-end-plate.mdx:199` `acero/ejemplo-conexion-momento-end-plate.mdx:253` `acero/ejemplo-diagonal-hss-traccion.mdx:165` `acero/ejemplo-diagonal-hss-traccion.mdx:167` `acero/ejemplo-diagonal-hss-traccion.mdx:533` `acero/ejemplo-diagonal-hss-traccion.mdx:635` `acero/ejemplo-diagonal-hss-traccion.mdx:656` `acero/ejemplo-gusset-apice-chevron.mdx:529` | `solo prosa` | — | ⬜ |
 | `J2-5` | `acero/aisc360-22-capJ-conexiones.mdx:139` `acero/aisc360-22-capJ-conexiones.mdx:250` `acero/ejemplo-conexion-momento-end-plate.mdx:197` | `solo prosa` | — | ⬜ |
 | `J2-6` | `acero/ejemplo-gusset-simple-soldado.mdx:54` | `solo prosa` | — | ⬜ |
-| `J3-1` | `acero/aisc360-22-capJ-conexiones.mdx:59` `acero/ejemplo-conexion-apernada-corte.mdx:61` `acero/ejemplo-conexion-apernada-corte.mdx:65` `acero/ejemplo-conexion-apernada-corte.mdx:265` `acero/ejemplo-conexion-doble-angulo.mdx:62` `acero/ejemplo-conexion-doble-angulo.mdx:64` `acero/ejemplo-conexion-doble-angulo.mdx:199` `acero/ejemplo-conexion-momento-end-plate.mdx:77` `acero/ejemplo-conexion-momento-end-plate.mdx:79` `acero/ejemplo-conexion-momento-end-plate.mdx:216` `acero/ejemplo-conexion-momento-end-plate.mdx:252` `acero/ejemplo-conexion-momento-end-plate.mdx:256` `acero/ejemplo-conexion-momento-placas-ala.mdx:68` `acero/ejemplo-conexion-momento-placas-ala.mdx:70` `acero/ejemplo-conexion-momento-placas-ala.mdx:267` `acero/ejemplo-empalme-apernado-viga.mdx:104` `acero/ejemplo-empalme-apernado-viga.mdx:108` `acero/ejemplo-empalme-apernado-viga.mdx:222` `acero/ejemplo-gusset-esquina-apernado.mdx:259` | `solo prosa` | — | ⬜ |
-| `J3-3a` | `acero/aisc360-22-capJ-conexiones.mdx:90` `acero/aisc360-22-capJ-conexiones.mdx:248` | `solo prosa` | — | ⬜ |
+| `J3-1` | `acero/aisc360-22-capJ-conexiones.mdx:59` `acero/ejemplo-conexion-apernada-corte.mdx:61` `acero/ejemplo-conexion-apernada-corte.mdx:65` `acero/ejemplo-conexion-apernada-corte.mdx:265` `acero/ejemplo-conexion-doble-angulo.mdx:62` `acero/ejemplo-conexion-doble-angulo.mdx:64` `acero/ejemplo-conexion-doble-angulo.mdx:199` `acero/ejemplo-conexion-momento-end-plate.mdx:77` `acero/ejemplo-conexion-momento-end-plate.mdx:79` `acero/ejemplo-conexion-momento-end-plate.mdx:216` `acero/ejemplo-conexion-momento-end-plate.mdx:252` `acero/ejemplo-conexion-momento-end-plate.mdx:256` `acero/ejemplo-conexion-momento-placas-ala.mdx:68` `acero/ejemplo-conexion-momento-placas-ala.mdx:70` `acero/ejemplo-conexion-momento-placas-ala.mdx:267` `acero/ejemplo-empalme-apernado-viga.mdx:104` `acero/ejemplo-empalme-apernado-viga.mdx:108` `acero/ejemplo-empalme-apernado-viga.mdx:222` `acero/ejemplo-gusset-esquina-apernado.mdx:259` `acero/placas-base-teoria.mdx:475` | `solo prosa` | — | 2026-08-07 |
+| `J3-3a` | `acero/aisc360-22-capJ-conexiones.mdx:90` `acero/aisc360-22-capJ-conexiones.mdx:248` `acero/placas-base-teoria.mdx:476` `src/pages/herramientas/placa-base/documentacion.mdx:184` | `solo prosa` | — | 2026-08-07 |
 | `J3-4` | `acero/aisc360-22-capJ-conexiones.mdx:99` `acero/aisc360-22-capJ-conexiones.mdx:249` `acero/ejemplo-empalme-apernado-viga.mdx:124` `acero/ejemplo-empalme-apernado-viga.mdx:218` `acero/ejemplo-empalme-apernado-viga.mdx:226` `acero/ejemplo-empalme-apernado-viga.mdx:270` | `solo prosa` | — | ⬜ |
 | `J3-6a` | `acero/aisc360-22-capJ-conexiones.mdx:166` `acero/aisc360-22-capJ-conexiones.mdx:168` `acero/aisc360-22-capJ-conexiones.mdx:219` `acero/aisc360-22-capJ-conexiones.mdx:251` `acero/ejemplo-conexion-apernada-corte.mdx:267` `acero/ejemplo-conexion-doble-angulo.mdx:82` `acero/ejemplo-conexion-doble-angulo.mdx:200` `acero/ejemplo-conexion-doble-angulo.mdx:201` `acero/ejemplo-conexion-momento-placas-ala.mdx:266` `acero/ejemplo-empalme-apernado-viga.mdx:224` `acero/ejemplo-empalme-apernado-viga.mdx:225` `acero/ejemplo-gusset-esquina-apernado.mdx:494` `acero/ejemplo-gusset-simple-apernado.mdx:104` | `solo prosa` | — | ⬜ |
 | `J3-6b` | `acero/aisc360-22-capJ-conexiones.mdx:177` | `solo prosa` | — | ⬜ |
@@ -178,6 +178,7 @@ PDF: `F:/OneDrive/Ingenieria/Normas/A360-22W-ewr.pdf`
 | `J4-4` | `acero/ejemplo-conexion-doble-angulo.mdx:203` `acero/ejemplo-conexion-momento-end-plate.mdx:182` `acero/ejemplo-conexion-momento-end-plate.mdx:254` `acero/ejemplo-empalme-apernado-viga.mdx:177` `acero/ejemplo-empalme-apernado-viga.mdx:228` `acero/gusset-teoria-estados-limite.mdx:336` | `solo prosa` | — | ⬜ |
 | `J4-5` | `acero/aisc360-22-capD-traccion.mdx:183` `acero/aisc360-22-capD-traccion.mdx:215` `acero/aisc360-22-capD-traccion.mdx:237` `acero/aisc360-22-capJ-conexiones.mdx:193` `acero/aisc360-22-capJ-conexiones.mdx:253` `acero/ejemplo-conexion-apernada-corte.mdx:146` `acero/ejemplo-conexion-apernada-corte.mdx:149` `acero/ejemplo-conexion-apernada-corte.mdx:270` `acero/ejemplo-conexion-doble-angulo.mdx:118` `acero/ejemplo-conexion-doble-angulo.mdx:204` `acero/ejemplo-diagonal-hss-traccion.mdx:214` `acero/ejemplo-diagonal-hss-traccion.mdx:217` `acero/ejemplo-diagonal-hss-traccion.mdx:580` `acero/ejemplo-diagonal-hss-traccion.mdx:636` `acero/ejemplo-diagonal-hss-traccion.mdx:657` `acero/ejemplo-empalme-apernado-viga.mdx:240` `acero/ejemplo-gusset-apice-chevron.mdx:116` `acero/ejemplo-gusset-apice-chevron.mdx:529` `acero/ejemplo-gusset-simple-apernado.mdx:197` `acero/ejemplo-gusset-simple-apernado.mdx:284` `acero/ejemplo-gusset-simple-apernado.mdx:339` `acero/ejemplo-gusset-simple-soldado.mdx:133` `acero/ejemplo-gusset-simple-soldado.mdx:180` `acero/ejemplo-gusset-simple-soldado.mdx:193` `acero/ejemplo-gusset-simple-soldado.mdx:245` | `solo prosa` | — | ⬜ |
 | `J4-6` | `acero/ejemplo-gusset-esquina-apernado.mdx:332` `acero/gusset-teoria-estados-limite.mdx:338` | `solo prosa` | — | ⬜ |
+| `J8-2` | `src/pages/herramientas/placa-base/documentacion.mdx:66` | `solo prosa` | — | 2026-08-07 |
 | `J10-1` | `acero/ejemplo-conexion-momento-end-plate.mdx:257` `acero/ejemplo-conexion-momento-placas-ala.mdx:150` `acero/ejemplo-conexion-momento-placas-ala.mdx:275` `acero/ejemplo-conexion-momento-placas-ala.mdx:312` | `solo prosa` | — | ⬜ |
 | `J10-2` | `acero/ejemplo-conexion-momento-placas-ala.mdx:160` `acero/ejemplo-conexion-momento-placas-ala.mdx:233` `acero/ejemplo-conexion-momento-placas-ala.mdx:274` `acero/ejemplo-gusset-esquina-apernado.mdx:394` `acero/ejemplo-viga-carrilera-puente-grua.mdx:282` `acero/ejemplo-viga-carrilera-puente-grua.mdx:394` | `solo prosa` | — | ⬜ |
 | `J10-4` | `acero/ejemplo-conexion-momento-placas-ala.mdx:168` `acero/ejemplo-conexion-momento-placas-ala.mdx:272` `acero/ejemplo-viga-carrilera-puente-grua.mdx:289` `acero/ejemplo-viga-carrilera-puente-grua.mdx:395` | `solo prosa` | — | ⬜ |
@@ -192,18 +193,18 @@ PDF: `F:/OneDrive/Ingenieria/Normas/AISC Design Guide 1 - 3rd Edition.pdf`
 
 | Ec. | Dónde | Doble entrada | Ancla | Revisada |
 |---|---|---|---|---|
-| `C-1` | `acero/placas-base-empotrada-o-rotulada.mdx:389` | `solo prosa` | — | 2026-08-07 |
-| `C-4` | `acero/placas-base-empotrada-o-rotulada.mdx:104` `acero/placas-base-empotrada-o-rotulada.mdx:161` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-5` | `acero/placas-base-empotrada-o-rotulada.mdx:110` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-6` | `acero/placas-base-empotrada-o-rotulada.mdx:117` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-7` | `acero/placas-base-empotrada-o-rotulada.mdx:117` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-8` | `acero/placas-base-empotrada-o-rotulada.mdx:125` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-9` | `acero/placas-base-empotrada-o-rotulada.mdx:117` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-10` | `acero/placas-base-empotrada-o-rotulada.mdx:126` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-11` | `acero/placas-base-empotrada-o-rotulada.mdx:127` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-12` | `acero/placas-base-empotrada-o-rotulada.mdx:129` `acero/placas-base-empotrada-o-rotulada.mdx:133` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
-| `C-17` *(familia)* | `acero/placas-base-empotrada-o-rotulada.mdx:336` | `solo prosa` | — | ⬜ |
-| `C-18` *(familia)* | `acero/placas-base-empotrada-o-rotulada.mdx:341` | `solo prosa` | — | ⬜ |
+| `C-1` | `acero/placas-base-empotrada-o-rotulada.mdx:424` | `solo prosa` | — | 2026-08-07 |
+| `C-4` | `acero/placas-base-empotrada-o-rotulada.mdx:101` `acero/placas-base-empotrada-o-rotulada.mdx:164` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-5` | `acero/placas-base-empotrada-o-rotulada.mdx:107` `acero/placas-base-empotrada-o-rotulada.mdx:164` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-6` | `acero/placas-base-empotrada-o-rotulada.mdx:114` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-7` | `acero/placas-base-empotrada-o-rotulada.mdx:114` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-8` | `acero/placas-base-empotrada-o-rotulada.mdx:124` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-9` | `acero/placas-base-empotrada-o-rotulada.mdx:114` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-10` | `acero/placas-base-empotrada-o-rotulada.mdx:125` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-11` | `acero/placas-base-empotrada-o-rotulada.mdx:126` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-12` | `acero/placas-base-empotrada-o-rotulada.mdx:128` `acero/placas-base-empotrada-o-rotulada.mdx:135` | `solo prosa` | `planilla:placa-base-rigidez-rotacional` | 2026-08-07 |
+| `C-17` *(familia)* | `acero/placas-base-empotrada-o-rotulada.mdx:370` | `solo prosa` | — | ⬜ |
+| `C-18` *(familia)* | `acero/placas-base-empotrada-o-rotulada.mdx:375` `acero/placas-base-empotrada-o-rotulada.mdx:453` | `solo prosa` | — | ⬜ |
 
 ---
 

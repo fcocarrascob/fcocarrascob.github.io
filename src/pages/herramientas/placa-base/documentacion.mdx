@@ -1,0 +1,421 @@
+---
+layout: ../../../layouts/DocLayout.astro
+title: "Placa base: cómo calcula la herramienta"
+description: "Qué resuelve el motor, con qué supuestos, y en qué decisiones se aparta de la Design Guide 1 y en qué dirección. La teoría del fenómeno está en la nota de teoría; acá está la implementación, para que cualquier resultado pueda auditarse y reproducirse a mano."
+tool: "Volver a la herramienta"
+toolHref: "/herramientas/placa-base"
+---
+
+import Note from '../../../components/content/Note.astro';
+import Equation from '../../../components/content/Equation.astro';
+
+Esta página documenta la [herramienta de placa base](/herramientas/placa-base): qué calcula, con
+qué supuestos, y **en qué decisiones se aparta de la fuente y en qué dirección**. Cada verificación
+de la tabla de resultados enlaza a la sección de acá que le corresponde.
+
+La **teoría del fenómeno** —por qué el problema es de contacto unilateral, de dónde salen las
+líneas críticas, por qué los dos códigos no calculan sobre la misma área— está en
+[La placa base: la interfaz que solo puede empujar](/acero/placas-base-teoria). Lo que sigue supone
+esa nota leída y no la repite.
+
+## 1. El solver: cómo se resuelve el equilibrio
+
+*Teoría: [§1, la interfaz que solo puede empujar](/acero/placas-base-teoria#1-la-interfaz-que-solo-puede-empujar).*
+
+La herramienta parametriza el asentamiento de la interfaz como un plano $s(x,y) = p_0 + p_x x +
+p_y y$, del que salen la presión de contacto (solo compresión) y la tracción de cada perno (solo
+tracción). Los tres parámetros se determinan imponiendo las tres ecuaciones de equilibrio contra
+las cargas aplicadas en el centroide de la placa:
+
+<Equation label="Equilibrio">
+$$
+\int_A \sigma \, dA - \sum_i T_i = P_u
+\qquad
+\int_A \sigma\, y \, dA - \sum_i T_i\, y_i = M_{ux}
+\qquad
+\int_A \sigma\, x \, dA - \sum_i T_i\, x_i = M_{uy}
+$$
+</Equation>
+
+**Convención de signos:** $P_u > 0$ comprime ($P_u < 0$ es levantamiento); $M_{ux}$ comprime el
+borde $+y$ (excentricidad a lo largo de $N$); $M_{uy}$ comprime el borde $+x$ (a lo largo de $B$).
+
+Tres detalles de implementación que importan para confiar en el resultado:
+
+- **El sistema es no lineal pero convexo.** Los operadores $\max(0,\cdot)$ hacen que la zona de
+  contacto y el conjunto de pernos activos dependan de la solución, pero el sistema es el gradiente
+  de un potencial convexo: la solución de equilibrio **existe y es única** siempre que la
+  configuración pueda equilibrar la carga. Se resuelve con Newton amortiguado sobre ese potencial.
+- **Las integrales son exactas, no de grilla.** La zona de contacto es el rectángulo de la placa
+  recortado por el semiplano $s \ge 0$ —un polígono de a lo más 5 vértices— y los momentos de área
+  de un polígono tienen forma cerrada por el teorema de Green. **El resultado no depende de ninguna
+  discretización.**
+- **La rigidez del perno es el área transformada** del método elástico clásico:
+  $\rho = n A_b$ con $n = E_s/E_c$ y $E_c = 15\,100\sqrt{f'_c}$ [kgf/cm²].
+
+<Note type="info" title="Sensibilidad a n">
+El reparto de tracciones entre pernos es poco sensible al valor exacto de la razón modular $n$: lo
+que importa es la **posición del eje neutro**, que depende de la geometría mucho más que de $n$.
+Por eso el método transformado, con toda su simplicidad, alcanza.
+</Note>
+
+## 2. Aplastamiento del hormigón — AISC 360 J8
+
+*Teoría: [§9, cláusula, guía y práctica](/acero/placas-base-teoria#9-qué-es-cláusula-qué-es-guía-y-qué-es-práctica).*
+
+<Equation label="AISC 360-22 Ec. J8-2">
+$$
+\phi_c \, f_{p,max} = \phi_c \cdot \min\!\left(0{,}85\, f'_c\, \sqrt{\tfrac{A_2}{A_1}},\ \ 1{,}7\, f'_c\right),
+\qquad \phi_c = 0{,}65
+$$
+</Equation>
+
+con $A_1 = BN$ el área de la placa y $A_2$ el área de la porción del pedestal **geométricamente
+similar y concéntrica** con ella. La verificación es $\sigma_{max} \le \phi_c f_{p,max}$.
+
+**Decisiones:**
+
+- $\sqrt{A_2/A_1} = \min(B_2/B,\ N_2/N) \le 2$ — la forma **conservadora** de construir el área
+  similar a partir de las dimensiones del pedestal $B_2 \times N_2$.
+- Se compara la presión **de esquina** del plano elástico, no una presión uniforme equivalente.
+  Para la misma carga la de esquina es mayor, así que esta verificación es **más conservadora** que
+  el método del bloque rectangular en excentricidades grandes. A cambio, es la misma para cualquier
+  combinación de $P$, $M_x$ y $M_y$, sin cambiar de método según el rango de excentricidad.
+
+## 3. Flexión de la placa — Design Guide 1
+
+*Teoría: [§4, la placa como voladizo](/acero/placas-base-teoria#4-la-placa-como-voladizo-y-el-mecanismo-que-aparece-cuando-el-voladizo-es-chico) y [§5, el lado traccionado](/acero/placas-base-teoria#5-el-lado-traccionado-la-guía-se-contradice-a-sí-misma).*
+
+El espesor requerido que reporta la herramienta es $t_{req} = \sqrt{4M_u/(\phi_b F_y)}$ con
+$\phi_b = 0{,}90$ y $M_u$ el mayor momento por unidad de ancho entre los tres mecanismos
+siguientes.
+
+### 3.1 Lado comprimido: voladizos m y n
+
+Los volados son $m = (N - 0{,}95d)/2$ y $n = (B - 0{,}8b_f)/2$.
+
+**Decisión:** en el método clásico, con presión uniforme $f_p$, el momento del voladizo es
+$M_u = f_p l^2/2$ con $l = \max(m,n)$. La herramienta generaliza: **integra el bloque de presiones
+real** —el plano recortado por el eje neutro— sobre la región más allá de cada línea crítica, en
+las cuatro direcciones ($\pm y$ a $0{,}95d$, $\pm x$ a $0{,}8b_f$), y toma momento respecto de la
+línea. Con presión uniforme el resultado coincide exactamente con $f_p l^2/2$; con presión
+triangular o contacto parcial captura la concentración de presión en el borde sin aproximar.
+
+### 3.2 Fluencia entre alas: λn′
+
+$\lambda n' = \lambda\sqrt{d\,b_f}/4$ con **$\lambda = 1$**, y momento asociado
+$M_u = \sigma_{max}(\lambda n')^2/2$.
+
+**Decisión:** tomar $\lambda = 1$ en vez de calcular $\lambda < 1$ con la carga es siempre
+**conservador**, y evita una dependencia circular entre carga y espesor.
+
+### 3.3 Lado traccionado: flexión por tracción de pernos
+
+<Equation label="Momento del lado traccionado">
+$$
+M_u = \frac{T_i \cdot \ell_i}{b_{ef}}, \qquad
+b_{ef} = \min\!\big(4\,\ell_i,\ s_{adj},\ \text{dimensión de la placa}\big)
+$$
+</Equation>
+
+donde $\ell_i$ es el brazo del perno a la línea crítica más próxima y $s_{adj}$ la distancia al
+perno más cercano, para no contar dos veces el mismo ancho de placa.
+
+<Note type="warning" title="Ésta es la decisión no conservadora de la herramienta">
+El $4\ell$ corresponde a una dispersión a 45° hacia **ambos** lados del perno. El paso 5 del
+Ejemplo B.2-2 de la DG1 3.ª ed. usa **$2\ell$** —*«el ancho se toma entonces como el doble de la
+distancia del perno a la sección crítica»*—, con lo que el momento queda $M_{pl} = T_{perno}/2$ sin
+importar el brazo. Es decir: **el doble de ancho y la mitad de momento** que la guía.
+
+La diferencia no es cosmética. Sobre el caso del
+[ejemplo trabajado](/acero/placa-base-ejemplo-trabajado), con $\ell = 3{,}25$ cm el factor gobierna
+en los dos criterios ($4\ell = 13{,}0$ cm y $2\ell = 6{,}5$ cm, ambos menores que
+$s_{adj} = 35$ cm), así que el momento se duplica exactamente:
+
+| | Herramienta ($4\ell$) | DG1, Ej. B.2-2 ($2\ell$) |
+|---|---:|---:|
+| $b_{ef}$ | 13,0 cm | 6,5 cm |
+| $M_{pl}$ | 1 955 kgf·cm/cm | 3 910 kgf·cm/cm |
+| Ratio contra $\phi_b M_p = 3\,558$ | 0,55 ✓ | **1,10 ✗** |
+| $t$ requerido por este mecanismo | 1,85 cm | 2,62 cm |
+
+Con el criterio del Ejemplo B.2-2 **este lado gobernaría** el ejemplo, en vez de quedar holgado.
+La herramienta usa $4\ell$ y lo reporta en el detalle de la verificación: es una elección que
+**se aparta de la guía en dirección no conservadora**, y conviene contrastar los dos valores en
+cualquier caso donde el lado traccionado esté cerca de gobernar.
+
+El cuadro completo —que la guía da **tres** criterios distintos, y que el tercero es el ancho
+completo de la placa— está en la
+[§5 de la nota de teoría](/acero/placas-base-teoria#5-el-lado-traccionado-la-guía-se-contradice-a-sí-misma).
+
+Para placas con silletas o atiesadores el mecanismo cambia por completo y esta verificación no
+aplica en ninguna de sus versiones.
+</Note>
+
+## 4. Pernos de anclaje — AISC 360 J3
+
+*Teoría: [§6, el perno y los dos códigos](/acero/placas-base-teoria#6-el-perno-dos-códigos-y-el-mismo-número-por-dos-caminos).*
+
+Los pernos se verifican como barras roscadas F1554 según la Tabla J3.2, sobre el **área bruta**
+$A_b = \pi d^2/4$:
+
+<Equation label="AISC 360-22 Tabla J3.2">
+$$
+F_{nt} = 0{,}75\, F_u, \qquad F_{nv} = 0{,}450\, F_u \ \text{(hilos incluidos)}, \qquad \phi = 0{,}75
+$$
+</Equation>
+
+| F1554 grado | $F_u$ (ksi) | $F_u$ (kgf/cm²) | $\phi F_{nt}$ (kgf/cm²) | $\phi F_{nv}$ (kgf/cm²) |
+|:---:|:---:|:---:|:---:|:---:|
+| 36 | 58 | 4078 | 2294 | 1376 |
+| 55 | 75 | 5273 | 2966 | 1780 |
+| 105 | 125 | 8788 | 4943 | 2966 |
+
+**Tracción:** la demanda es la tracción máxima de perno $T_{max}$ que entrega el solver, **no** un
+reparto uniforme $T/n$: con momento biaxial el perno de la esquina traccionada toma bastante más
+que el promedio.
+
+**Corte:** el corte resultante $V_u = \sqrt{V_{ux}^2 + V_{uy}^2}$ se reparte por igual entre los
+pernos designados para tomarlo ($n_{shear}$, configurable). Esto permite representar el caso
+práctico en que, por las holguras de los agujeros sobredimensionados, solo algunos pernos
+transfieren corte. **No se considera roce placa–hormigón ni llave de corte.**
+
+**Interacción (J3.8):** cuando $f_{rv} > 0{,}3\,\phi F_{nv}$, la tensión de tracción disponible se
+reduce por la Ec. J3-3a, y se verifica $T_{max} \le \phi F'_{nt} A_b$. Si no, la interacción no es
+requerida y la herramienta lo indica en el detalle.
+
+<Note type="info" title="Sistema AISC en el §4, sistema ACI en el §5">
+La herramienta usa el sistema **AISC** acá y el de **ACI** en el §5. Cada verificación es
+internamente consistente —la de acero contra la Tabla J3.2, la de hormigón contra el Cap. 17— y lo
+que cruza de una a otra es una **fuerza**, no un área, así que no hay doble descuento. Pero antes
+de comparar una capacidad de perno de esta herramienta contra la Tabla 4-1 de la DG1, que adopta el
+sistema de ACI, conviene tener presente que no son la misma cuenta: la diferencia es del 1 al 6 %
+según el diámetro, y está medida en la
+[§6 de la nota de teoría](/acero/placas-base-teoria#6-el-perno-dos-códigos-y-el-mismo-número-por-dos-caminos).
+</Note>
+
+## 5. Anclaje al hormigón — ACI 318-25 Cap. 17
+
+*Teoría: [§7, del perno al hormigón](/acero/placas-base-teoria#7-del-perno-al-hormigón), y la nota completa [ACI 318-25 Cap. 17](/hormigon/aci318-25-cap17-anclajes).*
+
+**Supuestos comunes a todas las verificaciones del capítulo:** perno **embebido con tuerca o
+cabeza** (*cast-in headed*), hormigón **fisurado** ($\psi_c = 1{,}0$, conservador), hormigón de peso
+normal ($\lambda_a = 1$), pedestal $B_2 \times N_2$ concéntrico con la placa, y **sin refuerzo
+suplementario ni armadura de anclaje** — condición B, $\phi = 0{,}70$ (17.5.3).
+
+### 5.1 Cono de arrancamiento (breakout, 17.6.2)
+
+<Equation label="ACI 318-25 Ec. 17.6.2.1b">
+$$
+N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\;\psi_{ec,N}\;\psi_{ed,N}\;\psi_{c,N}\; N_b,
+\qquad A_{Nco} = 9\,h_{ef}^2,
+\qquad N_b = 10{,}1\,\sqrt{f'_c}\; h_{ef}^{1{,}5}\ \ [\text{kgf, cm}]
+$$
+</Equation>
+
+(el 10,1 es la constante SI $k_c = 10$ convertida a kgf/cm). Cada término sale de la geometría ya
+ingresada: $A_{Nc}$ es la caja de los pernos traccionados extendida $1{,}5h_{ef}$ hacia cada lado y
+**recortada por los bordes del pedestal**, acotada por $n \cdot A_{Nco}$; $\psi_{ed,N}$ reduce por
+el borde más cercano; y $\psi_{ec,N}$ usa la excentricidad $e'_N$ calculada con las $T_i$ **reales**
+del solver, no con un reparto supuesto.
+
+La verificación es $\sum T_i \le \phi N_{cbg}$ sobre el total del grupo traccionado.
+
+**Decisión:** la herramienta calcula siempre con $h_{ef}^{1{,}5}$ y no con la alternativa de
+exponente 5/3 de §17.6.2.2.3, así que en el rango $280 \le h_{ef} \le 635$ mm es **conservadora**,
+cada vez más a medida que crece el embebido (nula en 280 mm, hasta 14,3 % en 635 mm).
+
+### 5.2 Extracción (pullout, 17.6.3)
+
+$N_{pn} = \psi_{c,P}\cdot 8 A_{brg} f'_c$ con $\psi_{c,P} = 1{,}0$ (fisurado).
+
+**Decisión:** $A_{brg} \approx 1{,}16\,d^2$, el área neta de una tuerca hexagonal pesada (ancho
+entre caras $\approx 1{,}5d$). Si el anclaje lleva placa de extremo, la capacidad real es mayor y
+esta verificación es **conservadora**.
+
+### 5.3 Desprendimiento lateral (side-face blowout, 17.6.4)
+
+$N_{sb} = 41{,}5\,c_{a1}\sqrt{A_{brg}}\sqrt{f'_c}$ [kgf, cm], con la corrección de **esquina** —si
+$c_{a2} < 3c_{a1}$, por $(1 + c_{a2}/c_{a1})/4$— y la de **grupo** a lo largo del borde —si
+$s < 6c_{a1}$, la capacidad conjunta es $(1 + s/(6c_{a1}))N_{sb}$ repartida entre los pernos de ese
+borde—. La herramienta revisa los cuatro bordes del pedestal y reporta el que gobierna; si ningún
+perno cumple $c_{a1} < 0{,}4h_{ef}$, el modo no aplica.
+
+### 5.4 Corte al hormigón: breakout y pryout (17.7)
+
+<Equation label="ACI 318-25 §17.7.2">
+$$
+V_b = \min\!\left( 1{,}92\,\Big(\tfrac{l_e}{d_a}\Big)^{0{,}2}\sqrt{d_a},\ \ 3{,}74 \right)
+\sqrt{f'_c}\; c_{a1}^{1{,}5} \quad [\text{kgf, cm}]
+$$
+</Equation>
+
+con $l_e = \min(h_{ef},\,8d_a)$, y para el grupo $V_{cbg} = (A_{Vc}/A_{Vco})\psi_{ed,V}V_b$ con
+$A_{Vco} = 4{,}5c_{a1}^2$.
+
+**Decisiones, explícitas en el detalle de la verificación:**
+
+- **Cada componente del corte se verifica contra el borde hacia el que apunta** ($V_{ux}$ contra el
+  borde $x\pm$, $V_{uy}$ contra $y\pm$), y gobierna la peor.
+- **La fila delantera toma toda la componente.** Es el caso conservador cuando los agujeros tienen
+  holgura y no puede garantizarse que las filas traseras participen antes de que la delantera
+  falle, y es lo que la DG1 §4.3.3 recomienda como práctica por defecto.
+- $\psi_{ec,V} = 1$ (reparto uniforme en la fila) y $\psi_{h,V} = 1$ (**pedestal profundo**,
+  $h_a \ge 1{,}5c_{a1}$, cierto en pedestales típicos).
+
+**Pryout (17.7.3):** $V_{cpg} = k_{cp}N_{cbg}$ con $k_{cp} = 1{,}0$ si $h_{ef} < 6{,}35$ cm y
+$2{,}0$ si no, usando $N_{cbg}$ del grupo completo ($\psi_{ec} = 1$) y como demanda el corte
+resultante.
+
+### 5.5 Interacción tracción–corte en el hormigón (17.8)
+
+<Equation label="ACI 318-25 Ec. 17.8.3">
+$$
+\frac{N_{ua}}{\phi N_n} + \frac{V_{ua}}{\phi V_n} \le 1{,}2
+$$
+</Equation>
+
+usando en cada término el **modo de hormigón gobernante** (el de mayor ratio en tracción, y el de
+mayor ratio en corte). Es frecuentemente la verificación que decide: cada modo puede pasar
+individualmente y la suma superar 1,2.
+
+## 6. Barrido de combinaciones de SAP2000
+
+Las verificaciones anteriores son para **un** juego de cargas. El problema práctico es que una
+placa base tipo debe cubrir **todos los apoyos** bajo **todas las combinaciones**: con $N$ apoyos y
+$M$ combinaciones son $N \times M$ filas — típicamente varios cientos.
+
+### 6.1 Por qué no basta la envolvente por componente
+
+La tentación natural es filtrar: quedarse con los máximos y mínimos de cada componente ($F_3$ máx,
+$M_1$ máx, excentricidad máx, …) y verificar solo esos casos. El problema es que las verificaciones
+de placa base son **funciones no lineales de la combinación completa**: el caso que gobierna la
+flexión de la placa puede tener un $P_u$ intermedio con un $M_u$ intermedio, sin ser extremo en
+ninguna componente individual. Una envolvente por componente **no tiene garantía de contener el
+caso gobernante**.
+
+Por eso la herramienta no filtra: el panel de barrido recibe la tabla *Joint Reactions* completa
+—copiada y pegada desde SAP2000— y ejecuta el modelo y las verificaciones completas (§1–§5) para
+**cada fila**. El resultado se agrega en tres vistas:
+
+- **Por apoyo:** la combinación que controla cada apoyo y su ratio máximo.
+- **Por verificación:** qué par (apoyo, combinación) controla cada verificación — muestra si
+  gobierna el hormigón, la placa o los pernos.
+- **Global:** el caso más desfavorable del conjunto, el $t_{req}$ máximo y las filas sin equilibrio
+  posible.
+
+La convención de ejes debe respetarse al mapear las reacciones: $F_3 \to P_u$ (compresión
+positiva), y los momentos según la orientación de la placa respecto de los ejes globales del
+modelo.
+
+### 6.2 Obtener las reacciones desde SAP2000
+
+La tabla se obtiene con *Display → Show Tables → Joint Reactions*, seleccionando todas las
+combinaciones para la salida, y se copia directamente al panel de barrido. Alternativamente, por
+la API:
+
+<details class="mt-6 text-sm">
+<summary class="cursor-pointer font-medium text-ink">Ver script en Python (API de SAP2000)</summary>
+
+Requiere `pip install comtypes` y una instancia de SAP2000 abierta con el modelo ya analizado.
+Imprime todas las reacciones de todos los apoyos para todas las combinaciones, en formato tabular
+listo para el panel de barrido.
+
+```python
+import comtypes.client
+
+# --- Conectarse a la instancia de SAP2000 abierta ---
+helper = comtypes.client.CreateObject("SAP2000v1.Helper")
+SapObject = helper.GetObject("CSI.SAP2000.API.SapObject")
+SapModel = SapObject.SapModel
+
+# --- 1. Apoyos: puntos con alguna restricción activa ---
+_, point_names, _ = SapModel.PointObj.GetNameList()
+support_joints = [
+    name for name in point_names
+    if any(SapModel.PointObj.GetRestraint(name)[0])
+]
+
+# --- 2. Seleccionar todas las combinaciones de carga para la salida ---
+_, combo_names, _ = SapModel.RespCombo.GetNameList()
+SapModel.Results.Setup.DeselectAllCasesAndCombosForOutput()
+for combo in combo_names:
+    SapModel.Results.Setup.SetComboSelectedForOutput(combo)
+
+# --- 3. Reacciones de todos los apoyos, para todas las combinaciones ---
+print("Joint\tOutputCase\tF1\tF2\tF3\tM1\tM2\tM3")
+for joint in support_joints:
+    (n, _obj, _elm, load_case, _step_type, _step_num,
+     f1, f2, f3, m1, m2, m3, _ret) = SapModel.Results.JointReact(joint, 0)
+    for i in range(n):
+        print(f"{joint}\t{load_case[i]}\t{f1[i]:.4f}\t{f2[i]:.4f}\t{f3[i]:.4f}"
+              f"\t{m1[i]:.4f}\t{m2[i]:.4f}\t{m3[i]:.4f}")
+```
+
+</details>
+
+## 7. Detallamiento: distancias mínimas
+
+Se chequean y se reportan como **avisos**: no bloquean el resultado, porque son requisitos de
+detallado y no de resistencia del modelo.
+
+### 7.1 AISC 360 — borde de placa y separación entre pernos
+
+Rige la [Sección J3 — Pernos](/acero/aisc360-22-capj-conexiones) de AISC 360-22.
+
+**Separación mínima entre centros (J3.3):** $s \ge 2\tfrac{2}{3}d$, preferible $3d$.
+
+**Distancia mínima del centro del agujero al borde (J3.4, Tabla J3.4M):**
+
+| $d$ (mm) | 16 | 20 | 22 | 24 | 27 | 30 | 36 | $> 36$ |
+|:---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| Mínima al borde (mm) | 22 | 26 | 28 | 30 | 34 | 38 | 46 | $1{,}25d$ |
+
+La distancia al borde no debe exceder $12t$ ni 150 mm (J3.5). Estos límites geométricos suelen
+controlar el detallado antes que la propia resistencia.
+
+Además se avisa si hay **pernos dentro de la huella de la columna** (entre alas): dificultan el
+montaje y quedan fuera del modelo de flexión del §3.3.
+
+### 7.2 ACI 318 — pernos de anclaje al hormigón
+
+- **Separación mínima entre anclajes:** $4d_a$ para embebidos que no se aprietan con torque;
+  $6d_a$ para embebidos apretados con torque y para post-instalados.
+- **Distancia mínima al borde del pedestal:** para embebidos sin torque, el recubrimiento mínimo de
+  armadura (Cap. 20); para embebidos con torque, $6d_a$.
+- **Post-instalados:** el código **no** fija un valor numérico — la separación y distancia al borde
+  mínimas son las del informe de calificación del producto (ensayos ACI 355.2 o 355.4, publicados
+  en el ESR del fabricante). Siempre esos valores, no una regla genérica.
+
+<Note type="warning" title="Cumplir el mínimo de splitting no basta">
+Aunque se cumplan las distancias mínimas, la resistencia real del cono de hormigón (§5.1) sigue
+cayendo mientras $c_{a1} < 1{,}5h_{ef}$. Para que el pedestal no gobierne el diseño de la placa
+conviene verificar también esa condición, no solo el mínimo de splitting.
+</Note>
+
+## 8. Alcance y limitaciones
+
+La herramienta es de **prediseño**, y su alcance está delimitado por lo que esta página describe.
+Lo que **no** verifica:
+
+- **Armadura de anclaje y llave de corte.** El anclaje al hormigón (§5) se verifica sin refuerzo
+  suplementario ni armadura de anclaje (17.5.2); cuando el cono no da, ésas son las soluciones de
+  diseño y su verificación se hace aparte. En pedestal, además, es el caso normal y no la
+  excepción — ver la [§7 de la nota de teoría](/acero/placas-base-teoria#7-del-perno-al-hormigón).
+  Tampoco se cubren anclajes post-instalados: las constantes $k_c$, $k_{cp}$ y los ψ usados son de
+  anclajes embebidos.
+- **Roce placa–hormigón.** No se cuenta. La DG1 §4.3.5 lo permite, pero NCh2369:2025 §8.5.4 lo
+  prohíbe expresamente junto con la resistencia del mortero de nivelación; en proyecto sísmico
+  chileno esa vía no existe.
+- **La reducción de 0,80 por mortero de nivelación** de ACI §17.7.1.2.1 sobre el corte del acero
+  del anclaje.
+- **Soldadura columna–placa** y su compatibilidad con el bloque de presiones.
+- **Placas con atiesadores o silletas:** el modelo de flexión (§3) supone placa plana.
+- **Flexibilidad de la placa.** La hipótesis de placa rígida (§1) es tanto mejor cuanto mayor el
+  espesor; para placas delgadas con volados grandes el modelo rígido sobreestima el brazo de la
+  resultante. El Apéndice B.3 de la DG1 3.ª ed. le pone número a eso para compresión concéntrica,
+  con un **área efectiva** que se extiende $c = 1{,}5t_p$ hacia afuera de alas y alma.
+- **La rigidez rotacional de la base**, que es lo que produce las reacciones de entrada. Está en
+  [ni empotrada ni rotulada](/acero/placas-base-empotrada-o-rotulada) y en su
+  [planilla del canvas](/herramientas/canvas?planilla=placa-base-rigidez-rotacional).
+- Solo **LRFD**: las cargas de entrada deben ser combinaciones mayoradas.

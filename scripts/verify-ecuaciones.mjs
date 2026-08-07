@@ -59,9 +59,17 @@ const FUENTES = [
   },
   { prefijo: 'src/content/acero/', normas: ['aisc360-22', 'aisc341-22'], zona: 'post' },
   { prefijo: 'src/content/hormigon/', normas: ['aci318-25'], zona: 'post' },
+  // La documentación de la herramienta de placa base no vive en una colección
+  // —es una página .mdx bajo src/pages— pero cita ecuaciones que el lector ve
+  // igual que en un post, así que entra al mismo control.
+  {
+    prefijo: 'src/pages/herramientas/placa-base/',
+    normas: ['aisc360-22', 'aci318-25', 'dg1-3ed'],
+    zona: 'doc',
+  },
 ];
 
-const RAICES = ['src/lib', 'src/content'];
+const RAICES = ['src/lib', 'src/content', 'src/pages'];
 
 const indice = JSON.parse(await readFile(path.join(ROOT, 'data', 'normas-indice.json'), 'utf8'));
 

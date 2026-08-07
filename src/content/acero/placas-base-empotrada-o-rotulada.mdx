@@ -19,7 +19,7 @@ con dos clics— mueve el resultado más que varias de las decisiones que sí se
 
 La *Design Guide 1*[^dg1] tiene el material para hacerlo mejor: su **§3.3** dice por qué ninguna
 de las dos es correcta, y su **Apéndice C** entrega el reemplazo. Acá se aplican a un caso
-concreto —el de la [nota de teoría](/acero/placas-base-sap2000) y el [ejemplo
+concreto —el de la [nota de teoría](/acero/placas-base-teoria) y el [ejemplo
 trabajado](/acero/placa-base-ejemplo-trabajado) de esta misma serie— y se mide la diferencia en un
 pórtico.
 
@@ -136,7 +136,8 @@ mismo término.)
 - **$L_{rod}$ es la longitud total del perno**, del tope de la placa base al tope de la tuerca del
   conjunto de anclaje inferior — no el embebido efectivo. Y $A_{rod}$ es el **área bruta**, no el
   área de tensión roscada que usa el Cap. 17 de ACI. Es la misma trampa de dos sistemas que ya
-  aparece en la [nota de teoría](/acero/placas-base-sap2000) de esta serie.
+  aparece en la [nota de teoría](/acero/placas-base-teoria#6-el-perno-dos-códigos-y-el-mismo-número-por-dos-caminos)
+  de esta serie.
 - **$d_{footing}$ es la profundidad *total* de la zapata**, y $E_{concrete}$ viene escrito en la
   guía como $w_c^{1,5}\sqrt{f'_c}$ **con todo en ksi** y $w_c$ en lb/ft³. Acá se usa la forma SI
   que la serie ya venía usando, $E_c = 15\,100\sqrt{f'_c}$ con $f'_c$ en kgf/cm²; con $w_c = 145$ lb/ft³ la forma
@@ -315,10 +316,9 @@ la sostiene. Por eso la respuesta correcta no es «usa el supuesto conservador»
 sea para las dos preguntas a la vez.
 </Note>
 
-Y para esta serie en particular hay una consecuencia concreta. El barrido de combinaciones del
-[barrido de combinaciones](/acero/placas-base-sap2000#6-barrido-de-combinaciones-de-sap2000) de
-la nota de teoría recibe una tabla
-de reacciones y la trata como el dato duro del problema. Para este pórtico, el par
+Y para esta serie en particular hay una consecuencia concreta. El
+[barrido de combinaciones](/herramientas/placa-base/documentacion#6-barrido-de-combinaciones-de-sap2000)
+de la herramienta recibe una tabla de reacciones y la trata como el dato duro del problema. Para este pórtico, el par
 $\{P_u, M_u\}$ de la base va de $(26{,}7;\ 0)$ a $(34{,}7;\ 24{,}1)$ según cómo se dibujó el
 apoyo. **No es un punto: es una banda**, y el barrido está explorando cuidadosamente una sola
 esquina de ella.

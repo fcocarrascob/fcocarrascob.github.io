@@ -3675,7 +3675,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 |------|------------------|-----------|----------|
 | `placas-base-empotrada-o-rotulada` | 2026-08-07 | ⚠️ | 0 · 21 aplicados (7🟠 11🟡 3🔵) · 3 descartados |
 | `placa-base-ejemplo-trabajado` | 2026-07-15 | ⚠️ | 2 (0🔴 0🟠) · movido desde `blog` el 2026-08-07 |
-| `placas-base-sap2000` | — | — | movido desde `blog` el 2026-08-07 |
+| `placas-base-teoria` | — | — | reescritura del 2026-08-07: era `placas-base-sap2000` (movido desde `blog` el mismo día) y documentaba la herramienta. La capa de implementación —solver, decisiones que se apartan de la guía, barrido SAP2000, alcance— salió a `/herramientas/placa-base/documentacion`, y el §5 duplicado del Cap. 17 se redujo a un puente hacia `hormigon/aci318-25-cap17-anclajes`. **Sin auditar** |
 | `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 (×2) | ⚠️ | 0 · 13 + 9 aplicados · sin planilla (candidata) |
 | `predimensionamiento-columna-comprimida` | 2026-08-06 (×2) | ⚠️ | 0 · 11 + 4 aplicados · sin planilla (parcial) |
 | `predimensionamiento-viga-flexion` | 2026-08-06 (×2) | ⚠️ | 0 · 12 + 4 aplicados · sin planilla (parcial) |

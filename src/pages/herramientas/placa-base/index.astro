@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/ui/Header.astro';
-import Footer from '../../components/ui/Footer.astro';
-import PlacaBaseTool from '../../components/placa/PlacaBaseTool.tsx';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/ui/Header.astro';
+import Footer from '../../../components/ui/Footer.astro';
+import PlacaBaseTool from '../../../components/placa/PlacaBaseTool.tsx';
 
 const title = 'Placa base de columna';
 const description =
@@ -26,10 +26,15 @@ const description =
         mapa muestra las presiones, el eje neutro y la tracción de cada perno.
         Con el <strong>barrido SAP2000</strong> (al final de la página) puedes pegar la tabla
         Joint Reactions completa y evaluar la placa contra todas las combinaciones de todos los
-        apoyos a la vez, detectando cuál controla. La teoría, las fórmulas y los supuestos de
-        cada verificación están documentados en la nota
-        <a href="/acero/placas-base-sap2000" class="text-accent hover:underline">Placas base:
-        teoría y verificaciones de la herramienta</a>, y hay un
+        apoyos a la vez, detectando cuál controla.
+      </p>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        Cada fórmula, supuesto y decisión de modelación está en
+        <a href="/herramientas/placa-base/documentacion" class="text-accent hover:underline">cómo
+        calcula la herramienta</a>. La teoría del fenómeno —el contacto que solo empuja, el kern
+        biaxial, los dos códigos que conviven en una placa base— está en
+        <a href="/acero/placas-base-teoria" class="text-accent hover:underline">La placa base: la
+        interfaz que solo puede empujar</a>, y hay un
         <a href="/acero/placa-base-ejemplo-trabajado" class="text-accent hover:underline">ejemplo
         trabajado</a> que compara la herramienta con la Design Guide 1 resuelta a mano.
       </p>
@@ -40,9 +45,10 @@ const description =
     <details class="mt-6 text-xs text-muted print:hidden">
       <summary class="cursor-pointer font-medium text-ink">Supuestos y notas del modelo</summary>
       <p class="mt-2 leading-relaxed">
-        Resumen de los supuestos; el desarrollo completo (modelo mecánico, ecuaciones y
-        referencias de cada verificación) está en la
-        <a href="/acero/placas-base-sap2000" class="text-accent hover:underline">nota teórica</a>.
+        Resumen de los supuestos; el desarrollo completo —ecuaciones, decisiones de modelación y en
+        qué dirección se aparta cada una de la fuente— está en
+        <a href="/herramientas/placa-base/documentacion" class="text-accent hover:underline">cómo
+        calcula la herramienta</a>.
       </p>
       <ul class="mt-2 space-y-1.5 list-disc pl-5 leading-relaxed">
         <li>
