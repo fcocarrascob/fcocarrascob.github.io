@@ -2,6 +2,7 @@
 title: "Placas base (2): ejemplo trabajado — la Design Guide 1 a mano vs. la herramienta"
 description: "Un mismo caso con excentricidad grande resuelto dos veces: a mano con el bloque rectangular de la Design Guide 1 y con el modelo elástico de la herramienta. Dónde coinciden, dónde difieren (tracción de pernos, flexión de placa) y qué verificación decisiva la DG1 nunca pregunta: el anclaje al hormigón."
 pubDate: 2026-07-04
+updatedDate: 2026-08-07
 tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "ejemplo trabajado"]
 norm: "AISC 360 / ACI 318"
 section: "Acero"
@@ -97,6 +98,29 @@ $$t_{req} = \sqrt{\frac{4\,M_{pl}}{\phi_b F_y}} = \sqrt{\frac{4 \cdot 6\,680}{0.
 brazo desde el perno a la línea $0.95d$ ($x = f - 0.95d/2 = 3.25$ cm) y el ancho completo,
 $M_{pl,T} = T_u \cdot x / B \approx 750$ kgf·cm/cm, que pide apenas $t = 1.15$ cm.
 
+<Note type="warning" title="Ojo con el ancho del lado traccionado: la DG1 usa tres criterios distintos">
+El $M_{pl,T}$ recién calculado usa el **ancho completo $B$**, que es lo que dice la teoría del
+capítulo 4 (Ec. 4-60, $M_{pl} = T_r x / B$). Pero ese no es el único criterio del documento:
+
+| Criterio | Ancho resistente | $M_{pl}$ en este caso |
+|---|---|---:|
+| DG1 §4.3.7, Ec. 4-60 (teoría, bloque rectangular) | $B$ completo = 45 cm | ~750 kgf·cm/cm |
+| DG1 Ejemplo B.2-2, paso 5 (bloque triangular) | $b_{ef} = 2\ell$ = 6,5 cm | **3 910** kgf·cm/cm |
+| Herramienta (dispersión a 45° a ambos lados) | $\min(4\ell,\ s_{adj},\ \text{dim})$ = 13,0 cm | 1 955 kgf·cm/cm |
+
+Los tres salen del mismo brazo $\ell = 3{,}25$ cm y difieren solo en cuánto ancho de placa se
+acepta que participe. El del Ejemplo B.2-2 —*"el doble de la distancia del perno a la sección
+crítica"*— es **casi seis veces más exigente** que el del cuerpo principal, y con él este lado
+**sí gobernaría**: ratio 1,10 contra la capacidad de 3 558 kgf·cm/cm, y $t$ requerido de 2,62 cm.
+
+Es una inconsistencia interna de la guía, no un error de este post: el criterio de ancho completo
+acompaña al bloque rectangular y el de $2\ell$ al triangular, pero nada explica por qué el
+mecanismo de flexión de la placa debería cambiar con la forma supuesta de la presión **del otro
+lado**. Mientras no se resuelva, conviene calcular los tres y quedarse con el peor cuando el lado
+traccionado esté cerca de gobernar. La [nota teórica](/blog/placas-base-sap2000#33-lado-traccionado-flexión-por-tracción-de-pernos)
+lo trata en detalle.
+</Note>
+
 ### 1.5 Pernos
 
 Para 1″ F1554 gr. 36[^aisc360]: $A_b = 5.07$ cm² y $\phi F_{nt} A_b = 0.75 \cdot (0.75 \cdot 58 \ \text{ksi}) \cdot A_b = 11.6$ tonf.
@@ -173,6 +197,39 @@ conservadora para la placa y optimista para los pernos y su anclaje; el modelo e
 al revés** — con la diferencia de que la placa de acero sí puede plastificar y
 redistribuir, mientras que el cono de hormigón que ancla los pernos es frágil.
 
+<Note type="tip" title="La 3.ª edición de la DG1 respalda el contraste — y su propio texto se equivoca de signo">
+La 3.ª edición admite explícitamente la distribución no rectangular: su Apéndice B.2 declara que
+*"es admisible suponer una distribución triangular de presiones"*, y que hacerlo *"no representa
+en sí mismo un diseño elástico ni un enfoque ASD"*. Lo que este post presentaba como una elección
+propia es un método reconocido.
+
+Pero el mismo §B.2.1 afirma que la triangular *"a menudo requerirá placas base **algo más gruesas**
+y pernos de anclaje **algo más pequeños** que el enfoque de presión uniforme, porque el centroide
+de la distribución de presiones está más cerca del borde en voladizo de la placa"*. **Eso es al
+revés de lo que se mide, incluso en el ejemplo de la propia guía.**
+
+Resolviendo su Ejemplo B.2-2 —W8×31 sobre placa de 14 × 14 in, $P_u = 90{,}0$ kips,
+$M_u = 720$ kip·in— por los dos caminos, con la implementación calibrada contra los valores que la
+guía publica ($A = 4{,}80$ in, $T = 21{,}6$ kips, $t = 1{,}08$ in):
+
+| | Rectangular (§4.3.7) | Triangular (§B.2) | |
+|---|---:|---:|---:|
+| Largo comprimido | $Y = 2{,}30$ in | $A = 4{,}80$ in | +108 % |
+| Tracción total | 17,06 kips | 21,45 kips | **+25,7 %** |
+| $t$ requerido | 1,181 in | 1,084 in | **−8,2 %** |
+
+Placa más **delgada** y pernos más **cargados** — la misma dirección que mide este post, y la
+contraria a la que enuncia B.2.1. La razón es que la frase compara centroides suponiendo el mismo
+largo de bloque, y no lo es: fijadas ambas distribuciones en $f_{p,máx}$ sobre el borde, la
+triangular necesita **más del doble de largo** para juntar la misma resultante, con lo que su
+centroide a $A/3 = 1{,}60$ in queda **más adentro** que el de la rectangular a $Y/2 = 1{,}15$ in.
+Brazo menor, más tracción.
+
+La conclusión práctica no cambia, pero se afina: **el sentido del contraste depende de la
+geometría y hay que medirlo caso a caso**, no darlo por sabido a partir de la forma supuesta de la
+presión.
+</Note>
+
 <Note type="info" title="La discrepancia también existe con excentricidad 'pequeña'">
 Con el momento original de 8 tonf·m ($e = 20$ cm $< e_{crit}$), la DG1 responde con su caso
 de excentricidad pequeña: bloque $Y = N - 2e = 5$ cm, presión 178 kgf/cm² y **tracción cero**
@@ -232,7 +289,7 @@ inferior que cambian el modo de falla.
   [herramienta](/herramientas/placa-base) enlaza cada fila de su tabla de verificaciones
   con la sección (§n) correspondiente.
 
-[^dg1]: Fisher, J. M., & Kloiber, L. A. (2006). *Base Plate and Anchor Rod Design*, Steel Design Guide 1, 2.ª ed. American Institute of Steel Construction, Chicago.
+[^dg1]: *Base Connection Design for Steel Structures*, Steel Design Guide 1, **3.ª ed.** American Institute of Steel Construction, Chicago. Reemplaza a Fisher, J. M., & Kloiber, L. A. (2006), *Base Plate and Anchor Rod Design*, 2.ª ed. El método del bloque rectangular que se usa aquí sigue siendo el principal de la guía (§4.3.7), atribuido a Drake y Elkin (1999) y modificado por Doyle y Fisher (2005).
 
 [^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§J3, J8).
 

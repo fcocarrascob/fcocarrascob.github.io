@@ -2,7 +2,7 @@
 title: "Placas base (1): teoría y verificaciones de la herramienta"
 description: "Base teórica de la herramienta de verificación de placas base: modelo de placa rígida con distribución biaxial de presiones, aplastamiento del hormigón (AISC 360 J8), flexión de la placa (Design Guide 1), pernos de anclaje (J3), anclaje al hormigón en tracción y corte (ACI 318 Cap. 17) y barrido de combinaciones de SAP2000."
 pubDate: 2026-07-02
-updatedDate: 2026-07-03
+updatedDate: 2026-08-07
 tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "SAP2000"]
 section: "Acero"
 series: "Placas base"
@@ -31,6 +31,27 @@ eje neutro cruza la placa en diagonal? El modelo elástico de placa rígida que 
 continuación responde esas preguntas con un único planteo consistente, del cual el método
 de la DG1 es un caso particular. Para ver los dos métodos aplicados al mismo caso, número
 a número, está el [ejemplo trabajado](/blog/placa-base-ejemplo-trabajado).
+
+<Note type="info" title="La 3.ª edición respalda las dos decisiones de fondo de esta herramienta">
+Esta nota se escribió citando la 2.ª edición de la DG1. La **3.ª edición** —otro documento, con
+220 páginas contra ~60— valida por escrito los dos supuestos que aquí eran elección propia:
+
+- **No usar el bloque rectangular no es apartarse de la norma.** Su Apéndice B.2 declara que
+  *"es admisible suponer una distribución triangular de presiones"*, y agrega una aclaración que
+  desactiva un malentendido frecuente: *"esta alternativa no representa en sí misma un diseño
+  elástico ni un enfoque ASD; tanto la triangular como la uniforme son aproximaciones
+  simplificadoras igualmente aplicables a LRFD y ASD"*. La forma supuesta de la presión y el
+  formato de diseño son cosas distintas.
+- **Para el biaxial no hay método manual, y la guía lo dice.** Su §4.3.11 reconoce que el
+  problema es estáticamente indeterminado —las incógnitas superan a las tres ecuaciones de
+  equilibrio, y la orientación del eje de rotación es una incógnita más— y que resolverlo con
+  rigor *"requiere ecuaciones de compatibilidad adicionales y un proceso de solución iterativo
+  por computador, no apto para cálculo manual"*. En su lugar ofrece una interacción empírica
+  de exponente 2 entre las resistencias a momento en cada eje, **válida solo si no hay tracción
+  neta y el corte lo toma una llave de corte o el roce, no los pernos**.
+
+El §1.3 de esta nota es justamente ese planteo de compatibilidad, resuelto numéricamente.
+</Note>
 
 ---
 
@@ -282,12 +303,48 @@ una dispersión a 45° hacia ambos lados del perno.
   caption="Flexión del lado traccionado: cada perno traccionado carga un voladizo de brazo ℓ hasta la línea crítica; el ancho efectivo b_ef queda acotado por la dispersión desde el perno (4·ℓ), la separación s_adj al perno vecino y la dimensión de la placa."
 />
 
-<Note type="warning" title="Supuesto de juicio">
-El ancho efectivo $b_{ef}$ del lado traccionado no está normado: es un supuesto razonable y
-habitual (dispersión a 45°), pero un supuesto al fin. La herramienta lo reporta
-explícitamente en el detalle de la verificación para que pueda revisarse caso a caso. Para
-placas con silletas o atiesadores el mecanismo cambia por completo y esta verificación no
-aplica.
+<Note type="warning" title="Corrección: la DG1 sí da una regla, y pide la mitad de ancho">
+Esta nota decía que el ancho efectivo $b_{ef}$ del lado traccionado *"no está normado"*. **Sí lo
+está**, aunque no en la teoría del Apéndice B sino en la prosa del paso 5 del **Ejemplo B.2-2** de
+la 3.ª edición:
+
+> *"El momento se toma en el ancho crítico de placa. Este se determina suponiendo que la carga se
+> dispersa a 45,0° hasta la ubicación $0{,}95d$ de la columna. **El ancho se toma entonces como el
+> doble de la distancia del perno a la sección crítica**, para cada perno, siempre que la sección
+> crítica no intersecte el borde de la placa."*
+
+Es decir $b_{ef} = 2\ell$, con lo que el momento queda $M_{pl} = T_{perno}/2$ **sin importar el
+brazo**. La herramienta usa $b_{ef} = \min(4\ell,\ s_{adj},\ \text{dimensión})$ — dispersión a 45°
+hacia **ambos** lados del perno—, es decir **el doble de ancho y la mitad de momento**.
+
+Con un matiz que conviene no omitir: **la propia guía usa dos criterios distintos**. El cuerpo
+principal, al tratar el bloque rectangular, toma el **ancho completo de la placa** (§4.3.7,
+Ec. 4-60: $M_{pl} = T_r x / B$), que es *menos* exigente que los dos anteriores; el $2\ell$
+aparece solo en el ejemplo del Apéndice B, junto al bloque triangular. Nada explica por qué el
+mecanismo de flexión del lado traccionado debería depender de la forma supuesta de la presión
+**del lado opuesto**, así que la diferencia parece una inconsistencia interna más que una
+distinción deliberada.
+
+La diferencia no es cosmética. Sobre el caso del [ejemplo
+trabajado](/blog/placa-base-ejemplo-trabajado), con $\ell = 3{,}25$ cm el factor gobierna en los dos
+criterios ($4\ell = 13{,}0$ cm y $2\ell = 6{,}5$ cm, ambos menores que $s_{adj} = 35$ cm), así que
+el momento se duplica exactamente:
+
+| | Herramienta ($4\ell$) | DG1, Ej. B.2-2 ($2\ell$) |
+|---|---:|---:|
+| $b_{ef}$ | 13,0 cm | 6,5 cm |
+| $M_{pl}$ | 1 955 kgf·cm/cm | 3 910 kgf·cm/cm |
+| Ratio contra $\phi_b M_p = 3\,558$ | 0,55 ✓ | **1,10 ✗** |
+| $t$ requerido por este mecanismo | 1,85 cm | 2,62 cm |
+
+Con el criterio de la DG1 **este lado gobernaría** el ejemplo, en vez de quedar holgado. La
+herramienta mantiene por ahora $4\ell$ y lo reporta en el detalle de la verificación; queda
+declarado que es una elección que **se aparta de la guía en dirección no conservadora**, y que
+conviene contrastar los dos valores en cualquier caso donde el lado traccionado esté cerca de
+gobernar.
+
+Para placas con silletas o atiesadores el mecanismo cambia por completo y esta verificación no
+aplica en ninguna de sus dos versiones.
 </Note>
 
 ---
@@ -309,6 +366,26 @@ $$
 | 36 | 58 | 4078 | 2294 | 1376 |
 | 55 | 75 | 5273 | 2966 | 1780 |
 | 105 | 125 | 8788 | 4943 | 2966 |
+
+<Note type="warning" title="AISC y ACI no calculan el perno sobre la misma área">
+El área bruta con coeficiente que se usa arriba es **el sistema de AISC**. El Capítulo 17 de
+ACI 318 —el que gobierna el §5 de esta nota— usa otro: el **área de tensión roscada** de
+ASME B1.1,
+
+$$A_{se,N} = \frac{\pi}{4}\left(d_a - \frac{0{,}9743}{n}\right)^2$$
+
+con $n$ los hilos por pulgada, y aplica $F_u$ **completo** sobre ella. En AISC el descuento de la
+rosca está en el coeficiente (0,75 y 0,45); en ACI está en el área. La DG1 3.ª ed. §4.3.2.1 lo
+advierte de forma expresa: *"el diseñador debe conocer las diferencias entre estos enfoques y
+**mantenerse consistente dentro de un solo sistema**"*, y su propia Tabla 4-1 adopta el de ACI
+para que las dos mitades del problema hablen el mismo idioma.
+
+Esta herramienta usa el sistema **AISC** en el §4 y el de **ACI** en el §5. Cada verificación es
+internamente consistente —la de acero contra la Tabla J3.2, la de hormigón contra el Cap. 17— y
+lo que cruza de una a otra es una **fuerza**, no un área, así que no hay doble descuento. Pero
+conviene saberlo antes de comparar una capacidad de perno de esta herramienta contra la Tabla 4-1
+de la DG1: no son la misma cuenta.
+</Note>
 
 **Tracción:** la demanda es la tracción máxima de perno $T_{max}$ que entrega el solver
 (§1) — no un reparto uniforme $T/n$: con momento biaxial, el perno de la esquina
@@ -362,6 +439,20 @@ $$
 
 (el 10.1 es la constante SI $k_c = 10$ convertida a kgf/cm). Para el **grupo** de pernos
 traccionados:
+
+<Note type="info" title="El exponente 1.5 no siempre es el que corresponde">
+ACI 318 §17.6.2.2.3 permite una segunda forma de $N_b$, con exponente **5/3** en vez de 1,5, para
+anclajes **embebidos con cabeza** cuya profundidad efectiva esté entre 11 y 25 pulgadas —o sea,
+aproximadamente **entre 28 y 64 cm**, que es el rango de un pedestal industrial corriente—. La
+DG1 3.ª ed. §4.3.2.2 la señala como un aumento *"de hasta un 14 %"*, y su propio Ejemplo 4.7-5 la
+usa con $h_{ef} = 12$ in.
+
+La herramienta calcula siempre con $h_{ef}^{1.5}$, así que en ese rango de embebido **es
+conservadora en el breakout**. No se implementó todavía porque la constante que acompaña al
+exponente 5/3 solo se leyó en unidades pulgada-libra, y convertirla a mano es exactamente el tipo
+de paso que produce errores de transcripción difíciles de detectar: hay que tomarla de la edición
+SI de ACI 318.
+</Note>
 
 <Equation label="Ec. 16">
 $$
@@ -441,7 +532,13 @@ Las decisiones de modelación, explícitas en el detalle de la verificación:
   ($V_{ux}$ contra el borde $x\pm$, $V_{uy}$ contra $y\pm$), y gobierna la peor.
 - **La fila delantera toma toda la componente** — el caso conservador cuando los
   agujeros de la placa tienen holgura y no puede garantizarse que las filas traseras
-  participen antes de que la delantera falle.
+  participen antes de que la delantera falle. La DG1 3.ª ed. §4.3.3 recomienda exactamente
+  esto, y no como un refinamiento sino como la práctica por defecto: *"los autores recomiendan
+  un enfoque cauteloso, como usar solo los pernos más cercanos al borde en la dirección de la
+  fuerza para transferir el corte, salvo que se tomen medidas especiales para igualar la carga
+  entre todos los pernos"* (Fisher, 1981). Esas medidas son golillas-placa con agujeros
+  **estándar** —no sobredimensionados— o una placa de nivelación soldada en obra a la placa base
+  después del montaje.
 - $\psi_{ec,V} = 1$ (reparto uniforme en la fila) y $\psi_{h,V} = 1$ (**pedestal
   profundo**, $h_a \geq 1.5\,c_{a1}$ — cierto en pedestales típicos).
 
@@ -484,6 +581,15 @@ de transferir el corte. El Capítulo 17 completo — los modos de falla, el caso
 pedestal angosto, la armadura de anclaje y la jerarquía sísmica del fusible — está
 desarrollado en la nota [ACI 318-25 Cap. 17 — Anclaje al
 hormigón](/hormigon/aci318-25-cap17-anclajes).
+
+Sobre lo primero conviene ser más directo de lo que esta nota fue: la DG1 3.ª ed. §4.4.1
+sostiene que *"cuando se usan pedestales, la resistencia de breakout por sí sola no puede
+transferir el nivel significativo de fuerza de tracción desde la columna de acero al
+hormigón"*. Es decir que en un pedestal —el caso normal en estructura industrial— **la
+armadura de anclaje no es el plan B, es el plan**. Y distingue dos cosas que se confunden
+seguido: la *armadura de anclaje* se diseña para la demanda y **reemplaza** el cálculo de
+breakout ($\phi = 0{,}75$), mientras que la *armadura suplementaria* no se diseña para carga
+alguna y solo sube el $\phi$ del breakout de 0,70 a 0,75, un 7 %.
 </Note>
 
 ---
@@ -643,15 +749,37 @@ describe. Lo que **no** verifica:
   sin refuerzo suplementario ni armadura de anclaje (17.5.2); cuando el cono no da, esas
   son las soluciones de diseño, y su verificación se hace aparte. Tampoco se cubren
   anclajes post-instalados (las constantes usadas son de anclajes embebidos).
+  La DG1 3.ª ed. cubre las dos: §4.4 la armadura de anclaje —con el Ejemplo 4.7-15, donde
+  el embebido final lo termina fijando **la longitud de desarrollo del gancho, no una
+  resistencia**— y §4.3.3 más el Ejemplo 4.7-5 el dimensionamiento completo de la llave de
+  corte, cuyos cuatro estados límite se reparten entre AISC (soldadura y flexión de la
+  llave) y ACI §17.11 (aplastamiento y breakout, ambos con $\phi = 0{,}65$). En ese ejemplo
+  **el que gobierna es el breakout de la llave**, con razón de uso 0,96 contra 0,10 de la
+  fluencia en corte del acero: lo que dimensiona una llave de corte es el ancho del pedestal,
+  no su espesor.
+- **Roce placa–hormigón:** esta herramienta no lo cuenta, y esa decisión ahora se puede
+  fundar mejor. La DG1 3.ª ed. §4.3.5 **sí lo permite** ($\mu = 0{,}4$, $\phi = 0{,}65$,
+  topado en $0{,}2f'_c A_c$), y observa que en bases típicas suele alcanzar por sí solo para
+  el corte lateral. Pero NCh2369:2025 **§8.5.4 lo prohíbe** de forma expresa, junto con la
+  resistencia del mortero de nivelación. En proyecto sísmico chileno esa vía no existe, así
+  que no contarla es lo correcto — y es la razón por la que la llave de corte aparece tan
+  seguido en estructura industrial nacional.
 - **Soldadura columna-placa** y su compatibilidad con el bloque de presiones.
 - **Placas con atiesadores o silletas:** el modelo de flexión (§3) supone placa plana; con
   rigidizadores los mecanismos de líneas de fluencia cambian por completo.
 - **Flexibilidad de la placa:** la hipótesis de placa rígida (§1.1) es tanto mejor cuanto
   mayor el espesor; para placas muy delgadas con volados grandes, la presión real se
   concentra bajo la columna y el modelo rígido sobreestima el brazo del bloque de presiones.
+  El Apéndice B.3 de la DG1 3.ª ed. le pone número a eso para el caso de **compresión
+  concéntrica**: la placa se diseña como rígida pero sobre un **área efectiva** que se extiende
+  solo $c = 1{,}5\,t_p$ hacia afuera de alas y alma, y contra esa área se verifica únicamente
+  el aplastamiento — *"no hay necesidad de realizar por separado la verificación de fluencia
+  de la placa"*. Va en dirección **económica**, no conservadora, y está calibrado contra
+  ensayos y simulaciones (Steenhuis et al., 2008; Denavit, 2022). El precio es que $c$ depende
+  de $t_p$, así que hay que suponer un espesor e iterar.
 - Solo **LRFD**: las cargas de entrada deben ser combinaciones mayoradas.
 
-[^dg1]: Fisher, J. M., & Kloiber, L. A. (2006). *Base Plate and Anchor Rod Design*, Steel Design Guide 1, 2.ª ed. American Institute of Steel Construction, Chicago.
+[^dg1]: *Base Connection Design for Steel Structures*, Steel Design Guide 1, **3.ª ed.** American Institute of Steel Construction, Chicago. Reemplaza a Fisher, J. M., & Kloiber, L. A. (2006), *Base Plate and Anchor Rod Design*, 2.ª ed., y **no es una revisión menor**: cambia de título y de alcance, pasando de ~60 a 220 páginas con bases embebidas (cap. 5), diseño sísmico (cap. 6), rigidez rotacional (Ap. C) y elementos finitos (Ap. D). Es un documento **no obligatorio**, como la propia guía declara en su §6.1.
 
 [^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§J3, J8).
 
