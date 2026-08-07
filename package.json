@@ -20,6 +20,7 @@
     "ecuaciones": "node scripts/verify-ecuaciones.mjs --escribir",
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
+    "figura": "node scripts/render-figura.mjs",
     "pdf:planilla": "node scripts/render-planilla-pdf.mjs",
     "pdf:planillas": "node scripts/render-planilla-pdf.mjs chevron-nch2369 columna-galpon-compresion gusset-simple-apernado gusset-simple-soldado gusset-esquina-apernado gusset-apice-chevron diagonal-hss-traccion conexion-momento-end-plate conexion-momento-placas-ala conexion-apernada-corte conexion-doble-angulo empalme-apernado-viga viga-carrilera-puente-grua viga-ltb viga-columna viga-hss-flexion viga-flexion-corte mensula-puntal-tensor columna-interaccion-esbeltez",
     "reflow:planilla": "node scripts/reflow-planilla.mjs",
