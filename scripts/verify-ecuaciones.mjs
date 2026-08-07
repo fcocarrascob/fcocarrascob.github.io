@@ -45,6 +45,18 @@ const FUENTES = [
   { prefijo: 'src/lib/zapata', normas: ['aci318-25'], zona: 'motor' },
   // Los posts entran al mismo control: una ecuación mal citada en una nota o en
   // un ejemplo la ve el lector, que es peor que si vive solo en el código.
+  //
+  // La serie de placas base va PRIMERO porque el lookup usa `.find()` y gana el
+  // primer prefijo que calce. Necesita dos normas más que el resto de `acero/`:
+  // ACI 318, porque el anclaje al hormigón es la mitad del problema; y la
+  // Design Guide 1, cuyo Apéndice C numera «C-5», «C-17a» — etiquetas que el
+  // detector lee igual que las del Cap. C de AISC 360-22, que solo llega a
+  // C2-2b. Sin esta línea, cada cita del Apéndice C sale huérfana.
+  {
+    prefijo: 'src/content/acero/placa',
+    normas: ['aisc360-22', 'aci318-25', 'dg1-3ed'],
+    zona: 'post',
+  },
   { prefijo: 'src/content/acero/', normas: ['aisc360-22', 'aisc341-22'], zona: 'post' },
   { prefijo: 'src/content/hormigon/', normas: ['aci318-25'], zona: 'post' },
 ];
