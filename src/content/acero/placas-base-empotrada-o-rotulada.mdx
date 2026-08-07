@@ -1,6 +1,6 @@
 ---
-title: "Placas base (3): ni empotrada ni rotulada"
-description: "Los dos posts anteriores calculan la placa a partir de un juego de reacciones que salió de un modelo donde alguien dibujó la base empotrada o rotulada. La Design Guide 1 mide 0,01–0,02 rad de rotación ANTES de fluir, y muestra que los dos errores no son simétricos. Acá se calcula el reemplazo —la rigidez rotacional del Apéndice C— sobre el caso del ejemplo trabajado, y se corre el mismo pórtico tres veces para medir qué cuesta cada supuesto: la base que todos modelaríamos empotrada da β·L/EI = 2,47, sobre una escala donde 20 es empotrada y 2 es rotulada."
+title: "Placas base: ni empotrada ni rotulada"
+description: "Una placa base se calcula a partir de un juego de reacciones que salió de un modelo donde alguien dibujó la base empotrada o rotulada, y esa elección mueve el resultado más que varias de las decisiones que sí se discuten. La Design Guide 1 mide 0,01–0,02 rad de rotación ANTES de fluir, y muestra que los dos errores no son simétricos. Acá se calcula el reemplazo —la rigidez rotacional del Apéndice C— sobre el caso del ejemplo trabajado, y se corre el mismo pórtico tres veces para medir qué cuesta cada supuesto: la base que todos modelaríamos empotrada da β·L/EI = 2,47, sobre una escala donde 20 es empotrada y 2 es rotulada."
 pubDate: 2026-08-07
 tags: ["placas base", "acero", "conexiones", "Design Guide 1", "rigidez rotacional", "modelación", "AISC 360-22", "OpenSees", "OpenSeesPy"]
 subsection: "teoria"
@@ -12,20 +12,16 @@ import Note from '../../components/content/Note.astro';
 import Figure from '../../components/content/Figure.astro';
 import Equation from '../../components/content/Equation.astro';
 
-Los dos primeros posts de esta serie calculan una placa base con bastante cuidado. El
-[primero](/acero/placas-base-sap2000) documenta cada fórmula de la herramienta y termina con un
-**barrido** que pasa cientos de reacciones de SAP2000 —apoyo × combinación— por la cadena
-completa de verificaciones. El [segundo](/acero/placa-base-ejemplo-trabajado) resuelve un caso a
-mano y con la herramienta, número a número.
+Una placa base se calcula a partir de un juego $\{P_u, M_u, V_u\}$ que se trata como **dato**. Y
+no lo es. Esas reacciones salieron de un modelo estructural en el que alguien dibujó la base
+**empotrada o rotulada**, y esa elección —que casi nunca se justifica, y que en un modelo se hace
+con dos clics— mueve el resultado más que varias de las decisiones que sí se discuten.
 
-Los dos empiezan igual: con un juego $\{P_u, M_u, V_u\}$ que se trata como **dato**. Y no lo es.
-Esas reacciones salieron de un modelo estructural en el que alguien dibujó la base **empotrada o
-rotulada**, y esa elección —que casi nunca se justifica, y que en un modelo se hace con dos
-clics— mueve el resultado más que varias de las decisiones que sí discutimos.
-
-La 3.ª edición de la *Design Guide 1*[^dg1] trae el material que faltaba: su **§3.3** dice por qué
-ninguna de las dos es correcta, y su **Apéndice C** entrega el reemplazo. Este post las aplica al
-caso del ejemplo trabajado y mide la diferencia en un pórtico.
+La *Design Guide 1*[^dg1] tiene el material para hacerlo mejor: su **§3.3** dice por qué ninguna
+de las dos es correcta, y su **Apéndice C** entrega el reemplazo. Acá se aplican a un caso
+concreto —el de la [nota de teoría](/acero/placas-base-sap2000) y el [ejemplo
+trabajado](/acero/placa-base-ejemplo-trabajado) de esta misma serie— y se mide la diferencia en un
+pórtico.
 
 <Note type="info" title="Qué se lee y qué se mide acá">
 Las ecuaciones del Apéndice C y del Cap. 4 se transcribieron de las **páginas rasterizadas** del
@@ -140,7 +136,7 @@ mismo término.)
 - **$L_{rod}$ es la longitud total del perno**, del tope de la placa base al tope de la tuerca del
   conjunto de anclaje inferior — no el embebido efectivo. Y $A_{rod}$ es el **área bruta**, no el
   área de tensión roscada que usa el Cap. 17 de ACI. Es la misma trampa de dos sistemas que ya
-  aparece en el §4 del [primer post](/acero/placas-base-sap2000).
+  aparece en la [nota de teoría](/acero/placas-base-sap2000) de esta serie.
 - **$d_{footing}$ es la profundidad *total* de la zapata**, y $E_{concrete}$ viene escrito en la
   guía como $w_c^{1,5}\sqrt{f'_c}$ **con todo en ksi** y $w_c$ en lb/ft³. Acá se usa la forma SI
   que la serie ya venía usando, $E_c = 15\,100\sqrt{f'_c}$ con $f'_c$ en kgf/cm²; con $w_c = 145$ lb/ft³ la forma
@@ -320,7 +316,8 @@ sea para las dos preguntas a la vez.
 </Note>
 
 Y para esta serie en particular hay una consecuencia concreta. El barrido de combinaciones del
-[primer post](/acero/placas-base-sap2000#6-barrido-de-combinaciones-de-sap2000) recibe una tabla
+[barrido de combinaciones](/acero/placas-base-sap2000#6-barrido-de-combinaciones-de-sap2000) de
+la nota de teoría recibe una tabla
 de reacciones y la trata como el dato duro del problema. Para este pórtico, el par
 $\{P_u, M_u\}$ de la base va de $(26{,}7;\ 0)$ a $(34{,}7;\ 24{,}1)$ según cómo se dibujó el
 apoyo. **No es un punto: es una banda**, y el barrido está explorando cuidadosamente una sola
