@@ -13,7 +13,7 @@
 
   <!-- ═══ (a) Compresión total ═══ -->
   <text x="16" y="26" font-size="12.5" font-weight="600" fill="#1a1a1a">(a) Compresión total</text>
-  <text x="16" y="42" font-size="11" fill="#6b7280">resultante dentro del núcleo central</text>
+  <text x="16" y="42" font-size="11" fill="#6b7280">resultante dentro del kern (rombo)</text>
   <rect x="60" y="160" width="260" height="50" fill="#eef1f4" stroke="#d1d5db" stroke-width="1"/>
   <polygon points="90,160 290,160 290,184 90,172" fill="#2563eb" fill-opacity="0.15" stroke="#2563eb" stroke-width="1.2"/>
   <rect x="90" y="148" width="200" height="12" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>

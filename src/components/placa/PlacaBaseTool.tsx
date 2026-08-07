@@ -87,7 +87,10 @@ const round1 = (v: number) => Math.round(v * 10) / 10;
 const NOTE_URL = '/herramientas/placa-base/documentacion';
 const THEORY: Record<string, { sec: string; hash: string }> = {
   aplastamiento: { sec: '§2', hash: '2-aplastamiento-del-hormigón--aisc-360-j8' },
-  'flexion-compresion': { sec: '§3.1', hash: '31-lado-comprimido-voladizos-m-y-n' },
+  // La verificación de flexión del lado comprimido incluye tanto los voladizos
+  // m y n (§3.1) como el mecanismo interior λn′ (§3.2): apunta al §3 y no a uno
+  // de los dos, porque cualquiera de ellos puede ser el que gobierne.
+  'flexion-compresion': { sec: '§3', hash: '3-flexión-de-la-placa--design-guide-1' },
   'flexion-traccion': { sec: '§3.3', hash: '33-lado-traccionado-flexión-por-tracción-de-pernos' },
   'perno-traccion': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
   'perno-corte': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },

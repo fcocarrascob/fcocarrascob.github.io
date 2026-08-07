@@ -18,9 +18,26 @@ líneas críticas, por qué los dos códigos no calculan sobre la misma área—
 [La placa base: la interfaz que solo puede empujar](/acero/placas-base-teoria). Lo que sigue supone
 esa nota leída y no la repite.
 
+<Note type="warning" title="El anclaje al hormigón está implementado contra ACI 318-19, no contra la 318-25">
+El motor de anclaje se escribió con el Capítulo 17 de **ACI 318-19**, y la 318-25 cambió tres cosas
+que lo afectan. Están declaradas una por una en la sección donde aparecen, y todas quedan
+**anotadas como trabajo pendiente**: mientras no se actualicen, lo que la herramienta reporta en el
+§5 es 318-19.
+
+| Qué | ACI 318-19 (lo implementado) | ACI 318-25 (lo vigente) | Dirección |
+|---|---|---|---|
+| Interacción N–V (§5.5) | trilineal, $\le 1{,}2$, con umbrales del 20 % | Ecs. 17.8.2/17.8.3, potencia $5/3$ con tope 1, **por separado** para modos de acero y de hormigón | la nueva es **menos conservadora** |
+| $\phi$ del hormigón (§5) | condición B, $\phi = 0{,}70$ | §17.5.3 → Tabla 21.2.1 | según redundancia y modo |
+| $\psi_a$ en $N_{cbg}$ y $N_{sb}$ (§5.1, §5.3) | no existe | 0,95 sin armadura suplementaria (§17.5.4.1) | la herramienta queda **5 % alta** |
+
+La 318-25 además introdujo $\psi_{cm,N}$ (§17.6.2.7), un factor pensado justamente para placas base
+con momento, que tampoco está. El desarrollo de todo esto está en la nota
+[ACI 318-25 Cap. 17](/hormigon/aci318-25-cap17-anclajes), que sí va con la edición vigente.
+</Note>
+
 ## 1. El solver: cómo se resuelve el equilibrio
 
-*Teoría: [§1, la interfaz que solo puede empujar](/acero/placas-base-teoria#1-la-interfaz-que-solo-puede-empujar).*
+*Teoría: [§1, la interfaz que solo puede empujar](/acero/placas-base-teoria#1-la-interfaz-que-solo-puede-empujar) y [los cuatro regímenes](/acero/placas-base-teoria#los-cuatro-regímenes), que son los que la herramienta rotula en su resultado.*
 
 La herramienta parametriza el asentamiento de la interfaz como un plano $s(x,y) = p_0 + p_x x +
 p_y y$, del que salen la presión de contacto (solo compresión) y la tracción de cada perno (solo
@@ -45,13 +62,20 @@ Tres detalles de implementación que importan para confiar en el resultado:
 - **El sistema es no lineal pero convexo.** Los operadores $\max(0,\cdot)$ hacen que la zona de
   contacto y el conjunto de pernos activos dependan de la solución, pero el sistema es el gradiente
   de un potencial convexo: la solución de equilibrio **existe y es única** siempre que la
-  configuración pueda equilibrar la carga. Se resuelve con Newton amortiguado sobre ese potencial.
+  configuración pueda equilibrar la carga. Se resuelve con Newton amortiguado sobre ese potencial y,
+  si eso no converge, con **continuación de carga** —el mismo problema resuelto al 25, 50, 75 y
+  100 % de la carga, cada paso arrancando del anterior—. Solo si la continuación también falla el
+  caso se declara **inestable**. La distinción importa: es lo que separa «no hay equilibrio posible»
+  de «el Newton no llegó», y de ella depende el conteo de filas sin equilibrio del barrido (§6).
 - **Las integrales son exactas, no de grilla.** La zona de contacto es el rectángulo de la placa
   recortado por el semiplano $s \ge 0$ —un polígono de a lo más 5 vértices— y los momentos de área
   de un polígono tienen forma cerrada por el teorema de Green. **El resultado no depende de ninguna
   discretización.**
 - **La rigidez del perno es el área transformada** del método elástico clásico:
-  $\rho = n A_b$ con $n = E_s/E_c$ y $E_c = 15\,100\sqrt{f'_c}$ [kgf/cm²].
+  $\rho = n A_b$ con $n = E_s/E_c$, $E_s = 2{,}04\times10^6$ kgf/cm² y
+  $E_c = 15\,100\sqrt{f'_c}$ [kgf/cm²]. Ese 15 100 es la conversión de la forma en pulgadas,
+  $57\,000\sqrt{f'_c}$ [psi]; la forma SI de ACI 318-25, $4700\sqrt{f'_c}$ [MPa], da 15 008 — un
+  0,6 % de diferencia, sin efecto por lo que dice el recuadro siguiente.
 
 <Note type="info" title="Sensibilidad a n">
 El reparto de tracciones entre pernos es poco sensible al valor exacto de la razón modular $n$: lo
@@ -101,7 +125,7 @@ las cuatro direcciones ($\pm y$ a $0{,}95d$, $\pm x$ a $0{,}8b_f$), y toma momen
 línea. Con presión uniforme el resultado coincide exactamente con $f_p l^2/2$; con presión
 triangular o contacto parcial captura la concentración de presión en el borde sin aproximar.
 
-### 3.2 Fluencia entre alas: λn′
+### 3.2 Fluencia entre alas: el mecanismo interior
 
 $\lambda n' = \lambda\sqrt{d\,b_f}/4$ con **$\lambda = 1$**, y momento asociado
 $M_u = \sigma_{max}(\lambda n')^2/2$.
@@ -135,9 +159,12 @@ $s_{adj} = 35$ cm), así que el momento se duplica exactamente:
 | | Herramienta ($4\ell$) | DG1, Ej. B.2-2 ($2\ell$) |
 |---|---:|---:|
 | $b_{ef}$ | 13,0 cm | 6,5 cm |
-| $M_{pl}$ | 1 955 kgf·cm/cm | 3 910 kgf·cm/cm |
+| $M_{pl}$ | 1 955 kgf·cm/cm | 3 910 kgf·cm/cm |
 | Ratio contra $\phi_b M_p = 3\,558$ | 0,55 ✓ | **1,10 ✗** |
 | $t$ requerido por este mecanismo | 1,85 cm | 2,62 cm |
+
+(La tabla está calculada con $T = 7{,}82$ tonf, el valor redondeado que publica el ejemplo. La
+herramienta reporta 1 954 en vez de 1 955 porque arrastra la $T$ sin redondear, $7{,}8166$ tonf.)
 
 Con el criterio del Ejemplo B.2-2 **este lado gobernaría** el ejemplo, en vez de quedar holgado.
 La herramienta usa $4\ell$ y lo reporta en el detalle de la verificación: es una elección que
@@ -156,8 +183,10 @@ aplica en ninguna de sus versiones.
 
 *Teoría: [§6, el perno y los dos códigos](/acero/placas-base-teoria#6-el-perno-dos-códigos-y-el-mismo-número-por-dos-caminos).*
 
-Los pernos se verifican como barras roscadas F1554 según la Tabla J3.2, sobre el **área bruta**
-$A_b = \pi d^2/4$:
+La cláusula que manda hacerlo así es **§J9**, que remite las barras de anclaje *«a los requisitos
+para partes roscadas de la Tabla J3.2»* y su transferencia al hormigón a ACI 318 — es el puente
+entre esta sección y la §5. Los pernos se verifican entonces como barras roscadas F1554 según la
+Tabla J3.2, sobre el **área bruta** $A_b = \pi d^2/4$:
 
 <Equation label="AISC 360-22 Tabla J3.2">
 $$
@@ -167,9 +196,9 @@ $$
 
 | F1554 grado | $F_u$ (ksi) | $F_u$ (kgf/cm²) | $\phi F_{nt}$ (kgf/cm²) | $\phi F_{nv}$ (kgf/cm²) |
 |:---:|:---:|:---:|:---:|:---:|
-| 36 | 58 | 4078 | 2294 | 1376 |
-| 55 | 75 | 5273 | 2966 | 1780 |
-| 105 | 125 | 8788 | 4943 | 2966 |
+| 36 | 58 | 4 078 | 2 294 | 1 376 |
+| 55 | 75 | 5 273 | 2 966 | 1 780 |
+| 105 | 125 | 8 788 | 4 943 | 2 966 |
 
 **Tracción:** la demanda es la tracción máxima de perno $T_{max}$ que entrega el solver, **no** un
 reparto uniforme $T/n$: con momento biaxial el perno de la esquina traccionada toma bastante más
@@ -201,11 +230,16 @@ según el diámetro, y está medida en la
 **Supuestos comunes a todas las verificaciones del capítulo:** perno **embebido con tuerca o
 cabeza** (*cast-in headed*), hormigón **fisurado** ($\psi_c = 1{,}0$, conservador), hormigón de peso
 normal ($\lambda_a = 1$), pedestal $B_2 \times N_2$ concéntrico con la placa, y **sin refuerzo
-suplementario ni armadura de anclaje** — condición B, $\phi = 0{,}70$ (17.5.3).
+suplementario ni armadura de anclaje**.
+
+**Desvío de edición:** con esos supuestos la herramienta aplica $\phi = 0{,}70$, que es la
+*condición B* de **ACI 318-19**. La 318-25 eliminó las condiciones A/B y su §17.5.3 remite a la
+**Tabla 21.2.1**, que reparte el φ según el modo y según si el grupo es redundante. Ver el recuadro
+de la entradilla.
 
 ### 5.1 Cono de arrancamiento (breakout, 17.6.2)
 
-<Equation label="ACI 318-25 Ec. 17.6.2.1b">
+<Equation label="ACI 318-19 Ec. 17.6.2.1b — la 318-25 suma tres factores más">
 $$
 N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\;\psi_{ec,N}\;\psi_{ed,N}\;\psi_{c,N}\; N_b,
 \qquad A_{Nco} = 9\,h_{ef}^2,
@@ -213,17 +247,43 @@ N_{cbg} = \frac{A_{Nc}}{A_{Nco}}\;\psi_{ec,N}\;\psi_{ed,N}\;\psi_{c,N}\; N_b,
 $$
 </Equation>
 
-(el 10,1 es la constante SI $k_c = 10$ convertida a kgf/cm). Cada término sale de la geometría ya
-ingresada: $A_{Nc}$ es la caja de los pernos traccionados extendida $1{,}5h_{ef}$ hacia cada lado y
-**recortada por los bordes del pedestal**, acotada por $n \cdot A_{Nco}$; $\psi_{ed,N}$ reduce por
-el borde más cercano; y $\psi_{ec,N}$ usa la excentricidad $e'_N$ calculada con las $T_i$ **reales**
-del solver, no con un reparto supuesto.
+(el 10,1 es la constante SI $k_c = 10$ convertida a kgf/cm). La forma vigente en 318-25 es
+$N_{cbg} = (A_{Nc}/A_{Nco})\,\psi_a\,\psi_{ec,N}\,\psi_{ed,N}\,\psi_{c,N}\,\psi_{cp,N}\,\psi_{cm,N}\,N_b$:
+de los tres que faltan, $\psi_{cp,N}$ vale 1 para anclajes preinstalados y $\psi_{cm,N}$ solo entra
+con brazo interno pequeño, pero **$\psi_a = 0{,}95$ no es omitible** sin armadura suplementaria —
+la herramienta queda un 5 % alta.
+
+Los dos factores de reducción, que es lo que hace falta para reproducir el resultado a mano:
+
+<Equation label="Los dos ψ que la herramienta sí calcula">
+$$
+\psi_{ec,N} = \frac{1}{1 + \dfrac{2\,e'_N}{3\,h_{ef}}} \le 1 \quad \text{por eje},
+\qquad\qquad
+\psi_{ed,N} = 0{,}7 + 0{,}3\,\frac{c_{a,min}}{1{,}5\,h_{ef}} \le 1
+$$
+</Equation>
+
+El resto sale de la geometría ya ingresada: $A_{Nc}$ es la caja de los pernos traccionados
+extendida $1{,}5h_{ef}$ hacia cada lado y **recortada por los bordes del pedestal**, acotada por
+$n_t \cdot A_{Nco}$ con $n_t$ el número de pernos traccionados; $\psi_{ed,N}$ reduce por el borde
+más cercano; y la excentricidad $e'_N$ de $\psi_{ec,N}$ se calcula con las $T_i$ **reales** del
+solver, no con un reparto supuesto.
 
 La verificación es $\sum T_i \le \phi N_{cbg}$ sobre el total del grupo traccionado.
 
 **Decisión:** la herramienta calcula siempre con $h_{ef}^{1{,}5}$ y no con la alternativa de
 exponente 5/3 de §17.6.2.2.3, así que en el rango $280 \le h_{ef} \le 635$ mm es **conservadora**,
 cada vez más a medida que crece el embebido (nula en 280 mm, hasta 14,3 % en 635 mm).
+
+**Lo que no aplica y debería:** §17.6.2.1.2 sustituye $h_{ef}$ por
+$\max(c_{a,max}/1{,}5,\ s/3)$ cuando el anclaje está a menos de $1{,}5h_{ef}$ de **tres o más
+bordes** — el caso del pedestal angosto, que en placas base es común y no excepcional. La
+herramienta usa $h_{ef}$ crudo. Sobre el caso del
+[ejemplo trabajado](/acero/placa-base-ejemplo-trabajado) —pedestal 80×80, $h_{ef} = 40$ cm, pernos
+a ±17,5— las cuatro distancias valen 22,5 cm contra $1{,}5h_{ef} = 60$, así que correspondería
+$h'_{ef} = 15$ cm en vez de 40. El desarrollo está en la
+[§1.2 de la nota del Cap. 17](/hormigon/aci318-25-cap17-anclajes), que lo titula «el caso que hay
+que conocer».
 
 ### 5.2 Extracción (pullout, 17.6.3)
 
@@ -235,11 +295,17 @@ esta verificación es **conservadora**.
 
 ### 5.3 Desprendimiento lateral (side-face blowout, 17.6.4)
 
-$N_{sb} = 41{,}5\,c_{a1}\sqrt{A_{brg}}\sqrt{f'_c}$ [kgf, cm], con la corrección de **esquina** —si
-$c_{a2} < 3c_{a1}$, por $(1 + c_{a2}/c_{a1})/4$— y la de **grupo** a lo largo del borde —si
-$s < 6c_{a1}$, la capacidad conjunta es $(1 + s/(6c_{a1}))N_{sb}$ repartida entre los pernos de ese
-borde—. La herramienta revisa los cuatro bordes del pedestal y reporta el que gobierna; si ningún
-perno cumple $c_{a1} < 0{,}4h_{ef}$, el modo no aplica.
+$N_{sb} = 41{,}5\,c_{a1}\sqrt{A_{brg}}\sqrt{f'_c}$ [kgf, cm] —sin el $\psi_a$ que la 318-25 antepone,
+igual que en §5.1—, con la corrección de **esquina** —si $c_{a2} < 3c_{a1}$, por
+$(1 + c_{a2}/c_{a1})/4$— y la de **grupo** a lo largo del borde —si $s < 6c_{a1}$, la capacidad
+conjunta es $(1 + s/(6c_{a1}))N_{sb}$ repartida entre los pernos de ese borde—. La herramienta
+revisa los cuatro bordes del pedestal y reporta el que gobierna; si ningún perno cumple
+$c_{a1} < 0{,}4h_{ef}$, el modo no aplica.
+
+**Decisión conservadora:** la herramienta **acumula** las dos correcciones —aplica la de esquina y
+después multiplica por la de grupo—. La §17.6.4.2 pide el factor de grupo sobre un $N_{sb}$
+*«without modification for a perpendicular edge distance»*, o sea sin la de esquina. Como el factor
+de esquina es $\le 1$, acumular va del lado seguro.
 
 ### 5.4 Corte al hormigón: breakout y pryout (17.7)
 
@@ -263,21 +329,37 @@ $A_{Vco} = 4{,}5c_{a1}^2$.
 - $\psi_{ec,V} = 1$ (reparto uniforme en la fila) y $\psi_{h,V} = 1$ (**pedestal profundo**,
   $h_a \ge 1{,}5c_{a1}$, cierto en pedestales típicos).
 
-**Pryout (17.7.3):** $V_{cpg} = k_{cp}N_{cbg}$ con $k_{cp} = 1{,}0$ si $h_{ef} < 6{,}35$ cm y
+**Pryout (17.7.3):** $V_{cpg} = k_{cp}N_{cbg}$ con $k_{cp} = 1{,}0$ si $h_{ef} < 6{,}5$ cm y
 $2{,}0$ si no, usando $N_{cbg}$ del grupo completo ($\psi_{ec} = 1$) y como demanda el corte
-resultante.
+resultante. (El código todavía usa 6,35 cm, que es el umbral de 2,5 in de la edición en pulgadas;
+la SI dice 65 mm. Sin consecuencia práctica: el embebido de una placa base está siempre muy por
+encima.)
 
 ### 5.5 Interacción tracción–corte en el hormigón (17.8)
 
-<Equation label="ACI 318-25 Ec. 17.8.3">
+<Equation label="ACI 318-19 §17.8.3 — reemplazada en 318-25">
 $$
 \frac{N_{ua}}{\phi N_n} + \frac{V_{ua}}{\phi V_n} \le 1{,}2
+\qquad\text{solo si}\qquad
+\frac{N_{ua}}{\phi N_n} > 0{,}2 \ \ \text{y}\ \ \frac{V_{ua}}{\phi V_n} > 0{,}2
 $$
 </Equation>
 
 usando en cada término el **modo de hormigón gobernante** (el de mayor ratio en tracción, y el de
 mayor ratio en corte). Es frecuentemente la verificación que decide: cada modo puede pasar
-individualmente y la suma superar 1,2.
+individualmente y la suma no.
+
+Los dos umbrales del 20 % son parte de la regla, no un detalle de implementación: son los tramos
+planos de la trilineal, donde se permite la capacidad plena en un sentido. **Por debajo de
+cualquiera de ellos la herramienta no emite la fila**, y conviene saberlo antes de buscarla en la
+tabla de resultados.
+
+**Desvío de edición.** Todo lo anterior es **ACI 318-19**. La 318-25 reemplazó la trilineal por una
+ley de potencia $5/3$ con tope 1 —Ec. (17.8.2) para el anclaje individual y (17.8.3) para el
+grupo— y, además, pide verificar la interacción **por separado** para los modos de hormigón
+(exponente $5/3$) y para los de acero (exponente 2, §17.8.4). R17.8.1 describe el cambio como *«un
+enfoque menos conservador»*, y con él desaparecen los umbrales del 20 %. El desarrollo está en la
+[§2.4 de la nota del Cap. 17](/hormigon/aci318-25-cap17-anclajes#24-interacción-traccióncorte-178).
 
 ## 6. Barrido de combinaciones de SAP2000
 
@@ -363,29 +445,50 @@ detallado y no de resistencia del modelo.
 
 Rige la [Sección J3 — Pernos](/acero/aisc360-22-capj-conexiones) de AISC 360-22.
 
-**Separación mínima entre centros (J3.3):** $s \ge 2\tfrac{2}{3}d$, preferible $3d$.
+**Separación mínima entre centros (J3.4):** $s \ge 2\tfrac{2}{3}d$, preferible $3d$.
 
-**Distancia mínima del centro del agujero al borde (J3.4, Tabla J3.4M):**
+**Distancia mínima del centro del agujero al borde (J3.5, Tabla J3.4M):**
 
 | $d$ (mm) | 16 | 20 | 22 | 24 | 27 | 30 | 36 | $> 36$ |
 |:---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | Mínima al borde (mm) | 22 | 26 | 28 | 30 | 34 | 38 | 46 | $1{,}25d$ |
 
-La distancia al borde no debe exceder $12t$ ni 150 mm (J3.5). Estos límites geométricos suelen
+La distancia al borde no debe exceder $12t$ ni 150 mm (J3.6). Estos límites geométricos suelen
 controlar el detallado antes que la propia resistencia.
+
+<Note type="info" title="Dos avisos sobre esta numeración y esta tabla">
+**La numeración corrió entre 360-16 y 360-22.** La 22 insertó «High-Strength Bolts» como J3.2 y
+desplazó todo lo posterior: la separación mínima pasó de J3.3 a **J3.4**, la distancia al borde de
+J3.4 a **J3.5**, y los máximos de J3.5 a **J3.6**. La *tabla* sí conserva su nombre, J3.4 y J3.4M.
+Referencias más viejas —incluida la nota de [Cap. J](/acero/aisc360-22-capj-conexiones) de este
+sitio— citan la numeración anterior.
+
+**La tabla de arriba es la métrica; el chequeo usa la de pulgadas.** `minEdgeJ34()` evalúa la Tabla
+J3.4 en pulgadas, así que para un perno de 1″ avisa con 1,25 in = 3,18 cm, mientras que la J3.4M
+con $d = 25{,}4$ mm caería en la fila de 27 y pediría 3,4 cm. La diferencia es de detallado, no de
+resistencia, pero el aviso que emite la herramienta no es el que esta tabla anuncia.
+</Note>
 
 Además se avisa si hay **pernos dentro de la huella de la columna** (entre alas): dificultan el
 montaje y quedan fuera del modelo de flexión del §3.3.
 
 ### 7.2 ACI 318 — pernos de anclaje al hormigón
 
+Los mínimos están en la **Tabla 17.9.2(a)** (separación y distancia al borde) y, nuevos en 318-25,
+en la **Tabla 17.9.2(b)** (distancia al borde de post-instalados cuando no hay información del
+producto):
+
 - **Separación mínima entre anclajes:** $4d_a$ para embebidos que no se aprietan con torque;
   $6d_a$ para embebidos apretados con torque y para post-instalados.
 - **Distancia mínima al borde del pedestal:** para embebidos sin torque, el recubrimiento mínimo de
   armadura (Cap. 20); para embebidos con torque, $6d_a$.
-- **Post-instalados:** el código **no** fija un valor numérico — la separación y distancia al borde
-  mínimas son las del informe de calificación del producto (ensayos ACI 355.2 o 355.4, publicados
-  en el ESR del fabricante). Siempre esos valores, no una regla genérica.
+- **Post-instalados, sin información del producto:** $8d_a$ para los de torque controlado, $10d_a$
+  para los de desplazamiento controlado, y $6d_a$ para los de rosca, socavado o adhesivos.
+- **Post-instalados, con informe:** el §17.9.1 permite —y el R17.9.1 prefiere— usar los valores del
+  informe de calificación del producto (ensayos ACI 355.2 o 355.4, publicados en el ESR del
+  fabricante) en lugar de los de la tabla. Cuando existen, mandan ésos.
+
+La herramienta solo evalúa el caso embebido, que es el que su §5 verifica.
 
 <Note type="warning" title="Cumplir el mínimo de splitting no basta">
 Aunque se cumplan las distancias mínimas, la resistencia real del cono de hormigón (§5.1) sigue
@@ -418,4 +521,10 @@ Lo que **no** verifica:
 - **La rigidez rotacional de la base**, que es lo que produce las reacciones de entrada. Está en
   [ni empotrada ni rotulada](/acero/placas-base-empotrada-o-rotulada) y en su
   [planilla del canvas](/herramientas/canvas?planilla=placa-base-rigidez-rotacional).
+- **El pedestal angosto** de §17.6.2.1.2: con tres o más bordes a menos de $1{,}5h_{ef}$, la 318-25
+  pide sustituir $h_{ef}$ y la herramienta no lo hace. Es el desvío **no conservador** de mayor
+  efecto que queda abierto — ver §5.1.
 - Solo **LRFD**: las cargas de entrada deben ser combinaciones mayoradas.
+
+Y lo que verifica con la **edición anterior** del código de hormigón —la interacción N–V, el φ y el
+$\psi_a$ ausente— está en el recuadro de la entradilla, con su dirección y su tamaño.

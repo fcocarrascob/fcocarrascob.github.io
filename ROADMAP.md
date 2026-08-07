@@ -32,6 +32,43 @@ Ideas discutidas para futuras sesiones (2026-07-03). Marcar estado al avanzar:
   pura, compartida por formulario y barrido.
 - [x] ~~**A4. Siguiente sub-tool de SAP Scripts**~~ — **cancelado y retirado el 2026-08-05**
   (ver sección J): la herramienta entera salió del sitio.
+- [ ] **A5. Actualizar el anclaje de la placa base a ACI 318-25** — abierto el 2026-08-07 por la
+  auditoría de `placas-base-teoria` y de la documentación de la herramienta. `placaBaseAnchorage.ts`
+  y `placaBaseChecks.ts` se escribieron el 2026-07-03 contra **ACI 318-19**; la nota
+  `/hormigon/aci318-25-cap17-anclajes`, del 2026-07-06, ya publica la edición vigente, así que hoy
+  **el sitio se contradice a sí mismo**. Mientras no se cierre, el desvío está declarado en el
+  recuadro de entrada de `/herramientas/placa-base/documentacion` y en cada sección donde aparece.
+
+  Cuatro cosas, en orden de efecto:
+
+  - **La interacción N–V (`placaBaseAnchorage.ts:21,347,355`).** Hoy es la trilineal
+    `N/φNn + V/φVn ≤ 1.2` con los umbrales del 20 %. La 318-25 la reemplazó por la ley de potencia
+    5/3 con tope 1 —Ec. (17.8.2) individual y (17.8.3) grupo— y pide **dos verificaciones
+    independientes**: modos de hormigón con exponente 5/3 y modos de acero con exponente 2
+    (§17.8.4). R17.8.1 la describe como «un enfoque menos conservador». Desaparecen los umbrales,
+    así que la fila pasa a emitirse siempre.
+  - **El φ (`placaBaseAnchorage.ts:39`, `PHI_ANC = 0.7`).** Las condiciones A/B se eliminaron; el
+    §17.5.3 remite a la **Tabla 21.2.1**, que reparte según modo y redundancia. Hay que decidir
+    cómo trata la herramienta la redundancia de un grupo de pernos de placa base — es una decisión
+    de modelación, no una constante, y va declarada.
+  - **`ψ_a` ausente en `N_cbg` y `N_sb` (§17.5.4.1, Tabla 17.5.4.1).** Vale **0,95** sin armadura
+    suplementaria, así que la herramienta reporta hoy un 5 % de más. Es el único de los cuatro que
+    va en dirección **no conservadora** por sí solo y no admite quedarse en 1.
+  - **`ψ_cm,N` (§17.6.2.7)**, que la 318-25 introdujo justamente para placas base con momento
+    —brazo interno pequeño respecto de `h_ef`—, no está.
+
+  Y un quinto que no es de edición sino una omisión de siempre, del mismo bloque:
+
+  - **El pedestal angosto, §17.6.2.1.2.** Con el anclaje a menos de `1,5·h_ef` de **tres o más
+    bordes**, `h_ef` se sustituye por `max(c_a,max/1,5, s/3)`. El motor usa `h_ef` crudo. Sobre el
+    caso por defecto de la herramienta (pedestal 80×80, `h_ef` = 40 cm, pernos a ±17,5)
+    correspondería `h'_ef = 15` cm en vez de 40 — es el desvío no conservador de mayor efecto que
+    queda abierto. La nota del Cap. 17 lo titula «el caso que hay que conocer».
+
+  Cerrar esto mueve los números que la herramienta publica, así que pide rehacer los contrastes de
+  `placa-base-ejemplo-trabajado` y `hormigon/ejemplo-anclajes-pedestal` en la misma pasada. Y el
+  `k_cp` de `placaBaseAnchorage.ts:323` usa 6,35 cm (2,5 in) donde la edición SI dice 65 mm: sin
+  consecuencia práctica, pero se corrige de paso.
 
 ## B. Posts
 

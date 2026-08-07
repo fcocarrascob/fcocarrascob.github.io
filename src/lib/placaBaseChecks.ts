@@ -259,7 +259,7 @@ export function runPlaca(inp: PlacaInputs): PlacaResults {
       checks.push(
         check(
           'perno-interaccion',
-          'Perno — interacción tracción + corte (J3.7)',
+          'Perno — interacción tracción + corte (J3.8)',
           Tmax,
           PHI_R * Fntp * Ab,
           'kgf',
