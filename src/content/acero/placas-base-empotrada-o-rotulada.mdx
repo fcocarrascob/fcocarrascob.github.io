@@ -1,0 +1,466 @@
+---
+title: "Placas base (3): ni empotrada ni rotulada"
+description: "Los dos posts anteriores calculan la placa a partir de un juego de reacciones que salió de un modelo donde alguien dibujó la base empotrada o rotulada. La Design Guide 1 mide 0,01–0,02 rad de rotación ANTES de fluir, y muestra que los dos errores no son simétricos. Acá se calcula el reemplazo —la rigidez rotacional del Apéndice C— sobre el caso del ejemplo trabajado, y se corre el mismo pórtico tres veces para medir qué cuesta cada supuesto: la base que todos modelaríamos empotrada da β·L/EI = 2,47, sobre una escala donde 20 es empotrada y 2 es rotulada."
+pubDate: 2026-08-07
+tags: ["placas base", "acero", "conexiones", "Design Guide 1", "rigidez rotacional", "modelación", "AISC 360-22", "OpenSees", "OpenSeesPy"]
+subsection: "teoria"
+chapter: "AISC Design Guide 1, 3.ª ed., §3.3 y Apéndice C — Rigidez rotacional de la base"
+tema: "Placas base"
+---
+
+import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
+import Equation from '../../components/content/Equation.astro';
+
+Los dos primeros posts de esta serie calculan una placa base con bastante cuidado. El
+[primero](/acero/placas-base-sap2000) documenta cada fórmula de la herramienta y termina con un
+**barrido** que pasa cientos de reacciones de SAP2000 —apoyo × combinación— por la cadena
+completa de verificaciones. El [segundo](/acero/placa-base-ejemplo-trabajado) resuelve un caso a
+mano y con la herramienta, número a número.
+
+Los dos empiezan igual: con un juego $\{P_u, M_u, V_u\}$ que se trata como **dato**. Y no lo es.
+Esas reacciones salieron de un modelo estructural en el que alguien dibujó la base **empotrada o
+rotulada**, y esa elección —que casi nunca se justifica, y que en un modelo se hace con dos
+clics— mueve el resultado más que varias de las decisiones que sí discutimos.
+
+La 3.ª edición de la *Design Guide 1*[^dg1] trae el material que faltaba: su **§3.3** dice por qué
+ninguna de las dos es correcta, y su **Apéndice C** entrega el reemplazo. Este post las aplica al
+caso del ejemplo trabajado y mide la diferencia en un pórtico.
+
+<Note type="info" title="Qué se lee y qué se mide acá">
+Las ecuaciones del Apéndice C y del Cap. 4 se transcribieron de las **páginas rasterizadas** del
+PDF de la guía (Ap. C en pp. 199–203 del archivo, Cap. 4 en pp. 53–54). Los números salen de dos
+implementaciones independientes: la [planilla del canvas](/herramientas/canvas?planilla=placa-base-rigidez-rotacional)
+y el script del laboratorio, que además corre el pórtico por rigidez directa en numpy y por
+OpenSeesPy. Las dos coinciden.
+</Note>
+
+---
+
+## 1. Lo que mide el ensayo
+
+El §3.3.1 parte de la respuesta momento-rotación cíclica de una base expuesta con compresión
+axial (Gomez *et al.*, 2010) y saca tres lecturas. La primera es la que rompe el supuesto:
+
+> *«…si se supone que los momentos de diseño ocurren al ~70–80 % de la capacidad (por los
+> factores de seguridad) y por consideraciones de dimensionamiento, **se obtiene una rotación de
+> 0,01–0,02 rad en la fluencia**. Este tipo de respuesta se observa en distintos tipos de
+> conexiones de base, tanto expuestas como embebidas. Esto sugiere que las conexiones de base
+> poseen **empotramiento parcial** y **no pueden suponerse fijas ni libres** sin análisis o
+> contexto adicional.»*
+
+Ese «tanto expuestas como **embebidas**» no es un detalle. Es lo que desarma el reflejo de que
+una base embebida se puede dibujar empotrada porque está enterrada.
+
+La segunda lectura decide **qué** rigidez se usa: ya en el rango que llamamos elástico la
+respuesta es no lineal, por dos causas físicas —el levantamiento de la placa respecto de la
+zapata, y la no linealidad del hormigón en aplastamiento—. Por eso lo que corresponde es una
+rigidez **secante**, medida al momento de diseño, no la pendiente en el origen.
+
+La tercera es que hay ductilidad de sobra: el ensayo fracturó el perno **sobre 0,08 rad**, y una
+revisión de la evidencia desde 1984 da capacidades de rotación *«bastante sobre 0,04 rad»* en
+bases expuestas y embebidas. El problema de la base, entonces, no es que se rompa: es que gira
+mucho antes de romperse, y el modelo no lo sabe.
+
+---
+
+## 2. Los dos errores no son simétricos
+
+Acá está el párrafo que justifica todo el post. El §3.3 abre diciendo que estas conexiones se
+representan rotuladas o empotradas *«y las dos introducen error en la estimación de la respuesta
+estructural»*; el §3.3.2 separa los dos casos:
+
+> *«Representarlas como rotuladas en modelos estructurales es una **suposición conservadora**, que
+> resulta en estimaciones mayores de derivas de entrepiso y momentos de columna; esto a su vez
+> lleva a seleccionar miembros más pesados o más grandes y a un **aumento del tonelaje de
+> acero**.»*
+
+> *«Por otro lado, a veces estas conexiones se consideran fijas en los modelos estructurales
+> porque están diseñadas para ser **más fuertes** que la columna. Si bien esto puede parecer una
+> suposición razonable, **indica una confusión entre resistencia y rigidez**. En contraste, la
+> evidencia experimental sugiere que aun conexiones de base significativamente más fuertes que la
+> columna a la que llegan (**incluidas las bases embebidas**) exhiben flexibilidad rotacional
+> significativa, de modo que simularlas como fijas **puede ser erróneo y llevar a una
+> caracterización no conservadora del desempeño**.»*
+
+La asimetría es completa. Rotulada cuesta **dinero**: perfiles más pesados de los necesarios.
+Empotrada cuesta **seguridad**: subestima la deriva y el momento en el tope de la columna, que es
+donde §3.3.2 dice que crece la susceptibilidad al **colapso de piso débil**.
+
+Y la guía se pone a sí misma un freno que conviene no omitir:
+
+> *«…la influencia de la rigidez de rotación de la base en la respuesta estructural global depende
+> fuertemente del resto de la estructura — por ejemplo, un marco con vigas y columnas muy rígidas
+> mostrará rotaciones de base bajas independientemente de la flexibilidad de la base.»*
+
+O sea: el efecto no es universal, hay que medirlo. Es exactamente lo que hacemos en el §6.
+
+---
+
+## 3. El reemplazo: cuatro deformaciones y una división
+
+El Apéndice C entrega un método que tiene una propiedad muy conveniente: **no pide un modelo
+nuevo**. La rigidez es secante, definida al momento de diseño,
+
+<Equation label="Ec. C-4">
+$$\beta_{connection} = \frac{M_u}{\theta}$$
+</Equation>
+
+y el giro sale de sumar cuatro deformaciones físicas y dividir por un brazo:
+
+<Equation label="Ec. C-5">
+$$\theta = \frac{\Delta_{rod} + \Delta_{plate}^{tension} + \Delta_{plate}^{compression} + \Delta_{footing}}{f + N/2}$$
+</Equation>
+
+Las cuatro se calculan con la tracción del perno $T$ y el ancho de la interfaz comprimida $Y$ —
+las dos cantidades que el bloque rectangular del capítulo 4 **ya produjo** para diseñar la placa:
+
+<Equation label="Ecs. C-6, C-7, C-9">
+$$
+\Delta_{rod} = \frac{T\,L_{rod}}{A_{rod}\,E_{rod}}
+\qquad
+\Delta_{plate}^{tension} = \frac{T\,L_{tension}^3}{3\,E_{plate}I_{plate}} + \frac{T\,L_{tension}}{A_{plate}^{shear}\,G_{plate}}
+\qquad
+A_{plate}^{shear} = \tfrac{5}{6}\,B\,t_p
+$$
+</Equation>
+
+con $L_{tension} = f - d/2$ medido del borde de la columna al eje del perno (Ec. C-8). El lado
+comprimido tiene dos ramas según el bloque cubra o no el voladizo $m$: rige la Ec. C-10 si
+$Y \ge m$ y la C-11 si $Y < m$. Y la zapata es un acortamiento directo:
+
+<Equation label="Ec. C-12">
+$$\Delta_{bearing} = \frac{f_{max}\,d_{footing}}{E_{concrete}}$$
+</Equation>
+
+(la guía lo llama $\Delta_{bearing}$ en C-12 y $\Delta_{footing}$ en C-5 y en su Fig. C-2; es el
+mismo término.)
+
+<Note type="warning" title="Dos cosas de C-6 y C-12 que es fácil pasar por alto">
+- **$L_{rod}$ es la longitud total del perno**, del tope de la placa base al tope de la tuerca del
+  conjunto de anclaje inferior — no el embebido efectivo. Y $A_{rod}$ es el **área bruta**, no el
+  área de tensión roscada que usa el Cap. 17 de ACI. Es la misma trampa de dos sistemas que ya
+  aparece en el §4 del [primer post](/acero/placas-base-sap2000).
+- **$d_{footing}$ es la profundidad *total* de la zapata**, y $E_{concrete}$ viene escrito en la
+  guía como $w_c^{1,5}\sqrt{f'_c}$ **con todo en ksi** y $w_c$ en lb/ft³. Acá se usa la forma SI
+  que la serie ya venía usando, $E_c = 15\,100\sqrt{f'_c}$ con $f'_c$ en kgf/cm²; con $w_c = 145$ lb/ft³ la forma
+  imperial da un **3,0 % menos**, que no cambia ninguna conclusión pero conviene medir en vez de
+  suponer.
+</Note>
+
+### El caso, y el resultado
+
+Sobre el [ejemplo trabajado](/acero/placa-base-ejemplo-trabajado) —columna HEB 300, placa
+45 × 45 × 2,5 cm, cuatro pernos de 1″, $P_u = 40$ tonf y $M_{ux} = 12$ tonf·m— el capítulo 4 ya
+publicó $Y = 4{,}56$ cm y $T = 10{,}37$ tonf. Con eso, y declarando dos datos que el ejemplo no
+publica (mortero de nivelación de 25 mm y zapata de 80 cm de profundidad), las cuatro
+deformaciones dan:
+
+| Componente | | Deformación | Fracción del giro |
+|---|---|---:|---:|
+| Alargamiento del perno | C-6 | 0,0226 cm | 14,3 % |
+| Flexión de la placa, lado traccionado | C-7 | 0,0008 cm | 0,5 % |
+| Flexión de la placa, lado comprimido | C-11 | 0,0519 cm | **33,0 %** |
+| Acortamiento de la zapata | C-12 | 0,0823 cm | **52,2 %** |
+| **Total** | C-5 | **0,1576 cm** | 100 % |
+
+<Equation label="Ecs. C-5 y C-4">
+$$
+\theta = \frac{0{,}157615\ \text{cm}}{40\ \text{cm}} = 3{,}9404\ \text{mrad}
+\qquad\Rightarrow\qquad
+\beta_{connection} = \frac{12\ \text{tonf·m}}{0{,}0039404} = 3\,045\ \text{tonf·m/rad}
+$$
+</Equation>
+
+Lo primero que sorprende es **quién manda**. No es el perno, que es la pieza en la que uno piensa
+cuando piensa en una base flexible: aporta el 14 %. Manda el **acortamiento del hormigón de la
+zapata**, con el 52 %, seguido de la flexión de la placa del lado comprimido. Y el lado
+traccionado, que es el que se dibuja en todos los esquemas, aporta medio punto porcentual.
+
+---
+
+## 4. «Resistencia ≠ rigidez», con número
+
+La frase de la guía —*«indica una confusión entre resistencia y rigidez»*— se puede dejar como
+cita, o se le puede poner cifra. El ejemplo trabajado da la oportunidad perfecta, porque su placa
+de 25 mm **no cumple**: la DG1 pide 35 mm por flexión. Engrosarla es entonces una decisión de
+diseño obligatoria, no un experimento. ¿Cuánta rigidez compra?
+
+| $t_p$ | $\phi M_p \propto t_p^2$ | $\Delta_{rod}$ | $\Delta_{plate}^{compr}$ | $\Delta_{footing}$ | $\beta$ |
+|---:|---:|---:|---:|---:|---:|
+| 25 mm | 1,00× | 0,0226 | 0,0519 | 0,0823 | 3 045 (1,00×) |
+| 30 mm | 1,44× | 0,0228 | 0,0311 | 0,0823 | 3 509 (1,15×) |
+| **35 mm** | **1,96×** | 0,0231 | 0,0204 | 0,0823 | **3 805 (1,25×)** |
+| 50 mm | 4,00× | 0,0238 | 0,0080 | 0,0823 | 4 197 (1,38×) |
+
+Mira la columna de la zapata: **no se mueve** — y es la mitad del giro. La del perno tampoco
+mejora: sube un poco, porque C-6 mide $L_{rod}$ desde el tope de la placa y engrosarla también
+alarga el perno. De los cuatro términos, el espesor de la placa baja dos, deja uno intacto y
+empeora el cuarto. Los que no ayudan suman el **66,5 %**.
+
+El resultado es la cifra que reemplaza a la cita: **cuadruplicar la resistencia a flexión de la
+placa compra un 38 % de rigidez**. Con la placa que la norma exige, 1,96× de resistencia compran
+1,25× de rigidez. Una base puede ser simultáneamente muy resistente y notablemente flexible
+porque las dos propiedades cuelgan de términos distintos.
+
+---
+
+## 5. Rígido respecto de qué
+
+Ya tenemos un número para la rigidez de la base. Un número solo no dice nada: como está
+desarrollado en [«Rígido y flexible no son adjetivos: son una razón»](/blog/oficio-rigido-y-flexible),
+rígido es siempre un **cociente**. El que corresponde acá lo da el Comentario a §B3.4 de
+AISC 360-22 (pág. 16.1-320)[^aisc360]:
+
+> *«Si $K_s L/EI \ge 20$, es aceptable considerar la conexión como totalmente restringida […]. Si
+> $K_s L/EI \le 2$, es aceptable considerar la conexión como simple […]. Las conexiones con
+> rigideces entre estos dos límites son parcialmente restringidas y la rigidez, resistencia y
+> ductilidad de la conexión deben considerarse en el diseño.»*
+
+Y hay una coincidencia que no es casual: ese $K_s$ **también es secante**, $K_s = M_s/\theta_s$
+(Ec. C-B3-7), y por la misma razón que el Apéndice C —*«muchos tipos de conexión no exhiben una
+rigidez inicial confiable»*—. Los dos documentos llegan por separado a que la rigidez que sirve
+para clasificar es la secante.
+
+<Note type="warning" title="Esto es una analogía, no la cláusula">
+El Comentario dice, literalmente: *«en la discusión que sigue, $L$ y $EI$ son la longitud y la
+rigidez flexional, respectivamente, **de la viga**»*. El criterio está escrito para una conexión
+viga-columna. Usarlo con la $L$ y el $EI$ de la **columna** para clasificar una base es un
+préstamo razonable —es el mismo cociente entre la rigidez de la conexión y la del miembro que
+llega a ella—, pero no es lo que AISC escribió. Se usa acá como **escala de lectura**, no como
+criterio normativo.
+
+Y hay una segunda diferencia que conviene declarar: el $K_s$ de AISC se mide a cargas **de
+servicio** y el $\beta$ del Apéndice C al momento de diseño **mayorado**. Evaluado como AISC
+pide —a nivel de servicio, donde el término de la zapata ni siquiera cambia porque no depende de
+la carga— el índice de esta base baja a **≈ 2,0**. El matiz corre a favor de la conclusión, no en
+contra.
+</Note>
+
+Con la columna del ejemplo —HEB 300, 4 m de altura, $I = 24\,187$ cm⁴ calculado de las planchas
+nominales sin los redondeos de unión ala-alma, de donde $EI = 4\,934$ tonf·m²—:
+
+<Equation>
+$$\frac{\beta\,L}{EI} = \frac{3\,045\ \text{tonf·m/rad} \cdot 4\ \text{m}}{4\,934\ \text{tonf·m}^2} = 2{,}47$$
+</Equation>
+
+**2,47.** Sobre una escala donde 20 es «empotrada» y 2 es «rotulada». La base que el reflejo
+dibuja empotrada —cuatro pernos de una pulgada embebidos 40 cm en un pedestal, sobre una zapata
+de 80 cm— está **más cerca de la definición de rotulada que de la de empotrada**.
+
+<Note type="info" title="Y ojo con el «es más fuerte que la columna»">
+El §3.3.2 describe el reflejo de suponer empotrada una base *diseñada para ser más fuerte que la
+columna*. **Este caso no es ese**: la HEB 300 en A36 tiene $\phi M_p \approx 41$ tonf·m y el
+[ejemplo trabajado](/acero/placa-base-ejemplo-trabajado) muestra que a 12 tonf·m la placa de
+25 mm ya no cumple y el breakout del anclaje va en 1,53. Es una base **más débil** que su
+columna, y aun así uno la dibujaría empotrada. Que el reflejo sobreviva a los dos casos —base
+fuerte y base débil— es parte del punto.
+</Note>
+
+Que **no es empotrada** es lo que no cuelga de los supuestos que tuvimos que declarar. El peor
+conocido es $d_{footing}$, que además es el término que más pesa; barrerlo entre 40 y 120 cm mueve
+$\beta$ un factor 1,7, y el índice se queda entre **1,96 y 3,34**. Ni con la placa de 35 mm
+(3,08), ni con una columna de 9 m (5,55), ni con la zapata más delgada, se acerca a 20.
+
+Lo que sí depende del supuesto es la **otra** frontera, y en el sentido contrario al que uno
+esperaría: con una zapata de más de 1,16 m de profundidad el índice cruza por debajo de 2 y la
+base deja de ser parcialmente restringida para clasificar como **simple**. O sea que la
+incertidumbre no está entre «rotulada» y «empotrada»: está entre «parcialmente restringida» y
+«rotulada».
+
+---
+
+## 6. El pórtico, corrido tres veces
+
+Hasta acá todo es la conexión mirada sola. El §3.3.2 predice tres efectos sobre la estructura, y
+la única forma de saber cuánto valen es medirlos. Un pórtico de un vano y un piso, columnas y viga
+HEB 300, 4 m de altura y 6 m de luz, con 40 tonf de gravedad en cada columna y 20 tonf laterales,
+corrido tres veces cambiando **solo** cómo se dibuja la base:
+
+<Figure
+  src="/placas-base-rigidez/fig-marco.svg"
+  alt="Tres pórticos idénticos deformados bajo la misma carga lateral: con base empotrada la deriva es 1,74 cm, con resorte rotacional beta es 3,18 cm y con base rotulada 7,60 cm. Se anotan además el momento en el tope de la columna y el momento en la base de cada uno."
+  caption="El mismo pórtico con las tres hipótesis de base. La deriva va de 1,74 a 7,60 cm y el momento en el tope de la columna de 16,0 a 40,0 tonf·m sin que se toque un solo perfil: lo único que cambia es cómo se dibujó el apoyo."
+/>
+
+| Base | Deriva | $M$ en el tope de columna | $M$ en la base | $P_u$ a barlovento |
+|---|---:|---:|---:|---:|
+| Empotrada | 1,74 cm | 16,0 tonf·m | 24,1 tonf·m | 34,7 tonf |
+| **Resorte $\beta$** | **3,18 cm** | **21,9 tonf·m** | **18,2 tonf·m** | **32,7 tonf** |
+| Rotulada | 7,60 cm | 40,0 tonf·m | 0 | 26,7 tonf |
+
+Los dos primeros efectos que la guía anuncia aparecen, con tamaños que no son despreciables:
+
+- **La deriva.** Modelar empotrada la subestima en un **45 %** (1,74 contra 3,18 cm). Modelar
+  rotulada la sobrestima en un factor 2,4. Acá el límite de 0,015$h$ de NCh2369 §6.3 son 6,0 cm y
+  las dos primeras pasan holgadas — pero la brecha del 45 % es la misma en un pórtico el doble de
+  alto, donde sí decide.
+- **El momento en el tope de la columna.** Empotrada lo subestima en un **27 %**. Ese es el
+  momento que §3.3.2 vincula con la susceptibilidad a colapso de piso débil.
+
+El tercero que §3.3.2 nombra —que la flexibilidad de base cambia la longitud efectiva de la
+columna y con ella su resistencia a compresión— **no se mide acá**: pide iterar entre la carga
+crítica y el $\beta$ que la produce, y el propio Apéndice C lo trata aparte. Queda declarado como
+no cubierto.
+
+Lo que sí aparece y la guía no lista entre los tres es **el axial de la base**: va de 26,7 a
+34,7 tonf según el supuesto, y el caso crítico para el perno es el de **menos** compresión,
+porque para el mismo momento deja más tracción. Es la advertencia del §6.4.1 de la guía, que pide
+considerar el axial con sobrerresistencia en los dos sentidos.
+
+<Note type="tip" title="El hallazgo que da vuelta la intuición">
+Mira la columna del momento **en la base**: empotrada da 24,1 tonf·m y la realidad 18,2. Para
+diseñar la placa base, suponerla empotrada es **conservador** — pide un 33 % más de momento del
+que la base va a ver.
+
+O sea que la misma decisión de modelación es **conservadora aguas abajo y no conservadora aguas
+arriba**. Sobredimensiona la conexión y subestima la deriva y el momento de columna del pórtico que
+la sostiene. Por eso la respuesta correcta no es «usa el supuesto conservador»: no hay uno que lo
+sea para las dos preguntas a la vez.
+</Note>
+
+Y para esta serie en particular hay una consecuencia concreta. El barrido de combinaciones del
+[primer post](/acero/placas-base-sap2000#6-barrido-de-combinaciones-de-sap2000) recibe una tabla
+de reacciones y la trata como el dato duro del problema. Para este pórtico, el par
+$\{P_u, M_u\}$ de la base va de $(26{,}7;\ 0)$ a $(34{,}7;\ 24{,}1)$ según cómo se dibujó el
+apoyo. **No es un punto: es una banda**, y el barrido está explorando cuidadosamente una sola
+esquina de ella.
+
+---
+
+## 7. La circularidad, resuelta en vez de advertida
+
+El Apéndice C deja abierto un problema que suena peor de lo que resulta:
+
+> *«…la rigidez rotacional es **sensible al nivel de compresión axial** presente en la columna. La
+> compresión axial misma puede ser desconocida porque el análisis para determinarla puede requerir
+> la representación de la rigidez rotacional de la base.»*
+
+La salida que propone es determinar el axial con la carga gravitacional sin sismo y, si se desea,
+iterar hasta consistencia mutua — *«reconociendo que esto puede volverse muy engorroso en marcos
+con varias columnas»*. Iterémoslo, entonces, y midamos cuánto cuesta:
+
+| Vuelta | $\beta$ barlovento | $\beta$ sotavento | $P_u$ | $M_u$ |
+|---:|---:|---:|---:|---:|
+| 1 | 3 458 | 3 708 | 32,72 | 18,20 |
+| 2 | 3 486 | 3 774 | 32,95 | 18,55 |
+| 3 | 3 487 | 3 780 | 32,96 | 18,55 |
+| 4 | 3 486 | 3 781 | 32,97 | 18,55 |
+| 5 | 3 486 | 3 781 | 32,97 | 18,55 |
+
+Tres conclusiones prácticas:
+
+1. **Converge rápido**: cinco vueltas, y en la segunda la base de barlovento ya está con tres
+   cifras (la de sotavento pide una vuelta más).
+2. **Mueve poco**: $\beta$ pasa de 3 045 a 3 486 (+14,5 %) y la deriva de 3,18 a **2,99 cm**, un
+   6 % — bastante menos que lo que mueve la incertidumbre en $d_{footing}$. Entre iterar y
+   estimar mejor la profundidad de la zapata, gana lo segundo.
+3. **Las dos bases del mismo pórtico convergen a $\beta$ distintos** (3 486 y 3 781, un 8,4 % de
+   diferencia), porque bajo la carga lateral una columna se descarga y la otra se carga. Ahí está,
+   concretamente, el «engorroso»: no hay un $\beta$ del edificio, hay uno por apoyo y por
+   combinación.
+
+---
+
+## 8. Blockout y embebidas
+
+Dos casos más que el Apéndice C cubre y que conviene tener ubicados.
+
+Un ***blockout*** es lo que queda cuando hay una losa sobre terreno por encima de una placa base
+expuesta: un embebido superficial que suma rigidez. La distinción con una base embebida de verdad
+es de intención — *«las conexiones superficialmente embebidas tienen una conexión de placa base
+expuesta completa debajo del blockout, diseñada independientemente para tomar las cargas. El
+embebido que provee la losa es **incidental**»*. Para ese caso hay fórmula cerrada (Ecs. C-17 y
+C-18), con una trampa de lectura: en flexión de eje **fuerte** se divide por $b_f$ y se usa
+$D = d$; en eje **débil** se divide por $d$ y se usa $D = b_f$. Al revés de lo que el instinto
+sugiere, en las dos.
+
+<Note type="warning" title="Las constantes de C-17 y C-18 son dimensionales">
+El cociente $\beta\lambda^{2,85}/b_f$ **no es adimensional**, así que los 174, 84, 132, 300, 129,
+14, 122 y 150 llevan unidades de $	ext{kip}/	ext{in}^{2{,}85}$, igual que el
+$k_0 = 500\ 	ext{kip}/	ext{in}^3$ recomendado. No se
+convierten «a ojo»: o se aplican en las unidades de la guía y se convierte el resultado, o la
+conversión se escribe con el factor a la vista. Lo que sí se puede comprobar es que las tres ramas
+empalman —$84(0{,}5)+132 = 174$ y $84(2)+132 = 300$; $14(0{,}5)+122 = 129$ y $14(2)+122 = 150$—,
+que es el único autocontraste que estas ecuaciones admiten sin salir del documento.
+</Note>
+
+Y para las **bases embebidas**, la guía dice lo que hay que decir:
+
+> *«Las conexiones de base embebidas **a menudo se suponen infinitamente rígidas** para proveer una
+> condición de base fija. Sin embargo, la investigación indica que hay numerosos modos de
+> deformación dentro de la zapata que contribuyen a la flexibilidad de estas conexiones, de modo
+> que **no pueden suponerse rígidas**. […] Un método simplificado para la estimación de la rigidez
+> rotacional de conexiones de base de columna embebidas **no está disponible actualmente**.»*
+
+Es un final incómodo y honesto: el caso donde el reflejo de «empotrada» es más fuerte es
+justamente aquel para el que no hay fórmula de bolsillo. Queda la herramienta en línea de AISC y
+Torres-Rodas *et al.* (2017).
+
+---
+
+## 9. Qué hacer el lunes
+
+La recomendación del Apéndice C cabe en una línea y vale por todo el capítulo:
+
+> *«En general, es **buena práctica representar la rigidez rotacional de la conexión como un
+> resorte flexible en todos los casos**. Sin embargo, cuando ese cálculo no sea factible desde un
+> punto de vista práctico, se recomienda que las soluciones del análisis estructural se **acoten
+> con soluciones de base fija y de base rotulada**.»*
+
+Es decir: la respuesta por defecto **no es elegir entre los dos extremos**, es calcular el
+resorte; y si no se puede, correr los dos y quedarse con la envolvente. Para el pórtico de arriba
+esa envolvente es ancha —deriva entre 1,74 y 7,60 cm— pero al menos es honesta, mientras que
+cualquiera de las dos puntas sola es una respuesta precisa a una pregunta equivocada.
+
+Tres cosas que este ejercicio deja como saldo:
+
+- **El cálculo cuesta poco.** Las cuatro deformaciones salen de $T$ y de $Y$, que ya calculaste
+  para dimensionar la placa. Media hora, o la
+  [planilla](/herramientas/canvas?planilla=placa-base-rigidez-rotacional) con tus números.
+- **La sensibilidad está en la zapata**, no en la conexión. El término que domina el giro es el
+  acortamiento del hormigón sobre la profundidad de la zapata, y ese dato suele no estar en el
+  plano de la placa base. Si vas a estimar algo con cuidado, estima eso.
+- **Y lo que la guía deja fuera.** Todo lo anterior es $\beta_{connection}$. La flexibilidad real
+  de la base incluye la del sistema de fundación y su interacción con el suelo, en serie:
+
+<Equation label="Ec. C-1">
+$$\beta_{base} = \frac{\beta_{connection}\,\beta_{footing}}{\beta_{connection} + \beta_{footing}}$$
+</Equation>
+
+  y $\beta_{footing}$ **está fuera del alcance de la guía**. Como las rigideces van en serie, la
+  base real es más flexible que lo calculado acá, nunca menos. El 2,47 es una **cota superior**.
+
+<Note type="info" title="Lo que queda pendiente de la 3.ª edición">
+El Capítulo 6 —diseño sísmico, con la bifurcación de AISC 341 §D2.6c entre base fuerte y base
+débil, y la discrepancia declarada con ACI 318 §17.10.5.3 sobre si el estado límite que gobierna
+debe ser dúctil— es el siguiente eslabón, y depende de este: su §6.2 pide conducir el análisis
+**incorporando la flexibilidad rotacional** de las bases diseñadas, y remite al Apéndice C. Con el puente a NCh2369, que llega al mismo lugar por otro
+camino.
+</Note>
+
+---
+
+## La planilla
+
+Cada número de este post está reproducido en una hoja del canvas construida desde las ecuaciones
+de la guía, con los contrastes contra lo publicado al final. Es también la forma de correr el
+método con tus propios datos: cambia $t_p$, $L_{rod}$ o $d_{footing}$ y mira moverse el reparto
+entre las cuatro deformaciones.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=placa-base-rigidez-rotacional)**
+· [descargar el JSON](/planillas/placa-base-rigidez-rotacional.json)
+
+Es la primera hoja del repo que no verifica estados límite sino una **propiedad**: no hay
+`u_max ≤ 1` que la cierre, sino la clasificación del Comentario §B3.4 y la continuidad de las
+ramas de C-17/C-18. Lo que la hoja **no** puede derivar —y por eso no está— son las doce
+magnitudes del pórtico del §6 y las veinte celdas de la iteración del §7: salen de un modelo de
+rigidez, no de una fórmula.
+
+Eso vive en `lab/nota05_base_rigidez_rotacional.py`, en el repo del laboratorio, resuelto por dos
+caminos independientes —rigidez directa en numpy y OpenSeesPy con resortes rotacionales
+`zeroLength`— que coinciden en las doce magnitudes comparadas.
+
+[^dg1]: *Base Connection Design for Steel Structures*, Steel Design Guide 1, **3.ª ed.** American Institute of Steel Construction, Chicago. §3.3 (págs. impresas 15–17) y Apéndice C completo (págs. impresas 189–196). Es un documento **no obligatorio**, como la propia guía declara en su §6.1: las *AISC Seismic Provisions* son norma; la Design Guide es un recurso. El método del Apéndice C es de Kanvinde *et al.* (2012), validado en Trautner *et al.* (2017b) y contra edificios instrumentados en Falborski y Kanvinde (2022).
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago. Comentario a §B3.4, pág. 16.1-320 (clasificación de conexiones por $K_s L/EI$).

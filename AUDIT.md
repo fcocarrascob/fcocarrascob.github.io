@@ -47,6 +47,90 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-07 · `acero/placas-base-empotrada-o-rotulada` · ⚠️ 24 hallazgos, 21 aplicados
+
+**Commit:** `ccb9a12` (post nuevo, auditado antes de commitear) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+**Alcance.** Post 3 de la serie «Placas base», el primero que estrena `dg1-3ed` como norma del
+índice de ecuaciones. El auditor reprodujo la cadena entera del Apéndice C desde cero en Python
+y —lo que importa— resolvió el pórtico con una **tercera** implementación de rigidez directa,
+independiente de la de `lab/_lib/ref.py` y de la de OpenSeesPy. Las 12 magnitudes del §6, las 20
+celdas de la iteración del §7 y las 4 deformaciones de la Ec. C-5 **cuadran al dígito publicado**,
+y el equilibrio global (20·4 = 2·M_base + 6·ΔN) cierra en los tres casos. **Ningún hallazgo fue
+numérico**: los 24 son de atribución de cita, de alcance de una afirmación, o de forma.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Estado |
+|---|-----|-----|-----------|----------|--------|
+| 1 | 🟠 | C | §2 | La cita *«y las dos introducen error»* se atribuía al §3.3.2; está en la **introducción del §3.3** (pág. impresa 15). El §3.3.2 dice lo mismo sin ese inciso | ✅ aplicado |
+| 2 | 🟠 | C | §6 | «Los tres efectos que la guía anuncia aparecen», y se listaba el axial como tercero. Los tres de §3.3.2 son momento en el tope, deriva de primer piso y **longitud efectiva de la columna**; el axial no es ninguno | ✅ aplicado — se listan los dos medidos, el tercero se **declara no cubierto**, y el axial pasa a hallazgo propio con la cita del §6.4.1 |
+| 3 | 🟠 | F | §2 | «Es exactamente lo que hacemos en el §5»: el pórtico se corre en el §6 | ✅ aplicado |
+| 4 | 🟠 | F/E | pie | `[^aisc360]` definida y **nunca referenciada** — verificado en el HTML construido, que solo emitía `fn-dg1`. La Bibliografía publicada no traía AISC 360-22 pese a que el §5 lo cita textualmente | ✅ aplicado (referenciada en el §5; el HTML ahora emite las dos) |
+| 5 | 🟠 | C | §5 | «La base que cualquiera dibujaría empotrada —**porque es más fuerte que la columna**…». Falso para este caso: la HEB 300 en A36 tiene φM_p ≈ 41 tonf·m, y a 12 tonf·m la placa ya no cumple y el breakout va en 1,53. Es una base **más débil** que su columna | ✅ aplicado — y convertido en `Note` propia: que el reflejo de «empotrada» sobreviva a los dos casos, base fuerte y base débil, es parte del punto |
+| 6 | 🟠 | C/N | §6 | «Si esa deriva se compara contra el 0,015h de NCh2369, la diferencia decide si el marco cumple». Con h = 4 m el límite es **6,0 cm** (§6.3, verificado en el PDF) y empotrada (1,74) y resorte (3,18) pasan las dos: acá no decide nada | ✅ aplicado (se publica el límite y la consecuencia se traslada a un pórtico el doble de alto) |
+| 7 | 🟠 | C | §9 | «su §6.4.2 exige incorporar la flexibilidad rotacional». El §6.4.2 es *Weak-Base Design*; la exigencia está en el **§6.2** (pág. impresa 153) | ✅ aplicado |
+| 8 | 🟡 | N | §3 | β se exhibía como `12/0,00394 = 3 045`, que da 3 045,7. El valor correcto sale del θ sin redondear | ✅ aplicado (se exhiben θ = 3,9404 mrad y 0,0039404) |
+| 9 | 🟡 | C | §5 | «El veredicto no cuelga de los supuestos», y tres líneas después se muestra que con zapata > 1,16 m la base **cambia de clase** a simple | ✅ aplicado — lo que no cuelga es «no es empotrada»; se reescribió el cierre: la incertidumbre está entre PR y rotulada, no entre rotulada y empotrada |
+| 10 | 🟡 | C/L | §5 | K_s se mide a cargas **de servicio** y β al momento **mayorado**; la `Note` acotaba la analogía solo en L y EI. Recalculado a nivel de servicio, el índice baja a ≈ 2,0 | ✅ aplicado — el matiz corre **a favor** de la conclusión, y ahora se publica |
+| 11 | 🟡 | F | §3 | La etiqueta «Ec. C-4» se repetía en dos bloques | ✅ aplicado (el segundo es «Ecs. C-5 y C-4») |
+| 12 | 🟡 | F | §4 | La figura del pórtico estaba montada al cierre del §4 —dos secciones antes de que se presente el modelo— y **ninguna línea la llamaba** | ✅ aplicado (movida al §6) |
+| 13 | 🟡 | F | figura | El `alt` enumeraba «empotrada, rotulada y resorte» y la figura va empotrada, resorte, rotulada; y no traía ningún número | ✅ aplicado |
+| 14 | 🟡 | L | todo | «marco» y «pórtico» alternaban para el mismo objeto, incluso entre el `alt` y el `caption` de la misma figura, y dentro del SVG | ✅ aplicado — «pórtico» para el objeto propio; «marco» queda solo dentro de las citas de la guía |
+| 15 | 🟡 | N/L | §4 | «el espesor de la placa no los toca» contradecía la frase anterior, que dice que Δ_rod sube | ✅ aplicado (baja dos, deja uno intacto y empeora el cuarto) |
+| 16 | 🟡 | N | §7 | «en la segunda ya está el resultado con tres cifras»: vale para barlovento, no para sotavento (3 774 contra 3 781) | ✅ aplicado |
+| 17 | 🟡 | U | §8 | `kip/in^2,85` en texto plano, con el `^` literal y una coma dentro del exponente | ✅ aplicado (a math) |
+| 18 | 🟡 | U | §3 | `15100` sin separador de miles contra `3\,045` del mismo post, y sin declarar que la forma SI pide f'_c en kgf/cm² | ✅ aplicado |
+| 19 | 🟡 | U/N | §5 | La ecuación de β·L/EI mezclaba tonf·m con kgf/cm²·cm⁴ sin mostrar la conversión (el resultado era correcto) | ✅ aplicado (EI = 4 934 tonf·m² a la vista) |
+| 20 | 🟡 | U | todo | Separador decimal **coma** (103 casos), contra **punto** en los posts 1 y 2 de la misma serie. No es un error: es una costura visible entre los tres | 🚫 descartado en esta pasada — es una decisión de serie, no de este post. Queda como pendiente de unificación |
+| 21 | 🟡 | F | cierre | El `## La planilla` no llevaba enlace: como el id no empieza con `ejemplo-`, `planillaDePost()` no pinta la caja automática | ✅ aplicado (enlace al canvas + descarga del JSON) |
+| 22 | 🔵 | L | §3 | La Ec. C-12 usa `Δ_bearing` y la C-5 `Δ_footing`. Es **fiel a la guía**, pero el lector no lo sabe | ✅ aplicado (media línea de aclaración) |
+| 23 | 🔵 | L | frontmatter | Tag `"OpenSees"` con el cuerpo hablando de OpenSeesPy | ✅ aplicado (los dos tags) |
+| 24 | 🔵 | L | §2 | «Rotulada cuesta **plata**»: hay precedente en el repo, pero CLAUDE.md pide vocabulario neutro | ✅ aplicado («dinero») |
+
+**Verificado y correcto.** *Cadena del Apéndice C, recalculada desde cero:* Y = 4,5575 cm y
+T = 10 369 kgf; Δ_rod = 0,022570, Δ_plate^t = 0,000804, Δ_plate^c (C-11) = 0,051946,
+Δ_footing = 0,082294 → total **0,157615 cm**; fracciones 14,320 / 0,510 / 32,957 / 52,212 %, que
+suman 100,0; θ = **3,9404 mrad**; β = **3 045,4 tonf·m/rad**. Tabla del §4 completa, con los
+ratios de resistencia (t/25)² y de rigidez 1,000 / 1,152 / 1,250 / **1,378** → «cuadruplicar la
+resistencia compra un 38 %». *Índice:* I = 24 186,8 cm⁴, EI = 4 934,1 tonf·m², β·L/EI = **2,4689**;
+con placa de 35 mm 3,085; con columna de 9 m 5,555; barrido de d_footing 40→120 cm con β en factor
+**1,707** e índice 3,3411 → 1,9578; el cruce en índice = 2 cae en d_footing = **115,92 cm**. Y
+β_base = β_c·β_f/(β_c+β_f) < β_c, luego 2,47 **sí** es cota superior. *El pórtico, con una tercera
+implementación de rigidez directa* (matriz 12×12 propia, con deformación axial): los doce valores
+del §6 y del SVG cuadran; derivados 45,09 % / 26,79 % / 32,63 % → 45 / 27 / 33. *La iteración del
+§7:* las 20 celdas coinciden; +14,48 %, 8,44 % entre las dos bases, deriva convergida 2,9942 cm
+(−5,71 %). *Contra el PDF rasterizado de la guía:* Ecs. C-1 a C-12 y C-17a/b/c, C-18a/b/c
+transcritas correctamente, incluida la inversión del denominador que el post señala (*«D may be
+taken as d… for major-axis bending… and b_f… for minor-axis»*), las ocho constantes, k₀ = 500
+kip/in³ y las cuatro continuidades; el análisis dimensional confirma kip/in^2,85. **Las siete
+citas textuales largas son traducciones fieles.** *Contra AISC 360-22 pág. 16.1-320 rasterizada:*
+los umbrales 20 y 2, la Ec. C-B3-7, el *«L y EI son… de la viga»* y el *«muchos tipos de conexión
+no exhiben una rigidez inicial confiable»*, todos literales. NCh2369:2025 §6.3 confirma
+d_máx = 0,015h. E_c imperial contra SI: **−3,04 %**. Frontmatter válido contra el schema Zod de
+`acero`; los cuatro enlaces internos resuelven y el ancla `#6-barrido-…` existe en el HTML.
+
+**No verificable.** Nada del post depende de un modelo SAP2000: el pórtico es reproducible y la
+auditoría lo reprodujo. El espesor de mortero (25 mm) y la profundidad de zapata (80 cm) son
+**decisiones declaradas** —el post las nombra como tales y el §5 acota su efecto—, y
+`f_p,max = 245,6 kgf/cm²` entra como dato publicado del post 2.
+
+**Planilla del canvas:** sí · ya tiene · `placa-base-rigidez-rotacional`, 74 pasos, 29
+verificaciones, 21 contrastes, 49 tokens de esquema, 7 páginas. Es la primera hoja del repo que
+no verifica estados límite sino una **propiedad**: no hay `u_max ≤ 1`, y lo que la cierra es la
+clasificación del Comentario §B3.4. Durante su construcción encontró dos cosas que el post
+publicaba mal y que ningún recálculo interno habría cazado, ya aplicadas: β₃₅ arrastraba el Δ_rod
+de la placa delgada cuando C-6 mide L_rod desde el **tope de la placa** (3 820 → **3 805**), y el
+booleano de robustez afirmaba «parcialmente restringida en todo el rango» cuando en el extremo
+flexible cruza a simple. Ver `PLANILLAS.md`.
+
+**Hallazgo de infraestructura, fuera del post.** Al construir la hoja, `L_col := 4 m` pasó a valer
+33 cm porque la hoja definía `m` —el voladizo de la placa, como lo llama la DG1— y en mathjs una
+variable con nombre de unidad **se la come**. El índice salió 12,1 veces más chico, y lo único que
+lo delató fue que el contraste contra el post no cuadraba. Un barrido de las 25 hojas publicadas
+no encontró ningún otro caso. Se agregó la convención a `PLANILLAS.md` y un chequeo permanente a
+`verify-planilla.mjs`, que ahora falla ante `<número> <identificador>` cuando el identificador es
+una variable de la hoja.
+
+
 ### 2026-08-06 · `acero/predimensionamiento-*` (los tres) · re-auditoría de la capa de lectura rápida · ⚠️ 12 hallazgos
 
 **Commit:** `e1897ed` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (las 13 filas de las tres tablas nuevas contrastadas término a término contra sus `Equation`, y las 22 celdas de «Dónde miente» rehechas analíticamente)
@@ -3513,7 +3597,7 @@ enlaces internos.
 
 Estado de auditoría por post. `—` = nunca auditado.
 
-### `blog` — blog (40)
+### `blog` — blog (38)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
@@ -3543,8 +3627,6 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `lab-zapata-sin-traccion` | 2026-08-05 | ⚠️ | 0 · 12 aplicados (1🟠 7🟡 4🔵) |
 | `pdelta-cuando-confiar-amplificador` | 2026-07-15 | ⚠️ | 4 (0🔴 0🟠) |
 | `periodos-fundamentales-exponente` | 2026-07-15 | ⚠️ | 6 (0🔴 1🟠) |
-| `placa-base-ejemplo-trabajado` | 2026-07-15 | ⚠️ | 2 (0🔴 0🟠) |
-| `placas-base-sap2000` | — | — | — |
 | `prediseno-fundaciones-aisladas` | — | — | — |
 | `presiones-contacto-winkler` | — | — | — |
 | `pushover-momento-vs-arriostrado-sap2000` | 2026-07-15 | ⚠️ | 14 (1🔴 1🟠) |
@@ -3587,10 +3669,13 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (26)
+### `acero` — acero (AISC 360-22) (29)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `placas-base-empotrada-o-rotulada` | 2026-08-07 | ⚠️ | 0 · 21 aplicados (7🟠 11🟡 3🔵) · 3 descartados |
+| `placa-base-ejemplo-trabajado` | 2026-07-15 | ⚠️ | 2 (0🔴 0🟠) · movido desde `blog` el 2026-08-07 |
+| `placas-base-sap2000` | — | — | movido desde `blog` el 2026-08-07 |
 | `predimensionamiento-diagonal-arriostramiento` | 2026-08-06 (×2) | ⚠️ | 0 · 13 + 9 aplicados · sin planilla (candidata) |
 | `predimensionamiento-columna-comprimida` | 2026-08-06 (×2) | ⚠️ | 0 · 11 + 4 aplicados · sin planilla (parcial) |
 | `predimensionamiento-viga-flexion` | 2026-08-06 (×2) | ⚠️ | 0 · 12 + 4 aplicados · sin planilla (parcial) |
