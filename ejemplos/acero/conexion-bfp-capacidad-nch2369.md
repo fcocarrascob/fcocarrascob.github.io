@@ -4,15 +4,15 @@ disciplina: acero
 tema: Conexiones
 normas: [NCh2369:2025, AISC 341-22, AISC 360-22]
 fecha: 2026-08-08
-estado: verificado
+estado: pendiente
 veredicto: Con el tope de §8.7.5 (41,6 tonf·m) la conexión pasa al filo (0,99) y la columna queda en 1,86/1,45/1,38. Los PL 100×12 no cumplen §8.7.6 (pide 20 mm) y la viga perforada rompe a 0,81·M_pe — el fusible dúctil no existe.
 post:
 ---
 
 # La conexión BFP re-verificada por capacidad — NCh2369 §8.7.5
 
-La conexión BFP del ejemplo publicado (por resistencia, AISC 360-22), sometida a la demanda de
-capacidad de NCh2369 §8.7.5. Capacidades heredadas del post.
+Una conexión de placas de ala (BFP) dimensionada por resistencia según AISC 360-22, sometida a la
+demanda de capacidad de NCh2369 §8.7.5. Las capacidades $\phi R_n$ del lado AISC quedan por leer en PDF (S3).
 
 ## Caso
 
@@ -26,11 +26,11 @@ capacidad de NCh2369 §8.7.5. Capacidades heredadas del post.
 
 ## Supuestos
 
-1. **S1** — tonf y kgf/cm², como el post de origen.
+1. **S1** — tonf y kgf/cm², como el caso original.
 2. **S2** — Reparto $M_{grav} = 8$ y $M_E = 24\ \text{tonf}\cdot\text{m}$, y $R_1 = 2{,}0$: datos del análisis.
-3. **S3** — Capacidades $\phi R_n$ heredadas del post BFP (auditado); solo cambia la demanda.
+3. **S3** — Capacidades $\phi R_n$ del lado AISC (§J3.7, §J4.1, §J10, §F13.1) **⚠ por leer en PDF**; acá solo cambia la demanda.
 4. **S4** — $R_y = R_t = 1{,}1$ para A992 (Tabla A3.2).
-5. **S5** — El corte asociado $V_e = 2M_{pe}/L_h$ va a la plancha de corte, fuera de alcance (igual que en el post).
+5. **S5** — El corte asociado $V_e = 2M_{pe}/L_h$ va a la plancha de corte, fuera de alcance.
 
 ## 1. Candidato 1: la capacidad esperada de la viga
 
@@ -75,7 +75,7 @@ Con $V_{col} = M_{dis}/H = 11{,}9$ tonf, el panel recibe $V_{pz} = 87{,}2 - 11{,
 
 $$\frac{87{,}2}{47{,}0} = 1{,}86 \quad \text{(J10-1)} \qquad \frac{87{,}2}{60{,}1} = 1{,}45 \quad \text{(J10-2)} \qquad \frac{87{,}2}{68{,}4} = 1{,}27 \quad \text{(J10-4)} \qquad \frac{75{,}3}{54{,}4} = 1{,}38 \quad \text{(J10-10)}$$
 
-→ cae hasta el aplastamiento que por resistencia se salvaba (0,98). El doubler de 6 mm del post
+→ cae hasta el aplastamiento que por resistencia se salvaba (0,98). Un doubler de 6 mm
 sigue alcanzando: $75{,}3/87{,}3 = 0{,}86$ ✓.
 
 ## 6. Atiesadores de continuidad: obligatorios y con mínimos
@@ -115,7 +115,7 @@ ni alcanzaría a actuar.
 |---|---|---|---|
 | NCh | NCh2369:2025 | §8.7.4 + C8.7.4; §8.7.5 + C8.7.5 ($V_e = 2M_{pe}/L_h$, tope); §8.7.6 + C8.7.6, Fig. C-3; §8.3.1 | 2026-08-08 |
 | AISC341 | ANSI/AISC 341-22 | Tabla A3.2 — A992: $R_y = R_t = 1{,}1$ | 2026-08-08 |
-| AISC | ANSI/AISC 360-22 | §J3.7, §J4.1, §J10 (J10-1/2/4/10), §F13.1 — capacidades | heredadas del post BFP |
+| AISC | ANSI/AISC 360-22 | §J3.7, §J4.1, §J10 (J10-1/2/4/10), §F13.1 — capacidades | ⚠ pendiente |
 
 ## Para promover a post
 

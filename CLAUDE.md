@@ -136,9 +136,21 @@ Both wrappers filter drafts and sort by `pubDate` descending.
 
 `ejemplos/` en la raíz **no es una colección y no llega al build**: ningún glob de
 `src/content.config.ts` la alcanza. Son memos de cálculo compactos —`.md` plano, techo de 150
-líneas y ~100 palabras de prosa por paso, sin componentes ni figuras ni planilla— que se acumulan
-sin publicarse, para poder resolver un caso y guardarlo antes de decidir si merece un ejemplo
-publicado.
+líneas y ~100 palabras de prosa por paso, sin componentes ni figuras ni planilla— y su fin es
+**consolidar la aplicación de la normativa chilena al diseño y análisis de elementos**, un caso a
+la vez.
+
+Dos reglas que definen la carpeta, y que son fáciles de romper sin querer:
+
+- **Independientes del blog.** No son borradores de posts ni su versión comprimida. Un memo **se
+  sostiene solo**: toda cláusula que usa se lee del PDF de la edición vigente y se registra en su
+  propia tabla de referencias. Ninguna fila puede decir «heredada del post», aunque el número
+  también viva en un post auditado. Heredar de **otro memo** sí se permite, declarándolo en los
+  supuestos.
+- **No repetir.** Cada cláusula se ejemplifica una vez y cada elemento se diseña una vez. Antes de
+  escribir un memo se lee `ejemplos/INDICE.md`; si el estado límite, la cláusula o el elemento ya
+  están, el caso nuevo es un paso más en el memo que existe, no un memo nuevo. Lo mismo con las
+  estructuras: un solo pórtico arriostrado, una sola base de columna.
 
 El contrato del formato está en **`ejemplos/README.md`**: léelo antes de escribir uno. Lo esencial:
 pasos numerados con la ecuación y su reemplazo numérico, prosa mínima, supuestos numerados `S1, S2…`
@@ -146,9 +158,11 @@ citables desde los pasos, y una tabla de referencias donde **cada cláusula decl
 PDF**. Un memo con referencias pendientes no se promueve a post. La plantilla en blanco es
 `ejemplos/_PLANTILLA.md` y lo acumulado se lista en `ejemplos/INDICE.md`.
 
-Un memo se promueve cuando el caso tiene una tesis que enseñe algo, no cuando el cálculo está
-completo; promoverlo significa reescribirlo al formato publicado, y **no cambia los ejemplos ya
-publicados**.
+La sección `## Para promover a post` de cada memo se mantiene, pero es una **salida opcional, no el
+propósito**: un cálculo que cierra sin sorpresas es un memo terminado. Se promueve cuando el caso
+tiene una tesis que enseñe algo; promoverlo significa reescribirlo al formato publicado, **no cambia
+los ejemplos ya publicados**, y el memo sigue siendo autónomo (no pasa a citar al post que salió
+de él).
 
 ## Math Syntax (content)
 

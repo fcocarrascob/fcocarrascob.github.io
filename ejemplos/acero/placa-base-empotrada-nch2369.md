@@ -4,7 +4,7 @@ disciplina: acero
 tema: Placas base
 normas: [NCh2369:2025, AISC Design Guide 1 3.ª ed., AISC 360-22]
 fecha: 2026-08-08
-estado: verificado
+estado: pendiente
 veredicto: No cierra — el piso de 0,5·M_pe* (279 kN·m) es 2,5 veces el momento del análisis y deja los pernos en 2,79. Sincerar la rigidez de la base o pagar el anclaje completo.
 post:
 ---
@@ -30,7 +30,7 @@ el piso del 50 % de la capacidad flexural esperada (§8.5.2), resuelto con el bl
 2. **S2** — $M_E$, $P_u$ y $P_{\text{máx}}$ son datos del análisis global con las combinaciones de 4.5.
 3. **S3** — $q_{\text{máx}} = 12{,}43$ kN/mm heredado del memo de la llave de corte: $f_{p,\text{máx}} = 27{,}6$ MPa con $\sqrt{A_2/A_1}$ saturado en 2.
 4. **S4** — 2 pernos en la fila traccionada.
-5. **S5** — El anclaje al hormigón queda fuera: el post del ejemplo trabajado ya mostró que el pedestal gobierna (breakout del grupo traccionado).
+5. **S5** — El anclaje al hormigón (breakout del grupo traccionado, ACI Cap. 17) queda fuera de alcance: lo cubre el memo del pedestal.
 6. **S6** — $R_y = 1{,}3$ por C8.3.3 (A36 nacional, U. de Chile), en vez de la Tabla A3.1 de AISC 341-16.
 
 ## 1. Capacidad flexural esperada de la columna
@@ -74,7 +74,7 @@ $$Y = 400 - \sqrt{160\,000 - 51\,866} = 71{,}2\ \text{mm} \qquad T_u = q_{\text{
 
 ## 6. Perno a tracción
 
-1″ F1554 gr. 36: $\phi F_{nt} A_b = 114$ kN, del ejemplo trabajado.  [AISC 360-22 §J3]
+1″ F1554 gr. 36: $\phi F_{nt} A_b = 114$ kN — **⚠ por leer en la Tabla J3.2**.  [AISC 360-22 §J3]
 
 $$\frac{T_u}{\phi R_n} = \frac{317{,}5}{114} = 2{,}79$$
 
@@ -114,7 +114,7 @@ momento al del análisis.
 | NCh | NCh2369:2025 | §8.5.2 (piso 50 %); §8.3.1 ($M_{pe}$, $M_{pe}^*$, $T_{ye}$); §8.3.3 + C8.3.3 ($R_y$) | 2026-08-08 |
 | DG1 | AISC Design Guide 1, 3.ª ed. | §4.3.7, Ecs. 4-37, 4-39, 4-40, 4-55, 4-58, 4-59 | 2026-08-08 |
 | DG1-q | AISC Design Guide 1, 3.ª ed. | §4.3.6 — $f_{p,\text{máx}}$ y $q_{\text{máx}}$ (S3) | 2026-08-07 (memo de la llave de corte) |
-| AISC | ANSI/AISC 360-22 | §J3 — $\phi F_{nt} A_b$ del perno | heredada del post del ejemplo trabajado |
+| AISC | ANSI/AISC 360-22 | §J3 y Tabla J3.2 — $\phi F_{nt} A_b$ del perno | ⚠ pendiente |
 
 ## Para promover a post
 

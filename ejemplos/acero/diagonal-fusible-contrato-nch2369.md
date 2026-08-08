@@ -104,7 +104,7 @@ termina cuando el último consumidor pagó su fila.
 |---|---|---|---|
 | NCh-a | NCh2369:2025 | §8.3.1 (capacidades esperadas); §8.3.4 (columnas); §8.3.5 (categorías) | 2026-08-08 (rasterizada, pp. impresas 79–81) |
 | NCh-b | NCh2369:2025 | §8.3.7 + C8.3.7 (zona protegida); §8.6.3, §8.6.4, Tabla 9; §8.6.7; §8.6.8 (conexiones y techo) | 2026-08-08 (rasterizada, pp. impresas 82, 87–90, 97–98) |
-| AISC | ANSI/AISC 360-22 | §E3 (Ecs. E3-1 a E3-4); §D2 fluencia bruta | 2026-08-08 (rasterizada, pp. 16.1-40/41); D2 heredada del post |
+| AISC | ANSI/AISC 360-22 | §E3, Ecs. E3-1 a E3-4; §D2, Ec. D2-1 ($P_n = F_y A_g$, $\phi_t = 0{,}90$) | 2026-08-08 (rasterizadas, pp. 16.1-32 y 16.1-40/41) |
 
 ## Para promover a post
 

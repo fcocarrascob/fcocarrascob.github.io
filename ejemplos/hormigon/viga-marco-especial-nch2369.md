@@ -4,30 +4,30 @@ disciplina: hormigon
 tema: Vigas
 normas: [ACI 318-25 (SI), NCh2369:2025]
 fecha: 2026-08-08
-estado: verificado
+estado: pendiente
 veredicto: El corte de diseño sube 42 % (25,6 tonf) sin que llegue carga nueva del análisis — lo fija la propia armadura vía M_pr. V_c se salva por 7 puntos (43 % < 50 %), y los estribos de la rótula los rige el d/4 del confinamiento, no el corte.
 post:
 ---
 
 # La viga 30×60 como viga de marco especial — ACI 18.6 + NCh2369 §9.1.2
 
-La viga del ejemplo publicado de flexión y corte, re-verificada con la capa sísmica que a un
-marco industrial chileno le corresponde por defecto.
+Una viga 30×60 dimensionada por flexión y corte, re-verificada con la capa sísmica que a un marco
+industrial chileno le corresponde por defecto.
 
 ## Caso
 
 | Dato | Valor |
 |---|---|
-| Sección | $b = 30$, $h = 60$, $d = 54$ cm — la del ejemplo publicado |
+| Sección | $b = 30$, $h = 60$, $d = 54$ cm |
 | Materiales | $f'_c = 250$ kgf/cm², $f_y = 4\,200$ kgf/cm² (G420) |
 | Armadura en caras del nudo | $A_s^- = 3\phi25 = 14{,}73$ cm²; $A_s^+ = 2\phi25 = 9{,}82$ cm², continuas |
 | Marco | Luz libre $l_n = 5{,}7$ m; gravitacional concurrente $w_u = 5{,}1$ tonf/m |
-| Referencia gravitacional | El diseño publicado cerró con $V_u = 18$ tonf |
+| Referencia gravitacional | El diseño por gravedad cerró con $V_u = 18$ tonf |
 
 ## Supuestos
 
-1. **S1** — kgf/cm y tonf, como el ejemplo publicado; $P_u \approx 0$ en la viga.
-2. **S2** — La viga pasa de apoyada a viga de marco: armadura de las caras del nudo declarada arriba (el positivo del post como armadura inferior continua).
+1. **S1** — kgf/cm y tonf; $P_u \approx 0$ en la viga.
+2. **S2** — La viga pasa de apoyada a viga de marco: armadura de las caras del nudo declarada arriba, con el positivo como armadura inferior continua.
 3. **S3** — $w_u = 1{,}2D + L$ como gravitacional concurrente con el sismo (combinaciones 4.5).
 4. **S4** — Marco de Categoría II sin muros que tomen ≥ 75 % del corte: no aplican 9.1.4–9.1.5.
 
@@ -110,7 +110,7 @@ en una viga con menos gravedad concurrente, se anula.
 |---|---|---|---|
 | ACI | ACI 318-25 (SI) | §18.6.3.1–.2; §18.6.4.1, .4, .5; §18.6.5.1–.2 + R18.6.5 | 2026-08-08 (rasterizadas, pp. impresas 328–333) |
 | NCh | NCh2369:2025 | §9.1.2, §9.1.3 (+ C9.1.1: DS 60 reemplaza a NCh430) | 2026-08-08 (rasterizada, p. impresa 101) |
-| Post | Ejemplo publicado viga flexión+corte (caso y $V_c$) | — | heredada (post auditado) |
+| ACI-22 | ACI 318-25 (SI) | §22.5.5.1 — $V_c$ | ⚠ pendiente |
 
 ## Para promover a post
 

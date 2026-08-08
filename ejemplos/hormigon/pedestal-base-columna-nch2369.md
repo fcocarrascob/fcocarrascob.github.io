@@ -12,7 +12,7 @@ post:
 # El pedestal por capacidad — NCh2369 §9.5 + ACI 318-25
 
 El pedestal del cuarteto de acero como miembro de hormigón armado, diseñado para la capacidad
-esperada de sus anclajes (§9.5.2, Cat. III). El anclaje (Cap. 17) ya está en el post publicado.
+esperada de sus anclajes (§9.5.2, Cat. III). El anclaje al hormigón (Cap. 17) queda fuera de alcance.
 
 ## Caso
 

@@ -1,15 +1,44 @@
 # `ejemplos/` — memos de cálculo
 
-Un lugar para **resolver un caso y guardarlo**, sin decidir todavía si merece un post.
-
-Los ejemplos publicados en `/acero/ejemplos`, `/hormigon/ejemplos` y `/geotecnia/ejemplos` cuestan
-caro: mediana de ~3.400 palabras, dos SVG a mano y una planilla del canvas con esquema paramétrico
-y `verify:planilla`. Ese costo es la razón de que el backlog avance de a un ejemplo. Un memo cuesta
-una fracción de eso, y **no se publica**: se acumula acá hasta que el caso demuestre que tiene algo
-que enseñar.
+**Consolidar la aplicación de la normativa chilena al diseño y análisis de elementos**, un caso a la
+vez y de forma compacta. Ese es el fin, y todo lo demás de este archivo sale de ahí.
 
 Esta carpeta está **fuera del build**. Ningún glob de `src/content.config.ts` la alcanza, así que
 nada de lo que hay acá llega al sitio. Sí se versiona.
+
+## Las tres reglas
+
+### 1. Independientes del blog
+
+Los memos **no son borradores de posts** ni su versión comprimida ni un banco de material para el
+sitio. Son un corpus propio: el registro de cómo se aplica NCh2369 —con las normas que ella
+referencia: AISC 360 y 341, ACI 318, NCh427— a un elemento concreto. Que un memo termine en post es
+una salida posible, no el objetivo, y no cambia cómo se escribe.
+
+De ahí sale la regla operativa: **un memo se sostiene solo**. Toda cláusula que usa se lee en el PDF
+de la edición vigente y se registra en su propia tabla de referencias. Ninguna fila puede decir
+«heredada del post»: si el número también vive en un post publicado, igual se lee del PDF acá. Un
+memo sí puede heredar de otro memo —declarándolo en los supuestos—, porque el corpus es una unidad;
+de un post, no.
+
+### 2. No repetir
+
+**Cada cláusula se ejemplifica una vez, y cada elemento se diseña una vez.** Antes de escribir un
+memo se lee [INDICE.md](INDICE.md): si el estado límite, la cláusula o el elemento ya están, el caso
+nuevo no es un memo nuevo — es un paso más en el que existe, o no es nada.
+
+Lo mismo con las estructuras: un solo pórtico arriostrado, una sola base de columna, una sola viga
+de marco. Dos cepas ficticias distintas que ejemplifican el mismo §8.3.1 son dos veces el mismo
+trabajo con la mitad del valor. Cuando dos memos comparten caso, supuestos y veredicto, se funden.
+
+El corpus pasó de 19 a 14 memos el 2026-08-08 aplicando esto por primera vez; la nota de esa
+consolidación está al pie de `INDICE.md`.
+
+### 3. Compactos
+
+Un memo cuesta una fracción de un ejemplo publicado (mediana de ~3.400 palabras, dos SVG a mano y
+una planilla del canvas). Ese costo bajo es lo que permite acumular. Lo que lo mantiene bajo está en
+la sección siguiente, y se pierde solo si no está escrito.
 
 ## Qué es un memo
 
@@ -140,17 +169,24 @@ agrega es que **la deuda se declara** en vez de quedar implícita:
 | ACI | ACI 318-25 (SI) | §17.6.2, Ec. 17.6.2.1b | ⚠ pendiente |
 ```
 
-Acumular rápido está permitido. Decir que un número está verificado cuando no lo está, no.
-**Un memo con alguna fila `⚠ pendiente` no se promueve a post** hasta que no queden.
+Acumular rápido está permitido. Decir que un número está verificado cuando no lo está, no. **Un memo
+con alguna fila `⚠ pendiente` está incompleto**: no vale como aplicación normativa consolidada y no
+se promueve.
 
-## Cuándo se promueve
+Y por la regla 1, `⚠ pendiente` es el único descargo admisible. «Heredada del post» no lo es: un
+memo cuyas cláusulas viven en un post no se sostiene solo, y el día que el post cambie el memo queda
+citando algo que ya no existe.
 
-Un memo se promueve **cuando el caso tiene una tesis que enseñe algo**, no cuando el cálculo está
-completo. Un cálculo que cierra sin sorpresas es un memo perfectamente terminado y no necesita
-post. Lo que justifica las 3.400 palabras es que el ejemplo muestre algo que el lector no habría
-anticipado: que gobierna la verificación que nadie mira, que dos métodos válidos se contradicen,
-que la palanca de diseño no es la que parece.
+## La salida opcional: promover a post
 
-Promover significa reescribir al formato publicado —apertura con tesis, `## El caso`, pasos con
-prosa, `## Resumen: demanda vs. capacidad`, `## La planilla`, footnote normativa— usando el memo
-como insumo. El memo se conserva y se le llena el campo `post:`.
+Todo memo lleva una sección `## Para promover a post`, y se mantiene. Pero es una **salida**, no el
+propósito: se escribe pensando en qué haría falta *si* el caso terminara publicado, no para
+justificar el memo. Un cálculo que cierra sin sorpresas es un memo perfectamente terminado, cumple
+el fin de la carpeta y no necesita post.
+
+Lo que justificaría las 3.400 palabras de un ejemplo publicado es que el caso muestre algo que el
+lector no habría anticipado: que gobierna la verificación que nadie mira, que dos métodos válidos se
+contradicen, que la palanca de diseño no es la que parece. Promover significa reescribir al formato
+publicado —apertura con tesis, `## El caso`, pasos con prosa, `## Resumen: demanda vs. capacidad`,
+`## La planilla`, footnote normativa— usando el memo como insumo. El memo se conserva, se le llena
+el campo `post:`, y **sigue siendo autónomo**: no pasa a citar al post que salió de él.
