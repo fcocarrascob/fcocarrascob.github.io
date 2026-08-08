@@ -4,7 +4,7 @@ disciplina: acero
 tema: Placas base
 normas: [NCh2369:2025, AISC Design Guide 1 3.ª ed., AISC 360-22]
 fecha: 2026-08-08
-estado: pendiente
+estado: verificado
 veredicto: No cierra — el piso de 0,5·M_pe* (279 kN·m) es 2,5 veces el momento del análisis y deja los pernos en 2,79. Sincerar la rigidez de la base o pagar el anclaje completo.
 post:
 ---
@@ -74,9 +74,9 @@ $$Y = 400 - \sqrt{160\,000 - 51\,866} = 71{,}2\ \text{mm} \qquad T_u = q_{\text{
 
 ## 6. Perno a tracción
 
-1″ F1554 gr. 36: $\phi F_{nt} A_b = 114$ kN — **⚠ por leer en la Tabla J3.2**.  [AISC 360-22 §J3]
+Barra roscada: $F_{nt} = 0{,}75F_u$ [Tabla J3.2] con $F_u = 58$ ksi, y $R_n = F_n A_b$ [Ec. J3-1], $\phi = 0{,}75$.  [AISC 360-22 §J3.7]
 
-$$\frac{T_u}{\phi R_n} = \frac{317{,}5}{114} = 2{,}79$$
+$$\phi R_n = 0{,}75\left(0{,}75 \cdot 400\right)507 = 114{,}0\ \text{kN} \qquad \frac{T_u}{\phi R_n} = \frac{317{,}5}{114{,}0} = 2{,}79$$
 
 → uso **2,79** ✗; ni el gr. 105 salva la pulgada: $114 \cdot 125/58 = 246 < 317{,}5$ kN.
 
@@ -96,8 +96,8 @@ tracción por **4,2**.
 |---|---|---:|---:|---:|:--:|
 | Momento de diseño | NCh §8.5.2 | 110 kN·m | piso 278,6 kN·m | ×2,5 | piso manda |
 | Solución real del bloque | DG1 Ec. 4-59 | 51 866 mm² | 160 000 mm² | 0,32 | ✓ |
-| **Perno a tracción (piso §8.5.2)** | AISC §J3 | 317,5 kN | 114 kN | **2,79** | ✗ |
-| Perno a tracción (solo análisis) | AISC §J3 | 75,1 kN | 114 kN | 0,66 | ✓ |
+| **Perno a tracción (piso §8.5.2)** | AISC §J3.7 | 317,5 kN | 114 kN | **2,79** | ✗ |
+| Perno a tracción (solo análisis) | AISC §J3.7 | 75,1 kN | 114 kN | 0,66 | ✓ |
 
 ## Veredicto
 
@@ -114,7 +114,7 @@ momento al del análisis.
 | NCh | NCh2369:2025 | §8.5.2 (piso 50 %); §8.3.1 ($M_{pe}$, $M_{pe}^*$, $T_{ye}$); §8.3.3 + C8.3.3 ($R_y$) | 2026-08-08 |
 | DG1 | AISC Design Guide 1, 3.ª ed. | §4.3.7, Ecs. 4-37, 4-39, 4-40, 4-55, 4-58, 4-59 | 2026-08-08 |
 | DG1-q | AISC Design Guide 1, 3.ª ed. | §4.3.6 — $f_{p,\text{máx}}$ y $q_{\text{máx}}$ (S3) | 2026-08-07 (memo de la llave de corte) |
-| AISC | ANSI/AISC 360-22 | §J3 y Tabla J3.2 — $\phi F_{nt} A_b$ del perno | ⚠ pendiente |
+| AISC | ANSI/AISC 360-22 | §J3.7 Ec. J3-1 ($\phi = 0{,}75$); Tabla J3.2, fila «threaded parts»: $F_{nt} = 0{,}75F_u$ | 2026-08-08 (rasterizadas, pp. 16.1-137 y -141) |
 
 ## Para promover a post
 

@@ -9,7 +9,7 @@ queda al menos una por leer, no se promueve así.
 | Caso | Disciplina | Tema | Estado | Veredicto | Post |
 |---|---|---|---|---|---|
 | [Llave de corte — viento y sismo](acero/placa-base-llave-de-corte-nch2369.md) | acero | Placas base | verificado | La misma llave, dos veredictos: sobra con viento (0,88) y no cierra con sismo (1,08). El sismo amplifica ×1,4 y §8.5.4 borra el roce; la capacidad no se mueve — la palanca es el pedestal, no la llave | — |
-| [Base empotrada — NCh2369 §8.5.2](acero/placa-base-empotrada-nch2369.md) | acero | Placas base | **pendiente** | No cierra: el piso de 0,5·$M_{pe}^*$ multiplica la tracción del perno por 4,2 y lo deja en 2,79 | — |
+| [Base empotrada — NCh2369 §8.5.2](acero/placa-base-empotrada-nch2369.md) | acero | Placas base | verificado | No cierra: el piso de 0,5·$M_{pe}^*$ multiplica la tracción del perno por 4,2 y lo deja en 2,79 | — |
 | [Silla de anclaje — NCh2369 C8.5.2](acero/placa-base-silla-anclaje-nch2369.md) | acero | Placas base | verificado | No cierra: la placa superior que la carga valida (0,63) falla bajo la fluencia esperada del perno (1,58); F1554 no está en la Tabla A3.2 | — |
 | [La base como resorte — DG1 Ap. C](acero/placa-base-rigidez-rotacional-dg1.md) | acero | Placas base | verificado | β_base = 18 480 kN·m/rad = 0,55·4EI/L, y la fundación es 19× más rígida que la conexión: el resorte blando del «empotramiento» son los pernos y la placa, no el suelo | — |
 | [Diagonal de paño en V invertida — NCh2369 §8.6](acero/diagonal-v-invertida-nch2369.md) | acero | Arriostramientos | verificado | Cierra con HSS 125×125×6 (0,67), pero el perfil lo elige la Tabla 9: el 5 mm pasaba resistencia (0,79) y falla b/t porque el R_y nacional endurece el límite; eximirse por 0,7R₁ costaría 2,2× el acero | — |
@@ -17,10 +17,10 @@ queda al menos una por leer, no se promueve así.
 | [Puntal entre paños en X — NCh2369 §8.6.7](acero/puntal-entre-x-nch2369.md) | acero | Arriostramientos | verificado | Cierra con HSS 150×150×8 (0,89) para un elemento que el análisis mostraba descargado: el equilibrio post-pandeo le pone 519 kN de compresión, y el cruce que salva la diagonal le sube la residual ×2,8 | — |
 | [La diagonal fusible se diseña dos veces — NCh2369 §8.3/§8.6](acero/diagonal-fusible-contrato-nch2369.md) | acero | Arriostramientos | verificado | Como miembro usa 0,50; como fusible factura 841 kN a la conexión, 519 al puntal y 587 a la columna — el contrato lo pagan los consumidores, no la diagonal | — |
 | [La columna del marco en X — NCh2369 §8.3.4](acero/columna-marco-x-capacidad-nch2369.md) | acero | Columnas | verificado | Cada elemento del mecanismo tiene su peor estado: el puntal el post-pandeo que §8.6.7 escribe, la columna el pandeo incipiente que C8.6.7 declara no evaluar — arrastrar el del puntal deja la demanda 31 % baja; el tope de «máxima transferible» entrega 1,8 % | — |
-| [BFP por capacidad — NCh2369 §8.7.5](acero/conexion-bfp-capacidad-nch2369.md) | acero | Conexiones | **pendiente** | El tope de 0,7$R_1$ salva la conexión (0,99) pero no la columna (1,27–1,86); la viga perforada rompe a 0,81·$M_{pe}$ y los atiesadores piden 20 mm | — |
-| [Viga de marco especial — ACI 18.6 + NCh2369 §9.1.2](hormigon/viga-marco-especial-nch2369.md) | hormigon | Vigas | **pendiente** | El corte sube 42 % sin carga nueva del análisis — lo fija su propia armadura vía M_pr; V_c se salva por 7 puntos y en la rótula rige el d/4 del confinamiento, no el corte | — |
+| [BFP por capacidad — NCh2369 §8.7.5](acero/conexion-bfp-capacidad-nch2369.md) | acero | Conexiones | verificado | El tope de 0,7$R_1$ salva la conexión (0,99) pero no la columna (1,27–1,86); la viga perforada rompe a 0,81·$M_{pe}$ y los atiesadores piden 20 mm | — |
+| [Viga de marco especial — ACI 18.6 + NCh2369 §9.1.2](hormigon/viga-marco-especial-nch2369.md) | hormigon | Vigas | verificado | El corte sube 42 % sin carga nueva del análisis — lo fija su propia armadura vía M_pr; V_c se salva por 7 puntos y en la rótula rige el d/4 del confinamiento, no el corte | — |
 | [Pedestal por capacidad — NCh2369 §9.5](hormigon/pedestal-base-columna-nch2369.md) | hormigon | Anclajes | verificado | Cierra holgado (≤ 0,37): la armadura la fija el 0,5 % mínimo y los estribos la zona de protección, que cubre casi todo el pedestal — se detalla, no se calcula | — |
-| [Zapata bajo el pedestal — NCh2369 Cap. 10](geotecnia/zapata-base-columna-nch2369.md) | geotecnia | Zapatas | **pendiente** | Cierra con B = 3,1: la dimensiona el 80 % de área apoyada (0,93), no la presión ni el deslizamiento (0,44); el roce prohibido arriba es la única resistencia abajo | — |
+| [Zapata bajo el pedestal — NCh2369 Cap. 10](geotecnia/zapata-base-columna-nch2369.md) | geotecnia | Zapatas | verificado | Cierra con B = 3,1: la dimensiona el 80 % de área apoyada (0,93), no la presión ni el deslizamiento (0,44); el roce prohibido arriba es la única resistencia abajo | — |
 | [La zapata B = 3,1 contra Das](geotecnia/zapata-capacidad-y-asentamiento-das.md) | geotecnia | Zapatas | verificado | Los dos estados límite que NCh2369 no cubre sobran (FS 11,5–13,0 contra 3; 2,2 mm contra 25) y la inclinación de 11° recorta 31 % sin gobernar: manda el 80 % de área. El k_v del informe es sísmico y subestima el estático ×3 | — |
 
 Se mantiene a mano. Un script cuando haya ~20 memos, no antes.
@@ -45,24 +45,30 @@ partía un tema de acero en dos disciplinas. `zapata-capacidad-soporte-das` y `z
 
 Lo retirado vive en el historial de git.
 
-## La regla de independencia y la deuda que destapó
+## La regla de independencia, saldada
 
-Al escribir la regla 1 del [README](README.md) —un memo se sostiene solo, ninguna cláusula puede
-decir «heredada del post»— quedaron a la vista cinco memos que sí dependían de un post publicado.
-Se limpió la prosa en todos y se cerró la única fila que las lecturas de hoy ya cubrían (la Ec. D2-1
-del memo de la diagonal fusible, y §4.5 + Tabla C-2 del de la zapata). **Los cuatro restantes pasan
-a `pendiente`** con su fila marcada `⚠`, que es lo que el README manda: declarar la deuda en vez de
-dejarla implícita.
+La regla 1 del [README](README.md) —un memo se sostiene solo, ninguna cláusula puede decir
+«heredada del post»— dejó a la vista cinco memos que dependían de un post publicado. Se limpió la
+prosa en los cinco y **se leyeron en PDF rasterizado las cuatro cláusulas que faltaban**. El corpus
+queda **14/14 verificados**, sin una sola fila `⚠ pendiente`.
 
-| Memo | Cláusula por leer en PDF |
-|---|---|
-| Base empotrada | AISC 360-22 §J3 y Tabla J3.2 — $\phi F_{nt} A_b$ del perno |
-| BFP por capacidad | AISC 360-22 §J3.7, §J4.1, §J10 (J10-1/2/4/10), §F13.1 |
-| Viga de marco especial | ACI 318-25 §22.5.5.1 — $V_c$ |
-| Zapata bajo el pedestal | NCh2369 Tabla 10 — $L$ de cálculo |
+| Memo | Cláusula leída | Resultado |
+|---|---|---|
+| Base empotrada | AISC 360-22 Tabla J3.2 + §J3.7 Ec. J3-1 | ✓ los 114,0 kN del perno reproducen |
+| BFP por capacidad | AISC 360-22 J3-1, J4-1, J4-2, J10-1, J10-2, J10-4, J10-10, F13-1 | ✓ las ocho capacidades reproducen |
+| Viga de marco especial | ACI 318-25 Tabla 22.5.5.1, Ec. (a) | **✗ corregido**: $V_c$ = 13,9 y no 13,6 tonf |
+| Zapata bajo el pedestal | NCh2369 Tabla 10, fila «Zarpa» | ✓ el $L$ = 1,00 m reproduce |
 
-Ninguna de las cuatro cambia un número: son valores que un post auditado ya usaba y que acá tienen
-que leerse otra vez, en su propio PDF. Son ~6 páginas rasterizadas.
+**Lo que apareció al leer.** La edición SI de ACI 318-25 imprime $V_c = 0{,}17\lambda\sqrt{f'_c}b_wd$;
+el memo arrastraba $0{,}53\sqrt{f'_c}$ en kgf/cm², que equivale a **0,166** — el coeficiente de
+ediciones anteriores. Son 13,58 contra 13,91 tonf: 2,3 %, invisible en cualquier revisión de
+resultados, y mueve el espaciamiento por corte de 17,4 a 17,6 cm. No cambia el veredicto (en la
+rótula manda el $d/4$ = 13,5 cm), pero es exactamente el tipo de deriva de edición que `CLAUDE.md`
+persigue.
+
+Y un gotcha de numeración para el libro mayor: en **360-22 el §J3.7 es *Tensile and Shear Strength
+of Bolts and Threaded Parts*** (Ec. J3-1); el caso combinado se corrió a §J3.8. En 360-16 el
+combinado era J3.7 — citar «J3.7» sin edición apunta a dos cláusulas distintas.
 
 ## Lo otro que queda abierto
 

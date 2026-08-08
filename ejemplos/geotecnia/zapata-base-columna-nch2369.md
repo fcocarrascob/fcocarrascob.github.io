@@ -4,7 +4,7 @@ disciplina: geotecnia
 tema: Zapatas
 normas: [NCh2369:2025]
 fecha: 2026-08-08
-estado: pendiente
+estado: verificado
 veredicto: Cierra con B = 3,1 m y la dimensiona el 80 % de área apoyada (0,93), no la presión ni el deslizamiento (0,44). El roce que §8.5.4 tarifa en cero arriba es la única resistencia lateral abajo — y sobra.
 post:
 ---
@@ -27,7 +27,7 @@ verificaciones del Cap. 10 en ASD, sobre el suelo del informe.
 ## Supuestos
 
 1. **S1** — tonf y kgf/cm² (ASD), como toda la cadena de la zapata; brazo del corte al sello 1,80 m.
-2. **S2** — Combinaciones de 4.5 y $a = 0{,}25$ leídas en PDF; el $L$ de cálculo sale de la Tabla 10, todavía por leer.
+2. **S2** — Combinaciones de 4.5 y $a = 0{,}25$ leídas en PDF; el $L$ de cálculo es la fila «Zarpa» de la Tabla 10.
 3. **S3** — Fundación **estándar menor**: la zapata no está en el modelo (misma decisión del cuarteto) → 80 %.
 4. **S4** — Fuerzas de inercia de la fundación despreciadas: se hormigona contra terreno natural [§10.1.4].
 5. **S5** — Capacidad de soporte con área efectiva e inclinación fuera de alcance; queda para promover.
@@ -119,7 +119,7 @@ es peso permanente garantizado, no una compresión que puede no estar.
 | NCh-d | NCh2369:2025 | §10.1.3 + C10.1.3, Ecs. (22) y (24), prohibiciones de cohesión y pasivo | 2026-08-08 |
 | NCh-e | NCh2369:2025 | §10.1.4 + C10.1.4: Ec. (25), clases, 80 % ASD, inercia despreciable | 2026-08-08 |
 | NCh-f | NCh2369:2025 | §4.5.1 (combinaciones) y Tabla C-2 ($a$) | 2026-08-08 (rasterizada, p. impresa 15) |
-| NCh-g | NCh2369:2025 | Tabla 10 — $L$ de cálculo | ⚠ pendiente |
+| NCh-g | NCh2369:2025 | Tabla 10 — $L$ de cálculo, fila «Zarpa» | 2026-08-08 (rasterizada, p. impresa 124) |
 
 ## Para promover a post
 

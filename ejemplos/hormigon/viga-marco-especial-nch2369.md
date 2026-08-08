@@ -4,7 +4,7 @@ disciplina: hormigon
 tema: Vigas
 normas: [ACI 318-25 (SI), NCh2369:2025]
 fecha: 2026-08-08
-estado: pendiente
+estado: verificado
 veredicto: El corte de diseño sube 42 % (25,6 tonf) sin que llegue carga nueva del análisis — lo fija la propia armadura vía M_pr. V_c se salva por 7 puntos (43 % < 50 %), y los estribos de la rótula los rige el d/4 del confinamiento, no el corte.
 post:
 ---
@@ -72,8 +72,12 @@ $V_c = 0$ solo si el corte sísmico es ≥ ½ del total **y** $P_u < A_g f'_c/20
 
 $$\frac{V_{cap}}{V_e} = \frac{11{,}0}{25{,}6} = 0{,}43 < 0{,}5$$
 
-→ $V_c = 13{,}6$ tonf **cuenta** — se salva por 7 puntos. Estribos por $V_e$:
-$V_s = 25{,}6/0{,}75 - 13{,}6 = 20{,}5$ → $s = 17{,}4$ cm con $\phi10$ de 2 ramas.
+$V_c$ por la Ec. (a) de la Tabla 22.5.5.1, con $N_u \approx 0$, $\lambda = 1$ y $\sqrt{f'_c} = 4{,}95 \le 8{,}3$ MPa [§22.5.3.1]:
+
+$$V_c = 0{,}17\lambda\sqrt{f'_c}\,b_w d = 0{,}17 \cdot \sqrt{24{,}52} \cdot 300 \cdot 540 = 136{,}4\ \text{kN} = 13{,}9\ \text{tonf}$$
+
+→ $V_c$ **cuenta** — se salva por 7 puntos. Estribos por $V_e$:
+$V_s = 25{,}6/0{,}75 - 13{,}9 = 20{,}2$ → $s = 17{,}6$ cm con $\phi10$ de 2 ramas.
 
 ## 6. El confinamiento rige sobre el corte
 
@@ -81,7 +85,7 @@ Zona de $2h = 120$ cm desde la cara; primer estribo a ≤ 50 mm.  [ACI §18.6.4.
 
 $$s \le \min\left(\frac{d}{4};\ 150\ \text{mm};\ 6d_b\right) = \min\left(135;\ 150;\ 150\right) = 135\ \text{mm}$$
 
-→ **φ10@130 cerrados con gancho sísmico** en 1,20 m (el corte pedía 174). Fuera de la zona:
+→ **φ10@130 cerrados con gancho sísmico** en 1,20 m (el corte pedía 176). Fuera de la zona:
 corte pide 289 mm, manda $d/2 = 270$ → φ10@250 con ganchos sísmicos.
 
 ## Resumen
@@ -92,7 +96,7 @@ corte pide 289 mm, manda $d/2 = 270$ → φ10@250 con ganchos sísmicos.
 | $M_n^+ \ge M_n^-/2$ en el nudo | ACI §18.6.3.2 | 0,69 | ≥ 0,5 | — | ✓ |
 | **Corte por capacidad** | ACI §18.6.5.1 | **25,6 tonf** | vs 18 del diseño grav. | ×1,42 | — |
 | ¿$V_c = 0$? | ACI §18.6.5.2 | 0,43 | ≥ 0,5 | no aplica | $V_c$ vale |
-| Estribos zona de rótula | ACI §18.6.4.4 | 174 mm (corte) | 135 mm (confinam.) | **rige 18.6.4** | φ10@130 |
+| Estribos zona de rótula | ACI §18.6.4.4 | 176 mm (corte) | 135 mm (confinam.) | **rige 18.6.4** | φ10@130 |
 | Estribos resto | ACI §18.6.4.5 | 289 mm | 270 mm ($d/2$) | rige $d/2$ | φ10@250 |
 
 ## Veredicto
@@ -110,7 +114,7 @@ en una viga con menos gravedad concurrente, se anula.
 |---|---|---|---|
 | ACI | ACI 318-25 (SI) | §18.6.3.1–.2; §18.6.4.1, .4, .5; §18.6.5.1–.2 + R18.6.5 | 2026-08-08 (rasterizadas, pp. impresas 328–333) |
 | NCh | NCh2369:2025 | §9.1.2, §9.1.3 (+ C9.1.1: DS 60 reemplaza a NCh430) | 2026-08-08 (rasterizada, p. impresa 101) |
-| ACI-22 | ACI 318-25 (SI) | §22.5.5.1 — $V_c$ | ⚠ pendiente |
+| ACI-22 | ACI 318-25 (SI) | Tabla 22.5.5.1, Ec. (a) — $V_c$; §22.5.3.1 (tope de $\sqrt{f'_c}$) | 2026-08-08 (rasterizada, p. impresa 444) |
 
 ## Para promover a post
 
