@@ -10,6 +10,8 @@ ejemplo ya publicado, no es cálculo nuevo.
 | Caso | Disciplina | Tema | Estado | Veredicto | Post |
 |---|---|---|---|---|---|
 | [Placa base con momento — DG1](acero/placa-base-momento-dg1.md) | acero | Placas base | derivado-de-post | No cierra: gobierna el breakout del grupo traccionado (1,02) y su interacción con el corte (1,20) | [`placa-base-ejemplo-trabajado`](../src/content/acero/placa-base-ejemplo-trabajado.mdx) |
-| [Llave de corte — ACI §17.11](acero/placa-base-llave-de-corte.md) | acero | Placas base | pendiente | Cierra con 0,88 en el breakout de la llave, pero obliga a subir $h_{ef}$ de 400 a 450 mm | — |
+| [Llave de corte — ACI §17.11](acero/placa-base-llave-de-corte.md) | acero | Placas base | verificado | Cierra con 0,88 en el breakout de la llave, pero obliga a subir $h_{ef}$ de 400 a 450 mm | — |
+| [Llave de corte sísmica — NCh2369 §8.5.3](acero/placa-base-llave-de-corte-nch2369.md) | acero | Placas base | verificado | No cierra: el breakout queda en 1,08 — el sismo amplifica ×1,4 y §8.5.4 prohíbe el roce que la DG1 acreditaría | — |
+| [Base empotrada — NCh2369 §8.5.2](acero/placa-base-empotrada-nch2369.md) | acero | Placas base | verificado | No cierra: el piso de 0,5·$M_{pe}^*$ multiplica la tracción del perno por 4,2 y lo deja en 2,79 | — |
 
 Se mantiene a mano. Un script cuando haya ~10 memos, no antes.

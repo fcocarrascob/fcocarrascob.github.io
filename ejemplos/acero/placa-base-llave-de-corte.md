@@ -4,7 +4,7 @@ disciplina: acero
 tema: Placas base
 normas: [ACI 318-25 (SI), AISC 360-22, AISC Design Guide 1 3.ª ed.]
 fecha: 2026-08-07
-estado: pendiente
+estado: verificado
 veredicto: Cierra con uso 0,88 en el breakout de la llave, pero obliga a subir h_ef de los pernos de 400 a 450 mm.
 post:
 ---
@@ -129,13 +129,14 @@ agujero de inspección de 25 mm a cada lado largo de la llave [§17.11.1.2].
 |---|---|---|---|
 | ACI | ACI 318-25 (SI) | §17.11.1 a §17.11.3; §17.7.2.1 a §17.7.2.5 | 2026-08-07 |
 | AISC | ANSI/AISC 360-22 | §J4.5 | 2026-08-07 |
-| AISC-F | ANSI/AISC 360-22 | §F11.1 — $M_n = F_y Z$ de la llave | ⚠ pendiente |
+| AISC-F | ANSI/AISC 360-22 | §F11.1, Ec. F11-1 — $M_n = F_y Z \le 1{,}5F_y S_x$ | 2026-08-08 |
 | DG1 | AISC Design Guide 1, 3.ª ed. | §4.3.6; Ej. 4.7-5 | 2026-08-07 |
 
 ## Para promover a post
 
-- Por leer: AISC 360-22 §F11.1. §J4.5 nombra la fluencia por flexión pero **no imprime la
-  ecuación**; $M_n = F_y Z$ se tomó del uso que le da la DG1 en su Ej. 4.7-5.
+- AISC §F11.1 leído el 2026-08-08 (§J4.5 nombra la fluencia por flexión pero no imprime la
+  ecuación): Ec. F11-1, $M_n = F_y Z \le 1{,}5F_y S_x$, y la plancha rectangular cumple el tope
+  con igualdad ($Z/S_x = 1{,}5$).
 - Tesis candidata: la llave que se dibuja no es la que trabaja — solo $2t_{sl}$ resiste, y el par
   que ella misma genera tracciona pernos que no tenían momento aplicado.
 - Figuras: $A_{ef,sl}$ y $A_{Vc}$ de la llave contra los del grupo de pernos, a la misma escala.
