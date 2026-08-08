@@ -18,6 +18,8 @@
     "indice:normas": "node scripts/build-indice-normas.mjs",
     "verify:ecuaciones": "node scripts/verify-ecuaciones.mjs",
     "ecuaciones": "node scripts/verify-ecuaciones.mjs --escribir",
+    "verify:ejemplos": "node scripts/verify-ejemplos.mjs",
+    "ejemplos": "node scripts/verify-ejemplos.mjs --escribir",
     "render:esquema": "node scripts/render-esquema.mjs",
     "render:esquemas": "node scripts/render-esquema.mjs public/planillas",
     "figura": "node scripts/render-figura.mjs",

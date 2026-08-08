@@ -5,7 +5,7 @@ tema: Placas base
 normas: [NCh2369:2025, ACI 318-25 (SI), AISC 360-22, AISC Design Guide 1 3.ª ed.]
 fecha: 2026-08-08
 estado: verificado
-veredicto: La misma llave, dos normas y dos veredictos: bajo viento sobra (0,88) y bajo sismo no cierra (1,08). El sismo entra dos veces —amplifica ×1,4 y §8.5.4 borra los 65 kN de roce que la DG1 acreditaría— y la capacidad no se mueve. Cierra con pedestal de 1300 (0,84).
+veredicto: La misma llave, dos normas y dos veredictos = bajo viento sobra (0,88) y bajo sismo no cierra (1,08). El sismo entra dos veces —amplifica ×1,4 y §8.5.4 borra los 65 kN de roce que la DG1 acreditaría— y la capacidad no se mueve. Cierra con pedestal de 1300 (0,84).
 post:
 ---
 

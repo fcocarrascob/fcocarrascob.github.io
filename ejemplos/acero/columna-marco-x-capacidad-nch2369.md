@@ -5,7 +5,7 @@ tema: Columnas
 normas: [NCh2369:2025, AISC 360-22]
 fecha: 2026-08-08
 estado: verificado
-veredicto: Cada elemento del mismo mecanismo tiene su peor estado: el puntal, el post-pandeo que §8.6.7 escribe; la columna, el pandeo incipiente que C8.6.7 declara no evaluar. Reusar el estado del puntal deja la demanda 31 % baja. Cierra con HEB 300 (0,77) y exporta 1 564 kN de levantamiento.
+veredicto: Cada elemento del mismo mecanismo tiene su peor estado = el puntal, el post-pandeo que §8.6.7 escribe; la columna, el pandeo incipiente que C8.6.7 declara no evaluar. Reusar el estado del puntal deja la demanda 31 % baja. Cierra con HEB 300 (0,77) y exporta 1 564 kN de levantamiento.
 post:
 ---
 

@@ -5,7 +5,7 @@ tema: Anclajes
 normas: [NCh2369:2025, ACI 318-25 (SI), AISC 341-22]
 fecha: 2026-08-08
 estado: verificado
-veredicto: Cierra holgado (usos ≤ 0,37) — y esa es la tesis. la resistencia no dimensiona nada. la armadura la fija el 0,5 % mínimo y los estribos la zona de protección de §9.5.3, que con lado 1100 cubre casi todo el pedestal.
+veredicto: Cierra holgado (usos ≤ 0,37) — y esa es la tesis. La resistencia no dimensiona nada. La armadura la fija el 0,5 % mínimo y los estribos la zona de protección de §9.5.3, que con lado 1100 cubre casi todo el pedestal.
 post:
 ---
 

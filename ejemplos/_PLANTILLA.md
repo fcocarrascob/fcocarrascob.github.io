@@ -4,8 +4,8 @@ disciplina:                # acero | hormigon | geotecnia
 tema:                      # mismo vocabulario que el `tema` de los posts
 normas: []
 fecha:
-estado: pendiente          # verificado | pendiente | derivado-de-post
-veredicto:
+estado: pendiente          # verificado | pendiente — se deriva de la tabla de referencias
+veredicto:                 # una o dos frases; es la celda del INDICE, verbatim
 post:
 ---
 
