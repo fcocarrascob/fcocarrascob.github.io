@@ -28,9 +28,9 @@ el piso del 50 % de la capacidad flexural esperada (§8.5.2), resuelto con el bl
 
 1. **S1** — Todo en SI (N, mm, MPa); propiedades del HEB 300 tomadas de catálogo.
 2. **S2** — $M_E$, $P_u$ y $P_{\text{máx}}$ son datos del análisis global con las combinaciones de 4.5.
-3. **S3** — $q_{\text{máx}} = 12{,}43$ kN/mm heredado del memo de viento: $f_{p,\text{máx}} = 27{,}6$ MPa con $\sqrt{A_2/A_1}$ saturado en 2.
+3. **S3** — $q_{\text{máx}} = 12{,}43$ kN/mm heredado del memo de la llave de corte: $f_{p,\text{máx}} = 27{,}6$ MPa con $\sqrt{A_2/A_1}$ saturado en 2.
 4. **S4** — 2 pernos en la fila traccionada.
-5. **S5** — El anclaje al hormigón queda fuera: el memo DG1 ya mostró que el pedestal gobierna.
+5. **S5** — El anclaje al hormigón queda fuera: el post del ejemplo trabajado ya mostró que el pedestal gobierna (breakout del grupo traccionado).
 6. **S6** — $R_y = 1{,}3$ por C8.3.3 (A36 nacional, U. de Chile), en vez de la Tabla A3.1 de AISC 341-16.
 
 ## 1. Capacidad flexural esperada de la columna
@@ -113,7 +113,7 @@ momento al del análisis.
 |---|---|---|---|
 | NCh | NCh2369:2025 | §8.5.2 (piso 50 %); §8.3.1 ($M_{pe}$, $M_{pe}^*$, $T_{ye}$); §8.3.3 + C8.3.3 ($R_y$) | 2026-08-08 |
 | DG1 | AISC Design Guide 1, 3.ª ed. | §4.3.7, Ecs. 4-37, 4-39, 4-40, 4-55, 4-58, 4-59 | 2026-08-08 |
-| DG1-q | AISC Design Guide 1, 3.ª ed. | $f_{p,\text{máx}}$ y $q_{\text{máx}}$ (S3) | 2026-08-07 (memo de viento) |
+| DG1-q | AISC Design Guide 1, 3.ª ed. | §4.3.6 — $f_{p,\text{máx}}$ y $q_{\text{máx}}$ (S3) | 2026-08-07 (memo de la llave de corte) |
 | AISC | ANSI/AISC 360-22 | §J3 — $\phi F_{nt} A_b$ del perno | heredada del post del ejemplo trabajado |
 
 ## Para promover a post

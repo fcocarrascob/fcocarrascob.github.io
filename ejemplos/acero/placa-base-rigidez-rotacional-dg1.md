@@ -1,28 +1,29 @@
 ---
-titulo: Rigidez rotacional de la base — DG1 Apéndice C
+titulo: La base como resorte — β_connection, β_footing y la serie (DG1 Ap. C)
 disciplina: acero
 tema: Placas base
-normas: [AISC Design Guide 1 3.ª ed., AISC 360-22]
+normas: [AISC Design Guide 1 3.ª ed., AISC 360-22, NCh2369:2025]
 fecha: 2026-08-08
 estado: verificado
-veredicto: La base declarada empotrada entrega β = 19 430 kN·m/rad al momento del análisis — el 58 % del 4EI/L de su propia columna, antes de restar la fundación (C-1). Y la secante sube con el momento, no baja, porque el bloque a f_máx fija la deformación de la zapata.
+veredicto: La base declarada empotrada entrega β_base = 18 480 kN·m/rad, el 55 % del 4EI/L de su propia columna. Y reparte la culpa: la fundación es 19 veces más rígida que la conexión, así que el empotramiento parcial vive en los pernos y la placa. Modelar el resorte del suelo y empotrar la conexión es afinar el resorte equivocado.
 post:
 ---
 
-# Rigidez rotacional de la base — DG1 Apéndice C
+# La base como resorte — β_connection, β_footing y la serie (DG1 Ap. C)
 
-La base del memo empotrado como resorte: rigidez secante $\beta_{connection}$ por el método
-C.2.1 (cuatro deformaciones), evaluada al momento del análisis y al piso de NCh2369 §8.5.2.
+La base del memo empotrado como resorte completo: la conexión por el método C.2.1 (cuatro
+deformaciones), la fundación por balasto, y las dos en serie según la Ec. C-1.
 
 ## Caso
 
 | Dato | Valor |
 |---|---|
-| Columna | HEB 300, $d = 300$ mm; $I_x = 25\,170$ cm⁴ (catálogo) |
+| Columna | HEB 300, $d = 300$ mm; $I_x = 25\,170$ cm⁴ (catálogo); 6 m de altura |
 | Placa | $B = N = 450$ mm, $t_p = 25$ mm; pernos a $f = 175$ mm |
 | Pedestal | $1100 \times 1100 \times 1200$ mm, $f'_c = 25$ MPa |
 | Pernos | 4 × 1″ F1554 gr. 36, $A_{rod} = 507$ mm²; 2 en la fila traccionada |
 | Aplastamiento | $f_{\text{máx}} = 27{,}6$ MPa, $q_{\text{máx}} = 12{,}43$ kN/mm (serie) |
+| Zapata / suelo | $B = L = 3{,}1$ m, **rígida** (Ec. 25); $k_v = 5\,000$ tonf/m³ (informe) |
 | Nivel 1 (análisis) | $M_E = 110\ \text{kN}\cdot\text{m}$, $P_u = 250$ kN → $Y = 32{,}2$ mm, $T = 150{,}2$ kN |
 | Nivel 2 (piso §8.5.2) | $M_u = 278{,}6\ \text{kN}\cdot\text{m}$, $P_u = 250$ kN → $Y = 71{,}2$ mm, $T = 635{,}0$ kN |
 
@@ -30,10 +31,12 @@ C.2.1 (cuatro deformaciones), evaluada al momento del análisis y al piso de NCh
 
 1. **S1** — $T$ e $Y$ heredados del memo de la base empotrada (bloque DG1 §4.3.7), en los dos niveles.
 2. **S2** — $L_{rod} = h_{ef} + t_p = 400 + 25 = 425$ mm (tope de placa a tuerca inferior), sin mortero.
-3. **S3** — $d_{footing} = 1\,200$ mm: la altura del pedestal. La zapata y el suelo son $\beta_{footing}$, fuera del alcance (Ec. C-1).
-4. **S4** — $w_c = 145$ lb/ft³ (hormigón de peso normal).
-5. **S5** — $E = E_{rod} = 200\,000$ MPa; $G = 77\,200$ MPa (AISC 360-22 §E4).
-6. **S6** — Contraste contra una columna de 6 m: $4EI/L$ con el $I_x$ de catálogo.
+3. **S3** — $d_{footing} = 1\,200$ mm: la altura del pedestal (Ec. C-12).
+4. **S4** — $w_c = 145$ lb/ft³; $E = E_{rod} = 200\,000$ MPa; $G = 77\,200$ MPa (AISC 360-22 §E4).
+5. **S5** — Zapata rígida sobre cama de resortes $k_v$ uniforme (contacto plano de §10.1.4), con contacto pleno: $\beta_{footing}$ es **cota superior** — con despegue (86 % apoyado en la sísmica) cae.
+6. **S6** — $k_v$ sísmico del informe; el memo de la zapata contra Das mostró que el estático es ~⅓.
+7. **S7** — Rotaciones aditivas: la conexión y la fundación giran en serie (Ec. C-1).
+8. **S8** — Contraste contra $4EI/L$ de la propia columna de 6 m, con el $I_x$ de catálogo.
 
 ## 1. Régimen de excentricidad
 
@@ -53,80 +56,80 @@ $$I_{plate} = \frac{B\,t_p^3}{12} = 585\,938\ \text{mm}^4 \qquad A_{plate}^{shea
 
 → voladizos: $m = (450 - 0{,}95 \cdot 300)/2 = 82{,}5$ mm; $L_{tension} = f - d/2 = 25$ mm [Ec. C-8].
 
-## 3. Alargamiento del perno
+## 3. Las tres deformaciones del acero
 
-Fila completa: $T = 150{,}2$ kN sobre $2 A_{rod}$.  [Ec. C-6]  (S2)
+Alargamiento del perno sobre la fila completa [Ec. C-6]; placa traccionada, voladizo corto con
+flexión más corte [Ec. C-7]; placa comprimida con $Y = 32{,}2 < m$, rama del bloque parcial [Ec. C-11].  (S2)
 
-$$\Delta_{rod} = \frac{T\,L_{rod}}{A_{rod}\,E_{rod}} = \frac{150\,200 \cdot 425}{2 \cdot 507 \cdot 200\,000} = 0{,}315\ \text{mm}$$
+$$\Delta_{rod} = \frac{T\,L_{rod}}{A_{rod}\,E_{rod}} = \frac{150\,200 \cdot 425}{2 \cdot 507 \cdot 200\,000} = 0{,}315\ \text{mm} \qquad \Delta_{plate}^{tension} = 0{,}007 + 0{,}005 = 0{,}012\ \text{mm}$$
 
-## 4. Flexión de la placa, lado traccionado
+$$\Delta_{plate}^{compression} = \frac{f_{\text{máx}}B}{8EI_{plate}}\left[m^4 - \frac{(m-Y)^3(3m+Y)}{3}\right] + \frac{f_{\text{máx}}BY}{A_{plate}^{shear}G}\left(m - \frac{Y}{2}\right) = 0{,}457 + 0{,}037 = 0{,}493\ \text{mm}$$
 
-Voladizo corto ($L_{tension} = 25$ mm): flexión más corte.  [Ec. C-7]
-
-$$\Delta_{plate}^{tension} = \frac{T\,L_{tension}^3}{3\,E\,I_{plate}} + \frac{T\,L_{tension}}{A_{plate}^{shear}\,G} = 0{,}007 + 0{,}005 = 0{,}012\ \text{mm}$$
-
-## 5. Flexión de la placa, lado comprimido
-
-$Y = 32{,}2 < m = 82{,}5$: rige la rama con el bloque parcial.  [Ec. C-11]
-
-$$\Delta_{plate}^{compression} = \frac{f_{\text{máx}}B}{8EI_{plate}}\left[m^4 - \frac{(m-Y)^3(3m+Y)}{3}\right] + \frac{f_{\text{máx}}BY}{A_{plate}^{shear}G}\left(m - \frac{Y}{2}\right)$$
-
-$$= 0{,}457 + 0{,}037 = 0{,}493\ \text{mm}$$
-
-## 6. Aplastamiento bajo la placa
+## 4. El aplastamiento, que no depende del momento
 
 $f_{\text{máx}}$ del bloque, a lo largo del pedestal.  [Ec. C-12]  (S3)
 
 $$\Delta_{footing} = \frac{f_{\text{máx}}\,d_{footing}}{E_{concrete}} = \frac{27{,}6 \cdot 1\,200}{22\,924} = 1{,}445\ \text{mm}$$
 
-→ el término mayor, y **no depende del momento**: el bloque está a $f_{\text{máx}}$ en los dos niveles.
+→ el término mayor, y **constante**: el bloque está a $f_{\text{máx}}$ en los dos niveles.
 
-## 7. Rotación y rigidez secante
+## 5. Rotación y rigidez secante, en los dos niveles
 
-Suma de deformaciones sobre el brazo $f + N/2 = 400$ mm.  [Ecs. C-5, C-4]
+Suma de deformaciones sobre el brazo $f + N/2 = 400$ mm. En el piso de §8.5.2 ($Y = 71{,}2$,
+$T = 635{,}0$ kN) los cuatro términos son 1,331 / 0,050 / 0,669 / 1,445 mm.  [Ecs. C-5, C-4]
 
-$$\theta = \frac{0{,}315 + 0{,}012 + 0{,}493 + 1{,}445}{400} = 5{,}66 \cdot 10^{-3}\ \text{rad}$$
-
-$$\beta_{connection} = \frac{M_u}{\theta} = \frac{110 \cdot 10^6}{5{,}66 \cdot 10^{-3}} = 19\,430\ \text{kN}\cdot\text{m/rad}$$
-
-## 8. La secante en el piso de §8.5.2
-
-Mismas ecuaciones con $Y = 71{,}2$, $T = 635{,}0$ kN: $\Delta_{rod} = 1{,}331$;
-$\Delta_{plate}^{tension} = 0{,}050$; $\Delta_{plate}^{compression} = 0{,}669$; $\Delta_{footing} = 1{,}445$ mm.
-
-$$\theta = \frac{3{,}495}{400} = 8{,}74 \cdot 10^{-3}\ \text{rad} \qquad \beta_{connection} = \frac{278{,}6 \cdot 10^6}{8{,}74 \cdot 10^{-3}} = 31\,890\ \text{kN}\cdot\text{m/rad}$$
+$$\theta = \frac{2{,}265}{400} = 5{,}66 \cdot 10^{-3} \;\text{rad} \;\to\; \beta = 19\,430 \qquad \theta = \frac{3{,}495}{400} = 8{,}74 \cdot 10^{-3} \;\text{rad} \;\to\; \beta = 31\,890\ \frac{\text{kN}\cdot\text{m}}{\text{rad}}$$
 
 → el momento sube ×2,5 y la rotación solo ×1,5: la secante **sube** ×1,6, arrastrada por el
-$\Delta_{footing}$ constante del paso 6.
+$\Delta_{footing}$ constante del paso 4.
 
-## 9. El contraste: la rigidez de la propia columna
+## 6. β_footing, derivada por estática
 
-$$\frac{4EI}{L} = \frac{4 \cdot 200\,000 \cdot 2{,}517 \cdot 10^8}{6\,000} = 33\,560\ \text{kN}\cdot\text{m/rad} \quad (S6)$$
+Zapata rígida girada $\theta$ sobre la cama: $q(x) = k_v\,\theta\,x$, y el momento resultante
+integra $x^2$ — la inercia del sello. Derivada, no recordada.  (S5, S6, S7)
 
-$$\frac{\beta_{connection}}{4EI/L} = \frac{19\,430}{33\,560} = 0{,}58$$
+$$M = \int_A k_v\,\theta\,x^2\,dA = k_v\,\theta\,I \;\Rightarrow\; \beta_{footing} = k_v\frac{B^4}{12} = 5\,000 \cdot \frac{3{,}1^4}{12} = 38\,480\ \frac{\text{tonf}\cdot\text{m}}{\text{rad}} = 377\,360\ \frac{\text{kN}\cdot\text{m}}{\text{rad}}$$
 
-→ y en el piso de §8.5.2, $31\,890/33\,560 = 0{,}95$.
+## 7. La serie de la Ec. C-1
+
+Las rotaciones se suman; las rigideces van en serie.  [DG1 Ap. C, Ec. C-1]  (S8)
+
+$$\beta_{base} = \frac{\beta_{connection}\,\beta_{footing}}{\beta_{connection} + \beta_{footing}} = \frac{19\,430 \cdot 377\,360}{19\,430 + 377\,360} = 18\,480\ \frac{\text{kN}\cdot\text{m}}{\text{rad}}$$
+
+```
+   columna 4EI/L = 33 560
+        ├── β_connection    19 430  ←── el resorte blando (pernos + placa + pedestal)
+        └── β_footing      377 360  ←── 19× más rígida (zapata B = 3,1 sobre k_v)
+   ═══ en serie ═══  β_base = 18 480 kN·m/rad = 0,55·(4EI/L)
+```
+
+→ $4EI/L = 4 \cdot 200\,000 \cdot 2{,}517 \cdot 10^8 / 6\,000 = 33\,560$; el suelo denso descuenta **5 %**.
+
+## 8. Sensibilidad: la arena suelta
+
+Con $k_v = 1\,000$ tonf/m³, $\beta_{footing} = 75\,470$ (S6):
+
+$$\beta_{base} = \frac{19\,430 \cdot 75\,470}{94\,900} = 15\,450\ \frac{\text{kN}\cdot\text{m}}{\text{rad}} \;\Rightarrow\; 0{,}46\,\frac{4EI}{L} \quad \text{— ni así la fundación gobierna.}$$
 
 ## Resumen
 
-| Magnitud | Ref. | $M_E = 110$ | Piso $278{,}6$ |
+| Magnitud | Ref. | Valor | $\beta/(4EI/L)$ |
 |---|---|---:|---:|
-| $\Delta_{rod}$ | Ec. C-6 | 0,315 mm | 1,331 mm |
-| $\Delta_{plate}^{tension}$ | Ec. C-7 | 0,012 mm | 0,050 mm |
-| $\Delta_{plate}^{compression}$ | Ec. C-11 | 0,493 mm | 0,669 mm |
-| $\Delta_{footing}$ | Ec. C-12 | 1,445 mm | 1,445 mm |
-| $\theta$ | Ec. C-5 | 5,66 mrad | 8,74 mrad |
-| $\beta_{connection}$ | Ec. C-4 | 19 430 kN·m/rad | 31 890 kN·m/rad |
-| $\beta / (4EI/L)$ | — | **0,58** | 0,95 |
+| Las cuatro $\Delta$ (rod / placa T / placa C / footing) | Ecs. C-6, C-7, C-11, C-12 | 0,315 / 0,012 / 0,493 / **1,445** mm | — |
+| $\beta_{connection}$ ($M_E = 110$) | Ec. C-4 | 19 430 kN·m/rad | 0,58 |
+| $\beta_{connection}$ (piso 278,6) | Ec. C-4 | 31 890 kN·m/rad | 0,95 |
+| $\beta_{footing}$ ($k_v = 5\,000$) | estática + S5 | 377 360 kN·m/rad | 11,2 |
+| **$\beta_{base}$ (serie C-1)** | Ec. C-1 | **18 480 kN·m/rad** | **0,55** |
+| $\beta_{base}$ con arena suelta | sensibilidad | 15 450 kN·m/rad | 0,46 |
 
 ## Veredicto
 
-La base que el análisis declaró empotrada entrega, al momento con que la modeló, el 58 % de la
-rigidez flexural de su propia columna — empotramiento parcial, y todavía sin restar
-$\beta_{footing}$, que entra en serie (Ec. C-1) y solo puede bajarla. El «sincerar la rigidez»
-del memo anterior tiene número: un resorte de ~19 400 kN·m/rad. Ojo de método: la secante del
-Apéndice C no se ablanda con el momento — sube—, porque el bloque rectangular a $f_{\text{máx}}$
-hace a $\Delta_{footing}$, el término dominante, independiente de $M_u$.
+La base declarada empotrada entrega el 55 % de la rigidez flexural de su propia columna, y la serie
+reparte la culpa: la fundación es 19 veces más rígida que la conexión, así que el empotramiento
+parcial vive en los pernos, la placa y el aplastamiento, no en el suelo. Modelar el resorte del
+suelo y empotrar la conexión es afinar el resorte equivocado. Ojo de método: la secante del
+Apéndice C no se ablanda con el momento —sube—, porque el bloque a $f_{\text{máx}}$ hace a
+$\Delta_{footing}$, el término dominante, independiente de $M_u$.
 
 ## Referencias
 
@@ -135,13 +138,13 @@ hace a $\Delta_{footing}$, el término dominante, independiente de $M_u$.
 | DG1-C | AISC Design Guide 1, 3.ª ed. | Ap. C §C.1–C.2.1, Ecs. C-1 a C-12 | 2026-08-08 (rasterizada, pp. impresas 189–192) |
 | DG1 | AISC Design Guide 1, 3.ª ed. | §4.3.7 — bloque: $e_{crit}$, $Y$, $T$ | heredada del memo de la base empotrada (2026-08-08) |
 | AISC | ANSI/AISC 360-22 | §E4 — $G = 77\,200$ MPa | 2026-08-08 (capa de texto: es definición, no ecuación) |
+| NCh | NCh2369:2025 | §8.5.2 (piso del momento); §10.1.4 — rigidez Ec. (25) y contacto plano | heredadas de los memos de la base empotrada y de la zapata (2026-08-08) |
+| — | $\beta_{footing} = k_v B^4/12$ | derivación por estática (paso 7) | no aplica |
 
 ## Para promover a post
 
-- Tesis candidata: «empotrada» es una promesa medible, y esta base cumple el 58 % — el puente
-  exacto entre el post «ni empotrada ni rotulada» (fenómeno) y el memo del piso §8.5.2 (castigo).
-- Falta el otro resorte: $\beta_{footing}$ con la zapata B = 3,1 m de la serie (Ec. C-1 +
-  NCh2369 Cap. 10 o Das) — memo de geotecnia propio.
-- Figura: las cuatro deformaciones de la Fig. C-2 sobre la base de la serie, apiladas por tamaño.
-- Sensibilidad que el post debería correr: $\beta$ con la placa de 35 mm que la DG1 pedía, y con
-  $L_{rod}$ largo (pernos con silla).
+- Tesis candidata: el resorte equivocado — la base tiene dos resortes en serie y el blando no es el
+  que todos modelan. Es el puente entre el post «ni empotrada ni rotulada» y el memo del piso §8.5.2.
+- Figura: las cuatro deformaciones de la Fig. C-2 apiladas por tamaño, y los dos resortes en serie.
+- Por correr al promover: la curva M–θ con despegue (S5), y $\beta$ con la placa de 35 mm que la DG1
+  pedía y con $L_{rod}$ largo (pernos con silla).
