@@ -27,40 +27,33 @@ en su capacidad esperada con techo, comprimida en la residual.
 ## Supuestos
 
 1. **S1** — Todo en SI; propiedades HSS con esquinas rectas (aprox. de catálogo).
-2. **S2** — Ambos niveles en el mismo estado post-pandeo: al puntal llega una diagonal traccionada y una comprimida; $\cos\theta = 0{,}832$.
-3. **S3** — Punto de cruce fijo fuera del plano: la contraparte está traccionada y una diagonal es continua (§8.6.4); $KL = L/2 = 3\,606$ mm.
-4. **S4** — Puntal puro, sin carga gravitacional (no es viga de plataforma); $K = 1{,}0$, $L = 6$ m.
-5. **S5** — Las componentes verticales del nudo van al pilar (§8.3.4, fuera de este memo).
-6. **S6** — La Tabla 9 no aplica al puntal: no es diagonal (§8.6.3) y se diseña para permanecer elástico.
+2. **S2** — Capacidades del fusible heredadas del memo de la diagonal de esta misma cepa: $T_{ye} = 928{,}2$, $P_{ne} = 724{,}6$, $0{,}3P_{ne} = 217{,}4$ kN, y techo de la tracción $T = 0{,}7R_1 P_u = 841{,}3$ kN.
+3. **S3** — Ambos niveles en el mismo estado post-pandeo: al puntal llega una diagonal traccionada y una comprimida; $\cos\theta = 0{,}832$.
+4. **S4** — Punto de cruce fijo fuera del plano: la contraparte está traccionada y una diagonal es continua (§8.6.4); $KL = L/2 = 3\,606$ mm.
+5. **S5** — Puntal puro, sin carga gravitacional (no es viga de plataforma); $K = 1{,}0$, $L = 6$ m.
+6. **S6** — Las componentes verticales del nudo van al pilar (§8.3.4, memo propio).
+7. **S7** — La Tabla 9 no aplica al puntal: no es diagonal (§8.6.3) y se diseña para permanecer elástico.
 
-## 1. Capacidades esperadas de la diagonal, con el cruce
+## 1. El cruce, que la diagonal necesita y el puntal paga
 
-$F_{cre}$ es $F_{cr}$ evaluada con $F_{ye}$; $KL/r = 3\,606/48{,}6 = 74{,}1$.  [NCh2369 §8.3.1 · §8.6.4]  (S1, S3)
+Sin conectar el cruce, la longitud de pandeo de la diagonal es $L$ entero.  [NCh2369 §8.6.4 · §8.6.3]  (S2, S4)
 
-$$F_e = \frac{\pi^2 E}{74{,}1^2} = 359{,}3\ \text{MPa} \qquad F_{cre} = 0{,}658^{325/359{,}3} \cdot 325 = 222{,}6\ \text{MPa}$$
+$$\frac{KL}{r} = \frac{7\,211}{48{,}6} = 148{,}4 > 133{,}3 \qquad \text{contra} \qquad \frac{3\,606}{48{,}6} = 74{,}1 \le 133{,}3$$
 
-$$T_{ye} = 325 \cdot 2\,856 = 928{,}2\ \text{kN} \qquad P_{ne} = 1{,}14 \cdot 222{,}6 \cdot 2\,856 = 724{,}6\ \text{kN} \qquad 0{,}3P_{ne} = 217{,}4\ \text{kN}$$
+→ sin cruce la diagonal **ni cumple** §8.6.3. Y el cruce obligado sube su residual de 76,9 a
+217,4 kN: **×2,8 sobre el puntal**, que es quien la equilibra.
 
-→ sin el cruce, $KL/r = 148{,}2 > 133{,}3$: la diagonal ni cumple §8.6.3. Y el cruce obligado
-sube la residual de 76,9 a 217,4 kN — **×2,8 sobre el puntal**.
+## 2. Equilibrio del nudo intermedio
 
-## 2. El techo de la tracción
-
-La tracción no necesita superar la de 4.5 con el sísmico ×$0{,}7R_1$.  [NCh2369 §8.6.7]  (S2)
-
-$$P_u = \frac{V_u}{2\cos\theta} = \frac{400}{2 \cdot 0{,}832} = 240{,}4\ \text{kN} \qquad T = \min\left(928{,}2;\ 240{,}4 \cdot 3{,}5\right) = 841{,}3\ \text{kN}$$
-
-## 3. Equilibrio del nudo intermedio
-
-Traccionada en $T$, comprimida en su residual; la diferencia horizontal entra al puntal.  [NCh2369 §8.6.7]  (S2, S5)
+Traccionada en el techo $T$, comprimida en su residual; la diferencia horizontal entra al puntal.  [NCh2369 §8.6.7]  (S2, S3, S6)
 
 ```
   sismo →              desde la X superior
-            T_ye ╱ 841,3            ╲ 0,3·P_ne 217,4     (kN)
+          T (techo) ╱ 841,3          ╲ 0,3·P_ne 217,4     (kN)
                 ╱                    ╲
    ●━━━━━━━━━ puntal: 519,1 kN (compresión) ━━━━━━━━━●
                 ╲                    ╱
-       0,3·P_ne ╲ 217,4             ╱ T_ye 841,3
+       0,3·P_ne ╲ 217,4           ╱ 841,3 (techo) T
                        desde la X inferior
 ```
 
@@ -68,15 +61,15 @@ $$F_{puntal} = \left(T - 0{,}3P_{ne}\right)\cos\theta = \left(841{,}3 - 217{,}4\
 
 → C8.6.7: si el puntal falla en compresión, la X degenera en una **K**, prohibida (§8.6.5).
 
-## 4. El contraste con el análisis
+## 3. El contraste con el análisis
 
 En la X simétrica las componentes horizontales elásticas se cancelan en el nivel intermedio:
 el modelo muestra el puntal **casi descargado** — el estado que lo dimensiona solo existe
-después del pandeo.  (S2)
+después del pandeo.  (S3)
 
-## 5. Compresión del puntal
+## 4. Compresión del puntal
 
-HSS 150×8: $KL/r = 6\,000/58{,}1 = 103{,}3$.  [AISC 360-22 §E3]  (S4)
+HSS 150×8: $KL/r = 6\,000/58{,}1 = 103{,}3$.  [AISC 360-22 §E3]  (S5)
 
 $$F_e = 184{,}9\ \text{MPa} \qquad F_n = 0{,}658^{250/184{,}9} \cdot 250 = 141{,}9\ \text{MPa} \quad \text{[Ec. E3-2]}$$
 
@@ -87,10 +80,10 @@ $$\phi_c P_n = 0{,}9 \cdot 141{,}9 \cdot 4\,544 = 580{,}5\ \text{kN} \qquad \fra
 | Verificación | Ref. | Demanda | Capacidad | Uso | |
 |---|---|---:|---:|---:|:--:|
 | Esbeltez diagonal con cruce | NCh §8.6.4/§8.6.3 | 74,1 | 133,3 | 0,56 | ✓ |
-| Esbeltez diagonal sin cruce | NCh §8.6.3 | 148,2 | 133,3 | 1,11 | ✗ |
-| Techo de la tracción | NCh §8.6.7 | $T_{ye}$ = 928,2 kN | techo 841,3 kN | — | techo rige |
+| Esbeltez diagonal sin cruce | NCh §8.6.3 | 148,4 | 133,3 | 1,11 | ✗ |
+| Fusible heredado (S2) | NCh §8.6.7/§8.6.8 | $T$ = 841,3 kN | $0{,}3P_{ne}$ = 217,4 kN | — | del memo de la diagonal |
 | **Compresión del puntal** | AISC §E3 | 519,1 kN | 580,5 kN | **0,89** | ✓ |
-| Puntal según análisis elástico | — | ≈ 0 kN | — | — | (S2) |
+| Puntal según análisis elástico | — | ≈ 0 kN | — | — | (S3) |
 
 ## Veredicto
 
@@ -103,7 +96,8 @@ el puntal equilibra — mejorar la diagonal carga al puntal.
 
 | Clave | Norma y edición | Cláusula | Leída en PDF |
 |---|---|---|---|
-| NCh | NCh2369:2025 | §8.3.1 (capacidades esperadas); §8.6.4 (cruce); §8.6.7 + C8.6.7 (equilibrio y techo) | 2026-08-08 (rasterizada, pp. impresas 79, 87, 89) |
+| NCh | NCh2369:2025 | §8.6.3 (esbeltez); §8.6.4 (cruce); §8.6.7 + C8.6.7 (equilibrio y techo) | 2026-08-08 (rasterizada, pp. impresas 87, 89) |
+| NCh-cap | NCh2369:2025 | §8.3.1 — $T_{ye}$, $P_{ne}$, $0{,}3P_{ne}$ (S2) | heredada del memo de la diagonal (2026-08-08) |
 | AISC | ANSI/AISC 360-22 | §E3, Ecs. E3-1 a E3-4 | 2026-08-08 (rasterizada, pp. 16.1-40/41) |
 
 ## Para promover a post

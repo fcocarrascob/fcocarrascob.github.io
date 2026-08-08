@@ -27,12 +27,17 @@ de un post, no.
 memo se lee [INDICE.md](INDICE.md): si el estado límite, la cláusula o el elemento ya están, el caso
 nuevo no es un memo nuevo — es un paso más en el que existe, o no es nada.
 
-Lo mismo con las estructuras: un solo pórtico arriostrado, una sola base de columna, una sola viga
-de marco. Dos cepas ficticias distintas que ejemplifican el mismo §8.3.1 son dos veces el mismo
-trabajo con la mitad del valor. Cuando dos memos comparten caso, supuestos y veredicto, se funden.
+Lo mismo con las estructuras: una sola base de columna, una sola viga de marco, **una sola cepa
+arriostrada**. Si hacen falta dos casos, que sean dos configuraciones de la misma estructura —mismo
+paño, mismo acero, mismo perfil— y que la diferencia sea la cláusula que se quiere mostrar, no una
+estructura nueva inventada de cero.
 
-El corpus pasó de 19 a 14 memos el 2026-08-08 aplicando esto por primera vez; la nota de esa
-consolidación está al pie de `INDICE.md`.
+Y **un dueño por número**: cada magnitud se deriva en un solo memo y los demás la heredan por
+supuesto declarado, citando el memo de origen. Tres copias de $T_{ye}$ no son tres ejemplos, son
+tres oportunidades de que deriven entre sí.
+
+El corpus pasó de 19 a 14 memos el 2026-08-08 aplicando esto; la nota de esa consolidación y la de
+las dos configuraciones de la cepa están al pie de `INDICE.md`.
 
 ### 3. Compactos
 

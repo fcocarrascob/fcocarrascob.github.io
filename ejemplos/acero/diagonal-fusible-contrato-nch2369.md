@@ -11,14 +11,15 @@ post:
 
 # La diagonal fusible se diseña dos veces — NCh2369 §8.3 y §8.6
 
-La diagonal de la cepa del memo del puntal, completa: primero como miembro (lo que resiste) y
-después como fusible (las demandas que exporta al resto del sistema).
+La diagonal de la cepa en X, completa: primero como miembro (lo que resiste) y después como fusible
+(las demandas que exporta). Es el memo que **posee** las capacidades esperadas de esta cepa: puntal
+y columna las heredan de acá.
 
 ## Caso
 
 | Dato | Valor |
 |---|---|
-| Cepa | La del memo del puntal: paños 6 × 4 m en X, $V_u = 400$ kN por nivel, $R_1 = 5$ |
+| Cepa | 2 niveles con X apiladas; paños de 6 m × 4 m; $V_u = 400$ kN por nivel, $R_1 = 5$ |
 | Diagonal | HSS 125×125×6, A36: $A = 2\,856$ mm², $r = 48{,}6$ mm, $L = 7\,211$ mm |
 | Cruce | Conectado, contraparte traccionada: $KL = L/2 = 3\,606$ mm (§8.6.4) |
 | Material esperado | $R_y = 1{,}3$ (C8.3.3); $F_{ye} = 325$ MPa |
@@ -33,7 +34,8 @@ después como fusible (las demandas que exporta al resto del sistema).
 
 ## 1. El miembro — demanda y ductilidad
 
-Del corte de línea, y los dos requisitos de §8.6.3 (heredados del par en V, misma sección).  (S2)
+Del corte de línea. El $b/t$ es el de la otra configuración (misma sección); la esbeltez es propia,
+porque el cruce parte la longitud de pandeo.  [NCh2369 §8.6.2 · §8.6.3 · §8.6.4]  (S2)
 
 $$P_u = \frac{V_u}{2\cos\theta} = 240{,}4\ \text{kN} \qquad \frac{KL}{r} = 74{,}1 \le 133{,}3 \qquad \frac{b}{t} = 17{,}83 \le 18{,}85$$
 

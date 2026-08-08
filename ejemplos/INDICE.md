@@ -70,9 +70,35 @@ Y un gotcha de numeración para el libro mayor: en **360-22 el §J3.7 es *Tensil
 of Bolts and Threaded Parts*** (Ec. J3-1); el caso combinado se corrió a §J3.8. En 360-16 el
 combinado era J3.7 — citar «J3.7» sin edición apunta a dos cláusulas distintas.
 
-## Lo otro que queda abierto
+## Regla 2 aplicada: una cepa, dos configuraciones, un dueño por número
 
-Hay **dos cepas arriostradas ficticias** (V invertida con $V_u = 294$ kN y X con 400 kN)
-ejemplificando la misma maquinaria de §8.3.1 y del equilibrio post-pandeo, y dentro de la X las
-capacidades esperadas de la diagonal están recalculadas en tres memos. Es la regla 2 sin aplicar,
-y cerrarla es reescritura de cinco memos, no una fusión.
+Los cinco memos de arriostramientos no son dos estructuras inventadas por separado: son **la misma
+cepa en las dos configuraciones que §8.6 trata distinto**. Comparten paño de 6 × 4 m, A36 con
+$R_y = 1{,}3$, $R_1 = 5$ y el mismo perfil HSS 125×125×6.
+
+| | V invertida (§8.6.6) | X apiladas (§8.6.7) |
+|---|---|---|
+| Diagonal | 5,0 m — $\cos	heta = 0{,}60$ | 7,21 m con cruce — $\cos	heta = 0{,}832$ |
+| Corte de piso | 294 kN | 400 kN |
+| **Axial en la diagonal** | **245 kN** | **240,4 kN** |
+| $P_{ne}$ | 510,9 kN ($KL/r$ = 102,8) | 724,6 kN ($KL/r$ = 74,1) |
+| Memos | diagonal, viga | diagonal fusible, puntal, columna |
+
+El corte de piso difiere porque el ángulo difiere: la X, más tendida, convierte corte en axial con
+menos eficiencia y por eso toma 400 kN con **la misma diagonal a la misma carga**. Esa igualdad
+(245 contra 240,4) es lo que hace que las dos configuraciones sean comparables y no dos ejemplos
+sueltos: cambia la configuración, no el elemento.
+
+**Un dueño por número.** Las capacidades esperadas de cada diagonal se derivan **una sola vez** y
+los demás memos las heredan por supuesto declarado:
+
+- X → las posee `diagonal-fusible-contrato` ($T_{ye}$ = 928,2, $P_{ne}$ = 724,6, techo 841,3). El
+  puntal las recalculaba en sus pasos 1 y 2 — **eliminado**: ahora entran por S2 y el memo baja de
+  116 a 110 líneas. La columna ya las heredaba.
+- V invertida → las posee `viga-pano-v-invertida`, que es donde el equilibrio del nudo las necesita;
+  `diagonal-v-invertida` diseña el miembro y le presta el $F_e$.
+
+Lo que **no** se fusionó, y por qué: §8.6.6 y §8.6.7 son cláusulas distintas con veredictos
+distintos (la viga se multiplica ×12 por flexión; el puntal, por compresión pura). Forzar un solo
+$V_u$ para las dos mataría la tesis del memo de la diagonal — que el HSS de 5 mm **pasa
+resistencia** (0,79) y lo mata la Tabla 9 —, que solo existe con 294 kN.
