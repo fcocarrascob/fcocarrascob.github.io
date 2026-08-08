@@ -76,7 +76,7 @@ Cada cláusula cobra las capacidades esperadas, no la demanda del análisis.  (S
 |---|---|---|---|
 | Conexión de extremo | §8.6.8 | 841,3 kN (T) y 724,6 kN (C) | post `ejemplo-diagonal-hss-traccion` |
 | Puntal entre X | §8.6.7 | 519,1 kN de compresión | memo del puntal |
-| Columna | §8.3.4 | +587,3 kN por nivel | pendiente (máx. transferible) |
+| Columna | §8.3.4 | +587,3 kN por nivel | memo de la columna del marco en X — allí gobierna el otro estado del mecanismo (916,8 kN/nivel) |
 | Zona protegida | §8.3.7 | sin número: prohibido soldar al fusible | detallamiento |
 
 ## Resumen
@@ -110,6 +110,7 @@ termina cuando el último consumidor pagó su fila.
 
 - Tesis candidata: la diagonal se diseña dos veces, y la segunda pasada es la cara. Es el post
   paraguas que ordena los existentes (diagonal HSS, chevron, gusset, puntal) como consumidores.
-- La fila pendiente del contrato: la columna por máxima transferible (§8.3.4 + C8.3.4) — memo
-  propio, con el mecanismo de plastificación que la limita.
+- La fila de la columna quedó saldada en su propio memo (§8.3.4 + C8.3.4): el estado post-pandeo
+  con que se escribe este contrato no es el que la gobierna, porque en la columna las dos
+  capacidades se suman en vez de restarse.
 - El croquis del contrato es el borrador de la figura central del post.

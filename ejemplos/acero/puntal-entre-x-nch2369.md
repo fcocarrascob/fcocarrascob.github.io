@@ -111,5 +111,6 @@ el puntal equilibra — mejorar la diagonal carga al puntal.
 - Tesis candidata: el puntal descargado es el que sostiene la X — cierra el hueco que el paso 13
   de `ejemplo-diagonal-hss-traccion` declara, junto a la viga del chevron (§8.6.6).
 - Figura: la cepa con la X pandeada (T y $0{,}3P_{ne}$) y el flujo horizontal entrando al puntal.
-- Por profundizar: el pilar (§8.3.4) y el caso asimétrico, donde el puntal además arrastra la
-  diferencia de cortes entre niveles.
+- El pilar (§8.3.4) tiene memo propio, y ahí el estado que dimensiona este puntal deja de gobernar.
+  Queda por profundizar el caso asimétrico, donde el puntal además arrastra la diferencia de cortes
+  entre niveles.
