@@ -26,7 +26,7 @@ publicado del mismo caso, en 480.
 ```bash
 f=ejemplos/<disciplina>/<slug>.md
 wc -l "$f"
-prosa=$(sed 's/\$\$[^$]*\$\$//g; s/\$[^$]*\$//g' "$f" | grep -v '^|' | wc -w)
+prosa=$(sed '/^```/,/^```/d; s/\$\$[^$]*\$\$//g; s/\$[^$]*\$//g' "$f" | grep -v '^|' | wc -w)
 pasos=$(grep -c '^## [0-9]' "$f")
 echo "$prosa palabras / $pasos pasos = $((prosa / pasos)) por paso"
 ```
@@ -97,7 +97,10 @@ se escribe recién si el caso se promueve a post.
 Esto es lo que lo mantiene compacto, y se va recuperando solo si no está escrito:
 
 - sin `<Note>`, `<Figure>` ni ningún componente MDX, y sin imports;
-- sin SVG ni figuras de ningún tipo;
+- sin SVG, imágenes ni HTML embebido; se admite **un** croquis ASCII dentro de un fence, con
+  tope de ~15 líneas, y solo cuando la geometría o el equilibrio son lo que el memo enseña.
+  La prueba: si al borrarlo se pierde claridad, va; si solo se pierde adorno, no va. Al
+  promover, el croquis es el borrador gratis del SVG real;
 - sin planilla del canvas — esa aparece recién al promover;
 - sin footnotes: la bibliografía es la tabla de `## Referencias`;
 - sin enlaces al sitio;
