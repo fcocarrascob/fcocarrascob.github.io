@@ -30,7 +30,7 @@ y columna las heredan de acá.
 1. **S1** — Todo en SI; propiedades HSS con esquinas rectas (aprox. de catálogo).
 2. **S2** — Corte repartido por equilibrio entre las dos diagonales del paño (una tracción, una compresión).
 3. **S3** — Categoría II: los techos por $0{,}7R_1$ están permitidos (§8.3.5).
-4. **S4** — Los consumidores del contrato se citan con su número; su diseño completo vive en el memo del puntal y en el post de la diagonal HSS en X.
+4. **S4** — Los consumidores del contrato se citan con su número; su diseño completo vive en los memos del puntal, de la columna y del gusset.
 
 ## 1. El miembro — demanda y ductilidad
 
@@ -76,7 +76,7 @@ Cada cláusula cobra las capacidades esperadas, no la demanda del análisis.  (S
 
 | Consumidor | Cláusula | Demanda exportada | Dónde se desarrolla |
 |---|---|---|---|
-| Conexión de extremo | §8.6.8 | 841,3 kN (T) y 724,6 kN (C) | post `ejemplo-diagonal-hss-traccion` |
+| Conexión de extremo | §8.6.8 | 841,3 kN (T) y 724,6 kN (C) | memo del gusset — y §8.6.9 le pone un techo al espesor |
 | Puntal entre X | §8.6.7 | 519,1 kN de compresión | memo del puntal |
 | Columna | §8.3.4 | +587,3 kN por nivel | memo de la columna del marco en X — allí gobierna el otro estado del mecanismo (916,8 kN/nivel) |
 | Zona protegida | §8.3.7 | sin número: prohibido soldar al fusible | detallamiento |

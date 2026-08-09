@@ -32,6 +32,8 @@ el piso del 50 % de la capacidad flexural esperada (§8.5.2), resuelto con el bl
 4. **S4** — 2 pernos en la fila traccionada.
 5. **S5** — El anclaje al hormigón (breakout del grupo traccionado, ACI Cap. 17) queda fuera de alcance: lo cubre el memo de la tracción del grupo.
 6. **S6** — $R_y = 1{,}3$ por C8.3.3 (A36 nacional, U. de Chile), en vez de la Tabla A3.1 de AISC 341-16.
+7. **S7** — La placa de 25 mm es la del cuarteto y **no cumple**: el memo del espesor pide 52 mm. No
+   afecta a este memo —el bloque de la DG1 no depende de $t_p$—, pero sí a la rigidez de la base.
 
 ## 1. Capacidad flexural esperada de la columna
 
@@ -70,7 +72,9 @@ Ecs. 4-58 y 4-55, con $f + N/2 = 400$ mm.  [DG1 §4.3.7]  (S4)
 
 $$Y = 400 - \sqrt{160\,000 - 51\,866} = 71{,}2\ \text{mm} \qquad T_u = q_{\text{máx}}\,Y - P_u = 12{,}43 \cdot 71{,}2 - 250 = 635{,}0\ \text{kN}$$
 
-→ **317,5 kN por perno** en la fila traccionada.
+→ **317,5 kN por perno** en la fila traccionada. Pero la fila solo puede entregar
+$2T_{ye}^{rod} = 377{,}2$ kN (memo de la silla): con ese tope el bloque cierra en $Y = 50{,}5$ mm y
+[Ec. 4-56] la base **desarrolla 191,3 kN·m**, el 69 % del piso que §8.5.2 le exige.
 
 ## 6. Perno a tracción
 

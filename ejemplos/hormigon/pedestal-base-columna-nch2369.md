@@ -5,7 +5,7 @@ tema: Anclajes
 normas: [NCh2369:2025, ACI 318-25 (SI), AISC 341-22]
 fecha: 2026-08-08
 estado: verificado
-veredicto: Cierra holgado (usos ≤ 0,37) — y esa es la tesis. La resistencia no dimensiona nada. La armadura la fija el 0,5 % mínimo y los estribos la zona de protección de §9.5.3, que con lado 1100 cubre casi todo el pedestal.
+veredicto: Cierra holgado (usos ≤ 0,37) — y esa es la tesis. La resistencia no dimensiona nada. La armadura la fija el 0,5 % mínimo y los estribos la zona de protección de §9.5.3, que con lado 1100 cubre casi todo el pedestal. Lo que ese ancho no compra es el anclaje: el memo de la tracción del grupo muestra que el cono de tracción no cierra ni con 1100 (uso 2,11).
 post:
 ---
 
@@ -97,7 +97,9 @@ primeros grupos a ≤ 50 mm libres, y malla superior (lado ≥ 700).
 Cierra holgado: ningún uso pasa de 0,37, y eso **es** el resultado. La armadura la fija el 0,5 %
 mínimo y los estribos §9.5.3, cuya zona de protección cubre casi todo el pedestal. La
 sobrerresistencia de C9.5.2 («no es fusible») sale sola: el ancho se eligió por el cono
-($c_{a1}$) y ese mismo ancho regala todo lo demás. El pedestal no se calcula: se detalla.
+($c_{a1}$) y ese mismo ancho regala todo lo demás **del miembro**. No el anclaje: el memo de la
+tracción del grupo muestra que con 1100 el cono de tracción queda en 2,11. El pedestal como
+miembro no se calcula, se detalla; el anclaje sí se calcula, y aparte.
 
 ## Referencias
 
