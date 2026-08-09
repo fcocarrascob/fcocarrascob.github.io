@@ -30,7 +30,7 @@ el piso del 50 % de la capacidad flexural esperada (§8.5.2), resuelto con el bl
 2. **S2** — $M_E$, $P_u$ y $P_{\text{máx}}$ son datos del análisis global con las combinaciones de 4.5.
 3. **S3** — $q_{\text{máx}} = 12{,}43$ kN/mm heredado del memo de la llave de corte: $f_{p,\text{máx}} = 27{,}6$ MPa con $\sqrt{A_2/A_1}$ saturado en 2.
 4. **S4** — 2 pernos en la fila traccionada.
-5. **S5** — El anclaje al hormigón (breakout del grupo traccionado, ACI Cap. 17) queda fuera de alcance: lo cubre el memo del pedestal.
+5. **S5** — El anclaje al hormigón (breakout del grupo traccionado, ACI Cap. 17) queda fuera de alcance: lo cubre el memo de la tracción del grupo.
 6. **S6** — $R_y = 1{,}3$ por C8.3.3 (A36 nacional, U. de Chile), en vez de la Tabla A3.1 de AISC 341-16.
 
 ## 1. Capacidad flexural esperada de la columna
