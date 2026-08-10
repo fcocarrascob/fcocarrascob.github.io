@@ -5,6 +5,9 @@ la vez y de forma compacta. Ese es el fin, y todo lo demás de este archivo sale
 
 Esta carpeta está **fuera del build**: nada de lo que hay acá llega al sitio. Sí se versiona.
 
+En qué orden se recorren estos casos cuando se diseña una estructura completa —y qué fase todavía
+no tiene memo— vive en [`ANALISIS.md`](../ANALISIS.md), en la raíz.
+
 ```
 ejemplos/
   README.md         este archivo — el contrato
