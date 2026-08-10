@@ -49,11 +49,9 @@ export const SUBSECTIONS = {
     label: 'NCh 432 — Cargas de viento',
     author: 'Instituto Nacional de Normalización (INN)',
     description:
-      'Apuntes didácticos de la NCh 432:2025 (3.ª edición): cómo la norma convierte una velocidad de viento en una presión de diseño — zonificación, presión de velocidad, factores de exposición, ráfaga y cerramiento, y las presiones que llegan al edificio.',
-    // Nota única: enlaza directo al post, sin página-galería. Para convertirla en
-    // galería multi-nota (como los libros): quitar `post` y crear
-    // `src/pages/apuntes/nch432/index.astro`.
-    post: 'nch432-cargas-de-viento',
+      'Apuntes didácticos de la NCh 432:2025 (3.ª edición): cómo la norma convierte una velocidad de viento en una presión de diseño — zonificación, presión de velocidad, factores de exposición, ráfaga y cerramiento, y las presiones que llegan al edificio, con un galpón resuelto de punta a punta.',
+    // Galería multi-nota desde el ejemplo del galpón (2026-08-10): sin `post`, la
+    // tarjeta de /apuntes enlaza a /apuntes/nch432 (ver `subsectionHref`).
   },
   nch2369: {
     group: 'normativas',

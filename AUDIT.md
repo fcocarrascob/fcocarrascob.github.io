@@ -47,6 +47,30 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-10 · `apuntes/ejemplo-viento-galpon-nch432` · ⚠️ 11 hallazgos — 10 aplicados, 1 conservado
+
+**Commit:** `eaeec7e` (post nuevo, working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | C/N | `title`, `description`, intro, §7.2 (caption), §7.3, error 7, cierre y `dos-zonificaciones.svg` | **El ×2,55 comparaba dos ubicaciones distintas.** La zona 3 de C&R solo existe donde la banda de cumbrera cruza la del hastial (Fig. 27), o sea **en el paño extremo** — y ahí el faldón está dentro de la franja $2a$, así que el reparto no le entrega los −465 de la zona 2 sino los **−668 de la 2E**. El propio post lo dice en §6.1 punto 3 y en la Nota de la regla de extensión. Con la base consistente: $w_u = -1{,}404$ kN/m → $M = 6{,}32$ kN·m → 10,53/6,32 = **×1,67**, no ×2,55 | Comparar cada costanera contra la presión de **su propia zona**, y publicar la escalera completa | ✅ aplicado: §7.3 pasa a una tabla de tres costaneras (cumbrera interior ×1,78 · cumbrera del paño extremo ×1,67 · campo ×1,25); el ×2,55 se conserva declarado como **la suma de dos errores** (usar la presión del SPRFV *y* perder la franja 2E), que es el error 3 de la lista final. Arrastró `title`, `description`, intro, caption, error 7, cierre y el SVG |
+| 2 | 🟠 | R | §7.3 y §8.2 | La costanera del paño extremo se calcula con −1 058 N/m² sobre toda la luz de 6,0 m, pero la zona 3 mide $a = 2{,}4$ m: los otros 3,6 m son zona 2. Conservador y defendible, pero no declarado | Declarar el supuesto | ✅ aplicado en §8.2 |
+| 3 | 🟠 | N/F | §4.1 y el `alt` de `zonas-sprfv.svg` | «Las zonas «E» ocupan una franja de 2a desde el **borde de barlovento**». §7.3.2.1 dice «a lo largo del borde del techo **perpendicular a la cumbrera** más cercano a la esquina que se evalúa» — o sea el hastial, que es lo que la propia figura dibuja | Corregir prosa y `alt` | ✅ aplicado |
+| 4 | 🟡 | N | §5 | «Los mínimos de §7.3.6 tampoco gobiernan» pero solo se verificaba el de muros. El de techo: $(0{,}690-0{,}407)\cdot 534{,}4 = 0{,}151$ kN/m² contra 0,13 → pasa por **16 %**, mucho más justo que el 67 % del muro | Agregar el segundo chequeo | ✅ aplicado, con la observación de que sobre la proyección vertical actúa la **diferencia** entre las dos succiones, no la suma |
+| 5 | 🟡 | L | §7.1 | «viga de techo del marco, que toma **medio faldón**: 6,0 · 12,19 = 73,1 m²». Los 12,19 m son el faldón completo; medio faldón daría 36,6 y no pasaría los 65 m² | «un faldón completo» | ✅ aplicado |
+| 6 | 🟡 | L | §7.2 | «Las otras dos siguen bajando hasta 18,6 y 27,9 m²» empareja al revés: zona 2 → 18,6; zona 1 → 27,9 | Nombrarlas | ✅ aplicado |
+| 7 | 🟡 | L | §7.2 | «0,56 kN/m² en el **peor** caso de campo»: 0,56 es la **menor** de las tres succiones, y por eso es la que ata el chequeo del mínimo | Reformular | ✅ aplicado |
+| 8 | 🟡 | L | §6 | *frame* en cursiva recién en su tercera aparición | Uniformar | ✅ aplicado: redonda en todo el post, por ser el nombre del objeto de SAP2000 |
+| 9 | 🔵 | L | §5 | «aplicados **simultáneamente**» en negrita como si fuera literal; §7.3.6 dice «y» | Marcar que es lectura | ✅ aplicado: se quitó la negrita y se declaró como lectura heredada del ASCE |
+| 10 | 🔵 | R | §6.1 | Reducir los 16 patrones a cuatro envolventes pierde justamente la ubicación por esquina de 2E/3E — el mecanismo del hallazgo 1 — y la receta no lo decía | Una línea | ✅ aplicado |
+| 11 | 🔵 | R/L | intro, §7.2 | (a) `SPRFV` y `C&R` no se expandían en este post; (b) la Nota de muros reusaba $A = 12$ m² sin declarar que supone la misma luz y separación; (c) no se declara versión de SAP2000 | Expandir siglas y declarar el supuesto | ✅ aplicado (a) y (b) · 🚫 (c) descartado: la receta no depende de la versión y ninguna captura la fija |
+
+**Verificado y correcto** (recalculado con `python`, y cada cita leída de la página rasterizada del PDF): la geometría (2,12 · 12,19 · 8,56 m); $K_h = 0{,}94157$ por la ley potencial de la Nota 1 de la Tabla 5 con $\alpha = 9{,}8$ y $z_g = 750$ (Tabla 6); $K_e = 0{,}94224$; $q_h = 628{,}7$ y $q_hK_d = 534{,}38$ N/m²; $p_0 = 709$ N/m² y la caída del 11 %; el +2,73 % de usar $h = 8{,}56$. Citas: Ec. (2) §5.8.2, **Ec. (7) §7.3.1**, **Ec. (19) §9.3.2**, §3.2 y la simbología de la cláusula 4 (la costura permiso/obligación de $h$ es real), §3.4, §3.11, §3.12, §7.1.2, §7.1.3, §7.3.1.1, §7.3.2 (exención de torsión con $h \le 9$ m), §7.3.2.1, §7.3.3, §7.3.6, Tabla 7 y su Nota 3, §9.2.2, §9.2.3, la **Nota 5 de la Figura 24** (reducir 10 % los muros si $\theta \le 10°$) y NCh 3171:2017 §9.1.1 combinación (6). Los ocho pares 0–5°/20° de la Figura 12 coinciden dígito a dígito y la interpolación a 10° con $f = 1/3$ da los ocho valores publicados; $a = 2{,}4$ m con sus dos pisos; la regla de extensión mín(12,0; 18,75) = $B/2$ y el umbral $B > 5h_e = 37{,}5$ m. Las cargas por marco (2,00 / 2,79 / 1,88 / 1,66 kN/m), $V_{muros} = 18{,}76$ kN, $V_{techo} = -1{,}92$ kN (−10,2 %) y los 187,6 / 168,3 kN. En C&R: $A = 12{,}0$ m², y la **interpolación logarítmica de las Figuras 24 y 27 verificada contra el ábaco** (mesetas en 0,9 / 9,3 / 18,6 / 27,9 / 46,5 m²), con −0,8685 / −1,2460 / −1,800 / +0,3434 y −0,8127 / −0,9054 tras la Nota 5. La costanera: $w_u$, los momentos $wL^2/8$ y $wL^2/10$, y $I \ge 2{,}331\times10^6$ mm⁴ = 233 cm⁴ (311 para $L/240$). Formato: frontmatter contra el schema Zod de `apuntes`, la galería `src/pages/apuntes/nch432/index.astro` creada, los tres SVG existentes y sus rótulos coincidiendo con las tablas del cuerpo.
+
+**No verificable:** el comportamiento de SAP2000 (que el objeto área con sección `None` no aporte rigidez ni masa, la ruta `Assign > Area Loads > Uniform to Frame (Shell)`, la semántica de `One Way`/`Two Way` y la dirección local 3) no se cierra sin el software: la sección es guía de aplicación declarada como tal, y los 168,3 kN «que va a dar el modelo» son una predicción aritmética del propio post, no una medición contra un `.sdb`. Tampoco el dato de proyecto $D = 0{,}15$ kN/m² ni el criterio de deflexión $L/180$–$L/240$, que el post ya declara fuera de la norma. La capacidad de la costanera queda explícitamente fuera de alcance (AISI S100), y esa frontera está bien declarada.
+
+**Planilla del canvas:** sí, candidata sin reservas y todavía no construida. La cadena es cerrada de punta a punta —ley potencial de $K_h$, exponencial de $K_e$, Ec. (2), interpolación lineal de la Fig. 12, interpolación logarítmica de las Figs. 24 y 27, Ecs. (7) y (19), ancho tributario, combinación (6) de NCh 3171, $wL^2/8$ y $5wL^4/384EI$— y el esquema paramétrico es obvio: las dos zonificaciones en planta con $a$, $B$, $L$ y las presiones como tokens. Daría ~8 veredictos ✓/✗ (las dos condiciones de §3.12; el $h \le 9$ m de §7.3.2; mín(0,5B; 2,5h_e) contra $B/2$; los dos mínimos de §7.3.6 —incluido el de techo, que era el hallazgo 4—; los dos de §9.2.2; y el umbral de 65 m² aplicado por separado a la costanera y a la viga del marco). Entrarían como dato declarado todas las lecturas de tabla y de ábaco (V, $p_0$, I, $K_d$, $\alpha$, $z_g$, $(GC_{pi})$, los ocho pares de la Fig. 12 y los puntos de quiebre de las Figs. 24 y 27) y las decisiones de proyecto.
+
 ### 2026-08-08 · `blog/galpon-liviano-nch2369` · ⚠️ 15 hallazgos — 14 aplicados, 1 descartado
 
 **Commit:** `0d890af` (working tree, sin commitear) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -3833,10 +3857,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `terzaghi-vs-ecuacion-general` | 2026-07-26 | ⚠️ | 11 (0🔴 1🟠 · 6🟡 4🔵) |
 | `tres-coeficientes-del-mismo-suelo` | 2026-07-26 | ⚠️ | 10 (0🔴 1🟠 · 7🟡 2🔵) |
 
-### `apuntes` — apuntes (29)
+### `apuntes` — apuntes (30)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-viento-galpon-nch432` | 2026-08-10 | ✅ | 0 · 10 aplicados (1🔴 2🟠 5🟡 2🔵) · 1🔵 descartado (versión de SAP2000) · sin planilla (candidata) |
 | `nch2369-panorama-y-combinaciones` | 2026-08-03 | ⚠️ | 14 (0🔴 0🟠 · 6🟡 8🔵) · 3 aplicados (1🟠 2🟡) |
 | `nch2369-espectro-de-diseno` | 2026-08-03 | ⚠️ | 7 (0🔴 0🟠 · 1🟡 6🔵) · 7 aplicados (4🟠 3🟡) |
 | `nch2369-capacidad-y-07r1` | 2026-08-03 | ⚠️ | 6 (0🔴 0🟠 · 2🟡 4🔵) · 10 aplicados (1🔴 4🟠 5🟡) |

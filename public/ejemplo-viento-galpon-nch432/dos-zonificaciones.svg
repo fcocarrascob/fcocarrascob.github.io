@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="900" height="470" fill="#ffffff"/>
+
+  <text x="450" y="28" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">El mismo techo, dos zonificaciones — y la misma costanera, dos presiones</text>
+  <text x="450" y="48" font-size="12" text-anchor="middle" fill="#666">planta del techo, 24 × 60 m · a = 2,4 m · escala 5 px/m</text>
+
+  <!-- ===================== IZQUIERDA: SPRFV ===================== -->
+  <text x="60" y="80" font-size="13" fill="#1b4a6e" font-weight="bold">SPRFV — Figura 12 (cláusula 7)</text>
+
+  <rect x="60" y="90" width="300" height="60" fill="#dce8f2"/>
+  <rect x="60" y="150" width="300" height="60" fill="#c9dcec"/>
+  <rect x="60" y="90" width="24" height="120" fill="#8fb6d4" fill-opacity="0.5"/>
+  <rect x="60" y="90" width="300" height="120" fill="none" stroke="#8a857c" stroke-width="1.5"/>
+  <line x1="84" y1="90" x2="84" y2="210" stroke="#2d6b9c" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <line x1="60" y1="150" x2="360" y2="150" stroke="#8a857c" stroke-width="1.8"/>
+
+  <text x="222" y="122" font-size="12" fill="#1b4a6e" text-anchor="middle">zona 3 — sotavento</text>
+  <text x="222" y="184" font-size="12" fill="#1b4a6e" text-anchor="middle">zona 2 — barlovento</text>
+  <text x="72" y="230" font-size="10.5" fill="#1b4a6e" text-anchor="middle">2E/3E</text>
+
+  <!-- purlin highlighted -->
+  <line x1="60" y1="157" x2="90" y2="157" stroke="#a8641b" stroke-width="3.4"/>
+  <text x="96" y="161" font-size="10.5" fill="#a8641b">la costanera</text>
+
+  <text x="210" y="262" font-size="12" fill="#2d6b9c" text-anchor="middle">separa barlovento de sotavento</text>
+  <text x="210" y="278" font-size="12" fill="#2d6b9c" text-anchor="middle">y depende de la dirección del viento</text>
+
+  <!-- ===================== DERECHA: C&R ===================== -->
+  <text x="540" y="80" font-size="13" fill="#7a3a12" font-weight="bold">C&amp;R — Figura 27 (cláusula 9)</text>
+
+  <rect x="540" y="90" width="300" height="120" fill="#f3ece2"/>
+  <!-- ridge band (zona 2) -->
+  <rect x="540" y="138" width="300" height="24" fill="#e3c9a6"/>
+  <!-- gable-end bands (zona 2) -->
+  <rect x="540" y="90" width="12" height="120" fill="#e3c9a6"/>
+  <rect x="828" y="90" width="12" height="120" fill="#e3c9a6"/>
+  <!-- corners (zona 3) -->
+  <rect x="540" y="138" width="12" height="24" fill="#c98a3c"/>
+  <rect x="828" y="138" width="12" height="24" fill="#c98a3c"/>
+  <rect x="540" y="90" width="300" height="120" fill="none" stroke="#8a857c" stroke-width="1.5"/>
+  <line x1="540" y1="150" x2="840" y2="150" stroke="#8a857c" stroke-width="1.8"/>
+
+  <text x="690" y="114" font-size="12" fill="#7a3a12" text-anchor="middle">zona 1 — campo</text>
+  <text x="690" y="198" font-size="12" fill="#7a3a12" text-anchor="middle">zona 1 — campo</text>
+
+  <!-- leyenda de bandas -->
+  <rect x="540" y="218" width="12" height="10" fill="#e3c9a6" stroke="#8a857c" stroke-width="0.8"/>
+  <text x="558" y="227" font-size="10.5" fill="#7a3a12">zona 2 — bandas de ancho a en la cumbrera y en los hastiales</text>
+  <rect x="540" y="234" width="12" height="10" fill="#c98a3c" stroke="#8a857c" stroke-width="0.8"/>
+  <text x="558" y="243" font-size="10.5" fill="#7a3a12">zona 3 — esquina, donde ambas se cruzan</text>
+
+  <!-- same purlin -->
+  <line x1="540" y1="157" x2="570" y2="157" stroke="#7a3a12" stroke-width="4"/>
+  <text x="578" y="171" font-size="10.5" fill="#7a3a12">la misma costanera</text>
+
+  <text x="690" y="262" font-size="12" fill="#a8641b" text-anchor="middle">rodea cada borde geométrico</text>
+  <text x="690" y="278" font-size="12" fill="#a8641b" text-anchor="middle">y no distingue dirección de viento</text>
+
+  <!-- ===================== BANDA DE VALORES ===================== -->
+  <rect x="60" y="292" width="780" height="150" fill="#f7f5f1" stroke="#e0dbd2" stroke-width="1"/>
+  <text x="80" y="316" font-size="12.5" fill="#222" font-weight="bold">La costanera junto a la cumbrera, en el paño extremo: luz 6,0 m, separación 1,5 m, área efectiva 6,0 · máx(1,5; 2,0) = 12,0 m²</text>
+
+  <text x="80" y="344" font-size="12" fill="#666">la carga que le reparte el modelo</text>
+  <text x="470" y="344" font-size="12" fill="#666">la carga que le pide la cláusula 9</text>
+  <line x1="80" y1="352" x2="820" y2="352" stroke="#e0dbd2" stroke-width="1"/>
+
+  <text x="80" y="374" font-size="12.5" fill="#333">zona 2E del SPRFV, (GC_pf) = −1,070</text>
+  <text x="470" y="374" font-size="12.5" fill="#333">zona 3 de C&amp;R, (GC_p) = −1,800</text>
+
+  <text x="80" y="398" font-size="14" fill="#2d6b9c" font-weight="bold">p = −668 N/m²</text>
+  <text x="470" y="398" font-size="14" fill="#a8641b" font-weight="bold">p = −1 058 N/m²</text>
+
+  <text x="80" y="420" font-size="12.5" fill="#333">M = 6,32 kN·m   (0,9D + 1,6W, viga simple)</text>
+  <text x="470" y="420" font-size="12.5" fill="#333">M = 10,53 kN·m</text>
+
+  <text x="470" y="436" font-size="12.5" fill="#a8641b" font-weight="bold">1,67 veces el momento de diseño</text>
+  <text x="80" y="436" font-size="11" fill="#8a857c">esta costanera cae en la franja de borde de los dos mapas</text>
+</svg>

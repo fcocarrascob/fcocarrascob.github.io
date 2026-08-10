@@ -1,0 +1,617 @@
+---
+title: "Ejemplo — El viento de un galpón: del q_h a la costanera, y qué reparte el modelo"
+description: "Un galpón de 24 × 60 m resuelto completo por la NCh 432:2025: la presión de velocidad con h medido en el alero, las zonas de la Figura 12 interpoladas a 10°, las presiones que van al marco y cómo se aplican en SAP2000 con el reparto área→frame. Y el paso que el modelo no da: la costanera se diseña con la cláusula 9, que le pide 1,8 veces el momento que le habría puesto el reparto del SPRFV — y 2,55 si además se perdió la franja de borde."
+pubDate: 2026-08-10
+tags: ["viento", "nch432", "ejemplo", "galpón", "costaneras", "SPRFV", "componentes y revestimiento", "SAP2000", "cargas"]
+subsection: "nch432"
+chapter: "Ejemplo — El viento del galpón: del q_h a la costanera"
+source: "NCh 432:2025 (3.ª ed.), cláusulas 3, 4, 5, 7 y 9, con las Figuras 12, 24 y 27 · NCh 3171:2017 (2.ª ed.), cláusula 9"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+El [panorama de la NCh 432](/apuntes/nch432-cargas-de-viento) termina donde empieza el trabajo:
+sabemos que la norma convierte una velocidad en una presión, pero no qué presión le toca a cada
+superficie de un galpón real, cómo se lleva eso a un modelo, ni por qué la costanera casi siempre
+se termina analizando a mano.
+
+Acá resolvemos un galpón completo, con las cláusulas leídas del PDF de la 3.ª edición. Y el
+resultado que organiza todo el ejemplo es este:
+
+**la misma cubierta tiene dos presiones de diseño, y el modelo solo reparte una.** El marco ve la
+presión promediada por zonas de la cláusula 7 —el sistema principal resistente a las fuerzas del
+viento, SPRFV—; la costanera ve el pico local de la cláusula 9, la de componentes y revestimiento
+(C&R). El reparto área→frame de SAP2000 distribuye la primera. Comparando cada costanera con la
+presión que ese reparto le habría puesto **en su propia zona**, la cláusula 9 pide entre **1,7 y 1,8
+veces el momento de diseño** — y 2,55 veces si al modelar se perdió además la franja de borde.
+
+## 1. El caso
+
+Nave industrial de bodegaje, estructura de acero, en el valle central.
+
+| Dato | Valor |
+|---|---|
+| Planta | $B = 24$ m (transversal) × $L = 60$ m |
+| Marcos | cada 6,0 m — 11 marcos |
+| Techo | dos aguas simétrico, $\theta = 10°$ |
+| Altura de alero | $h_e = 7{,}5$ m |
+| Cumbrera sobre el alero | $12 \cdot \tan 10° = 2{,}12$ m → cumbrera a 9,62 m |
+| Largo del faldón | $12 / \cos 10° = 12{,}19$ m |
+| Costaneras de techo | luz 6,0 m entre marcos, separadas 1,5 m |
+| Sitio | zona III-A · exposición C · $z_e \approx 500$ msnm · terreno plano |
+| Ocupación / cerramiento | categoría II · edificio cerrado |
+| Peso del techo | $D = 0{,}15$ kN/m² (panel + costanera + instalaciones colgadas) |
+
+El peso del techo y las separaciones son datos de proyecto, no de la norma: la NCh 432 entrega
+presiones y nada más. Se declaran acá porque de ellos cuelga el último tramo del cálculo.
+
+## 2. Por qué este galpón va por la cláusula 7
+
+La norma ofrece varios caminos y el primero se elige, no se hereda. Para el sistema principal hay
+dos candidatos: el **direccional** (cláusula 6, todas las alturas) y el **envolvente** (cláusula 7,
+edificios de baja altura). El envolvente es el que corresponde, y hay que verificarlo:
+
+**Edificio de baja altura** (§3.12) — las dos condiciones:
+
+1. $h \le 18$ m: se cumple con holgura;
+2. $h$ no excede la menor dimensión horizontal: $h < 24$ m, se cumple.
+
+**Condiciones de §7.1.2** — las tres: forma regular ✓; sin respuesta sujeta a viento transversal,
+vórtices, galope o aleteo, ni canalización ✓; y **techo no arqueado ni en forma de barril** ✓. Si
+alguna fallara, §7.1.3 devuelve el problema a la cláusula 6.
+
+<Note type="warning" title="La primera trampa: cuál h">
+La altura media geométrica del techo es $\tfrac{1}{2}(7{,}5 + 9{,}62) = 8{,}56$ m. **No es la que
+se usa.** La simbología de la cláusula 4 define:
+
+> $h$ = Altura media del techo de un edificio o altura de otra estructura, **excepto que la altura
+> del alero se utiliza para un ángulo de techo $\theta$ menor o igual a 10 grados**, en m.
+
+Con $\theta = 10°$ exactos, entonces, **$h = h_e = 7{,}5$ m**. Y no es solo para las figuras: la
+Ec. (7) define $q_h$ como la presión de velocidad evaluada «a la altura media del techo $h$, como
+se define en cláusula 4», así que el reemplazo entra en el cálculo de $q_h$ mismo. Con $h = 8{,}56$
+m la presión saldría **2,7 % mayor** — no cambia ningún veredicto acá, pero es un dato que se
+arrastra a todas las tablas del ejemplo.
+
+Una costura de la edición, de paso: la definición 3.2 lo escribe como **permiso** —«para ángulos de
+techo menores o iguales a 10 grados, se acepta utilizar la altura media del techo como la altura del
+alero del techo»— y la cláusula 4, como **obligación**. El número es el mismo por las dos vías; lo
+que cambia es si usar 8,56 m sigue siendo lícito. Acá se usa 7,5 y se deja declarado.
+</Note>
+
+## 3. La presión de velocidad, una sola vez
+
+La simplificación central del procedimiento envolvente es esta: **hay una sola $q_h$ para todo el
+edificio**. No hay perfil de presiones en el muro de barlovento, no hay $q_z$ variando con la
+altura. Todas las zonas —muros y techo, barlovento y sotavento— usan el mismo número.
+
+<Equation label="Ec. 2 (§5.8.2)">
+$$
+q_z = 0{,}613\,I\,K_z\,K_{zt}\,K_e\,V^2 \qquad [\text{N/m}^2]
+$$
+</Equation>
+
+Factor por factor, con lo leído de la cláusula 5:
+
+| Factor | Valor | De dónde |
+|---|---|---|
+| $V$ | 34 m/s | Tabla 1, zona III-A (29°54′–37°28′ S, bajo 1 000 msnm) |
+| $I$ | 1,00 | Tabla 2, categoría de ocupación II |
+| $K_h$ | 0,94 | Tabla 5 / Nota 1, exposición C, $z = h = 7{,}5$ m |
+| $K_{zt}$ | 1,00 | §5.6.1: terreno plano, no se cumplen las tres condiciones |
+| $K_e$ | 0,94 | §5.7, Nota 2: $e^{-0{,}000119 \cdot 500}$ |
+
+El $K_h$ no sale de la tabla: la Tabla 5 tabula 0,90 a 6 m y 0,95 a 8 m, y 7,5 m no está. La Nota 1
+da la ley potencial, con $\alpha = 9{,}8$ y $z_g = 750$ m de la Tabla 6 para exposición C:
+
+<Equation label="Tabla 5, Nota 1">
+$$
+K_h = 2{,}41\left(\frac{z}{z_g}\right)^{2/\alpha} = 2{,}41\left(\frac{7{,}5}{750}\right)^{2/9{,}8} = 0{,}9416
+$$
+</Equation>
+
+Con eso:
+
+<Equation>
+$$
+q_h = 0{,}613 \cdot 1{,}00 \cdot 0{,}9416 \cdot 1{,}00 \cdot 0{,}9422 \cdot 34^2 = 628{,}7\ \text{N}/\text{m}^2
+$$
+</Equation>
+
+Y como el factor de direccionalidad multiplica en todas las ecuaciones de presión que siguen,
+conviene dejar el producto armado de una vez —con $K_d = 0{,}85$ para edificios (Tabla 3)—:
+
+$$
+q_h\,K_d = 628{,}7 \cdot 0{,}85 = 534{,}4\ \text{N}/\text{m}^2
+$$
+
+Ese número es el que va a aparecer multiplicando todo lo demás: las presiones del SPRFV y las de
+componentes y revestimiento salen las dos de él, y lo único que cambia entre ellas es el
+coeficiente.
+
+<Note type="tip" title="El ancla mental: 709 → 629">
+La Tabla 1 da para la zona III-A una presión referencial $p_0 = 0{,}613 \cdot 34^2 = 709$ N/m², que
+es $q_z$ con todos los factores en 1,0. Nuestro galpón termina en 629: la exposición C a 7,5 m
+($K_h = 0{,}94$) y los 500 msnm ($K_e = 0{,}94$) le sacan un 11 % entre los dos. En un sitio de
+cordillera el $K_{zt}$ podría devolverlo todo y más — es el factor que hay que verificar primero,
+no el último.
+</Note>
+
+## 4. Las zonas de la Figura 12
+
+Acá está el corazón del procedimiento envolvente, y es lo que más se resuelve mal:
+
+<Equation label="Ec. 7 (§7.3.1)">
+$$
+p = q_h\,K_d\left[(GC_{pf}) - (GC_{pi})\right] \qquad [\text{N}/\text{m}^2]
+$$
+</Equation>
+
+El $(GC_{pf})$ es un coeficiente de presión externa **equivalente**, con la ráfaga ya adentro, que
+no se aplica a caras sino a **zonas** numeradas del 1 al 6, más sus versiones «E» de borde. §7.3.1.1
+prohíbe separarlo: nada de multiplicar por $G = 0{,}85$ otra vez.
+
+### 4.1 El ancho de las zonas de borde
+
+Toda la zonificación cuelga de una sola dimensión, $a$, que la notación de la Figura 12 define así:
+10 % de la menor dimensión horizontal o $0{,}4h$, la que sea menor, pero no menos que el 4 % de la
+menor dimensión horizontal ni menos de 0,9 m.
+
+$$
+a = \min(0{,}10 \cdot 24;\ 0{,}4 \cdot 7{,}5) = \min(2{,}4;\ 3{,}0) = 2{,}4\ \text{m}
+$$
+
+y los pisos —0,96 m y 0,9 m— no gobiernan. Las zonas «E» ocupan una franja de $2a = 4{,}8$ m medida
+desde la esquina de barlovento evaluada, **a lo largo del borde perpendicular a la cumbrera**
+(§7.3.2.1). O sea que la franja corre por el hastial, no por el alero.
+
+### 4.2 La interpolación que casi nadie hace
+
+La Figura 12 tabula $(GC_{pf})$ para $\theta$ de 0–5°, 20°, 30–45° y 90°. Nuestros 10° no están, y
+la Nota 2 es explícita: «para valores de $\theta$ distintos de los mostrados, se permite la
+interpolación lineal». Entre 5° y 20°, con $f = (10-5)/(20-5) = 1/3$:
+
+| Superficie | 0–5° | 20° | **$\theta = 10°$** |
+|---|---:|---:|---:|
+| 1 — muro de barlovento | +0,40 | +0,53 | **+0,443** |
+| 2 — faldón de barlovento | −0,69 | −0,69 | **−0,690** |
+| 3 — faldón de sotavento | −0,37 | −0,48 | **−0,407** |
+| 4 — muro de sotavento | −0,29 | −0,43 | **−0,337** |
+| 1E | +0,61 | +0,80 | **+0,673** |
+| 2E | −1,07 | −1,07 | **−1,070** |
+| 3E | −0,53 | −0,69 | **−0,583** |
+| 4E | −0,43 | −0,64 | **−0,500** |
+
+Redondear los 10° «hacia el caso plano» no es conservador de forma pareja: el muro de barlovento y
+las zonas de sotavento se subestiman entre un 9 y un 14 %, mientras el faldón de barlovento —el que
+más succión tiene— no se mueve.
+
+<Figure
+  src="/ejemplo-viento-galpon-nch432/zonas-sprfv.svg"
+  alt="Planta y elevación del galpón de 24 por 60 metros con las zonas del procedimiento envolvente de la NCh 432: en planta, la franja de 2a = 4,8 m medida a lo largo del hastial desde la esquina de barlovento, que contiene las zonas 1E a 4E, y el resto del edificio con las zonas 1 a 4; en elevación, el muro de barlovento con coeficiente +0,443, el faldón de barlovento con −0,690, el faldón de sotavento con −0,407 y el muro de sotavento con −0,337, y las presiones resultantes en newton por metro cuadrado para los dos signos del coeficiente de presión interna"
+  caption="El mapa de zonas del Caso de Carga 1 (viento transversal) con los coeficientes ya interpolados a 10°. La franja de borde 2a = 4,8 m concentra los coeficientes más severos: la zona 2E succiona 668 N/m² contra los 465 de la zona 2, un 44 % más."
+/>
+
+### 4.3 Las presiones, con los dos signos de la presión interna
+
+El edificio es **cerrado** (§3.11: aberturas menores a 0,01 $A_g$ o 0,37 m² en cada muro), así que
+la Tabla 7 da $(GC_{pi}) = \pm 0{,}18$. Y la Nota 3 de esa tabla obliga a evaluar **los dos casos
+completos**: el positivo aplicado a todas las superficies internas, o el negativo aplicado a todas.
+No se eligen signos por superficie.
+
+Presiones del Caso de Carga 1 (viento normal a la cumbrera), en N/m²:
+
+| Zona | $(GC_{pf})$ | $(GC_{pi}) = +0{,}18$ | $(GC_{pi}) = -0{,}18$ |
+|---|---:|---:|---:|
+| 1 — muro barlovento | +0,443 | +141 | **+333** |
+| 2 — faldón barlovento | −0,690 | **−465** | −273 |
+| 3 — faldón sotavento | −0,407 | **−314** | −121 |
+| 4 — muro sotavento | −0,337 | **−276** | −84 |
+| 1E | +0,673 | +264 | **+456** |
+| 2E | −1,070 | **−668** | −476 |
+| 3E | −0,583 | **−408** | −216 |
+| 4E | −0,500 | **−363** | −171 |
+
+En negrita, el caso más desfavorable de cada zona: el interior presurizado ($+0{,}18$) empeora todo
+lo que succiona, y el interior en depresión ($-0{,}18$) empeora lo que empuja. Por eso el galpón se
+calcula dos veces, no una.
+
+Y esas dos veces se multiplican: §7.3.2.1 obliga a evaluar el edificio **tomando cada esquina como
+la esquina de barlovento**, y cada esquina por separado para los dos casos de carga de la
+Figura 12. Son 4 esquinas × 2 casos × 2 signos de $(GC_{pi})$ = **16 patrones**. La torsión, en
+cambio, no: §7.3.2 exime a los edificios de un piso con $h \le 9$ m, y con $h = 7{,}5$ m este galpón
+califica. Con un alero de 9,5 m no calificaría, y habría que agregar los casos de la Figura 13.
+
+<Note type="tip" title="La regla de extensión de la Zona 2, y por qué acá no muerde">
+§7.3.2.1 dice que cuando el $(GC_{pf})$ del techo es negativo en las Zonas 2 y 2E —lo es—, ese
+coeficiente se aplica sobre una distancia desde el borde del techo igual al **menor** entre 0,5 × la
+dimensión horizontal paralela a la dirección del SPRFV y 2,5 × la altura del alero; el resto de la
+zona, hasta la cumbrera, usa el coeficiente de la Zona 3.
+
+$$
+\min(0{,}5 \cdot 24;\ 2{,}5 \cdot 7{,}5) = \min(12{,}0;\ 18{,}75) = 12{,}0\ \text{m}
+$$
+
+y la proyección horizontal del faldón de barlovento es, justamente, $B/2 = 12{,}0$ m. La regla no
+recorta nada.
+
+**No es casualidad, es geometría**: en un galpón a dos aguas simétrico el primer término *siempre*
+vale exactamente el faldón entero, así que la regla solo puede morder por el segundo, y para eso
+hace falta $2{,}5\,h_e < B/2$, o sea $B > 5\,h_e = 37{,}5$ m. Es una regla para naves anchas y
+bajas: con este mismo alero y 40 m de luz, el último 1,25 m antes de la cumbrera pasaría de −0,690 a
+−0,407, un alivio del 41 % en esa franja.
+</Note>
+
+## 5. Del mapa de zonas al marco
+
+Un marco interior toma 6,0 m de galpón: la presión de cada zona se convierte en carga lineal
+multiplicando por ese ancho tributario. Con el caso que gobierna cada superficie:
+
+| Superficie | $p$ (N/m²) | $w = p \cdot 6{,}0$ | Sentido |
+|---|---:|---:|---|
+| Muro de barlovento | +333 | **2,00 kN/m** | hacia el muro |
+| Faldón de barlovento | −465 | **2,79 kN/m** | normal al faldón, hacia afuera |
+| Faldón de sotavento | −314 | **1,88 kN/m** | normal al faldón, hacia afuera |
+| Muro de sotavento | −276 | **1,66 kN/m** | hacia afuera |
+
+La tabla es una **envolvente por superficie**, no un estado de carga: las cuatro filas salen de los
+dos casos de $(GC_{pi})$ y ninguno de los dos las produce todas a la vez. Sirve para dimensionar
+cada elemento; para el equilibrio del marco hay que volver a uno de los dos casos completos.
+
+Cada columna del marco lleva la carga del muro; cada faldón, la del techo. Y el resultado a mirar
+antes de modelar nada es el **corte horizontal por marco**, que es la servilleta contra la cual se
+va a comparar el modelo:
+
+$$
+V_{\text{muros}} = \left[(GC_{pf})_1 - (GC_{pf})_4\right] q_h K_d\,h_e \cdot 6{,}0 = 0{,}780 \cdot 534{,}4 \cdot 7{,}5 \cdot 6{,}0 = 18{,}8\ \text{kN}
+$$
+
+Nótese que la presión interna desapareció: sobre el muro de barlovento y el de sotavento actúa la
+misma $(GC_{pi})$ en sentidos opuestos, y para la fuerza horizontal total se cancela. Importa para
+diseñar cada muro, no para el corte del marco.
+
+<Note type="warning" title="El techo baja el corte un 10 %, y §7.3.3 no lo deja contar">
+Los dos faldones succionan, pero con distinta intensidad (−0,690 contra −0,407), y sus componentes
+horizontales no se cancelan: sobre la altura de cumbrera de 2,12 m aportan
+
+$$
+V_{\text{techo}} = (-0{,}690 + 0{,}407) \cdot 534{,}4 \cdot 2{,}12 \cdot 6{,}0 = -1{,}9\ \text{kN}
+$$
+
+o sea que el corte por marco baja de 18,8 a **16,8 kN**, un 10 %. Y §7.3.3 dice, en una línea: «el
+corte horizontal total no debe ser menor que el determinado despreciando las fuerzas del viento
+sobre el techo». La excepción son los SPRFV de marcos de momento, que no es el caso de un galpón
+arriostrado.
+
+Traducido a la práctica: **el modelo va a entregar 16,8 kN por marco y hay que diseñar con 18,8.**
+No es un error del modelo ni de la servilleta — es una cláusula que ningún software aplica solo.
+</Note>
+
+Los mínimos de §7.3.6 —0,25 kN/m² sobre el área de muro y 0,13 kN/m² sobre el área de techo
+proyectada en un plano vertical normal a la dirección del viento— tampoco gobiernan acá, pero no con
+el mismo margen:
+
+$$
+p_{\text{muros}} = (0{,}443 + 0{,}337) \cdot 534{,}4 = 0{,}417\ \text{kN}/\text{m}^2 \quad (+67\ \%)
+$$
+
+$$
+p_{\text{techo}} = (0{,}690 - 0{,}407) \cdot 534{,}4 = 0{,}151\ \text{kN}/\text{m}^2 \quad (+16\ \%)
+$$
+
+El de techo es el ajustado, y es el que casi nunca se calcula: sobre la proyección vertical del
+techo lo que actúa es la **diferencia** entre las succiones de los dos faldones, no su suma. En una
+zona de $V$ más baja o en un edificio más bajo, ese piso es el que manda el diseño, y conviene
+calcularlo siempre aunque se descarte. (La norma dice «y», no «simultáneamente»: que los dos
+mínimos se apliquen a la vez es la lectura corriente, heredada del ASCE, no una palabra del texto.)
+
+## 6. Cómo entra al modelo: el área que no es un área
+
+Hasta acá todo es norma. Lo que sigue es oficio, y es donde se pierde la trazabilidad de un
+proyecto: entre la tabla de presiones y las barras del modelo.
+
+SAP2000 no sabe repartir una presión sobre un marco plano — los objetos frame no tienen ancho. La
+herramienta es un **objeto área con propiedad de sección `None`**: no aporta rigidez, no aporta
+masa, no genera esfuerzos propios, y existe solo para tomar una presión y entregarla como carga
+lineal a las barras de su contorno. El comando es
+`Assign > Area Loads > Uniform to Frame (Shell)`.
+
+### 6.1 La receta
+
+1. **Un patrón de carga por dirección y por signo de la presión interna.** Con los 16 patrones de
+   §7.3.2.1 el modelo se vuelve inmanejable, así que en la práctica se arman los envolventes que
+   gobiernan: `WX+`, `WX−`, `WY+`, `WY−`, donde el signo se refiere al $(GC_{pi})$ y la letra a la
+   dirección del viento. El precio de esa reducción es que las zonas «E» quedan fijas en una
+   esquina, cuando la norma las hace recorrer las cuatro: o se duplican los patrones de techo, o se
+   envuelven a mano las dos franjas de borde.
+2. **Todos los patrones en nivel nominal.** La presión de la NCh 432 no viene mayorada: el 1,6 lo
+   pone la combinación de NCh 3171, y aplicarlo también en el patrón lo aplica dos veces.
+3. **Un objeto área por zona**, no uno por faldón. Las zonas 2E y 2 tienen presiones distintas
+   (−668 contra −465): si se dibuja una sola área por agua, esa diferencia se pierde y los marcos
+   de los extremos reciben un 30 % menos de carga de la que les toca.
+4. **Dirección de la carga: normal a la superficie.** El viento actúa perpendicular al plano, no
+   hacia abajo. En el cuadro de diálogo eso es la dirección local 3 del área; la opción de gravedad
+   proyectada es para nieve y sobrecarga de techo, no para viento.
+5. **Reparto `One Way` o `Two Way`.** El unidireccional entrega la carga a dos bordes opuestos, como
+   una losa que salva en una dirección; el bidireccional la reparte a los cuatro. Para una cubierta
+   con costaneras el reparto real es unidireccional. La dirección en que salva depende de los ejes
+   locales del objeto área: conviene fijarlos explícitamente y **comprobar el resultado en las
+   barras**, no suponerlo.
+
+### 6.2 Los dos esquemas, y no mezclarlos
+
+<Figure
+  src="/ejemplo-viento-galpon-nch432/reparto-area-frame.svg"
+  alt="Tres esquemas del reparto de la presión de viento en un modelo: a la izquierda el esquema con costaneras modeladas, donde el área nula entrega la carga a las costaneras y estas la llevan a los marcos; al centro el esquema sin costaneras, donde el área nula entrega la carga directamente a los marcos con un ancho tributario de 6 metros; y a la derecha, marcado como incorrecto, el caso en que se cargan las dos cosas a la vez y la carga se duplica"
+  caption="Los dos esquemas consistentes de reparto y el que no lo es. Cualquiera de los dos primeros llega al mismo corte por marco; cargarlos juntos duplica la carga y el error no se ve en la deformada."
+/>
+
+**Esquema (a) — con costaneras modeladas.** El área nula cubre el paño entre costaneras y les
+entrega la carga; las costaneras la llevan a los marcos. Es el más fiel y el que hay que usar si el
+techo trabaja como diafragma.
+
+**Esquema (b) — sin costaneras.** El área nula cubre el faldón entre marcos y les entrega la carga
+directamente: cada marco recibe los 2,79 kN/m de la tabla anterior. Es el que basta para dimensionar
+el marco, y es más rápido.
+
+Cargar los dos a la vez —el área sobre las costaneras *y* el área sobre el faldón— duplica la carga.
+Es el error más común de esta parte y el más difícil de detectar: la deformada se ve razonable, las
+barras trabajan más, y nada avisa.
+
+### 6.3 El chequeo que cierra
+
+Antes de creerle al modelo, una suma:
+
+$$
+\sum p_i A_i = \left[(GC_{pf})_1 - (GC_{pf})_4\right] q_h K_d\,h_e\,L = 0{,}780 \cdot 534{,}4 \cdot 7{,}5 \cdot 60 = 187{,}6\ \text{kN}
+$$
+
+contra la reacción basal del modelo en esa dirección. Si el modelo trae también los faldones —y
+debe traerlos—, la reacción va a dar **168,3 kN**, un 10 % menos, y ya sabemos por qué: es la
+componente horizontal de la succión de techo que §7.3.3 no deja acreditar. Las dos cifras hay que
+tenerlas; la que se diseña es la mayor.
+
+<Note type="warning" title="Lo que ningún reparto área→frame te va a dar">
+Aunque el esquema (a) esté impecable y las costaneras del modelo reciban su carga repartida, esa
+carga sale de un $(GC_{pf})$ **del SPRFV**. La costanera no es SPRFV: es un componente, y la norma
+la manda a la cláusula 9, con coeficientes que pueden ser el doble. Eso es lo que viene ahora, y es
+la razón de fondo por la que la costanera se analiza fuera del modelo.
+</Note>
+
+## 7. La costanera: el mismo techo, otra zonificación
+
+La cláusula 9 no es una variante de la 7: es otra escala del mismo fenómeno. El SPRFV ve presiones
+**promediadas sobre grandes áreas**; los componentes y revestimientos ven **picos locales** donde el
+flujo se separa y se forman vórtices cónicos. La ecuación tiene la misma forma y coeficientes
+distintos:
+
+<Equation label="Ec. 19 (§9.3.2)">
+$$
+p = q_h\,K_d\left[(GC_p) - (GC_{pi})\right] \qquad [\text{N}/\text{m}^2]
+$$
+</Equation>
+
+### 7.1 El área efectiva de viento — la regla que infla
+
+El $(GC_p)$ no es un número: es una curva contra el **área efectiva de viento**, que §3.4 define como
+la longitud del tramo multiplicada por un ancho efectivo que **no necesita ser menor a un tercio de
+la longitud del tramo**. Para nuestra costanera:
+
+$$
+A = 6{,}0 \cdot \max(1{,}5;\ 6{,}0/3) = 6{,}0 \cdot 2{,}0 = 12{,}0\ \text{m}^2
+$$
+
+El ancho real es 1,5 m y el área tributaria, 9,0 m². Se usan 12,0: el mínimo de $L/3$ manda, y la
+consecuencia es un $(GC_p)$ **menor**, porque un pico de succión no se sostiene sobre una franja
+infinitamente delgada. Para los **anclajes** del revestimiento la misma cláusula invierte la regla
+—el área efectiva no debe ser *mayor* que el área tributaria de un anclaje individual—, y ahí sube.
+Una regla alivia y la otra aprieta, a propósito.
+
+<Note type="tip" title="El escape de los 65 m², que acá aplica a un elemento y no al otro">
+§9.2.3 permite diseñar con las disposiciones del SPRFV los elementos de C&R con áreas tributarias
+superiores a 65 m². En este galpón la frontera pasa por el medio:
+
+- **costanera**: 9,0 m² de área tributaria → no aplica, va por la cláusula 9;
+- **viga de techo del marco**, que toma un faldón completo: $6{,}0 \cdot 12{,}19 = 73{,}1$ m² →
+  **sí aplica**, y se diseña con los $(GC_{pf})$ de la Figura 12.
+
+Es el mismo criterio físico visto desde los dos lados: un elemento que promedia sobre 73 m² ya no
+«ve» el vórtice de esquina, ve el promedio. Uno que promedia sobre 12, sí lo ve.
+</Note>
+
+### 7.2 Las zonas, que no son las del SPRFV
+
+La Figura 27 —techos a dos aguas con $7° < \theta \le 20°$— zonifica la cubierta en campo (1), borde
+(2) y esquina (3), con el mismo $a = 2{,}4$ m de antes: bandas de ancho $a$ a lo largo de los bordes
+de los muros hastiales y a cada lado de la cumbrera, y las esquinas donde ambas se cruzan.
+
+**No coinciden con las zonas de la Figura 12.** Las del SPRFV separan barlovento de sotavento; las
+de C&R no distinguen dirección de viento en absoluto: rodean cada borde geométrico, porque el pico
+aparece donde el flujo se despega, venga el viento de donde venga.
+
+<Figure
+  src="/ejemplo-viento-galpon-nch432/dos-zonificaciones.svg"
+  alt="El mismo techo del galpón dibujado dos veces en planta: a la izquierda, las zonas del sistema principal según la Figura 12, que separan el faldón de barlovento del de sotavento y agregan una franja de borde de 4,8 metros a lo largo del hastial; a la derecha, las zonas de componentes y revestimiento según la Figura 27, que forman bandas de 2,4 metros a lo largo de la cumbrera y de los muros hastiales, con esquinas donde ambas se cruzan. Una misma costanera aparece marcada en los dos dibujos con las dos presiones que le corresponden, 668 y 1058 newton por metro cuadrado"
+  caption="El mismo techo, dos zonificaciones. La costanera junto a la cumbrera en el paño extremo cae en la franja 2E del SPRFV (−668 N/m²) y en la zona 3 de C&R (−1 058 N/m²). Ninguna de las dos está mal: responden preguntas distintas."
+/>
+
+Leyendo la Figura 27 en $A = 12$ m² —interpolando en la escala logarítmica del ábaco entre el tramo
+plano que termina en 0,9 m² y la meseta de área grande—:
+
+| Zona | $(GC_p)$ en 12 m² | $p$ con $(GC_{pi}) = +0{,}18$ |
+|---|---:|---:|
+| 1 — campo | −0,869 | **−560 N/m²** |
+| 2 — borde (cumbrera y hastial) | −1,246 | **−762 N/m²** |
+| 3 — esquina | −1,800 | **−1 058 N/m²** |
+| todas, presión positiva | +0,343 | +280 N/m² (con $(GC_{pi}) = -0{,}18$) |
+
+La zona 3 entrega −1,800 sin interpolar: su curva ya llegó a la meseta en 9,3 m², así que a partir
+de esa área el pico de esquina deja de aliviarse por más grande que sea el elemento. Las otras dos
+siguen bajando: la zona 2 hasta 18,6 m² y la zona 1 hasta 27,9 m².
+
+El mínimo de §9.2.2 —0,25 kN/m² **neta y en cualquier dirección normal a la superficie**— se cumple
+holgado en succión (0,56 kN/m² en el campo del techo, que es la menor de las tres y por eso la que
+ata el chequeo) y **apenas** en presión: 0,280 contra 0,25.
+Un galpón un poco más bajo o en zona I-A quedaría gobernado por el mínimo en el sentido positivo, que
+es el que nadie mira.
+
+<Note type="tip" title="Y los muros, de paso">
+Para las costaneras de muro la lámina es la Figura 24, con zonas 4 (campo) y 5 (esquina). Con la
+misma luz de 6,0 m y la misma separación de 1,5 m —o sea, la misma área efectiva de 12 m²— da
+$(GC_p) = -0{,}903$ y $-1{,}006$… salvo que la **Nota 5** de esa
+figura ordena reducir los valores de muros **un 10 % cuando $\theta \le 10°$**, que es exactamente
+nuestro caso. Quedan −0,813 y −0,905, o sea **−530 y −580 N/m²**. Es una nota al pie que vale un
+10 % de acero en el cerramiento.
+</Note>
+
+### 7.3 La comparación que es el punto del ejemplo
+
+Hay que hacerla **costanera por costanera**, comparando cada una contra la presión que el reparto le
+habría puesto **en su propia posición**. Es un detalle que cambia el resultado: la costanera de la
+cumbrera en el paño extremo está en la zona 3 de C&R, pero también está dentro de la franja
+$2a$ del SPRFV, así que el modelo no le da los −465 de la zona 2 sino los −668 de la 2E.
+
+| Costanera | Lo que reparte el modelo | Lo que pide la cláusula 9 | Momentos |
+|---|---:|---:|---:|
+| Cumbrera, paño interior | zona 2: −465 N/m² | zona 2: −762 N/m² | 4,12 → **7,33 kN·m (×1,78)** |
+| Cumbrera, paño extremo | zona 2E: −668 N/m² | zona 3: −1 058 N/m² | 6,32 → **10,53 kN·m (×1,67)** |
+| Campo del techo | zona 2: −465 N/m² | zona 1: −560 N/m² | 4,12 → 5,15 kN·m (×1,25) |
+
+Los momentos son de viga simple e incluyen ya la combinación de levantamiento que viene en la
+sección siguiente. En la fila del paño extremo las dos presiones se aplican a la luz completa aunque
+ninguna de las dos franjas la cubra entera —la 2E mide 4,8 m y la zona 3, 2,4—: del lado seguro en
+las dos columnas, y por eso la razón se sostiene. La escalera es pareja: **entre 1,7 y 1,8 veces**
+en las dos costaneras que gobiernan, y todavía un 25 % en el campo del techo, donde uno esperaría
+que las dos escalas coincidieran.
+
+Y el 2,55 del que se habla al principio es la suma de los dos errores: si además de usar la presión
+del SPRFV se dibujó **una sola área por faldón** —perdiendo la franja 2E—, la costanera de esquina
+recibe 4,12 kN·m donde la norma pide 10,53.
+
+No hay forma de arreglarlo dentro del modelo sin trampas: habría que cargar el área nula con la
+presión de C&R, lo que a su vez dejaría el marco sobrecargado en un 128 %. **Son dos cálculos, y por
+eso hay dos caminos.**
+
+## 8. El análisis manual de la costanera
+
+Este es el trabajo que se hace fuera del modelo, y son diez líneas.
+
+### 8.1 La carga sobre la barra
+
+Ancho tributario 1,5 m, y la presión de C&R que corresponda a su zona. Para la costanera de borde
+(zona 2, la que corre junto a la cumbrera):
+
+$$
+w_W = -0{,}762 \cdot 1{,}5 = -1{,}143\ \text{kN}/\text{m} \quad \text{(normal al faldón, hacia afuera)}
+$$
+
+El peso propio del techo va en la otra dirección y hay que descomponerlo, porque el faldón está
+inclinado:
+
+$$
+w_D = 0{,}15 \cdot 1{,}5 = 0{,}225\ \text{kN}/\text{m} \;\longrightarrow\;
+\begin{cases} w_{D,\perp} = w_D \cos 10° = 0{,}222 \\ w_{D,\parallel} = w_D \sin 10° = 0{,}039 \end{cases}
+$$
+
+<Note type="info" title="La gravedad flexiona el eje débil; el viento, no">
+Es una diferencia puramente geométrica y se olvida seguido. El **peso** es vertical, así que sobre
+un faldón a 10° tiene una componente contenida en el plano del techo igual al 17,6 % ($\tan 10°$) de
+la componente normal: la costanera trabaja en **flexión biaxial**. La **presión de viento** actúa
+por definición perpendicular a la superficie, así que su componente en el plano del techo es cero:
+flexión simple, en el eje fuerte.
+
+La consecuencia práctica: los **tensores** (las barras que atan las costaneras a media luz) existen
+para el eje débil, o sea para la gravedad, y su efecto es partir en dos la luz de ese eje. Bajo
+viento de succión no hacen nada por la flexión — pero sí sujetan lateralmente el ala que en ese caso
+está comprimida, que es el otro problema.
+</Note>
+
+### 8.2 La combinación que gobierna: levantamiento
+
+Con succión, el peso propio **ayuda**, así que la combinación crítica es la que lo minimiza: la (6)
+de NCh 3171:2017 §9.1.1, $0{,}9D + 1{,}6W$. Nótese que el 1,6 aparece acá y solo acá — no en la
+presión.
+
+$$
+w_u = 0{,}9 \cdot 0{,}222 - 1{,}6 \cdot 1{,}143 = 0{,}200 - 1{,}829 = -1{,}629\ \text{kN}/\text{m}
+$$
+
+Para la costanera de la cumbrera en el paño extremo, con −1,587 kN/m de viento, la misma cuenta da
+−2,340 kN/m. Ahí se está aplicando el pico de esquina a la luz completa aunque la zona 3 mida solo
+$a = 2{,}4$ m: los otros 3,6 m del vano son zona 2. Es del lado seguro y ahorra un cálculo de viga
+con carga escalonada, pero es un supuesto, no un resultado.
+
+### 8.3 Viga simple o viga continua
+
+Una costanera que corre por varios paños no es una viga simple, pero tratarla como tal es lícito y
+conservador para el momento de tramo:
+
+| Modelo | $M$ (zona 2) | $M$ (zona 3) |
+|---|---:|---:|
+| Viga simple, $w L^2/8$ | 7,33 kN·m | 10,53 kN·m |
+| Continua de varios tramos, $\approx w L^2/10$ | 5,87 kN·m | 8,42 kN·m |
+
+La simplificación cuesta un 25 % de momento y ahorra el detalle de continuidad: un perfil que llega
+tope a tope con dos pernos **no** es continuo, y uno traslapado sobre el marco sí lo es en parte. Si
+el detalle no está decidido, la viga simple es la respuesta honesta. Si está decidido y es
+traslapado, el momento se muda al apoyo, donde el traslape lo resiste doble — y donde el ala
+comprimida bajo succión no tiene el panel para sujetarla.
+
+### 8.4 La deflexión, que suele mandar
+
+La NCh 432 no da límites de deflexión: es criterio de proyecto. Con el viento en nivel de servicio
+—$w = 1{,}143 - 0{,}222 = 0{,}921$ kN/m neto hacia arriba— y despejando la inercia de la flecha de
+viga simple:
+
+$$
+\delta = \frac{5wL^4}{384EI} \le \frac{L}{180} \;\Longrightarrow\; I \ge \frac{180 \cdot 5wL^3}{384E} = \frac{180 \cdot 5 \cdot 0{,}921 \cdot 6\,000^3}{384 \cdot 200\,000} = 2{,}33 \times 10^6\ \text{mm}^4 = 233\ \text{cm}^4
+$$
+
+con $w$ en N/mm y $E = 200\,000$ MPa. Para el criterio más exigente de $L/240$, 311 cm⁴.
+
+Es la primera cifra útil para elegir un perfil, antes de cualquier verificación de resistencia.
+
+<Note type="warning" title="Dónde termina este ejemplo, y por qué">
+La costanera chilena típica es un **perfil plegado C o Z**, y su capacidad no la da la AISC 360 sino
+la **AISI S100** — con ancho efectivo, pandeo distorsional y la reducción por el ala libre bajo
+succión. Esa norma no está en el escritorio de este ejemplo, así que acá se entrega la **demanda**
+(momento, corte, inercia requerida) y la verificación queda declarada como frontera. Completarla de
+memoria sería exactamente lo que la regla de fuentes de este sitio prohíbe.
+
+Lo que sí conviene dejar anotado, porque cambia el perfil: bajo succión el ala comprimida es la
+**inferior**, y esa no la sujeta el panel. La longitud no arriostrada de esa ala es la que hay entre
+tensores o entre apoyos, no cero.
+</Note>
+
+## 9. Los siete errores que este camino evita
+
+Cerrando en una lista operativa, cada uno con su cláusula:
+
+1. **Calcular $q_h$ con la altura media geométrica** cuando $\theta \le 10°$ manda usar el alero
+   (cláusula 4). Acá, 2,7 % de más.
+2. **Redondear $\theta = 10°$ a «techo plano»** en vez de interpolar la Figura 12 (Nota 2). Deja el
+   muro de barlovento un 10 % bajo.
+3. **Dibujar una sola área por faldón**, perdiendo la franja $2a = 4{,}8$ m donde la zona 2E succiona
+   un 44 % más que la zona 2.
+4. **Aplicar el 1,6 en el patrón de carga y otra vez en la combinación.** El factor vive en
+   NCh 3171 §9.1.1, no en la presión.
+5. **Cargar los dos esquemas de reparto a la vez** (área sobre costaneras *y* área sobre el faldón),
+   duplicando la carga sin que la deformada avise.
+6. **Aceptar el corte del modelo tal cual**, cuando §7.3.3 prohíbe descontar la ayuda de la succión
+   de techo: 16,8 kN por marco contra los 18,8 que se diseñan.
+7. **Diseñar la costanera con la presión que le repartió el modelo**, que es la del SPRFV. La
+   cláusula 9 pide entre 1,7 y 1,8 veces ese momento — y 2,55 si se cometió también el error 3.
+
+Los siete son de proceso, no de aritmética, y ninguno lo caza revisar los resultados: cada uno
+produce un cálculo que cuadra consigo mismo.
+
+## El hilo, en una frase
+
+**La NCh 432 no entrega una carga: entrega dos**, y la diferencia entre ellas no es un refinamiento
+sino un cambio de escala del fenómeno. El sistema principal promedia sobre el edificio entero; el
+revestimiento sufre el vórtice de la esquina. El modelo, que reparte áreas sobre barras, solo sabe de
+la primera — y por eso la costanera se calcula a mano, con la Figura 27, el área efectiva inflada
+por el $L/3$ y la combinación de levantamiento. Diez líneas fuera del modelo, que en este galpón
+multiplican por 1,8 el momento con que se elige el perfil.
