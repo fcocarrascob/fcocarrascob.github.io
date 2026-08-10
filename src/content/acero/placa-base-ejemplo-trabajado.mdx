@@ -1,21 +1,22 @@
 ---
-title: "Placas base (2): ejemplo trabajado — la Design Guide 1 a mano vs. la herramienta"
+title: "Placas base: ejemplo trabajado — la Design Guide 1 a mano vs. la herramienta"
 description: "Un mismo caso con excentricidad grande resuelto dos veces: a mano con el bloque rectangular de la Design Guide 1 y con el modelo elástico de la herramienta. Dónde coinciden, dónde difieren (tracción de pernos, flexión de placa) y qué verificación decisiva la DG1 nunca pregunta: el anclaje al hormigón."
 pubDate: 2026-07-04
 updatedDate: 2026-08-07
 tags: ["placas base", "acero", "conexiones", "AISC 360", "Design Guide 1", "ejemplo trabajado"]
-norm: "AISC 360 / ACI 318"
-section: "Acero"
-series: "Placas base"
-seriesPart: 2
+subsection: "ejemplos"
+chapter: "Design Guide 1, 3.ª ed. · ACI 318-25 Cap. 17 — Placa base con momento"
+tema: "Placas base"
 ---
 
 import Note from '../../components/content/Note.astro';
 import Figure from '../../components/content/Figure.astro';
 import Equation from '../../components/content/Equation.astro';
 
-En la [nota teórica de placas base](/blog/placas-base-sap2000) está cada fórmula que usa la
-[herramienta](/herramientas/placa-base); acá cerramos el triángulo con la **práctica**: un mismo
+La [nota de teoría](/acero/placas-base-teoria) explica el fenómeno y
+[la documentación de la herramienta](/herramientas/placa-base/documentacion) tiene cada fórmula
+que la [herramienta](/herramientas/placa-base) implementa; acá cerramos el triángulo con la
+**práctica**: un mismo
 caso resuelto dos veces — a mano, con el método clásico de la AISC *Design Guide 1*[^dg1] (bloque
 rectangular de presiones, excentricidad grande), y con el modelo elástico de la herramienta.
 El objetivo no es que los números coincidan (no lo hacen, y eso es lo interesante), sino
@@ -113,11 +114,11 @@ acepta que participe. El del Ejemplo B.2-2 —*"el doble de la distancia del per
 crítica"*— es **casi seis veces más exigente** que el del cuerpo principal, y con él este lado
 **sí gobernaría**: ratio 1,10 contra la capacidad de 3 558 kgf·cm/cm, y $t$ requerido de 2,62 cm.
 
-Es una inconsistencia interna de la guía, no un error de este post: el criterio de ancho completo
-acompaña al bloque rectangular y el de $2\ell$ al triangular, pero nada explica por qué el
-mecanismo de flexión de la placa debería cambiar con la forma supuesta de la presión **del otro
-lado**. Mientras no se resuelva, conviene calcular los tres y quedarse con el peor cuando el lado
-traccionado esté cerca de gobernar. La [nota teórica](/blog/placas-base-sap2000#33-lado-traccionado-flexión-por-tracción-de-pernos)
+Es una inconsistencia interna de la guía: el criterio de ancho completo acompaña al bloque
+rectangular y el de $2\ell$ al triangular, pero nada explica por qué el mecanismo de flexión de la
+placa debería cambiar con la forma supuesta de la presión **del otro lado**. Mientras no se
+resuelva, conviene calcular los tres y quedarse con el peor cuando el lado traccionado esté cerca
+de gobernar. La [nota de teoría](/acero/placas-base-teoria#5-el-lado-traccionado-la-guía-se-contradice-a-sí-misma)
 lo trata en detalle.
 </Note>
 
@@ -197,11 +198,11 @@ conservadora para la placa y optimista para los pernos y su anclaje; el modelo e
 al revés** — con la diferencia de que la placa de acero sí puede plastificar y
 redistribuir, mientras que el cono de hormigón que ancla los pernos es frágil.
 
-<Note type="tip" title="La 3.ª edición de la DG1 respalda el contraste — y su propio texto se equivoca de signo">
-La 3.ª edición admite explícitamente la distribución no rectangular: su Apéndice B.2 declara que
-*"es admisible suponer una distribución triangular de presiones"*, y que hacerlo *"no representa
-en sí mismo un diseño elástico ni un enfoque ASD"*. Lo que este post presentaba como una elección
-propia es un método reconocido.
+<Note type="tip" title="La guía respalda el contraste — y su propio texto se equivoca de signo">
+La DG1 admite explícitamente la distribución no rectangular: su Apéndice B.2 declara que *"es
+admisible suponer una distribución triangular de presiones"*, y que hacerlo *"no representa en sí
+mismo un diseño elástico ni un enfoque ASD"*. O sea que el método de la herramienta no es una
+elección propia: es una vía reconocida.
 
 Pero el mismo §B.2.1 afirma que la triangular *"a menudo requerirá placas base **algo más gruesas**
 y pernos de anclaje **algo más pequeños** que el enfoque de presión uniforme, porque el centroide
@@ -242,7 +243,7 @@ clásico sugiere — relevante si esos pernos, además, anclan un cono de hormig
 
 El método clásico termina en el perno de acero. Pero el perno está embebido en hormigón, y
 el Capítulo 17 de ACI 318[^aci318] pregunta si el **cono de arrancamiento** del grupo traccionado
-resiste ([§5.1 de la nota teórica](/blog/placas-base-sap2000#51-cono-de-arrancamiento-breakout-1762)).
+resiste ([§5.1 de la documentación](/herramientas/placa-base/documentacion#51-cono-de-arrancamiento-breakout-1762)).
 Para la fila de 2 pernos con $h_{ef} = 40$ cm en el pedestal de 80×80:
 
 <Equation label="Ec. 8">
@@ -285,11 +286,11 @@ inferior que cambian el modo de falla.
   decisiva (breakout, ratio 1.53) no existe en el método clásico; apareció al conectar el
   Capítulo 17 de ACI 318 con la tracción real por perno que entrega el solver.
 - Para auditar cualquiera de los números de este post: las fórmulas están en la
-  [nota teórica](/blog/placas-base-sap2000) sección por sección, y la
-  [herramienta](/herramientas/placa-base) enlaza cada fila de su tabla de verificaciones
+  [documentación de la herramienta](/herramientas/placa-base/documentacion) sección por sección,
+  y la [herramienta](/herramientas/placa-base) enlaza cada fila de su tabla de verificaciones
   con la sección (§n) correspondiente.
 
-[^dg1]: *Base Connection Design for Steel Structures*, Steel Design Guide 1, **3.ª ed.** American Institute of Steel Construction, Chicago. Reemplaza a Fisher, J. M., & Kloiber, L. A. (2006), *Base Plate and Anchor Rod Design*, 2.ª ed. El método del bloque rectangular que se usa aquí sigue siendo el principal de la guía (§4.3.7), atribuido a Drake y Elkin (1999) y modificado por Doyle y Fisher (2005).
+[^dg1]: *Base Connection Design for Steel Structures*, Steel Design Guide 1, **3.ª ed.** American Institute of Steel Construction, Chicago. El método del bloque rectangular que se usa aquí es el principal de la guía (§4.3.7), atribuido a Drake y Elkin (1999) y modificado por Doyle y Fisher (2005).
 
 [^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. American Institute of Steel Construction, Chicago (§J3, J8).
 

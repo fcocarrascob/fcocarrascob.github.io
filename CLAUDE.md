@@ -76,6 +76,9 @@ Gotchas ya registrados en el repo, que valen como recordatorio de qué tipo de c
 - **`b = B − 3t` es texto de §B4.1b(d)**, no una nota al pie de la Tabla B4.1b.
 - **La Ec. (19.2.3.1) está impresa con errata en la edición SI de ACI 318-25** (0,062 en vez de 0,62).
 - **ACI 318-19 removió el DDM y el marco equivalente**, y renumeró γ_f, γ_v y J_c.
+- **En 360-22 el §J3.7 es *Tensile and Shear Strength of Bolts and Threaded Parts*** (Ec. J3-1) y el caso combinado corte+tracción se corrió a §J3.8; en 360-16 el combinado era J3.7. Citar «J3.7» sin edición apunta a dos cláusulas distintas.
+- **La Ec. 25.4.3.1(a) está impresa con errata en la edición SI de ACI 318-25**: `f_y·ψ/(21λ√f'c)·d_b` — con ese denominador la expresión nunca rige sobre los pisos `8d_b`/150 mm. R25.4.3.1 declara restaurada la ecuación del 318-14 (`0,24·f_y·ψ/(λ√f'c)·d_b`), que es la lectura consistente y la más conservadora.
+- **φ de la armadura de anclaje (17.5.2.1): 0,75 en 318-19 → 0,90 en 318-25** (Tabla 21.2.1, fila (k)). La DG1 3.ª ed. dice 0,75 porque cita 318-19.
 
 ## Commands
 
@@ -131,6 +134,16 @@ Each collection has its own query wrapper — **import from these, don't call `g
 - `src/lib/hormigon.ts` → `getAllHormigonPosts()`, `getHormigonPostsBySubsection()`, plus the `SUBSECTIONS` map and `SubsectionKey` type (hormigon)
 
 Both wrappers filter drafts and sort by `pubDate` descending.
+
+### `ejemplos/` — memos de cálculo, fuera del sitio
+
+`ejemplos/` en la raíz **no es una colección y no llega al build**: son memos de cálculo compactos
+que consolidan la aplicación de la normativa chilena al diseño de elementos, un caso a la vez. El
+contrato completo —las tres reglas, el formato, la trazabilidad— vive en **`ejemplos/README.md`**:
+léelo antes de escribir o tocar un memo. Antes de escribir uno nuevo se lee además
+`ejemplos/INDICE.md` (regla: no repetir cláusulas, elementos ni estructuras); la plantilla es
+`ejemplos/_PLANTILLA.md`. `npm run verify:ejemplos` verifica el contrato mecánico y
+`npm run ejemplos` regenera la tabla del índice desde los frontmatter.
 
 ## Math Syntax (content)
 

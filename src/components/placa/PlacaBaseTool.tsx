@@ -81,11 +81,16 @@ type RodMode = 'pattern' | 'coords';
 interface Coord { x: number; y: number }
 const round1 = (v: number) => Math.round(v * 10) / 10;
 
-// Enlace de cada verificación a su sección en la nota teórica.
-const NOTE_URL = '/blog/placas-base-sap2000';
+// Enlace de cada verificación a su sección en la documentación de la herramienta.
+// Los hashes son las anclas que Astro genera desde los títulos de esa página: si se
+// renumera o se reescribe un título allá, hay que actualizarlos acá.
+const NOTE_URL = '/herramientas/placa-base/documentacion';
 const THEORY: Record<string, { sec: string; hash: string }> = {
   aplastamiento: { sec: '§2', hash: '2-aplastamiento-del-hormigón--aisc-360-j8' },
-  'flexion-compresion': { sec: '§3.1', hash: '31-lado-comprimido-voladizos-m-y-n' },
+  // La verificación de flexión del lado comprimido incluye tanto los voladizos
+  // m y n (§3.1) como el mecanismo interior λn′ (§3.2): apunta al §3 y no a uno
+  // de los dos, porque cualquiera de ellos puede ser el que gobierne.
+  'flexion-compresion': { sec: '§3', hash: '3-flexión-de-la-placa--design-guide-1' },
   'flexion-traccion': { sec: '§3.3', hash: '33-lado-traccionado-flexión-por-tracción-de-pernos' },
   'perno-traccion': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
   'perno-corte': { sec: '§4', hash: '4-pernos-de-anclaje--aisc-360-j3' },
@@ -355,10 +360,11 @@ export default function PlacaBaseTool() {
       <p className="mt-1 text-xs leading-relaxed text-muted">
         Generada el {fechaMemoria} con la herramienta «Placa base de columna»
         (https://fcocarrascob.github.io/herramientas/placa-base). Verificación LRFD según
-        AISC 360-22, Design Guide 1 y ACI 318-25 Cap. 17. La base teórica, las ecuaciones
-        (Ecs. 1–21) y los supuestos de cada verificación están documentados en
-        https://fcocarrascob.github.io/blog/placas-base-sap2000 — las referencias §n de la
-        tabla de verificaciones apuntan a sus secciones.
+        AISC 360-22, Design Guide 1 y ACI 318-25 Cap. 17. Las ecuaciones y los supuestos de
+        cada verificación están documentados en
+        https://fcocarrascob.github.io/herramientas/placa-base/documentacion — las referencias
+        §n de la tabla de verificaciones apuntan a sus secciones. La teoría del fenómeno está
+        en https://fcocarrascob.github.io/acero/placas-base-teoria.
       </p>
       <h2 className="mt-4 mb-1 text-sm font-semibold text-ink">Datos de entrada</h2>
       <div className="grid grid-cols-3 gap-x-6 gap-y-0.5 text-xs">

@@ -100,6 +100,19 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
   y un único `u_max <= 1`. **No** una batería de booleanos «¿gobierna éste?»: cinco de ellos
   darían `false` por diseño y habría que declararlos en `esperadoFalso`, que es justo lo que
   esa lista no debe contener.
+- **Una variable no se puede llamar como una unidad, y la que muerde es `m`.** El motor evalúa
+  con mathjs, donde `4 m` son cuatro metros — salvo que la hoja haya definido antes una variable
+  `m`, y entonces son `4·m`. No falla: **devuelve otro número**. El 2026-08-07 la planilla de
+  rigidez rotacional cayó en esto en su primera corrida: la DG1 llama `m` al voladizo de la placa
+  del lado comprimido, y con `m = 8,25 cm` la altura de columna `L_col := 4 m` pasó a valer 33 cm.
+  El índice β·L/EI salió **12,1 veces más chico** del que corresponde, y lo único que lo delató
+  fue que el contraste contra el post no cuadraba. Un barrido de las 25 hojas publicadas no
+  encontró ningún otro caso, así que esto es prevención, no reparación.
+  El arreglo es de nombre y de contrato a la vez: la variable pasa a `m_vol` **con una línea de
+  texto que dice por qué** —si no, el próximo que transcriba la Ec. C-11 desde el PDF la va a
+  volver a llamar `m`—, y `verify-planilla.mjs` chequea el patrón `<número> <identificador>`
+  contra las variables definidas en la hoja. Ojo con que el peligro es **solo** ese patrón sin
+  `*`: `2*h` con `h` definida es lo que el autor quiere y no se toca.
 - **Valores de tabla: al PDF, y en la columna de las unidades del cálculo.** Toda constante
   que venga de una tabla de la norma —$F_{nv}$, $F_y$ de un grado, un $\phi$, un coeficiente,
   una dimensión de agujero— se lee en el PDF y se declara en la planilla con su cita
@@ -536,9 +549,10 @@ Una planilla por vuelta, sin adelantar la siguiente hasta cerrar la anterior:
 | `ejemplo-viga-carrilera-puente-grua` | 156 | 82 | 62 | 41 | 12 (1↱) | 13 aplicados 2026-08-01 (la Ec. A-3-1 con el C_f de 360-16 y el exponente 1/3; la flecha lateral que era la vertical escalada; y la sección compuesta, que ninguna hipótesis reproducía — al componerla bien la fatiga deja de gobernar en servicio severo y **la tesis de cierre se reescribió**) | 2026-08-01 | ✅ |
 | `ejemplo-viga-columna` | 126 | 82 | 39 | 45 | 10 (1⇱) | 1 aplicado 2026-08-01 (M_r salía de `1,34 · 8,0`, los dos operandos redondeados; se declaró w_u = 1,306 y el uso insignia 0,94 quedó en pie) + 1🔵 conservado | 2026-08-01 | ✅ |
 | `ejemplo-viga-ltb` | 73 | 52 | 31 | 44 | 6 | 3 aplicados 2026-08-01 (escalar el redondeado en las dos cadenas: 1458 → 1453 · 51,0 → 50,9 y 56,7 → 56,6 · «casi triplica» → ×2,7) | 2026-08-01 | ✅ |
+| `placas-base-empotrada-o-rotulada` | 74 | 29 | 18 | 49 | 7 | 2 aplicados 2026-08-07 sobre la hoja recién construida (β₃₅ arrastraba el Δ_rod de la placa de 25 mm, cuando C-6 mide L_rod desde el **tope de la placa** y engrosarla también alarga el perno: 3 820 → **3 805** tonf·m/rad; y el booleano de robustez afirmaba «parcialmente restringida en todo el rango» cuando con zapata de 120 cm el índice baja a **1,96** y cruza al lado simple — la afirmación publicable es «nunca cerca de FR», y se despejó el cruce en d_footing = 116 cm). Primera hoja que no verifica estados límite sino una **propiedad**: no hay `u_max`, y lo que la cierra es la clasificación del Comentario §B3.4 | 2026-08-07 | ✅ |
 | `ejemplo-viga-hss-flexion` | 219 | 174 | 134 | 107 | 16 (1⇱) | 12 aplicados 2026-08-04 sobre el post recién escrito (el 🟠: «el LTB **no aplica**» sin acotar, cuando en los dos tubos rectangulares sí aplica F7.4(b) —L_p = 7,15 y 6,42 m < L_b— y lo que pasa es que no llega a recortar; y la cita `§B4.1b(d)`, que no es una nota al pie de la Tabla B4.1b sino texto de la sección, alineada con el hallazgo 3 de `diagonal-hss-traccion`) | 2026-08-04 | ✅ |
 
-**Esq.** = tokens del esquema paramétrico. Las 24 planillas publicadas lo tienen.
+**Esq.** = tokens del esquema paramétrico. Las 25 planillas publicadas lo tienen.
 **Págs.** = páginas A4 al imprimir, y entre paréntesis los saltos forzados (⇱).
 
 ### hormigón

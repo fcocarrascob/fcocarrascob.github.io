@@ -55,6 +55,17 @@ const NORMAS = {
     dir: 'aci318-25',
     patron: 'aci',
   },
+  // La DG1 es el caso raro: no es norma sino guía, y no está ingerida en
+  // material_teorico, así que NO tiene extracciones. Su inventario sale entero
+  // del PDF vía `python scripts/extraer-tags-pdf.py`, y por eso `dir` es null.
+  // Entra al índice igual porque la serie de placas base la cita de punta a
+  // punta, y una ecuación mal citada la ve el lector venga de donde venga.
+  'dg1-3ed': {
+    nombre: 'AISC Design Guide 1, 3.ª ed.',
+    pdf: 'F:/OneDrive/Ingenieria/Normas/AISC Design Guide 1 - 3rd Edition.pdf',
+    dir: null,
+    patron: 'dg1',
+  },
 };
 
 // Los `\s?` son por la «(J 4-5)», donde la extracción mete un espacio ENTRE la
@@ -96,13 +107,17 @@ try {
 const indice = { generado: new Date().toISOString().slice(0, 10), fuente: RAW, normas: {} };
 
 for (const [clave, cfg] of Object.entries(NORMAS)) {
-  const dir = path.join(RAW, cfg.dir);
-  let archivos;
-  try {
-    archivos = (await readdir(dir)).filter((f) => f.endsWith('.txt') && !f.startsWith('com'));
-  } catch {
-    console.error(`✗ no se pudo leer ${dir} — ¿está montado material_teorico?`);
-    process.exit(1);
+  // `dir: null` = documento sin extracciones en la wiki; su inventario entero
+  // viene del PDF (ver el bloque de apéndices más abajo).
+  const dir = cfg.dir ? path.join(RAW, cfg.dir) : null;
+  let archivos = [];
+  if (dir) {
+    try {
+      archivos = (await readdir(dir)).filter((f) => f.endsWith('.txt') && !f.startsWith('com'));
+    } catch {
+      console.error(`✗ no se pudo leer ${dir} — ¿está montado material_teorico?`);
+      process.exit(1);
+    }
   }
 
   const ecuaciones = {};
@@ -124,11 +139,11 @@ for (const [clave, cfg] of Object.entries(NORMAS)) {
     archivos: archivos.sort(),
     ecuaciones,
   };
-  const nApe = Object.keys(deApendice).length;
+  const nPdf = Object.keys(deApendice).length;
   console.log(
-    `${cfg.nombre.padEnd(18)} ${Object.keys(ecuaciones).length} ecuaciones` +
-      ` · ${archivos.length} archivos` +
-      (nApe ? ` · ${nApe} de apéndices (del PDF)` : '')
+    `${cfg.nombre.padEnd(28)} ${String(Object.keys(ecuaciones).length).padStart(3)} ecuaciones` +
+      (archivos.length ? ` · ${archivos.length} archivos` : ' · sin extracciones en la wiki') +
+      (nPdf ? ` · ${nPdf} del PDF` : '')
   );
 }
 

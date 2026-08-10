@@ -10,6 +10,22 @@ import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
   site: 'https://fcocarrascob.github.io',
+  // La serie «Placas base» vivía en /blog con `section: "Acero"` — una sección
+  // fantasma de dos posts al lado de /acero, que es la sección real. Se movió a
+  // la colección `acero` (teoría a /acero/teoria, el ejemplo a /acero/ejemplos)
+  // y estas rutas quedan por los enlaces ya publicados. Con salida estática
+  // y sin adapter, Astro emite una página HTML con `meta refresh` por cada una.
+  //
+  // `placas-base-sap2000` fue además el slug de la nota de teoría mientras ésta
+  // documentaba la herramienta: el barrido de combinaciones de SAP2000 era una de
+  // sus secciones. Al separarse en nota de teoría (el fenómeno) y documentación de
+  // la herramienta (la implementación, incluido el barrido), el slug dejó de
+  // describir el contenido y la nota pasó a `placas-base-teoria`.
+  redirects: {
+    '/blog/placas-base-sap2000': '/acero/placas-base-teoria',
+    '/acero/placas-base-sap2000': '/acero/placas-base-teoria',
+    '/blog/placa-base-ejemplo-trabajado': '/acero/placa-base-ejemplo-trabajado',
+  },
   // mermaid() debe ir antes de mdx() para interceptar los bloques ```mermaid
   integrations: [
     mermaid({

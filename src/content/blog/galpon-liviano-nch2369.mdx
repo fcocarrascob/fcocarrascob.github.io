@@ -1,0 +1,244 @@
+---
+title: "El galpón liviano de NCh2369: tres beneficios por ocho condiciones"
+description: "La cláusula 12.2 de NCh2369:2025 define la única excepción de la cláusula 8 a la prohibición de arriostramiento solo-tracción. Lo que casi nadie cuenta es que el paquete trae una tercera pieza: 12.2.2 rebaja el amplificador del diseño por capacidad de 0,7R₁ a 0,5R₁. Con R = 4, el galpón liviano amplifica por 2,0 donde el mismo galpón por la fila 5.5 amplifica por 0,7·5 = 3,5 — y los tres beneficios se pierden juntos al violar una sola de las ocho condiciones de admisión."
+pubDate: 2026-08-08
+tags: ["NCh2369", "galpón", "arriostramiento", "diseño por capacidad", "factor R", "sísmica", "acero"]
+norm: "NCh2369:2025"
+section: "Sísmica"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+
+## La prohibición, y su única salida
+
+NCh2369:2025[^norma] tiene una regla que atraviesa todo el diseño en acero: el
+arriostramiento sísmico no puede confiarse a elementos que solo resisten tracción.
+La cláusula 8 lo dice dos veces, con el mismo lenguaje y la misma salida:
+
+> «No se permiten sistemas de arriostramiento con elementos que solo resisten
+> tracción, excepto en los casos de galpones livianos de acero que se rigen por
+> las disposiciones de 12.2.» — §8.6.1 (arriostramientos verticales)
+
+> «No se permiten sistemas de arriostramiento de piso o cubierta con elementos que
+> solo resisten tracción, excepto en los casos de galpones livianos de acero que se
+> rigen por las disposiciones de 12.2.» — §8.8.2 (diafragmas)
+
+El motivo es de sistema, no de elemento: C8.6.1 dice que la disposición «tiene como
+objetivo generar redundancia». Una diagonal que solo trabaja en tracción deja de
+aportar en el semiciclo en que se destensa, y el corte de ese instante lo toma la
+diagonal del otro sentido — o nadie. Y cuando la norma repite la prohibición fuera
+de la cláusula 8, lo hace sin salida: 12.5.10 e) se la impone a las estanterías de
+almacenamiento con las mismas palabras y sin excepción alguna.
+
+La excepción importa porque el sistema prohibido es justamente el más barato que
+existe: la crucería de barras o ángulos esbeltos, tensada, que fue durante décadas
+*el* arriostramiento de galpón. NCh2369 lo prohíbe en general y lo devuelve en un
+solo lugar: el **galpón liviano de acero** de la cláusula 12.2.
+
+Hasta aquí llega la versión conocida de la historia: galpón liviano = fila 5.7 de la
+Tabla 7 ($R = 4$) + permiso de solo-tracción. Lo que casi nadie cuenta es que el
+paquete tiene una tercera pieza, y es la más cara de las tres.
+
+## El contrato: tres beneficios y un permiso
+
+**1 — La demanda se evalúa con la fila 5.7.** La cláusula 12.2 lo fija de entrada:
+«la demanda sísmica para galpones livianos se debe evaluar utilizando los parámetros
+indicados en Tabla 7, punto 5.7» — $R = 4$, con $\xi = 0{,}02$ para uniones soldadas
+y $0{,}03$ para uniones empernadas, igual que sus filas vecinas:
+
+| Fila | Sistema resistente | $R$ |
+|---|---|:---:|
+| 5.5 | Edificios industriales de un piso, con o sin puente grúa, **con arriostramiento continuo de techo**, y con anclajes dúctiles | 5 |
+| 5.6 | Edificios industriales de un piso, sin puente grúa, **sin arriostramiento continuo de techo**, y con anclajes dúctiles | 3 |
+| 5.7 | **Galpones livianos de acero** | 4 |
+
+Nótese que, mirado solo, el $R = 4$ no es un premio: es *menos* que el $R = 5$ que el
+mismo galpón obtendría por la fila 5.5. Como el espectro de diseño divide por $R^*$
+(Ec. (1a), §5.4.1), pasar de 5 a 4 **sube** la demanda de análisis — la que dimensiona
+las diagonales — en un 25 %. Si el beneficio fuera solo el factor, nadie lo pediría.
+
+**2 — El solo-tracción queda permitido**, en los planos verticales (§8.6.1) y en el
+techo (§8.8.2). Es lo que habilita las diagonales esbeltas que en cualquier otra
+estructura de la norma están prohibidas, y con ellas el arriostramiento liviano
+clásico.
+
+**3 — El diseño por capacidad se paga a mitad de tarifa.** Esta es la pieza que no se
+cuenta, y vive en 12.2.2:
+
+> «El diseño de galpones livianos debe cumplir con las disposiciones de cláusula 8,
+> reemplazando el factor de amplificación de la carga sísmica horizontal ($0{,}7R_1$)
+> por $0{,}5R_1$.» — §12.2.2
+
+La cláusula 8 usa el $0{,}7R_1 \ge 1{,}0$ como amplificador universal de todo lo que
+no debe plastificar: la resistencia requerida de las **columnas** (§8.3.4), la de las
+**conexiones sismorresistentes** (§8.4.1), y hasta la eximición de los límites de
+compacidad y esbeltez para diagonales comprimidas (§8.6.3) se compran con ese mismo
+factor — de dónde sale el 0,7, que es una estimación de la sobrerresistencia del
+sistema, lo desarrolla [la serie sobre el factor R](/blog/factor-r-anatomia). En un
+galpón liviano, cada una de esas apariciones se lee con $0{,}5R_1$.
+
+**Y un permiso menor, condicionado:** en galpones livianos **sin puente grúa ni otros
+equipos**, 12.2.3 permite usar el panel de techo como diafragma para llevar las
+fuerzas sísmicas a los arriostramientos verticales, si el panel y su instalación
+satisfacen los estándares ANSI/SDI SD. La resistencia requerida del panel se determina
+con las combinaciones de 4.5 con el sísmico horizontal amplificado — también — por
+$0{,}5R_1$. El galpón mínimo puede entonces prescindir del arriostramiento de techo
+como sistema y dejar que el propio panel trabaje. El permiso cuelga de la misma
+calificación que los tres beneficios, y se pierde con ellos.
+
+## La cuenta que vende el contrato
+
+Comparemos el mismo galpón diseñado por las dos vías, llamando $E_{el}$ a la demanda
+sísmica elástica (la del espectro sin reducir). La comparación supone $R_1 = R$ — sin
+degradación por período ni por corte mínimo; sobre eso, la advertencia de más abajo:
+
+| | Fila 5.5 ($R = 5$) | Fila 5.7 ($R = 4$) | Diferencia |
+|---|:---:|:---:|:---:|
+| Demanda de análisis (dimensiona los fusibles) | $E_{el}/5 = 0{,}20\,E_{el}$ | $E_{el}/4 = 0{,}25\,E_{el}$ | **+25 %** |
+| Amplificador de capacidad | $0{,}7 \cdot 5 = 3{,}5$ | $0{,}5 \cdot 4 = 2{,}0$ | — |
+| Columnas, conexiones y demás elementos protegidos | $3{,}5 \cdot 0{,}20\,E_{el} = 0{,}70\,E_{el}$ | $2{,}0 \cdot 0{,}25\,E_{el} = 0{,}50\,E_{el}$ | **−29 %** |
+
+La última fila es la tesis del post. Con la tarifa completa, los elementos protegidos de
+un galpón por la fila 5.5 se diseñan para el 70 % de la fuerza elástica — el $R = 5$ que
+lucía el análisis nunca les llegó. El galpón liviano los diseña para el 50 %: un 29 %
+menos (−28,6 % exacto), el cociente $0{,}5/0{,}7$, porque al multiplicar la demanda
+reducida por el amplificador el $R$ se cancela y solo sobrevive la tarifa.
+
+Una precisión antes de gastar el ahorro: $0{,}70\,E_{el}$ y $0{,}50\,E_{el}$ son la
+rama amplificada, y las dos vías comparten los mismos topes y el mismo piso. La
+resistencia requerida no necesita ser mayor que la máxima carga que el sistema puede
+transferir al elemento (§8.3.4) ni que la capacidad esperada del elemento a conectar
+(§8.4.1), y en conexiones no debe ser menor que la mitad de esa capacidad esperada —
+piso que no aplica a anclajes de bases de columnas (§8.4.1). Cuando gobierna un tope,
+las dos tarifas convergen en el mismo número y el ahorro se estrecha: el −29 % vale en
+el tramo donde manda la rama amplificada, que es el habitual en columnas y anclajes.
+De esa competencia entre ramas hay un caso resuelto con números en el
+[ejemplo del chevron NCh2369](/acero/ejemplo-chevron-nch2369).
+
+El reparto del intercambio es elocuente. Lo que se encarece un 25 % son las diagonales —
+que en un sistema solo-tracción son barras, lo más liviano del galpón. Lo que se abarata
+un 29 % son las columnas, las conexiones y los anclajes: los elementos donde el diseño
+por capacidad concentra el costo real de un proyecto NCh2369. El contrato encarece lo
+barato y abarata lo caro.
+
+## Las ocho condiciones de admisión
+
+El precio del contrato es la definición del objeto. 12.2.1 exige que el galpón cumpla
+**todas** estas condiciones:
+
+| | Condición | Límite |
+|---|---|---|
+| a) | Categoría de la estructura (4.3.1) | I o II |
+| b) | Configuración | una o varias naves paralelas |
+| c) | Altura libre interior de las columnas laterales | ≤ 23 m |
+| c) | Luz transversal entre ejes de columnas sismorresistentes adyacentes | ≤ 75 m (nave individual) / ≤ 45 m (naves paralelas) |
+| d) | Peso propio de la estructura soportante del techo (solo incluye vigas, costaneras, colgadores, puntales, arriostramientos y conexiones) | ≤ 70 kg/m² |
+| e) | Capacidad nominal de los puentes grúa | ≤ 100 kN sin cabina de operación / ≤ 50 kN con cabina |
+| f) | Estanterías de almacenamiento vinculadas sísmicamente a la estructura | ninguna |
+| g) | Peso total de los equipos soportados, por marco | ≤ 50 kN |
+| h) | Carga sísmica horizontal transferida por altillos vinculados a columnas del galpón | ≤ 15 kN por columna |
+
+C12.2.1 explica el retrato: son galpones «de luz y altura limitadas y grúas o equipos de
+poco peso, en los cuales los esfuerzos de viento son normalmente superiores a los
+sísmicos». La norma acepta relajar el frente sísmico porque en esta tipología el
+dimensionamiento lo suele mandar el viento — el sismo no es el que elige los perfiles.
+
+Lo que hay que ver en esa tabla es que **no es una lista de requisitos de diseño: es una
+definición**. Los beneficios no se otorgan por separado — la fila 5.7 aplica a
+«galpones livianos de acero», §8.6.1 y §8.8.2 exceptúan a los galpones «que se rigen por
+las disposiciones de 12.2», y 12.2.2 rebaja la tarifa para «galpones livianos» — así que
+todos cuelgan del mismo objeto. Un galpón que viola una sola letra deja de ser ese
+objeto, y pierde los tres beneficios — y el permiso del panel con ellos — a la vez.
+
+## Cómo se rompe el contrato
+
+El ejemplo típico no es de estructuración: es de uso. Un galpón de bodegaje Categoría II,
+nave única de 30 m, techo de 45 kg/m², sin grúa — liviano de manual — al que el proyecto
+le agrega un altillo de oficinas amarrado a las columnas, que transfiere 20 kN por
+columna. La letra h) admite 15.
+
+Con eso el galpón deja de ser liviano, y la caída no es un ajuste de factor:
+
+- **Pierde la fila 5.7.** Vuelve a competir entre la 5.5 ($R = 5$, si tiene
+  arriostramiento continuo de techo y anclajes dúctiles) y la 5.6 ($R = 3$, si no).
+- **Pierde el solo-tracción** (§8.6.1, §8.8.2). Las crucerías de barras dejan de ser un
+  sistema admisible: hay que rediseñar el arriostramiento con diagonales que trabajen
+  también en compresión, con sus límites de compacidad y esbeltez.
+- **Pierde el $0{,}5R_1$.** Columnas, conexiones y anclajes vuelven a la tarifa
+  $0{,}7R_1$: con $R = 5$, el amplificador pasa de 2,0 a 3,5.
+- **Pierde el permiso de 12.2.3**, si usaba el panel de techo como diafragma: el techo
+  vuelve a necesitar un sistema de arriostramiento de acero diseñado por §8.8.
+
+Cuatro consecuencias por 5 kN por columna. El contrato de 12.2 se firma completo y se
+rompe completo — por eso la calificación de galpón liviano se decide y se documenta al
+inicio del proyecto, y cualquier cambio de uso posterior (un altillo, una estantería
+anclada, una grúa más grande) la reabre.
+
+<Note type="warning" title="La comparación supone R₁ = R, y eso hay que ganárselo">
+El $R_1$ que entra en $0{,}7R_1$ y $0{,}5R_1$ es el factor de modificación **efectivo**
+de §5.14:
+
+<Equation label="Ec. 14">
+$$R_1 = R^{*} \cdot \min\!\left(\frac{Q_0}{Q_0^{\text{mín.}}},\, 1\right)$$
+</Equation>
+
+donde $Q_0$ es el corte basal del análisis, $Q_0^{\text{mín.}}$ el corte basal mínimo
+de §5.12, y $R^*$ degrada con el período: para estructuras cortas
+($T^* < C_r T_1$, con $C_r = 0{,}16R$), la Ec. (1b) de §5.4.1 lo lleva linealmente
+desde $R$ hacia 1,5. Un galpón suele ser rígido en la dirección arriostrada y flexible
+en la de los marcos, así que $R^*$ — y con él $R_1$ y las dos tarifas — se evalúa
+**por dirección**.
+
+Ahora, la degradación no toca la última fila de la tabla, y vale la pena ver por qué.
+Si $R^*$ degradó, la demanda de análisis vale $E_{el}/R^*$ y el amplificador
+$0{,}5R_1$: el producto es $0{,}5 \cdot R^* \cdot E_{el}/R^* = 0{,}5\,E_{el}$ — el
+$R^*$ se cancela exactamente. Y si además el corte quedó bajo el mínimo, §5.12 ordena
+escalar todas las fuerzas por $Q_0^{\text{mín.}}/Q_0$ mientras la Ec. 14 reduce $R_1$
+por el cociente inverso: se cancelan también. Los elementos protegidos se diseñan para
+$0{,}7\,E_{el}$ o $0{,}5\,E_{el}$ **siempre** (salvo que se invoque la reducción por
+corte máximo de §5.13) — para eso está definido $R_1$. Lo que sí mueven la degradación
+y el corte mínimo es la demanda de los fusibles, que sube, y los valores numéricos 3,5
+y 2,0, que bajan; la comparación relativa entre las dos vías queda intacta.
+</Note>
+
+<Note type="info" title="La tarifa 0,5 no es exclusiva del galpón — es el patrón de la cláusula 12">
+La otra aparición está en las estanterías de almacenamiento: 12.5.10 permite $R = 4$
+para sistemas selectivos que cumplen nueve requisitos, y entre ellos las conexiones
+(letra g) y las columnas (letra h) se diseñan con las combinaciones de 4.5 «en las
+cuales el estado de carga sísmico horizontal ha sido amplificado por
+$0{,}5R_1 \ge 1{,}0$». El patrón: cuando la cláusula 12 le reclama más ductilidad a un
+sistema liviano, le cobra el diseño por capacidad a la tarifa 0,5, no a la 0,7 de la
+cláusula 8.
+
+Y en el otro sentido, la excepción del solo-tracción reaparece en las naves
+industriales de pilares de hormigón en voladizo, con doble candado: §9.3.11 la concede
+solo a los elementos amplificados por $0{,}7R_1 \ge 1{,}0$ — tarifa completa — y
+«adicionalmente, la estructura debe cumplir con 12.2.1». Ahí el solo-tracción no es un
+beneficio del contrato: se compra aparte, y más caro.
+</Note>
+
+## En la práctica
+
+1. **La calificación 12.2.1 se decide en la primera reunión y queda en los Criterios de
+   Diseño**, con las ocho letras verificadas una a una. No es un atributo del sistema
+   estructural: es un atributo del edificio y de su uso, y el uso lo controla el
+   mandante, no el calculista.
+2. **La cuenta se hace con las dos tarifas antes de elegir.** El galpón liviano no
+   siempre gana: paga +25 % en la demanda de análisis y las diagonales solo-tracción
+   se llevan esa alza. Donde el contrato rinde es en columnas, conexiones y anclajes
+   (−29 %) — si el galpón es tan liviano que esos elementos los dimensiona el viento,
+   el beneficio sísmico puede ser irrelevante, que es exactamente lo que C12.2.1
+   anticipa.
+3. **$R_1$ se evalúa por dirección y se deja escrito**, porque las dos tarifas lo
+   multiplican. Usar el $R$ de tabla cuando el corte mínimo gobernó sobreestima las
+   cargas amplificadas en las dos vías.
+4. **Todo cambio de uso reabre la calificación.** Un altillo, una estantería vinculada
+   o el reemplazo de la grúa pueden costar, en el mismo acto, el $R = 4$, el
+   solo-tracción y el $0{,}5R_1$.
+
+[^norma]: NCh2369:2025 *Diseño sísmico de estructuras e instalaciones industriales*,
+    3.ª edición, INN, 2025. Todas las cláusulas citadas en este post —12.2 completo,
+    la Tabla 7 (filas 5.5 a 5.7), §8.6.1, §8.8.2, §8.3.4, §8.4.1, §8.6.3, §9.3.11,
+    §12.5.10, §5.4.1 (Ecs. 1a y 1b), §5.12 (Ec. 12), §5.13 y §5.14 (Ec. 14)— fueron
+    leídas del PDF de la norma para este texto.

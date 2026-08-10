@@ -1,0 +1,157 @@
+# Índice de memos
+
+Qué hay acumulado en `ejemplos/`, en qué estado y con qué veredicto. El contrato está en
+[README.md](README.md); la plantilla en blanco, en [_PLANTILLA.md](_PLANTILLA.md).
+
+`estado` — **verificado**: toda cláusula leída en el PDF de la edición vigente · **pendiente**:
+queda al menos una por leer, no se promueve así.
+
+La tabla se genera desde el frontmatter de cada memo: `npm run ejemplos` la regenera y
+`npm run verify:ejemplos` falla si quedó desactualizada o si un memo rompe el contrato.
+
+<!-- INDICE:INICIO -->
+| Caso | Disciplina | Tema | Estado | Veredicto | Post |
+|---|---|---|---|---|---|
+| [La diagonal fusible se diseña dos veces — NCh2369 §8.3 y §8.6](acero/diagonal-fusible-contrato-nch2369.md) | acero | Arriostramientos | verificado | Como miembro usa 0,50 de sí misma; como fusible factura 841 kN a la conexión, 519 al puntal y 587 a la columna. Sobredimensionarla no la mejora — encarece el contrato que exporta. | — |
+| [Diagonal de paño en V invertida — NCh2369 §8.6](acero/diagonal-v-invertida-nch2369.md) | acero | Arriostramientos | verificado | Cierra con HSS 125×125×6 (uso 0,67), pero el perfil lo elige la Tabla 9, no la resistencia — el 5 mm pasaba resistencia (0,79) y falla b/t (22 > 18,9), porque el R_y nacional endurece el límite. Eximirse por 0,7R₁ costaría 2,2 veces el acero. | — |
+| [Puntal entre paños en X — NCh2369 §8.6.7](acero/puntal-entre-x-nch2369.md) | acero | Arriostramientos | verificado | Cierra con HSS 150×150×8 (0,89) para un elemento que el análisis mostraba descargado — el equilibrio post-pandeo le pone 519 kN de compresión. Y el cruce que salva la diagonal (sin él, KL/r = 148 > 133) le sube la residual ×2,8 al puntal. | — |
+| [Viga del paño en V invertida — NCh2369 §8.6.6](acero/viga-pano-v-invertida-nch2369.md) | acero | Arriostramientos | verificado | Cierra con HEB 500 (H1 = 0,88), pero la gravedad pedía Z_x = 340 cm³ y el equilibrio post-pandeo pide 4 100 — el pandeo de la diagonal multiplica la viga por 12. | — |
+| [La columna del marco en X — NCh2369 §8.3.4](acero/columna-marco-x-capacidad-nch2369.md) | acero | Columnas | verificado | Cada elemento del mismo mecanismo tiene su peor estado = el puntal, el post-pandeo que §8.6.7 escribe; la columna, el pandeo incipiente que C8.6.7 declara no evaluar. Reusar el estado del puntal deja la demanda 31 % baja. Cierra con HEB 300 (0,77) y exporta 1 564 kN de levantamiento. | — |
+| [La conexión BFP re-verificada por capacidad — NCh2369 §8.7.5](acero/conexion-bfp-capacidad-nch2369.md) | acero | Conexiones | verificado | Con el tope de §8.7.5 (41,6 tonf·m) la conexión pasa al filo (0,99) y la columna queda en 1,86/1,45/1,38. Los PL 100×12 no cumplen §8.7.6 (pide 20 mm) y la viga perforada rompe a 0,81·M_pe — el fusible dúctil no existe. | — |
+| [El gusset de la diagonal fusible — §8.6.9 pide 38 mm por la vía (a) y 12 por la (b)](acero/gusset-diagonal-fusible-nch2369.md) | acero | Conexiones | verificado | Cierra con plancha de 12 mm, filete de 4 y cordón de 345 — pero ningún estado límite de resistencia fija el espesor: los tres piden 7,3 mm y el 12 se pone por montaje. Lo que sí lo fija es §8.6.9, y por arriba - la vía (a), resistir el M_pe de la diagonal (41,5 kN·m), pediría 38 mm, tres veces la plancha, así que para un tubo la única vía real es la (b), girar. Y el largo del cordón no lo decide la plancha - lo decide la pared de 6 mm del tubo, que topa el filete en 4 mm por J2.2b y estira el cordón a 345 mm; con pared de 8 serían 229. | — |
+| [El área neta del tubo ranurado — la ranura que ningún cordón alcanza (AISC 360-22 §D2)](acero/tubo-ranurado-area-neta-nch2369.md) | acero | Conexiones | verificado | No cierra — con la pared de 6 mm y el cordón de 345 mm del memo del gusset, φR_n = 702 kN contra los 841,3 que §8.6.8 obliga a desarrollar (uso 1,20). Y no hay largo de cordón que lo salve - la ranura deja A_n = 2 688 mm² y harían falta 2 804 aun con U = 1, o sea U = 1,043. Tres salidas: refuerzo de ranura (≥ 533 mm²), pared de 8 mm (0,99, y de paso acorta el cordón 34 %, pero sube P_ne y con él lo que pagan el puntal y la columna), o dos gussets laterales con bisel, que el comentario declara sin reducción de área bruta. De regalo, la Tabla D3.1 no define la b del caso 5 - es B/2, y con ella la ecuación reproduce exactamente el centroide de la media sección. | — |
+| [Base empotrada — los pernos pagan la mitad de M_pe (NCh2369 §8.5.2)](acero/placa-base-empotrada-nch2369.md) | acero | Placas base | verificado | No cierra — el piso de 0,5·M_pe* (279 kN·m) es 2,5 veces el momento del análisis y deja los pernos en 2,79. Sincerar la rigidez de la base o pagar el anclaje completo. | — |
+| [El espesor de la placa base — los 25 mm del corpus piden 52 (DG1 §4.3.1 y §4.3.7)](acero/placa-base-espesor-dg1.md) | acero | Placas base | verificado | Los 25 mm que seis memos usan como dato piden 52,0. Y no los fija el momento — la interfaz comprimida da lo mismo en los dos niveles (análisis y piso de §8.5.2), porque con el bloque en f_p(max) el espesor solo depende del voladizo y de f'c. Lo que gobierna es n = 105 mm, el voladizo transversal, que es mayor que m = 82,5 porque la placa es cuadrada sobre una columna cuadrada; la interfaz traccionada, la que uno esperaría que mande con 635 kN en los pernos, llega a 29,4 y nunca gobierna. Y no se puede equilibrar m con n: bajar B a 405 dejaría 27,5 mm de borde para un perno de 1″. | — |
+| [Llave de corte — viento y sismo (ACI 318-25 §17.11 · NCh2369 §8.5.3)](acero/placa-base-llave-de-corte-nch2369.md) | acero | Placas base | verificado | La misma llave, dos normas y dos veredictos = bajo viento sobra (0,88) y bajo sismo no cierra (1,08). El sismo entra dos veces —amplifica ×1,4 y §8.5.4 borra los 65 kN de roce que la DG1 acreditaría— y la capacidad no se mueve. Cierra con pedestal de 1300 (0,84), pero la salida barata resultó ser otra: el memo de la armadura de anclaje cose el mismo plano con 3 horquillas φ12 sin tocar el pedestal. | — |
+| [La base como resorte — β_connection, β_footing y la serie (DG1 Ap. C)](acero/placa-base-rigidez-rotacional-dg1.md) | acero | Placas base | verificado | La base declarada empotrada entrega β_base = 18 190 kN·m/rad, el 54 % del 4EI/L de su propia columna. Y reparte la culpa: la fundación es 20 veces más rígida que la conexión, así que el empotramiento parcial vive en los pernos y la placa. Modelar el resorte del suelo y empotrar la conexión es afinar el resorte equivocado. | — |
+| [Silla de anclaje — diseñada para el perno, no para la carga (NCh2369 C8.5.2)](acero/placa-base-silla-anclaje-nch2369.md) | acero | Placas base | verificado | No cierra — la placa superior que la carga valida (0,63) no resiste la fluencia esperada del perno (1,58) y pide 32 mm. Y el R_y hay que suponerlo — F1554 no está en la Tabla A3.2. | — |
+| [Armadura de anclaje para el breakout de la llave — ACI 318-25 §17.5.2.1 + NCh2369 §8.5.5](hormigon/llave-corte-armadura-de-anclaje-nch2369.md) | hormigon | Anclajes | verificado | El breakout que no cerraba (1,08) se cose con 3 horquillas φ12 (uso 0,91) sin agrandar el pedestal. Pero la vía está escrita para pernos —§17.11 la calla—, los estribos de §9.5.3 quedan a 2,9 veces la distancia eficaz, y la armadura se cuelga de los 234 kN de la fluencia esperada de la llave, no de los 98 del análisis. Dos derivas de edición de regalo: φ pasó de 0,75 a 0,90 y la Ec. 25.4.3.1(a) SI está impresa con un denominador que nunca puede regir. | — |
+| [El pedestal por capacidad — NCh2369 §9.5 + ACI 318-25](hormigon/pedestal-base-columna-nch2369.md) | hormigon | Anclajes | verificado | Cierra holgado (usos ≤ 0,37) — y esa es la tesis. La resistencia no dimensiona nada. La armadura la fija el 0,5 % mínimo y los estribos la zona de protección de §9.5.3, que con lado 1100 cubre casi todo el pedestal. Lo que ese ancho no compra es el anclaje: el memo de la tracción del grupo muestra que el cono de tracción no cierra ni con 1100 (uso 2,11). | — |
+| [Tracción del grupo de pernos — el cono que ningún pedestal compra (ACI 318-25 §17.6)](hormigon/pedestal-traccion-grupo-armadura-nch2369.md) | hormigon | Anclajes | verificado | Ninguna de las dos configuraciones cierra en hormigón simple — §17.6.2.1.2 trunca el h_ef de cálculo de 450 a 250 (pedestal 1100) y a 117 (600), y el uso queda en 2,11 y 7,22. El lado 1100 se eligió por el cono de la llave y para el de tracción no compra nada. Con armadura de anclaje el 600 cierra en 0,83 y son sus propias barras mínimas, porque el pedestal chico las mete dentro de la pantalla de 0,5h_ef que el grande deja fuera. Pero el estallido lateral —que la armadura no reemplaza— fija el lado mínimo en 710 mm, y el pullout de la tuerca falla en las dos con 1,58 sin importar el pedestal. | — |
+| [La viga 30×60 como viga de marco especial — ACI 18.6 + NCh2369 §9.1.2](hormigon/viga-marco-especial-nch2369.md) | hormigon | Vigas | verificado | El corte de diseño sube 42 % (25,6 tonf) sin que llegue carga nueva del análisis — lo fija la propia armadura vía M_pr. V_c se salva por 7 puntos (43 % < 50 %), y los estribos de la rótula los rige el d/4 del confinamiento, no el corte. | — |
+| [La zapata bajo el pedestal del cuarteto — NCh2369 Cap. 10](geotecnia/zapata-base-columna-nch2369.md) | geotecnia | Zapatas | verificado | Cierra con B = 3,1 m y la dimensiona el 80 % de área apoyada (0,93), no la presión ni el deslizamiento (0,44). El roce que §8.5.4 tarifa en cero arriba es la única resistencia lateral abajo — y sobra. | — |
+| [La zapata B = 3,1 contra Das — capacidad de soporte y asentamiento](geotecnia/zapata-capacidad-y-asentamiento-das.md) | geotecnia | Zapatas | verificado | Los dos estados límite que NCh2369 no cubre sobran por mucho: FS = 11,5 y 13,0 contra 3, y 2,2 mm contra 25. La inclinación de 11° recorta la capacidad un 31 % y ni así gobierna — el 80 % de área apoyada sigue siendo lo único que dimensiona B. Y el k_v del informe es rigidez sísmica: subestima el asentamiento estático ×3. | — |
+<!-- INDICE:FIN -->
+
+## Las estructuras del corpus
+
+Regla 2 en acción: pocas estructuras, muchos memos. Antes de inventar una estructura nueva, el
+caso tiene que no caber en una de estas.
+
+**El cuarteto de la base** — HEB 300 sobre placa 450 × 450 × 25, pedestal 1100 × 1100 y zapata
+B = 3,1 m. Lo comparten los memos de placas base, los de anclaje y las dos zapatas; las magnitudes
+cruzan de un memo a otro por supuesto declarado.
+
+**Dos de esas dimensiones están declaradas insuficientes** y se conservan a propósito, porque son
+las que un proyectista pondría y los memos que las desmienten valen por eso:
+
+- **la placa de 25 mm** pide 52 (memo del espesor), gobernada por el voladizo transversal $n$. Solo
+  entra en cálculos en el memo de la rigidez rotacional, que lo declara en su S2;
+- **el pedestal de 1100** se eligió por el cono de la llave y no compra el cono de tracción (memo de
+  la tracción del grupo, uso 2,11); el lado mínimo por estallido lateral es 710 mm.
+
+Los grafos que siguen leen sus aristas de los `## Supuestos`: **cada flecha es una magnitud que un
+memo deriva y otro declara heredar**, con su valor, y nada más — las advertencias cruzadas van
+listadas aparte, bajo cada grafo. Ninguna arista se infiere: si no está declarada en un supuesto,
+no está dibujada. Todo memo aparece en alguno de los tres grafos, y `npm run verify:ejemplos`
+falla si uno queda fuera.
+
+```mermaid
+flowchart TD
+    placa-base-llave-de-corte-nch2369["Llave de corte<br/>q_máx = 12,43 kN/mm<br/>uso 1,08 — no cierra"]
+    placa-base-empotrada-nch2369["Base empotrada §8.5.2<br/>M = 278,6 kN·m<br/>T = 635,0 kN"]
+    placa-base-silla-anclaje-nch2369["Silla de anclaje<br/>T_ye = 188,6 kN/perno<br/>uso 1,58 — no cierra"]
+    placa-base-espesor-dg1["Espesor de placa<br/>t_p = 52,0 mm<br/>el corpus lleva 25 — no cierra"]
+    placa-base-rigidez-rotacional-dg1["Rigidez rotacional<br/>beta_base = 18 190 kN·m/rad<br/>0,54 · 4EI/L"]
+    pedestal-base-columna-nch2369["Pedestal §9.5<br/>1100 · 16φ25<br/>V_llave = 234,4 kN"]
+    llave-corte-armadura-de-anclaje-nch2369["Armadura de anclaje §17.5.2.1<br/>3 horquillas φ12<br/>uso 0,91"]
+    pedestal-traccion-grupo-armadura-nch2369["Tracción del grupo §17.6<br/>uso 2,11 — no cierra<br/>lado mínimo 710 mm"]
+    zapata-base-columna-nch2369["Zapata Cap. 10<br/>B = 3,1 m<br/>80 % apoyada"]
+    zapata-capacidad-y-asentamiento-das["Zapata contra Das<br/>FS = 11,5<br/>2,2 mm"]
+
+    placa-base-llave-de-corte-nch2369 -- "q_máx = 12,43 · f_p,máx = 27,6" --> placa-base-empotrada-nch2369
+    placa-base-empotrada-nch2369 -- "geometría · f_p,máx · M_r en dos niveles" --> placa-base-espesor-dg1
+    placa-base-empotrada-nch2369 -- "T = 150,2 / 635,0 · Y = 32,2 / 71,2" --> placa-base-rigidez-rotacional-dg1
+    placa-base-empotrada-nch2369 -- "T_u = 75 kN/perno (análisis)" --> placa-base-silla-anclaje-nch2369
+    placa-base-silla-anclaje-nch2369 -- "2·T_ye = 377,2 kN (tope físico)" --> placa-base-empotrada-nch2369
+    placa-base-silla-anclaje-nch2369 -- "T_ye = 188,6 kN/perno" --> pedestal-base-columna-nch2369
+    placa-base-silla-anclaje-nch2369 -- "T_ye = 188,6 kN/perno" --> pedestal-traccion-grupo-armadura-nch2369
+    placa-base-llave-de-corte-nch2369 -- "llave 300×25 · c_a1 = 537,5" --> pedestal-base-columna-nch2369
+    placa-base-llave-de-corte-nch2369 -- "φV_cb,sl = 90,7 vs. 98 kN" --> llave-corte-armadura-de-anclaje-nch2369
+    pedestal-base-columna-nch2369 -- "16φ25 + estribos φ10 · V = 234,4 kN" --> llave-corte-armadura-de-anclaje-nch2369
+    pedestal-base-columna-nch2369 -- "h_ef = 450 · mínimo 0,5 %" --> pedestal-traccion-grupo-armadura-nch2369
+    llave-corte-armadura-de-anclaje-nch2369 -- "ℓ_d y ℓ_dh (Ec. 25.4.3.1(a) del 318-14)" --> pedestal-traccion-grupo-armadura-nch2369
+    pedestal-base-columna-nch2369 -- "pedestal 1,10 × 1,20 sobre el sello" --> zapata-base-columna-nch2369
+    zapata-base-columna-nch2369 -- "B = 3,1 rígida · W = 37,05 tonf" --> zapata-capacidad-y-asentamiento-das
+    zapata-base-columna-nch2369 -- "B = 3,1 · k_v = 5 000 tonf/m³" --> placa-base-rigidez-rotacional-dg1
+```
+
+**Advertencias cruzadas del cuarteto** — no son herencias, son memos que desmienten o corrigen un
+dato que otro usa:
+
+- **espesor → rigidez rotacional**: la rigidez se calculó con $t_p = 25$; con los 52 mm que el
+  espesor exige, $\beta_{connection}$ sube ~20 %.
+- **zapata contra Das → rigidez rotacional**: el $k_v = 5\,000$ del informe es sísmico; el estático
+  es ~⅓, y $\beta_{footing}$ con él sería menor.
+- **tracción del grupo → espesor**: con el pedestal de 600 que ese memo estudia, $f_{p(máx)}$ baja y
+  el espesor cae de 52,0 a 42,4 mm.
+
+**La cepa arriostrada** — un solo paño de 6 × 4 m, A36 con R_y = 1,3, R_1 = 5 y la misma diagonal
+HSS 125×125×6, en las dos configuraciones que §8.6 trata distinto:
+
+| | V invertida (§8.6.6) | X apiladas (§8.6.7) |
+|---|---|---|
+| Diagonal | 5,0 m — cos θ = 0,60 | 7,21 m con cruce — cos θ = 0,832 |
+| Corte de piso | 294 kN | 400 kN |
+| Axial en la diagonal | 245 kN | 240,4 kN |
+| P_ne | 510,9 kN (KL/r = 102,8) | 724,6 kN (KL/r = 74,1) |
+| Memos | diagonal, viga | diagonal fusible, puntal, columna, gusset |
+
+El corte de piso difiere porque el ángulo difiere: la X, más tendida, convierte corte en axial con
+menos eficiencia, y por eso las dos configuraciones cargan **la misma diagonal casi igual** (245
+contra 240,4 kN). Cambia la configuración, no el elemento — eso es lo que las hace comparables y
+no dos ejemplos sueltos.
+
+**Un dueño por número.** Las capacidades esperadas de cada diagonal se derivan una sola vez y los
+demás memos las heredan por supuesto declarado:
+
+- X apiladas → las posee `diagonal-fusible-contrato` (T_ye = 928,2 kN, P_ne = 724,6 kN y el techo
+  de tracción 841,3 kN).
+- V invertida → las posee `viga-pano-v-invertida`, donde el equilibrio del nudo las necesita;
+  `diagonal-v-invertida` diseña el miembro y le presta el F_e.
+
+```mermaid
+flowchart TD
+    subgraph X["X apiladas — §8.6.7"]
+        diagonal-fusible-contrato-nch2369["Diagonal fusible<br/>T_ye = 928,2 · P_ne = 724,6<br/>techo T = 841,3 kN"]
+        puntal-entre-x-nch2369["Puntal §8.6.7<br/>519,1 kN<br/>HSS 150×150×8 (0,89)"]
+        columna-marco-x-capacidad-nch2369["Columna §8.3.4<br/>916,8 kN/nivel<br/>HEB 300 (0,77)"]
+        gusset-diagonal-fusible-nch2369["Gusset §8.6.9<br/>PL 12 · filete 4<br/>ℓ_w = 345 mm"]
+        tubo-ranurado-area-neta-nch2369["Tubo ranurado §D2<br/>φR_n = 702 kN<br/>uso 1,20 — no cierra"]
+    end
+    subgraph V["V invertida — §8.6.6"]
+        diagonal-v-invertida-nch2369["Diagonal del paño<br/>HSS 125×125×6<br/>la fija la Tabla 9, no el uso"]
+        viga-pano-v-invertida-nch2369["Viga del paño §8.6.6<br/>T_ye y P_ne de esta cepa<br/>HEB 500 (0,88)"]
+    end
+
+    diagonal-fusible-contrato-nch2369 -- "T_ye, P_ne, 0,3P_ne = 217,4 y T = 841,3" --> puntal-entre-x-nch2369
+    diagonal-fusible-contrato-nch2369 -- "T_ye, P_ne y 0,3P_ne = 217,4" --> columna-marco-x-capacidad-nch2369
+    diagonal-fusible-contrato-nch2369 -- "T = 841,3 y C = P_ne = 724,6 (§8.6.8)" --> gusset-diagonal-fusible-nch2369
+    diagonal-fusible-contrato-nch2369 -- "T = 841,3 kN · A_g esquinas rectas" --> tubo-ranurado-area-neta-nch2369
+    gusset-diagonal-fusible-nch2369 -- "ℓ_w = 345 mm · ranura 14 mm" --> tubo-ranurado-area-neta-nch2369
+    puntal-entre-x-nch2369 -- "geometría de la cepa" --> columna-marco-x-capacidad-nch2369
+    diagonal-v-invertida-nch2369 -- "paño 6 × 4 · F_e · KL/r = 102,8 · P_u = 245 kN" --> viga-pano-v-invertida-nch2369
+```
+
+**Advertencia cruzada de la cepa** — **tubo ranurado → diagonal fusible**: la salida de la pared de
+8 mm que el tubo propone sube $P_{ne}$, y con él lo que pagan el puntal, la columna y el gusset.
+Cerrar el tubo por ahí obliga a rehacer los tres.
+
+**Sin estructura declarada.** Dos memos no pertenecen a ninguna de las dos y por ahora no
+alimentan a nadie ni heredan de nadie. Aparecen acá porque el corpus se declara completo:
+
+```mermaid
+flowchart LR
+    conexion-bfp-capacidad-nch2369["Conexión BFP §8.7.5<br/>marco de momento W460×74<br/>0,99 · sin fusible dúctil"]
+    viga-marco-especial-nch2369["Viga 30×60 de marco especial<br/>hormigón, ACI 18.6<br/>V_e = 25,6 tonf (+42 %)"]
+```

@@ -27,8 +27,8 @@
   <line x1="70" y1="364" x2="530" y2="364" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 5"/>
   <line x1="220" y1="70" x2="220" y2="430" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 5"/>
   <line x1="380" y1="70" x2="380" y2="430" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 5"/>
-  <text x="536" y="140" font-size="11" fill="#2563eb">0.95·<tspan font-style="italic">d</tspan></text>
-  <text x="220" y="62" text-anchor="middle" font-size="11" fill="#2563eb">0.8·<tspan font-style="italic">b</tspan><tspan font-size="8" dy="2.5">f</tspan></text>
+  <text x="536" y="140" font-size="11" fill="#2563eb">0,95·<tspan font-style="italic">d</tspan></text>
+  <text x="220" y="62" text-anchor="middle" font-size="11" fill="#2563eb">0,8·<tspan font-style="italic">b</tspan><tspan font-size="8" dy="2.5">f</tspan></text>
 
   <!-- dimensión m (volado superior) -->
   <line x1="66" y1="70" x2="42" y2="70" stroke="#cbd5e1" stroke-width="1"/>

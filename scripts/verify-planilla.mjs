@@ -145,6 +145,41 @@ function comprobarConteosDelPost(planillaPath, real) {
   ];
 }
 
+/**
+ * Variables cuyo nombre se come una unidad.
+ *
+ * En mathjs `4 m` son cuatro metros, salvo que la hoja haya definido una
+ * variable `m`: ahí son `4·m`. No falla — devuelve OTRO número. El 2026-08-07
+ * la planilla de rigidez rotacional definió `m` (el voladizo de la placa, como
+ * lo llama la DG1) y su `L_col := 4 m` pasó a valer 33 cm, con el índice
+ * β·L/EI 12,1 veces más chico. Solo lo delató el contraste contra el post.
+ *
+ * El patrón peligroso es un literal numérico seguido de identificador SIN `*`.
+ * `2*h` con `h` definida es lo que el autor quiere, y no se toca.
+ */
+function unidadesEclipsadas(regions) {
+  const definidas = new Set();
+  for (const r of regions) {
+    if (r.kind !== 'math' && r.kind !== 'program') continue;
+    const mo = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*:=/.exec(r.src ?? '');
+    if (mo) definidas.add(mo[1]);
+  }
+  const choques = [];
+  for (const r of regions) {
+    if (r.kind !== 'math') continue;
+    const src = r.src ?? '';
+    // Solo el cuerpo de la expresión: la unidad de despliegue (`= tonf*m`) se
+    // resuelve aparte y NO pasa por el scope, así que ahí no hay riesgo.
+    const cuerpo = (src.includes(':=') ? src.split(':=')[1] : src).split('=')[0];
+    for (const mo of cuerpo.matchAll(/\d\s+([A-Za-z_][A-Za-z0-9_]*)/g)) {
+      if (definidas.has(mo[1])) {
+        choques.push({ id: r.id, frag: mo[0].trim(), nombre: mo[1] });
+      }
+    }
+  }
+  return choques;
+}
+
 /** Verifica una planilla; devuelve true si está limpia. */
 async function verificar(planillaPath) {
 const planilla = JSON.parse(await readFile(planillaPath, 'utf8'));
@@ -158,6 +193,18 @@ const results = evaluateSheet(regions);
 const ordenadas = [...regions].sort((a, b) => a.y - b.y || a.x - b.x);
 
 const errores = [];
+
+// Antes que nada: una variable que eclipsa una unidad no rompe nada, cambia el
+// número en silencio. Ver `unidadesEclipsadas`.
+for (const { id, frag, nombre } of unidadesEclipsadas(regions)) {
+  errores.push({
+    id,
+    src: frag,
+    error:
+      `«${frag}» se lee como ${frag.replace(/\s+/, '·')}, no como unidad: ` +
+      `la hoja define «${nombre}» como variable. Renómbrala (y di por qué).`,
+  });
+}
 const verdictos = [];
 const filas = [];
 let n = 0;

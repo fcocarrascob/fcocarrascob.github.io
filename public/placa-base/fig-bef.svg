@@ -17,7 +17,7 @@
   <rect x="150" y="60" width="300" height="32" fill="#dfe3e8" stroke="#1a1a1a" stroke-width="1"/>
   <text x="300" y="80" text-anchor="middle" font-size="11" fill="#4b5563">columna</text>
   <line x1="50" y1="110" x2="570" y2="110" stroke="#2563eb" stroke-width="1.3" stroke-dasharray="6 5"/>
-  <text x="566" y="102" text-anchor="end" font-size="11" fill="#2563eb">línea crítica (0.95·<tspan font-style="italic">d</tspan>)</text>
+  <text x="566" y="102" text-anchor="end" font-size="11" fill="#2563eb">línea crítica (0,95·<tspan font-style="italic">d</tspan>)</text>
 
   <!-- dispersión desde el perno hacia la línea crítica -->
   <line x1="200" y1="280" x2="80" y2="110" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3"/>
