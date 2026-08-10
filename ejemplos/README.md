@@ -31,6 +31,10 @@ caso nuevo es un paso más en el memo que existe, o no es nada. Las estructuras 
 —las del corpus están descritas en el INDICE—: si hacen falta dos casos, que sean dos
 configuraciones de la misma estructura, y que la diferencia sea la cláusula que se quiere mostrar.
 
+Al terminar un memo se lo agrega como nodo al grafo de dependencias de su estructura, en «Las
+estructuras del corpus» del INDICE, con una arista por cada magnitud que sus supuestos declaren
+heredar. El script exige la cobertura; el contenido de la arista, no.
+
 Y **un dueño por número**: cada magnitud se deriva en un solo memo y los demás la heredan por
 supuesto declarado, citando el memo de origen.
 
@@ -109,7 +113,8 @@ descargo admisible — «heredada del post» no lo es.
 ## Verificación mecánica
 
 ```bash
-npm run verify:ejemplos   # contrato: frontmatter, techo de líneas, estado ↔ referencias, INDICE al día
+npm run verify:ejemplos   # contrato: frontmatter, techo de líneas, estado ↔ referencias, INDICE al día,
+                          #           y que todo memo sea nodo de algún grafo de dependencias
 npm run ejemplos          # además regenera la tabla del INDICE desde los frontmatter
 ```
 

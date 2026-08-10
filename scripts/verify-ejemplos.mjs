@@ -105,9 +105,29 @@ if (desde === -1 || hasta === -1) {
   }
 }
 
+// Guardia de cobertura de los grafos de dependencias: todo memo aparece como nodo en algún
+// ```mermaid del INDICE, y todo nodo corresponde a un memo. Que la arista diga la magnitud
+// correcta no lo decide este script — eso sale de los `## Supuestos` y lo pone quien la escribe.
+const bloques = indice.match(/```mermaid\r?\n[\s\S]*?```/g) || [];
+const nodos = new Set();
+for (const bloque of bloques) {
+  for (const m of bloque.matchAll(/^\s*([a-z0-9][a-z0-9-]*)\[/gm)) nodos.add(m[1]);
+}
+const slugs = new Set(memos.map((m) => path.basename(m.ruta, '.md')));
+if (bloques.length === 0) {
+  errores.push('INDICE.md: no hay ningún grafo ```mermaid en «Las estructuras del corpus»');
+} else {
+  for (const slug of slugs) {
+    if (!nodos.has(slug)) errores.push(`INDICE.md: \`${slug}\` no es nodo de ningún grafo — agrégalo a «Las estructuras del corpus»`);
+  }
+  for (const nodo of nodos) {
+    if (!slugs.has(nodo)) errores.push(`INDICE.md: el nodo \`${nodo}\` no corresponde a ningún memo`);
+  }
+}
+
 for (const aviso of avisos) console.warn(`aviso: ${aviso}`);
 if (errores.length) {
   for (const error of errores) console.error(`error: ${error}`);
   process.exit(1);
 }
-console.log(`${memos.length} memos, contrato OK (${memos.filter((m) => m.estado === 'verificado').length} verificados).`);
+console.log(`${memos.length} memos, contrato OK (${memos.filter((m) => m.estado === 'verificado').length} verificados, ${bloques.length} grafos cubren los ${nodos.size} nodos).`);
