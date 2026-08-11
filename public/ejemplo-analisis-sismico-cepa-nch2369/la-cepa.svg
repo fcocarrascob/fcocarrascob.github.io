@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="900" height="470" fill="#ffffff"/>
+
+  <text x="450" y="28" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">La cepa: dos niveles de 4 m, X apiladas en las cuatro caras</text>
+  <text x="450" y="48" font-size="12" text-anchor="middle" fill="#666">escala 25 px/m · el peso del chute está en el nivel intermedio, no arriba</text>
+
+  <defs>
+    <marker id="dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a857c"/>
+    </marker>
+    <marker id="sis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d6b9c"/>
+    </marker>
+  </defs>
+
+  <!-- ===================== ELEVACIÓN ===================== -->
+  <!-- marco: x 165..315 = 6,0 m · y 350..150 = 8,0 m (25 px/m) -->
+  <text x="240" y="86" font-size="13" text-anchor="middle" fill="#1b4a6e" font-weight="bold">Elevación de una línea arriostrada</text>
+
+  <!-- suelo -->
+  <line x1="130" y1="350" x2="360" y2="350" stroke="#8a857c" stroke-width="2"/>
+  <line x1="136" y1="350" x2="128" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="156" y1="350" x2="148" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="176" y1="350" x2="168" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="196" y1="350" x2="188" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="216" y1="350" x2="208" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="236" y1="350" x2="228" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="256" y1="350" x2="248" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="276" y1="350" x2="268" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="296" y1="350" x2="288" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="316" y1="350" x2="308" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="336" y1="350" x2="328" y2="360" stroke="#8a857c" stroke-width="1"/>
+  <line x1="356" y1="350" x2="348" y2="360" stroke="#8a857c" stroke-width="1"/>
+
+  <!-- diagonales: X apiladas, un paño por nivel -->
+  <line x1="165" y1="350" x2="315" y2="250" stroke="#a8641b" stroke-width="2.2"/>
+  <line x1="315" y1="350" x2="165" y2="250" stroke="#a8641b" stroke-width="2.2"/>
+  <line x1="165" y1="250" x2="315" y2="150" stroke="#a8641b" stroke-width="2.2"/>
+  <line x1="315" y1="250" x2="165" y2="150" stroke="#a8641b" stroke-width="2.2"/>
+
+  <!-- columnas y vigas -->
+  <line x1="165" y1="350" x2="165" y2="150" stroke="#1b4a6e" stroke-width="3.4"/>
+  <line x1="315" y1="350" x2="315" y2="150" stroke="#1b4a6e" stroke-width="3.4"/>
+  <line x1="165" y1="250" x2="315" y2="250" stroke="#1b4a6e" stroke-width="3.4"/>
+  <line x1="165" y1="150" x2="315" y2="150" stroke="#1b4a6e" stroke-width="3.4"/>
+
+  <!-- el chute, en el nivel 1 -->
+  <path d="M 205 214 L 275 214 L 258 248 L 222 248 Z" fill="#f0e2cf" stroke="#a8641b" stroke-width="1.4"/>
+  <text x="240" y="234" font-size="10.5" text-anchor="middle" fill="#7a3a12">chute</text>
+
+  <!-- plataforma superior -->
+  <rect x="165" y="142" width="150" height="6" fill="#dce8f2"/>
+
+  <!-- masas por nivel -->
+  <text x="330" y="140" font-size="11.5" fill="#a8641b" font-weight="bold">P₂ = 437,5 kN</text>
+  <text x="330" y="155" font-size="10.5" fill="#666">nivel 2 — plataforma</text>
+  <text x="330" y="240" font-size="11.5" fill="#a8641b" font-weight="bold">P₁ = 912,5 kN</text>
+  <text x="330" y="255" font-size="10.5" fill="#666">nivel 1 — operación</text>
+
+  <!-- cotas verticales -->
+  <line x1="145" y1="350" x2="145" y2="250" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <line x1="145" y1="250" x2="145" y2="150" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="139" y="304" font-size="10.5" text-anchor="end" fill="#666">4,0 m</text>
+  <text x="139" y="204" font-size="10.5" text-anchor="end" fill="#666">4,0 m</text>
+
+  <!-- cota horizontal -->
+  <line x1="165" y1="378" x2="315" y2="378" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="240" y="394" font-size="10.5" text-anchor="middle" fill="#666">6,0 m</text>
+
+  <!-- llamada de la diagonal -->
+  <line x1="240" y1="300" x2="372" y2="318" stroke="#8a857c" stroke-width="0.9"/>
+  <circle cx="240" cy="300" r="3" fill="none" stroke="#8a857c" stroke-width="1.1"/>
+  <text x="376" y="315" font-size="10.5" fill="#7a3a12">HSS 125×125×6</text>
+  <text x="376" y="329" font-size="10.5" fill="#666">L = 7 211 mm · cos θ = 0,832</text>
+
+  <!-- sismo -->
+  <line x1="100" y1="150" x2="150" y2="150" stroke="#2d6b9c" stroke-width="2" marker-end="url(#sis)"/>
+  <text x="100" y="142" font-size="10.5" fill="#2d6b9c">sismo</text>
+
+  <!-- ===================== PLANTA ===================== -->
+  <text x="660" y="86" font-size="13" text-anchor="middle" fill="#1b4a6e" font-weight="bold">Planta — las cuatro caras arriostradas</text>
+
+  <rect x="585" y="180" width="150" height="150" fill="#f7f5f1" stroke="#8a857c" stroke-width="1.2"/>
+
+  <!-- las cuatro caras arriostradas: las paralelas al sismo, llenas; las otras, pálidas -->
+  <line x1="585" y1="180" x2="585" y2="330" stroke="#e3c9a6" stroke-width="3"/>
+  <line x1="735" y1="180" x2="735" y2="330" stroke="#e3c9a6" stroke-width="3"/>
+  <line x1="585" y1="180" x2="735" y2="180" stroke="#a8641b" stroke-width="3.6"/>
+  <line x1="585" y1="330" x2="735" y2="330" stroke="#a8641b" stroke-width="3.6"/>
+
+  <!-- columnas -->
+  <rect x="579" y="174" width="12" height="12" fill="#1b4a6e"/>
+  <rect x="729" y="174" width="12" height="12" fill="#1b4a6e"/>
+  <rect x="579" y="324" width="12" height="12" fill="#1b4a6e"/>
+  <rect x="729" y="324" width="12" height="12" fill="#1b4a6e"/>
+  <text x="660" y="260" font-size="10.5" text-anchor="middle" fill="#666">4 × HEB 300</text>
+
+  <!-- cotas -->
+  <line x1="585" y1="352" x2="735" y2="352" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="660" y="368" font-size="10.5" text-anchor="middle" fill="#666">6,0 m</text>
+  <line x1="763" y1="180" x2="763" y2="330" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="770" y="259" font-size="10.5" fill="#666">6,0 m</text>
+
+  <!-- direccion de analisis -->
+  <line x1="520" y1="255" x2="570" y2="255" stroke="#2d6b9c" stroke-width="2" marker-end="url(#sis)"/>
+  <text x="520" y="247" font-size="10.5" fill="#2d6b9c">dirección</text>
+  <text x="520" y="272" font-size="10.5" fill="#2d6b9c">de análisis</text>
+
+  <line x1="556" y1="388" x2="576" y2="388" stroke="#a8641b" stroke-width="3.6"/>
+  <text x="584" y="392" font-size="10.5" fill="#a8641b" font-weight="bold">paralelas al sismo — trabajan: 2 líneas por dirección</text>
+  <line x1="556" y1="405" x2="576" y2="405" stroke="#e3c9a6" stroke-width="3"/>
+  <text x="584" y="409" font-size="10.5" fill="#8a857c">perpendiculares — trabajan en la otra dirección</text>
+
+  <!-- ===================== BANDA DE CIERRE ===================== -->
+  <rect x="55" y="420" width="790" height="40" fill="#f7f5f1" stroke="#e0dbd2" stroke-width="1"/>
+  <text x="75" y="437" font-size="12.5" fill="#222" font-weight="bold">P₁ / P₂ = 912,5 / 437,5 = 2,09 &gt; 1,50 → irregularidad de masa, y con eso el análisis estático queda fuera (§5.2.2).</text>
+  <text x="75" y="453" font-size="12" fill="#555">Si el chute estuviera en el nivel 2, la misma razón no contaría: la definición no aplica al último nivel.</text>
+</svg>

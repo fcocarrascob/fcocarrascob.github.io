@@ -853,6 +853,7 @@ columna normativa y `(305, 50, 570, 800)` para el comentario; **página PDF = p�
 | H1 | **El contrato: alcance, desempeño y combinaciones** | 1–4 + Anexo B | [x] | 1 SVG a mano | ⚠️ 2026-08-03 (3 aplicados; 14 abiertos, sin 🔴 ni 🟠) |
 | H2 | **El espectro de diseño y sus tres correcciones** | 5.4 y 6.1 | [x] | 2 SVG **generados** | ⚠️ 2026-08-03 (7 aplicados; 7 abiertos, sin 🔴 ni 🟠) |
 | H3 | **El 0,7R₁: diseño por capacidad como multiplicador** | 4.1, 5.12–5.14, 8 | [x] | — (deuda) | ⚠️ 2026-08-03 (10 aplicados, incl. 1🔴; 6 abiertos) |
+| HE1 | **Ejemplo — Del corte modal al R₁ efectivo** (cepa arriostrada de 2 niveles) | 4.5, 5.1.2, 5.2, 5.4–5.6, 5.12–5.14 | [x] | 3 SVG a mano | ⚠️ 2026-08-10 (15 aplicados, incl. 5🟠; 1 descartado) |
 
 **Novedad de infraestructura: figuras calculadas, no dibujadas.**
 `scripts/render-espectro-nch2369.mjs` (`npm run figuras:espectro`) importa
@@ -896,8 +897,18 @@ herramienta el 2026-08-05 — sección J.)
   corta, de mapeo, para no duplicar lo publicado.
 - **Bloqueado por fuente:** cláusulas 11 a 14 (estanques y chimeneas, galpones y estanterías,
   muelles, generación eléctrica) y los anexos informativos A, C, D y E **no están procesados**.
-- **Deuda menor:** H3 no tiene figura (un esquema de la cadena $R \to R^* \to R_1 \to 0{,}7R_1$
-  es lo que le falta al §1), y quedan 27 hallazgos 🟡/🔵 abiertos entre las tres.
+- **Deuda menor:** quedan 27 hallazgos 🟡/🔵 abiertos entre las tres. El esquema de la cadena
+  $R \to R^* \to R_1 \to 0{,}7R_1$ que le faltaba al §1 de H3 **ya existe**
+  (`public/ejemplo-analisis-sismico-cepa-nch2369/cadena-r.svg`, con los números de la cepa); queda
+  decidir si H3 lo reusa o dibuja el suyo sin caso.
+
+**HE1 estrena el formato «ejemplo» en esta galería** (2026-08-10), copiando el de
+`/apuntes/nch432`: `chapter` sin ningún dígito ASCII, para que `capNum()` de
+`src/pages/apuntes/nch2369/index.astro` lo mande al final (después de «Cap. 8») y el chip diga
+«Ejemplo». Cierra la deuda #2 de `ANALISIS.md` y deja la #1 (§6) planteada. **Hallazgo que arrastra:
+los memos de la cepa declaran $R_1 = 5$ y $V_u = 400$ kN por línea, y la derivación da 3,38 y
+249,9 kN** — el primero del lado seguro, el segundo por un peso sísmico distinto del que implica su
+propia gravedad declarada. Registrado en `ejemplos/INDICE.md` y en la deuda de `ANALISIS.md`.
 
 ## I. Sección «Oficio» — la línea corta de práctica (estrenada 2026-08-05)
 

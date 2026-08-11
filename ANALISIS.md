@@ -26,7 +26,7 @@ flowchart TD
     B["B · Modelo y análisis sísmico<br/>modelo matemático §5.3 · espectros §5.4<br/>AME §5.6 · corte basal §5.12 y §5.13 · R_1 §5.14"]
     C["C · Desplazamientos<br/>§6.1 a §6.4"]
     D["D · Los fusibles, con las combinaciones de §4.5<br/>diagonales del MAC §8.6"]
-    E["E · El contrato de capacidad<br/>capacidades esperadas §8.3.1<br/>techo de 0,7R_1 §8.3.5"]
+    E["E · El contrato de capacidad<br/>capacidades esperadas §8.3.1<br/>techo de 0,7R_1 §8.3.4"]
     F["F · Todo lo que el fusible carga<br/>conexión §8.6.8 y §8.6.9 · puntal §8.6.7<br/>viga §8.6.6 · columna §8.3.4"]
     G["G · La base de acero<br/>anclajes §8.5 · AISC Design Guide 1"]
     H["H · Pedestal y anclaje al hormigón<br/>§9.5 · ACI 318-25 Cap. 17"]
@@ -75,8 +75,15 @@ Modelo matemático [§5.3], espectros normativos [§5.4], análisis modal espect
 sísmica vertical [§5.7], corte basal mínimo y máximo [§5.12 y §5.13], y el $R_1$ efectivo [§5.14].
 El espectro ya entra dividido por $R$ — el «inelástico» de la práctica.
 
-Cubre: [el espectro y sus tres correcciones](src/content/apuntes/nch2369-espectro-de-diseno.mdx), y
-la serie del factor $R$ en el blog. **Sin cubrir**: §5.3, §5.6, §5.12 a §5.14 — ver la deuda.
+**Lo que el corpus encontró: el corte que devuelve el análisis no es el de diseño, y $R_1$ no es un
+dato.** La banda de §5.12 y §5.13 no depende del análisis —es $P$ por una constante del sitio y del
+sistema—, y lo único que decide cuál de los dos extremos manda es dónde cae $T^*$: en la cepa
+arriostrada, con $T^* = 0{,}1762$ s, muerde el **máximo** y recorta un 16,6 %. El $R_1$ que sale de
+la Ec. (14) es 3,38, no el 5 de la Tabla 7, y todo el descuento lo produce la rigidez.
+
+Cubre: [el espectro y sus tres correcciones](src/content/apuntes/nch2369-espectro-de-diseno.mdx) ·
+[del corte modal al R₁ efectivo](src/content/apuntes/ejemplo-analisis-sismico-cepa-nch2369.mdx), y
+la serie del factor $R$ en el blog. **Sin cubrir**: §5.3 — ver la deuda.
 
 ### C · Desplazamientos
 
@@ -100,7 +107,7 @@ Cubre: [diagonal de paño en V invertida](ejemplos/acero/diagonal-v-invertida-nc
 ### E · El contrato de capacidad
 
 Con el fusible ya elegido salen las capacidades esperadas [§8.3.1] y el techo de $0{,}7R_1$
-[§8.3.5]. Ese conjunto es un **contrato que el fusible exporta** a todo lo demás.
+[§8.3.4]. Ese conjunto es un **contrato que el fusible exporta** a todo lo demás.
 
 **La consecuencia que sorprende: sobredimensionar el fusible no mejora nada — encarece a todos sus
 consumidores.** La diagonal como miembro usa 0,50 de sí misma y le factura 841 kN a la conexión,
@@ -178,15 +185,15 @@ Cubre: [zapata bajo el pedestal](ejemplos/geotecnia/zapata-base-columna-nch2369.
 | Fase | Cláusulas | Estado |
 |---|---|:--:|
 | A · Antes del modelo | §4.3, §4.5, Anexo B | ✓ |
-| A · Sistema estructural y R | §5.14 y su tabla | ~ |
+| A · Sistema estructural y R | §5.14 y su tabla | ✓ |
 | B · Modelo matemático | §5.3 | — |
 | B · Espectros normativos | §5.4 | ✓ |
-| B · Métodos y análisis modal | §5.2, §5.6 | — |
+| B · Métodos y análisis modal | §5.2, §5.6 | ✓ |
 | B · Acción sísmica vertical | §5.7 | — |
-| B · Corte basal mínimo y máximo | §5.12, §5.13 | — |
+| B · Corte basal mínimo y máximo | §5.12, §5.13 | ✓ |
 | C · Desplazamientos y P-Delta | §6.1 a §6.4 | — |
 | D · Fusibles del MAC | §8.6 y su Tabla 9 | ✓ |
-| E · Capacidades esperadas y 0,7R₁ | §8.3.1, §8.3.5 | ✓ |
+| E · Capacidades esperadas y 0,7R₁ | §8.3.1, §8.3.4 | ✓ |
 | F · Conexión de la diagonal | §8.6.8, §8.6.9 | ✓ |
 | F · Puntal, viga y columna | §8.6.6, §8.6.7, §8.3.4 | ✓ |
 | F · Conexiones sismorresistentes en general | §8.4 | — |
@@ -204,14 +211,18 @@ Cubre: [zapata bajo el pedestal](ejemplos/geotecnia/zapata-base-columna-nch2369.
 En orden de cuánto duele:
 
 1. **§6, los desplazamientos.** Cierra el bucle 1 y no hay nada escrito. Sin esto la fase C es un
-   nombre.
-2. **§5.12 a §5.14 — corte basal mínimo, máximo y $R_1$ efectivo.** El corpus usa $R_1$ como dato
-   del análisis en todos los memos; ningún memo lo deriva.
-3. **§5.3, el modelo matemático.** Es donde vive el supuesto que el bucle 3 desmiente.
-4. **§8.8, diafragmas horizontales.** El arriostramiento de techo no está en ninguna parte del
+   nombre. El ejemplo del corte basal lo deja planteado —§6.1 usa el espectro de referencia, sin
+   dividir por $R^*$, y ni el aumento de §5.12 ni la reducción de §5.13 llegan a los
+   desplazamientos— pero no calcula ninguna deriva.
+2. **§5.3, el modelo matemático.** Es donde vive el supuesto que el bucle 3 desmiente.
+3. **§8.8, diafragmas horizontales.** El arriostramiento de techo no está en ninguna parte del
    corpus, y es la mitad del camino de la carga.
-5. **§8.4, conexiones sismorresistentes en general.** Hoy solo está lo específico del MAC.
-6. **§8.7, marcos resistentes a momento.** Hay un memo de conexión BFP, sin la estructura alrededor.
+4. **§8.4, conexiones sismorresistentes en general.** Hoy solo está lo específico del MAC.
+5. **§8.7, marcos resistentes a momento.** Hay un memo de conexión BFP, sin la estructura alrededor.
+6. **Los memos de la cepa siguen con $R_1 = 5$ y $V_u = 400$ kN declarados**, que la derivación de
+   §5.12 a §5.14 no reproduce: $R_1 = 3{,}38$ y 249,9 kN por línea. Los memos quedan del lado
+   seguro en el multiplicador de capacidad, y el corte de línea corresponde a una cepa más pesada
+   que la que describe su propia gravedad. Ver la ficha de la cepa en `ejemplos/INDICE.md`.
 
 ## Cómo se mantiene
 

@@ -1,0 +1,538 @@
+---
+title: "Ejemplo — Del corte modal al R₁: lo que el análisis devuelve y lo que la norma exige encima"
+description: "Una cepa arriostrada de dos niveles resuelta por la NCh 2369:2025: el peso sísmico de §5.1.2, por qué la irregularidad de masa la saca del análisis estático, el modal espectral con CQC, y las tres cláusulas que ningún software aplica solo. El análisis entrega 599 kN de corte basal y se diseña con 500 kN, porque el máximo de §5.13 recorta un 16,6 %. Y el R₁ que sale de la Ec. (14) es 3,38, no el 5 de la Tabla 7 — un 32 % menos en el multiplicador del diseño por capacidad."
+pubDate: 2026-08-10
+tags: ["nch2369", "ejemplo", "análisis modal espectral", "corte basal", "R1", "espectro de diseño", "SAP2000", "sísmica", "marcos arriostrados"]
+subsection: "nch2369"
+chapter: "Ejemplo — Del corte modal al R₁ efectivo"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.3.2, 4.5, 5.1.2, 5.2, 5.4, 5.5, 5.6, 5.12 a 5.14, 6.1 a 6.4 y 8.3.4, con las Tablas 3, 4, 6 y 7 (pp. 13, 15, 19-21, 27-29, 31-34, 48-49, 57, 60-63, 68-70 y 79)"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+La nota del [espectro de diseño](/apuntes/nch2369-espectro-de-diseno) arma la curva y la del
+[0,7R₁](/apuntes/nch2369-capacidad-y-07r1) explica qué hace la norma con ella. Entre las dos queda
+un hueco operativo: el análisis modal espectral devuelve un corte basal, y ahí se detiene. Lo que
+viene después —compararlo contra un piso, contra un techo, y recién entonces calcular el factor de
+reducción que se usará el resto del proyecto— no lo hace ningún software, y no está en ningún
+resultado del modelo.
+
+Acá resolvemos una cepa arriostrada completa, con las cláusulas leídas del PDF de la 3.ª edición. Y
+el resultado que organiza el ejemplo es este:
+
+**el análisis no entrega el corte de diseño, entrega un candidato.** El modal espectral de esta cepa
+da $Q_0 = 599$ kN y se diseña con **500 kN**, porque el corte basal máximo de §5.13 recorta un
+16,6 %. El mínimo de §5.12 no interviene: recién le aplicaría a una estructura con un período casi
+nueve veces mayor. Y el factor que sale de la Ec. (14) es $R_1 = 3{,}38$, no el $R = 5$ de la
+Tabla 7 — **un 32 % menos** en el multiplicador con que después se diseña por capacidad todo lo que
+cuelga del fusible.
+
+## 1. El caso
+
+Cepa de traspaso de una planta de proceso: torre de acero de dos niveles que sostiene un chute y su
+plataforma de operación. Chica, regular y sin nada raro — la idea es que la única dificultad del
+ejemplo esté en las cláusulas, no en la estructura.
+
+| Dato | Valor |
+|---|---|
+| Planta | 6,0 × 6,0 m |
+| Niveles | 2, de 4,0 m cada uno → $H = 8{,}0$ m |
+| Columnas | 4 × HEB 300, A36 ($A_g = 14\,910$ mm²) |
+| Arriostramiento | X apiladas en las cuatro caras → **2 líneas por dirección** |
+| Diagonales | HSS 125×125×6, A36: $A = 2\,856$ mm², $L_d = 7\,211$ mm |
+| Geometría de la diagonal | $\cos\theta = 0{,}832$; $\operatorname{sen}\theta = 0{,}555$ |
+| Acero | $E = 200\,000$ MPa |
+| Uniones | soldadas (gusset PL 12 con filete, tubo ranurado) |
+| Sitio | zona sísmica 3 · arena media densa, $\phi' = 30°$, $D_R \approx 65\ \%$ |
+| Categoría | II → $I = 1{,}00$ (§4.3.2) |
+| Gravedad, nivel 1 | $D = 800$ kN · $L = 450$ kN (plataforma de operación con el chute) |
+| Gravedad, nivel 2 | $D = 400$ kN · $L = 150$ kN (plataforma superior) |
+
+La zona sísmica, el reparto de la gravedad entre niveles y el número de líneas arriostradas son
+**datos de proyecto, no de la norma**: se declaran acá porque de ellos cuelga todo lo demás. La
+gravedad total —$D = 1\,200$ kN y $L = 600$ kN— equivale a 300 y 150 kN por columna, que es el
+orden de magnitud de una cepa de este tamaño con equipo encima.
+
+<Figure
+  src="/ejemplo-analisis-sismico-cepa-nch2369/la-cepa.svg"
+  alt="Esquema de la cepa en dos vistas. A la izquierda, la elevación de una línea arriostrada: un marco de 6,0 metros de ancho y 8,0 metros de alto, con dos niveles de 4,0 metros, cuatro columnas HEB 300 en azul y vigas en cada nivel; en cada nivel hay un par de diagonales cruzadas en X, de perfil HSS 125 por 125 por 6, con largo 7 211 milímetros y coseno del ángulo igual a 0,832. Sobre la viga del nivel 1 se dibuja un chute, y a la derecha del marco se anotan los pesos sísmicos: 912,5 kilonewton en el nivel 1 de operación y 437,5 kilonewton en el nivel 2 de plataforma. Una flecha azul entra por la izquierda marcando el sismo. A la derecha, la planta cuadrada de 6,0 por 6,0 metros con las cuatro columnas en las esquinas y las cuatro caras arriostradas: las dos paralelas a la dirección de análisis se dibujan en trazo lleno porque son las que trabajan, dos líneas por dirección, y las dos perpendiculares en trazo pálido"
+  caption="La cepa del ejemplo. El peso está concentrado en el nivel intermedio, donde va el chute: P₁/P₂ = 2,09, y esa sola razón saca a la estructura del análisis estático. Con las cuatro caras arriostradas, cada dirección cuenta con dos líneas, que es lo que reparte el corte basal entre paños."
+/>
+
+**Clasificación de sitio.** La Tabla 4 define el suelo Tipo D como «suelo medianamente denso, o
+firme», con $V_{s30} \ge 180$ m/s. Una arena media densa con $D_R \approx 65\ \%$ cae ahí, y no en
+el Tipo C, que pide $V_{s30} \ge 350$ m/s. De la Tabla 6, entonces:
+
+| Parámetro | Valor |
+|---|---:|
+| $S$ | 1,00 |
+| $r$ | 3,50 |
+| $T_0$ | 0,60 s |
+| $p$ | 1,00 |
+| $q$ | 2,50 |
+| $T_1$ | 0,41 s |
+
+Y de la Tabla 3, zona 3: $A_0 = 0{,}40\,g$ y $A_r = 1{,}4\,A_0 = 0{,}56\,g$.
+
+**Sistema resistente.** La Tabla 7, fila 5.3 —«edificios y estructuras de marcos arriostrados con
+anclajes dúctiles»— da $R = 5$ y $\xi = 0{,}02$ para uniones soldadas (la misma fila da 0,03 para
+empernadas). Las uniones de esta cepa son soldadas, así que $\xi = 0{,}02$.
+
+<Note type="warning" title="El ξ de la tabla entra dos veces, y por caminos distintos">
+El $\xi = 0{,}02$ aparece en el factor $(0{,}05/\xi)^{0{,}4}$ que corrige la ordenada del espectro
+—§5.4.2 lo dice explícito: «la razón de amortiguamiento incorporada en los espectros de referencia
+es $\xi = 0{,}05$», y la corrección es **válida solo entre 0,02 y 0,05**— y aparece otra vez en el
+coeficiente de acoplamiento $\rho_{in}$ de la combinación modal. Son dos usos independientes: el
+primero sube la demanda un 44 %, el segundo solo dice cuánto se acoplan dos modos vecinos.
+
+Elegir la fila equivocada de la Tabla 7 cuesta caro por el primer camino: con $\xi = 0{,}03$ el
+factor baja de 1,443 a 1,227, un 15 % menos de espectro. Y la tabla no lo condiciona a la unión de
+la diagonal sino al sistema: si el marco es soldado, es 0,02.
+</Note>
+
+## 2. El peso sísmico, que no es la carga gravitacional
+
+<Equation label="§5.1.2">
+$$
+P = D + a \cdot L
+$$
+</Equation>
+
+La cláusula pide «las cargas permanentes del sistema y una fracción de las sobrecargas, de acuerdo
+con el valor esperado, o su probabilidad de ocurrencia simultánea, con el sismo de diseño». Sin una
+estimación específica fija tres pisos: 50 % para bodegas y salas de archivo, 50 % para zonas de
+acopio con baja tasa de rotación, y **25 % para zonas de uso normal y plataformas de operación**.
+Los dos niveles de esta cepa son plataformas de operación, así que $a = 0{,}25$:
+
+$$
+P_1 = 800 + 0{,}25 \cdot 450 = 912{,}5\ \text{kN}
+\qquad
+P_2 = 400 + 0{,}25 \cdot 150 = 437{,}5\ \text{kN}
+$$
+
+$$
+P = P_1 + P_2 = 1\,350{,}0\ \text{kN}
+$$
+
+Ese $P$ es el que va a aparecer multiplicando todo lo demás: el corte basal, el piso de §5.12 y el
+techo de §5.13 salen los tres de él, y lo único que cambia entre ellos es el coeficiente.
+
+## 3. Por qué esta cepa no puede ir por el análisis estático
+
+§5.2.2 ofrece tres procedimientos lineales, y el primero se elige, no se hereda. El **análisis
+estático o de fuerzas equivalentes** (AEE) está permitido «solamente para estructuras de Categoría I
+y II, de hasta 4 niveles y altura no mayor a 12 m, siempre que no se presente alguna de las
+siguientes irregularidades». Las tres condiciones de entrada las cumple con holgura:
+
+1. Categoría II ✓;
+2. 2 niveles ≤ 4 ✓;
+3. $H = 8{,}0$ m ≤ 12 m ✓.
+
+Y aun así no puede. La **irregularidad de masa** de §5.2.2 dice que la estructura la presenta
+«cuando la masa sísmica de cualquier nivel es mayor al 150 % de la masa sísmica de un nivel
+adyacente»:
+
+$$
+\frac{P_1}{P_2} = \frac{912{,}5}{437{,}5} = 2{,}09 > 1{,}50
+$$
+
+El chute está en el nivel intermedio, y eso basta. Queda el procedimiento 2, **análisis modal
+espectral** (AME), que §5.2.2 admite «para cualquier tipo de estructuras».
+
+<Note type="tip" title="La excepción que decide el veredicto: «no aplica al último nivel»">
+La definición de irregularidad de masa termina con una frase que cambia el resultado: **«Esta
+definición no aplica al último nivel.»** Si el mismo chute, con el mismo peso, estuviera montado en
+la plataforma superior en vez de la intermedia, la razón 2,09 no contaría y el AEE seguiría siendo
+lícito.
+
+No es una sutileza de redacción: es el reconocimiento de que un peso arriba no crea el mecanismo de
+piso blando que la irregularidad busca detectar, solo aumenta la demanda pareja. Vale la pena
+verificarlo en cada proyecto antes de descartar el estático por costumbre —o de usarlo sin derecho—,
+porque el AEE es también la única forma barata de contrastar el modal, y en §5 la usamos así.
+</Note>
+
+## 4. Lo que devuelve el modelo, y dónde se detiene
+
+Los dos períodos, las dos formas modales, los pesos modales equivalentes y los cortes de esta
+sección son **salida del modelo**, no de la norma. Se declaran acá con esa marca, y la aritmética
+que los reproduce se muestra para que el ejemplo sea rehacible sin abrir un `.sdb`.
+
+El modelo es de dos grados de libertad —un desplazamiento horizontal por nivel, con la masa
+concentrada en los niveles 4 y 8 m—, con dos fuentes de flexibilidad **en serie**: el corte de las
+diagonales y la deformación axial de las columnas, que trabajan como los cordones de un voladizo.
+Por línea arriostrada, con las dos diagonales de la X activas y $E = 200\,000$ MPa:
+
+$$
+k_{\text{línea}} = 2\,\frac{EA}{L_d}\cos^2\theta
+= 2 \cdot \frac{200\,000 \cdot 2\,856}{7\,211{,}1} \cdot \frac{36}{52} = 109\,677\ \text{kN/m}
+$$
+
+y con dos líneas por dirección, $k = 219\,354$ kN/m por piso. Los cordones aportan, con las dos
+líneas y sus dos columnas a $\pm B/2$,
+$EI = 2 \cdot E \cdot 2A_g (B/2)^2 = 1{,}074 \times 10^8$ kN·m².
+
+Las dos flexibilidades se suman término a término en la **matriz de flexibilidad**: la de corte
+acumula $1/k$ por cada piso común a los dos grados de libertad, y la de flexión es la del voladizo
+de $EI$ constante, $f_{ij} = a^2(3b-a)/6EI$ con $a = \min(z_i, z_j)$ y $b = \max(z_i, z_j)$.
+Invirtiéndola se llega a los dos modos:
+
+| Modo | $T$ | Forma $\{\phi_1;\ \phi_2\}$ | $\Gamma$ | Peso modal equivalente |
+|---|---:|---|---:|---:|
+| 1 | 0,1762 s | $\{1{,}00;\ +1{,}52\}$ | 0,819 | 1 293,2 kN — **95,8 %** |
+| 2 | 0,0727 s | $\{1{,}00;\ -1{,}37\}$ | 0,181 | 56,8 kN — 4,2 % |
+
+Omitir la flexión de los cordones no es inocuo: con solo el resorte de corte el período baja a
+0,167 s, un 5 % menos, y el 5 % se traslada entero a $R^*$.
+
+Los dos modos suman el 100 % de la masa, así que el 90 % que exige **§5.6.2** está cubierto con
+holgura. El modo 1 es el de mayor masa de traslación equivalente, y por eso es el que gobierna el
+espectro: §5.4 define $R^*$ como el factor «calculado para el período del modo con mayor masa de
+traslación equivalente, en la dirección de análisis». Acá ese modo es también el fundamental, así
+que coincide con el $T^*$ que §5.5.1 define como «período fundamental en la dirección horizontal de
+análisis sísmico».
+
+$$
+T^* = 0{,}1762\ \text{s}
+$$
+
+**El espectro de diseño.** Va antes que todo lo demás porque $C$ lo necesita: el $R^*$ de la
+Ec. (1b) se calcula **una sola vez**, con ese $T^*$, y con $C_r = 0{,}16\,R$:
+
+$$
+C_r T_1 = 0{,}16 \cdot 5 \cdot 0{,}41 = 0{,}328\ \text{s}
+$$
+
+Como $T^* = 0{,}1762 < 0{,}328$, la definición por tramos entra por la rampa, no por $R$:
+
+<Equation label="Ec. 1b (§5.4.1)">
+$$
+R^* = 1{,}5 + (R - 1{,}5)\,\frac{T^*}{C_r T_1}
+= 1{,}5 + 3{,}5 \cdot \frac{0{,}1762}{0{,}328} = 3{,}380
+$$
+</Equation>
+
+El espectro de referencia de la Ec. (3), evaluado en $T^*$ con los parámetros del suelo D:
+
+$$
+S_{aH}(T^*) = A_r S\,\frac{1 + r\,(T^*/T_0)^p}{1 + (T^*/T_0)^q}
+= 0{,}56 \cdot 1{,}00 \cdot \frac{1 + 3{,}50 \cdot 0{,}2937}{1 + 0{,}2937^{2{,}5}} = 1{,}085\,g
+$$
+
+y con la corrección por amortiguamiento:
+
+<Equation label="Ec. 1a (§5.4.1)">
+$$
+C = \frac{S_a(T^*)}{g} = \frac{I\,S_{aH}(T^*)}{R^*}\left(\frac{0{,}05}{\xi}\right)^{0{,}4}
+= \frac{1{,}00 \cdot 1{,}085}{3{,}380} \cdot 1{,}443 = 0{,}463
+$$
+</Equation>
+
+**La combinación modal.** §5.6.3 pide superposición cuadrática completa, con $\beta_{in} = T_n/T_i$:
+
+<Equation label="Ecs. 8 y 10 (§5.6.3)">
+$$
+S = \sqrt{\sum_i \sum_j \rho_{ij}\,S_i\,S_j}
+\qquad
+\rho_{in} = \frac{8\xi^2(1+\beta_{in})\,\beta_{in}^{3/2}}
+{\left(1-\beta_{in}^2\right)^2 + 4\xi^2\beta_{in}\left(1+\beta_{in}\right)^2}
+$$
+</Equation>
+
+Acá $\beta_{12} = 0{,}0727/0{,}1762 = 0{,}413$ y $\rho_{12} = 0{,}0017$: los dos modos están tan
+separados que la CQC coincide con la SRSS en la cuarta cifra. Los cortes modales y su combinación:
+
+| | Modo 1 | Modo 2 | CQC |
+|---|---:|---:|---:|
+| $C(T_i)$ | 0,463 | 0,339 | — |
+| Corte del nivel 2 | 252,8 kN | −36,7 kN | 255,4 kN |
+| **Corte basal $Q_0$** | 598,8 kN | 19,2 kN | **599,2 kN** |
+
+La columna CQC está calculada con los modales sin redondear; rehecha desde las celdas impresas da
+599,1 kN.
+
+**El chequeo que cierra.** Antes de creerle al modelo, la Ec. (5) del análisis estático da un
+contraste de una línea:
+
+$$
+Q_0^{\text{AEE}} = C \cdot P = 0{,}463 \cdot 1\,350 = 625{,}1\ \text{kN}
+$$
+
+El modal entrega 599,2 kN, un **4 % menos**, y se sabe por qué: el modo 1 tiene el 95,8 % de la masa
+y el resto vive en un modo cuyo período cae más abajo en el espectro. Si esa razón se alejara mucho
+de la unidad —o peor, si diera un orden de magnitud— el problema no está en la norma sino en el
+modelo: masa perdida, factor de escala del espectro mal puesto, o modos insuficientes.
+
+<Note type="warning" title="Acá termina lo que el software sabe hacer">
+`Base Reactions` del caso de espectro devolvería 599,2 kN y no tendría nada más que decir. Las tres
+cláusulas que siguen —§5.12, §5.13 y §5.14— no son opciones de un cuadro de diálogo ni salen de
+ninguna tabla de resultados: se aplican a mano, sobre ese número, después de que el análisis
+terminó. Y la última no produce una fuerza sino un factor, que se usa recién en la etapa de diseño
+por capacidad, en otro documento y muchas veces por otra persona.
+</Note>
+
+## 5. El corte basal mínimo (§5.12)
+
+<Equation label="Ec. 12 (§5.12)">
+$$
+Q_0^{\text{mín.}} = 0{,}25\,\frac{I\,A_r\,S}{g}\,P
+$$
+</Equation>
+
+(La [nota del 0,7R₁](/apuntes/nch2369-capacidad-y-07r1) lo escribe $Q_{0,\text{mín}}$; acá se usa la
+notación del PDF, con «mín.» como superíndice.) Con los valores del caso:
+
+$$
+Q_0^{\text{mín.}} = 0{,}25 \cdot 1{,}00 \cdot 0{,}56 \cdot 1{,}00 \cdot 1\,350 = 189{,}0\ \text{kN}
+$$
+
+$$
+Q_0 = 599{,}2\ \text{kN} > 189{,}0\ \text{kN}
+\qquad \Longrightarrow \qquad \text{no se escala}
+$$
+
+La cláusula es una obligación con una frase importante al final: si $Q_0$ es menor que
+$Q_0^{\text{mín.}}$, «todas las fuerzas y esfuerzos internos… **se deben multiplicar** por el
+cociente $Q_0^{\text{mín.}}/Q_0$, para los efectos de diseño. **Este aumento no se debe aplicar al
+cálculo de desplazamientos.**»
+
+<Note type="tip" title="El veredicto no depende del peso">
+$Q_0$ y $Q_0^{\text{mín.}}$ son los dos proporcionales a $P$. Al dividir uno por otro, el peso se
+cancela, y la desigualdad se reduce a comparar dos números que no lo contienen: el coeficiente
+sísmico $C(T^*) = 0{,}463$ contra la constante del sitio $0{,}25\,A_r S/g = 0{,}140$. Duplicar el
+chute no cambia si el mínimo muerde.
+
+Con una salvedad que importa: el peso sí entra por la puerta de atrás, porque cambia $T^*$ —una cepa
+más pesada es más flexible— y $T^*$ es lo único que mueve a $C$. Lo que no existe es una dependencia
+directa. **Lo que decide es dónde cae el período en el espectro, no cuánto pesa la estructura.**
+</Note>
+
+## 6. El corte basal máximo (§5.13)
+
+<Equation label="Ec. 13 (§5.13)">
+$$
+Q_0^{\text{máx.}} = 2{,}75\,\frac{I\,A_r\,S}{g\,(R+1)}\left(\frac{0{,}05}{\xi}\right)^{0{,}4} P
+$$
+</Equation>
+
+$$
+Q_0^{\text{máx.}} = 2{,}75 \cdot \frac{1{,}00 \cdot 0{,}56 \cdot 1{,}00}{5+1} \cdot 1{,}443 \cdot 1\,350
+= 499{,}9\ \text{kN}
+$$
+
+$$
+Q_0 = 599{,}2\ \text{kN} > 499{,}9\ \text{kN}
+\qquad \Longrightarrow \qquad \text{se puede reducir por } \frac{499{,}9}{599{,}2} = 0{,}834
+$$
+
+Un **16,6 % menos** en todas las fuerzas y esfuerzos internos. Dos diferencias con §5.12 que valen
+más que el número:
+
+**Es permisivo, no obligatorio.** La redacción cambia de «se deben multiplicar» a «**se pueden**
+multiplicar». Es la única cláusula de esta cadena que se puede decidir no usar, y renunciar a ella
+es perfectamente lícito: se diseña con los 599,2 kN y se acabó. Lo que no es lícito es lo inverso,
+aplicar la reducción sin verificar que corresponde.
+
+**Tiene cinco exclusiones,** y hay que recorrerlas una por una. La cláusula «no aplica para equipos
+y sistemas estructurales» donde se cumpla alguna de estas condiciones:
+
+| | Exclusión de §5.13 | Esta cepa |
+|---|---|---|
+| (a) | diseño obtenido de análisis tiempo-historia que cumpla 5.10.2, 5.10.3 y 5.10.4 | no — es modal espectral ✓ |
+| (b) | sistema sismorresistente diseñado con $R \le 2$ | no — $R = 5$ ✓ |
+| (c) | emplazados sobre sitios Tipo F | no — suelo D ✓ |
+| (d) | incluidos en cláusula 13 (muelles) de Categorías III o IV | no ✓ |
+| (e) | componentes de instalaciones generadoras de energía, cláusula 14 | no ✓ |
+
+Ninguna aplica, así que la reducción es admisible y se toma. **El corte de diseño es 499,9 kN.**
+
+<Figure
+  src="/ejemplo-analisis-sismico-cepa-nch2369/espectro-y-las-dos-bandas.svg"
+  alt="Gráfico del coeficiente sísmico de diseño contra el período fundamental, para el sitio y el sistema de la cepa: zona 3, suelo D, coeficiente de importancia 1,0, R igual a 5 y amortiguamiento 0,02. La curva parte en 0,539 para período cero, baja hasta un quiebre en 0,328 segundos donde el factor R asterisco alcanza a R y deja de crecer, vuelve a subir levemente hasta 0,395 cerca de 0,42 segundos y luego decae. Dos líneas horizontales de trazos marcan las bandas de la norma: el corte basal máximo en 0,370 y el mínimo en 0,140. El gráfico queda partido en tres regímenes sombreados: hasta 0,58 segundos el máximo recorta, entre 0,58 y 1,54 segundos ninguna de las dos cláusulas interviene, y sobre 1,54 segundos el mínimo escala. La cepa está marcada con un punto en 0,1762 segundos y coeficiente 0,463, con una flecha que baja hasta 0,370"
+  caption="El coeficiente de diseño de una estructura de este sitio y este sistema, según su período. El mínimo de §5.12 es una cláusula para estructuras flexibles y el máximo de §5.13 para estructuras rígidas; la cepa, con 0,1762 s, está de lleno en el segundo régimen. El quiebre en 0,328 s es donde R* deja de crecer con el período."
+/>
+
+Ese gráfico es el que explica por qué la intuición falla acá. **El mínimo de §5.12 es una cláusula
+para estructuras flexibles**: en este sitio recién le aplica a partir de $T^* \approx 1{,}54$ s, casi
+nueve veces el período de la cepa. **El máximo de §5.13 es para estructuras rígidas**, y recorta a
+todo lo que tenga $T^* \lesssim 0{,}58$ s. Una cepa industrial arriostrada vive del lado rígido, y
+por eso la cláusula que muerde casi siempre es la segunda — al revés de lo que sugiere el nombre
+«corte basal mínimo», que es el que uno recuerda.
+
+## 7. El R₁ efectivo (§5.14)
+
+La cláusula es una sola frase —«para fines de diseño, el factor de modificación de la respuesta
+estructural efectivo se determina mediante (14)»— y toda la sustancia está en la ecuación:
+
+<Equation label="Ec. 14 (§5.14)">
+$$
+R_1 = R^{*}\,\text{mín.}\!\left(\frac{Q_0}{Q_0^{\text{mín.}}},\ 1\right)
+$$
+</Equation>
+
+$$
+\frac{Q_0}{Q_0^{\text{mín.}}} = \frac{599{,}2}{189{,}0} = 3{,}17
+\qquad \Longrightarrow \qquad
+R_1 = 3{,}380 \cdot \min(3{,}17;\ 1) = 3{,}380 \cdot 1{,}00 = \mathbf{3{,}380}
+$$
+
+$$
+0{,}7\,R_1 = 2{,}366
+$$
+
+Dos cosas que la ecuación dice y que se pierden si se la lee rápido.
+
+**Solo mira el mínimo.** La reducción del 16,6 % que acabamos de aplicar por §5.13 no aparece en
+ninguna parte de la Ec. (14): el $Q_0$ que entra es el del análisis, antes de cualquier ajuste. O
+sea que en esta cepa se baja la fuerza *y* se conserva el $R_1$ entero. Son dos cosas
+independientes, y confundirlas —bajar $R_1$ «porque se redujo el corte»— castiga el diseño por
+capacidad sin que ninguna cláusula lo pida.
+
+**Lo que baja $R_1$ acá no es el corte, es el período.** El factor $\min(\cdot;1)$ vale 1,00: la
+corrección de §5.12 no interviene. Todo el descuento respecto del $R = 5$ de la Tabla 7 viene de la
+rampa de la Ec. (1b), es decir de que la cepa es rígida.
+
+<Figure
+  src="/ejemplo-analisis-sismico-cepa-nch2369/cadena-r.svg"
+  alt="Diagrama de la cadena de los cuatro factores R en cuatro cajas encadenadas por flechas. La primera caja, R igual a 5, viene de la Tabla 7 fila 5.3, marcos arriostrados con anclajes dúctiles y amortiguamiento 0,02. Una flecha con factor 0,676, rotulada Ecuación 1b, lleva a la segunda caja, R asterisco igual a 3,38, porque el período 0,1762 segundos queda bajo el producto Cr por T1 igual a 0,328 segundos y entra por la rampa. Una flecha con factor 1,000, rotulada Ecuación 14, lleva a la tercera caja, R uno igual a 3,38, porque el corte basal de 599 kN supera el mínimo de 189 kN y el mínimo de la ecuación vale 1,00. Una flecha con factor 0,70, rotulada cláusula 8, lleva a la cuarta caja, 0,7 R uno igual a 2,37, el multiplicador de la demanda del fusible. Al pie, un panel dice que R es mayor o igual que R asterisco y este que R uno por construcción, y que usar el R igual a 5 de la tabla donde va R uno da 0,7 R uno igual a 3,50 en vez de 2,37, un 48 por ciento más de demanda de capacidad"
+  caption="Los cuatro factores, y cuál multiplica de verdad. R ≥ R* ≥ R₁ por construcción: el de la Tabla 7 nunca es el que entra en el 0,7R₁. Para esta cepa el descuento completo —de 5 a 3,38— lo produce el período, no el corte."
+/>
+
+### 7.1 Lo que cuesta usar el R de la tabla
+
+El error de escribir $R_1 = 5$ —el de la Tabla 7— donde va el efectivo se puede poner en kilonewton,
+y para eso basta cerrar la cadena de fuerza un paso más. El corte de diseño del nivel 1 son 499,9 kN
+repartidos entre las dos líneas, y dentro de cada línea entre las dos diagonales de la X:
+
+$$
+P_u = \frac{499{,}9/2}{2\cos\theta} = \frac{249{,}9}{2 \cdot 0{,}832} = 150{,}2\ \text{kN}
+$$
+
+Sobre ese axial se aplica el amplificador de capacidad, y ahí se ve la diferencia:
+
+| | Con el $R$ de la Tabla 7 | Con el $R_1$ de la Ec. (14) |
+|---|---:|---:|
+| Factor | 5,00 | 3,38 |
+| $0{,}7R_1$ | 3,50 | 2,37 |
+| Demanda sobre la diagonal, $0{,}7R_1 P_u$ | 525,7 kN | 355,4 kN |
+
+**Un 48 % más**, que se paga en la conexión, en el puntal, en la columna y en la fundación, porque
+todos ellos se dimensionan con esa demanda. Va del lado seguro —el error encarece, no expone—, pero
+son 170,3 kN de diferencia por diagonal que ninguna cláusula pidió.
+
+Y hay algo más de fondo que el número. **$R_1$ no se puede declarar al empezar el proyecto**: la
+Ec. (14) necesita $T^*$, que sale del modelo, y $Q_0$, que sale del análisis. Quien lo escribe en la
+portada de una memoria antes de correr nada está escribiendo el $R$ de la tabla y llamándolo $R_1$;
+y como el resultado cierra igual —cuadra consigo mismo, y del lado conservador— nada avisa.
+
+## 8. Cómo se hace en SAP2000
+
+Hasta acá todo es norma. Lo que sigue es oficio, y es donde la cadena se corta en la práctica.
+
+### 8.1 Lo que hay que armar
+
+1. **Primero el modal, después el espectro.** $R^*$ es un solo número y depende de $T^*$, que es un
+   resultado del análisis. O sea que la función de espectro **no se puede escribir antes de correr
+   el modal**: se corre `Modal`, se lee $T^*$, se calcula $R^*$ con la Ec. (1b) y recién ahí se
+   define la función. Es una iteración de una vuelta, y saltársela es el origen más común de un
+   espectro mal reducido.
+2. **La función, en `Define > Functions > Response Spectrum > User`,** con las ordenadas ya
+   divididas por $R^*$ y ya multiplicadas por $(0{,}05/\xi)^{0{,}4}$ e $I$. La NCh 2369 no entrega
+   la curva en el formato del programa: se tabula punto a punto.
+3. **El factor de escala del caso, en unidades de aceleración.** Si la función se ingresó
+   adimensional —en fracción de $g$, que es lo natural leyendo la Ec. (1a)— el `Scale Factor` del
+   caso es $g$ en las unidades del modelo: 9,81 m/s² o 9 810 mm/s². Es el error que produce
+   cortes basales absurdos y no da ninguna alarma.
+4. **`Modal Combination: CQC`** — §5.6.3 lo pide por nombre, «Superposición Cuadrática Completa». El
+   amortiguamiento de esa combinación es $\xi = 0{,}02$, no el 5 % que viene por omisión, y su único
+   efecto es el acoplamiento entre modos vecinos: la corrección de la ordenada ya está adentro de la
+   función.
+5. **Modos suficientes para el 90 % de §5.6.2**, verificados en `Modal Participating Mass Ratios`
+   (`SumUX` y `SumUY`), no en el número de modos que trae el caso por omisión.
+
+### 8.2 Lo que hay que hacerle encima
+
+Nada de lo que sigue lo hace el programa.
+
+1. **Comparar `Base Reactions` del caso de espectro contra $Q_0^{\text{mín.}}$ y
+   $Q_0^{\text{máx.}}$.** Las dos son fórmulas cerradas que dependen de $P$, del sitio y del
+   sistema: se calculan a mano en tres líneas y ninguna aparece en un resultado del modelo.
+2. **Si hay que escalar, en un caso aparte.** Como ni el aumento de §5.12 ni la reducción de §5.13
+   se aplican al cálculo de desplazamientos, el factor no puede vivir en el caso de espectro: hay
+   que llevar **dos casos**, uno sin escalar para deformaciones y otro escalado para diseño, o poner
+   el factor en las combinaciones de resistencia y solo en ellas. Mezclarlos es un error que no se
+   ve en la deformada.
+3. **$R_1$ no está en el modelo.** Sale de la Ec. (14) a mano, y su consumidor no es el análisis
+   sino el diseño por capacidad de la cláusula 8, muchas veces en otro documento.
+4. **El contraste con la Ec. (5).** $C \cdot P$ contra el corte del modal es una división y es lo
+   único que detecta masa perdida o un espectro mal escalado. Acá, 599,2 contra 625,1 kN.
+
+<Note type="info" title="El factor sobre E vale 1,0, y el 0,7R₁ es otra cosa">
+Las combinaciones sísmicas de §4.5.1 en LRFD son $1{,}2D + aL + SO + SA + E$ y $0{,}9D + SA + E$:
+**el sismo entra con factor unitario**. Los 499,9 kN de corte de diseño son la $E$ de esas
+combinaciones, sin mayorar otra vez.
+
+El $0{,}7R_1$ no es un factor de carga y no vive acá: es el amplificador que la cláusula 8 aplica a
+la demanda sísmica de los elementos que deben permanecer elásticos, y se aplica una sola vez, donde
+la cláusula 8 lo manda. Ponerlo en una combinación global lo aplica a todo, incluido el fusible que
+justamente no debe llevarlo.
+</Note>
+
+## 9. Los ocho errores que este camino evita
+
+Cerrando en una lista operativa, cada uno con su cláusula:
+
+1. **Usar el $R$ de la Tabla 7 donde va $R_1$.** Por construcción $R \ge R^* \ge R_1$. Acá, 5 contra
+   3,38: un 48 % de más en el multiplicador de capacidad (§5.14, Ec. 14). Es caro, no inseguro —
+   pero es acero que no hacía falta.
+2. **Aceptar el corte del modelo tal cual**, sin compararlo con §5.12 y §5.13. Acá el máximo recorta
+   un 16,6 %: 599,2 kN contra los 499,9 con que se diseña.
+3. **Aplicar el escalado también a los desplazamientos.** §5.12 y §5.13 lo prohíben con la misma
+   frase, cada una en su párrafo: «no se debe aplicar al cálculo de desplazamientos».
+4. **Suponer que el que muerde es el mínimo.** Para esta cepa el mínimo recién intervendría con un
+   período de 1,54 s, casi nueve veces el suyo. El nombre engaña: en estructuras industriales
+   rígidas gobierna el máximo.
+5. **Reducir por §5.13 sin recorrer sus cinco exclusiones** — tiempo-historia, $R \le 2$, sitios
+   Tipo F, cláusula 13 de Categorías III o IV, y cláusula 14. La segunda es la que más se cruza en
+   el camino: son 7 de las 44 filas de la Tabla 7 —las estructuras que se diseñan para permanecer
+   elásticas, las asimiladas, el péndulo invertido, las sísmicas isostáticas y las de conexiones no
+   dúctiles—, y para todas ellas la reducción simplemente no existe.
+6. **Calcular $R^*$ período a período.** §5.4 lo define «para el período del modo con mayor masa de
+   traslación equivalente»: es **un solo número** para todo el espectro. Reducir cada modo con su
+   propio $R^*$ es conservador para los modos altos, pero no es lo que dice la norma, y conviene
+   declarar cuál se usó.
+7. **Quedarse con los modos que trae el caso por omisión.** §5.6.2 pide verificar el 90 % de la masa
+   en cada dirección, y el número de modos que lo consigue no lo sabe nadie antes de correr el
+   modal.
+8. **Descartar el análisis estático por costumbre, o usarlo sin derecho.** Acá lo prohíbe la
+   irregularidad de masa (2,09 > 1,50) — y no lo habría prohibido si el chute estuviera en el último
+   nivel, que §5.2.2 excluye expresamente de esa definición.
+
+Los ocho son de proceso, no de aritmética, y ninguno lo caza revisar los resultados: cada uno
+produce un cálculo que cuadra consigo mismo.
+
+<Note type="warning" title="Dónde termina este ejemplo, y qué sigue">
+Acá se cierra la fuerza. Falta el otro lado del bucle: **los desplazamientos de la cláusula 6**, que
+no se calculan con nada de lo que se hizo acá.
+
+§6.1 los estima con el **espectro de referencia** —el de la Ec. (3), sin dividir por $R^*$—,
+corregido por amortiguamiento y ponderado por $I$. Para esta cepa eso significa una demanda de
+desplazamiento $R^* = 3{,}38$ veces la que daría el espectro de diseño. Y como ni el aumento de
+§5.12 ni la reducción de §5.13 se aplican a desplazamientos, el corte con que se verifica la deriva
+no es ninguno de los tres números de este ejemplo.
+
+Sobre esos desplazamientos cuelgan los límites de §6.3 —0,015·h en el caso general—, la separación
+entre estructuras de §6.2 y el umbral de P-Delta de §6.4, que es el mismo 0,015·h. Es el post
+siguiente.
+</Note>
+
+## El hilo, en una frase
+
+**El análisis modal espectral no entrega el corte de diseño: entrega un candidato,** y la norma le
+pone una banda por arriba y por abajo cuyos dos extremos no dependen del análisis sino de $P$, del
+sitio y del sistema. Lo único que decide cuál de los dos manda es dónde cae $T^*$ en el espectro —y
+en una cepa industrial rígida manda el máximo, no el mínimo. Del mismo período sale el $R^*$ que
+después arrastra la Ec. (14), y con él el $R_1$ que multiplica la demanda de todo lo que cuelga del
+fusible. Por eso $R_1$ no es un dato del proyecto: es el último resultado del análisis, y el primero
+del diseño.

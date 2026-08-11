@@ -112,6 +112,23 @@ menos eficiencia, y por eso las dos configuraciones cargan **la misma diagonal c
 contra 240,4 kN). Cambia la configuración, no el elemento — eso es lo que las hace comparables y
 no dos ejemplos sueltos.
 
+**De dónde salen el corte de piso y el $R_1$** (2026-08-10). Los dos entraban declarados y ningún
+memo los derivaba. El post [del corte modal al
+R₁](../src/content/apuntes/ejemplo-analisis-sismico-cepa-nch2369.mdx) hace la cadena §5.1.2 → §5.6 →
+§5.12/5.13/5.14 sobre la cepa de dos niveles y llega a otros números:
+
+| | Declarado en los memos | Derivado del análisis |
+|---|---:|---:|
+| $R_1$ | 5,00 | **3,38** (Ec. 14; todo el descuento lo pone la rampa de la Ec. 1b, no el corte) |
+| $0{,}7R_1$ | 3,50 | 2,37 |
+| Corte por línea, nivel 1 | 400 kN | 249,9 kN |
+
+El $R_1 = 5$ de los memos queda **del lado seguro** —un $R_1$ mayor amplifica más la demanda de
+capacidad—, así que no invalida ninguno. El corte de 400 kN por línea corresponde a una cepa más
+pesada que la que describe la gravedad declarada en `columna-marco-x-capacidad` ($D = 300$ kN y
+$L = 150$ kN por columna → $P = 1\,350$ kN por §5.1.2). Rehacer los memos con los números derivados
+es un ítem abierto en la deuda de `ANALISIS.md`, no una corrección de este índice.
+
 **Un dueño por número.** Las capacidades esperadas de cada diagonal se derivan una sola vez y los
 demás memos las heredan por supuesto declarado:
 
