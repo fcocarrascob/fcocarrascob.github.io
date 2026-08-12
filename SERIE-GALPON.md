@@ -198,10 +198,15 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 | **§5.7** y **Tabla 4** — Factor de elevación del suelo K_e | 23 | 31 | 2026-08-12 | «El factor de elevación del suelo para ajustar la densidad del aire, K_e, se debe determinar de acuerdo con la Tabla 4. **Se permite tomar K_e = 1 para todas las elevaciones.**» **Tabla 4** por z_e en m: **< 0** → ver Nota 2 · **0** → 1,00 · **300** → 0,96 · **600** → 0,93 · **900** → 0,90 · **1 200** → 0,87 · **1 500** → 0,84 · **1 800** → 0,81 · **> 1 800** → **ver Nota 2**. **NOTA 1)** en todos los casos es posible usar K_e = 1,00 de manera conservadora. **NOTA 2)** K_e se determina por interpolación o con **`K_e = e^(−0,000119·z_e)`**, con z_e la elevación del terreno sobre el nivel del mar en m. | **Hallazgo 5.26**; post 1 |
 | **§5.8.1** y **§5.8.2** — Presión de velocidad, Ec. (2) | 23 | 31 | 2026-08-12 | **5.8.1**: K_z o K_h se determinan de la Tabla 5 según la categoría de exposición de §5.5.3; en zonas de transición cerca de un cambio de rugosidad se permiten **valores intermedios** de K_z o K_h si se justifican con metodología. **5.8.2**, **Ec. (2)**: **`q_z = 0,613·I·K_z·K_zt·K_e·V²`** en **N/m²**, con **I** el factor de importancia según categoría de ocupación (Tabla 2), K_z de §5.8.1, K_zt de §5.6.2. **Ojo: I va DENTRO de q_z y K_d va fuera** (K_d aparece en las ecuaciones de presión, no acá). | Post 1 |
 
-**Pendiente de NCh432**: Figura 2 y §5.3 (zonificación y **V básica**) · **Tabla 2** (I por categoría) ·
-**Tabla 3 (K_d)**, pág. 18 / PDF 26 · §5.5 categorías de exposición y **Tabla 6** (α, z_g, z_mín),
-pág. 25 / PDF 33 · §5.9 (**G**, y el criterio rígido vs flexible) · §5.10 y §5.11 con Tabla 7
-(**GC_pi** por cerramiento).
+| **Tabla 3** — Factor de direccionalidad K_d | 18 | 26 | 2026-08-12 | **Edificios**: sistema principal resistente a las fuerzas del viento **0,85**; componentes y revestimiento **0,85**. Techos en arco 0,85 · cúpulas circulares 1,0ᵃ · **chimeneas, estanques y similares**: cuadrada 0,90, hexagonal 0,95, octagonal 1,0ᵃ, redonda 1,0ᵃ · muros y letreros sólidos, aislados y equipos en techumbres 0,85 · letreros abiertos y marcos planos 0,85 · **estructuras en celosía**: secciones triangulares, cuadradas o rectangulares 0,85, todas las demás 0,95. **Nota ᵃ**: se permite K_d = 0,95 para estructuras redondas u octogonales con sistemas estructurales **no axisimétricos**. | **K_d = 0,85** |
+| **§5.5.2** Categorías de rugosidad de la superficie | 18 | 26 | 2026-08-12 | La rugosidad se determina «dentro de cada **sector de 45 grados** para una distancia contra el viento del sitio», según §5.5.3. **Rugosidad B**: áreas urbanas y suburbanas, boscosas, u otros terrenos con numerosas obstrucciones muy cercanas entre sí del tamaño de viviendas unifamiliares o mayor. **Rugosidad C**: «**terreno abierto con obstrucciones dispersas que tienen alturas generalmente inferiores a 10 m. Esta categoría incluye campos llanos, abiertos y pastizales.**» **C5.5.2**: la rugosidad C «es representativa de zonas de ubicación de aeropuertos, zonas en donde están la mayoría de las estaciones meteorológicas». | **Exposición C** |
+| **Tabla 6** — Constantes de exposición al terreno | 25 | 33 | 2026-08-12 | Por exposición, **α · z_g (m) · z_mín (m)**: **B** → 7,5 · 1 000 · 10 · **C** → **9,8 · 750 · 5** · **D** → 11,5 · 590 · 2. | Chequeo de K_z |
+| **§5.9** Efecto de ráfaga | 25 | 33 | 2026-08-12 | **5.9.1**: para decidir si es rígido o flexible, la frecuencia natural fundamental se establece «mediante un análisis debidamente fundamentado, utilizando las propiedades estructurales y las características de deformación de los elementos resistentes. **No se permite determinar la frecuencia natural fundamental mediante métodos aproximados basados únicamente en las características geométricas** del edificio o estructura». **5.9.2 rígidas**: «se permite considerar el factor de efecto de ráfaga (G) igual a **0,85**»; alternativamente el procedimiento de **ASCE/SEI 7-22 §26.11.4**; «**Los edificios de baja altura, tal como se definen en cláusula 3, se pueden considerar rígidos**». **5.9.3 flexibles**: G_f por análisis racional fundamentado; se permite **ASCE/SEI 7-22 §26.11.5**, pero sin métodos aproximados para la frecuencia. **5.9.4 Limitaciones**: «Cuando se entreguen factores de efecto de ráfaga **combinados** con coeficientes de presión (GC_p), (GC_pi) y (GC_pf) en tablas y figuras, el factor de efecto de ráfaga **no se debe determinar por separado**». | **Hallazgo 5.28**; G = 0,85 |
+| **§5.10** Clasificación del cerramiento | 25 | 33 | 2026-08-12 | **5.10.1**: para los GC_pi los edificios se clasifican como **cerrados, parcialmente cerrados, parcialmente abiertos o abiertos** (cuatro clases) según la cláusula 3. Si satisface a la vez recinto abierto y parcialmente cerrado, se clasifica como **parcialmente abierto**. **5.10.2 Aberturas**: para establecer la clasificación se determina la cantidad de aberturas en la envolvente, y «cada muro del edificio **se debe asumir como el muro de barlovento**» para esa determinación. | Post 1 |
+| **§5.11** y **Tabla 7** — Coeficientes de presión interna GC_pi | 26 | 34 | 2026-08-12 | **5.11.1 Factor de reducción para edificios de gran volumen R_i, Ec. (3)**: «Para un edificio **parcialmente cerrado** que contiene un **único volumen grande sin particiones**, el GC_pi se debe multiplicar por R_i»: `R_i = 1,0` o `R_i = 0,5·[1 + 1/√(1 + V_i/(6 950·A_og))] < 1,0`, con **A_og** = área total de aberturas en la envolvente (m²) y **V_i** = volumen interno sin particionar (m³). **Tabla 7** (SPRFV y C&R, todas las alturas, muros y techo): **Edificios cerrados** — A_o menor que el menor entre 0,01A_g o 0,37 m², y A_oi/A_gi ≤ 0,2 — presión interna **moderada**, **GC_pi = +0,18 / −0,18**. **Parcialmente cerrados** — A_o > 1,1A_oi, y A_o mayor que el menor entre 0,01A_g o 0,37 m², y A_oi/A_gi ≤ 0,2 — presión **alta**, **+0,55 / −0,55**. **Parcialmente abiertos** — el que no satisface cerrado, parcialmente cerrado ni abierto — moderada, **+0,18 / −0,18**. **Abiertos** — cada muro al menos **80 % abierto** — despreciable, **0,00**. **NOTAS**: 1) los signos + y − denotan presiones actuando **hacia** y **alejándose** de las superficies internas. 2) los GC_pi se usan con q_z o q_h según se especifique. 3) se consideran **dos casos**: GC_pi positivo en todas las superficies internas, o negativo en todas. | **GC_pi = ±0,18** |
+
+**NCh432 queda leída para lo que la serie necesita.** Lo que falta es de la cláusula 7 (envolvente) y la
+9 (C&R), que **ya está trabajado** en `ejemplo-viento-galpon-nch432.mdx` y se cita en vez de rehacerse.
 
 ### 4.2 Parámetros derivados
 
@@ -785,6 +790,24 @@ una faena real.
 Cruzar el límite comunal cambia A_r de 0,42 g a 0,28 g, un **33 % menos** de demanda, sin que cambie
 nada del sitio ni de la estructura.
 
+### 5.28 El galpón es rígido por definición — la duda del G se cierra sin análisis de frecuencia
+
+El plan marcaba como riesgo que «el marco a momento con T\* ~ 0,9 s podría no calificar de rígido y
+exigir G_f de estructura flexible». **§5.9.2 lo resuelve**: «Los edificios de **baja altura**, tal como se
+definen en cláusula 3, **se pueden considerar rígidos**». Con h = 8,0 m (≤ 18 m, y ≤ la menor dimensión
+horizontal de 24 m) el galpón es de baja altura, así que **G = 0,85** sin necesidad de determinar la
+frecuencia.
+
+Y hay una consecuencia que conviene decir en el post: **§5.9.4** manda que cuando el factor de ráfaga
+viene **combinado** con los coeficientes de presión —GC_p, GC_pi, GC_pf, que es el caso de la
+**cláusula 7 (envolvente)** por la que va este galpón— **el G no se aplica por separado**. O sea, el
+0,85 de §5.9.2 no multiplica nada en nuestro camino de cálculo: ya está dentro del GC_pf de la Figura 12.
+Es un error clásico aplicarlo dos veces.
+
+Nota de rigor para el post: §5.9.1 **prohíbe** estimar la frecuencia con fórmulas geométricas del tipo
+`T = 0,1N`. Si el galpón no fuera de baja altura, habría que sacar la frecuencia del modelo — que es
+justo lo que la serie tiene, en dos motores.
+
 ---
 
 ## 6. Estado de la serie
@@ -796,7 +819,7 @@ nada del sitio ni de la estructura.
 | 1 | Verificar tablas sísmicas de rukan contra la 3.ª ed. | ✅ **hecho** — coinciden (§5.5) |
 | 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
 | 3 | Leer NCh3171:2017 §9 completo | ✅ **hecho** — §9, §9.1.1 con sus seis excepciones y reglas de cierre, §9.1.2, §9.1.3, §9.2.1 con sus cuatro excepciones y cierre, §9.2.2, §9.2.3 y §9.3 |
-| 4 | Leer NCh432:2025, parámetros del sitio | 🔄 **en curso** — §5.6.1, §5.6.2 y la **Figura 3 (K_zt)** leídas; falta lo listado al pie de §4.1 |
+| 4 | Leer NCh432:2025, parámetros del sitio | ✅ **hecho** — §3.2, §3.3, §5.5.2, §5.6.1, §5.6.2, §5.7, §5.8.1, §5.8.2, §5.9, §5.10, §5.11 y las Tablas 1, 2, 3, 4, 5, 6 y 7, más la **Figura 3 (K_zt)** |
 | 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ⬜ pendiente |
 
 **Ya leído de NCh2369** (2026-08-12): §4.3.1 · §4.3.2 · §4.5.1 + Tabla C-2 · §5.1.1 · §5.1.2 ·
