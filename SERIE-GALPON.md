@@ -109,7 +109,7 @@ Tomadas con el usuario. No se re-litigan.
 |---|---|
 | Geometría | luz 24,0 m · pendiente 10° · alero 8,0 m · 5 marcos @ 6,0 m |
 | Bases | **articuladas** (práctica chilena; es lo que hace fallar la deriva de §6.3) |
-| Sitio | altiplano ~3.800 m · **zona sísmica 2** · suelo **B** (sensibilidad a C) |
+| Sitio | faena minera de altiplano ~3.800 m, **comuna de Pica, Región de Tarapacá** · **zona sísmica 2**, A_r = 0,42 g (Tabla 2 de NCh2369) · **zona de viento I-B**, V = 30 m/s (Tabla 1 de NCh432) · suelo **B** (sensibilidad a C). Verificado en §5.27 |
 | Perfiles | soldados por planchas, **peralte variable** en columna y dintel |
 | Nieve | **S = 1,20 kPa** sobre proyección horizontal, desde estudio de sitio |
 | Extensión | **10 posts** + 1 subproducto |
@@ -191,6 +191,9 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 
 | **Tabla 5** — Coeficientes de exposición K_h y K_z | 24 | 32 | 2026-08-12 | Por altura z o h en m, y exposición **B / C / D**: **0-2** → 0,71 / 0,87 / 0,90 · **4** → 0,71 / 0,87 / 1,01 · **5** → 0,71 / 0,87 / 1,05 · **6** → 0,71 / 0,90 / 1,09 · **8** → 0,71 / **0,95** / 1,14 · **10** → 0,71 / 1,00 / 1,19 · **12** → 0,74 / 1,04 / 1,22 · **14** → 0,77 / 1,07 / 1,26 · **16** → 0,80 / 1,10 / 1,29 · **18** → 0,83 / 1,13 / 1,31 · **20** → 0,85 / 1,15 / 1,34. **NOTAS**: 1) `K_z = 2,41·[z/z_g]^(2/α)` para `z_mín ≤ z ≤ z_g`. 2) α, z_g y z_mín según **Tabla 6**. 3) para `z < z_mín` se usa K_z con z = z_mín. 4) para `z > z_g`, **K_z = 2,41**. 5) para alturas no señaladas, aplicar la Nota 1 — **la nota dice «Tabla 4», errata: es la Tabla 5**. Texto arriba de la tabla: «La presión de velocidad, a la altura media del techo se calcula como **q_h = q_z evaluada a partir de la Ecuación (2) usando K_z a la altura media del techo h**». | **Hallazgo 5.25**; post 1 |
 
+| **Tabla 2 de NCh2369** — Zonificación sísmica por comunas | 50 | 56 | 2026-08-12 | **No estaba transcrita al wiki.** Norte del país: **Arica y Parinacota** → Zona 3: Arica, Camarones · Zona 2: General Lagos, Putre. **Tarapacá** → Zona 3: Alto Hospicio, Huara, Iquique, Pozo Almonte · **Zona 2: Camiña, Pica** · **Zona 1: Colchane**. **Antofagasta** → Zona 3: Antofagasta, María Elena, Mejillones, Taltal, Tocopilla · **Zona 2: Calama, Sierra Gorda** · **Zona 1: San Pedro de Atacama**. **Atacama** → Zona 3: Alto del Carmen, Caldera, Chañaral, Copiapó, Huasco, Vallenar · Zona 2: Diego de Almagro, Tierra Amarilla. **Coquimbo** → todas en Zona 3 (Andacollo, Canela, Combarbalá, Coquimbo, Illapel, La Higuera, La Serena, Los Vilos, Monte Patria, Ovalle, Paiguano, Punitaqui, Río Hurtado, Salamanca, Vicuña). | **Hallazgo 5.27**; fija la comuna |
+| **Tabla 1** — Zonificación y velocidad básica V | 12 | 20 | 2026-08-12 | Por zona, latitud sur, altitud (msnm), **V** en m/s y **p₀** en N/m²: **I-A** 17°29'–27°22'S, < 2 000, **27**, 447 · **I-B** 17°29'–27°22'S, **≥ 2 000**, **30**, **552** — ambas «Límite Norte hasta Copiapó» · **II-A** 27°22'–29°54'S, < 1 500, 27, 447 · **II-B** ídem, ≥ 1 500, 35, 751 — «Zona Centro» · **III-A** 29°54'–37°28'S, < 1 000, 34, 709 · **III-B** ídem, ≥ 1 000, 35, 751 — «Zona Sur» · **IV-A** 37°28'–41°28'S, < 600, 37, 839 · **IV-B** ídem, ≥ 600, 40, 981 — «Zona Sur hasta Chiloé» · **V** 41°28'–50°S, 40, 981 · **VI** 50°–56°32'S, 44, 1 187 — «Zona Austral» · **NC1** Isla de Pascua 32, 628 · **NC2** Juan Fernández 50, 1 533 · **NC3** Antártica CL 60, 2 207. **NOTA 1)** «p₀ corresponde a un valor de presión referencial que considera la evaluación de q_z de acuerdo con 5.8 **adoptando K_z, K_zt y K_e iguales a 1,0**». **NOTA 2)** Ver Figura 2. | **V = 30 m/s** (zona I-B) |
+| **Tabla 2** — Factor de importancia I y período de retorno | 12 | 20 | 2026-08-12 | Por **Categoría de ocupación I / II / III / IV**: **período de retorno medio** 25 / 50 / 100 / 150 años; **Factor de Importancia I** = **0,87 / 1,00 / 1,15 / 1,22**. Texto: «La carga de viento se ajusta por el Factor de Importancia, I, de la Tabla 2. **La categoría de ocupación de la estructura se define en NCh3171.**» — ojo, remite a **NCh3171**, no a la Tabla 1 de NCh2369. | **I = 1,00** (categoría II) |
 | **§3.2** y **§3.3** altura media del techo y altura del alero | 2 | 10 | 2026-08-12 | **3.2 altura media del techo, h**: «promedio de la altura del alero de la techumbre y la altura hasta el punto más alto de la techumbre. **Para ángulos de techo menores o iguales a 10 grados, se acepta utilizar la altura media del techo como la altura del alero del techo**». **3.3 altura del alero, h_e**: distancia desde la superficie del suelo adyacente al edificio hasta la línea del alero del techo en un muro en particular; si varía a lo largo del muro se usa la **altura promedio**. La simbología (pág. 7 / PDF 15) repite: «h = altura media del techo […] **excepto que la altura del alero se utiliza para un ángulo de techo θ menor o igual a 10 grados**». *(Definiciones en prosa: leídas de la capa de texto, que `CLAUDE.md` autoriza para prosa y definiciones.)* | Cierra **§5.25** |
 | **§5.7** y **Tabla 4** — Factor de elevación del suelo K_e | 23 | 31 | 2026-08-12 | «El factor de elevación del suelo para ajustar la densidad del aire, K_e, se debe determinar de acuerdo con la Tabla 4. **Se permite tomar K_e = 1 para todas las elevaciones.**» **Tabla 4** por z_e en m: **< 0** → ver Nota 2 · **0** → 1,00 · **300** → 0,96 · **600** → 0,93 · **900** → 0,90 · **1 200** → 0,87 · **1 500** → 0,84 · **1 800** → 0,81 · **> 1 800** → **ver Nota 2**. **NOTA 1)** en todos los casos es posible usar K_e = 1,00 de manera conservadora. **NOTA 2)** K_e se determina por interpolación o con **`K_e = e^(−0,000119·z_e)`**, con z_e la elevación del terreno sobre el nivel del mar en m. | **Hallazgo 5.26**; post 1 |
 | **§5.8.1** y **§5.8.2** — Presión de velocidad, Ec. (2) | 23 | 31 | 2026-08-12 | **5.8.1**: K_z o K_h se determinan de la Tabla 5 según la categoría de exposición de §5.5.3; en zonas de transición cerca de un cambio de rugosidad se permiten **valores intermedios** de K_z o K_h si se justifican con metodología. **5.8.2**, **Ec. (2)**: **`q_z = 0,613·I·K_z·K_zt·K_e·V²`** en **N/m²**, con **I** el factor de importancia según categoría de ocupación (Tabla 2), K_z de §5.8.1, K_zt de §5.6.2. **Ojo: I va DENTRO de q_z y K_d va fuera** (K_d aparece en las ecuaciones de presión, no acá). | Post 1 |
@@ -728,7 +731,59 @@ $$q_h = 0,613 \times 1,00 \times 0,95 \times 1,948 \times 0,6362 \times V^2 = \m
 Y contra el **mismo galpón en terreno plano a nivel del mar** (K_zt = K_e = 1), la razón es exactamente
 `K_zt · K_e = 1,948 × 0,6362 = ` **1,239**. El 25 % de más del §5.24, ahora con la ecuación en la mano.
 
-Falta **V** (Figura 2 y §5.3) para cerrar el número.
+**Cerrado con V = 30 m/s** (Tabla 1, zona **I-B**: latitud 17°29'–27°22'S y altitud ≥ 2 000 m, que es
+donde cae una faena de altiplano de Tarapacá o Antofagasta):
+
+$$q_h = 0,613 \times 1,00 \times 0,95 \times 1,948 \times 0,6362 \times 30^2 = \mathbf{650\ \text{N/m}^2 = 0,650\ \text{kPa}}$$
+
+Chequeo cruzado con la NOTA 1 de la Tabla 1, que define `p₀` como el q_z con K_z = K_zt = K_e = 1:
+`p₀ = 0,613 × 900 = 551,7 ≈ 552` ✅ tabulado. Entonces
+`q_h = p₀ × K_z·K_zt·K_e = 552 × (0,95 × 1,948 × 0,6362) = 552 × 1,177 = 650 N/m²`. Las dos vías cierran.
+
+**El titular del post 1, ya como número:**
+
+| Quién calcula | q_h | |
+|---|---|---|
+| Aplica K_z, K_e **y K_zt** (correcto) | **0,650 kPa** | |
+| Aplica K_z y K_e, **olvida K_zt** | 0,334 kPa | **51 %** de lo que corresponde |
+| Toma K_e = 1,00 «conservador» y olvida K_zt | 0,525 kPa | 81 % |
+| Referencia p₀ (los tres factores = 1) | 0,552 kPa | |
+
+La razón entre la primera y la segunda fila es exactamente **K_zt = 1,948**.
+
+### 5.27 Zona sísmica verificada — se sostiene la 2, pero hay que nombrar la comuna
+
+La Tabla 1 de NCh432 ubica la zona **I-B** entre las latitudes **17°29'S y 27°22'S** — o sea Arica,
+Tarapacá y Antofagasta. Pero la **zona sísmica** de NCh2369 se asigna **por comuna**, y en el norte de
+Chile la zonificación baja hacia la cordillera: la costa es zona 3, la depresión intermedia zona 2, y el
+**altiplano y la alta cordillera suelen ser zona 1**.
+
+Si el sitio resulta **zona 1**, `A_r` pasa de **0,42 g a 0,28 g** (Tabla 3 de NCh2369) — un **33 % menos**
+de demanda sísmica. Eso **refuerza** la tesis del post 10 (el viento dimensiona la diagonal) pero cambia
+todos los números sísmicos de la serie.
+
+**Verificado el 2026-08-12** leyendo la **Tabla 2 de NCh2369** (pág. 50 / PDF 56), que **no estaba
+transcrita al wiki**. Las tres regiones del norte:
+
+| Región | Zona 3 | Zona 2 | Zona 1 |
+|---|---|---|---|
+| Arica y Parinacota | Arica · Camarones | General Lagos · Putre | — |
+| **Tarapacá** | Alto Hospicio · Huara · Iquique · Pozo Almonte | **Camiña · Pica** | **Colchane** |
+| **Antofagasta** | Antofagasta · María Elena · Mejillones · Taltal · Tocopilla | **Calama · Sierra Gorda** | **San Pedro de Atacama** |
+| Atacama | Alto del Carmen · Caldera · Chañaral · Copiapó · Huasco · Vallenar | Diego de Almagro · Tierra Amarilla | — |
+| Coquimbo | todas las comunas listadas | — | — |
+
+La sospecha era correcta: en el altiplano conviven **zona 1 y zona 2**. Pero la **zona 2 se sostiene**
+si se nombra la comuna.
+
+**Resolución**: el sitio se declara en la **comuna de Pica, Región de Tarapacá**. Es **zona sísmica 2**
+(A_r = 0,42 g), su latitud cae en 17°29'–27°22'S y su territorio sube sobre los 2 000 m, o sea **zona de
+viento I-B con V = 30 m/s**. Los dos parámetros de sitio quedan consistentes entre las dos normas y con
+una faena real.
+
+**Detalle didáctico para el post 5**: **Pica es zona 2 y Colchane —su vecina altiplánica— es zona 1**.
+Cruzar el límite comunal cambia A_r de 0,42 g a 0,28 g, un **33 % menos** de demanda, sin que cambie
+nada del sitio ni de la estructura.
 
 ---
 
