@@ -221,6 +221,13 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 | **§12.1.1–§12.1.3** Galpones industriales | 143 | 149 | 2026-08-12 | **12.1.2** «Los edificios con marcos transversales **deben tener un sistema de arriostramiento continuo en el techo**. Cuando hay cerchas de techo el arriostramiento continuo se debe colocar en el plano de la cuerda inferior. **Se exceptúan los edificios sin puente-grúa en que las cargas permanentes sólo provienen del peso propio.**» **C12.1.2**: «tiene las ventajas sísmicas de los diafragmas rígidos horizontales. Hace posible, además, distribuir cargas laterales concentradas, como las de grúas, entre varios marcos.» **C12.1**: define galpón como construcción de grandes dimensiones, comúnmente de un solo nivel, de vanos típicamente libres entre paredes perimetrales. | **Hallazgo 5.29** — la excepción no aplica (hay 0,35 kPa superpuesta) |
 | **Anexo A (informativo)** — **Figura A.2** | 218-219 | 224-225 | 2026-08-12 | El anexo se titula «Anexo A (**informativo**) — Detalles tradicionales». La Figura A.2, «Arriostramiento continuo de techo», muestra en planta un **anillo cerrado**: bandas diagonales a lo largo de cada alero en todos los vanos, cerradas por bandas en ambos hastiales, con el centro sin aspas — pero **las líneas de puntal recorren el largo completo**, incluido el centro. | **Hallazgo 5.29**; topología del modelo |
 
+| **§4.5.2** Simultaneidad direccional | 16 | 22 | 2026-08-12 | Tres ecuaciones: `E = ±1,0Ex ±0,3Ey ±0,3Ez`, `±0,3Ex ±1,0Ey ±0,3Ez`, `±0,3Ex ±0,3Ey ±1,0Ez`. `E_i` = carga sísmica desacoplada en la dirección *i* según cláusula 5; x e y horizontales perpendiculares, z vertical. **C4.5.2**: «corresponde a **tres ecuaciones que deben ser evaluadas de manera independiente**, con sus respectivos cambios de signos, y **no a una elección entre las alternativas** posibles»; los factores «son **menores** a los requeridos en las versiones anteriores», consistentes con ASCE 7. | **Corrige el plan**: es 100/30/**30** con la vertical adentro, no 100/30 |
+| **§6.1** Cálculo de desplazamientos sísmicos | 68 | 74 | 2026-08-12 | «Los desplazamientos sísmicos se deben estimar utilizando el **espectro elástico de referencia**, corregido según la razón de amortiguamiento que corresponda, y **ponderado por el coeficiente de importancia I**… La acción sísmica debe considerar la regla de simultaneidad direccional indicada en 4.5.2.» **C6.1**: «se ha observado deficiencias en la estimación del desplazamiento sísmico horizontal… se define al espectro de referencia como la demanda sísmica adecuada para la estimación de desplazamientos de diseño». | Casos `RSX_REF` / `RSY_REF`; **Hallazgo 5.38** |
+| **§6.2** Separación entre estructuras — **Ec. (15)** | 68-69 | 74-75 | 2026-08-12 | `D ≥ κ·√(d_i² + d_j²)`, con `κ = 1,2` condición normal y **1,5** condición crítica (1,0 y 1,2 si `d_i`, `d_j` vienen de tiempo-historia con el modelo incluyendo ambas estructuras). **§6.2.2** la separación a elementos no estructurales rígidos o frágiles debe superar el desplazamiento relativo entre sus niveles. | Fuera de alcance (no hay estructuras adyacentes), declarado |
+| **§6.3** Desplazamientos sísmicos máximos | 69-70 | 75-76 | 2026-08-12 | Los desplazamientos estimados según 6.1 no deben exceder: **estructuras en general `d^máx = 0,015·h`** · prefabricado con muros de uniones secas `0,002·h` · albañilería con particiones rígidamente unidas `0,003·h` · **marcos de momento con rellenos de albañilería dilatados `0,0075·h`**. **`h` = altura del nivel o entre dos puntos ubicados sobre una misma línea vertical.** **EXCEPCIÓN: «Los límites anteriores se pueden aumentar al doble si se demuestra que el desplazamiento horizontal estimado no compromete la operación de la industria.»** **C6.3**: la versión anterior no ponía tope al usar la excepción; el tope de ahora es consistente con ASCE 7-16 para el sismo Máximo Considerado. | **0,120 m** en el alero; **Hallazgo 5.38** |
+| **§6.4** Efecto P-Delta | 70 | 76 | 2026-08-12 | «El efecto P-Delta se debe considerar cuando las deformaciones sísmicas excedan el valor: `d = 0,015·h`.» **C6.4**: «rara vez tiene importancia en estructuras arriostradas, pero **puede serlo en estructuras de marcos resistentes a momento**». | **No se gatilla** (0,9459 del límite); **Hallazgo 5.38** |
+| **§12.5.9** | 151 | 157 | 2026-08-12 | «Para el cálculo de deformaciones sísmicas se debe realizar el procedimiento estipulado en cláusula 6, **considerando efecto P-Delta para todos los casos de carga y análisis**…» **Pero §12.5 es SISTEMAS DE ALMACENAMIENTO**, no galpones: `C12.5.9` habla de «la carga almacenada», de *leaning columns*, y la Figura C-6 es el arriostramiento de un rack. | **No aplica al galpón**; **Hallazgo 5.38** |
+
 #### Lecturas de la Fase 2 — NCh 432:2025 (cláusula 7, procedimiento envolvente)
 
 | Cláusula / Figura | pág. | PDF | Leída | Contenido verificado | Alimenta |
@@ -1008,6 +1015,42 @@ el T\* longitudinal cae en la meseta del espectro (§5.36) y la dirección arrio
 La tesis del post 10 sobrevive, pero por otra razón: la demanda es baja para el cajón, y lo que lo
 deja fuera **no es la resistencia sino λ_md** (§5.15). El post pasa de «el viento dimensiona» a
 «ni el viento ni el sismo dimensionan: dimensiona la esbeltez local sísmica».
+
+### 5.38 La deriva NO reprueba: pasa al 94,6 % — y ahí está la historia
+
+El plan daba por hecho que «la deriva de §6.3 reprueba el marco articulado». **No reprueba.**
+
+Desplazamientos con el espectro de **referencia** (§6.1: sin R\*, con `(0,05/ξ)^0,4` y con `I`) y la
+simultaneidad de §4.5.2:
+
+| | Valor | Límite `0,015·h` | Ratio |
+|---|---|---|---|
+| **Alero, marco 4** (máximo) | **0,113504 m** | 0,120 | **0,9459** |
+| Alero, marco 2 | 0,113480 m | 0,120 | 0,9457 |
+| Alero, marco 3 | 0,112442 m | 0,120 | 0,9370 |
+| Cumbrera, marco 3 | 0,112605 m | 0,151739 | 0,7421 |
+| Dirección Y, alero | 0,006912 m | 0,120 | 0,0576 |
+
+**Cumple con 5,4 % de margen**, sin necesidad de invocar la excepción del doble.
+
+Chequeo de consistencia que valida el par referencia/diseño: bajo `RSX_R4` el mismo nodo da
+**0,028105 m**, y `0,112442 / 0,028105 = 4,0009 ≈ R*_X = 4,0` ✅.
+
+**La historia del post cambia de «reprueba» a «pasa raspando», que es mejor**, por tres razones:
+
+1. **El mismo `0,015·h` de §6.3 es el gatillo del P-Delta de §6.4.** Estamos al 94,6 %: a un 5 % de
+   tener que correr segundo orden. Y `C6.4` avisa que el P-Delta «rara vez tiene importancia en
+   estructuras arriostradas, pero **puede serlo en estructuras de marcos resistentes a momento**».
+2. La dirección **arriostrada va sobrada** (5,8 % del límite) mientras la de marcos está al borde —
+   el espejo exacto de §5.36, donde la arriostrada se llevaba **más** corte basal.
+3. El resultado **depende de la discretización del tapered**: §5.34 midió que con N = 1 la deriva se
+   sobreestima 37,8 % y con N = 2 un 9,2 %. Con la malla de 4 tramos que se adoptó, cualquiera de
+   esos errores habría dado un «reprueba» falso.
+
+**Trampa de lectura, y hay que decirla**: **§12.5.9** obliga a considerar «efecto P-Delta para todos
+los casos de carga y análisis» — pero **§12.5 es *Sistemas de almacenamiento*, no galpones**.
+`C12.5.9` habla de «la carga almacenada» y de *leaning columns*, y su Figura C-6 es el
+arriostramiento de un rack. Citarla para un galpón es leer mal la sub-cláusula.
 
 ## 6. Estado de la serie
 
