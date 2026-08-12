@@ -310,7 +310,7 @@ viento. Se declaran en los supuestos de cada post; no se atribuyen a NCh431 ni a
 | Cubierta (panel sándwich aislado) | 0,12 kPa | |
 | Costaneras | 0,06 kPa | |
 | Instalaciones colgadas | 0,15 kPa | bandejas, luminarias, rociadores |
-| **D superpuesta de techo** | **0,35 kPa** | el peso propio del marco lo pone el motor, aparte |
+| **D superpuesta de techo** | **0,35 kPa** sobre el faldón | los tres componentes suman 0,33; **se adopta 0,35**, redondeando hacia arriba. Es el valor que usa el modelo (`D_TECHO = 0.35`) y con el que cierra `DSD = 302,964 kN`. El peso propio del marco lo pone el motor, aparte |
 | D revestimiento de muro | 0,12 kPa | |
 | **L_r** | **0,30 kPa** | con S = 1,20 no gobierna nunca; `a = 0` la saca del sismo |
 | **S balanceada** | **1,20 kPa** sobre proyección horizontal | ≈ 3,4× la carga muerta de techo |
@@ -1131,6 +1131,20 @@ que es exactamente la suma de razones sobre la que descansa la tesis del post 9.
 cierre ya no es «pon dos tirantes y el momento débil se divide por nueve». Es más fuerte: **sin
 tirantes la verificación que todo el mundo escribe no es aplicable**, y la que sí lo es (§H2 / §H3)
 nadie la corre.
+
+### 5.39-bis Inventario del `.sdb`, para que no quede colgando
+
+Leído del modelo abierto el 2026-08-12, porque el post 0 lo publica y no constaba en ninguna parte:
+
+| | |
+|---|---|
+| SAP2000 | **v27.1.0** · unidades **6** = kN, m, C |
+| Patrones de carga | **11** — `DEAD`, `DSD`, `LR`, `SBAL`, `SUNBI`, `SUNBD`, `WTXP`, `WTXN`, `WLYP`, `WLYN`, `WPI` |
+| Casos | **19** — los 11 estáticos, `MODAL`, seis espectrales (`RSX/RSY` × `R4`, `R5`, `REF`) y `EV` |
+| Combinaciones | **85** — las 79 de diseño más 6 envolventes |
+| Archivo | `galpon_altiplano.sdb`, **97,9 KB**, guardado bloqueado; los resultados viven en los `.Y0*` aparte |
+
+La copia publicada es `public/galpon-altiplano-la-serie/galpon-altiplano.sdb`.
 
 ### 5.40 El J de SAP no es Σbt³/3 — medido en las cuatro secciones extremas
 

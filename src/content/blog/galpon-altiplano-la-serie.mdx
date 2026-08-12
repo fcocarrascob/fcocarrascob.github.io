@@ -1,6 +1,6 @@
 ---
 title: "El galpón del altiplano: el caso, y la bitácora de la serie"
-description: "Un galpón industrial a dos aguas de 24 × 24 m en una faena minera a 3.800 m, construido de punta a punta: sitio, cargas, modelo, análisis y verificación miembro por miembro, con NCh432, NCh3171, NCh2369 y AISC 360-22, y con dos motores de cálculo que se vigilan entre sí. Este post es el mapa de los diez que vienen y la bitácora de lo que se va midiendo — incluidas las tres hipótesis del plan que ya se cayeron."
+description: "Un galpón industrial a dos aguas de 24 × 24 m en una faena minera a 3 800 m, construido de punta a punta: sitio, cargas, modelo, análisis y verificación miembro por miembro, con NCh432, NCh3171, NCh2369 y AISC 360-22, y con dos motores de cálculo que se vigilan entre sí. Este post es el mapa de los diez que vienen y la bitácora de lo que se va midiendo — incluidas las tres hipótesis del plan que ya se cayeron."
 pubDate: 2026-08-12
 updatedDate: 2026-08-12
 tags: ["galpón", "NCh2369", "NCh432", "NCh3171", "AISC 360", "peralte variable", "SAP2000", "Rukan", "OpenSeesPy", "serie"]
@@ -29,11 +29,11 @@ el caso, sigue leyendo.
 
 ## El caso
 
-Galpón industrial a dos aguas para una faena minera de altiplano, a unos 3.800 m de altitud.
+Galpón industrial a dos aguas para una faena minera de altiplano, a unos 3 800 m de altitud.
 
 <Figure
   src="/galpon-altiplano-la-serie/el-galpon.svg"
-  alt="Esquema del galpón en tres vistas. Arriba a la izquierda, el marco transversal: 24,0 metros de luz y 8,0 metros al alero, con la columna y el dintel dibujados a escala como polígonos de espesor variable en azul, escalonados tramo a tramo porque cada tramo del modelo tiene peralte constante; la columna crece de la base al alero y el dintel decrece del alero a la cumbrera; una línea de trazos marca la línea de trabajo teórica, puntos azules marcan los nodos de la malla, las dos bases se dibujan como rótulas circulares sobre un terreno achurado, y una flecha azul rotulada E sub x marca el sismo transversal. Se acotan la luz de 24,0 metros, el alero de 8,0 metros, la flecha de 2,116 metros y la pendiente de 10 grados. Arriba a la derecha, la elevación longitudinal del muro: cinco columnas azules separadas 6,0 metros unidas arriba por el puntal de alero en café, con crucería en aspa color café solamente en el primer y el último vano, cada aspa con un punto en el cruce; los otros dos vanos centrales van libres, y una flecha azul rotulada E sub y marca el sismo longitudinal. Abajo a la izquierda, la planta de techo de 24,0 por 24,0 metros: cinco líneas transversales azules que son los marcos, siete líneas longitudinales café que son los puntales, la línea central destacada que es la cumbrera, y las aspas de arriostramiento de techo en amarillo formando un anillo cerrado en todo el perímetro; un rectángulo de trazos encierra la zona central, rotulada centro sin aspas, donde los puntales siguen existiendo pero no hay diagonales. Puntos verdes marcan los cinco pilares de hastial de cada testera. A la derecha, la leyenda de los cuatro sistemas y dos notas: por qué el anillo y no una crucería completa, y qué no está modelado a propósito."
+  alt="Esquema del galpón en tres vistas. Primera vista, arriba a la izquierda, el marco transversal: 24,0 metros de luz y 8,0 metros al alero, con la columna y el dintel dibujados a escala como polígonos de espesor variable en azul, escalonados tramo a tramo porque cada tramo del modelo tiene peralte constante. La columna crece de la base al alero y el dintel decrece del alero a la cumbrera. Una línea de trazos marca la línea de trabajo teórica y puntos azules marcan los nodos de la malla. Las dos bases se dibujan como rótulas circulares sobre un terreno achurado, y una flecha azul rotulada E sub x marca el sismo transversal. Se acotan la luz de 24,0 metros, el alero de 8,0 metros, la flecha de 2,116 metros y la pendiente de 10 grados. Segunda vista, arriba a la derecha, la elevación longitudinal del muro: cinco columnas azules separadas 6,0 metros, unidas arriba por el puntal de alero en café. Hay crucería en aspa color café solamente en el primer y el último vano, cada aspa con un punto en el cruce; los dos vanos centrales van libres. Una flecha azul rotulada E sub y marca el sismo longitudinal. Tercera vista, abajo a la izquierda, la planta de techo de 24,0 por 24,0 metros: cinco líneas transversales azules que son los marcos, siete líneas longitudinales café que son los puntales, y la línea central destacada que es la cumbrera. Las aspas de arriostramiento de techo, en amarillo, forman un anillo cerrado en todo el perímetro. Un rectángulo de trazos encierra la zona central, rotulada centro sin aspas, donde los puntales siguen existiendo pero no hay diagonales. Puntos verdes marcan los cinco pilares de hastial de cada testera. A la derecha del conjunto, la leyenda de los cuatro sistemas y dos notas: por qué el anillo y no una crucería completa, y qué no está modelado a propósito."
   caption="El galpón completo, dibujado con las mismas constantes con que se construyó el modelo. El peralte variable va a escala: lo que se ve escalonado no es un defecto del dibujo, es la discretización del análisis."
 />
 
@@ -54,10 +54,12 @@ cada tres. Un solo mallado sirve entonces para cargar, para arriostrar y para ve
 
 | | |
 |---|---|
-| Ubicación | comuna de Pica, Región de Tarapacá, ~3.800 m |
+| Ubicación | comuna de Pica, Región de Tarapacá, ~3 800 m |
 | Sismo | **zona 2**, $A_r = 0{,}42\ g$ · suelo **B** · $\xi = 0{,}02$ (uniones soldadas) |
 | Viento | zona **I-B**, $V = 30$ m/s |
 | Topografía | cima 2D, $H = 40$ m, $L_h = 120$ m, con el galpón **en la cresta** |
+| Categoría de ocupación | **II** — «estructuras y equipos normales» (Tabla 1 de NCh2369:2025) → $I = 1{,}00$ en sismo (§4.3.2) y en viento (Tabla 2 de NCh432:2025) |
+| Acero | **A36**, con perfiles soldados por planchas |
 
 Esa loma no es un adorno: es la que produce el $K_{zt}$ del que vive el primer post.
 
@@ -68,13 +70,13 @@ NCh431 (nieve) y NCh1537 (sobrecargas) no están disponibles como PDF en este eq
 **ningún valor de nieve o de sobrecarga lleva número de cláusula al lado**. Y resulta que no lo
 necesita: **§4.5.1 de NCh2369** exige, para proyectos de alta montaña, estudios específicos que
 definan el nivel de las cargas de interés «por ejemplo nieve o viento» *y la forma en que se
-combinan con el sismo*. A 3.800 m, declarar `S` desde un estudio de sitio deja de ser una deuda y
+combinan con el sismo*. A 3 800 m, declarar `S` desde un estudio de sitio deja de ser una deuda y
 pasa a ser lo que la norma manda hacer.
 </Note>
 
 | Carga | Valor | Nota |
 |---|---|---|
-| **D superpuesta de techo** | 0,35 kPa | cubierta 0,12 + costaneras 0,06 + instalaciones colgadas 0,15 |
+| **D superpuesta de techo** | **0,35 kPa** sobre el faldón | cubierta 0,12 + costaneras 0,06 + instalaciones colgadas 0,15 = 0,33, **adoptado 0,35** |
 | D de revestimiento de muro | 0,12 kPa | |
 | $L_r$ | 0,30 kPa | con la nieve encima no gobierna nunca, y **que sea irrelevante es la enseñanza** |
 | **S balanceada** | **1,20 kPa** sobre proyección horizontal | ≈ 3,4× la carga muerta de techo |
@@ -91,8 +93,8 @@ y cada post cierra con la iteración que arregla lo que no pasó y cuánto acero
 
 | Miembro | Predimensionado | Falla esperada |
 |---|---|---|
-| Columna tapered | alma 6 mm, peralte 350 → 800 mm, alas 220×12 | $h/t_w$ fuera del límite de alma esbelta |
-| Dintel tapered | alma 6 mm, 800 → 350 mm, alas 220×12 | flexión bajo nieve · LTB del ala inferior bajo succión |
+| Columna de peralte variable | alma 6 mm, peralte 350 → 800 mm, alas 220×12 | $h/t_w$ fuera del límite de alma esbelta |
+| Dintel de peralte variable | alma 6 mm, 800 → 350 mm, alas 220×12 | flexión bajo nieve · LTB del ala inferior bajo succión |
 | Diagonal longitudinal | 2L 75×75×6, $L = 10{,}0$ m | esbeltez fuera del límite de NCh2369 §8 |
 | Costanera | C 200×50×15×2,0 @ 1,50 m | flexión en el eje **débil** |
 
@@ -108,6 +110,10 @@ miembro de peralte variable que da la vuelta en el alero. Así se reparte:
 ## Cómo se verifica
 
 Tres reglas que se aplican a todo lo que aparece en la serie.
+
+Las ediciones vigentes, y las únicas que se citan: **NCh2369:2025** (3.ª ed.), **NCh432:2025**,
+**NCh3171:2017** y **AISC 360-22**. Vale la pena decirlo, porque la numeración de las cláusulas
+cambia entre ediciones y una cita sin edición apunta a dos sitios distintos.
 
 **Todo número de norma se lee de la página rasterizada del PDF de la edición vigente.** No de
 memoria, no de una ficha, no de la capa de texto — que en un PDF de norma destruye las fracciones y
@@ -175,8 +181,8 @@ Varias piezas de esto ya están publicadas y los posts nuevos enlazan en vez de 
 [el galpón por la cláusula 7 de NCh432](/apuntes/ejemplo-viento-galpon-nch432),
 [el panorama de cargas de viento](/apuntes/nch432-cargas-de-viento),
 [el galpón liviano de §12.2](/blog/galpon-liviano-nch2369/) y
-[el caso 8 de Rukan](/blog/rukan-verificacion-peso-propio-combinaciones/), que ya era un galpón a
-dos aguas en 3D.
+[el caso 8 de Rukan](/blog/rukan-verificacion-peso-propio-combinaciones/) —el octavo *caso de
+validación*, publicado en la sexta entrega de esa serie—, que ya era un galpón a dos aguas en 3D.
 
 ## Bitácora
 
@@ -186,7 +192,8 @@ El sprint de lectura de PDF terminó. Lo que salió, y que ya cambió el primer 
 
 $$K_{zt} = 1{,}948 \qquad K_e = 0{,}6362 \qquad q_h = 0{,}650\ \text{kPa}$$
 
-El plan estimaba $K_{zt}$ entre 1,1 y 1,4. Es **1,948**, casi el doble. Y el producto
+El plan estimaba $K_{zt}$ entre 1,1 y 1,4. Es **1,948**: un 39 % por sobre el techo de esa
+estimación, y **casi el doble** de la presión que vería el mismo galpón en terreno plano. Y el producto
 $K_{zt} \cdot K_e = 1{,}239$ significa que el galpón del altiplano **en una loma** se diseña con un
 **25 % más** de presión que el mismo galpón en terreno plano a nivel del mar. El $q_h$ cierra por
 dos vías independientes que dan lo mismo.
@@ -194,7 +201,7 @@ dos vías independientes que dan lo mismo.
 De paso, tres trampas de lectura quedaron documentadas: los casos de torsión de NCh432 están
 **exentos** para este galpón, la excepción de §7.3.3 se aplica solo a la dirección de marcos, y
 §7.3.7 parece hecha a medida —«marcos transversales y techos inclinados»— pero su alcance son
-edificios **abiertos**.
+edificios **abiertos o parcialmente cerrados**, y este es cerrado.
 
 ### 2026-08-12 · El modelo, cerrado a cuatro manos
 
@@ -209,6 +216,16 @@ Seis pasos, cada uno confirmado antes de seguir. El modelo quedó así:
 | Períodos dominantes | $T^*_X = 0{,}852657$ s (modo 1) · $T^*_Y = 0{,}161061$ s (**modo 41**) |
 | Reducción efectiva | $R^*_X = 4{,}000000$ · $R^*_Y = 3{,}830163$ |
 | Corte basal | $Q_{0X} = 86{,}960$ kN · $Q_{0Y} = 130{,}257$ kN, ambos dentro de la banda |
+
+**Con qué $R$ están calculados esos números, porque importa para reproducirlos.** La ruta de diseño
+de la serie es la de **§12.2, galpón liviano, con $R = 4$** y el amplificador $0{,}5R_1$: es la que
+la norma obliga a usar cuando el galpón califica, y este califica. La fila 5.5 de la Tabla 7, con
+$R = 5$ y $0{,}7R_1$, se corre **solo como comparación ilustrativa** sobre el mismo modelo, y el
+post 5 es el que desarrolla por qué. Toda la tabla de arriba es la ruta de $R = 4$: con $R = 5$ el
+$R^*_Y$ daría 4,110 y nada de esto cuadraría.
+
+La banda de §5.12–§5.13, para el mismo caso, es $[70{,}860 ; 224{,}907]$ kN. Los dos cortes caen
+dentro, así que ni el mínimo ni el máximo intervienen.
 
 Varias decisiones cambiaron sobre la marcha, y las que más movieron el resultado fueron dos: sacar
 las costaneras del modelo (se calculan aparte como viga simple, y modelarlas metía masa en nodos
@@ -245,11 +262,16 @@ aprueba es el que dispara el P-Delta**.
 dividido por $R^*$ y el viento entra multiplicado sin dividir por nada. **Es al revés**: la
 compresión sísmica es 39,895 kN contra 34,233 de gravedad y viento, o sea el sismo gana por 16,5 %.
 Falla porque el $T^*$ longitudinal cae en la meseta. Y al final no dimensiona ninguno de los dos:
-dimensiona la **esbeltez local sísmica**, con un tubo que pasa cómodo el $KL/r$ que todo el mundo
-revisa.
+dimensiona la **esbeltez local sísmica**, con un cajón soldado que pasa el $KL/r$ que todo el mundo
+revisa —127,5 contra 133,29, un 4,3 % de margen— y se cae en el $\lambda_{md}$ que casi nadie mira.
 
 **3. «El aire enrarecido regala y la loma devuelve».** Se quedaba corto. No devuelve: **cobra de
 más**. Un 25 % por sobre el terreno plano a nivel del mar.
+
+Y una precisión de vocabulario que vale para toda la serie: la diagonal longitudinal es un **cajón
+soldado por planchas**, no un tubo comercial. La distinción no es cosmética — el $R_y$ de una
+plancha A36 es 1,3, y el de un tubo A500 Gr. B es 1,4, así que la capacidad esperada con que se
+diseñan las conexiones cambia según cuál de los dos sea.
 
 Y una que se cayó sola, por leer mal el índice: hay una cláusula de NCh2369 que obliga a considerar
 P-Delta «para todos los casos de carga y análisis» y que parecía aplicar. No aplica — está dentro
