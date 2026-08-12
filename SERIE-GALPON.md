@@ -1,0 +1,578 @@
+# El galpón del altiplano — memoria de cálculo y bitácora de la serie
+
+Este documento es **dos cosas a la vez**, a propósito:
+
+1. **Una mini memoria de cálculo.** Cada dato que entra al modelo o a un post aparece acá con su
+   procedencia: norma, edición, cláusula, página impresa, página del PDF, y la fecha en que se leyó
+   la página rasterizada. Un número sin fila en esta tabla no puede aparecer en un post.
+2. **El estado de la serie.** Qué post va en qué fase, qué está bloqueado por qué, y qué se decidió
+   ya para no volver a discutirlo. La serie no cabe en una sesión: esto es lo que permite retomarla.
+
+Sirve además como material del benchmark de `C:\Proyectos_Python\struct_llm`: muestra el orden real
+en que se resuelve un proyecto —leer la norma, congelar parámetros, modelar, verificar, diseñar— y
+deja registrado qué se leyó y qué se supuso, que es exactamente lo que un modelo de lenguaje tiende
+a saltarse.
+
+**Plan completo de la serie:** `C:\Users\francisco.carrasco\.claude\plans\quiero-que-analices-los-vivid-cocke.md`
+
+---
+
+## 1. Cómo se retoma esto en otra sesión
+
+1. Lee este archivo entero. Es corto a propósito.
+2. Mira **§6 Estado de la serie** para saber en qué fase está y qué sigue.
+3. Todo número que necesites ya leído está en **§4 Memoria de cálculo**. Si no está ahí, **no lo
+   sabes**: hay que abrir el PDF. La regla no negociable de `CLAUDE.md` aplica igual.
+4. Las decisiones ya tomadas están en **§3**. No se re-litigan sin que el usuario lo pida.
+5. Los hallazgos que cambian el contenido de un post están en **§5**.
+
+### Herramientas de lectura de PDF
+
+PyMuPDF **no está** en el Python del sistema. Está en el venv de rukan:
+
+```
+C:\Proyectos_Python\rukan\.venv\Scripts\python.exe     # PyMuPDF 1.28.2
+```
+
+Usar `import pymupdf` (el alias `fitz` está deprecado y emite warning). Los dos scripts auxiliares
+viven en el scratchpad de la sesión; si no existen, se reescriben en cinco líneas:
+
+- `localizar.py <pdf> <regex> [n]` — busca en la **capa de texto** para *ubicar* la sección. La capa
+  de texto **no sirve** para transcribir: destruye fracciones y convierte φ en `f`.
+- `raster.py <pdf> <dir> <pag...> [--zoom 2.6]` — `get_pixmap()` a PNG. **Esta es la única vía
+  válida** para leer una ecuación, una tabla o un coeficiente. Zoom 2,6 da ~1550×2190 px y se lee
+  bien.
+
+### Offsets de página (verificados, corrigen al wiki)
+
+| Norma | Índice 0-based de PyMuPDF | Página PDF 1-based |
+|---|---|---|
+| **NCh2369:2025** | página impresa **+ 6** | página impresa + 7 |
+
+Verificado contra los pies de página de cinco páginas leídas (impresas 15, 19, 57, 60, 61). El wiki
+de `material_teorico` cita «+7» porque cuenta páginas 1-based; `raster.py` es 0-based. Anotarlo evita
+una cacería de off-by-one por sesión.
+
+### Rutas reales de las normas
+
+`CLAUDE.md` cita `F:\OneDrive\Ingenieria\Normas\…`, que **no existe en este equipo**. Las reales:
+
+```
+C:\Users\francisco.carrasco\OneDrive - PSC INGENIERÍA SpA\Escritorio\Documentos\Normas\
+  NCh 2369 - 3°Edición 2025.05.28.pdf
+  NCh 432 - 3°Edición 2025.06.27.pdf
+  NCh3171-2017.pdf            <- escaneada, SIN capa de texto: localizar.py no sirve, todo rasterizado
+  NCh 433 - 5°Edición 2026.03.26.pdf
+  A360-22W-ewr.pdf · A341-22W-oke.pdf · ACI 318-25_SI.pdf
+```
+
+**NCh431 (nieve) y NCh1537 (sobrecargas) no existen en PDF** en este equipo. Ver §5.1: resultó no ser
+un problema.
+
+---
+
+## 2. El caso
+
+Galpón industrial a dos aguas para faena minera de altiplano (~3.800 m).
+
+```
+              cumbrera
+                 /\              pendiente 10°
+                /  \
+               /    \            flecha f = 2,12 m
+          ____/      \____
+         |                |
+         |                |      h alero = 8,0 m
+         |                |
+        ===              ===     bases articuladas
+         |<--- 24,0 m --->|
+
+  Largo: 4 vanos x 6,0 m = 24,0 m  (5 marcos)
+  Area en planta: 24,0 x 24,0 = 576,0 m2
+  Faldon: 12,0 / cos 10° = 12,185 m  ->  9 espacios de 1,354 m (costaneras)
+```
+
+- **Transversal**: marcos a momento, columna y dintel de **peralte variable**, bases articuladas.
+- **Longitudinal**: arriostrado (crucería), más **arriostramiento continuo de techo** — que no es
+  decoración: es lo que decide la fila de la Tabla 7 (ver §5.2).
+- **Perfiles**: soldados definidos **por planchas**; A, I, J, Z de primeros principios. El tapered no
+  está en ningún catálogo, así que no se depende del ICHA.
+
+---
+
+## 3. Decisiones congeladas
+
+Tomadas con el usuario. No se re-litigan.
+
+| Tema | Decisión |
+|---|---|
+| Geometría | luz 24,0 m · pendiente 10° · alero 8,0 m · 5 marcos @ 6,0 m |
+| Bases | **articuladas** (práctica chilena; es lo que hace fallar la deriva de §6.3) |
+| Sitio | altiplano ~3.800 m · **zona sísmica 2** · suelo **B** (sensibilidad a C) |
+| Perfiles | soldados por planchas, **peralte variable** en columna y dintel |
+| Nieve | **S = 1,20 kPa** sobre proyección horizontal, desde estudio de sitio |
+| Extensión | **10 posts** + 1 subproducto |
+| Alcance | análisis + verificación de miembros. **Sin conexiones, sin fundaciones** |
+| Ubicación de posts | espejo de la serie de la torre: `apuntes/` + `blog/` (Rukan 8-10) + `acero/` |
+| Skills_SAP | **no se toca**; sus defectos se documentan en el subproducto |
+| Pedagogía | predimensionar «a ojo de obra» y dejar que falle; cada post cierra con la iteración |
+| Modelo SAP2000 | se construye **a cuatro manos**, en 6 pasos con confirmación del usuario (§6.2) |
+| **Ruta del R** | **las dos**: la de diseño es **§12.2 galpón liviano, R = 4, amplificador 0,5R₁ = 2,00** (que es lo que la norma obliga, §5.8); la fila 5.5 con R = 5 y 0,7R₁ = 3,50 se corre como **comparación ilustrativa** sobre el mismo modelo. El post 5 debe dejar explícito cuál es la obligatoria y cuál la ilustrativa |
+| **Techo** | **crucería de techo explícita**. El panel como diafragma de §12.2.3 queda como `Note` de contraste (exige ANSI/SDI SD, que no tenemos, y rukan no tiene shell) |
+
+---
+
+## 4. Memoria de cálculo
+
+### 4.1 Datos leídos de norma
+
+Todos leídos en **página rasterizada**. `pág.` = página impresa de la norma; `PDF` = índice 0-based
+de `raster.py`.
+
+#### NCh 2369:2025 (3.ª ed., 2025.05.28)
+
+| Cláusula / Tabla | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§4.3.1 y §4.3.2** Clasificación e importancia | 13 | 19 | 2026-08-12 | **4.3.1** las estructuras y equipos se clasifican en Categorías de ocupación y operación según Tabla 1. **4.3.2** «A cada Categoría definida en Tabla 1 le corresponde un coeficiente de importancia I, cuyo valor es el siguiente: Categoría I: **I = 0,80** · Categoría II: **I = 1,00** · Categoría III: **I = 1,20** · Categoría IV: **I = 1,20**». Ojo: **III y IV comparten I = 1,20**. **C4.3.1**: la Tabla 1 es una adaptación al ámbito industrial de las clasificaciones de NCh3171. **C4.3.2**: «La mayor parte de un proyecto puede ser clasificado como Categoría de ocupación II». | **I = 1,00** |
+| **Tabla 1** — Clasificación de instalaciones | 18 | 24 | 2026-08-12 | **I** menores o provisionales (incl. provisionales de mantención/montaje < 60 días) · **II** «estructuras y equipos **normales**, que pueden tener fallas menores susceptibles de reparación rápida que no causan detenciones prolongadas ni pérdidas importantes de producción y que no ponen en peligro otras estructuras de categorías superiores» · **III** críticos o esenciales cuya falla causa detenciones prolongadas y pérdidas significativas; servicios públicos; salas de control, eléctricas y telecomunicaciones · **IV** esenciales que deben mantener operación durante el sismo; peligrosos con riesgo de incendio, explosión o emisiones tóxicas; vitales; protección y evacuación de personal; alta inversión y difícil reemplazo. **NOTA 1**: «Una instalación **no puede tener una clasificación inferior a la del equipo o proceso más crítico que aloje o soporte**, a menos que el diseño demuestre que los daños o detenciones de ella no afectan dicho equipo o proceso.» **NOTA 2**: la clasificación se hace extensiva a las instalaciones de control, enfriamiento y energía que competan a su operación. | Categoría **II**; **Hallazgo 5.14** |
+| **§4.5.1** Combinaciones de cargas | 15 | 21 | 2026-08-12 | Las que no incorporan sismo se definen según NCh3171. Con sismo, **a lo menos** estas cuatro, complementadas con las aplicables al proyecto: **ASD** `D + 0,75aL + 0,75SO + 0,75SA + 0,70E` y `D + 0,75SA + 0,70E`; **LRFD** `1,2D + aL + SO + SA + E` y `0,9D + SA + E`. Definiciones: `D` carga permanente · `L` carga de uso · `a` factor de reducción de la sobrecarga de uso según la probabilidad de ocurrencia de su valor nominal junto con el sismo de diseño · `SO` carga de operación esperada concurrente con el sismo · `SA` carga accidental esperada producida por la ocurrencia del sismo · `E` carga sísmica direccionalmente combinada. **No aparecen W ni S en ninguna.** | Post 3, todos los combos |
+| **§4.5.1**, párrafo de cierre | 15 | 21 | 2026-08-12 | «En el caso de proyectos ubicados en **alta montaña** o sitios en los cuales las características ambientales difieran considerablemente de los supuestos básicos considerados en las normas de cargas que correspondan, o en casos en que dichas normas así lo indiquen, es necesario contar con **estudios específicos que definan el nivel adecuado de las cargas de interés (por ejemplo nieve o viento)** para el diseño estructural y **especialmente la forma en que dichos efectos se deben combinar con el evento sísmico** definido en esta norma.» | **Hallazgo 5.1** — es la base normativa de S declarada |
+| **Tabla C-2** (comentario a §4.5.1) | 15 | 21 | 2026-08-12 | Valores tradicionales de `a`: bodegas / salas de archivo y similares **0,50** · zonas de acopio con baja tasa de rotación **0,50** · zonas de uso normal y plataformas de operación **0,25** · **pasarelas de mantención y techos 0**. Está en la columna de COMENTARIOS: es guía, no disposición. | `a = 0` para el techo → L_r fuera de la combinación sísmica |
+| **§5.1.1** Dirección de la solicitación sísmica | 19 | 25 | 2026-08-12 | Mínimo dos direcciones horizontales aproximadamente perpendiculares, elegidas para detectar los efectos más desfavorables. «El efecto de las aceleraciones sísmicas verticales se debe considerar **en todos los casos**» y combinarse con las horizontales según §4.5; las demandas verticales se determinan según §5.7. | Estado `EV` obligatorio |
+| **§5.1.2** Masa sísmica | 19 | 25 | 2026-08-12 | Incluye las cargas permanentes del sistema y **una fracción de las sobrecargas, de acuerdo con el valor esperado o su probabilidad de ocurrencia simultánea con el sismo de diseño**. Sin estimación específica, la fracción no puede ser menor a: bodegas y salas de archivo **50 %**; zonas de acopio con baja tasa de rotación **50 %**; zonas de uso normal y plataformas de operación **25 %**. Para la masa de las fundaciones, remite a la cláusula 10. **No menciona nieve ni remite a NCh1537.** | Paso 2.5 del modelo; **Hallazgo 5.3** |
+| **Tabla 3** — A₀ y A_r | 57 | 63 | 2026-08-12 | `A_r = 1,4·A₀`. Zona 1: A₀ = 0,20 g, A_r = **0,28 g** · Zona 2: 0,30 g, **0,42 g** · Zona 3: 0,40 g, **0,56 g**. NOTA: A₀ desde un registro puede determinarse como A₀ = S_a/2,5, con S_a la aceleración media del espectro elástico de seudo aceleración para ξ = 5 % entre 0,1 s y 0,5 s. | **A_r = 0,42 g** (zona 2) |
+| **Tabla 4** — tipos de suelo | 57 | 63 | 2026-08-12 | A roca / suelo cementado, V_s30 ≥ 900, T_g < 0,15 · **B roca blanda o fracturada, suelo muy denso o muy firme, V_s30 ≥ 500, T_g < 0,30 (o H/V plano)** · C suelo denso o firme, ≥ 350, < 0,40 · D medianamente denso o firme, ≥ 180, < 1,00 · E compacidad o consistencia mediana, < 180 · F sitios singulares. Nota a): la clasificación aplica a topografía y estratificación aproximadamente horizontal **y a estructuras lejos de singularidades geomorfológicas y topográficas**; si el sitio admite dos o más tipos se toma el más desfavorable; si no se cumple el T_g, la clasificación baja un grado pero el corte basal de diseño es el mayor entre la reducida y la primaria por V_s30. | Suelo **B**; **Hallazgo 5.4** |
+| **Tabla 6** — parámetros por suelo | 60 | 66 | 2026-08-12 | A: S 0,90 · r 4,50 · T₀ 0,15 · p 1,85 · q 3,00 · T₁ 0,15 — B: **1,00 · 4,50 · 0,30 · 1,60 · 3,00 · 0,27** — C: 1,05 · 4,50 · 0,40 · 1,50 · 3,00 · 0,35 — D: 1,00 · 3,50 · 0,60 · 1,00 · 2,50 · 0,41 — E: 1,00 · 3,00 · 1,20 · 1,00 · 2,70 · 0,79. NOTA: para estructuras con período fundamental ≥ 4 s se recomienda espectro de sitio según §5.4.3 y análisis según §5.10. | Espectro; **Hallazgo 5.5** |
+| **§12.1.1 a §12.1.6** Galpones industriales | 143-144 | 149-150 | 2026-08-12 | **12.1.1** aplica a edificios industriales con o sin vigas portagrúas. **12.1.2** «Los edificios con marcos transversales **deben tener un sistema de arriostramiento continuo en el techo**. Cuando hay cerchas de techo el arriostramiento continuo se debe colocar en el plano de la cuerda inferior. **Se exceptúan los edificios sin puente-grúa en que las cargas permanentes sólo provienen del peso propio.**» **12.1.3** con puente-grúa, el análisis considera las magnitudes y alturas de carga suspendida más probables. **12.1.4** varias grúas → combinación con todas sin carga en la posición más desfavorable. **12.1.5** dispositivos contra caída de puentes grúa si hay levantamiento. **12.1.6** edificio flexible con muros rígidos no estructurales → uniones que soporten lateralmente el muro y permitan desplazamiento longitudinal independiente. **C12.1.2**: «El arriostramiento continuo de techo tiene las ventajas sísmicas de los diafragmas rígidos horizontales. Hace posible, además, distribuir cargas laterales concentradas, como las de grúas, entre varios marcos.» | **Hallazgo 5.7**; conecta con post 4 |
+| **§12.2** Galpones livianos de acero | 144-145 | 150-151 | 2026-08-12 | «La demanda sísmica para galpones livianos **se debe** evaluar utilizando los parámetros indicados en Tabla 7, punto 5.7.» **12.2.1**, ocho condiciones: **a)** Categoría I o II según §4.3.1 · **b)** una o varias naves paralelas · **c)** altura libre interior de columnas laterales ≤ **23 m** y luz entre ejes de columnas sismorresistentes adyacentes ≤ **75 m** (nave individual) o **45 m** (naves paralelas) · **d)** peso propio de la **estructura soportante del techo** (sólo vigas, costaneras, colgadores, puntales, arriostramientos y conexiones) ≤ **70 kg/m²** · **e)** puentes grúa ≤ 100 kN sin cabina, o 50 kN con cabina · **f)** sin estanterías de almacenamiento vinculadas sísmicamente · **g)** equipos soportados por la estructura ≤ **50 kN por marco** · **h)** altillos vinculados a columnas ≤ **15 kN de carga sísmica horizontal por columna**. **12.2.2** el diseño cumple la cláusula 8 **reemplazando el amplificador 0,7R₁ por 0,5R₁**. **12.2.3** sin puente grúa ni otros equipos, se puede usar el **panel de techo como diafragma** (estándares ANSI/SDI SD), con la resistencia requerida de los paneles según §4.5 amplificada por 0,5R₁. **C12.2.1**: galpones «de luz y altura limitadas y grúas o equipos de poco peso, **en los cuales los esfuerzos de viento son normalmente superiores a los sísmicos**». | **Hallazgo 5.8** — decide el R de la serie |
+| **§8.3.2 y §8.3.3** Estabilidad y resistencia esperada | 80 | 86 | 2026-08-12 | **8.3.2** «**No se permite ningún tipo de reducción de rigidez en los elementos estructurales, producto de la aplicación de algún método de diseño por estabilidad indicado en NCh427/1, al momento de evaluar los efectos sísmicos mediante las metodologías elásticas expuestas en esta norma**». **C8.3.2**: el Método de Análisis Directo reduce rigidez e incorpora P∆-Pδ; es adecuado para viento «cuya magnitud y sentido son fundamentalmente independientes de la respuesta dinámica», pero la solicitación sísmica depende fuertemente de ella, así que reducir rigidez «puede conducir a una subestimación de la demanda. Luego, **no se permite el uso del Análisis Directo en el contexto del diseño estructural sismorresistente nacional**». Además: no es adecuado diseñar a compresión con K = 1,0; «tal como lo establece NCh427, **debe realizarse un análisis de pandeo para definir el valor de K de cada elemento**» (K depende también de la distribución de cargas), o usar métodos conservadores reconocidos como los **nomogramas de Kavanagh (1962)**. El análisis aproximado de segundo orden de **NCh427/1:2016, Anexo 8** es aceptable. **8.3.3** para R_y y R_t se usan los valores del material correspondiente; para materiales certificados ASTM «se pueden usar los valores definidos en **ANSI/AISC 341-16, Tabla A3.1**»; se admiten otros valores justificados por ensayos de control de calidad y certificación del fabricante. **C8.3.3**: «De acuerdo a estudios sobre placas de acero calidad ASTM A36 (U. de Chile) […] el valor de **R_y es cercano a 1,3**, lo que es consistente con lo indicado por ANSI/AISC 341-16.» Arriba en la misma página, **método ASD**: las capacidades esperadas del LRFD **divididas por 1,5**. | **Hallazgos 5.16 y 5.17**; post 7 |
+| **§8.6.1 a §8.6.4** Marcos arriostrados concéntricamente (MAC) | 87 | 93 | 2026-08-12 | **8.6.1** «No se permiten sistemas de arriostramiento con elementos que **solo resisten tracción**, **excepto en los casos de galpones livianos de acero que se rigen por las disposiciones de 12.2**.» **8.6.2** «En una línea resistente cualquiera, para cada nivel, la resistencia proporcionada por las diagonales traccionadas, para cada sentido de la acción sísmica, debe ser como mínimo un **30 % del esfuerzo de corte total en esa línea**.» **8.6.3** las diagonales sismorresistentes de planos verticales **que trabajen en compresión** deben tener razones ancho/espesor menores que λ_md de Tabla 9, y **esbeltez global menor que 1,5π√(E/F_y)**; se exceptúan aquellas cuya resistencia requerida se determine con §4.5 amplificando el sismo horizontal por **0,7R₁ ≥ 1,0**. **8.6.4** «Las diagonales en X **se deben conectar en el punto de cruce**. Dicho punto **se puede considerar fijo en la dirección perpendicular al plano** de las diagonales para los efectos de determinar la longitud de pandeo de la diagonal comprimida cuando la otra esté traccionada y una de las diagonales sea continua en el cruce.» **C8.6.1**: el objetivo de la prohibición es generar redundancia. **C8.6.4**: la longitud de pandeo fuera del plano depende de la razón de fuerzas axiales y de la conexión de las diagonales discontinuas en el cruce. | **Hallazgos 5.10 y 5.11**; post 10 |
+| **Anexo B (normativo)** B.1 Objetivo y generalidades | 220-221 | 226-227 | 2026-08-12 | Existe porque «NCh3171 no cuenta con combinaciones de cargas especialmente desarrolladas para casos industriales. Esto conduce a que en ocasiones las combinaciones indicadas en NCh3171, para casos generales, **generen inconsistencias**». Entrega lineamientos, no una lista cerrada. ASD sigue aceptable pero LRFD es superior en racionalidad probabilística. **Factor de equivalencia entre métodos, a nivel de resistencia, para diseño por capacidad: 1,5.** Las **tres reglas históricas**: (1) en cada combinación deben estar las cargas permanentes; (2) debe existir **al menos una acción crítica en su nivel de diseño (carga primaria)**, y las restantes (**acompañantes**) pueden adoptar su **valor más probable**; (3) sin información confiable y específica, criterios conservadores. **Definiciones probabilísticas**: el valor de diseño nominal de **nieve** y de **viento** es el de **2 % de probabilidad de excedencia anual**; el evento sísmico de diseño nominal es el de **10 % en 50 años**. «El **valor más probable** corresponde […] al **valor medio de la distribución** asociada a la carga.» Criterios conservadores **no** significan todas las acciones en su máximo simultáneo: «no es requerida la evaluación de escenarios de diseño que presenten conflictos con las leyes de la física». Remite a **ASCE/SEI 7-16 Caps. 1 y 2, y comentarios 2.3.5 y C2.3.5** para factores de acciones no tradicionales. Reconoce que servicio (deformaciones, vibraciones, fatiga) y estabilidad de fundaciones se verifican con **combinaciones de servicio**, en general equivalentes a ASD. | **Hallazgos 5.12 y 5.13**; post 3 |
+| **§8.8.4 y §8.8.5** Arriostramiento de piso o de cubierta | 96 | 102 | 2026-08-12 | **8.8.4** «Las diagonales y puntales de sistemas de arriostramiento de piso o de cubierta deben tener razones ancho/espesor, menores que el valor λ_md establecido en Tabla 9. **La esbeltez global de estos elementos debe ser menor que 1,5π√(E/F_y)**.» Se pueden **exceptuar** los elementos cuya resistencia requerida se determine con las combinaciones de §4.5 en las que el estado sísmico horizontal se amplificó por **0,7R₁ ≥ 1,0**, o con la máxima carga que el sistema puede transferir al elemento. **8.8.5** las conexiones de esas diagonales y puntales se diseñan para la **capacidad esperada en tracción y en compresión**; la resistencia requerida no necesita superar la de §4.5 con el sismo amplificado por 0,7R₁ ≥ 1,0, ni la máxima carga transferible. **C8.8.4**: el motivo del límite es que los ciclos de pandeo no generen fatiga de bajo ciclaje. | **Hallazgo 5.9**; post 10 |
+| **Tabla 9** — Límites de la relación ancho/espesor | 97-99 | 103-105 | 2026-08-12 | Todos los límites se escriben con **R_y·F_y**, no con F_y. **Elementos no atiesados** (pág. 97): alas de perfiles soldados o laminados I, H, y alas de soldados/laminados/plegados en frío C, T y L → λ = b/t, **λ_md = 0,40√(E/(R_y F_y))**; almas de perfiles soldados o laminados tipo T → λ = d/t, mismo 0,40√(...). **Elementos atiesados, usados como arriostramientos** (pág. 98): paredes de rectangulares conformados en frío (HSS) o plegados en frío, alas de rectangulares soldados o laminados I/H, planchas laterales de rectangulares I/H, y paredes de rectangulares soldados → **λ_md = 0,76√(E/(R_y F_y))**; almas de I, H o C soldados, laminados o plegados en frío → **λ_md = 1,57√(E/(R_y F_y))**. **Perfiles usados como vigas sometidos a flexo-compresión** (pág. 99): alas en compresión uniforme (rectangulares soldados, HSS, plegados en frío; y alas de rectangulares soldados o laminados I/H) → b/t, **λ_md = 1,18√(E/(R_y F_y))**; almas de perfiles soldados, laminados o plegados en frío I, H o C, planchas laterales de rectangulares I/H, y almas de rectangulares soldados/HSS/plegados → h/t, con **dos ramas**: para **C_a ≤ 0,114**, `3,96√(E/(R_y F_y))·(1 − 3,04·C_a)`; para **C_a > 0,114**, `1,29√(E/(R_y F_y))·(2,12 − C_a) ≥ 1,57√(E/(R_y F_y))`. En que `C_a = P_u/(φ_c·P_y)` (LRFD), `C_a = Ω_c·P_a/P_y` (ASD) y **`P_y = R_y·F_y·A_g`**. | **Hallazgo 5.15**; posts 7, 8 y 10 |
+| **Tabla 7** — R y ξ (filas de acero) | 60-61 | 66-67 | 2026-08-12 | 1. elásticas R 1, ξ 0,03 · 2. otras no incluidas o asimilables R 1,5, ξ 0,02 · 3. péndulo invertido R 2, ξ 0,03 · 4. sísmicas isostáticas R 2, ξ 0,03 · **5.1** marcos a momento **con** anclajes dúctiles R **5** · **5.2** marcos a momento **sin** anclajes dúctiles R **3** · **5.3** marcos arriostrados **con** anclajes dúctiles R **5** · **5.4** marcos arriostrados **sin** anclajes dúctiles R **3** · **5.5** edificios industriales de un piso, **con o sin puente grúa, con arriostramiento continuo de techo**, y con anclajes dúctiles R **5** · **5.6** edificios industriales de un piso, **sin puente grúa, sin arriostramiento continuo de techo**, y con anclajes dúctiles R **3** · **5.7** galpones livianos de acero R **4**. Todas las filas de acero: **ξ = 0,02 uniones soldadas / 0,03 uniones empernadas**. | Fila **5.5**, R = 5, ξ = 0,02; **Hallazgos 5.2 y 5.6** |
+
+#### NCh 3171:2017 · NCh 432:2025
+
+Pendientes. Ver §6.1.
+
+### 4.2 Parámetros derivados
+
+| Símbolo | Valor | De dónde sale |
+|---|---|---|
+| Área en planta | 576,0 m² | 24,0 × 24,0, geometría congelada |
+| Largo de faldón | 12,185 m | 12,0 / cos 10° |
+| Separación de costaneras | 1,354 m | faldón / 9 espacios |
+| A_r | 0,42 g | Tabla 3, zona 2 |
+| S, r, T₀, p, q, T₁ | 1,00 · 4,50 · 0,30 s · 1,60 · 3,00 · 0,27 s | Tabla 6, suelo B |
+| R | 5 | Tabla 7 fila 5.5 (exige arriostramiento continuo de techo **y** anclajes dúctiles) |
+| ξ | 0,02 | Tabla 7, uniones soldadas |
+| f_ξ = (0,05/ξ)^0,4 | **1,4427** | Ec. (1a) — pendiente de leer. Con ξ = 0,02 son **+44 %** |
+| Codo de la Ec. (1b): 0,16·R·T₁ | R=4: **0,173 s** · R=5: **0,216 s** | 0,16·R·T₁ con T₁ = 0,27 s. El T\* de la dirección arriostrada cae cerca: su R\* es sensible al modelo |
+| Límite de esbeltez global §8.8.4, A36 | **133,29** | 1,5π√(E/F_y) con E = 200.000 MPa y F_y = 250 MPa. √800 = 28,2843 → ×π = 88,8577 → ×1,5 = 133,2865 |
+| r mínimo de la diagonal, L = 10,0 m | **75,0 mm** | 10.000 / 133,29. Inalcanzable con perfil razonable |
+| r mínimo de la diagonal, L = 5,0 m (cruce de la X, §8.6.4) | **37,5 mm** | 5.000 / 133,29. Un cajón 100×100×4 da r ≈ 39,2 mm → KL/r = 127,5 ✅ |
+| **√(E/(R_y·F_y))** para A36 | **24,807** | E = 200.000 MPa, **R_y = 1,3** (de C8.3.3, ver §5.17), F_y = 250 MPa → R_y F_y = 325 MPa → √(200.000/325) = √615,38. ⚠️ **Todas las filas λ_md que siguen son condicionales a R_y = 1,3**; con 1,5 bajan un 6,9 % |
+| λ_md alas no atiesadas (0,40·) | **9,92** | Ala 220×12 con alma 6: b = (220−6)/2 = 107 → b/t = **8,92** ✅ (10 % de margen) |
+| λ_md paredes de HSS como arriostramiento (0,76·) | **18,85** | Cajón 100×100×4: b/t = 92/4 = **23** ❌ · 100×100×5: 90/5 = **18** ✅ |
+| λ_md almas I/H/C como arriostramiento (1,57·) | **38,95** | también es el piso de la rama alta de flexo-compresión |
+| λ_md alas en flexo-compresión (1,18·) | **29,27** | |
+| λ_md almas en flexo-compresión, rama baja | **98,25·(1 − 3,04·C_a)** | 3,96 × 24,807. En C_a = 0 → 98,25; en C_a = 0,114 → **64,2** |
+| λ_md almas en flexo-compresión, rama alta | **32,00·(2,12 − C_a) ≥ 38,95** | 1,29 × 24,807. Continua con la rama baja en C_a = 0,114; toca el piso en C_a ≈ 0,903 |
+
+### 4.3 Datos de proyecto (declarados, sin cláusula)
+
+Amparados por **§4.5.1** de NCh2369, que para alta montaña exige estudios específicos de nieve y
+viento. Se declaran en los supuestos de cada post; no se atribuyen a NCh431 ni a NCh1537.
+
+| Carga | Valor | Nota |
+|---|---|---|
+| Cubierta (panel sándwich aislado) | 0,12 kPa | |
+| Costaneras | 0,06 kPa | |
+| Instalaciones colgadas | 0,15 kPa | bandejas, luminarias, rociadores |
+| **D superpuesta de techo** | **0,35 kPa** | el peso propio del marco lo pone el motor, aparte |
+| D revestimiento de muro | 0,12 kPa | |
+| **L_r** | **0,30 kPa** | con S = 1,20 no gobierna nunca; `a = 0` la saca del sismo |
+| **S balanceada** | **1,20 kPa** sobre proyección horizontal | ≈ 3,4× la carga muerta de techo |
+| **S desbalanceada** | 100 % / 50 % por faldón | **redactar como regla del estudio de sitio**, jamás como regla normativa |
+
+### 4.4 Predimensionamiento «a ojo de obra»
+
+Pensado para fallar. Se confirma con el usuario en el paso 2.2.
+
+| Miembro | Predimensionado | Falla esperada | Arreglo esperado |
+|---|---|---|---|
+| Columna tapered | alma 6 mm, peralte 350 (base) → 800 (alero); alas 220×12 | h/t_w = 133 → alma esbelta · deriva §6.3 | alma 8 mm, alero 800→1.100, rigidizadores |
+| Dintel tapered | alma 6 mm, 800 (alero) → 350 (cumbrera); alas 220×12 | flexión bajo nieve · LTB del ala inferior con L_b = 6,0 m | alma 8 mm + kickers a 2,70 m |
+| Diagonal longitudinal | 2L 75×75×6, L = 10,0 m | esbeltez fuera del límite de §8 | **puntal a media altura** → L = 5,0 m |
+| Costanera | C 200×50×15×2,0 @ 1,50 m | flexión eje débil bajo nieve | CA 250×3,0 @ 1,354 m + 2 tirantes a los tercios |
+| Crucería de techo | dos vanos extremos | — | es lo que compra R = 5; hay que pesarla |
+
+---
+
+## 5. Hallazgos
+
+Los que cambian el contenido de un post o corrigen algo ya escrito.
+
+### 5.1 La deuda de NCh431 no existe — la norma manda usar un estudio de sitio
+
+**§4.5.1 de NCh2369** exige, para proyectos de **alta montaña**, estudios específicos que definan el
+nivel de las cargas de interés «por ejemplo nieve o viento» **y la forma en que se combinan con el
+sismo**. El galpón está a 3.800 m. Declarar `S` desde un estudio de sitio deja de ser una deuda con
+disculpa y pasa a ser lo que la norma pide, citable con cláusula y página.
+
+Efecto sobre el plan: el `Note` de deuda del post 3 se reescribe como **cita normativa**, no como
+disclaimer. Sigue prohibido atribuir un número a NCh431.
+
+### 5.2 La Tabla 7 clasifica el edificio, no la dirección — y el techo elige la fila
+
+Filas 5.5 (R = 5) y 5.6 (R = 3) se diferencian **solo** en si hay o no **arriostramiento continuo de
+techo**. La fila aplica al edificio completo, o sea también a la dirección transversal, que ni siquiera
+toca el techo. Unos cientos de kilos de crucería mueven la demanda de análisis un **67 %**.
+
+Es la tesis del post 5, y quedó confirmada literalmente por la norma.
+
+### 5.3 §5.1.2 no da un número para la nieve en la masa sísmica
+
+Da un **criterio**: valor esperado, o probabilidad de ocurrencia simultánea con el sismo de diseño.
+Los tres mínimos tabulados son ocupaciones (bodegas, acopio, plataformas), ninguna es nieve de techo.
+En el altiplano la nieve permanece meses sobre la cubierta, así que la probabilidad de simultaneidad
+**no** es despreciable — al revés que en un techo de Santiago. La decisión se toma en el paso 2.5 y se
+argumenta, no se copia.
+
+**Corrección al wiki**: `material_teorico\taller\_indice-taller.md` (línea ~79) anota que «§5.1.2
+[remite a NCh1537 para la] fracción mínima de masa sísmica obligatoria». **§5.1.2 no remite a
+NCh1537.** Corregir esa nota.
+
+### 5.4 La loma del K_zt pelea con la clasificación de suelo
+
+La nota a) de la **Tabla 4** dice que la clasificación de suelos aplica a topografía aproximadamente
+horizontal y a estructuras **lejos de singularidades geomorfológicas y topográficas**. La plataforma
+sobre un lomo que le da al post 1 su `K_zt` es, justamente, una singularidad topográfica. Es una
+tensión real entre las dos normas y da un párrafo excelente en el post 1 o el 5.
+
+### 5.5 Las tablas sísmicas de rukan SÍ coinciden con la 3.ª edición
+
+Riesgo #1 del plan, **descartado**. `AR_BY_ZONE` (`spectra.py:22`) y `SOIL_PARAMS`
+(`spectra.py:38-44`) coinciden **exactamente** con las Tablas 3 y 6 de la edición 2025, pese a que el
+docstring del módulo cita «NCh2369.Of2003, cláusula 5.4 y 5.5» y «Tabla 5.2/5.3». No hay impacto
+retroactivo sobre la serie de la torre.
+
+**Pendiente menor**: actualizar ese docstring, que apunta a una edición que no es la vigente.
+
+### 5.6 Con puente grúa y sin arriostramiento continuo de techo no hay fila
+
+La 5.5 dice «**con o sin** puente grúa, **con** arriostramiento continuo de techo». La 5.6 dice «**sin**
+puente grúa, **sin** arriostramiento continuo de techo». El caso «con puente grúa y sin arriostramiento
+continuo de techo» **no está en la tabla**, y cae en la fila 2 («otras estructuras no incluidas o
+asimilables»), R = 1,5. No estaba en el plan; es material para el post 5.
+
+### 5.7 El arriostramiento continuo de techo es obligatorio, no una opción que compra R
+
+**§12.1.2** lo exige para todo edificio con marcos transversales. La única excepción son los edificios
+**sin puente grúa cuyas cargas permanentes provienen sólo del peso propio** — no es nuestro caso: la
+cubierta, las costaneras y las instalaciones colgadas suman 0,35 kPa de carga muerta superpuesta.
+
+Eso afila la tesis del post 5 en vez de romperla. La fila **5.6 de la Tabla 7 (R = 3) es casi
+inalcanzable legalmente**: si tienes marcos transversales, §12.1.2 te obliga al arriostramiento
+continuo, y eso te pone en la fila 5.5 (R = 5). La 5.6 describe la excepción —un galpón pelado cuya
+única carga permanente es su propio peso— o un edificio que no cumple §12.1.2.
+
+Y **C12.1.2 dice explícitamente** que el arriostramiento continuo «tiene las ventajas sísmicas de los
+diafragmas rígidos horizontales» y «hace posible distribuir cargas laterales concentradas […] entre
+varios marcos». O sea, el reparto entre los 5 marcos que es la tesis del post 4 es exactamente lo que
+la norma persigue con la cláusula.
+
+### 5.8 El galpón CALIFICA como liviano — y eso es una bifurcación, no un detalle
+
+Las ocho condiciones de **§12.2.1**, contrastadas contra el caso:
+
+| Cond. | Exige | Nuestro galpón | ¿Cumple? |
+|---|---|---|---|
+| a) | Categoría I o II | II | ✅ |
+| b) | una o varias naves paralelas | una nave | ✅ |
+| c) | altura libre ≤ 23 m; luz ≤ 75 m | 8,0 m; 24,0 m | ✅ |
+| d) | **peso propio de la estructura de techo ≤ 70 kg/m²** | estimado ~25-30 kg/m² | ✅ (verificar en el paso 2.2) |
+| e) | puente grúa ≤ 100/50 kN | no hay | ✅ |
+| f) | sin estanterías vinculadas sísmicamente | no hay | ✅ |
+| g) | equipos ≤ 50 kN por marco | instalaciones colgadas 0,15 kPa × 144 m² ≈ 21,6 kN | ✅ |
+| h) | altillos ≤ 15 kN por columna | no hay | ✅ |
+
+**Consecuencia**: §12.2 dice «se **debe** evaluar utilizando […] Tabla 7, punto 5.7», o sea **R = 4**, y
+§12.2.2 reemplaza el amplificador de capacidad **0,7R₁ por 0,5R₁**. No es un menú: si cumples las ocho
+condiciones, eres galpón liviano.
+
+Esto **corrige el plan**, que suponía R = 5 con «la rama alternativa 3». La alternativa real es
+**R = 5 (fila 5.5) contra R = 4 (§12.2)**, y las dos tiran en sentidos opuestos: R = 4 sube la demanda
+de análisis un 25 %, pero el amplificador de capacidad baja de 3,50 a 2,00 (−43 %). Es exactamente el
+contrato que ya explicó `blog/galpon-liviano-nch2369.mdx`, así que el post 5 **no lo re-explica**:
+lo aplica y resuelve por cuál ruta va este galpón.
+
+Nota adicional de **C12.2.1**: los galpones livianos son aquellos «en los cuales los esfuerzos de
+viento son normalmente superiores a los sísmicos» — la norma misma anticipa la tesis del post 10.
+
+**Resuelto con el usuario (2026-08-12)**: se corren **las dos**. La de diseño es §12.2 (R = 4, 0,5R₁);
+la fila 5.5 (R = 5, 0,7R₁) va como comparación ilustrativa sobre el mismo modelo.
+
+### 5.9 La esbeltez de §8.8.4 tiene dos salidas, y una es geometría
+
+El límite es **1,5π√(E/F_y)** = **133,29** para A36. La diagonal longitudinal de 10,0 m pediría
+r ≥ 75,0 mm, que no existe en perfil razonable. Con un **puntal a media altura** (L = 5,0 m) el
+requisito baja a r ≥ 37,5 mm y un cajón 100×100×4 (r ≈ 39,2 mm) lo cumple con KL/r = 127,5.
+Confirma la tesis del post 10: **el arreglo no es un perfil, es geometría.**
+
+Lo que el plan no tenía: §8.8.4 ofrece una **segunda ruta legal** — quedar exento del límite
+diseñando el elemento para el sismo amplificado por 0,7R₁ ≥ 1,0 (o para la máxima carga transferible).
+Y como este galpón va por §12.2, **§12.2.2 reescribe ese 0,7R₁ como 0,5R₁ dentro de la propia
+§8.8.4**. El post 10 puede mostrar las dos rutas y cuánto acero cuesta cada una.
+
+Ojo con la distinción de cláusulas: **§8.8 es arriostramiento de piso o de cubierta** (nuestra crucería
+de techo) y **§8.6 es MAC, marcos arriostrados concéntricamente** (nuestra crucería longitudinal
+vertical). Ambas traen el mismo límite `1,5π√(E/F_y)` — §8.6.3 está en la pág. impresa 87 (PDF 93) y
+queda **pendiente de leer rasterizada**.
+
+### 5.10 Ir por galpón liviano habilita el arriostramiento solo-tracción
+
+**§8.6.1** prohíbe el arriostramiento solo-tracción **excepto** en galpones livianos regidos por §12.2.
+Como la ruta de diseño es §12.2 (§5.8), este galpón **sí puede** usar solo-tracción. Y §8.6.3 aplica su
+límite de esbeltez a las diagonales «**que trabajen en compresión**», así que un sistema solo-tracción
+lo esquiva por definición.
+
+Eso convierte al post 10 en una comparación de tres configuraciones, no en un cálculo:
+
+| | Fila 5.5 (R = 5) | §12.2 liviano (R = 4) |
+|---|---|---|
+| Solo-tracción | **prohibido** (§8.6.1) | **permitido** (§8.6.1, excepción) |
+| Esbeltez §8.6.3 | muerde: la diagonal trabaja en compresión | no muerde si es solo-tracción |
+| Amplificador de capacidad | 0,7R₁ = 3,50 | 0,5R₁ = 2,00 |
+| §8.6.2 | ≥ 30 % del corte de la línea por las traccionadas | ídem |
+
+### 5.11 El punto de cruce de la X ya es el punto de arriostramiento
+
+**§8.6.4** obliga a conectar las diagonales en el punto de cruce y permite considerarlo **fijo en la
+dirección perpendicular al plano** para la longitud de pandeo de la comprimida, cuando la otra está
+traccionada y una es continua en el cruce.
+
+Corrige el plan: el «puntal a media altura» que se proponía como arreglo geométrico **ya está** — es el
+cruce de la propia X. Con la diagonal de 6 × 8 m, la longitud de pandeo fuera del plano es 5,0 m desde
+el principio, y un cajón 100×100×4 (r ≈ 39,2 mm → KL/r = 127,5) cumple sin agregar nada.
+
+El post 10 mantiene su tesis —el problema se resuelve con geometría, no con perfil— pero la geometría
+la puso la norma, y el hallazgo pasa a ser **la cláusula que casi nadie aplica**. Queda por decidir con
+el modelo qué pasa **en el plano**, donde §8.6.4 no dice nada.
+
+### 5.12 El «1,4 de §4.5 para conexiones» no existe en la edición 2025
+
+El reporte inicial sobre `modelo_base` de Skills_SAP daba por hecho un factor 1,4 de NCh2369 §4.5 para
+conexiones. **§4.5 leída completa no lo tiene**: solo las cuatro combinaciones sísmicas. Lo que sí
+existe es, en el **Anexo B**, un **factor de equivalencia entre métodos ASD↔LRFD a nivel de
+resistencia, igual a 1,5**, aceptado «para propósitos de diseño sísmico (diseño por capacidad)».
+
+Corrige el subproducto sobre los defectos del `modelo_base`: el defecto no es «le falta el 1,4», es
+«no implementa la equivalencia de 1,5 del Anexo B».
+
+### 5.13 El Anexo B cierra el argumento de la nieve
+
+La cadena queda completa y citable de punta a punta:
+
+1. **§5.1.2** pide una fracción de las sobrecargas «de acuerdo con el **valor esperado**, o su
+   probabilidad de ocurrencia simultánea, con el sismo de diseño».
+2. **Anexo B** define que «el **valor más probable** corresponde […] al **valor medio de la
+   distribución** asociada a la carga», y que el nominal de nieve es el de **2 % de excedencia anual**
+   mientras el sísmico es el de **10 % en 50 años**.
+3. **§4.5.1** obliga, en alta montaña, a un estudio específico que defina el nivel de la nieve **y cómo
+   se combina con el sismo**.
+
+O sea: la fracción de nieve en la masa sísmica es **media / nominal**, y quien la entrega es el estudio
+de sitio que la propia norma exige. Ningún número inventado, y la deuda de NCh431 queda convertida en
+contenido.
+
+El Anexo B aporta además la doctrina de **carga primaria / acompañante** que estructura el post 3, y
+autoriza explícitamente las **combinaciones de servicio** para deformaciones — que es lo que el
+`modelo_base` no tiene.
+
+### 5.14 La Categoría de ocupación puede matar al galpón liviano
+
+**§12.2.1 a)** exige Categoría I o II. La **NOTA 1 de la Tabla 1** dice que una instalación **no puede
+clasificarse por debajo del equipo o proceso más crítico que aloje o soporte**. Basta con que el galpón
+albergue equipo de proceso crítico para subir a Categoría III — y ahí pierde de golpe el galpón liviano
+(R = 4 → habría que ir a la fila 5.5) **y** sube I de 1,00 a 1,20.
+
+Por eso hay que **declarar explícitamente en los supuestos** qué alberga el galpón. Se declara como
+bodega / almacenamiento de insumos **sin equipo de proceso crítico**, que es lo que sostiene a la vez la
+Categoría II, el I = 1,00 y la ruta de §12.2.
+
+Es un buen párrafo para el post 5: el R de un galpón no lo decide solo su estructura, lo decide **lo que
+se guarda adentro**.
+
+### 5.15 La Tabla 9 muerde más que la esbeltez global, y el arreglo del plan se queda corto
+
+Dos consecuencias, ambas corrigen el predimensionamiento del plan.
+
+**La diagonal.** El cajón 100×100×4 **cumple** la esbeltez global de §8.6.3 (KL/r = 127,5 < 133,29) pero
+**falla la local**: b/t = 23 contra λ_md = 18,85 (y con la lectura `b = B − 3t` de AISC §B4.1b(d) da 22,
+que tampoco pasa). Hay que subir a **100×100×5** → b/t = 18 ✅ y r ≈ 38,8 mm → KL/r = 128,8 ✅.
+Buen material para el post 10: lo que manda no es el KL/r que todos miran, es el λ_md.
+
+**El alma del tapered.** Con C_a bajo —lo típico de una columna de galpón, digamos C_a ≈ 0,05— el límite
+es 98,25 × (1 − 3,04 × 0,05) = **83,3**. El alma de 6 mm con h = 800 − 2×12 = 776 mm da
+h/t = **129,3**: falla, como el plan quería. Pero **el arreglo que el plan proponía —alma de 8 mm— da
+97 y tampoco pasa**. Se necesita **10 mm**, o bajar el peralte del alero, o ambas. El C_a real sale del
+análisis, así que el número final se fija en la Fase 2.
+
+**Pendiente que decide cuánto de esto aplica**: hay que leer **§8.7 (marcos de momento)** para saber con
+qué alcance invoca la Tabla 9 y si trae la misma exención por diseño de capacidad que §8.6.3 y §8.8.4.
+Si la trae, el dintel y la columna tienen la misma bifurcación que la diagonal.
+
+### 5.16 El Método de Análisis Directo está prohibido para sismo en Chile
+
+**§8.3.2** lo dice como disposición y **C8.3.2** lo explicita: «no se permite el uso del Análisis Directo
+en el contexto del diseño estructural sismorresistente nacional». El razonamiento es fino: el DAM es
+adecuado para viento, «cuya magnitud y sentido son fundamentalmente independientes de la respuesta
+dinámica», pero la solicitación sísmica sí depende de ella, y bajar la rigidez **subestima la demanda**.
+
+**Corrige el plan**, que proponía resolver el post 7 con «DAM: 0,8τ_b EI + cargas nocionales». Para el
+sismo hay que ir por longitud efectiva: C8.3.2 pide **un análisis de pandeo que defina el K de cada
+elemento** (recordando que K depende también de la distribución de cargas), o métodos conservadores
+reconocidos como los **nomogramas de Kavanagh (1962)**; y acepta el segundo orden aproximado de
+**NCh427/1:2016 Anexo 8**.
+
+Eso *mejora* la tesis del post 7: en Chile vuelves a los factores de longitud efectiva — **y para un
+miembro de peralte variable no hay nomograma**. El K sale de un análisis de pandeo del modelo, que es
+justo lo que los dos motores pueden entregar y contrastar.
+
+Consecuencias prácticas:
+
+- El DAM sí se puede (y conviene) usar para las combinaciones **de gravedad y viento**. Hay que separar
+  las dos familias en el modelo y decirlo en el post.
+- Baja la urgencia del `geom_transf` PDelta en rukan para el caso sísmico, pero **sube** la de tener un
+  **análisis de pandeo (`eigen` de la matriz geométrica)** en ambos motores. Reordena la lista de
+  cambios de rukan de §6.1.
+- **NCh427/1 no está en PDF** en este equipo. Se suma a la deuda de §8.
+
+### 5.17 R_y = 1,3 se apoya en el comentario; la vía normativa apunta a una edición que no tenemos
+
+**§8.3.3** (disposición) manda a **ANSI/AISC 341-16, Tabla A3.1**. En disco hay **A341-22**, no la 16.
+El **1,3** que uso en todos los λ_md derivados viene de **C8.3.3** —columna de comentarios—, que lo
+declara «cercano a 1,3» para placas A36 nacionales según estudios de la U. de Chile.
+
+Es defendible y citable, pero hay que escribirlo así: **el 1,3 es del comentario C8.3.3**, no de la
+Tabla A3.1. Antes de publicar cualquier λ_md hay que abrir la Tabla A3.1 de AISC 341 y decidir si la
+edición 22 sirve como fuente o si se cita solo C8.3.3. Ojo con la distinción **placa vs perfil
+laminado**, que en AISC llevan R_y distinto: si cambiara a 1,5, todos los λ_md de §4.2 bajan un 6,9 %
+(factor √(1,3/1,5) = 0,9309) y el margen del ala pasa de 10 % a 2 %.
+
+Todos los λ_md numéricos de §4.2 quedan marcados como **condicionales a R_y = 1,3**.
+
+---
+
+## 6. Estado de la serie
+
+### 6.1 Fase 0 — sprint de PDF
+
+| # | Tarea | Estado |
+|---|---|---|
+| 1 | Verificar tablas sísmicas de rukan contra la 3.ª ed. | ✅ **hecho** — coinciden (§5.5) |
+| 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
+| 3 | Leer NCh3171:2017 §9 completo | ⬜ pendiente |
+| 4 | Leer NCh432:2025, parámetros del sitio | ⬜ pendiente |
+| 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ⬜ pendiente |
+
+**Ya leído de NCh2369** (2026-08-12): §4.3.1 · §4.3.2 · §4.5.1 + Tabla C-2 · §5.1.1 · §5.1.2 ·
+§8.6.1–8.6.4 · §8.8.4 · §8.8.5 · §12.1.1–12.1.6 · §12.2 completa con las ocho condiciones ·
+Anexo B normativo B.1 · Tablas 1, 3, 4, 6 y 7. Todo en §4.1.
+
+**Lo que falta de NCh2369** (tarea 2), en orden de urgencia:
+
+| Cláusula | pág. impresa | PDF | Para qué |
+|---|---|---|---|
+| **§8.7 Marcos de momento** | ~99-101 | ~105-107 | **decide el alcance de la Tabla 9 sobre el tapered** y si hay exención por capacidad (§5.15) |
+| **AISC 341 Tabla A3.1** (R_y, R_t) | — | `A341-22W-oke.pdf` | cerrar §5.17. La norma cita la **ed. 16**, en disco está la **22** |
+| §8.4 / §8.5 (el 0,7R₁ y sus alternativas) | ~81-86 | ~87-92 | contexto de §12.2.2 |
+| §5.2.2 irregularidades · §5.6.2 masa modal 90 % · §5.7 vertical · §5.12/§5.13 banda · Ec. (14) | ~30-50 | ~36-56 | posts 4 y 5 |
+| §6.1–§6.4 deformaciones | ~68-70 | ~74-76 | post 5 |
+| Ec. (1a)/(1b) espectro | ~32-35 | ~38-41 | posts 4 y 5 |
+
+Las cinco últimas filas **ya se leyeron rasterizadas el 2026-08-11** para la serie de la torre, y están
+implementadas y verificadas en `src/lib/nch2369-spectrum.ts` (contrastado contra SAP2000 y OpenSeesPy
+a < 0,01 %). Se re-leen al escribir el post que las cite, para que la fila de esta memoria tenga su
+propia fecha — no se heredan.
+
+**Bloqueantes de rukan** (tarea 5), los tres verificados leyendo el código:
+
+| # | Qué | Dónde | Arreglo |
+|---|---|---|---|
+| 1 | `nch2369_spectrum` aplica **R\* período a período** | `spectra.py:115` | parámetro `r_fixed`; R\* constante por dirección |
+| 2 | docstring cita la Of2003 | `spectra.py:13-15, 21, 27` | actualizar la referencia (los **valores** están bien, §5.5) |
+| 3 | `_r_star` **sin** la rama `R ≤ 1 → R* = 1` | `spectra.py:57-62` | portar de `src/lib/nch2369-spectrum.ts` |
+
+### 6.2 Fase 2 — el modelo SAP2000, a cuatro manos
+
+Seis pasos cortos vía el MCP. **Cada uno termina con un resumen para que el usuario lo confirme antes
+de seguir.** Ningún post se escribe con un modelo sin confirmar.
+
+| Paso | Qué se construye | Qué se muestra | Estado |
+|---|---|---|---|
+| 2.1 | Geometría desnuda: nodos, ejes, 5 marcos, crucería longitudinal y de techo | coordenadas de un marco tipo + croquis. Se decide altura de crucería, en qué vanos va, y si el puntal a media altura existe desde el principio | ⬜ |
+| 2.2 | Secciones por planchas y discretización del tapered | tabla estación por estación con `d`, `b_f`, `t_f`, `t_w` y A/I/J de `GetSectProps`. **Acá el usuario confirma el predimensionado** | ⬜ |
+| 2.3 | Ejes locales, releases, apoyos | el momento del plano que no trabaja debe dar ~1e-14; tabla de restricciones | ⬜ |
+| 2.4 | Cargas de gravedad y viento | reacciones totales por estado contra la resultante a mano (equilibrio global) | ⬜ |
+| 2.5 | Masa sísmica y modal | períodos, masa modal acumulada, modos dominantes. **Acá se decide la fracción de nieve** (§5.3) | ⬜ |
+| 2.6 | R\*, espectros y casos RS | ordenadas en T\*, chequeo `referencia/diseño = R\*`, cortes contra la banda §5.12/§5.13 | ⬜ |
+
+Reglas: scripts **idempotentes** (`InitializeNewModel` + `File.NewBlank`) · `save_as` solo al cerrar
+cada paso · si el usuario cambia algo se re-corre desde 2.1 (la torre entera tardaba ~27 s) · **rukan
+no se toca hasta que el modelo SAP esté cerrado** · números **sin redondear**.
+
+### 6.3 Fase 3 — los diez posts
+
+| # | Slug | Colección | Estado |
+|---|---|---|---|
+| 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ⬜ |
+| 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ |
+| 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ⬜ |
+| 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ |
+| 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | ⬜ |
+| 5b | `modelo-base-skills-sap-los-siete-defectos` | `blog` / SAP2000 | ⬜ |
+| 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ⬜ |
+| 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |
+| 8 | `ejemplo-dintel-tapered-ltb-galpon` | `acero` / Miembros | ⬜ |
+| 9 | `ejemplo-costanera-galpon-biaxial` | `acero` / Miembros | ⬜ |
+| 10 | `ejemplo-diagonal-longitudinal-galpon` | `acero` / Marcos arriostrados | ⬜ |
+
+Las tesis de cada uno están en el plan. Auditoría en dos tandas: tras 1+2+3, y tras el resto.
+
+---
+
+## 7. Lo que cada post NO puede rehacer
+
+Párrafo obligatorio en el §1 de cada post, con enlace.
+
+| Post ya publicado | Qué agotó | Afecta a |
+|---|---|---|
+| `apuntes/ejemplo-viento-galpon-nch432.mdx` | galpón 24 × 60 m θ=10°: **Figura 12**, el **reparto área→frame** en SAP2000, y la **costanera por C&R** (área efectiva, viga simple vs continua, deflexión) | posts 1 y 9 |
+| `apuntes/nch432-cargas-de-viento.mdx` | el panorama completo y **K_e en el altiplano** | post 1 (allí K_e es contexto; la tesis es K_zt) |
+| `blog/galpon-liviano-nch2369.mdx` | **§12.2** completa, las ocho condiciones, R = 4 y el 0,5R₁ | post 5 (debe declarar por qué **no** califica) |
+| `blog/rukan-verificacion-peso-propio-combinaciones.mdx` | caso 8: galpón a dos aguas 3D de 3 marcos con D, L_r, E_X, E_Y | posts 2, 4, 6 |
+| `acero/ejemplo-columna-galpon-compresion.mdx` · `ejemplo-viga-columna.mdx` | compresión pura con K y esbeltez · H1 prismático | post 7 |
+| `acero/ejemplo-viga-ltb.mdx` | LTB con L_b como dato | post 8 (allí L_b es **función de la combinación**) |
+| Serie de la torre (3 apuntes + Rukan 7) | la cadena `T*→R*→Q₀→banda→R₁`, la deriva de §6, el espectro de referencia | posts 4 y 5 |
+
+---
+
+## 8. Deuda y pendientes
+
+- **Docstring de `rukan/spectra.py`** cita NCh2369.Of2003; los valores son de la 2025. Actualizar.
+- **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
+- **Anexo B normativo de NCh2369** (combinaciones de cargas) no estaba en el plan. Leerlo antes del
+  post 3.
+- **NCh431 y NCh1537** siguen sin PDF. Ya no bloquean (§5.1), pero si aparecen, el post 3 gana una
+  sección.
+- **NCh427/1 no está en PDF.** La cita §8.3.2 (métodos de diseño por estabilidad) y C8.3.2 (el segundo
+  orden aproximado del Anexo 8, aceptado explícitamente). Necesaria para el post 7.
+- **AISC 341-16 Tabla A3.1** — la norma cita esa edición y en disco está la 22. Ver §5.17.
+- **Análisis de pandeo para K** (§5.16): rukan necesita un `eigen` de pandeo (matriz geométrica), no
+  solo P-Delta. Reordena la prioridad de los cambios de rukan respecto de lo que decía el plan.
+- **Figuras 25/26 de NCh432** (topografía, K_zt) y **Figura 2** (zonificación) no están transcritas al
+  wiki: hay que leerlas del PDF para el post 1.
+- **rukan no tiene sección de peralte variable** ni `geom_transf` configurable. Ver plan, Fase 2.
