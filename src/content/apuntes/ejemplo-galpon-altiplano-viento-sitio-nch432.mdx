@@ -1,0 +1,324 @@
+---
+title: "Ejemplo — El sitio del galpón: el mismo cerro, tres K_zt distintos"
+description: "El galpón del altiplano a 3 800 m sobre una loma minera, resuelto hasta el q_h por la NCh 432:2025. La altitud le descuenta un 36,4 % de presión y la topografía se lo devuelve con creces: el neto es +23,9 %. Pero el número que decide no sale de ninguna tabla — sale de cómo se clasifique el cerro, y entre cima 2D y escarpamiento hay un 27 % con la misma altura y la misma posición. Más el escalón de H/L_h = 0,2, que apaga el factor entero sin transición, y el factor de ráfaga que en este camino no se multiplica."
+pubDate: 2026-08-12
+tags: ["viento", "nch432", "ejemplo", "galpón", "altiplano", "topografía", "cargas", "serie galpón"]
+subsection: "nch432"
+chapter: "Ejemplo — El sitio: K_zt, K_e y la clasificación del cerro"
+source: "NCh 432:2025 (3.ª ed.), cláusulas 3, 5 y 7, con la Figura 3 y las Tablas 1, 2, 3, 4, 5 y 7"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Este es el primero de los diez posts sobre el
+[galpón del altiplano](/blog/galpon-altiplano-la-serie/), y el único que se puede escribir sin
+abrir un modelo: todo lo que hay acá sale de la norma y de un plano topográfico.
+
+<Note type="info" title="Lo que este post no rehace">
+Dos apuntes ya publicados cubren el resto del camino, y conviene tenerlos a mano en vez de
+repetirlos:
+
+- [**El panorama de la NCh 432**](/apuntes/nch432-cargas-de-viento) — la lógica completa de la
+  norma y la zonificación. Su §10 ya resuelve una nave en el altiplano a 3 400 m: el $K_e$, la
+  advertencia de que tomar $K_e = 1{,}0$ «por conservador» sale caro, **y un $K_{zt}$ sobre una
+  colina axisimétrica 3D** que da 1,47.
+- [**El viento de un galpón, del $q_h$ a la costanera**](/apuntes/ejemplo-viento-galpon-nch432) —
+  las zonas de la Figura 12 interpoladas a 10°, el reparto área→frame en SAP2000, la costanera por
+  componentes y revestimiento, y las exenciones de torsión y los mínimos de la cláusula 7.
+
+Así que acá **no** se trata de mostrar que el $K_{zt}$ existe y es grande: eso ya está escrito. Lo
+que se resuelve es **cuál fila de la Figura 3 se elige y hasta dónde se mide el $L_h$** — las dos
+decisiones que preceden a la aritmética, que ninguna tabla toma por ti, y que mueven el resultado
+más que el factor sobre el que todos discuten.
+</Note>
+
+## 1. El sitio
+
+El galpón es de 24,0 × 24,0 m en planta, con alero a 8,0 m y pendiente de 10°. Lo que importa acá
+no es el galpón sino dónde está parado.
+
+| | |
+|---|---|
+| Ubicación | faena minera, comuna de Pica, Región de Tarapacá |
+| Altitud | **3 800 m** sobre el nivel del mar |
+| Zona de viento | **I-B** → $V = 30$ m/s (Tabla 1) |
+| Categoría de ocupación | **II** → $I = 1{,}00$ (Tabla 2) |
+| Exposición | **C** — «terreno abierto con obstrucciones dispersas… campos llanos, abiertos y pastizales» (§5.5.2) |
+| Cerramiento | **cerrado** (§3.11) → $GC_{pi} = \pm 0{,}18$ (Tabla 7) |
+| Topografía | plataforma en corte sobre una **cima 2D**, $H = 40$ m, $L_h = 120$ m, con el galpón **en la cresta** |
+
+Dos de esas filas conviene justificarlas, porque no son automáticas.
+
+La **exposición C** y no D: la D pide costa o planicie sin obstrucciones en un sector amplio, y
+acá la plataforma está en corte sobre un lomo, con el propio relieve rompiendo el barlovento. La C
+es la que la §5.5.2 describe como «terreno abierto con obstrucciones dispersas». *(El
+[panorama publicado](/apuntes/nch432-cargas-de-viento) usa D para una planicie desértica abierta del
+mismo altiplano — es el mismo criterio aplicado a un terreno distinto.)*
+
+Y la **geometría del cerro** es dato de proyecto: sale del levantamiento topográfico, se declara en
+los supuestos y se congela. No es un detalle de trámite — de las siete filas de arriba, es la que
+más mueve el resultado.
+
+## 2. La cadena del $q_h$: qué va dentro y qué queda fuera
+
+La presión de velocidad es la **Ec. (2)** de §5.8.2:
+
+<Equation label="Ec. (2)">
+$$q_z = 0{,}613 \cdot I \cdot K_z \cdot K_{zt} \cdot K_e \cdot V^2 \qquad [\text{N/m}^2]$$
+</Equation>
+
+Vale la pena detenerse en quién está y quién no, porque es una fuente constante de errores:
+
+- **$I$ está adentro.** El factor de importancia multiplica la presión de velocidad, no la presión
+  final. Con categoría II vale 1,00 y no se nota; con categoría III o IV sí.
+- **$K_d$ está afuera.** El factor de direccionalidad —0,85 para el sistema principal resistente a
+  las fuerzas del viento de un edificio, según la Tabla 3— aparece en las ecuaciones de presión de
+  la cláusula 7, **no** en el $q_h$. Meterlo también acá lo aplica dos veces y deja la presión en
+  $0{,}85^2/0{,}85 = 0{,}85$ de la correcta: **un 15 % baja, del lado inseguro**.
+- **$G$ tampoco está**, y en este camino no aparece nunca. Eso tiene su propia sección más abajo.
+
+Y el $h$ del $q_h$ es la **altura de alero**, 8,00 m, no la altura media del techo. La §3.2 lo
+autoriza en una línea que conviene tener subrayada:
+
+> «altura media del techo, $h$: promedio de la altura del alero de la techumbre y la altura hasta el
+> punto más alto de la techumbre. **Para ángulos de techo menores o iguales a 10 grados, se acepta
+> utilizar la altura media del techo como la altura del alero del techo**»
+
+Nuestro techo tiene exactamente 10°, así que entra por el «menores o iguales». Con $h = 8{,}00$ m y
+exposición C, la Tabla 5 da **$K_z = 0{,}95$** sin interpolar.
+
+## 3. El altiplano se sale de la tabla de su propia norma
+
+La Tabla 4 tabula $K_e$ por elevación y **termina en 1 800 m**. Nuestro sitio está a 3 800: más del
+doble del último valor de la tabla. Quien busque su elevación ahí no la encuentra, y tiene que irse
+a la Nota 2:
+
+<Equation label="Tabla 4, Nota 2">
+$$K_e = e^{-0{,}000119 \cdot z_e} = e^{-0{,}000119 \times 3\,800} = e^{-0{,}4522} = \mathbf{0{,}6362}$$
+</Equation>
+
+El aire a 3 800 m tiene un 36,4 % menos de densidad efectiva para estos efectos, y la norma lo
+reconoce con un descuento directo sobre la presión.
+
+<Note type="warning" title="La Nota 1 permite ignorarlo, y sale caro">
+La Nota 1 de la misma tabla permite tomar $K_e = 1{,}00$ «de manera conservadora». Es lícito y
+muchas memorias lo hacen por inercia. En el altiplano eso significa diseñar con
+$1/0{,}6362 = 1{,}57$, o sea **un 57 % más de presión de viento** en toda la estructura. Es
+conservador, sí, pero se paga en acero.
+</Note>
+
+## 4. La loma: la Ec. (1), paso a paso
+
+El factor topográfico sale de la **Ec. (1)** de §5.6.2, con sus tres coeficientes definidos en la
+Figura 3:
+
+<Equation label="Ec. (1)">
+$$K_{zt} = (1 + K_1 \cdot K_2 \cdot K_3)^2$$
+</Equation>
+
+Antes de calcular nada hay que pasar el filtro de §5.6.1, que exige **las tres** condiciones a la
+vez: que el edificio esté en la mitad superior del accidente, que $H/L_h \geq 0{,}2$, y que
+$H \geq 4{,}5$ m para exposiciones C y D. Si falla cualquiera, «entonces $K_{zt} = 1{,}0$».
+
+<Figure
+  src="/ejemplo-galpon-altiplano-viento-sitio-nch432/kzt-la-loma.svg"
+  alt="Dos partes. Arriba, el desarrollo de la Ec. (1) en cuatro filas: H sobre L_h igual a 40 dividido 120 igual 0,3333, que cumple el mínimo de 0,20 de la condición 2 de la sección 5.6.1; K uno igual a 1,45 por 0,3333 igual 0,4833, para cima 2D y exposición C; K dos igual a 1 menos 0 dividido por 1,5 por 120, igual 1,0000, porque el galpón está en la cresta; y K tres igual a e elevado a menos 3 por 8,0 dividido 120, igual 0,8187, con gamma igual 3 para cima 2D. Debajo, el resultado: K_zt igual a uno más 0,4833 por 1,0000 por 0,8187, todo al cuadrado, igual 1,395720 al cuadrado, igual 1,9480. Abajo, un corte del terreno con la vertical exagerada 2,1 veces: una loma con perfil de coseno, el terreno general marcado con línea de trazos al pie, el galpón dibujado en la cresta con la etiqueta x igual cero, una flecha azul de viento entrando por la izquierda, la cota H igual 40 metros desde el terreno general hasta la cresta, una línea de trazos naranja a media altura con la etiqueta H medios igual 20 metros y la aclaración de que ahí termina el L_h, un punto naranja donde esa línea corta el perfil, la cota horizontal L_h igual 120 metros entre ese punto y la cresta, y la cota z igual 8,0 metros sobre el galpón."
+  caption="El cerro del proyecto y de dónde sale cada letra. La medición que decide es la de L_h: no va hasta el pie del cerro, va hasta donde el terreno está a media altura."
+/>
+
+Los cuatro números, con su procedencia:
+
+| | Cuenta | Valor | De dónde |
+|---|---|---|---|
+| $H/L_h$ | $40/120$ | **0,3333** | levantamiento topográfico · cumple $\geq 0{,}20$ |
+| $K_1$ | $1{,}45 \times 0{,}3333$ | **0,4833** | Figura 3, fila cima 2D, columna exposición C |
+| $K_2$ | $1 - 0/(1{,}5 \times 120)$ | **1,0000** | el galpón está en la cresta, $x = 0$ |
+| $K_3$ | $e^{-3 \times 8{,}0/120}$ | **0,8187** | $\gamma = 3$ para cima 2D · $z$ es la altura de alero |
+
+<Equation>
+$$K_{zt} = (1 + 0{,}4833 \times 1{,}0000 \times 0{,}8187)^2 = 1{,}395720^2 = \mathbf{1{,}9480}$$
+</Equation>
+
+La loma casi **duplica** la presión. Y conviene fijarse en $K_2 = 1{,}0000$: el galpón está justo en
+la cresta, que es el peor lugar posible. Moverlo 60 m ladera abajo bajaría el $K_2$ a 0,667 y el
+$K_{zt}$ a 1,60.
+
+## 5. La tesis: el mismo cerro, tres factores distintos
+
+Acá está lo que hace que este número sea peligroso. La aritmética de arriba es trivial —cuatro
+multiplicaciones— pero **antes de esas cuatro multiplicaciones hay dos decisiones que ninguna tabla
+toma por ti**: qué forma tiene el accidente, y hasta dónde se mide el $L_h$.
+
+<Figure
+  src="/ejemplo-galpon-altiplano-viento-sitio-nch432/kzt-sensibilidad.svg"
+  alt="Dos paneles. Panel A, La misma loma según cómo se la clasifique: nueve barras agrupadas en tres tríos, con el eje vertical K_zt de 1,0 a 2,2. Trío Cima 2D: exposición B 1,835, exposición C 1,948 destacada en naranja, exposición D 2,025. Trío Colina axisimétrica 3D: 1,544, 1,608 y 1,673. Trío Escarpamiento 2D: 1,468, 1,537 y 1,608. Al pie del panel, el texto: con la exposición C fija, entre cima 2D y escarpamiento hay un 27 por ciento de diferencia, con el mismo cerro, la misma altura y la misma posición. Panel B, El escalón de la sección 5.6.1 y el techo de la 5.6.2: una curva de K_zt contra H sobre L_h para cima 2D en exposición C, con H fijo en 40 metros. Bajo 0,2 la curva es una recta roja horizontal en K_zt igual a 1,00; en 0,2 exactamente salta a 1,581, marcado con una línea vertical de trazos y la anotación salto de 58 por ciento sin transición; desde ahí sube hasta 2,363 en H sobre L_h igual 0,5, donde se congela en una meseta porque la norma le pone tope. Un punto azul marca el proyecto en 1,948."
+  caption="El K_zt no se calcula, se decide. Panel A: la misma loma clasificada de tres formas. Panel B: bajo H/L_h = 0,2 el factor no decae, se apaga."
+/>
+
+Con la exposición C fija y **exactamente el mismo cerro** —misma altura, mismo $L_h$, mismo galpón
+en la cresta— cambiar la fila de la Figura 3 mueve el factor así:
+
+| Clasificación | $K_1$ | $K_3$ | $K_{zt}$ | $q_h$ resultante |
+|---|---|---|---|---|
+| **Cima 2D** | 0,4833 | 0,8187 | **1,948** | **650 N/m²** |
+| Colina axisimétrica 3D | 0,3500 | 0,7659 | 1,608 | 536 N/m² |
+| Escarpamiento 2D | 0,2833 | 0,8465 | 1,537 | 513 N/m² |
+
+**Un 27 % de diferencia entre la primera fila y la última.** Y no es un caso rebuscado: una loma
+alargada vista en un plano de curvas de nivel puede leerse como cima 2D o como colina 3D según por
+dónde se la corte, y un talud de plataforma minera se parece bastante a un escarpamiento.
+
+Nótese que $K_1$ y $K_3$ se mueven en sentidos opuestos —el escarpamiento tiene el $K_1$ más bajo
+pero el $\gamma$ más suave, así que retiene mejor la aceleración con la altura— y aun así la cima 2D
+gana con comodidad.
+
+La exposición agrega un segundo eje, más chico: entre B y D, con la forma fija, hay hasta un 10 %.
+
+<Note type="tip" title="Lo que sí verifica una revisión de cálculo, y lo que no">
+En una revisión se comprueba que la aritmética cierre, que el $K_e$ esté aplicado y que la zona de
+viento sea la correcta. **Nadie vuelve al plano topográfico a discutir si el cerro es una cima o un
+escarpamiento**, ni a remedir el $L_h$. Y esas dos decisiones pesan más que el $K_e$, que es el
+factor sobre el que se discute siempre.
+</Note>
+
+## 6. El escalón de $H/L_h = 0{,}2$
+
+La condición 2 de §5.6.1 no es una transición suave: es un umbral. Con $H = 40$ m fijo:
+
+- Con $L_h = 200$ m → $H/L_h = 0{,}200$ → **$K_{zt} = 1{,}581$**
+- Con $L_h = 201$ m → $H/L_h = 0{,}199$ → **$K_{zt} = 1{,}000$**
+
+Un metro de diferencia al medir el $L_h$ en el plano, y el factor cae un **37 %** de golpe. Visto al
+revés: cruzar el umbral hacia arriba agrega un **58 %** sin ninguna gradualidad.
+
+Esto no es una crítica a la norma —el umbral existe porque bajo esa pendiente el efecto es
+despreciable— pero sí tiene una consecuencia práctica: **cuando $H/L_h$ queda cerca de 0,2, hay que
+medirlo con cuidado y dejar registro de cómo se midió.** Es el único parámetro de toda la cadena
+donde un error de medición no cuesta un porcentaje sino el factor entero.
+
+Del otro lado hay un tope: §5.6.2 dice que para $H/L_h > 0{,}5$ se toma $0{,}5$ al evaluar $K_1$ **y
+se sustituye $L_h$ por $2H$** al evaluar $K_2$ y $K_3$. Las dos partes, no solo la primera —
+aplicar únicamente el tope de $K_1$ deja el $K_3$ decayendo con un $L_h$ que la norma ya reemplazó.
+Con nuestro $H/L_h = 0{,}333$ no interviene.
+
+## 7. El $q_h$, y quién pierde qué
+
+Con todo junto:
+
+<Equation>
+$$q_h = 0{,}613 \times 1{,}00 \times 0{,}95 \times 1{,}948 \times 0{,}6362 \times 30^2 = \mathbf{650\ \text{N/m}^2 = 0{,}650\ \text{kPa}}$$
+</Equation>
+
+Y cierra por una segunda vía independiente. La Nota 1 de la Tabla 1 define $p_0$ como el $q_z$
+evaluado «adoptando $K_z$, $K_{zt}$ y $K_e$ iguales a 1,0», y para la zona I-B tabula
+$p_0 = 552$ N/m². Entonces:
+
+$$p_0 \cdot K_z \cdot K_{zt} \cdot K_e = 552 \times (0{,}95 \times 1{,}948 \times 0{,}6362) = 552 \times 1{,}1774 = 650\ \text{N/m}^2$$
+
+Las dos vías dan lo mismo, que es exactamente para lo que sirve tener el $p_0$ tabulado.
+
+<Figure
+  src="/ejemplo-galpon-altiplano-viento-sitio-nch432/qh-cascada.svg"
+  alt="Gráfico de cascada con cuatro columnas y el eje vertical q en newton por metro cuadrado. Primera columna, p sub cero de referencia, 551,7, calculada con K_z, K_zt y K_e iguales a 1. Segunda columna, por K_z igual 0,95 de la Tabla 5 para exposición C a 8,0 metros, baja a 524,1, un menos 5,0 por ciento. Tercera columna, por K_e igual 0,6362 de la Nota 2 de la Tabla 4, baja a 333,5, un menos 36,4 por ciento. Cuarta columna, por K_zt igual 1,948 de la Ec. (1) para cima 2D en la cresta, sube a 649,6, un más 94,8 por ciento. Dos líneas de trazos horizontales marcan el nivel plano en 524,1 y el q_h final en 649,6. Al pie, el texto: el neto del sitio es más 23,9 por ciento, y es exactamente K_zt por K_e igual 1,2394, medido contra la segunda columna, o sea el mismo galpón con su misma exposición C en terreno plano y a nivel del mar. Quien se queda en la tercera columna diseña con el 51 por ciento de la presión que corresponde."
+  caption="La altitud descuenta un 36,4 % y la loma agrega un 94,8 %. No se compensan: el neto del sitio es +23,9 %, y es exactamente el producto K_zt · K_e."
+/>
+
+El titular del post, como tabla:
+
+| Quién calcula | $q_h$ | |
+|---|---|---|
+| Aplica $K_z$, $K_e$ **y $K_{zt}$** | **650 N/m²** | lo que corresponde |
+| Aplica $K_z$ y $K_e$, **olvida el $K_{zt}$** | 333 N/m² | **51 %** de lo que corresponde |
+| Toma $K_e = 1{,}00$ «conservador» y olvida el $K_{zt}$ | 524 N/m² | 81 % |
+| Referencia $p_0$ (los tres factores en 1) | 552 N/m² | |
+
+La razón entre la primera fila y la segunda es, exactamente, $K_{zt} = 1{,}948$.
+
+Y el neto del sitio se lee mejor así: contra el **mismo galpón con la misma exposición, en terreno
+plano y a nivel del mar**, la presión es $K_{zt} \cdot K_e = 1{,}2394$ veces mayor. **Un 24 % más,
+no menos.** La intuición de que el altiplano «regala» presión es correcta a medias y peligrosa: solo
+vale si el terreno es plano, y una faena minera de altura rara vez lo es.
+
+## 8. Lo que no se multiplica: el factor de ráfaga
+
+Dos preguntas sobre el $G$ se cierran acá, y las dos sin correr nada.
+
+**¿Es rígido o flexible?** §5.9.1 prohíbe estimar la frecuencia fundamental «mediante métodos
+aproximados basados únicamente en las características geométricas», o sea que la fórmula del tipo
+$T = 0{,}1N$ no sirve para decidirlo. Pero §5.9.2 cierra el asunto por otro lado: «**Los edificios de
+baja altura, tal como se definen en cláusula 3, se pueden considerar rígidos**». Y la §3.12 define
+edificio de baja altura con dos condiciones: que la altura media del techo sea $\leq 18$ m, **y** que
+no exceda la menor dimensión horizontal. Con $h = 8{,}0$ m contra 18 m y contra 24 m, el galpón
+califica por las dos. Rígido, y **$G = 0{,}85$**, sin análisis de frecuencia.
+
+**¿Y dónde se multiplica ese 0,85?** En ninguna parte. §5.9.4 dice que cuando el factor de ráfaga
+viene **combinado** con los coeficientes de presión —los $(GC_p)$, $(GC_{pi})$ y $(GC_{pf})$—
+«el factor de efecto de ráfaga **no se debe determinar por separado**». Este galpón va por el
+procedimiento de envolvente de la cláusula 7, cuya Ec. (7) es
+
+$$p = q_h \cdot K_d \cdot [(GC_{pf}) - (GC_{pi})]$$
+
+y ahí el $G$ ya está adentro del $GC_{pf}$ de la Figura 12.
+
+Y hay que decir en qué dirección falla el error, porque es contraintuitivo: multiplicar el 0,85
+aparte **no infla la presión, la baja un 15 %**. Es un error del lado inseguro, y encima es fácil de
+cometer, porque en el camino direccional de la cláusula 8 —que es el que más se enseña— el $G$ sí va
+explícito. Quien viene de ahí lo arrastra por costumbre y se queda corto sin enterarse.
+
+## 9. La misma cláusula 7, ahora con marcos de momento
+
+Las puertas de salida de la cláusula 7 —la exención de torsión de §7.3.2 para edificios de un piso
+con $h \leq 9$ m, y los mínimos de §7.3.6— ya están resueltas y aplicadas en
+[el galpón por la cláusula 7](/apuntes/ejemplo-viento-galpon-nch432), y valen igual acá: un piso,
+8,0 m al alero, torsión exenta, y los dos casos de la Figura 13 se caen de la lista junto con sus
+cuatro esquinas.
+
+Lo que cambia con este galpón es que **su sistema resistente no es el mismo en las dos
+direcciones**, y eso activa una asimetría que el ejemplo anterior no tenía.
+
+**El corte mínimo de §7.3.3 aplica en una dirección y no en la otra.** La cláusula pide que el corte
+horizontal total no sea menor que el calculado despreciando el viento sobre el techo, y agrega:
+«**Excepción: no se aplica a los edificios que utilizan marcos de momento para el sistema principal
+resistente a las fuerzas del viento**». Este galpón tiene marcos de momento en el sentido
+transversal y crucería en el longitudinal. Así que la exención vale para el marco y **no** para la
+dirección arriostrada, donde el chequeo hay que hacerlo.
+
+**Y §7.3.7 es una trampa preciosa.** Se titula con las palabras exactas de nuestro galpón —presión
+horizontal longitudinal para edificios «con marcos transversales y techo inclinado»— y trae dos
+ecuaciones con factores $K_B$ y $K_S$ que parecen hechas a medida para la dirección que acabamos de
+dejar sin exención. No aplica: su alcance son edificios **abiertos o parcialmente cerrados**, y este
+es cerrado —muros y cubierta continuos, con las aberturas de portones y ventanas por debajo del
+límite de §3.11— así que va por los casos básicos de la Figura 12 como cualquier otro. Vale la pena
+decirlo porque el título invita a usarla y las ecuaciones dan números plausibles.
+
+Los mínimos de §7.3.6 se chequean cuando existan las presiones de superficie, o sea en el post de
+cargas. Con este $q_h$ no van a gobernar, pero el chequeo se hace igual.
+
+## El hilo, en una frase
+
+**En un sitio de altura, el factor que decide la carga de viento no es el que todos discuten.** El
+$K_e$ se calcula con una exponencial y no admite interpretación; el $K_{zt}$ exige medir un cerro en
+un plano y clasificarlo, y esa decisión —que ninguna revisión de cálculo suele cuestionar— mueve la
+presión un 27 %, mientras el umbral de $H/L_h = 0{,}2$ espera un metro más allá para apagar el
+factor entero.
+
+Los 0,650 kPa de acá son el punto de partida del resto de la serie: el post de cargas y
+combinaciones —todavía sin publicar, el mapa está en
+[la serie](/blog/galpon-altiplano-la-serie/)— los convierte en presiones sobre cada cara con la
+Figura 12, y de ahí en los once estados de carga del modelo.
+
+<Note type="info" title="Trazabilidad">
+Las cláusulas, tablas y figuras citadas se leyeron del PDF de la **NCh 432:2025 (3.ª ed.,
+2025-06-27)**: §3.11, §3.12, §5.5.2, §5.6.1, §5.6.2 con la Ec. (1), §5.8.2 con la Ec. (2), §5.9,
+§5.10, §7.3.1 con la Ec. (7), §7.3.2, §7.3.3, §7.3.6, §7.3.7, y las Tablas 1, 2, 3, 4, 5 y 7 más la
+Figura 3. Todo lo que es ecuación, tabla o figura se leyó de la **página rasterizada**; las
+definiciones en prosa de §3.2, §3.11 y §3.12 se leyeron de la capa de texto, que para prosa sí es
+fiable.
+
+Las tres figuras las genera `npm run figuras:galpon-viento` desde los parámetros del sitio y las
+ecuaciones de la norma: ningún valor está escrito a mano en el SVG. El $q_h$ exacto de esa cadena es
+649,58 N/m²; el modelo de la serie se construyó con $K_{zt}$ y $K_e$ redondeados a los dígitos que
+se publican acá, y da 649,54 N/m². La diferencia es del 0,006 %.
+</Note>

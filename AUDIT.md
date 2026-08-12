@@ -47,6 +47,48 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432` · ✅ 16 hallazgos, todos aplicados
+
+**Commit:** `cd82f08` (rama `serie-galpon`) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+Post 1 de la serie del galpón, auditado antes de commitear. El auditor recalculó la cadena completa
+del `q_h` a mano y la contrastó contra la salida de `scripts/render-galpon-viento-sitio.mjs`.
+**Todos los hallazgos se aplicaron en el mismo commit**, porque el post no estaba publicado todavía.
+
+| # | Sev | Cat | Hallazgo | Fix | Estado |
+|---|-----|-----|----------|-----|--------|
+| 1 | 🔴 | N | «Meterlo dos veces cuesta un 28 %» sobre el `K_d`: aplicar 0,85 dos veces deja la presión en `0,85²/0,85 = 0,85` de la correcta, o sea **15 % baja**, no 28 % alta. El 28 % es `1 − 0,85²`, la caída contra `K_d = 1`, que no es el error descrito | Reescrito a «un 15 % baja, del lado inseguro» | ✅ |
+| 2 | 🟠 | N | La tabla del titular decía **334 N/m²** para «olvida el K_zt», derivado de dividir el ya redondeado `650/1,948`. El valor exacto es `551,7 × 0,95 × 0,63623 = 333,5` | 333 N/m² | ✅ |
+| 3 | 🟠 | C | §9 presentaba como nuevas tres exenciones de la cláusula 7, pero **la torsión de §7.3.2 y los mínimos de §7.3.6 ya están en `ejemplo-viento-galpon-nch432`**. Solo son nuevas la asimetría de §7.3.3 y la trampa de §7.3.7 | §9 reencuadrada como «la misma cláusula 7, ahora con marcos de momento», con enlace al post publicado. Corregido también §5.41 de la memoria, que decía «ninguna publicada» | ✅ |
+| 4 | 🟠 | C | El `Note` de deslinde describía el panorama como «un ejemplo con su K_e», pero su §10 **también trae un K_zt sobre colina 3D** (1,47) y la advertencia de la Nota 1 — que este post repetía | El `Note` ahora dice qué hace el §10 y declara que lo nuevo acá es **cuál fila de la Figura 3 se elige**, no que el K_zt exista | ✅ |
+| 5 | 🟠 | N | El post 0 y la memoria decían que `K_zt · K_e` da «un **25 %** más». Es **23,94 %**: el 25 % salía de multiplicar los redondeos (`0,64 × 1,95`) | Corregido a 23,9 % en el post 0 (dos lugares) y en §5.41 | ✅ |
+| 6 | 🟡 | N | «36 %» en la `description` y en prosa contra «36,4 %» en el caption y el `alt` | Unificado en 36,4 % | ✅ |
+| 7 | 🟡 | E | El texto «post de cargas y combinaciones» enlazaba al índice de la serie, y ese post no existe todavía | Reescrito: «todavía sin publicar, el mapa está en la serie» | ✅ |
+| 8 | 🟡 | R | La Trazabilidad afirmaba que **todas** las cláusulas se leyeron rasterizadas; §3.2, §3.11 y §3.12 son prosa leída de la capa de texto (permitido, pero la afirmación era inexacta) | Declarada la distinción | ✅ |
+| 9 | 🟡 | F | `source` citaba Tablas 1-5 y 7; la Trazabilidad citaba 1-5 y §5.10, sin Tabla 7. Y el post afirmaba «este es cerrado» sin justificarlo | Listas alineadas, y fila nueva de cerramiento en la tabla del sitio (§3.11 → `GC_pi = ±0,18`) | ✅ |
+| 10 | 🟡 | L | «SPRFV» aparecía solo dentro de una cita, sin expandir | Expandido en la cita de §7.3.3 | ✅ |
+| 12 | 🔵 | N | «entre B y D hay un 10 %» vale para la cima 2D; para colina 3D es 8,4 % y para escarpamiento 9,5 % | «hasta un 10 %» | ✅ |
+| 13 | 🔵 | F | «los ocho casos de la Figura 13»: el 8 no se deriva; son **dos** casos evaluados en las cuatro esquinas que obliga §7.3.2.1 | «los dos casos de la Figura 13… junto con sus cuatro esquinas» | ✅ |
+| 14 | 🔵 | C | «Con q_h = 0,650 kPa el cálculo manda cómodo» sobre los mínimos de §7.3.6, pero el post no calcula ninguna presión de superficie | «se chequean en el post de cargas; con este q_h no van a gobernar» | ✅ |
+| 15 | 🔵 | L | Exposición **C** acá contra **D** en el panorama publicado, para la misma familia de sitio, sin explicación | Párrafo nuevo justificando C (plataforma en corte sobre lomo) y reconociendo que el panorama usa D para una planicie | ✅ |
+| 16 | 🔵 | F | El índice de la serie seguía titulando el post 1 «…y el camino longitudinal», que no es lo que entrega, y no lo enlazaba | Fila 1 del mapa actualizada con título nuevo, tesis nueva y enlace | ✅ |
+| 11 | 🔵 | F | Barra final inconsistente en enlaces internos (`/blog/…/` con barra, `/apuntes/…` sin) | **No aplicado**: es la convención mixta que ya usa todo el repo | 🚫 descartado |
+
+**Verificado y correcto:** `K_e = 0,63623` · `K_1 = 0,4833` · `K_2 = 1,0000` · `K_3 = 0,81873` ·
+`K_zt = 1,39572² = 1,94803` · `q_h = 649,58 N/m²` y su cierre por la segunda vía (`552 × 1,17735 = 649,9`) ·
+`K_zt · K_e = 1,2394` · `1/0,6362 = 1,5718` → +57 % · las nueve barras del panel A coinciden una a una
+con el SVG · las tres clasificaciones (1,948 / 1,608 / 1,537 y sus `q_h` 650 / 536 / 513) y el rango de 27 % ·
+el escalón (`L_h = 200` → 1,5806, +58,1 %; caída de 36,7 %) · el tope en `H/L_h = 0,5` → 2,3627 ·
+`K_2 = 0,667` a 60 m → 1,60 · la exageración vertical 2,1 · `p_0 = 551,7 ≈ 552`.
+**Todas las cláusulas citadas están registradas en SERIE-GALPON §4.1** con página impresa y fecha;
+ninguna cita fuera de ese registro. Frontmatter válido contra el schema Zod de `apuntes`.
+
+**Planilla del canvas:** sí — **pendiente**. Cadena cerrada de punta a punta (parámetros del sitio →
+`q_h`), 6 veredictos: las tres condiciones de §5.6.1, el tope de §5.6.2, el `θ ≤ 10°` que autoriza
+`h = h_e`, y el `z_e > 1 800 m` que obliga a salir a la Nota 2. Datos de entrada a declarar: `K_z`,
+`V`, `p_0`, `I`, `K_d`, los tres parámetros de la Figura 3 por forma y exposición, y `H`, `L_h`, `x`,
+la forma del accidente y la exposición.
+
 ### 2026-08-12 · `blog/galpon-altiplano-la-serie` · ⚠️ 20 hallazgos (2 bloqueantes)
 
 **Commit:** `d5c3fc3` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -4095,10 +4137,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `terzaghi-vs-ecuacion-general` | 2026-07-26 | ⚠️ | 11 (0🔴 1🟠 · 6🟡 4🔵) |
 | `tres-coeficientes-del-mismo-suelo` | 2026-07-26 | ⚠️ | 10 (0🔴 1🟠 · 7🟡 2🔵) |
 
-### `apuntes` — apuntes (33)
+### `apuntes` — apuntes (34)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-galpon-altiplano-viento-sitio-nch432` | 2026-08-12 | ✅ | 16 (1🔴 4🟠 · 5🟡 6🔵) · **15 aplicados**, 1 descartado, 0 abiertos · planilla pendiente |
 | `ejemplo-analisis-sismico-cepa-nch2369` | 2026-08-12 | ⚠️ | 0 · 7 aplicados en `7522225` (1🟠 2🟡 4🔵) + 16 previos cerrados · planilla ✓ (23 verificaciones + 17 contrastes; el ✗ de Q₀ > Q₀máx declarado) |
 | `ejemplo-torre-sismica-nch2369` | 2026-08-12 | ⚠️ | 0 · 4 aplicados en `7522225` (3🟡 1🔵) + 15 previos en `aa0b828` · planilla ✓ (9 verificaciones; veredictos activos para verify:planilla desde `7522225`) |
 | `ejemplo-torre-deformaciones-nch2369` | 2026-08-12 | ⚠️ | 0 · 10 aplicados en `7522225` (2🟠 5🟡 3🔵) · planilla ✓ (24 verificaciones + 10 contrastes; los 4 ✗ declarados) |

@@ -14,6 +14,7 @@
     "figuras:espectro-torre": "node scripts/render-espectro-torre.mjs",
     "figuras:derivas-torre": "node scripts/render-derivas-torre.mjs",
     "figuras:galpon-esquema": "node scripts/render-galpon-esquema.mjs",
+    "figuras:galpon-viento": "node scripts/render-galpon-viento-sitio.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
     "esquema:planilla": "node scripts/publicar-esquema-planilla.mjs",

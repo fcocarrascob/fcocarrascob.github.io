@@ -263,6 +263,13 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 | **Figura 13** — `GC_pf` casos de torsión | 52 | 60 | 2026-08-12 | Casos 3 y 4. Sus cotas fijan la geometría de zonas: el Caso 3 marca `2a`, `0,5L` y `L` **a lo largo de la cumbrera**; el Caso 4 marca `B`, `0,5B`, `a` y `2a` **sobre el hastial**. Caso 3: `1T 0,10 · 2T −0,17 · 3T −0,09 · 4T −0,07` (fila 0–5). Caso 4: `5T 0,10 · 6T −0,07`. | Exento, pero sus cotas definen las franjas E |
 | **Figura 14** | 53 | 61 | 2026-08-12 | Terminología geométrica de §7.3.7 (`B`, `A_S`, `A_E`, `n`), para edificios abiertos. | No aplica |
 
+#### Lecturas de la Fase 3 — NCh 432:2025 (definiciones que faltaban)
+
+| Cláusula | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§3.12** Edificio de baja altura | 3 | 11 | 2026-08-12 | «edificio cerrado, parcialmente cerrado o parcialmente abierto, que cumple con las condiciones siguientes: **1. Altura media del techo `h` es menor o igual a 18 m**, y **2. La altura media del techo `h` no excede la menor dimensión horizontal.**» Con `h = 8,0 m` contra 18 m y contra 24 m, el galpón califica por las dos. Es la definición a la que remite §5.9.2 para declararlo rígido sin análisis de frecuencia. | Post 1; cierra §5.28 con página |
+| **§3.11, §3.13, §3.14, §3.15** Clases de cerramiento | 3 | 11 | 2026-08-12 | **Cerrado**: aberturas por muro `A_o < 0,01·A_g` o 0,37 m², el que sea menor. **Abierto**: cada muro al menos 80 % abierto, `A_o ≥ 0,8·A_g`. **Parcialmente cerrado**: `A_o > 1,10·A_oi` **y** `A_o >` (0,37 m² o 0,01·A_g, el menor) **y** `A_oi/A_gi ≤ 0,20`. **Parcialmente abierto**: el que no cumple ninguna de las tres. | Post 1; `GC_pi = ±0,18` |
+
 #### Lecturas de la Fase 3 — AISC 360-22 (la ruta del canal de la costanera)
 
 PDF: `A360-22W-ewr.pdf`. `pág.` = la numeración impresa `16.1-nn`; `PDF` = índice 0-based de `raster.py`
@@ -1172,6 +1179,50 @@ arranca con un 3 % de desajuste en todo lo que dependa de la torsión — y el L
 doble T **en los nueve valores geométricos** (A, I₃₃, I₂₂, S, Z, r). Ese cerró al último dígito. El
 `J` es la única propiedad que **no** coincide, y por eso vale la pena decirlo aparte.
 
+### 5.41 La tesis del post 1 hubo que afilarla: el panorama ya había hecho el K_zt
+
+Al escribir el post 1 apareció un solapamiento que el plan **no** había previsto. El plan declaraba
+que `apuntes/nch432-cargas-de-viento.mdx` «ya ejemplificó K_e en el altiplano» y que por eso en el
+post 1 el K_e sería contexto y la tesis sería el K_zt. Pero su **§10, «La misma nave en el
+altiplano»**, hace bastante más que el K_e:
+
+- el K_e a 3 400 m, con la exponencial de la Nota 2;
+- una nota de que tomar `K_e = 1,0` «por conservador» cuesta un 50 %;
+- **y un ejemplo completo de K_zt sobre colina** (axisimétrica 3D, H/L_h = 0,3, en la cresta),
+  que da 1,47 y con el que concluye que «la topografía devuelve, de una sola vez, todo lo que la
+  altitud había regalado».
+
+O sea, la tesis original del post 1 —«el K_zt es grande y da vuelta la intuición»— **ya estaba
+publicada**, con otro cerro y otro número.
+
+**Lo que quedó como tesis nueva**, y es mejor:
+
+1. **La clasificación del accidente decide más que el K_e, y nadie la revisa.** El mismo cerro
+   (H = 40, L_h = 120, en la cresta, exp. C) da **1,948 como cima 2D**, **1,608 como colina
+   axisimétrica 3D** y **1,537 como escarpamiento 2D**: un **27 %** de rango. El ejemplo publicado
+   usó la fila 3D; el nuestro usa la 2D, y esa sola diferencia de lectura del plano vale más que
+   toda la discusión sobre el K_e.
+2. **El escalón de §5.6.1.** Con H = 40 m fijo: `L_h = 200 m` → K_zt = **1,581**; `L_h = 201 m` →
+   K_zt = **1,000**. Un umbral, no una transición. No estaba en ningún post.
+3. **El G que no se multiplica.** §5.9.2 declara rígido al galpón por §3.12 (baja altura), pero
+   §5.9.4 prohíbe aplicar el G por separado cuando viene combinado en los `GC_pf` — que es el caso
+   de la cláusula 7. **Y el error va del lado inseguro**: multiplicar el 0,85 aparte *baja* la
+   presión un 15 %. El post publicado va por el camino direccional de la cláusula 8, donde el G sí
+   es explícito, así que el contraste es directo.
+4. **De las exenciones de la cláusula 7, solo dos cosas son nuevas.** La torsión de §7.3.2 y los
+   mínimos de §7.3.6 **ya están en `ejemplo-viento-galpon-nch432`** — este punto se escribió mal la
+   primera vez y la auditoría lo cazó. Lo nuevo es la **asimetría de §7.3.3** (la exención de marcos
+   de momento vale en la dirección transversal y no en la arriostrada, porque este galpón tiene
+   sistemas distintos en cada eje) y la **trampa de §7.3.7**.
+
+**Y el neto del sitio es +23,9 %, no +25 %.** El 25 % de §5.24 salía de multiplicar los redondeos
+(`0,64 × 1,95`). El valor exacto es `K_zt · K_e = 1,948034 × 0,636227 = 1,239392`. Corregido en el
+post 0 y acá.
+
+**Lección de proceso**: el deslinde del plan se armó leyendo los *títulos* de las secciones de los
+posts publicados, no su contenido. Para los posts 3, 5 y 9 —que también tienen antecesores— hay que
+leer las secciones completas antes de fijar la tesis, no después.
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF
@@ -1294,7 +1345,7 @@ Todo lo aprendido de la OAPI quedó en
 | # | Slug | Colección | Estado |
 |---|---|---|---|
 | **0** | `galpon-altiplano-la-serie` | `blog` / Sísmica | ✅ `05c3846` — **el caso + el mapa + la bitácora**. Sin campo `series` (los tres de rukan ya son Rukan 8-10; una serie de un miembro es ruido). **Se reabre y se actualiza al cerrar cada post**: entrada fechada en la bitácora, enlace en el mapa, y `updatedDate` |
-| 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ⬜ |
+| 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ✅ escrito, rama `serie-galpon` · 3 figuras · **tesis afilada**: ver §5.41 |
 | 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ |
 | 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ⬜ |
 | 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ |

@@ -163,7 +163,7 @@ Los enlaces aparecen a medida que cada post se publica.
 
 | # | Post | Dónde | De qué va |
 |---|---|---|---|
-| 1 | El sitio: $K_{zt}$, $K_e$ y el camino longitudinal | `apuntes` · NCh432 | El aire enrarecido regala un 36 % de presión y la loma lo devuelve con creces. Quien aplica solo el $K_e$ que todos conocen diseña con la **mitad** de la presión |
+| 1 | [El sitio: el mismo cerro, tres $K_{zt}$ distintos](/apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432) | `apuntes` · NCh432 | El $K_{zt}$ no se calcula, se decide: clasificar la misma loma como cima 2D o como escarpamiento mueve la presión un **27 %**. Y quien olvida el factor diseña con la **mitad** |
 | 2 | El peralte variable y la convergencia | Rukan (8) | Prohibirse la sección no prismática de SAP para poder verificar. Y el prismático equivalente **no es conservador** |
 | 3 | Estados y combinaciones | `apuntes` · NCh2369 | NCh3171 y NCh2369 §4.5 no son listas alternativas: una **cede por escrito** ante la otra, y la diferencia es un 40 % en el término sísmico |
 | 4 | Modal espectral | Rukan (9) | El techo no es diafragma rígido. Y **39 de los primeros 60 modos son basura local**: el modo longitudinal de verdad está en el puesto 41 |
@@ -194,8 +194,8 @@ $$K_{zt} = 1{,}948 \qquad K_e = 0{,}6362 \qquad q_h = 0{,}650\ \text{kPa}$$
 
 El plan estimaba $K_{zt}$ entre 1,1 y 1,4. Es **1,948**: un 39 % por sobre el techo de esa
 estimación, y **casi el doble** de la presión que vería el mismo galpón en terreno plano. Y el producto
-$K_{zt} \cdot K_e = 1{,}239$ significa que el galpón del altiplano **en una loma** se diseña con un
-**25 % más** de presión que el mismo galpón en terreno plano a nivel del mar. El $q_h$ cierra por
+$K_{zt} \cdot K_e = 1{,}2394$ significa que el galpón del altiplano **en una loma** se diseña con un
+**23,9 % más** de presión que el mismo galpón en terreno plano a nivel del mar. El $q_h$ cierra por
 dos vías independientes que dan lo mismo.
 
 De paso, tres trampas de lectura quedaron documentadas: los casos de torsión de NCh432 están
@@ -243,6 +243,19 @@ $1{,}2D + 1{,}6S$ dimensiona la columna y el dintel, y la envolvente sísmica ll
 momento de alero. La nieve **desbalanceada** —el caso que casi nadie corre— gobierna el dintel a
 media luz.
 
+### 2026-08-12 · El post 1, y una lección de método
+
+El primer post está escrito. Al escribirlo apareció algo que el plan no había previsto: **la tesis
+original ya estaba publicada**. El panorama de la NCh 432 no solo había hecho el $K_e$ del
+altiplano, también traía un ejemplo de $K_{zt}$ sobre colina. La tesis hubo que afilarla, y quedó
+mejor: no es que el factor topográfico sea grande, es que **su valor depende de una clasificación
+que nadie revisa** — la misma loma da 1,948 como cima 2D, 1,608 como colina 3D y 1,537 como
+escarpamiento.
+
+La lección de método, que vale para los posts 3, 5 y 9: el deslinde del plan se armó leyendo los
+títulos de las secciones de los posts publicados, no su contenido. Hay que leerlas enteras **antes**
+de fijar la tesis.
+
 ### 2026-08-12 · La deriva
 
 $$\delta = 0{,}113504\ \text{m} \quad \text{contra} \quad 0{,}015\,h = 0{,}120\ \text{m} \quad \rightarrow \quad 94{,}6\ \%$$
@@ -266,7 +279,7 @@ dimensiona la **esbeltez local sísmica**, con un cajón soldado que pasa el $KL
 revisa —127,5 contra 133,29, un 4,3 % de margen— y se cae en el $\lambda_{md}$ que casi nadie mira.
 
 **3. «El aire enrarecido regala y la loma devuelve».** Se quedaba corto. No devuelve: **cobra de
-más**. Un 25 % por sobre el terreno plano a nivel del mar.
+más**. Un 23,9 % por sobre el terreno plano a nivel del mar.
 
 Y una precisión de vocabulario que vale para toda la serie: la diagonal longitudinal es un **cajón
 soldado por planchas**, no un tubo comercial. La distinción no es cosmética — el $R_y$ de una
