@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="pta" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="500" fill="#ffffff"/>
+  <text x="500" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El espectro de desplazamiento: por qué la deriva se arregla con rigidez, y cuánta</text>
+  <text x="500" y="47" font-size="12" text-anchor="middle" fill="#6b7280">S_d(T) = S_a(T)·(T/2π)² sobre el espectro de referencia de §6.1 (zona 3, suelo D, ξ = 0,02, I = 1,0)</text>
+  <line x1="84.0" y1="92" x2="84.0" y2="422" stroke="#d1d5db" stroke-width="1"/>
+  <text x="84.0" y="438" font-size="11" fill="#6b7280" text-anchor="middle">0,0</text>
+  <line x1="236.5" y1="92" x2="236.5" y2="422" stroke="#d1d5db" stroke-width="1"/>
+  <text x="236.5" y="438" font-size="11" fill="#6b7280" text-anchor="middle">0,5</text>
+  <line x1="389.0" y1="92" x2="389.0" y2="422" stroke="#d1d5db" stroke-width="1"/>
+  <text x="389.0" y="438" font-size="11" fill="#6b7280" text-anchor="middle">1,0</text>
+  <line x1="541.5" y1="92" x2="541.5" y2="422" stroke="#d1d5db" stroke-width="1"/>
+  <text x="541.5" y="438" font-size="11" fill="#6b7280" text-anchor="middle">1,5</text>
+  <line x1="694.0" y1="92" x2="694.0" y2="422" stroke="#d1d5db" stroke-width="1"/>
+  <text x="694.0" y="438" font-size="11" fill="#6b7280" text-anchor="middle">2,0</text>
+  <line x1="84" y1="422.0" x2="694" y2="422.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="426.0" font-size="11" fill="#6b7280" text-anchor="end">0</text>
+  <line x1="84" y1="356.0" x2="694" y2="356.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="360.0" font-size="11" fill="#6b7280" text-anchor="end">100</text>
+  <line x1="84" y1="290.0" x2="694" y2="290.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="294.0" font-size="11" fill="#6b7280" text-anchor="end">200</text>
+  <line x1="84" y1="224.0" x2="694" y2="224.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="228.0" font-size="11" fill="#6b7280" text-anchor="end">300</text>
+  <line x1="84" y1="158.0" x2="694" y2="158.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="162.0" font-size="11" fill="#6b7280" text-anchor="end">400</text>
+  <line x1="84" y1="92.0" x2="694" y2="92.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="76" y="96.0" font-size="11" fill="#6b7280" text-anchor="end">500</text>
+  <line x1="84" y1="422" x2="694" y2="422" stroke="#333" stroke-width="1.5"/>
+  <line x1="84" y1="92" x2="84" y2="422" stroke="#333" stroke-width="1.5"/>
+  <text x="694" y="456" font-size="12" fill="#333" text-anchor="end">T [s]</text>
+  <text x="78" y="82" font-size="12" fill="#333">S_d [mm]</text>
+  <polyline points="84.0,422.0 87.0,422.0 90.1,421.9 93.2,421.9 96.2,421.7 99.3,421.6 102.3,421.4 105.3,421.1 108.4,420.8 111.5,420.4 114.5,419.9 117.5,419.4 120.6,418.8 123.7,418.1 126.7,417.4 129.8,416.6 132.8,415.7 135.8,414.7 138.9,413.6 141.9,412.5 145.0,411.2 148.1,409.9 151.1,408.5 154.2,407.0 157.2,405.4 160.3,403.7 163.3,401.9 166.4,400.1 169.4,398.2 172.4,396.2 175.5,394.1 178.6,392.0 181.6,389.8 184.7,387.5 187.7,385.2 190.8,382.8 193.8,380.4 196.8,377.9 199.9,375.4 202.9,372.8 206.0,370.2 209.1,367.5 212.1,364.8 215.2,362.1 218.2,359.4 221.3,356.6 224.3,353.8 227.3,351.1 230.4,348.2 233.4,345.4 236.5,342.6 239.6,339.8 242.6,337.0 245.7,334.2 248.7,331.4 251.8,328.6 254.8,325.8 257.9,323.0 260.9,320.2 263.9,317.5 267.0,314.7 270.0,312.0 273.1,309.3 276.1,306.6 279.2,303.9 282.3,301.3 285.3,298.7 288.4,296.1 291.4,293.5 294.4,291.0 297.5,288.4 300.5,285.9 303.6,283.5 306.6,281.0 309.7,278.6 312.8,276.2 315.8,273.8 318.9,271.5 321.9,269.2 325.0,266.9 328.0,264.6 331.1,262.4 334.1,260.2 337.1,258.0 340.2,255.9 343.3,253.7 346.3,251.6 349.4,249.5 352.4,247.5 355.4,245.5 358.5,243.5 361.6,241.5 364.6,239.5 367.7,237.6 370.7,235.7 373.8,233.8 376.8,231.9 379.8,230.1 382.9,228.2 385.9,226.4 389.0,224.6 392.1,222.9 395.1,221.1 398.2,219.4 401.2,217.7 404.3,216.0 407.3,214.4 410.4,212.7 413.4,211.1 416.5,209.5 419.5,207.9 422.6,206.3 425.6,204.7 428.6,203.2 431.7,201.6 434.8,200.1 437.8,198.6 440.8,197.1 443.9,195.7 446.9,194.2 450.0,192.8 453.1,191.4 456.1,189.9 459.1,188.5 462.2,187.2 465.3,185.8 468.3,184.4 471.4,183.1 474.4,181.7 477.4,180.4 480.5,179.1 483.6,177.8 486.6,176.5 489.7,175.2 492.7,174.0 495.8,172.7 498.8,171.5 501.9,170.2 504.9,169.0 507.9,167.8 511.0,166.6 514.0,165.4 517.1,164.2 520.1,163.0 523.2,161.8 526.3,160.7 529.3,159.5 532.3,158.4 535.4,157.2 538.5,156.1 541.5,155.0 544.5,153.9 547.6,152.8 550.7,151.7 553.7,150.6 556.8,149.5 559.8,148.4 562.9,147.4 565.9,146.3 569.0,145.2 572.0,144.2 575.0,143.1 578.1,142.1 581.1,141.1 584.2,140.1 587.3,139.0 590.3,138.0 593.3,137.0 596.4,136.0 599.4,135.0 602.5,134.1 605.5,133.1 608.6,132.1 611.6,131.1 614.7,130.2 617.8,129.2 620.8,128.3 623.9,127.3 626.9,126.4 630.0,125.4 633.0,124.5 636.1,123.6 639.1,122.6 642.1,121.7 645.2,120.8 648.3,119.9 651.3,119.0 654.4,118.1 657.4,117.2 660.4,116.3 663.5,115.4 666.5,114.5 669.6,113.6 672.6,112.8 675.7,111.9 678.8,111.0 681.8,110.1 684.9,109.3 687.9,108.4 691.0,107.6 694.0,106.7" fill="none" stroke="#333" stroke-width="2.6"/>
+  <circle cx="387.7" cy="225.4" r="5.5" fill="#b02a1a"/>
+  <line x1="387.7" y1="225.4" x2="387.7" y2="422" stroke="#b02a1a" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="399.7" y="219.4" font-size="11" fill="#b02a1a" text-anchor="start" font-weight="bold">T*_Y = 0,996 s → 298 mm</text>
+  <circle cx="225.9" cy="352.4" r="5.5" fill="#b02a1a"/>
+  <line x1="225.9" y1="352.4" x2="225.9" y2="422" stroke="#b02a1a" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="213.9" y="346.4" font-size="11" fill="#b02a1a" text-anchor="end" font-weight="bold">T meta = 0,465 s → 105 mm</text>
+  <circle cx="151.2" cy="408.4" r="5.5" fill="#1a63a8"/>
+  <line x1="151.2" y1="408.4" x2="151.2" y2="422" stroke="#1a63a8" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="151.2" y="394.4" font-size="11" fill="#1a63a8" text-anchor="middle" font-weight="bold">T*_X → 21 mm</text>
+  <path d="M 387.7 225.4 Q 297.5 239.2 233.9 344.4" fill="none" stroke="#333" stroke-width="1.6" stroke-dasharray="7 4" marker-end="url(#pta)"/>
+  <text x="285.3" y="286.7" font-size="11.5" fill="#333" font-weight="bold">rigidez × 4,6</text>
+  <text x="285.3" y="302.7" font-size="10.5" fill="#6b7280">para que la deriva baje de 169,5 a 60 mm</text>
+  <text x="712" y="120" font-size="10.5" fill="#333" font-weight="bold">La curva crece casi monótona con T:</text>
+  <text x="712" y="134" font-size="10.5" fill="#6b7280">flexibilizar siempre agranda el</text>
+  <text x="712" y="148" font-size="10.5" fill="#6b7280">desplazamiento. Y al revés: rigidizar</text>
+  <text x="712" y="162" font-size="10.5" fill="#6b7280">rinde poco al principio, porque S_a</text>
+  <text x="712" y="176" font-size="10.5" fill="#6b7280">sube mientras T² baja. Para cortar la</text>
+  <text x="712" y="190" font-size="10.5" fill="#6b7280">deriva a un tercio (169,5 → 60 mm) el</text>
+  <text x="712" y="204" font-size="10.5" fill="#6b7280">período debe bajar a menos de la</text>
+  <text x="712" y="218" font-size="10.5" fill="#6b7280">mitad: rigidez × 4,6.</text>
+  <text x="712" y="244" font-size="10.5" fill="#1a63a8">El CBF vive en la otra punta: en</text>
+  <text x="712" y="258" font-size="10.5" fill="#1a63a8">T*_X = 0,220 s el espectro solo</text>
+  <text x="712" y="272" font-size="10.5" fill="#1a63a8">le pide 21 mm.</text>
+  <text x="84" y="470" font-size="10.5" fill="#6b7280">Curva: src/lib/nch2369-spectrum.ts (Ec. 3 corregida por ξ) · T* y derivas: análisis validado en dos motores (case09 rukan ↔ SAP2000) · estimación con forma modal constante</text>
+</svg>

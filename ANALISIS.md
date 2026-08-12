@@ -101,7 +101,13 @@ cubierto en una sección, sin el contraste estático/modal desarrollado.
 Cálculo de desplazamientos sísmicos [§6.1], separación entre estructuras [§6.2], máximos [§6.3] y
 efecto P-Delta [§6.4]. **Cierra el bucle 1.**
 
-Cubre: nada del corpus. Es el hueco más grande.
+Cubre:
+[la torre mixta: la deriva que dimensiona](src/content/apuntes/ejemplo-torre-deformaciones-nch2369.mdx)
+— §6.1 a §6.4 completas sobre la torre CBF/MRF (espectro de referencia, derivas CQC contra
+0,015·h y su excepción ×2, Ec. (15) de separación, disparador de P-Delta), más la deriva de la
+cepa rehecha a mano como cierre. El hallazgo que le da nombre: el MRF que aprobaba en fuerza
+reprueba 2,8× en deriva, y cumplir exige rigidez ×4,6 — el bucle 1 no es verificación final sino
+predimensionado del marco.
 
 ### D · Los fusibles, con las combinaciones de §4.5
 
@@ -202,7 +208,7 @@ Cubre: [zapata bajo el pedestal](ejemplos/geotecnia/zapata-base-columna-nch2369.
 | B · Métodos y análisis modal | §5.2, §5.6 | ✓ |
 | B · Acción sísmica vertical | §5.7 | ~ |
 | B · Corte basal mínimo y máximo | §5.12, §5.13 | ✓ |
-| C · Desplazamientos y P-Delta | §6.1 a §6.4 | — |
+| C · Desplazamientos y P-Delta | §6.1 a §6.4 | ✓ |
 | D · Fusibles del MAC | §8.6 y su Tabla 9 | ✓ |
 | E · Capacidades esperadas y 0,7R₁ | §8.3.1, §8.3.4 | ✓ |
 | F · Conexión de la diagonal | §8.6.8, §8.6.9 | ✓ |
@@ -221,10 +227,10 @@ Cubre: [zapata bajo el pedestal](ejemplos/geotecnia/zapata-base-columna-nch2369.
 
 En orden de cuánto duele:
 
-1. **§6, los desplazamientos.** Cierra el bucle 1 y no hay nada escrito. Sin esto la fase C es un
-   nombre. El ejemplo del corte basal lo deja planteado —§6.1 usa el espectro de referencia, sin
-   dividir por $R^*$, y ni el aumento de §5.12 ni la reducción de §5.13 llegan a los
-   desplazamientos— pero no calcula ninguna deriva.
+1. ~~**§6, los desplazamientos.**~~ **Saldada (2026-08-12)** con el ejemplo de las deformaciones
+   de la torre mixta (§6.1 a §6.4 + la deriva de la cepa a mano). Queda como deuda menor el
+   análisis P-Delta *hecho* (el ejemplo calcula el índice y muestra el disparador, pero no corre
+   un segundo orden).
 2. **§5.3, el modelo matemático.** Es donde vive el supuesto que el bucle 3 desmiente.
 3. **§8.8, diafragmas horizontales.** El arriostramiento de techo no está en ninguna parte del
    corpus, y es la mitad del camino de la carga.
