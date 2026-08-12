@@ -23,14 +23,32 @@ Si un texto ya publicado tiene voseo o un regionalismo, se corrige en el mismo c
 
 Aplica igual a agentes y subagentes. Si no puedes abrir el PDF, no escribas el número: dilo.
 
+### Dónde están los PDF — depende del equipo, compruébalo
+
+La carpeta de normas **no está en la misma ruta en los dos equipos**, y `material_teorico`
+se mueve igual:
+
+| Equipo | Normas | `material_teorico` |
+|---|---|---|
+| PC personal | `F:\OneDrive\Ingenieria\Normas\` | `F:\Proyectos_Python\material_teorico\` |
+| Notebook de oficina | `C:\Users\francisco.carrasco\OneDrive - PSC INGENIERÍA SpA\Escritorio\Documentos\Normas\` | `C:\Proyectos_Python\material_teorico\` |
+
+**Comprueba cuál de las dos existe antes de abrir nada, y di en cuál estás trabajando.** No
+supongas la de CLAUDE.md: si escribes la ruta que no es y concluyes que el PDF no está,
+acabas citando de memoria, que es justo lo que esta sección prohíbe.
+
+El nombre de la carpeta de oficina lleva acento y espacios, y la codificación de la consola
+lo rompe: resuélvelo con glob (`~\OneDrive*\Escritorio\Documentos\Normas\...`) en vez de
+escribirlo literal.
+
 ### Las ediciones vigentes, y las únicas que se citan
 
-| Norma | Edición | PDF |
+| Norma | Edición | Archivo |
 |---|---|---|
-| AISC 360 | **360-22** | `F:\OneDrive\Ingenieria\Normas\A360-22W-ewr.pdf` |
-| AISC 341 | **341-22** | `F:\OneDrive\Ingenieria\Normas\A341-22W-oke.pdf` |
-| ACI 318 | **318-25 (SI)** | `F:\OneDrive\Ingenieria\Normas\ACI 318-25_SI.pdf` |
-| NCh2369 | **2025, 3.ª ed.** | `F:\OneDrive\Ingenieria\Normas\NCh 2369 - 3°Edición 2025.05.28.pdf` |
+| AISC 360 | **360-22** | `A360-22W-ewr.pdf` |
+| AISC 341 | **341-22** | `A341-22W-oke.pdf` |
+| ACI 318 | **318-25 (SI)** | `ACI 318-25_SI.pdf` |
+| NCh2369 | **2025, 3.ª ed.** | `NCh 2369 - 3°Edición 2025.05.28.pdf` |
 
 Citar una edición distinta es un hallazgo, no una variante: AISC 360-10 y ACI 318-19 están en disco y sirven para explicar de dónde viene algo, nunca como fuente de un número nuevo.
 
@@ -45,7 +63,7 @@ Entonces, dos usos distintos:
 
 ### Las fichas de `material_teorico` son un mapa, no una fuente
 
-`F:\Proyectos_Python\material_teorico\referencias\` sirve para ubicar rápido la sección y entender el contexto. No está auditado: ya hubo al menos una ficha con una ecuación mal transcrita que varios posts citaban como fuente. Si la ficha y el PDF discrepan, **manda el PDF** y la ficha se corrige en el mismo commit.
+`material_teorico\referencias\` (bajo la raíz que corresponda al equipo) sirve para ubicar rápido la sección y entender el contexto. No está auditado: ya hubo al menos una ficha con una ecuación mal transcrita que varios posts citaban como fuente. Si la ficha y el PDF discrepan, **manda el PDF** y la ficha se corrige en el mismo commit.
 
 ### Por qué la regla es tan dura
 
