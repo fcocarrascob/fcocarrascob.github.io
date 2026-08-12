@@ -177,9 +177,20 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 
 **§9 de NCh3171 queda leída completa.**
 
-#### NCh 432:2025
+#### NCh 432:2025 (3.ª ed., 2025.06.27)
 
-Pendiente. Ver §6.1.
+162 páginas, **con capa de texto** (289 k caracteres): `localizar.py` sirve para ubicar. **Offset:
+índice 0-based = página impresa + 8.**
+
+| Cláusula / Figura | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§5.6.1** Aceleración del viento sobre colinas, cimas y escarpamientos | 20 | 28 | 2026-08-12 | Los efectos en colinas, crestas y escarpes **aislados** que constituyen cambios abruptos en la topografía general, en **cualquier** categoría de exposición, se incluyen cuando el sitio cumple **todas** estas condiciones: **1.** el edificio está en la **mitad superior de una colina o cima**, o cerca de la cima de un escarpamiento (como se muestra en Figura 3); **2.** **H/L_h ≥ 0,2**; **3.** **H ≥ 4,5 m** para Exposiciones **C y D**, y **≥ 18 m** para Exposición **B**. | Post 1 |
+| **§5.6.2** Factor topográfico, Ec. (1) | 20 | 28 | 2026-08-12 | **`K_zt = (1 + K₁·K₂·K₃)²`** — Ec. (1). K₁, K₂ y K₃ se dan en la Figura 3. **Los valores de K₂ y K₃ no deben ser menores que 0.** Las ecuaciones de K₁, K₂ y K₃ se pueden usar en vez de los valores tabulados cuando se requiere mayor precisión. **Para H/L_h > 0,5, se supone H/L_h = 0,5 para evaluar K₁ y se sustituye L_h por 2H para evaluar K₂ y K₃.** «Si las condiciones del sitio y la ubicación de los edificios y otras estructuras **no cumplen con todas** las condiciones especificadas en 5.6.1, entonces **K_zt = 1,0**.» | Post 1 |
+| **Figura 3** — Factor topográfico K_zt | 21-22 | 29-30 | 2026-08-12 | **No estaba transcrita al wiki.** Definiciones: **L_h** = distancia contra el viento desde la cima hasta donde la diferencia en la elevación del terreno es **la mitad** de la altura de la colina o escarpa, m · **x** = distancia (en contra o a favor del viento) desde la **cresta** hasta el sitio del edificio, m · **z** = altura sobre la superficie del suelo en el lugar del edificio, m · **μ** = factor de atenuación horizontal · **γ** = factor de atenuación de altura · **K₃** = factor que tiene en cuenta la reducción de la aceleración con la altura sobre el terreno local. **Ecuaciones**: `K_zt = (1 + K₁K₂K₃)²` · K₁ de la tabla · **`K₂ = (1 − \|x\|/(μ·L_h))`** · **`K₃ = e^(−γ·z/L_h)`**. **Tabla «Parámetros por aceleración en cimas, colinas o escarpamientos»**, con K₁/(H/L_h) por exposición: **Cima 2D** (o valles con H negativo en K₁/(H/L_h)) → B 1,30 · **C 1,45** · D 1,55 · γ = 3 · μ 1,5 contra el viento y 1,5 a favor. **Escarpamiento 2D** → 0,75 · 0,85 · 0,95 · γ = 2,5 · μ 1,5 contra y **4** a favor. **Colina axisimétrica 3D** → 0,95 · 1,05 · 1,15 · γ = 4 · μ 1,5 y 1,5. | **Hallazgo 5.24**; post 1 |
+
+**Pendiente de NCh432**: Figura 2 y §5.3 (zonificación y V básica) · Tabla 2 (I) · **Tabla 3 (K_d)**, pág. 18
+/ PDF 26 · §5.5 y **Tabla 5 (K_z)**, pág. 24 / PDF 32 · §5.7 y Tabla 4 (K_e) · §5.9 (G, y el criterio
+rígido vs flexible) · §5.10 y §5.11 con Tabla 7 (GC_pi por cerramiento).
 
 ### 4.2 Parámetros derivados
 
@@ -620,6 +631,35 @@ impreso: **§9.2.2 y la regla de cierre de §9.2.1 citan «(5), (6) y (7)»**, p
 significa 6a, 6b o ambas. Para nuestro caso importa: la **regla de montaña en ASD reemplaza «la
 combinación (6)»**, y 6b es justamente la que trae `0,75E + 0,75S`.
 
+### 5.24 El K_zt de la loma es mucho más grande de lo que el plan estimaba, y da vuelta la tesis del post 1
+
+Con la Figura 3 ya legible se puede evaluar la loma propuesta: **cima 2D, exposición C, H = 40 m,
+L_h = 120 m, x = 0** (galpón en la cresta), y **z = 8,0 m** (altura de alero, que es la que usa el q_h de
+un techo a dos aguas de 10°).
+
+Condiciones de §5.6.1: el galpón está en la mitad superior ✅ · H/L_h = 40/120 = **0,333 ≥ 0,2** ✅ ·
+H = 40 m ≥ 4,5 m para exposición C ✅. Aplica, y como 0,333 < 0,5 no entra el tope de §5.6.2.
+
+| Paso | Cuenta | Valor |
+|---|---|---|
+| K₁ | 1,45 × (40/120) | **0,4833** |
+| K₂ | 1 − 0/(1,5 × 120) | **1,0000** |
+| K₃ | e^(−3 × 8/120) = e^(−0,2) | **0,8187** |
+| **K_zt** | (1 + 0,4833 × 1,0 × 0,8187)² = 1,3957² | **1,948** |
+
+El plan estimaba 1,1–1,4. Es **1,95**: casi el doble de presión.
+
+**Y eso da vuelta el titular del post 1.** La versión que el plan proponía era «el aire enrarecido regala
+un 36 % y la loma se lo devuelve entero». La cuenta real es mejor: K_e ≈ 0,64 y K_zt ≈ 1,95 dan
+**0,64 × 1,95 = 1,25**. O sea, el galpón del altiplano en una loma se diseña con **un 25 % más** de
+presión que el mismo galpón en terreno plano a nivel del mar — no con menos. Quien aplique solo el K_e
+que «todo el mundo conoce» diseña con **la mitad** de la presión que corresponde (0,64 contra 1,25).
+
+**Cuidado al elegir la geometría del cerro**: K_zt es muy sensible. Con H = 20 m y L_h = 120 m
+(H/L_h = 0,167) **no se cumple la condición 2 y K_zt = 1,0 de golpe** — un acantilado de discontinuidad
+que también es contenido del post. La geometría del cerro es un parámetro de proyecto que hay que
+declarar y congelar con el usuario, no un detalle.
+
 ---
 
 ## 6. Estado de la serie
@@ -631,7 +671,7 @@ combinación (6)»**, y 6b es justamente la que trae `0,75E + 0,75S`.
 | 1 | Verificar tablas sísmicas de rukan contra la 3.ª ed. | ✅ **hecho** — coinciden (§5.5) |
 | 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
 | 3 | Leer NCh3171:2017 §9 completo | ✅ **hecho** — §9, §9.1.1 con sus seis excepciones y reglas de cierre, §9.1.2, §9.1.3, §9.2.1 con sus cuatro excepciones y cierre, §9.2.2, §9.2.3 y §9.3 |
-| 4 | Leer NCh432:2025, parámetros del sitio | ⬜ pendiente |
+| 4 | Leer NCh432:2025, parámetros del sitio | 🔄 **en curso** — §5.6.1, §5.6.2 y la **Figura 3 (K_zt)** leídas; falta lo listado al pie de §4.1 |
 | 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ⬜ pendiente |
 
 **Ya leído de NCh2369** (2026-08-12): §4.3.1 · §4.3.2 · §4.5.1 + Tabla C-2 · §5.1.1 · §5.1.2 ·
