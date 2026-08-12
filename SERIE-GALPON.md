@@ -19,6 +19,26 @@ a saltarse.
 
 ## 1. Cómo se retoma esto en otra sesión
 
+> **Estado al 2026-08-12, fin de sesión.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los
+> parámetros congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones,
+> envolvente y deriva incluidas). El **post 0 está publicado** (`blog/galpon-altiplano-la-serie`) y
+> hace de mapa y bitácora. **Faltan los diez posts.**
+>
+> **Lo próximo, sin ambigüedad: escribir el post 1** (`ejemplo-galpon-altiplano-viento-sitio-nch432`).
+> Es el único que no depende de ningún motor —todos sus números están en §4.1 y en la subsección
+> «El q_h del galpón»— y la primera tanda de auditoría es 1+2+3, así que fija el léxico de la serie.
+>
+> **No hace falta abrir SAP2000** para los posts 1, 3 y 5: sus números ya están en este archivo.
+> Sí hace falta rukan para los posts 2, 4 y 6, y **rukan todavía no se ha tocado**.
+
+**Los tres repos que participan** (los tres quedaron limpios y commiteados):
+
+| Repo | Qué guarda | Rama |
+|---|---|---|
+| `fcocarrascob.github.io` | los posts, este archivo, las figuras y planillas | `main` |
+| `Skills_SAP` | los ocho scripts `galpon_altiplano_*`. **Lee `scripts/README.md` antes de correr ninguno**: hay orden obligatorio y tres scripts superados cuyas cabeceras traen números viejos | `main` |
+| `struct_llm` | `docs/lecciones-sap2000-modelado-oapi.md` §12 — lo aprendido de la OAPI | `auditoria-alcance-clausulas` |
+
 1. Lee este archivo entero. Es corto a propósito.
 2. Mira **§6 Estado de la serie** para saber en qué fase está y qué sigue.
 3. Todo número que necesites ya leído está en **§4 Memoria de cálculo**. Si no está ahí, **no lo
