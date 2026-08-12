@@ -3900,7 +3900,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `rukan-verificacion-modal-espectral` | — | — | — |
 | `rukan-verificacion-modal-opensees` | — | — | — |
 | `rukan-verificacion-peso-propio-combinaciones` | — | — | — |
-| `rukan-verificacion-torre-r-por-direccion` | 2026-08-12 | ⚠️ | 0 · 13 aplicados en `aa0b828` (2🟠 8🟡 3🔵) · sin planilla (candidata parcial; host natural: el gemelo de apuntes) |
+| `rukan-verificacion-torre-r-por-direccion` | 2026-08-12 | ⚠️ | 0 · 13 aplicados en `aa0b828` (2🟠 8🟡 3🔵) · planilla en el gemelo de apuntes |
 | `section-cut-muros-losas-sap2000` | 2026-07-15 | ⚠️ | 5 (0🔴 1🟠) |
 | `surrogate-biaxial-despegue` | — | — | — |
 | `zapata-solo-compresion-sap2000` | 2026-07-15 | ⚠️ | 13 (0🔴 5🟠) |
@@ -3992,7 +3992,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
 | `ejemplo-analisis-sismico-cepa-nch2369` | 2026-08-10 | ⚠️ | 16 (0🔴 5🟠 · 6🟡 5🔵) · sin planilla (candidata parcial) |
-| `ejemplo-torre-sismica-nch2369` | 2026-08-12 | ⚠️ | 0 · 15 aplicados en `aa0b828` (1🟠 9🟡 5🔵) · sin planilla (candidata parcial, 6 verificaciones) |
+| `ejemplo-torre-sismica-nch2369` | 2026-08-12 | ⚠️ | 0 · 15 aplicados en `aa0b828` (1🟠 9🟡 5🔵) · planilla ✓ (6 verificaciones + banda y R₁ por dirección) |
 | `ejemplo-viento-galpon-nch432` | 2026-08-10 | ✅ | 0 · 10 aplicados (1🔴 2🟠 5🟡 2🔵) · 1🔵 descartado (versión de SAP2000) · sin planilla (candidata) |
 | `nch2369-panorama-y-combinaciones` | 2026-08-03 | ⚠️ | 14 (0🔴 0🟠 · 6🟡 8🔵) · 3 aplicados (1🟠 2🟡) |
 | `nch2369-espectro-de-diseno` | 2026-08-03 | ⚠️ | 7 (0🔴 0🟠 · 1🟡 6🔵) · 7 aplicados (4🟠 3🟡) |
