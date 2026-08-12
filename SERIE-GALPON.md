@@ -45,13 +45,14 @@ viven en el scratchpad de la sesión; si no existen, se reescriben en cinco lín
 
 ### Offsets de página (verificados, corrigen al wiki)
 
-| Norma | Índice 0-based de PyMuPDF | Página PDF 1-based |
+| Norma | Índice 0-based de PyMuPDF | Nota |
 |---|---|---|
-| **NCh2369:2025** | página impresa **+ 6** | página impresa + 7 |
+| **NCh2369:2025** | página impresa **+ 6** | verificado contra los pies de las impresas 13, 15, 18, 19, 57, 60, 61, 80, 87, 92, 93, 96, 97-99, 143-145, 220-221 |
+| **NCh3171:2017** | página impresa **+ 3** | 18 páginas de PDF, 12 de cuerpo. **Escaneado: 0 caracteres de capa de texto**, `localizar.py` no sirve |
+| **AISC 341-22** | — | la Tabla A3.2 (R_y, R_t) está en el índice 0-based **59**, página 9.1-6 |
 
-Verificado contra los pies de página de cinco páginas leídas (impresas 15, 19, 57, 60, 61). El wiki
-de `material_teorico` cita «+7» porque cuenta páginas 1-based; `raster.py` es 0-based. Anotarlo evita
-una cacería de off-by-one por sesión.
+El wiki de `material_teorico` cita «+7» para NCh2369 porque cuenta páginas 1-based; `raster.py` es
+0-based. Anotarlo evita una cacería de off-by-one por sesión.
 
 ### Rutas reales de las normas
 
@@ -159,9 +160,26 @@ de `raster.py`.
 |---|---|---|---|---|---|
 | **Tabla A3.2** — R_y y R_t | 9.1-6 | 59 | 2026-08-12 | *R_y and R_t Values for Steel and Steel Reinforcement Materials*. **Hot-Rolled Structural Shapes and Bars**: A36 → **R_y = 1,5**, R_t = 1,2 · A529 Gr.50 → 1,2/1,2 · A572 Gr.50 o 55 → 1,1/1,1 · A992 → 1,1/1,1 · A1043 Gr.36 → 1,3/1,1. **Hollow Structural Sections (HSS)**: A53 → 1,6/1,2 · **A500 Gr. B → 1,4/1,3** · A500 Gr. C → 1,3/1,2 · A501 → 1,4/1,3 · A1085 Gr. A → 1,25/1,15. **Plates, Strips, and Sheets**: **A36 → R_y = 1,3**, R_t = 1,2 · A572 Gr.42 → 1,3/1,0 · A572 Gr.50 o 55 → 1,1/1,2 · A1043 Gr.36 → 1,3/1,1. **Steel Reinforcement**: A615 Gr.60 → 1,2/1,2 · A706 Gr.60 y 80 → 1,2/1,2. | Cierra **§5.17**; confirma **R_y = 1,3** |
 
-#### NCh 3171:2017 · NCh 432:2025
+#### NCh 3171:2017 (2.ª ed., 2017.05.23)
 
-Pendientes. Ver §6.1.
+PDF **escaneado, sin capa de texto** (0 caracteres en las 18 páginas): `localizar.py` no sirve, todo va
+rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** El cuerpo son 12 páginas.
+
+| Cláusula | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§9** Combinaciones de carga (encabezado) | 9 | 12 | 2026-08-12 | Las combinaciones de 9.1 y 9.2 se usan «cuando las normas de diseño correspondientes a los distintos materiales así lo indiquen». **«Cuando las normas de diseño sísmico consideren otras combinaciones para casos particulares de cargas, éstas prevalecen.»** Se usan las que produzcan el efecto más desfavorable, y «en algunos casos esto puede ocurrir cuando una o más cargas en la combinación **no están presentes**». **NOTA**: son las combinaciones **mínimas**; el diseñador debe incorporar las más desfavorables para cada situación. | **Hallazgo 5.20** |
+| **§9.1.1** Combinaciones básicas LRFD | 9 | 12 | 2026-08-12 | **(1)** `1,4D` · **(2)** `1,2D + 1,6L + 0,5(L_r o S o R)` · **(3a)** `1,2D + 1,6(L_r o S o R) + L` · **(3b)** `1,2D + 1,6(L_r o S o R) + 0,8W` · **(4)** `1,2D + 1,6W + L + 0,5(L_r o S o R)` · **(5)** `1,2D + 1,4E + L + 0,2S` · **(6)** `0,9D + 1,6W` · **(7)** `0,9D + 1,4E`. **L_r, S y R son alternativas** («o»), no aditivas. **E lleva factor 1,4.** La (5) **sí trae nieve, con 0,2S**. | Post 3 |
+| **§9.1.1** excepciones a) a f) y reglas de cierre | 9-10 | 12-13 | 2026-08-12 | **a)** el factor de L en (3a), (4) y (5) puede ser **0,5** para destinos con L₀ de NCh1537 ≤ 5 kN/m², salvo estacionamientos y lugares de asamblea pública. **b)** F y T se incluyen con el mismo factor de D en (1), (2), (3a), (3b), (4), (5) y **(7)** — la **(6) queda fuera de la lista**. **c)** H: **1,6** si suma a la carga primaria; **0,9** si la contrarresta y es permanente y justificable; **0** en toda otra condición. **d)** en (2), (3a), (3b), (4) y (5) la S concurrente se toma como nieve de techo plano (p_f) o de techo inclinado (p_s). **e)** si W no fue reducida por factor de direccionalidad se permite **1,3W** en vez de 1,6W en (4) y (6). **f)** «En el caso de la combinación (ii) del método de diseño por cargas últimas de **NCh2369:2003, 4.5**, el factor "b" de amplificación de la carga sísmica para el diseño de estructuras de acero se debe considerar igual a **1,4**». **Reglas de cierre**: se investiga cada estado límite de resistencia y los efectos de una o más cargas no actuantes; el sismo y el viento se investigan **por separado** y «no es necesario considerar que actúan simultáneamente»; la definición específica de E la da la norma de diseño que corresponda. Y: **«En zonas donde la presencia de viento y nieve no es eventual, por ejemplo, zonas montañosas o ubicadas en las regiones XI o XII, se deben estudiar combinaciones especiales que reemplacen las combinaciones (3b), (4) y (5), anteriormente indicadas, pero que no sean menores que las originales.»** | **Hallazgos 5.21 y 5.22** |
+| **§9.1.2** y **§9.1.3** inundación y hielo | 10 | 13 | 2026-08-12 | **9.1.2** en zonas susceptibles de inundación el término `1,6W` de (4) y (6) se reemplaza por `1,6W + 2,0F_a`; en zonas no susceptibles, por `0,8W + 1,0F_a`. **9.1.3** hielo atmosférico: `0,5(L_r o S o R)` de (2) → `0,2D_i + 0,5S`; `1,6W + 0,5(L_r o S o R)` de (4) → `D_i + W_i + 0,5S`; `1,6W` de (6) → `D_i + W_i`. | Fuera de alcance, declarado |
+| **§9.2.1** Combinaciones básicas ASD | 11 | 14 | 2026-08-12 | **(1)** `D` · **(2)** `D + L` · **(3)** `D + (L_r o S o R)` · **(4)** `D + 0,75L + 0,75(L_r o S o R)` · **(5a)** `D + W` · **(5b)** `D + E` · **(6a)** `D + 0,75W + 0,75L + 0,75(L_r o S o R)` · **(6b)** `D + 0,75E + 0,75L + 0,75S` · **(7)** `0,6D + W` · **(8)** `0,6D + E`. Excepciones: **a)** F y T con el mismo factor de D en todas **excepto la (7)**. **b)** H: **1,0** si suma; **0,6** si contrarresta y es permanente y justificable; **0** en toda otra condición. **c)** en (3), (4), (6a) y (6b) la S concurrente se toma como p_f o p_s. **d)** las combinaciones **(7) y (8) se pueden omitir en el cálculo de estabilidad de las fundaciones y tensiones del suelo**. Cierre: viento y terremoto no necesitan considerarse simultáneos; la definición de E la da la norma de diseño correspondiente. | Post 3, servicio |
+
+| **§9.2.1** reglas de cierre · **§9.2.2** · **§9.2.3** · **§9.3** | 12 | 15 | 2026-08-12 | **Cierre de 9.2.1**: «**No deben ser utilizados incrementos en las tensiones admisibles** con las combinaciones de cargas dadas en esta norma a menos que pueda ser demostrado que tal aumento es justificado por el comportamiento estructural causado por la rapidez o la duración de la carga; tales aumentos deben estar indicados en la norma de diseño de cada material.» Y la regla de montaña, en versión ASD: «En zonas donde la presencia de viento y nieve no es eventual, por ejemplo, zonas montañosas o ubicadas en las regiones XI o XII, se deben estudiar combinaciones especiales que reemplacen **la combinación (6)**, anteriormente indicada, pero que no sean menores que la original.» **9.2.2** inundación: zonas susceptibles → agregar `1,5F_a` a (5), (6) y (7), **y E se fija en cero en (5) y (6)**; zonas no susceptibles → `0,75F_a` en (5), (6) y (7), E = 0 en (5) y (6). **9.2.3** hielo: `0,7D_i` se agrega a (2); `(L_r o S o R)` de (3) → `0,7D_i + 0,7W_i + S`; `W` de (7) → `0,7D_i + 0,7W_i`. **9.3 Eventos extraordinarios**, un párrafo sin factores: «Donde se requiera por el código aplicable, norma, o la Autoridad Competente, la resistencia y la estabilidad deben ser comprobadas para asegurar que las estructuras sean capaces de soportar los efectos de los eventos extraordinarios (es decir, cargas accidentales de baja probabilidad), tales como incendios, explosiones, y el impacto de vehículos.» | **Hallazgo 5.23**; §9.3 fuera de alcance |
+
+**§9 de NCh3171 queda leída completa.**
+
+#### NCh 432:2025
+
+Pendiente. Ver §6.1.
 
 ### 4.2 Parámetros derivados
 
@@ -530,6 +548,78 @@ mirarlo con §8.7.6 (atiesadores de continuidad obligatorios) en la mano.
 la resistencia requerida **«para todos los esfuerzos»** salga de la combinación amplificada — redacción
 más dura que la de las otras dos. Y por **§12.2.2**, para este galpón ese 0,7R₁ se lee **0,5R₁**.
 
+### 5.20 Quién manda: NCh3171 cede por escrito ante la norma sísmica
+
+La pregunta que el plan dejaba abierta —«determinar exactamente dónde manda cada una»— la contesta la
+propia NCh3171 en la primera página de su §9: **«Cuando las normas de diseño sísmico consideren otras
+combinaciones para casos particulares de cargas, éstas prevalecen.»**
+
+Y la diferencia no es cosmética. Para el **mismo** E:
+
+| | LRFD | ASD |
+|---|---|---|
+| **NCh3171** §9.1.1 (5) y §9.2.1 (5b) | `1,2D + **1,4E** + L + 0,2S` | `D + **1,0E**` |
+| **NCh2369** §4.5.1 | `1,2D + aL + SO + SA + **1,0E**` | `D + 0,75aL + 0,75SO + 0,75SA + **0,70E**` |
+
+Meter el E de NCh2369 en la combinación (5) de NCh3171 lo amplificaría **un 40 % de más**. NCh3171
+además se cuida: «Para la definición específica del efecto del terremoto, E, ver normas de diseño según
+corresponda» — o sea, **NCh3171 no define E**, lo delega. Esa es exactamente la «inconsistencia» de la
+que se queja el **Anexo B B.1** de NCh2369.
+
+Estructura del post 3: NCh3171 pone el andamio de gravedad y viento; NCh2369 §4.5 reemplaza la rama
+sísmica; y el Anexo B explica por qué.
+
+### 5.21 El «1,4» existe, pero es de NCh3171 y apunta a una edición muerta
+
+**Excepción 9.1 f)** de NCh3171:2017: «En el caso de la combinación (ii) del método de diseño por cargas
+últimas de **NCh2369:2003, 4.5**, el factor "b" de amplificación de la carga sísmica para el diseño de
+estructuras de acero se debe considerar igual a **1,4**».
+
+Tres correcciones de una sola frase, y cierra el §5.12:
+
+1. El 1,4 está en **NCh3171**, no en NCh2369 §4.5.
+2. No tiene nada que ver con conexiones: es el factor «b» de amplificación de la carga sísmica.
+3. Remite a **NCh2369:2003**, edición que la 2025 reemplazó. La §4.5 de la 2025 **no tiene** una
+   «combinación (ii)» ni un factor «b». **La excepción f) quedó colgando.**
+
+Es un hallazgo publicable por sí solo, y explica de dónde venía el mito del «1,4 de §4.5 en conexiones»
+que arrastraba el reporte del `modelo_base`.
+
+### 5.22 NCh3171 también exige estudio especial para zona montañosa
+
+Regla de cierre de §9.1.1: **«En zonas donde la presencia de viento y nieve no es eventual, por ejemplo,
+zonas montañosas o ubicadas en las regiones XI o XII, se deben estudiar combinaciones especiales que
+reemplacen las combinaciones (3b), (4) y (5), anteriormente indicadas, pero que no sean menores que las
+originales.»**
+
+Con esto son **dos normas independientes** exigiendo un estudio de combinaciones para este sitio:
+NCh2369 §4.5.1 por alta montaña, y NCh3171 §9.1.1 por zona montañosa. La «deuda de NCh431» queda
+doblemente cubierta por texto normativo, y el post 3 tiene su columna vertebral.
+
+Nota práctica: la exigencia es que las combinaciones especiales **no sean menores que las originales**,
+así que las (3b), (4) y (5) siguen siendo el piso y el estudio solo puede subir.
+
+Y una regla que poda el árbol de combinaciones: **sismo y viento se investigan por separado**, «no es
+necesario considerar que actúan simultáneamente» — vale igual en §9.1.1 y en §9.2.1.
+
+### 5.23 Dos cosas del ASD de NCh3171 que cambian el trabajo, y una errata confirmada
+
+**No hay aumento de tensiones admisibles.** El cierre de §9.2.1 lo prohíbe salvo que la norma de material
+lo justifique «por la rapidez o la duración de la carga». El clásico aumento de un tercio por viento o
+sismo no aplica: la reducción ya está en los factores 0,75 y 0,6 de las propias combinaciones.
+
+**La verificación de servicio tiene combinaciones propias.** El Anexo B de NCh2369 reconoce que
+deformaciones, vibraciones y fatiga se verifican con combinaciones de servicio «en general equivalentes
+al método ASD», y §9.2.1 d) además permite **omitir las combinaciones (7) y (8)** en el cálculo de
+estabilidad de fundaciones y tensiones del suelo. Esto es lo que el `modelo_base` de Skills_SAP no
+tiene: marca LRFD y ASD **ambos como *strength*** y nunca llama `SetComboDeflection`.
+
+**Errata interna confirmada.** El wiki de `material_teorico` la marcaba como sospecha y se verifica en el
+impreso: **§9.2.2 y la regla de cierre de §9.2.1 citan «(5), (6) y (7)»**, pero **§9.2.1 numera 5a/5b y
+6a/6b**. La norma remite a rótulos que no existen. Al implementar hay que decidir —y declarar— si «(6)»
+significa 6a, 6b o ambas. Para nuestro caso importa: la **regla de montaña en ASD reemplaza «la
+combinación (6)»**, y 6b es justamente la que trae `0,75E + 0,75S`.
+
 ---
 
 ## 6. Estado de la serie
@@ -540,7 +630,7 @@ más dura que la de las otras dos. Y por **§12.2.2**, para este galpón ese 0,7
 |---|---|---|
 | 1 | Verificar tablas sísmicas de rukan contra la 3.ª ed. | ✅ **hecho** — coinciden (§5.5) |
 | 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
-| 3 | Leer NCh3171:2017 §9 completo | ⬜ pendiente |
+| 3 | Leer NCh3171:2017 §9 completo | ✅ **hecho** — §9, §9.1.1 con sus seis excepciones y reglas de cierre, §9.1.2, §9.1.3, §9.2.1 con sus cuatro excepciones y cierre, §9.2.2, §9.2.3 y §9.3 |
 | 4 | Leer NCh432:2025, parámetros del sitio | ⬜ pendiente |
 | 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ⬜ pendiente |
 
@@ -637,6 +727,11 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 - **AISC 341-16 Tabla A3.1** — la norma cita esa edición y en disco está la 22. Ver §5.17.
 - **Análisis de pandeo para K** (§5.16): rukan necesita un `eigen` de pandeo (matriz geométrica), no
   solo P-Delta. Reordena la prioridad de los cambios de rukan respecto de lo que decía el plan.
+- **La excepción 9.1 f) de NCh3171:2017 quedó colgando** (§5.21): remite a NCh2369:**2003** §4.5, que la
+  edición 2025 reemplazó. No hay «combinación (ii)» ni factor «b» en la vigente. Vale como hallazgo
+  publicable y como aviso a quien arme combos automáticamente desde NCh3171.
+- **Errata interna de NCh3171** (§5.23): §9.2.2 y el cierre de §9.2.1 citan «(5), (6) y (7)» cuando
+  §9.2.1 numera 5a/5b y 6a/6b. Hay que decidir y **declarar** la lectura al implementar los combos.
 - **Figuras 25/26 de NCh432** (topografía, K_zt) y **Figura 2** (zonificación) no están transcritas al
   wiki: hay que leerlas del PDF para el post 1.
 - **rukan no tiene sección de peralte variable** ni `geom_transf` configurable. Ver plan, Fase 2.
