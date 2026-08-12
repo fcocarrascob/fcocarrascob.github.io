@@ -972,6 +972,43 @@ El T\* longitudinal cae en la meseta del espectro y además **6,8 % bajo el codo
 (`C_r T₁ = 0,1728 s` con R = 4), lo que le baja el R\* un 4,2 % adicional. Rigidizar la dirección
 arriostrada la castiga dos veces.
 
+### 5.37 La envolvente: la nieve manda casi todo, y la diagonal la gobierna el sismo
+
+79 combinaciones LRFD (63 de gravedad y viento por NCh3171 §9.1.1, 12 sísmicas por NCh2369
+§4.5.1 con la simultaneidad de §4.5.2, 4 de la rama ilustrativa con R = 5). Gobernantes:
+
+| Miembro | M₃ máx (kNm) | manda | P comp. (kN) | manda | P tracc. (kN) | manda |
+|---|---|---|---|---|---|---|
+| Columna, base | 158,321 | `G3A_B` | −190,140 | `G3A_B` | +13,964 | `G6_TXPP` |
+| **Columna, alero** | **633,284** | **`G3A_B`** | −180,384 | `G3A_B` | +21,562 | `G6_TXPP` |
+| **Dintel, alero** | **−633,206** | **`G3A_B`** | −136,003 | `G3A_B` | +24,780 | `G6_LYNP` |
+| Dintel, medio | 176,334 | **`G3A_I`** | −148,067 | `G3A_B` | +30,587 | `G6_LYNP` |
+| Dintel, cumbrera | 207,932 | `G3A_B` | −137,454 | `G3A_B` | +32,502 | `G6_LYNP` |
+| Puntal de alero | 1,686 | `E3P_A` | **−16,113** | **`E2N_B`** | **+28,248** | **`E2P_A`** |
+| Puntal de cumbrera | 1,686 | `E3P_A` | −96,087 | `G3A_B` | +14,959 | `G6_TXNP` |
+| **Media diag. de muro** | −0,384 | `E3P_A` | **−39,895** | **`E2P_A`** | **+23,651** | **`E2N_B`** |
+| Media diag. de techo | 2,014 | `E3P_A` | −28,234 | `G3A_B` | +15,007 | `E2N_B` |
+| Pilar de hastial | −23,432 | **`G4_BLYPN`** | −13,504 | `E3P_A` | 0,0 | — |
+
+`G3A_B` = `1,2D + 1,6S` balanceada · `G3A_I` = ídem desbalanceada · `G6_*` = `0,9D + 1,6W` ·
+`E*` = las sísmicas · `G4_*` = `1,2D + 1,6W + 0,5S`.
+
+**Confirmado**: con `S = 1,20 kPa` y el sismo dividido por `R* = 4`, la gravedad con nieve gana
+cómodo en la estructura principal. La envolvente sísmica llega al **53 %** del momento de alero
+(337,165 contra 633,284 kNm). Y **la nieve desbalanceada gobierna el dintel medio** — el caso que
+nadie corre.
+
+**Corrige el plan**: la hipótesis del post 10 era que «la diagonal la dimensiona el viento, porque
+E entra dividido por R\* y W entra multiplicado sin dividir por nada». **Es al revés**: la
+compresión sísmica en la media diagonal de muro es **39,895 kN** contra **34,233** de la
+envolvente de gravedad y viento, o sea el sismo gana por **16,5 %**. El razonamiento falla porque
+el T\* longitudinal cae en la meseta del espectro (§5.36) y la dirección arriostrada se lleva
+130,3 kN de corte basal contra 87,0 de la transversal.
+
+La tesis del post 10 sobrevive, pero por otra razón: la demanda es baja para el cajón, y lo que lo
+deja fuera **no es la resistencia sino λ_md** (§5.15). El post pasa de «el viento dimensiona» a
+«ni el viento ni el sismo dimensionan: dimensiona la esbeltez local sísmica».
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF
