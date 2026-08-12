@@ -208,6 +208,32 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 **NCh432 queda leída para lo que la serie necesita.** Lo que falta es de la cláusula 7 (envolvente) y la
 9 (C&R), que **ya está trabajado** en `ejemplo-viento-galpon-nch432.mdx` y se cita en vez de rehacerse.
 
+#### Lecturas de la Fase 2 — NCh 2369:2025
+
+| Cláusula / Figura | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§5.4.1** Espectros de diseño — **Ec. (1a)** y **Ec. (1b)** | 28 | 34 | 2026-08-12 | `S_a(T_H) = I·S_aH(T_H)/R* · (0,05/ξ)^0,4`. **R\*** = **1** si `R = 1`; **R** si `R ≠ 1` y `T* ≥ C_r T₁`; `1,5 + (R−1,5)·T*/(C_r T₁)` si `R ≠ 1` y `T* < C_r T₁`; y **`C_r = 0,16 R`**. Espectro vertical Ec. (2): `S_a(T_V) = I·S_aV(T_V)/R_V · (0,05/ξ_V)^0,4`, con `ξ_V = 0,03` salvo justificación. **C5.4.1**: «es necesario verificar que el período de vibración adoptado para el cálculo de R\* sea representativo y **maximice la respuesta** de la estructura». | Paso 2.6; la rama `R = 1` (rukan usa `R ≤ 1`, superset seguro) |
+| **§5.4.2** Espectros de referencia — **Ec. (3)** y **Ec. (4)** | 29 | 35 | 2026-08-12 | `S_aH(T_H) = A_r·S·[1 + r(T_H/T₀)^p] / [1 + (T_H/T₀)^q]`. Vertical Ec. (4): `S_aV(T_V) = 0,7·A_r·S·[1 + r(1,7T_V/T₀)^p] / [1 + (1,7T_V/T₀)^q]`. «La razón de amortiguamiento incorporada en los espectros de referencia es ξ = 0,05. Para razones menores se debe ponderar por `(0,05/ξ)^0,4`. **Esta expresión es válida sólo para valores de ξ entre 0,02 y 0,05**.» Los de referencia «corresponden a demandas asociadas a **nivel último**». | Confirma la forma que implementa `rukan/spectra.py`; **ξ = 0,02 está justo en el borde de validez** |
+| **§5.6.1** y **§5.6.2** Número de modos | 32 | 38 | 2026-08-12 | **5.6.1** «El análisis modal espectral se debe realizar considerando el espectro de diseño **para la dirección horizontal**.» **5.6.2** «suficientes modos … para que la suma de las masas modales (equivalentes), **en cada dirección de análisis**, sea mayor o igual al 90 % de la masa total». **C5.6.2**: la condición viene de NCh433, UBC, SEAOC y Nueva Zelandia. | **Hallazgo 5.31** — el 90 % está acotado al AME horizontal |
+| **§5.7** Acción sísmica vertical | 35 | 41 | 2026-08-12 | **5.7.1** «Se debe representar el efecto sísmico vertical considerando **fuerzas estáticas equivalentes** `F_V = ± C_V·P`… `C_V` debe ser **1,2 I·A_r·S/g para suelos tipo A, B y C**; 1,1 para D; `I·A_r·S/g` para E.» **5.7.2** «**Alternativamente**, se puede desarrollar un análisis modal espectral utilizando el espectro vertical, aplicando las mismas reglas para cantidad de modos y superposición.» **C5.7.1**: la suma de pesos activos en vertical no es necesariamente la del horizontal, y «se debe examinar cuidadosamente si los factores de reducción de la sobrecarga usados para la acción horizontal son adecuados para la vertical»; además, si la flexibilidad vertical sugiere deformaciones relevantes «**es preferible hacer análisis dinámico**». | `C_V = 0,504`; estado `EV`; **Hallazgo 5.31** |
+| **§5.12** Corte basal mínimo — **Ec. (12)** | 48 | 54 | 2026-08-12 | `Q₀^mín = 0,25·I·A_r·S·P/g`. Si `Q₀ < Q₀^mín`, todas las fuerzas y esfuerzos internos «se deben multiplicar por el cociente `Q₀^mín/Q₀`… **Este aumento no se debe aplicar al cálculo de desplazamientos**». **C5.12.1**: «Esta norma **no permite** el diseño de estructuras cuya resistencia lateral sea inferior a `Q₀^mín`, **independientemente del método de análisis** utilizado.» | **70,860 kN**; **Hallazgo 5.35** |
+| **§5.13** Corte basal máximo — **Ec. (13)** · **§5.14** — **Ec. (14)** | 49 | 55 | 2026-08-12 | `Q₀^máx = 2,75 · I·A_r·S/(g(R+1)) · (0,05/ξ)^0,4 · P`. La reducción por `Q₀^máx/Q₀` «no se debe aplicar al cálculo de desplazamientos». **No aplica** si (a) el diseño sale de tiempo-historia con 5.10.2/5.10.3/5.10.4; **(b) el sistema se diseña con `R ≤ 2`**; (c) sitios Tipo F; (d) cláusula 13 Cat. III o IV; (e) generadoras de energía de cláusula 14. **§5.14**: `R₁ = R*·mín(Q₀/Q₀^mín, 1)`. | **224,907 kN** (R = 4) · 187,422 (R = 5); **Hallazgo 5.35** |
+| **§12.1.1–§12.1.3** Galpones industriales | 143 | 149 | 2026-08-12 | **12.1.2** «Los edificios con marcos transversales **deben tener un sistema de arriostramiento continuo en el techo**. Cuando hay cerchas de techo el arriostramiento continuo se debe colocar en el plano de la cuerda inferior. **Se exceptúan los edificios sin puente-grúa en que las cargas permanentes sólo provienen del peso propio.**» **C12.1.2**: «tiene las ventajas sísmicas de los diafragmas rígidos horizontales. Hace posible, además, distribuir cargas laterales concentradas, como las de grúas, entre varios marcos.» **C12.1**: define galpón como construcción de grandes dimensiones, comúnmente de un solo nivel, de vanos típicamente libres entre paredes perimetrales. | **Hallazgo 5.29** — la excepción no aplica (hay 0,35 kPa superpuesta) |
+| **Anexo A (informativo)** — **Figura A.2** | 218-219 | 224-225 | 2026-08-12 | El anexo se titula «Anexo A (**informativo**) — Detalles tradicionales». La Figura A.2, «Arriostramiento continuo de techo», muestra en planta un **anillo cerrado**: bandas diagonales a lo largo de cada alero en todos los vanos, cerradas por bandas en ambos hastiales, con el centro sin aspas — pero **las líneas de puntal recorren el largo completo**, incluido el centro. | **Hallazgo 5.29**; topología del modelo |
+
+#### Lecturas de la Fase 2 — NCh 432:2025 (cláusula 7, procedimiento envolvente)
+
+| Cláusula / Figura | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **§7.1.1–§7.1.4** Alcance, condiciones, limitaciones | 46-47 | 54-55 | 2026-08-12 | Aplica al SPRFV de **edificios de baja altura** por procedimiento de envolvente. Tres condiciones: forma regular; sin respuesta sujeta a viento transversal, desprendimiento de vórtices, galope o aleteo, ni canalización; **sin techo arqueado o en barril**. **§7.1.4**: «**No debe haber reducciones** en la presión de velocidad causadas por el blindaje…» | El galpón califica |
+| **§7.3.1** Presión de diseño — **Ec. (7)** | 47 | 55 | 2026-08-12 | `p = q_h·K_d·[(GC_pf) − (GC_pi)]` (N/m²), con `q_h` la presión de velocidad **a la altura media del techo**, `K_d` de §5.4, `GC_pf` de §7.3.2 y `GC_pi` de la Tabla 7. **`K_d` va explícito en la ecuación** — no dentro de `q_h`. | Paso 2.4b |
+| **§7.3.1.1** y **§7.3.2** Casos de carga | 48 | 56 | 2026-08-12 | **7.3.1.1** «**No se permite separar** los coeficientes de presión externa combinados con factor de efecto ráfaga, `GC_pf`.» **7.3.2** hay casos básicos y casos de torsión, actuando de forma independiente. **Excepción — no se requiere diseño para torsión en: 1. edificios de un piso con `h ≤ 9 m`; 2. estructura ligera de uno y dos pisos; 3. uno y dos pisos con diafragmas flexibles.** **7.3.2.1**: se evalúa **tomando cada esquina como la de barlovento**, cargando todas las zonas simultáneamente; las Zonas 2E y 3E van en el borde del techo perpendicular a la cumbrera más cercano a esa esquina. Regla de truncamiento de Zona 2 negativa: se aplica hasta `mín(0,5·dimensión horizontal paralela al SPRFV ; 2,5·altura de alero)` y el resto usa el coeficiente de Zona 3. | **Torsión exenta** (un piso, h = 8,0 m); **Hallazgo 5.30** |
+| **§7.3.3–§7.3.6** | 49 | 57 | 2026-08-12 | **7.3.3** el corte horizontal total no debe ser menor que el calculado despreciando el viento sobre el techo — «**Excepción: no se aplica a los edificios que utilizan marcos de momento para el SPRFV**». **7.3.4** parapetos, Ec. (8), `GC_pn` = +1,5 barlovento / −1,0 sotavento. **7.3.5** aleros: `GC_p = 0,7` en la cara inferior a barlovento. **7.3.6** **mínimos: 0,25 kN/m² en muro y 0,13 kN/m² en techo** proyectado sobre plano vertical normal al viento. | §7.3.3 aplica solo en la dirección longitudinal (arriostrada) |
+| **§7.3.7** — **Ecs. (9) y (10)** | 50 | 58 | 2026-08-12 | Presión horizontal longitudinal para **edificios abiertos o parcialmente cerrados** con marcos transversales y techo inclinado: `p = q_h·K_d·[(GC_pf)barlovento − (GC_pf)sotavento]·K_B·K_S`, con `K_B = 1,8 − 0,033B` para `B < 30 m`, `K_S = 0,60 + 0,073(n−3) + 1,25φ^1,8`, y `F = p·A_E`. | **No aplica**: el galpón es cerrado. Trampa declarada |
+| **Figura 12** — `GC_pf` casos básicos | 51 | 59 | 2026-08-12 | `a` = mín(10 % de la menor dimensión horizontal ; 0,4h), pero ≥ máx(4 % de la menor dimensión ; 0,9 m). **`h` = altura media del techo, «excepto que se debe utilizar la altura del alero para θ ≤ 10°»**. **Caso 1** (θ: 0–5 / 20 / 30–45 / 90) superficies 1,2,3,4,1E,2E,3E,4E — fila 0–5: `0,40 / −0,69 / −0,37 / −0,29 / 0,61 / −1,07 / −0,53 / −0,43`; fila 20: `0,53 / −0,69 / −0,48 / −0,43 / 0,80 / −1,07 / −0,69 / −0,64`. **Caso 2** (θ 0–90): `1 −0,45 · 2 −0,69 · 3 −0,37 · 4 −0,45 · 5 0,40 · 6 −0,29 · 1E −0,48 · 2E −1,07 · 3E −0,53 · 4E −0,48 · 5E 0,61 · 6E −0,43`. **Nota 2**: se permite interpolación lineal para θ distinto de los mostrados. | **Cierra la deuda de §5.25 con página**; paso 2.4b |
+| **Figura 13** — `GC_pf` casos de torsión | 52 | 60 | 2026-08-12 | Casos 3 y 4. Sus cotas fijan la geometría de zonas: el Caso 3 marca `2a`, `0,5L` y `L` **a lo largo de la cumbrera**; el Caso 4 marca `B`, `0,5B`, `a` y `2a` **sobre el hastial**. Caso 3: `1T 0,10 · 2T −0,17 · 3T −0,09 · 4T −0,07` (fila 0–5). Caso 4: `5T 0,10 · 6T −0,07`. | Exento, pero sus cotas definen las franjas E |
+| **Figura 14** | 53 | 61 | 2026-08-12 | Terminología geométrica de §7.3.7 (`B`, `A_S`, `A_E`, `n`), para edificios abiertos. | No aplica |
+
 ### 4.2 Parámetros derivados
 
 | Símbolo | Valor | De dónde sale |
@@ -810,6 +836,142 @@ justo lo que la serie tiene, en dos motores.
 
 ---
 
+### 5.29 El arriostramiento de techo: la obligación es normativa, el dibujo es informativo
+
+**§12.1.2 es disposición normativa** y obliga a que todo edificio con marcos transversales tenga
+arriostramiento **continuo** de techo. Su única excepción —«edificios sin puente-grúa en que las
+cargas permanentes **sólo** provienen del peso propio»— **no aplica acá**: hay 0,35 kPa de carga
+muerta superpuesta de techo y 0,12 kPa de muro.
+
+Pero el **cómo** viene de la **Figura A.2 del Anexo A, que se titula «(informativo) — Detalles
+tradicionales»**. Ese contraste es contenido del post 5: la topología del arriostramiento la
+define un anexo informativo, no la cláusula.
+
+Y la figura dice algo que se lee mal a primera vista: **lo que se vacía en el centro son las
+aspas, no las líneas**. Los puntales recorren el largo completo en todas las líneas; las
+diagonales forman un anillo perimetral. En este galpón: **28 puntales** (7 líneas × 4 vanos) y
+**16 paneles** de diagonales (bandas de alero en los 4 vanos + bandas de hastial en los extremos).
+
+### 5.30 NCh432 exime la torsión de este galpón, y el marco de momento tiene su propia excepción
+
+Dos exenciones que se ganan por lectura, no por criterio:
+
+- **§7.3.2, excepción 1**: no se requiere diseño para los casos de torsión en «edificios de un
+  piso con `h` menor o igual a **9 m**». Con `h = 8,0 m` la Figura 13 completa queda fuera. Las
+  causales 2 y 3 (estructura ligera; diafragmas flexibles) también aplicarían.
+- **§7.3.3**: el corte horizontal total no puede ser menor que el calculado despreciando el
+  viento sobre el techo, **excepto en edificios que usan marcos de momento para el SPRFV**. Acá
+  la exención vale en la dirección **transversal** (marcos) pero **no** en la longitudinal
+  (arriostrada). Es un párrafo que casi nadie escribe.
+
+Y una trampa que hay que declarar: **§7.3.7 (Ecs. 9 y 10) suena a este galpón** —«edificios con
+marcos transversales y techos inclinados»— pero su alcance son **edificios abiertos o
+parcialmente cerrados**. El nuestro es cerrado y va por la Ec. (7).
+
+### 5.31 El 90 % de masa modal está acotado al análisis horizontal
+
+**§5.6.1** acota el AME al «espectro de diseño **para la dirección horizontal**», y **§5.6.2**
+pide el 90 % «en cada dirección de análisis» — de ese análisis. La vertical va por **§5.7.1**,
+con **fuerzas estáticas equivalentes** `F_V = ±C_V·P`, y el modal vertical de **§5.7.2** es la
+*alternativa*: solo ahí aplicaría el 90 % vertical.
+
+Importa porque este modelo **no converge en masa vertical**: 65,1 % con 60 modos y 75,4 % con
+150. Confundir el alcance manda a una persecución imposible.
+
+Con suelo B: `C_V = 1,2 × 1,00 × 0,42 × 1,00 = ` **0,504**, y `F_V = 0,504 × 674,861 = `
+**340,130 kN**.
+
+Queda una salvedad viva, y hay que declararla en el post: **C5.7.1** dice que «cuando la
+flexibilidad de los componentes frente a cargas verticales sugiera la posibilidad de que ocurran
+deformaciones verticales relevantes **es preferible hacer análisis dinámico**» — y nuestro techo
+lo es (modo 2, T = 0,3915 s, 48,9 % de masa vertical). Pero esa vía exige el 90 % que no se
+alcanza. Se adopta §5.7.1 y se dice por qué.
+
+### 5.32 El punto de cruce de la X es un sumidero de modos
+
+Con las crucerías modeladas según §8.6.4 —conectadas en el cruce, con **una sola** diagonal
+continua— aparecen **39 modos locales entre los primeros 60**, que juntan el **0,48 %** de la
+masa. En el primero de ellos el nodo de cruce da `U₁ = 1,377014` contra ~0,003 en todo el resto
+de la estructura.
+
+La causa es física y vale como párrafo: en un análisis lineal ese punto queda sostenido solo por
+la rigidez **flexional** de las diagonales, porque falta la **rigidez geométrica** de la diagonal
+traccionada. Justamente lo que §8.6.4 permite *suponer* para el pandeo —«dicho punto se puede
+considerar fijo en la dirección perpendicular al plano … **para los efectos de determinar la
+longitud de pandeo**»— es una hipótesis de diseño, **no una licencia para poner un apoyo**.
+
+Consecuencia práctica: el modo longitudinal real está en el **puesto 41**. Quien corra 12 o 30
+modos no solo incumple §5.6.2 (46,7 % de masa con 30), se lleva un **T\* equivocado**: el del
+modo 8, 0,269 s en vez de 0,161 s.
+
+### 5.33 El prismático equivalente no es conservador en un marco hiperestático
+
+Tentación al simplificar: modelar prismático y confiar en que «si la sección chica cumple, la
+real —más grande hacia la rodilla— cumple mejor». **Es falso**, porque al agrandar la rodilla la
+rodilla *atrae* más momento. Marco tipo, misma alma y mismas alas:
+
+| | T₁ (s) | δ_x alero (m) | M₃ alero (kNm) | M₃ cumbrera (kNm) |
+|---|---|---|---|---|
+| **tapered 350↔800** | 0,370397 | 0,158560 | **463,088** | **145,537** |
+| prismático d = 350 | 0,677884 | 0,648948 | 376,870 | 254,559 |
+| prismático d = 575 | 0,427494 | 0,217608 | 376,706 | 254,766 |
+| prismático d = 800 | 0,317630 | 0,103877 | 376,485 | 255,045 |
+
+Entre los tres prismáticos **el momento no se mueve**: cambiar la rigidez de forma uniforme no
+redistribuye nada. El tapered sí, y se lleva **+23 % al alero** y **−43 % a la cumbrera**. Ningún
+peralte único reproduce ambas.
+
+La simplificación correcta no es prismatizar el análisis: es **reducir la malla y las estaciones
+de verificación**. Cortando el dintel en las uniones con el arriostramiento quedan **7 secciones
+en vez de 17**, con el análisis intacto.
+
+### 5.34 La discretización del tapered la controla la deriva, no la flecha
+
+Contra `N = 36` como referencia, con base articulada:
+
+| N | T₁ | flecha de cumbrera | **deriva de alero** |
+|---|---|---|---|
+| 1 | +16,31 % | +2,87 % | **+37,80 %** |
+| 2 | +4,38 % | +0,37 % | **+9,23 %** |
+| 3 | +1,91 % | +0,16 % | +3,98 % |
+| 6 | +0,46 % | +0,042 % | +0,95 % |
+| 9 | +0,196 % | +0,019 % | +0,40 % |
+
+Se esperaba lo contrario —que la flecha convergiera más lento que el período—. La magnitud lenta
+es una tercera: **la deriva**, y con un solo tramo se va casi un 38 %.
+
+El porqué es físico: con base articulada el momento de la columna es cero abajo y máximo en el
+alero, así que la rigidez que gobierna es la del extremo donde `d = 800`, no la del promedio
+`d = 575`. La flecha del dintel la domina la zona central, donde el peralte real anda cerca del
+promedio — por eso casi no se entera.
+
+### 5.35 Con R = 5 el corte basal cae bajo el mínimo, y la Ec. (14) se lleva el R prometido
+
+Con `P = 674,861 kN`, `Q₀^mín = 70,860 kN` (Ec. 12):
+
+| Ruta | R\*_X | R\*_Y | Q₀X | Q₀Y | Q₀^máx | Veredicto |
+|---|---|---|---|---|---|---|
+| **§12.2, R = 4** (diseño) | 4,000000 | 3,830163 | 86,960 kN | 130,257 kN | 224,907 | dentro / dentro |
+| fila 5.5, R = 5 (ilustrativa) | 5,000000 | 4,109783 | **69,568 kN** | 121,395 kN | 187,422 | **bajo el mínimo** / dentro |
+
+Con `R = 5` el corte transversal queda **1,8 % bajo `Q₀^mín`**. §5.12 obliga a amplificar todo por
+`70,860/69,568 = 1,018573`, y la Ec. (14) recorta el R₁ efectivo de **5,00 a 4,908819**. La fila
+5.5 promete un R que el mínimo se come antes de empezar — buen cierre para el post 5.
+
+### 5.36 La dirección arriostrada se lleva más corte que la de marcos
+
+`Q₀Y = 130,257 kN` contra `Q₀X = 86,960 kN`: **+49,8 %** en la dirección que es más rígida. No es
+un error, es dónde cae cada `T*` en el espectro:
+
+| | T\* | S_aH de referencia | S_a de diseño (R = 4) |
+|---|---|---|---|
+| X transversal | 0,8526566 s | 0,6306425 | 0,1576606 |
+| Y longitudinal | 0,1610609 s | **1,3975929** | 0,3648912 |
+
+El T\* longitudinal cae en la meseta del espectro y además **6,8 % bajo el codo** de la Ec. (1b)
+(`C_r T₁ = 0,1728 s` con R = 4), lo que le baja el R\* un 4,2 % adicional. Rigidizar la dirección
+arriostrada la castiga dos veces.
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF
@@ -817,7 +979,7 @@ justo lo que la serie tiene, en dos motores.
 | # | Tarea | Estado |
 |---|---|---|
 | 1 | Verificar tablas sísmicas de rukan contra la 3.ª ed. | ✅ **hecho** — coinciden (§5.5) |
-| 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
+| 2 | Leer NCh2369:2025, cláusulas de la serie | ✅ **hecho** para todo lo que la Fase 2 necesitó |
 | 3 | Leer NCh3171:2017 §9 completo | ✅ **hecho** — §9, §9.1.1 con sus seis excepciones y reglas de cierre, §9.1.2, §9.1.3, §9.2.1 con sus cuatro excepciones y cierre, §9.2.2, §9.2.3 y §9.3 |
 | 4 | Leer NCh432:2025, parámetros del sitio | ✅ **hecho** — §3.2, §3.3, §5.5.2, §5.6.1, §5.6.2, §5.7, §5.8.1, §5.8.2, §5.9, §5.10, §5.11 y las Tablas 1, 2, 3, 4, 5, 6 y 7, más la **Figura 3 (K_zt)** |
 | 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ✅ **hecho** — commit `35c3050` en rukan, 8 tests pasan |
@@ -826,19 +988,24 @@ justo lo que la serie tiene, en dos motores.
 §8.3.2 · §8.3.3 · §8.6.1–8.6.4 · §8.7.1–8.7.6 · §8.8.4 · §8.8.5 · §12.1.1–12.1.6 · §12.2 completa con
 las ocho condiciones · Anexo B normativo B.1 · Tablas 1, 3, 4, 6, 7 y 9. Todo en §4.1.
 
-**Lo que falta de NCh2369** (tarea 2), en orden de urgencia:
+**Leído en la Fase 2** (2026-08-12), todo rasterizado y en §4.1: **§5.4.1 Ecs. (1a)/(1b)/(2)** ·
+**§5.4.2 Ecs. (3)/(4)** · **§5.6.1** y **§5.6.2** · **§5.7.1** y **§5.7.2** · **§5.12 Ec. (12)** ·
+**§5.13 Ec. (13)** · **§5.14 Ec. (14)** · **§12.1.1–§12.1.3** con `C12.1.2` · **Anexo A y Figura A.2**.
+
+De **NCh432:2025** se leyó la **cláusula 7 completa**: §7.1.1–§7.1.4, §7.2.1, §7.3.1 con la
+**Ec. (7)**, §7.3.1.1, §7.3.2 con sus tres excepciones, §7.3.2.1, §7.3.2.2, §7.3.3–§7.3.6,
+§7.3.7 con las **Ecs. (9)/(10)**, y las **Figuras 12, 13 y 14**.
+
+**Lo que sigue faltando de NCh2369**, en orden de urgencia:
 
 | Cláusula | pág. impresa | PDF | Para qué |
 |---|---|---|---|
+| §6.1–§6.4 deformaciones | ~68-70 | ~74-76 | post 5 — **es lo próximo**, la deriva de §6.3 |
 | §8.4 / §8.5 (el 0,7R₁ y sus alternativas) | ~81-86 | ~87-92 | contexto de §12.2.2 |
-| §5.2.2 irregularidades · §5.6.2 masa modal 90 % · §5.7 vertical · §5.12/§5.13 banda · Ec. (14) | ~30-50 | ~36-56 | posts 4 y 5 |
-| §6.1–§6.4 deformaciones | ~68-70 | ~74-76 | post 5 |
-| Ec. (1a)/(1b) espectro | ~32-35 | ~38-41 | posts 4 y 5 |
+| §5.2.2 irregularidades | ~30 | ~36 | post 4 |
 
-Las cinco últimas filas **ya se leyeron rasterizadas el 2026-08-11** para la serie de la torre, y están
-implementadas y verificadas en `src/lib/nch2369-spectrum.ts` (contrastado contra SAP2000 y OpenSeesPy
-a < 0,01 %). Se re-leen al escribir el post que las cite, para que la fila de esta memoria tenga su
-propia fecha — no se heredan.
+Nada de lo ya leído se hereda de la serie de la torre: cada fila de §4.1 tiene su propia fecha de
+lectura rasterizada.
 
 **Bloqueantes de rukan** (tarea 5) — **los tres resueltos el 2026-08-12**, commit `35c3050` en rukan:
 
@@ -857,18 +1024,70 @@ período a período y en `T = 0,05 s` la razón es **2,164** (la variable reduce
 Seis pasos cortos vía el MCP. **Cada uno termina con un resumen para que el usuario lo confirme antes
 de seguir.** Ningún post se escribe con un modelo sin confirmar.
 
-| Paso | Qué se construye | Qué se muestra | Estado |
-|---|---|---|---|
-| 2.1 | Geometría desnuda: nodos, ejes, 5 marcos, crucería longitudinal y de techo | coordenadas de un marco tipo + croquis. Se decide altura de crucería, en qué vanos va, y si el puntal a media altura existe desde el principio | ⬜ |
-| 2.2 | Secciones por planchas y discretización del tapered | tabla estación por estación con `d`, `b_f`, `t_f`, `t_w` y A/I/J de `GetSectProps`. **Acá el usuario confirma el predimensionado** | ⬜ |
-| 2.3 | Ejes locales, releases, apoyos | el momento del plano que no trabaja debe dar ~1e-14; tabla de restricciones | ⬜ |
-| 2.4 | Cargas de gravedad y viento | reacciones totales por estado contra la resultante a mano (equilibrio global) | ⬜ |
-| 2.5 | Masa sísmica y modal | períodos, masa modal acumulada, modos dominantes. **Acá se decide la fracción de nieve** (§5.3) | ⬜ |
-| 2.6 | R\*, espectros y casos RS | ordenadas en T\*, chequeo `referencia/diseño = R\*`, cortes contra la banda §5.12/§5.13 | ⬜ |
+**Cerrada el 2026-08-12.** Los seis pasos se hicieron con confirmación del usuario en cada
+bifurcación, y varias decisiones cambiaron sobre la marcha (§6.2.2).
 
-Reglas: scripts **idempotentes** (`InitializeNewModel` + `File.NewBlank`) · `save_as` solo al cerrar
-cada paso · si el usuario cambia algo se re-corre desde 2.1 (la torre entera tardaba ~27 s) · **rukan
-no se toca hasta que el modelo SAP esté cerrado** · números **sin redondear**.
+| Paso | Qué se construyó | Estado |
+|---|---|---|
+| 2.1 | Geometría: 5 marcos, puntales, crucerías de muro y de techo, pilares de hastial | ✅ |
+| 2.2 | Secciones de peralte variable por planchas + estudio de convergencia de N (§5.34) | ✅ |
+| 2.3 | Ejes locales, releases con §8.6.4, apoyos, `No design` en el tapered | ✅ |
+| 2.4 | Cargas: 5 de gravedad + 5 de viento, todas distribuidas sobre barras | ✅ |
+| 2.5 | Masa `D + 0,20·S` y modal de 60 modos | ✅ |
+| 2.6 | R\*, espectros de diseño y de referencia, casos RS con CQC, vertical de §5.7.1, banda | ✅ |
+
+#### 6.2.1 El modelo, en números
+
+Dos scripts autoritativos en `C:\Proyectos_Python\Skills_SAP\scripts\`, en este orden:
+**`galpon_altiplano_build`** (geometría → cargas → masa → modal) y
+**`galpon_altiplano_espectral`** (T\* → R\* → espectros → casos RS → vertical → banda).
+
+| | |
+|---|---|
+| Modelo | **105 nodos · 188 barras · 20 bases articuladas** · 23 826,406894506235 kg = **41,365 kg/m²** |
+| Secciones tapered | **7**: columna 406,25 / 518,75 / 631,25 / 743,75 mm · dintel 725 / 575 / 425 mm (alma 6, alas 220×12) |
+| Otras secciones | diagonal de muro CAJ 100×100×4 · diagonal de techo CAJ 75×75×4 · puntal CAJ 125×125×6 · pilar de hastial I 400×150×8/6 |
+| Malla | columna 4 tramos de 2,0 m · dintel 6 tramos cortados en `j = 0,3,6,9,12,15,18` |
+| Estados | 11, todos con **residuo de equilibrio 0,0** |
+| `DEAD` · `DSD` | 233,65722558396922 · **302,9638654094505** kN |
+| `LR` · `SBAL` · `SUNBI`/`SUNBD` | 172,8 · 691,2 · 518,4 kN |
+| Viento (ΣF) | `WTXP` (81,939439 ; 0 ; 192,082392) · `WLYP` (−10,205652 ; 86,625229 ; 185,722047) · `WPI` (0 ; 0 ; 57,243097) kN |
+| Masa sísmica `P` | **674,8610909934324 kN** = `D + 0,20·S` |
+| T\* | X **0,8526565963541679 s** (modo 1, U_x = 94,63 %) · Y **0,1610608923144279 s** (modo 41, U_y = 47,42 %) |
+| Masa acumulada (60 modos) | X 97,63 % · Y 97,83 % · Z 65,13 % |
+| R\* de diseño (R = 4) | X **4,000000** · Y **3,8301633726045696** |
+| Q₀ | X **86,960228719357** · Y **130,2571888641845** kN |
+| Banda §5.12/§5.13 | [**70,86041455430902** ; **224,9066895021051**] → dentro en ambas |
+| Vertical §5.7.1 | `C_V = 0,504` → `F_V = 340,1299898606887 kN` |
+
+**Asserts que cerraron**: equilibrio global de los 11 estados a **0,0**; `Q_referencia/Q_diseño = R\*`
+a **1e-15** en ambas direcciones; `F_V` contra `C_V·P` a **5e-12**; `GetSectProps` contra el cálculo
+a mano de una I al último dígito en los nueve valores geométricos.
+
+#### 6.2.2 Decisiones de modelado tomadas con el usuario
+
+| Decisión | Rama descartada | Por qué |
+|---|---|---|
+| Costaneras **fuera** del modelo, como carga distribuida | modelarlas pin-pin en las 19 líneas | se calculan aparte como viga simple de 6,0 m; y la carga **nodal** concentraba masa en nodos sin atadura → modos locales (§5.32) |
+| Malla del dintel en las uniones con el arriostramiento | una línea por costanera | todo nodo queda atado; 7 secciones en vez de 17 |
+| **Se mantiene el peralte variable** | prismático equivalente | §5.33: ningún peralte único reproduce el momento de alero y el de cumbrera |
+| Puntales en las 7 líneas × 4 vanos | solo en los vanos arriostrados | la Fig. A.2 vacía el aspa, no la línea (§5.29) |
+| Diagonales en anillo perimetral, 16 paneles | X en los dos vanos extremos cruzando la luz | eso no es «continuo a lo largo» |
+| §8.6.4 literal: **una sola** diagonal continua en el cruce | las dos continuas | más rígido que la norma y que el detalle real |
+| Nodos sobre **líneas teóricas** | línea de centroides (columna a 1,6112°) | coordenadas limpias; el momento parásito se declara |
+| Pilares de hastial: 5 por testera, **1 elemento**, `P` liberada arriba | 4 tramos; o sin pilares con carga nodal | son prismáticos; la `P` liberada evita que apuntalen el dintel del marco extremo |
+| Crucería de muro y de techo en los **vanos extremos** | vano central; o extremos + central | camino corto desde el hastial |
+| `No design` en las 70 barras del tapered | dejar el diseño activo | AISC 360-22 no tiene capítulo de peralte variable y SAP tomaría `L = 2,0 m` por objeto |
+| Zonas de viento **promediadas por área** por cara | las 8 posiciones de franja E de §7.3.2.1 | la resultante por cara queda idéntica; solo se pierde la concentración local, que es materia de C&R |
+| Masa sísmica `D + 0,20·S` | solo permanentes; o `S` completa | §5.1.2 da criterio, no número; el 0,2S de la combinación (5) de NCh3171 §9.1.1 es el juicio de la propia normativa |
+
+Reglas de trabajo que se mantienen: scripts **idempotentes** (`InitializeNewModel` +
+`File.NewBlank`) · `save_as` solo al cerrar cada paso · **rukan no se toca hasta que el modelo SAP
+esté cerrado** · números **sin redondear** · **no encadenar muchos ciclos de `InitializeNewModel` +
+`RunAnalysis`**: seis seguidos tumbaron el RPC de SAP2000 (`0x800706BE`) y cerraron el programa.
+
+Todo lo aprendido de la OAPI quedó en
+`C:\Proyectos_Python\struct_llm\docs\lecciones-sap2000-modelado-oapi.md`, §12.
 
 ### 6.3 Fase 3 — los diez posts
 
@@ -908,7 +1127,29 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 
 ## 8. Deuda y pendientes
 
-- **Docstring de `rukan/spectra.py`** cita NCh2369.Of2003; los valores son de la 2025. Actualizar.
+### Cerradas en la Fase 2
+
+- ~~Docstring de `rukan/spectra.py` cita la Of2003~~ → **corregido** en el commit `35c3050`.
+- ~~Ec. (1a)/(1b) pendientes de leer rasterizadas~~ → **leídas** (§4.1). `C_r = 0,16 R` confirmado.
+- ~~¿`h` en el alero o altura media?~~ → **cerrado con página**: la notación de la Figura 12 de
+  NCh432 dice «excepto que se debe utilizar la altura del alero para θ ≤ 10°». El post publicado
+  estaba bien (§5.25).
+- ~~Coeficientes de presión de la cláusula 7 sin leer~~ → **cláusula 7 completa leída**, incluidas
+  las Figuras 12, 13 y 14 (§4.1).
+- ~~§5.6.2, §5.7, §5.12, §5.13 y la Ec. (14) pendientes~~ → **leídas** (§4.1, §5.31, §5.35).
+
+### Abiertas
+
+- **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
+- **§6.1–§6.4 de NCh2369 (deformaciones)** — es lo próximo que hay que leer: la deriva de §6.3 es la
+  que reprueba el marco articulado, y el modelo ya está listo para medirla.
+- **La masa modal vertical no converge** (65,1 % con 60 modos, 75,4 % con 150). Se adopta §5.7.1
+  estática, pero `C5.7.1` prefiere el dinámico para techos flexibles y el nuestro lo es. **Hay que
+  declarar la salvedad en el post** (§5.31).
+- **39 de 60 modos son locales del punto de cruce** (§5.32). Si el post 4 quiere mostrar un modal
+  «limpio», hay que decidir si se documenta el artefacto o se modelan las diagonales enteras.
+- **El script `galpon_altiplano_espectral` fija `P_SIS` a mano** (constante literal). Al cambiar
+  cualquier carga hay que actualizarlo, o leerlo del modelo.
 - **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
 - **Anexo B normativo de NCh2369** (combinaciones de cargas) no estaba en el plan. Leerlo antes del
   post 3.
