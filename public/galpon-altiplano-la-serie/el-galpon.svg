@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 780" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1000" height="780" fill="#ffffff"/>
+  <text x="500" y="30" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">El galpón: marcos a momento en el corte, arriostrado en el largo y en el techo</text>
+  <text x="500" y="50" font-size="12" text-anchor="middle" fill="#666">24,0 × 24,0 m en planta · 5 marcos @ 6,0 m · alero 8,0 m · pendiente 10° · bases articuladas · 105 nodos y 188 barras</text>
+  <defs>
+    <marker id="dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a857c"/>
+    </marker>
+    <marker id="sis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2d6b9c"/>
+    </marker>
+  </defs>
+  <text x="238.0" y="96" font-size="13" text-anchor="middle" fill="#1b4a6e" font-weight="bold">Marco transversal — 5 iguales @ 6,0 m</text>
+  <text x="238.0" y="112" font-size="11" text-anchor="middle" fill="#666">peralte variable dibujado a escala · el escalonado ES la discretización del modelo</text>
+  <polygon points="67.2,330.0 67.2,302.0 72.8,302.0 72.8,330.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="66.4,302.0 66.4,274.0 73.6,274.0 73.6,302.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="65.6,274.0 65.6,246.0 74.4,246.0 74.4,274.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="64.8,246.0 64.8,218.0 75.2,218.0 75.2,246.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="403.2,330.0 403.2,302.0 408.8,302.0 408.8,330.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="402.4,302.0 402.4,274.0 409.6,274.0 409.6,302.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="401.6,274.0 401.6,246.0 410.4,246.0 410.4,274.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="400.8,246.0 400.8,218.0 411.2,218.0 411.2,246.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="69.1,213.0 125.1,203.1 126.9,213.1 70.9,223.0" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="125.3,204.2 181.3,194.3 182.7,202.2 126.7,212.1" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="181.5,195.3 237.5,185.4 238.5,191.3 182.5,201.2" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="238.5,185.4 294.5,195.3 293.5,201.2 237.5,191.3" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="294.7,194.3 350.7,204.2 349.3,212.1 293.3,202.2" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polygon points="350.9,203.1 406.9,213.0 405.1,223.0 349.1,213.1" fill="#1b4a6e" fill-opacity="0.25" stroke="#1b4a6e" stroke-width="1.1"/>
+  <polyline points="70.0,330.0 70.0,218.0 238.0,188.4 406.0,218.0 406.0,330.0" fill="none" stroke="#1b4a6e" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.75"/>
+  <circle cx="70.0" cy="218.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="126.0" cy="208.1" r="2.6" fill="#1b4a6e"/>
+  <circle cx="182.0" cy="198.3" r="2.6" fill="#1b4a6e"/>
+  <circle cx="238.0" cy="188.4" r="2.6" fill="#1b4a6e"/>
+  <circle cx="294.0" cy="198.3" r="2.6" fill="#1b4a6e"/>
+  <circle cx="350.0" cy="208.1" r="2.6" fill="#1b4a6e"/>
+  <circle cx="406.0" cy="218.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="70.0" cy="302.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="70.0" cy="274.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="70.0" cy="246.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="406.0" cy="302.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="406.0" cy="274.0" r="2.6" fill="#1b4a6e"/>
+  <circle cx="406.0" cy="246.0" r="2.6" fill="#1b4a6e"/>
+  <line x1="44.0" y1="330.0" x2="432.0" y2="330.0" stroke="#8a857c" stroke-width="2"/>
+  <line x1="50.0" y1="330.0" x2="42.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="72.0" y1="330.0" x2="64.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="94.0" y1="330.0" x2="86.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="116.0" y1="330.0" x2="108.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="138.0" y1="330.0" x2="130.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="160.0" y1="330.0" x2="152.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="182.0" y1="330.0" x2="174.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="204.0" y1="330.0" x2="196.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="226.0" y1="330.0" x2="218.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="248.0" y1="330.0" x2="240.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="270.0" y1="330.0" x2="262.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="292.0" y1="330.0" x2="284.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="314.0" y1="330.0" x2="306.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="336.0" y1="330.0" x2="328.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="358.0" y1="330.0" x2="350.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="380.0" y1="330.0" x2="372.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="402.0" y1="330.0" x2="394.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="424.0" y1="330.0" x2="416.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <circle cx="70.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <circle cx="406.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="8.0" y1="218.0" x2="50.0" y2="218.0" stroke="#2d6b9c" stroke-width="3" marker-end="url(#sis)"/>
+  <text x="8.0" y="208.0" font-size="11.5" fill="#2d6b9c" font-weight="bold">E_x</text>
+  <text x="161.0" y="195.6" font-size="11" fill="#666">10°</text>
+  <path d="M 131.6 207.1 L 173.6 207.1" fill="none" stroke="#666" stroke-width="1" stroke-dasharray="3 2"/>
+  <line x1="70.0" y1="364.0" x2="406.0" y2="364.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="238.0" y="379.0" font-size="10.5" text-anchor="middle" fill="#8a857c">luz 24,0 m</text>
+  <line x1="436.0" y1="330.0" x2="436.0" y2="218.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="443.0" y="278.0" font-size="10.5" fill="#8a857c">alero 8,0 m</text>
+  <line x1="480.0" y1="218.0" x2="480.0" y2="188.4" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="487.0" y="207.2" font-size="10.5" fill="#8a857c">f = 2,116 m</text>
+  <line x1="406.0" y1="218.0" x2="486.0" y2="218.0" stroke="#8a857c" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <line x1="238.0" y1="188.4" x2="486.0" y2="188.4" stroke="#8a857c" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <text x="238.0" y="392.0" font-size="10.5" text-anchor="middle" fill="#666">bases articuladas · peralte 350 → 800 → 350 mm</text>
+  <text x="752.0" y="96" font-size="13" text-anchor="middle" fill="#1b4a6e" font-weight="bold">Elevación longitudinal — muro tipo</text>
+  <text x="752.0" y="112" font-size="11" text-anchor="middle" fill="#666">crucería solo en los dos vanos extremos · los otros dos van libres</text>
+  <line x1="596.0" y1="330.0" x2="674.0" y2="226.0" stroke="#a8641b" stroke-width="2.2"/>
+  <line x1="674.0" y1="330.0" x2="596.0" y2="226.0" stroke="#a8641b" stroke-width="2.2"/>
+  <circle cx="635.0" cy="278.0" r="3.4" fill="#a8641b"/>
+  <line x1="830.0" y1="330.0" x2="908.0" y2="226.0" stroke="#a8641b" stroke-width="2.2"/>
+  <line x1="908.0" y1="330.0" x2="830.0" y2="226.0" stroke="#a8641b" stroke-width="2.2"/>
+  <circle cx="869.0" cy="278.0" r="3.4" fill="#a8641b"/>
+  <line x1="596.0" y1="330.0" x2="596.0" y2="226.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <circle cx="596.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="674.0" y1="330.0" x2="674.0" y2="226.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <circle cx="674.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="752.0" y1="330.0" x2="752.0" y2="226.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <circle cx="752.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="830.0" y1="330.0" x2="830.0" y2="226.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <circle cx="830.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="908.0" y1="330.0" x2="908.0" y2="226.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <circle cx="908.0" cy="330.0" r="5" fill="#ffffff" stroke="#1b4a6e" stroke-width="2"/>
+  <line x1="596.0" y1="226.0" x2="908.0" y2="226.0" stroke="#a8641b" stroke-width="2.6"/>
+  <text x="916.0" y="230.0" font-size="10" fill="#a8641b">puntal de alero</text>
+  <line x1="570.0" y1="330.0" x2="934.0" y2="330.0" stroke="#8a857c" stroke-width="2"/>
+  <line x1="576.0" y1="330.0" x2="568.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="598.0" y1="330.0" x2="590.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="620.0" y1="330.0" x2="612.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="642.0" y1="330.0" x2="634.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="664.0" y1="330.0" x2="656.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="686.0" y1="330.0" x2="678.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="708.0" y1="330.0" x2="700.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="730.0" y1="330.0" x2="722.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="752.0" y1="330.0" x2="744.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="774.0" y1="330.0" x2="766.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="796.0" y1="330.0" x2="788.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="818.0" y1="330.0" x2="810.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="840.0" y1="330.0" x2="832.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="862.0" y1="330.0" x2="854.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="884.0" y1="330.0" x2="876.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="906.0" y1="330.0" x2="898.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="928.0" y1="330.0" x2="920.0" y2="340.0" stroke="#8a857c" stroke-width="1"/>
+  <line x1="534.0" y1="226.0" x2="576.0" y2="226.0" stroke="#2d6b9c" stroke-width="3" marker-end="url(#sis)"/>
+  <text x="534.0" y="216.0" font-size="11.5" fill="#2d6b9c" font-weight="bold">E_y</text>
+  <line x1="596.0" y1="364.0" x2="674.0" y2="364.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="635.0" y="379.0" font-size="10.5" text-anchor="middle" fill="#8a857c">6,0 m</text>
+  <line x1="674.0" y1="364.0" x2="752.0" y2="364.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="713.0" y="379.0" font-size="10.5" text-anchor="middle" fill="#8a857c">6,0 m</text>
+  <line x1="752.0" y1="364.0" x2="830.0" y2="364.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="791.0" y="379.0" font-size="10.5" text-anchor="middle" fill="#8a857c">6,0 m</text>
+  <line x1="830.0" y1="364.0" x2="908.0" y2="364.0" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="869.0" y="379.0" font-size="10.5" text-anchor="middle" fill="#8a857c">6,0 m</text>
+  <text x="752.0" y="392.0" font-size="10.5" text-anchor="middle" fill="#666">largo total 24,0 m · el cruce de la X es el punto de arriostramiento (NCh2369 §8.6.4)</text>
+  <text x="247.2" y="410" font-size="13" text-anchor="middle" fill="#1b4a6e" font-weight="bold">Planta de techo — el anillo de la Figura A.2</text>
+  <text x="247.2" y="428" font-size="10.5" text-anchor="middle" fill="#666">la línea central es la cumbrera</text>
+  <line x1="132.0" y1="678.4" x2="170.4" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="170.4" y1="678.4" x2="132.0" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="151.2" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="132.0" y1="620.8" x2="170.4" y2="563.2" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="170.4" y1="620.8" x2="132.0" y2="563.2" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="151.2" cy="592.0" r="2" fill="#c9a227"/>
+  <line x1="132.0" y1="563.2" x2="170.4" y2="505.6" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="170.4" y1="563.2" x2="132.0" y2="505.6" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="151.2" cy="534.4" r="2" fill="#c9a227"/>
+  <line x1="132.0" y1="505.6" x2="170.4" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="170.4" y1="505.6" x2="132.0" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="151.2" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="324.0" y1="678.4" x2="362.4" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="362.4" y1="678.4" x2="324.0" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="343.2" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="324.0" y1="620.8" x2="362.4" y2="563.2" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="362.4" y1="620.8" x2="324.0" y2="563.2" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="343.2" cy="592.0" r="2" fill="#c9a227"/>
+  <line x1="324.0" y1="563.2" x2="362.4" y2="505.6" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="362.4" y1="563.2" x2="324.0" y2="505.6" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="343.2" cy="534.4" r="2" fill="#c9a227"/>
+  <line x1="324.0" y1="505.6" x2="362.4" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="362.4" y1="505.6" x2="324.0" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="343.2" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="170.4" y1="678.4" x2="208.8" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="208.8" y1="678.4" x2="170.4" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="189.6" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="208.8" y1="678.4" x2="247.2" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="247.2" y1="678.4" x2="208.8" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="228.0" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="247.2" y1="678.4" x2="285.6" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="285.6" y1="678.4" x2="247.2" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="266.4" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="285.6" y1="678.4" x2="324.0" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="324.0" y1="678.4" x2="285.6" y2="620.8" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="304.8" cy="649.6" r="2" fill="#c9a227"/>
+  <line x1="170.4" y1="505.6" x2="208.8" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="208.8" y1="505.6" x2="170.4" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="189.6" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="208.8" y1="505.6" x2="247.2" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="247.2" y1="505.6" x2="208.8" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="228.0" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="247.2" y1="505.6" x2="285.6" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="285.6" y1="505.6" x2="247.2" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="266.4" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="285.6" y1="505.6" x2="324.0" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <line x1="324.0" y1="505.6" x2="285.6" y2="448.0" stroke="#c9a227" stroke-width="1.5"/>
+  <circle cx="304.8" cy="476.8" r="2" fill="#c9a227"/>
+  <line x1="132.0" y1="678.4" x2="132.0" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="170.4" y1="678.4" x2="170.4" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="208.8" y1="678.4" x2="208.8" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="247.2" y1="678.4" x2="247.2" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="285.6" y1="678.4" x2="285.6" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="324.0" y1="678.4" x2="324.0" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="362.4" y1="678.4" x2="362.4" y2="448.0" stroke="#a8641b" stroke-width="1.8"/>
+  <line x1="132.0" y1="678.4" x2="362.4" y2="678.4" stroke="#1b4a6e" stroke-width="2.6"/>
+  <line x1="132.0" y1="620.8" x2="362.4" y2="620.8" stroke="#1b4a6e" stroke-width="2.6"/>
+  <line x1="132.0" y1="563.2" x2="362.4" y2="563.2" stroke="#1b4a6e" stroke-width="2.6"/>
+  <line x1="132.0" y1="505.6" x2="362.4" y2="505.6" stroke="#1b4a6e" stroke-width="2.6"/>
+  <line x1="132.0" y1="448.0" x2="362.4" y2="448.0" stroke="#1b4a6e" stroke-width="2.6"/>
+  <line x1="247.2" y1="678.4" x2="247.2" y2="448.0" stroke="#a8641b" stroke-width="2.6"/>
+  <rect x="128.0" y="674.4" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="358.4" y="674.4" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="128.0" y="616.8" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="358.4" y="616.8" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="128.0" y="559.2" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="358.4" y="559.2" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="128.0" y="501.6" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="358.4" y="501.6" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="128.0" y="444.0" width="8" height="8" fill="#1b4a6e"/>
+  <rect x="358.4" y="444.0" width="8" height="8" fill="#1b4a6e"/>
+  <circle cx="170.4" cy="678.4" r="3.2" fill="#4a7c59"/>
+  <circle cx="208.8" cy="678.4" r="3.2" fill="#4a7c59"/>
+  <circle cx="247.2" cy="678.4" r="3.2" fill="#4a7c59"/>
+  <circle cx="285.6" cy="678.4" r="3.2" fill="#4a7c59"/>
+  <circle cx="324.0" cy="678.4" r="3.2" fill="#4a7c59"/>
+  <circle cx="170.4" cy="448.0" r="3.2" fill="#4a7c59"/>
+  <circle cx="208.8" cy="448.0" r="3.2" fill="#4a7c59"/>
+  <circle cx="247.2" cy="448.0" r="3.2" fill="#4a7c59"/>
+  <circle cx="285.6" cy="448.0" r="3.2" fill="#4a7c59"/>
+  <circle cx="324.0" cy="448.0" r="3.2" fill="#4a7c59"/>
+  <rect x="170.4" y="505.6" width="153.6" height="115.2" fill="none" stroke="#666" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <rect x="211.2" y="546.2" width="72" height="27" fill="#ffffff" fill-opacity="0.95"/>
+  <text x="247.2" y="559.2" font-size="10" text-anchor="middle" fill="#666">centro</text>
+  <text x="247.2" y="571.2" font-size="10" text-anchor="middle" fill="#666">sin aspas</text>
+  <line x1="132.0" y1="706.4" x2="362.4" y2="706.4" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="247.2" y="721.4" font-size="10.5" text-anchor="middle" fill="#8a857c">24,0 m (luz)</text>
+  <line x1="386.4" y1="448.0" x2="386.4" y2="678.4" stroke="#8a857c" stroke-width="1" marker-start="url(#dim)" marker-end="url(#dim)"/>
+  <text x="393.4" y="567.2" font-size="10.5" fill="#8a857c">24,0 m (largo)</text>
+  <line x1="82.0" y1="678.4" x2="110.0" y2="678.4" stroke="#666" stroke-width="1.5" marker-end="url(#dim)"/>
+  <text x="116.0" y="682.4" font-size="10.5" fill="#666">X</text>
+  <line x1="82.0" y1="678.4" x2="82.0" y2="650.4" stroke="#666" stroke-width="1.5" marker-end="url(#dim)"/>
+  <text x="82.0" y="644.4" font-size="10.5" text-anchor="middle" fill="#666">Y</text>
+  <line x1="470" y1="448.0" x2="504" y2="448.0" stroke="#1b4a6e" stroke-width="3.2"/>
+  <text x="514" y="452.0" font-size="11" fill="#333">Marco de momento: columna y dintel de peralte variable</text>
+  <line x1="470" y1="472.0" x2="504" y2="472.0" stroke="#a8641b" stroke-width="2.4"/>
+  <text x="514" y="476.0" font-size="11" fill="#333">Puntales longitudinales (7 líneas × 4 vanos = 28) y crucería de muro</text>
+  <line x1="470" y1="496.0" x2="504" y2="496.0" stroke="#c9a227" stroke-width="1.8"/>
+  <text x="514" y="500.0" font-size="11" fill="#333">Arriostramiento de techo — NCh2369 §12.1.2, topología de la Fig. A.2</text>
+  <line x1="470" y1="520.0" x2="504" y2="520.0" stroke="#4a7c59" stroke-width="3.2"/>
+  <text x="514" y="524.0" font-size="11" fill="#333">Pilares de hastial (5 por testera, con P liberada arriba)</text>
+  <text x="470" y="566" font-size="11" fill="#222" font-weight="bold">Por qué el anillo, y no una crucería completa</text>
+  <text x="470" y="584" font-size="10.5" fill="#666">§12.1.2 obliga al arriostramiento continuo de techo, pero es la Figura A.2 —del</text>
+  <text x="470" y="598" font-size="10.5" fill="#666">Anexo A, informativo— la que dibuja la topología. Y lo que la figura vacía en el</text>
+  <text x="470" y="612" font-size="10.5" fill="#666">centro son las aspas, no las líneas: los puntales van en los cuatro vanos igual.</text>
+  <text x="470" y="636" font-size="11" fill="#222" font-weight="bold">Lo que NO está modelado, a propósito</text>
+  <text x="470" y="654" font-size="10.5" fill="#666">Las costaneras. Se calculan aparte como viga simple de 6,0 m y su carga entra</text>
+  <text x="470" y="668" font-size="10.5" fill="#666">distribuida sobre el dintel. Modelarlas metía masa en nodos sin atadura y llenaba</text>
+  <text x="470" y="682" font-size="10.5" fill="#666">el modal de modos locales.</text>
+  <text x="70" y="748" font-size="10.5" fill="#666">Geometría y topología: las mismas constantes del modelo verificado (Skills_SAP/scripts/galpon_altiplano_build.py rev.G) · 23 826,4 kg de acero = 41,365 kg/m²</text>
+  <text x="70" y="763" font-size="10.5" fill="#666">Los once estados de carga cierran con residuo de equilibrio 0,0 contra la resultante calculada a mano.</text>
+</svg>

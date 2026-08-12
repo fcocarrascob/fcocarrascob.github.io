@@ -13,6 +13,7 @@
     "figuras:espectro": "node scripts/render-espectro-nch2369.mjs",
     "figuras:espectro-torre": "node scripts/render-espectro-torre.mjs",
     "figuras:derivas-torre": "node scripts/render-derivas-torre.mjs",
+    "figuras:galpon-esquema": "node scripts/render-galpon-esquema.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
     "esquema:planilla": "node scripts/publicar-esquema-planilla.mjs",

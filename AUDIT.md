@@ -47,6 +47,53 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-12 · `blog/galpon-altiplano-la-serie` · ⚠️ 20 hallazgos (2 bloqueantes)
+
+**Commit:** `d5c3fc3` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
+
+Post 0 de la serie del galpón: índice y bitácora, no ejemplo de cálculo. Auditado tras recibir los
+dos esquemas SVG (`el-galpon.svg`, `el-tapered.svg`, generados por `npm run figuras:galpon-esquema`)
+y el enlace de descarga del modelo `.sdb`. Cinco hallazgos se aplicaron en el mismo commit por ser
+errores introducidos en esa pasada; los demás quedan abiertos a decisión.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | N | L.77 | La descomposición de la D superpuesta —«cubierta 0,12 + costaneras 0,06 + instalaciones colgadas 0,15»— suma **0,33**, no los 0,35 kPa declarados. El dato duro es 0,35: `galpon_altiplano_build.py` rev.G fija `D_TECHO = 0.35` y `DSD = 302,964 kN` se reproduce exactamente con él. El mismo error está en `SERIE-GALPON.md` §4.3 y en el plan | Ajustar un componente para que sume 0,35, y corregir §4.3 de la memoria. **Es dato de proyecto: lo decide el usuario, no la auditoría** | ⬜ |
+| 2 | 🔴 | N | `el-tapered.svg` y alt | `h/t_w = 124,65` no sale de ningún dato del repo: con d = 800, t_f = 12, t_w = 6 da **129,33**. `SERIE-GALPON.md` §5.15 registra 129,3 | Corregido a 129,33, con el alma libre explícita (776 mm) y la nota de §5.15 de que 8 mm tampoco alcanza | ✅ aplicado en este commit |
+| 3 | 🟠 | C N | bitácora del modelo | Todos los números publicados (R\*_X, R\*_Y, Q₀, la banda, la deriva) salen de la ruta de diseño **§12.2 galpón liviano con R = 4**, pero el post solo nombra R = 5 (la ruta ilustrativa). Verificado: con R = 4, R\*_Y = 1,5 + 2,5·0,16106/0,1728 = 3,83016 ✓; con R = 5 daría 4,1098, que no es lo publicado. Un lector no puede reproducir la tabla | Una línea declarando cuál es la ruta obligatoria y cuál la comparación | ⬜ |
+| 4 | 🟠 | N | caption y `el-tapered.svg` | «usar un extremo, **o el promedio de los extremos**, sesga la rigidez» es falso para una ley lineal: el promedio de los extremos **es** el punto medio (COL_1: (350 + 462,5)/2 = 406,25, el valor del modelo) | Reescrito: con ley lineal equivale a promediar los **peraltes**, pero no las **inercias** — promediar secciones da +2,5 % de rigidez en COL_1 | ✅ aplicado en este commit |
+| 5 | 🟠 | L | caption | «segundo orden» usado como precisión de cuadratura, y 130 líneas más abajo como P-Delta | Eliminado el término del caption | ✅ aplicado en este commit |
+| 6 | 🟡 | N | bitácora del sitio | «El plan estimaba K_zt entre 1,1 y 1,4. Es 1,948, **casi el doble**»: 1,948/1,4 = 1,39. En §5.24 el «casi el doble» está referido a la presión sin loma (K_zt = 1,0), que sí cierra | Referir la comparación al terreno plano | ⬜ |
+| 7 | 🟡 | U | 4 lugares | «3.800 m» con punto de miles; el repo usa espacio en prosa y `\,` en LaTeX | `3 800 m` | ⬜ |
+| 8 | 🟡 | L | tabla de predimensionado | «Columna tapered» / «Dintel tapered»: anglicismo sin cursiva, y es el único lugar del sitio donde aparece | «de peralte variable», como el resto del post | ⬜ |
+| 9 | 🟡 | L | mapa y §lo-que-no-rehace | Dos numeraciones «8» conviven: «Rukan (8)» es el 8.º post y «el caso 8 de Rukan» es el 8.º caso de validación, que vive en Rukan (6) | «el caso 8 de Rukan (publicado en Rukan (6))» | ⬜ |
+| 10 | 🟡 | L | bitácora del sitio | «§7.3.7 … su alcance son edificios **abiertos**»; NCh432:2025 §7.3.7 dice «abiertos **o parcialmente cerrados**» (§4.1) | Completar el alcance | ⬜ |
+| 11 | 🟡 | F | alt de `el-galpon.svg` | El alt describía la flecha E_x y omitía la E_y, que el SVG sí dibuja | Agregada | ✅ aplicado en este commit |
+| 12 | 🟡 | R | tablas | No se declaran el acero (**A36**) ni el coeficiente de importancia (**I = 1,00**), y ambos gobiernan números que el post publica (Q₀mín = 0,25·I·A_r·S·P/g) | Dos filas más | ⬜ |
+| 13 | 🟡 | R | tabla de cargas | La fila de S dice «sobre proyección horizontal» y la de D no dice nada; en el modelo D va **sobre el faldón** (0,35 × 584,886 = 204,710 kN) | Añadir «sobre el faldón» | ⬜ |
+| 14 | 🟡 | L N | «lo que ya se cayó» | «un **tubo** que pasa **cómodo** el KL/r»: es cajón soldado por planchas (R_y = 1,3, no 1,4 de A500), y el margen es 4,3 %, no «cómodo» | «un cajón soldado que pasa el KL/r» | ⬜ |
+| 15 | 🔵 | C | bitácora del modelo | «ambos dentro de la banda» sin definirla: es [70,860 ; 224,907] kN por §5.12 y §5.13, ambas recalculadas y correctas | Dar la banda o el par de cláusulas | ⬜ |
+| 16 | 🔵 | N R | `el-tapered.svg` | El «3,2 %» de discrepancia del J no tenía registro en el repo | **Medido contra el modelo** (SAP2000 v27.1, `GetSectProps` en COL_1/COL_4/DIN_1/DIN_3): el J de SAP queda entre **−2,942 % y −3,197 %** bajo Σbt³/3. Figura corregida al rango y con el signo, y registrado como hallazgo **§5.40** de la memoria | ✅ aplicado en este commit |
+| 17 | 🔵 | L | cuerpo | Normas citadas sin edición fuera del frontmatter, y el post cita §12.5 y §4.5, cuya numeración cambia entre 2003 y 2025 | Edición en la primera mención | ⬜ |
+| 18 | 🔵 | E | descarga | «98 KB» no verificable por el auditor (sin shell) | **Verificado**: 97,9 KB. Correcto | ✅ verificado |
+| 19 | 🔵 | F | alt de `el-galpon.svg` | Cadena de ~1 900 caracteres sin respiro al leerla por voz | Partirla por vista | ⬜ |
+| 20 | 🔵 | R | descarga y mapa | «v27.1», «19 casos», «seis espectrales», «85 combinaciones» no constaban en la memoria | **Verificados contra el modelo abierto** (11 patrones, 19 casos, 85 combinaciones, v27.1.0, unidades kN·m·C). Falta anotarlos en §6.2 de `SERIE-GALPON.md` | ⬜ |
+
+**Verificado y correcto** (selección; el auditor recalculó las siete familias):
+
+- **Geometría**: 12,0/cos 10° = 12,1851 ✓ · 12,185/9 = 1,3539 ✓ · 576,0 m² ✓ · flecha 2,1159 ✓ · recorrido a cumbrera 20,185 ✓ · «una de cada tres» ✓.
+- **Las siete secciones**: `d_col(k)` → 406,25 / 518,75 / 631,25 / 743,75 ✓ · `d_din(m)` → 725,00 / 575,00 / 425,00 ✓, exactamente los rótulos de la figura.
+- **Constantes del dibujo contra el modelo**: las 23 constantes de `scripts/render-galpon-esquema.mjs` comparadas una a una contra `galpon_altiplano_build.py` rev.G — **cero desviación**. Los 16 paneles del anillo, los 28 puntales y los 5 pilares por testera coinciden con `PANELES`, `PUNTALES` y `J_PIL`.
+- **Conteo del modelo**: 105 nodos, 188 barras y 20 bases reconstruidos por partes ✓ · 23 826,4/576 = 41,365 kg/m² ✓.
+- **Cadena sísmica**: f_ξ = 1,4427 ✓ · Q₀mín = 70,860 ✓ · Q₀máx = 224,906 ✓ · 130,257/86,960 − 1 = 49,79 % ✓ · T\*_Y < C_r·T₁ ✓ · R\*_Y = 3,830163 ✓.
+- **Viento**: K_e = 0,6362 ✓ · K_zt·K_e = 1,2393 → «25 % más» ✓ · q_h = 649,6 N/m² ✓, coincide con la constante `QH` del build.
+- **Envolvente y deriva**: 53,2 % ✓ · 0,113504/0,120 = 94,587 % ✓ · 16,54 % ✓.
+- **Cláusulas contra §4.1 de la memoria**: §4.5.1, Tabla 7, §6.3, §6.4, §12.5, §7.3.2, §7.3.3, zona 2, A_r, suelo B, ξ, topografía — todas ✓.
+- **Enlaces y activos**: los cinco enlaces internos existen y ninguno es `draft` ✓ · los tres activos de `/galpon-altiplano-la-serie/` existen ✓ · ancla `#el-mapa-los-diez-posts` ✓.
+- **Formato**: frontmatter válido contra el schema Zod de `blog` ✓ · sin H1, jerarquía sin saltos ✓ · coma decimal en prosa y en LaTeX ✓ · español neutro, sin voseo ✓.
+
+**Planilla del canvas:** no · ¿ya tiene? no · El post es índice y bitácora: su único par demanda–capacidad es la deriva (0,113504 ≤ 0,120), y el resto de sus números sale del modelo, no de una fórmula. Las cadenas cerradas —K_e, K_zt, q_h, la banda Q₀mín/Q₀máx, la Ec. (1b) y el límite 0,015·h— viajan a las planillas de los **posts 1 y 5**, no a esta.
+
 ### 2026-08-12 · `apuntes/ejemplo-torre-deformaciones-nch2369` · ⚠️ 10 hallazgos
 
 **Commit:** `2dedc97` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (a mano y contra `src/lib/nch2369-spectrum.ts`; en esta sesión no había herramienta Bash disponible)
@@ -3911,10 +3958,11 @@ enlaces internos.
 
 Estado de auditoría por post. `—` = nunca auditado.
 
-### `blog` — blog (40)
+### `blog` — blog (41)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `galpon-altiplano-la-serie` | 2026-08-12 | ⚠️ | 20 (2🔴 3🟠 · 9🟡 6🔵) · 5 aplicados (1🔴 2🟠 2🔵) + 1 verificado |
 | `capacidad-vs-resistencia` | 2026-07-29 | ⚠️ | 16 (0🔴 0🟠 · 12🟡 4🔵) · 4 aplicados (1🔴 3🟠) |
 | `oficio-errores-sin-alarma` | 2026-08-05 | ⚠️ | 6 (0🔴 0🟠 · 5🟡 1🔵) · 5 aplicados (1🔴 4🟠) |
 | `oficio-rigido-y-flexible` | 2026-08-05 | ⚠️ | 5 (0🔴 0🟠 · 3🟡 2🔵) · 3 aplicados (1🔴 2🟠) + 1 verificado, 1🟡 caído con el 🔴 |

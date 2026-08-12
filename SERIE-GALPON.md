@@ -1132,6 +1132,32 @@ cierre ya no es «pon dos tirantes y el momento débil se divide por nueve». Es
 tirantes la verificación que todo el mundo escribe no es aplicable**, y la que sí lo es (§H2 / §H3)
 nadie la corre.
 
+### 5.40 El J de SAP no es Σbt³/3 — medido en las cuatro secciones extremas
+
+Circulaba en la conversación un «3,2 %» de discrepancia entre la constante torsional que reporta
+`GetSectProps` y el `Σbt³/3` de manual, **sin registro de dónde salía**. Se midió contra el modelo
+(2026-08-12, SAP2000 v27.1):
+
+| Sección | d [mm] | J de SAP [mm⁴] | Σbt³/3 con h = d − 2t_f [mm⁴] | Diferencia |
+|---|---|---|---|---|
+| COL_1 | 406,25 | 271 980,7 | 280 962,0 | **−3,197 %** |
+| COL_4 | 743,75 | 296 280,7 | 305 262,0 | **−2,942 %** |
+| DIN_1 | 725,00 | 294 930,7 | 303 912,0 | **−2,955 %** |
+| DIN_3 | 425,00 | 273 330,7 | 282 312,0 | **−3,181 %** |
+
+O sea: **entre 2,9 % y 3,2 % por debajo**, y el signo importa — SAP reporta **menos** rigidez
+torsional que la fórmula de manual, no más. La diferencia no es un error de ninguno de los dos: la
+suma de rectángulos ignora el material de los encuentros ala-alma y el redondeo interno del
+programa. Es sistemática y crece cuando el alma pesa poco en el total.
+
+**Consecuencia operativa**: `GetSectProps` es la fuente única, y ese número se escribe al
+`stations.json` que consume rukan. Si un motor usa `Σbt³/3` y el otro el `J` de SAP, el contraste
+arranca con un 3 % de desajuste en todo lo que dependa de la torsión — y el LTB del post 8 depende.
+
+**No confundir con el assert de §6.2**, que verificó `GetSectProps` contra el cálculo a mano de una
+doble T **en los nueve valores geométricos** (A, I₃₃, I₂₂, S, Z, r). Ese cerró al último dígito. El
+`J` es la única propiedad que **no** coincide, y por eso vale la pena decirlo aparte.
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF

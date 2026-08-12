@@ -9,6 +9,7 @@ norm: "NCh2369:2025"
 ---
 
 import Note from '../../components/content/Note.astro';
+import Figure from '../../components/content/Figure.astro';
 
 ## Por qué existe este post
 
@@ -30,22 +31,11 @@ el caso, sigue leyendo.
 
 Galpón industrial a dos aguas para una faena minera de altiplano, a unos 3.800 m de altitud.
 
-```
-              cumbrera
-                 /\              pendiente 10°
-                /  \
-               /    \            flecha f = 2,12 m
-          ____/      \____
-         |                |
-         |                |      h alero = 8,0 m
-         |                |
-        ===              ===     bases articuladas
-         |<--- 24,0 m --->|
-
-  Largo: 4 vanos x 6,0 m = 24,0 m  (5 marcos)
-  Area en planta: 24,0 x 24,0 = 576,0 m2
-  Faldon: 12,0 / cos 10° = 12,185 m  ->  9 espacios de 1,354 m (costaneras)
-```
+<Figure
+  src="/galpon-altiplano-la-serie/el-galpon.svg"
+  alt="Esquema del galpón en tres vistas. Arriba a la izquierda, el marco transversal: 24,0 metros de luz y 8,0 metros al alero, con la columna y el dintel dibujados a escala como polígonos de espesor variable en azul, escalonados tramo a tramo porque cada tramo del modelo tiene peralte constante; la columna crece de la base al alero y el dintel decrece del alero a la cumbrera; una línea de trazos marca la línea de trabajo teórica, puntos azules marcan los nodos de la malla, las dos bases se dibujan como rótulas circulares sobre un terreno achurado, y una flecha azul rotulada E sub x marca el sismo transversal. Se acotan la luz de 24,0 metros, el alero de 8,0 metros, la flecha de 2,116 metros y la pendiente de 10 grados. Arriba a la derecha, la elevación longitudinal del muro: cinco columnas azules separadas 6,0 metros unidas arriba por el puntal de alero en café, con crucería en aspa color café solamente en el primer y el último vano, cada aspa con un punto en el cruce; los otros dos vanos centrales van libres, y una flecha azul rotulada E sub y marca el sismo longitudinal. Abajo a la izquierda, la planta de techo de 24,0 por 24,0 metros: cinco líneas transversales azules que son los marcos, siete líneas longitudinales café que son los puntales, la línea central destacada que es la cumbrera, y las aspas de arriostramiento de techo en amarillo formando un anillo cerrado en todo el perímetro; un rectángulo de trazos encierra la zona central, rotulada centro sin aspas, donde los puntales siguen existiendo pero no hay diagonales. Puntos verdes marcan los cinco pilares de hastial de cada testera. A la derecha, la leyenda de los cuatro sistemas y dos notas: por qué el anillo y no una crucería completa, y qué no está modelado a propósito."
+  caption="El galpón completo, dibujado con las mismas constantes con que se construyó el modelo. El peralte variable va a escala: lo que se ve escalonado no es un defecto del dibujo, es la discretización del análisis."
+/>
 
 - **Transversal**: marcos a momento, columna y dintel de **peralte variable**, bases articuladas.
   Las bases articuladas son práctica corriente en Chile y son las que hacen interesante la deriva.
@@ -54,6 +44,11 @@ Galpón industrial a dos aguas para una faena minera de altiplano, a unos 3.800 
 - **Perfiles**: soldados, definidos **por planchas**. El área, las inercias, la constante torsional
   y los módulos plásticos salen de primeros principios. Un miembro de peralte variable no está en
   ningún catálogo, así que no se depende del ICHA para nada.
+
+Los números de partida: **576,0 m² en planta**, faldón de $12{,}0/\cos 10° = 12{,}185$ m, y las
+costaneras cada **1,354 m** — nueve espacios por faldón. Esa separación no es redonda por casualidad:
+está elegida para que **los cortes de la malla del dintel caigan sobre líneas de costanera**, una de
+cada tres. Un solo mallado sirve entonces para cargar, para arriostrar y para verificar por estación.
 
 ### El sitio
 
@@ -101,6 +96,15 @@ y cada post cierra con la iteración que arregla lo que no pasó y cuánto acero
 | Diagonal longitudinal | 2L 75×75×6, $L = 10{,}0$ m | esbeltez fuera del límite de NCh2369 §8 |
 | Costanera | C 200×50×15×2,0 @ 1,50 m | flexión en el eje **débil** |
 
+Las dos primeras filas son la misma pieza vista dos veces, porque columna y dintel son un solo
+miembro de peralte variable que da la vuelta en el alero. Así se reparte:
+
+<Figure
+  src="/galpon-altiplano-la-serie/el-tapered.svg"
+  alt="Dos gráficos sobre el miembro de peralte variable. Arriba, el peralte contra el recorrido desde la base: una línea de trazos café marca la ley lineal del proyecto, que sube de 350 milímetros en la base a 800 en el alero y baja de vuelta a 350 en la cumbrera, y sobre ella siete barras azules de altura constante marcan las secciones del modelo, cuatro de columna rotuladas COL uno a COL cuatro con peraltes 406,25, 518,75, 631,25 y 743,75 milímetros, y tres de dintel rotuladas DIN uno a DIN tres con 725,00, 575,00 y 425,00 milímetros; cada barra corta la recta por su punto medio. El eje horizontal marca tres hitos: base con recorrido cero, alero a 8,0 metros y cumbrera a 20,19 metros. A la derecha se explica que el peralte se evalúa en el punto medio de cada tramo y por qué son cuatro y tres tramos. Abajo, la sección transversal dibujada en el alero: una doble T soldada de 800 milímetros de peralte, alas de 220 por 12 milímetros y alma de 6 milímetros, con sus cotas. A la derecha, tres notas: el predimensionamiento está hecho para fallar, con un alma libre de 776 milímetros que da una relación h sobre t sub w de 129,33, y subir el alma a 8 milímetros tampoco alcanza; la constante torsional que reporta SAP queda entre 2,9 y 3,2 por ciento bajo el cálculo a mano; y está prohibido usar la sección no prismática de SAP2000."
+  caption="La recta que se dibuja en el plano y las siete secciones con que se analiza. El peralte de cada tramo se evalúa en su punto medio: con una ley lineal eso equivale a promediar los peraltes, pero no las inercias — promediar las secciones de los extremos entrega un tramo más rígido del que realmente hay."
+/>
+
 ## Cómo se verifica
 
 Tres reglas que se aplican a todo lo que aparece en la serie.
@@ -121,6 +125,31 @@ inflaba la demanda un 23 % en silencio.
 reacciones de cada estado de carga y compararlas contra la resultante calculada a mano. Los once
 estados cierran a **residuo 0,0**, y ese chequeo cazó un error de carga de muro que ninguna
 revisión de resultados habría encontrado.
+
+### El modelo, para abrirlo
+
+Nada de lo que sigue tiene gracia si hay que creerme. El modelo va acá:
+
+**[Descargar el modelo SAP2000 — `galpon-altiplano.sdb`, 98 KB](/galpon-altiplano-la-serie/galpon-altiplano.sdb)**
+
+Lo que trae, y conviene saber antes de abrirlo:
+
+| | |
+|---|---|
+| Versión | SAP2000 **v27.1** · unidades kN, m, C |
+| Geometría | 105 nodos · 188 barras · 20 bases articuladas |
+| Secciones | 7 de peralte variable, definidas por planchas, más los perfiles de arriostramiento |
+| Estados | 11 patrones de carga · 19 casos, incluidos el modal y **seis espectrales** |
+| Combinaciones | **85** — las 79 de diseño más las envolventes |
+
+Viene **bloqueado**, porque se guardó con el análisis corrido, pero los archivos de resultados no
+van en la descarga: son varios MB y se regeneran en segundos. Al abrirlo hay que desbloquear y
+volver a correr.
+
+Y si prefieres reconstruirlo desde cero en vez de recibirlo hecho, los cinco scripts de la OAPI que
+lo levantan —geometría, espectros, combinaciones, envolvente y deriva— están en
+[Skills_SAP](https://github.com/fcocarrascob/Skills_SAP), y **hay que correrlos en ese orden**: el
+primero reinicializa el modelo y borra lo que crean los otros.
 
 ## El mapa: los diez posts
 
