@@ -120,6 +120,7 @@ Tomadas con el usuario. No se re-litigan.
 | Modelo SAP2000 | se construye **a cuatro manos**, en 6 pasos con confirmación del usuario (§6.2) |
 | **Ruta del R** | **las dos**: la de diseño es **§12.2 galpón liviano, R = 4, amplificador 0,5R₁ = 2,00** (que es lo que la norma obliga, §5.8); la fila 5.5 con R = 5 y 0,7R₁ = 3,50 se corre como **comparación ilustrativa** sobre el mismo modelo. El post 5 debe dejar explícito cuál es la obligatoria y cuál la ilustrativa |
 | **Techo** | **crucería de techo explícita**. El panel como diafragma de §12.2.3 queda como `Note` de contraste (exige ANSI/SDI SD, que no tenemos, y rukan no tiene shell) |
+| **Topografía** | **cima 2D, H = 40 m, L_h = 120 m, galpón en la cresta (x = 0), exposición C.** H/L_h = 0,333: cumple las tres condiciones de §5.6.1 y queda bajo el tope de 0,5 de §5.6.2. Da **K_zt = 1,95** (§5.24) |
 
 ---
 
@@ -190,10 +191,14 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 
 | **Tabla 5** — Coeficientes de exposición K_h y K_z | 24 | 32 | 2026-08-12 | Por altura z o h en m, y exposición **B / C / D**: **0-2** → 0,71 / 0,87 / 0,90 · **4** → 0,71 / 0,87 / 1,01 · **5** → 0,71 / 0,87 / 1,05 · **6** → 0,71 / 0,90 / 1,09 · **8** → 0,71 / **0,95** / 1,14 · **10** → 0,71 / 1,00 / 1,19 · **12** → 0,74 / 1,04 / 1,22 · **14** → 0,77 / 1,07 / 1,26 · **16** → 0,80 / 1,10 / 1,29 · **18** → 0,83 / 1,13 / 1,31 · **20** → 0,85 / 1,15 / 1,34. **NOTAS**: 1) `K_z = 2,41·[z/z_g]^(2/α)` para `z_mín ≤ z ≤ z_g`. 2) α, z_g y z_mín según **Tabla 6**. 3) para `z < z_mín` se usa K_z con z = z_mín. 4) para `z > z_g`, **K_z = 2,41**. 5) para alturas no señaladas, aplicar la Nota 1 — **la nota dice «Tabla 4», errata: es la Tabla 5**. Texto arriba de la tabla: «La presión de velocidad, a la altura media del techo se calcula como **q_h = q_z evaluada a partir de la Ecuación (2) usando K_z a la altura media del techo h**». | **Hallazgo 5.25**; post 1 |
 
-**Pendiente de NCh432**: definición de «altura media de techumbre» en cl. 3 (ver §5.25) · Figura 2 y §5.3
-(zonificación y V básica) · Tabla 2 (I) · **Tabla 3 (K_d)**, pág. 18 / PDF 26 · §5.5 categorías de
-exposición y **Tabla 6** (α, z_g, z_mín) · §5.7 y Tabla 4 (K_e) · §5.9 (G, y el criterio rígido vs
-flexible) · §5.10 y §5.11 con Tabla 7 (GC_pi por cerramiento).
+| **§3.2** y **§3.3** altura media del techo y altura del alero | 2 | 10 | 2026-08-12 | **3.2 altura media del techo, h**: «promedio de la altura del alero de la techumbre y la altura hasta el punto más alto de la techumbre. **Para ángulos de techo menores o iguales a 10 grados, se acepta utilizar la altura media del techo como la altura del alero del techo**». **3.3 altura del alero, h_e**: distancia desde la superficie del suelo adyacente al edificio hasta la línea del alero del techo en un muro en particular; si varía a lo largo del muro se usa la **altura promedio**. La simbología (pág. 7 / PDF 15) repite: «h = altura media del techo […] **excepto que la altura del alero se utiliza para un ángulo de techo θ menor o igual a 10 grados**». *(Definiciones en prosa: leídas de la capa de texto, que `CLAUDE.md` autoriza para prosa y definiciones.)* | Cierra **§5.25** |
+| **§5.7** y **Tabla 4** — Factor de elevación del suelo K_e | 23 | 31 | 2026-08-12 | «El factor de elevación del suelo para ajustar la densidad del aire, K_e, se debe determinar de acuerdo con la Tabla 4. **Se permite tomar K_e = 1 para todas las elevaciones.**» **Tabla 4** por z_e en m: **< 0** → ver Nota 2 · **0** → 1,00 · **300** → 0,96 · **600** → 0,93 · **900** → 0,90 · **1 200** → 0,87 · **1 500** → 0,84 · **1 800** → 0,81 · **> 1 800** → **ver Nota 2**. **NOTA 1)** en todos los casos es posible usar K_e = 1,00 de manera conservadora. **NOTA 2)** K_e se determina por interpolación o con **`K_e = e^(−0,000119·z_e)`**, con z_e la elevación del terreno sobre el nivel del mar en m. | **Hallazgo 5.26**; post 1 |
+| **§5.8.1** y **§5.8.2** — Presión de velocidad, Ec. (2) | 23 | 31 | 2026-08-12 | **5.8.1**: K_z o K_h se determinan de la Tabla 5 según la categoría de exposición de §5.5.3; en zonas de transición cerca de un cambio de rugosidad se permiten **valores intermedios** de K_z o K_h si se justifican con metodología. **5.8.2**, **Ec. (2)**: **`q_z = 0,613·I·K_z·K_zt·K_e·V²`** en **N/m²**, con **I** el factor de importancia según categoría de ocupación (Tabla 2), K_z de §5.8.1, K_zt de §5.6.2. **Ojo: I va DENTRO de q_z y K_d va fuera** (K_d aparece en las ecuaciones de presión, no acá). | Post 1 |
+
+**Pendiente de NCh432**: Figura 2 y §5.3 (zonificación y **V básica**) · **Tabla 2** (I por categoría) ·
+**Tabla 3 (K_d)**, pág. 18 / PDF 26 · §5.5 categorías de exposición y **Tabla 6** (α, z_g, z_mín),
+pág. 25 / PDF 33 · §5.9 (**G**, y el criterio rígido vs flexible) · §5.10 y §5.11 con Tabla 7
+(**GC_pi** por cerramiento).
 
 ### 4.2 Parámetros derivados
 
@@ -663,7 +668,7 @@ que «todo el mundo conoce» diseña con **la mitad** de la presión que corresp
 que también es contenido del post. La geometría del cerro es un parámetro de proyecto que hay que
 declarar y congelar con el usuario, no un detalle.
 
-### 5.25 ¿h en el alero o altura media de techumbre? Hay que alinear con el post ya publicado
+### 5.25 ¿h en el alero o altura media? — **resuelto: alero**, y el post publicado estaba bien
 
 La Tabla 5 viene precedida de: «La presión de velocidad, a la altura media del techo se calcula como
 **q_h = q_z evaluada […] usando K_z a la altura media del techo h**». Pero
@@ -679,13 +684,51 @@ h = altura de alero), la diferencia es:
 | K₃ del K_zt | 0,8187 | 0,7975 |
 | **K_zt** | **1,948** | 1,919 |
 
-Es un 3 % en K_z y un 1,5 % en K_zt: chico, pero **los dos posts no pueden usar criterios distintos para
-el mismo tipo de galpón**. Hay que leer la definición de «altura media de techumbre» en la cláusula 3 de
-NCh432, decidir, y si el post publicado quedó del otro lado, corregirlo en el mismo commit — que es lo
-que manda la regla de `CLAUDE.md` sobre fuentes que discrepan.
+**Resuelto el 2026-08-12** con la definición **§3.2** (pág. 2, PDF 10) —prosa, que la regla de
+`CLAUDE.md` sí permite leer de la capa de texto—:
+
+> «**3.2 altura media del techo, h**: promedio de la altura del alero de la techumbre y la altura hasta
+> el punto más alto de la techumbre. **Para ángulos de techo menores o iguales a 10 grados, se acepta
+> utilizar la altura media del techo como la altura del alero del techo**»
+
+Y la simbología (pág. 7, PDF 15) lo repite: «h = altura media del techo de un edificio o altura de otra
+estructura, **excepto que la altura del alero se utiliza para un ángulo de techo θ menor o igual a
+10 grados**». La **§3.3** define además `h_e` (altura del alero) y aclara que si varía a lo largo del
+muro se usa la altura promedio.
+
+Nuestro θ = **10°** entra en el «≤ 10 grados». Por lo tanto **h = h_e = 8,00 m**, se mantienen
+**K_z = 0,95** y **K_zt = 1,948**, y `ejemplo-viento-galpon-nch432.mdx` —que también es θ = 10° y midió
+h en el alero— **estaba correcto**. No hay corrección que hacer y los dos posts quedan alineados.
 
 **Errata menor confirmada**: la Nota 5 de la Tabla 5 remite a «Tabla 4» cuando habla de las alturas de la
 propia Tabla 5.
+
+### 5.26 La Tabla 4 no llega al altiplano — hay que salirse a la Nota 2
+
+La tabla de K_e termina en **1 800 m**, y sobre eso dice «**ver Nota 2**». Nuestro sitio está a
+**3 800 m**, o sea **más del doble** del último valor tabulado. Quien busque su elevación en la tabla no
+la encuentra, y tiene que usar la fórmula de la Nota 2:
+
+$$K_e = e^{-0,000119 \cdot z_e} = e^{-0,000119 \times 3800} = e^{-0,4522} = \mathbf{0,6362}$$
+
+Confirma el ≈ 0,64 que se venía estimando, ahora con procedencia. Y es material del post 1: **el
+altiplano chileno se sale de la tabla de su propia norma de viento.**
+
+Nota práctica que conviene decir en el post: la **Nota 1** permite tomar `K_e = 1,00` «de manera
+conservadora». En el altiplano eso significa diseñar con un **57 % más** de presión de la que
+corresponde (1/0,6362). Es conservador, sí, pero es mucho acero.
+
+### El q_h del galpón, con lo leído hasta ahora
+
+Con `I = 1,00` (categoría II, **pendiente confirmar en la Tabla 2**), `K_z = 0,95` (exp. C, h = 8,0 m),
+`K_zt = 1,948` y `K_e = 0,6362`:
+
+$$q_h = 0,613 \times 1,00 \times 0,95 \times 1,948 \times 0,6362 \times V^2 = \mathbf{0,7217\,V^2}\ \text{N/m}^2$$
+
+Y contra el **mismo galpón en terreno plano a nivel del mar** (K_zt = K_e = 1), la razón es exactamente
+`K_zt · K_e = 1,948 × 0,6362 = ` **1,239**. El 25 % de más del §5.24, ahora con la ecuación en la mano.
+
+Falta **V** (Figura 2 y §5.3) para cerrar el número.
 
 ---
 
