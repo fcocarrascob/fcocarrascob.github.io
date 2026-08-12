@@ -153,6 +153,12 @@ de `raster.py`.
 | **Tabla 9** — Límites de la relación ancho/espesor | 97-99 | 103-105 | 2026-08-12 | Todos los límites se escriben con **R_y·F_y**, no con F_y. **Elementos no atiesados** (pág. 97): alas de perfiles soldados o laminados I, H, y alas de soldados/laminados/plegados en frío C, T y L → λ = b/t, **λ_md = 0,40√(E/(R_y F_y))**; almas de perfiles soldados o laminados tipo T → λ = d/t, mismo 0,40√(...). **Elementos atiesados, usados como arriostramientos** (pág. 98): paredes de rectangulares conformados en frío (HSS) o plegados en frío, alas de rectangulares soldados o laminados I/H, planchas laterales de rectangulares I/H, y paredes de rectangulares soldados → **λ_md = 0,76√(E/(R_y F_y))**; almas de I, H o C soldados, laminados o plegados en frío → **λ_md = 1,57√(E/(R_y F_y))**. **Perfiles usados como vigas sometidos a flexo-compresión** (pág. 99): alas en compresión uniforme (rectangulares soldados, HSS, plegados en frío; y alas de rectangulares soldados o laminados I/H) → b/t, **λ_md = 1,18√(E/(R_y F_y))**; almas de perfiles soldados, laminados o plegados en frío I, H o C, planchas laterales de rectangulares I/H, y almas de rectangulares soldados/HSS/plegados → h/t, con **dos ramas**: para **C_a ≤ 0,114**, `3,96√(E/(R_y F_y))·(1 − 3,04·C_a)`; para **C_a > 0,114**, `1,29√(E/(R_y F_y))·(2,12 − C_a) ≥ 1,57√(E/(R_y F_y))`. En que `C_a = P_u/(φ_c·P_y)` (LRFD), `C_a = Ω_c·P_a/P_y` (ASD) y **`P_y = R_y·F_y·A_g`**. | **Hallazgo 5.15**; posts 7, 8 y 10 |
 | **Tabla 7** — R y ξ (filas de acero) | 60-61 | 66-67 | 2026-08-12 | 1. elásticas R 1, ξ 0,03 · 2. otras no incluidas o asimilables R 1,5, ξ 0,02 · 3. péndulo invertido R 2, ξ 0,03 · 4. sísmicas isostáticas R 2, ξ 0,03 · **5.1** marcos a momento **con** anclajes dúctiles R **5** · **5.2** marcos a momento **sin** anclajes dúctiles R **3** · **5.3** marcos arriostrados **con** anclajes dúctiles R **5** · **5.4** marcos arriostrados **sin** anclajes dúctiles R **3** · **5.5** edificios industriales de un piso, **con o sin puente grúa, con arriostramiento continuo de techo**, y con anclajes dúctiles R **5** · **5.6** edificios industriales de un piso, **sin puente grúa, sin arriostramiento continuo de techo**, y con anclajes dúctiles R **3** · **5.7** galpones livianos de acero R **4**. Todas las filas de acero: **ξ = 0,02 uniones soldadas / 0,03 uniones empernadas**. | Fila **5.5**, R = 5, ξ = 0,02; **Hallazgos 5.2 y 5.6** |
 
+#### ANSI/AISC 341-22
+
+| Cláusula / Tabla | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **Tabla A3.2** — R_y y R_t | 9.1-6 | 59 | 2026-08-12 | *R_y and R_t Values for Steel and Steel Reinforcement Materials*. **Hot-Rolled Structural Shapes and Bars**: A36 → **R_y = 1,5**, R_t = 1,2 · A529 Gr.50 → 1,2/1,2 · A572 Gr.50 o 55 → 1,1/1,1 · A992 → 1,1/1,1 · A1043 Gr.36 → 1,3/1,1. **Hollow Structural Sections (HSS)**: A53 → 1,6/1,2 · **A500 Gr. B → 1,4/1,3** · A500 Gr. C → 1,3/1,2 · A501 → 1,4/1,3 · A1085 Gr. A → 1,25/1,15. **Plates, Strips, and Sheets**: **A36 → R_y = 1,3**, R_t = 1,2 · A572 Gr.42 → 1,3/1,0 · A572 Gr.50 o 55 → 1,1/1,2 · A1043 Gr.36 → 1,3/1,1. **Steel Reinforcement**: A615 Gr.60 → 1,2/1,2 · A706 Gr.60 y 80 → 1,2/1,2. | Cierra **§5.17**; confirma **R_y = 1,3** |
+
 #### NCh 3171:2017 · NCh 432:2025
 
 Pendientes. Ver §6.1.
@@ -173,7 +179,7 @@ Pendientes. Ver §6.1.
 | Límite de esbeltez global §8.8.4, A36 | **133,29** | 1,5π√(E/F_y) con E = 200.000 MPa y F_y = 250 MPa. √800 = 28,2843 → ×π = 88,8577 → ×1,5 = 133,2865 |
 | r mínimo de la diagonal, L = 10,0 m | **75,0 mm** | 10.000 / 133,29. Inalcanzable con perfil razonable |
 | r mínimo de la diagonal, L = 5,0 m (cruce de la X, §8.6.4) | **37,5 mm** | 5.000 / 133,29. Un cajón 100×100×4 da r ≈ 39,2 mm → KL/r = 127,5 ✅ |
-| **√(E/(R_y·F_y))** para A36 | **24,807** | E = 200.000 MPa, **R_y = 1,3** (de C8.3.3, ver §5.17), F_y = 250 MPa → R_y F_y = 325 MPa → √(200.000/325) = √615,38. ⚠️ **Todas las filas λ_md que siguen son condicionales a R_y = 1,3**; con 1,5 bajan un 6,9 % |
+| **√(E/(R_y·F_y))** para A36 en **plancha** | **24,807** | E = 200.000 MPa, **R_y = 1,3** (AISC 341-22 Tabla A3.2, fila *Plates, Strips, and Sheets*; y C8.3.3 de NCh2369), F_y = 250 MPa → R_y F_y = 325 MPa → √(200.000/325) = √615,38. Válido porque **todas las secciones se definen por planchas**; con perfil laminado A36 sería R_y = 1,5 y todos los λ_md bajarían 6,9 % |
 | λ_md alas no atiesadas (0,40·) | **9,92** | Ala 220×12 con alma 6: b = (220−6)/2 = 107 → b/t = **8,92** ✅ (10 % de margen) |
 | λ_md paredes de HSS como arriostramiento (0,76·) | **18,85** | Cajón 100×100×4: b/t = 92/4 = **23** ❌ · 100×100×5: 90/5 = **18** ✅ |
 | λ_md almas I/H/C como arriostramiento (1,57·) | **38,95** | también es el piso de la rama alta de flexo-compresión |
@@ -451,19 +457,36 @@ Consecuencias prácticas:
   cambios de rukan de §6.1.
 - **NCh427/1 no está en PDF** en este equipo. Se suma a la deuda de §8.
 
-### 5.17 R_y = 1,3 se apoya en el comentario; la vía normativa apunta a una edición que no tenemos
+### 5.17 R_y = 1,3 confirmado — pero es el de **placas**, y la cita de la norma quedó renumerada
 
-**§8.3.3** (disposición) manda a **ANSI/AISC 341-16, Tabla A3.1**. En disco hay **A341-22**, no la 16.
-El **1,3** que uso en todos los λ_md derivados viene de **C8.3.3** —columna de comentarios—, que lo
-declara «cercano a 1,3» para placas A36 nacionales según estudios de la U. de Chile.
+**Cerrado el 2026-08-12** leyendo la **Tabla A3.2 de AISC 341-22** rasterizada. La tabla separa por
+aplicación, y para **ASTM A36** da:
 
-Es defendible y citable, pero hay que escribirlo así: **el 1,3 es del comentario C8.3.3**, no de la
-Tabla A3.1. Antes de publicar cualquier λ_md hay que abrir la Tabla A3.1 de AISC 341 y decidir si la
-edición 22 sirve como fuente o si se cita solo C8.3.3. Ojo con la distinción **placa vs perfil
-laminado**, que en AISC llevan R_y distinto: si cambiara a 1,5, todos los λ_md de §4.2 bajan un 6,9 %
-(factor √(1,3/1,5) = 0,9309) y el margen del ala pasa de 10 % a 2 %.
+| Aplicación | R_y | R_t |
+|---|---|---|
+| Hot-Rolled Structural Shapes and Bars | **1,5** | 1,2 |
+| **Plates, Strips, and Sheets** | **1,3** | 1,2 |
 
-Todos los λ_md numéricos de §4.2 quedan marcados como **condicionales a R_y = 1,3**.
+El **1,3 es el de placas**. Como todas las secciones de esta serie se definen **por planchas** (decisión
+de §2), es el valor que corresponde — y coincide con **C8.3.3** de NCh2369, que habla literalmente de
+«placas de acero calidad ASTM A36 (U. de Chile)». **Los λ_md de §4.2 quedan firmes**, ya no son
+condicionales.
+
+**Dos consecuencias de diseño que hay que tener a la vista:**
+
+1. Si un miembro se resolviera con **perfil laminado** A36 en vez de plancha, R_y sube a 1,5 y **todos
+   sus λ_md bajan un 6,9 %** (factor √(1,3/1,5) = 0,9309). El ala de 220×12 pasaría de 10 % de margen
+   a 2 %.
+2. Si la diagonal se resolviera con **tubo comercial** en vez de cajón soldado de plancha, cambia dos
+   veces: **A500 Gr. B lleva R_y = 1,4** (Gr. C, 1,3) *y* su F_y nominal es mayor que el de A36, así que
+   tanto el λ_md como el límite `1,5π√(E/F_y)` se aprietan. La comparación cajón-soldado contra
+   tubo-comercial es material para el post 10.
+
+**Gotcha de edición, nuevo, de la familia que `CLAUDE.md` ya documenta:** en **AISC 341-22 la tabla de
+R_y y R_t es la A3.2**; la **A3.1** pasó a ser *Listed Materials Permitted for Use in SFRS*. La 22
+declara en su prefacio «New presentation of Table A3.1». **NCh2369:2025 §8.3.3 cita «341-16, Tabla
+A3.1»**, que era correcto para la 16 y apunta a otra cosa en la 22. Citar «AISC 341 Tabla A3.1» sin
+edición manda a dos tablas distintas — conviene agregarlo a la lista de gotchas de `CLAUDE.md`.
 
 ### 5.18 «Columna fuerte–viga débil» dejó de ser obligatorio en la edición 2025
 
@@ -529,7 +552,6 @@ las ocho condiciones · Anexo B normativo B.1 · Tablas 1, 3, 4, 6, 7 y 9. Todo 
 
 | Cláusula | pág. impresa | PDF | Para qué |
 |---|---|---|---|
-| **AISC 341 Tabla A3.1** (R_y, R_t) | — | `A341-22W-oke.pdf` | cerrar §5.17. La norma cita la **ed. 16**, en disco está la **22** |
 | §8.4 / §8.5 (el 0,7R₁ y sus alternativas) | ~81-86 | ~87-92 | contexto de §12.2.2 |
 | §5.2.2 irregularidades · §5.6.2 masa modal 90 % · §5.7 vertical · §5.12/§5.13 banda · Ec. (14) | ~30-50 | ~36-56 | posts 4 y 5 |
 | §6.1–§6.4 deformaciones | ~68-70 | ~74-76 | post 5 |
