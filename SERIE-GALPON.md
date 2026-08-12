@@ -121,6 +121,8 @@ Tomadas con el usuario. No se re-litigan.
 | **Ruta del R** | **las dos**: la de diseño es **§12.2 galpón liviano, R = 4, amplificador 0,5R₁ = 2,00** (que es lo que la norma obliga, §5.8); la fila 5.5 con R = 5 y 0,7R₁ = 3,50 se corre como **comparación ilustrativa** sobre el mismo modelo. El post 5 debe dejar explícito cuál es la obligatoria y cuál la ilustrativa |
 | **Techo** | **crucería de techo explícita**. El panel como diafragma de §12.2.3 queda como `Note` de contraste (exige ANSI/SDI SD, que no tenemos, y rukan no tiene shell) |
 | **Topografía** | **cima 2D, H = 40 m, L_h = 120 m, galpón en la cresta (x = 0), exposición C.** H/L_h = 0,333: cumple las tres condiciones de §5.6.1 y queda bajo el tope de 0,5 de §5.6.2. Da **K_zt = 1,95** (§5.24) |
+| **Material de peralte variable** | **repartido, sin post propio.** La convergencia y el prismático-no-conservador (§5.33, §5.34) van al post 2; §8.6.4 y el punto de cruce van al post 4; la verificación por estación va al post 7. **No se abre un post 4bis** |
+| **Costanera** | **canal C simple, verificado con AISC 360-22** — sin AISI S100, que no está en PDF. Ruta confirmada rasterizada: **§F2** eje mayor, **§F6** eje menor, **Ec. H1-1b con `P_r = 0`** para la biaxial (§5.39). Se define **por planchas**, como todo el resto, y **el ala debe salir compacta** o la ruta cae a §F12 |
 
 ---
 
@@ -240,6 +242,19 @@ rasterizado. **Offset: índice 0-based de `raster.py` = página impresa + 3.** E
 | **Figura 12** — `GC_pf` casos básicos | 51 | 59 | 2026-08-12 | `a` = mín(10 % de la menor dimensión horizontal ; 0,4h), pero ≥ máx(4 % de la menor dimensión ; 0,9 m). **`h` = altura media del techo, «excepto que se debe utilizar la altura del alero para θ ≤ 10°»**. **Caso 1** (θ: 0–5 / 20 / 30–45 / 90) superficies 1,2,3,4,1E,2E,3E,4E — fila 0–5: `0,40 / −0,69 / −0,37 / −0,29 / 0,61 / −1,07 / −0,53 / −0,43`; fila 20: `0,53 / −0,69 / −0,48 / −0,43 / 0,80 / −1,07 / −0,69 / −0,64`. **Caso 2** (θ 0–90): `1 −0,45 · 2 −0,69 · 3 −0,37 · 4 −0,45 · 5 0,40 · 6 −0,29 · 1E −0,48 · 2E −1,07 · 3E −0,53 · 4E −0,48 · 5E 0,61 · 6E −0,43`. **Nota 2**: se permite interpolación lineal para θ distinto de los mostrados. | **Cierra la deuda de §5.25 con página**; paso 2.4b |
 | **Figura 13** — `GC_pf` casos de torsión | 52 | 60 | 2026-08-12 | Casos 3 y 4. Sus cotas fijan la geometría de zonas: el Caso 3 marca `2a`, `0,5L` y `L` **a lo largo de la cumbrera**; el Caso 4 marca `B`, `0,5B`, `a` y `2a` **sobre el hastial**. Caso 3: `1T 0,10 · 2T −0,17 · 3T −0,09 · 4T −0,07` (fila 0–5). Caso 4: `5T 0,10 · 6T −0,07`. | Exento, pero sus cotas definen las franjas E |
 | **Figura 14** | 53 | 61 | 2026-08-12 | Terminología geométrica de §7.3.7 (`B`, `A_S`, `A_E`, `n`), para edificios abiertos. | No aplica |
+
+#### Lecturas de la Fase 3 — AISC 360-22 (la ruta del canal de la costanera)
+
+PDF: `A360-22W-ewr.pdf`. `pág.` = la numeración impresa `16.1-nn`; `PDF` = índice 0-based de `raster.py`
+(offset: PDF = impresa + 67).
+
+| Cláusula | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **Tabla User Note F1.1** — tabla de selección del Cap. F | 51 | 118 | 2026-08-12 | El pictograma de la fila **F2 es una doble T *y un canal***, con ala **C** y alma **C**, estados límite `Y, LTB`. Las filas **F3, F4 y F5 dibujan solo doble T** — no hay fila de canal para ala no compacta o esbelta ni para alma esbelta. La fila **F6** dibuja doble T **y canal** flectados en el eje menor: ala `C, NC, S`, alma `NA`, estados `Y, FLB`. **F12** = «Unsymmetrical shapes, other than single angles», todos los estados límite. | **La ruta del canal existe en los dos ejes**; **Hallazgo 5.39** |
+| **§F6** Doble T y canales flectados en su eje menor | 61 | 128 | 2026-08-12 | «This section applies to I-shaped members **and channels** bent about their minor axis. The nominal flexural strength, `M_n`, shall be the lower value obtained according to the limit states of **yielding (plastic moment)** and **flange local buckling**.» | Eje débil de la costanera |
+| **Cap. H, encabezado** | 82 | 149 | 2026-08-12 | «This chapter addresses members subjected to axial force and flexure about **one or both axes**, with or without torsion, and members subjected to torsion only.» `H1` doblemente y simplemente simétricos · `H2` no simétricos · `H3` torsión · `H4` rotura de alas con perforaciones. | Encuadre |
+| **§H1.1** — **Ecs. (H1-1a)** y **(H1-1b)** | 82 | 149 | 2026-08-12 | «The interaction of flexure and compression in doubly symmetric members and **singly symmetric members constrained to bend about a geometric axis (`x` and/or `y`)** shall be limited by Equations H1-1a and H1-1b.» **(a)** cuando `P_r/P_c ≥ 0,2`: `P_r/P_c + (8/9)·(M_rx/M_cx + M_ry/M_cy) ≤ 1,0`. **(b)** cuando `P_r/P_c < 0,2`: `P_r/(2P_c) + (M_rx/M_cx + M_ry/M_cy) ≤ 1,0`. **User Note**: «Section H2 may be used in lieu of the provisions of this section.» | **La ecuación del post 9**; **Hallazgo 5.39** |
+| **§H1.2** Flexión y tracción | 83 | 150 | 2026-08-12 | Mismas Ecs. H1-1a/H1-1b con `P_c` de tracción del Cap. D. Para miembros **doblemente** simétricos se permite multiplicar `C_b` por `√(1 + α·P_r/P_ey)`, **Ec. (H1-2)** `P_ey = π²EI_y/L_b²`, `α = 1,0` (LRFD). **User Note de §H1.1**: «All terms in Equations H1-1a and H1-1b are to be taken as positive.» | El bono de `C_b` **no** aplica al canal (es simplemente simétrico) |
 
 ### 4.2 Parámetros derivados
 
@@ -1052,6 +1067,51 @@ los casos de carga y análisis» — pero **§12.5 es *Sistemas de almacenamient
 `C12.5.9` habla de «la carga almacenada» y de *leaning columns*, y su Figura C-6 es el
 arriostramiento de un rack. Citarla para un galpón es leer mal la sub-cláusula.
 
+### 5.39 El canal sí está en AISC 360-22 — y son los tirantes los que habilitan la ecuación
+
+La costanera se declaró **canal C simple, verificado con AISC 360-22**, para no depender de AISI S100
+(que no está en PDF en ninguno de los dos equipos). La duda razonable era si 360-22 cubre el canal, o
+si el canal es de los perfiles que la especificación deja fuera. **Lo cubre, y la tabla de selección
+lo dice con dibujo.**
+
+En la **Tabla User Note F1.1** (pág. 16.1-51) el pictograma de la fila **F2 son dos figuras: una doble
+T y un canal**, ambos con ala compacta y alma compacta. Y la fila **F6** —eje menor— también dibuja
+canal. O sea:
+
+| Eje | Sección | Estados límite |
+|---|---|---|
+| Mayor | **§F2** | fluencia y **LTB** |
+| Menor | **§F6** | fluencia y **pandeo local del ala** |
+
+La combinación biaxial sale de **§H1.1** (pág. 16.1-82). Con `P_r = 0` la **Ec. (H1-1b)** se reduce a
+
+`M_rx/M_cx + M_ry/M_cy ≤ 1,0`
+
+que es exactamente la suma de razones sobre la que descansa la tesis del post 9.
+
+**Lo que hay que mirar dos veces, y es el hallazgo:**
+
+1. **La condición de aplicabilidad de §H1.1 no es la simetría, es el arriostramiento.** El texto dice
+   «doubly symmetric members **and singly symmetric members constrained to bend about a geometric axis
+   (`x` and/or `y`)**». Un canal es simplemente simétrico y su centro de corte cae **fuera del alma**:
+   cargado sobre el faldón, si nada lo sujeta, **no flecta en torno a un eje geométrico — se tuerce**,
+   y entonces §H1.1 no le aplica. Los **tirantes** de la tesis del post 9 dejan de ser un truco para
+   bajar el momento débil: son **la condición que hace legal la ecuación**. Sin ellos hay que irse a
+   §H2, o a §H3 si se quiere contar la torsión.
+2. **El ala tiene que salir compacta o la ruta se cae.** Las filas **F3, F4 y F5 dibujan solo doble
+   T**: no hay sección de canal para ala no compacta o esbelta, ni para alma esbelta. Un canal que no
+   entre en F2 no tiene capítulo propio — cae a **§F12, «Unsymmetrical shapes»**, que manda revisar
+   *todos* los estados límite. **Eso restringe el predimensionamiento de la costanera**: hay que
+   elegir `b_f/t_f` y `h/t_w` compactos a propósito, y decirlo.
+3. **El bono de `C_b` de §H1.2 no aplica.** La Ec. (H1-2) que permite multiplicar `C_b` por
+   `√(1 + α·P_r/P_ey)` bajo tracción concurrente está escrita **solo «for doubly symmetric members»**.
+   El canal queda fuera.
+
+**Consecuencia para el plan**: el post 9 sigue en `acero` con `chapter: "Cap. F — Flexión"`, pero su
+cierre ya no es «pon dos tirantes y el momento débil se divide por nueve». Es más fuerte: **sin
+tirantes la verificación que todo el mundo escribe no es aplicable**, y la que sí lo es (§H2 / §H3)
+nadie la corre.
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF
@@ -1182,7 +1242,7 @@ Todo lo aprendido de la OAPI quedó en
 | 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ⬜ |
 | 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |
 | 8 | `ejemplo-dintel-tapered-ltb-galpon` | `acero` / Miembros | ⬜ |
-| 9 | `ejemplo-costanera-galpon-biaxial` | `acero` / Miembros | ⬜ |
+| 9 | `ejemplo-costanera-galpon-biaxial` | `acero` / Miembros | ⬜ · canal C por **AISC 360-22** (§5.39) |
 | 10 | `ejemplo-diagonal-longitudinal-galpon` | `acero` / Marcos arriostrados | ⬜ |
 
 Las tesis de cada uno están en el plan. Auditoría en dos tandas: tras 1+2+3, y tras el resto.
@@ -1217,6 +1277,11 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 - ~~Coeficientes de presión de la cláusula 7 sin leer~~ → **cláusula 7 completa leída**, incluidas
   las Figuras 12, 13 y 14 (§4.1).
 - ~~§5.6.2, §5.7, §5.12, §5.13 y la Ec. (14) pendientes~~ → **leídas** (§4.1, §5.31, §5.35).
+- ~~La costanera es un plegado y se diseñaría por AISI S100, que no está en PDF~~ → **cerrado**: se
+  adopta **canal C simple por AISC 360-22**, con la ruta §F2 / §F6 / Ec. (H1-1b) confirmada
+  rasterizada (§5.39). Ya no hay dependencia de una norma que no tenemos.
+- ~~¿El material de peralte variable da para post propio?~~ → **no**: se reparte entre los posts 2, 4
+  y 7 (decisión del usuario, §3).
 
 ### Abiertas
 
