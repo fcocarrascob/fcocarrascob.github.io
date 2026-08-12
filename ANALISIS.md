@@ -81,9 +81,20 @@ sistema—, y lo único que decide cuál de los dos extremos manda es dónde cae
 arriostrada, con $T^* = 0{,}1762$ s, muerde el **máximo** y recorta un 16,6 %. El $R_1$ que sale de
 la Ec. (14) es 3,38, no el 5 de la Tabla 7, y todo el descuento lo produce la rigidez.
 
+**Y la forma general del hallazgo la puso la torre mixta: $R_1$ es por dirección.** La Tabla 7 da
+el mismo $R = 5$ al CBF y al MRF, pero el $R^*$ de la Ec. (1b) se evalúa con el $T^*$ *de cada
+dirección de análisis*: en la torre, 3,85 en la arriostrada (rampa) contra 5,00 en la del marco
+(meseta) — un 30 % de diferencia en el $0{,}7R_1$ que ninguna tabla muestra. Además §5.7 dejó de
+ser prosa: el AME vertical ($R_V = 2$, $\xi_V = 0{,}03$) da $Q_{0Z} = 420$ kN, **más que el corte
+horizontal del MRF** (256 kN). Todo validado en dos motores (case09 de rukan ↔ SAP2000, <0,01 %).
+
 Cubre: [el espectro y sus tres correcciones](src/content/apuntes/nch2369-espectro-de-diseno.mdx) ·
-[del corte modal al R₁ efectivo](src/content/apuntes/ejemplo-analisis-sismico-cepa-nch2369.mdx), y
-la serie del factor $R$ en el blog. **Sin cubrir**: §5.3 — ver la deuda.
+[del corte modal al R₁ efectivo](src/content/apuntes/ejemplo-analisis-sismico-cepa-nch2369.mdx) ·
+[la torre mixta: R₁ por dirección](src/content/apuntes/ejemplo-torre-sismica-nch2369.mdx) (+ su
+[verificación en dos motores](src/content/blog/rukan-verificacion-torre-r-por-direccion.mdx)), y
+la serie del factor $R$ en el blog. **Parcial**: §5.3 —la torre declara sus supuestos de modelo
+(sin diafragma rígido, bases mixtas por GDL, masas nodales) pero falta la nota dedicada— y §5.7,
+cubierto en una sección, sin el contraste estático/modal desarrollado.
 
 ### C · Desplazamientos
 
@@ -186,10 +197,10 @@ Cubre: [zapata bajo el pedestal](ejemplos/geotecnia/zapata-base-columna-nch2369.
 |---|---|:--:|
 | A · Antes del modelo | §4.3, §4.5, Anexo B | ✓ |
 | A · Sistema estructural y R | §5.14 y su tabla | ✓ |
-| B · Modelo matemático | §5.3 | — |
+| B · Modelo matemático | §5.3 | ~ |
 | B · Espectros normativos | §5.4 | ✓ |
 | B · Métodos y análisis modal | §5.2, §5.6 | ✓ |
-| B · Acción sísmica vertical | §5.7 | — |
+| B · Acción sísmica vertical | §5.7 | ~ |
 | B · Corte basal mínimo y máximo | §5.12, §5.13 | ✓ |
 | C · Desplazamientos y P-Delta | §6.1 a §6.4 | — |
 | D · Fusibles del MAC | §8.6 y su Tabla 9 | ✓ |
@@ -218,7 +229,9 @@ En orden de cuánto duele:
 3. **§8.8, diafragmas horizontales.** El arriostramiento de techo no está en ninguna parte del
    corpus, y es la mitad del camino de la carga.
 4. **§8.4, conexiones sismorresistentes en general.** Hoy solo está lo específico del MAC.
-5. **§8.7, marcos resistentes a momento.** Hay un memo de conexión BFP, sin la estructura alrededor.
+5. **§8.7, marcos resistentes a momento.** La estructura alrededor ya existe —la torre mixta
+   analiza sus dos marcos de momento— pero los requisitos de diseño de §8.7 siguen sin ejemplo;
+   el memo de conexión BFP sigue suelto.
 6. **Los memos de la cepa siguen con $R_1 = 5$ y $V_u = 400$ kN declarados**, que la derivación de
    §5.12 a §5.14 no reproduce: $R_1 = 3{,}38$ y 249,9 kN por línea. Los memos quedan del lado
    seguro en el multiplicador de capacidad, y el corte de línea corresponde a una cepa más pesada

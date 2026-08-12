@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "figuras:espectro": "node scripts/render-espectro-nch2369.mjs",
+    "figuras:espectro-torre": "node scripts/render-espectro-torre.mjs",
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
     "verify:acero": "node scripts/verify-acero.mjs",
