@@ -30,14 +30,10 @@
 //
 // Las regiones `image` no se evalúan: se cuentan y se omiten del desarrollo.
 
-import { build } from 'esbuild';
-import { readFile, readdir, rm, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
-import { tmpdir } from 'node:os';
 import path from 'node:path';
-
-const ROOT = path.resolve(import.meta.dirname, '..');
+import { cargarMotor, ROOT } from './lib/motor.mjs';
 
 const args = process.argv.slice(2);
 const emitMd = args.includes('--md');
@@ -61,22 +57,6 @@ async function resolverPlanillas(entradas) {
     }
   }
   return rutas;
-}
-
-/** Compila el motor del canvas (TypeScript) a un módulo importable por Node. */
-async function loadEngine() {
-  const out = path.join(tmpdir(), `worksheet-engine-${process.pid}.mjs`);
-  await build({
-    entryPoints: [path.join(ROOT, 'src/lib/planilla-engine.ts')],
-    bundle: true,
-    platform: 'node',
-    format: 'esm',
-    outfile: out,
-    logLevel: 'error',
-  });
-  const mod = await import(pathToFileURL(out).href);
-  await rm(out, { force: true });
-  return mod;
 }
 
 /**
@@ -103,7 +83,7 @@ function valorDeTex(tex, src) {
     .trim();
 }
 
-const { evaluateSheet, parseMathRegion, renderEsquema, ESQUEMAS_PREFIX } = await loadEngine();
+const { evaluateSheet, parseMathRegion, renderEsquema, ESQUEMAS_PREFIX } = await cargarMotor();
 
 /** Secciones de contenido donde puede vivir el ejemplo de una planilla. */
 const SECCIONES = ['acero', 'hormigon', 'geotecnia'];

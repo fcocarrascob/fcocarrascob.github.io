@@ -56,6 +56,36 @@ function hasStoredWork(): boolean {
   }
 }
 
+/**
+ * ¿Tiene forma de hoja del canvas? Es todo lo que se exige para cargarla: un
+ * `regions` que sea array. Las regiones malformadas de dentro las delata el
+ * motor con un error visible en su región, que es mejor que un rechazo opaco
+ * del archivo entero.
+ */
+function esHoja(data: unknown): data is { regions: Region[]; meta?: { titulo?: string } } {
+  return Array.isArray((data as { regions?: unknown } | null)?.regions);
+}
+
+/**
+ * Parsea el texto de una hoja —de un archivo o del portapapeles— y devuelve null
+ * si no tiene forma de hoja.
+ *
+ * Tolera la valla de código porque la vía principal es pegar desde un chat, y ahí
+ * los ```json vienen pegados al JSON más veces de las que no. Rechazarlo por eso
+ * sería un no gratuito.
+ */
+function parsearHoja(text: string): { regions: Region[]; meta?: { titulo?: string } } | null {
+  let limpio = text.trim();
+  const valla = /^```[a-z]*\s*\n([\s\S]*?)\n?\s*```$/i.exec(limpio);
+  if (valla) limpio = valla[1].trim();
+  try {
+    const data: unknown = JSON.parse(limpio);
+    return esHoja(data) ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 const toolBtn =
   'whitespace-nowrap rounded border border-border bg-white px-2.5 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent';
 
@@ -73,6 +103,10 @@ export default function MathCanvas() {
   const [templatesOpen, setTemplatesOpen] = useState(false);
   /** Menú desplegable de origen de la imagen (portapapeles / archivo) abierto. */
   const [imageMenuOpen, setImageMenuOpen] = useState(false);
+  // Cuadro para pegar una hoja en JSON (la que acaba de generar un chat).
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasteText, setPasteText] = useState('');
+  const [pasteError, setPasteError] = useState<string | null>(null);
   /** Aviso del autoguardado (cuota llena, storage deshabilitado). */
   const [storageWarn, setStorageWarn] = useState<string | null>(null);
   /** Hay un archivo sobrevolando la hoja (realce de la zona de soltado). */
@@ -131,18 +165,55 @@ export default function MathCanvas() {
     });
   }, [selected]);
 
+  /**
+   * Carga una hoja ya parseada (`{version, regions}`) venga de donde venga: del
+   * import por archivo, de un deep-link o de un pegado. Devuelve false si el
+   * objeto no tiene forma de hoja o si el usuario prefirió no pisar su trabajo.
+   *
+   * Está centralizado porque las cuatro vías tienen que preguntar igual:
+   * reemplazar la hoja es destructivo y el autoguardado lo vuelve permanente en
+   * 300 ms.
+   *
+   * `hayTrabajo` es un parámetro y no una lectura fija del estado porque las vías
+   * no coinciden en qué cuenta como «trabajo». Un deep-link corre en el primer
+   * render, cuando `regions` ya trae la demo aunque el usuario no haya escrito
+   * nada: ahí lo que vale es `hasStoredWork()`. Una acción dentro de la app sí
+   * mira lo que hay en pantalla.
+   */
+  const cargarHoja = useCallback(
+    (data: unknown, opts: { titulo?: string; hayTrabajo?: boolean } = {}): boolean => {
+      if (!esHoja(data)) return false;
+      const nombre = opts.titulo ?? data.meta?.titulo;
+      const hayTrabajo =
+        opts.hayTrabajo ?? regionsRef.current.some((r) => r.src.trim() !== '');
+      if (
+        hayTrabajo &&
+        !confirm(
+          nombre
+            ? `¿Abrir «${nombre}» y reemplazar tu hoja actual?`
+            : '¿Reemplazar tu hoja actual por la que estás cargando?',
+        )
+      ) {
+        return false;
+      }
+      // Se clonan las regiones: una plantilla de la galería es un objeto
+      // compartido y editarla en la hoja no debe mutarlo.
+      setRegions(data.regions.map((r) => ({ ...r })));
+      setSelected(new Set());
+      setActiveId(null);
+      setInsertAt(null);
+      return true;
+    },
+    [],
+  );
+
   // Deep-link: /herramientas/canvas?plantilla=<id> abre esa plantilla al entrar.
-  // Si hay trabajo previo guardado, confirma antes de reemplazarlo.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get('plantilla');
     if (!id) return;
     const tpl = TEMPLATES.find((t) => t.id === id);
     if (!tpl) return;
-    if (hasStoredWork() && !confirm(`¿Abrir la plantilla «${tpl.titulo}» y reemplazar tu hoja actual?`))
-      return;
-    setRegions(tpl.regions.map((r) => ({ ...r })));
-    setSelected(new Set());
-    setActiveId(null);
+    cargarHoja(tpl, { titulo: tpl.titulo, hayTrabajo: hasStoredWork() });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -164,11 +235,7 @@ export default function MathCanvas() {
         if (cancelled) return;
         if (!Array.isArray(data?.regions)) throw new Error('formato inválido');
         const titulo = typeof data?.meta?.titulo === 'string' ? data.meta.titulo : slug;
-        if (hasStoredWork() && !confirm(`¿Abrir la planilla «${titulo}» y reemplazar tu hoja actual?`))
-          return;
-        setRegions((data.regions as Region[]).map((r) => ({ ...r })));
-        setSelected(new Set());
-        setActiveId(null);
+        cargarHoja(data, { titulo, hayTrabajo: hasStoredWork() });
       })
       .catch(() => {
         if (!cancelled) alert(`No se pudo cargar la planilla «${slug}».`);
@@ -338,20 +405,34 @@ export default function MathCanvas() {
     }
   }, [addImages]);
 
-  // Pegar una imagen del portapapeles (Ctrl+V) la coloca en el punto de
-  // inserción. Se ignora mientras se edita una región: ahí el pegado es de texto.
+  // Ctrl+V sobre la hoja: una imagen se coloca en el punto de inserción, y una
+  // hoja en JSON reemplaza la hoja entera. Se ignora mientras se edita una
+  // región o se escribe en el cuadro de pegado: ahí el pegado es de texto.
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       const el = document.activeElement;
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
+
       const files = Array.from(e.clipboardData?.files ?? []).filter(isImageFile);
-      if (files.length === 0) return;
+      if (files.length > 0) {
+        e.preventDefault();
+        void addImages(files);
+        return;
+      }
+
+      // Una planilla recién salida de un chat. Solo se intercepta si el texto de
+      // verdad parsea como hoja: cualquier otro pegado sigue su camino, y así
+      // esto no le roba el Ctrl+V a nada.
+      const texto = e.clipboardData?.getData('text/plain');
+      if (!texto) return;
+      const data = parsearHoja(texto);
+      if (!data) return;
       e.preventDefault();
-      void addImages(files);
+      cargarHoja(data);
     };
     window.addEventListener('paste', onPaste);
     return () => window.removeEventListener('paste', onPaste);
-  }, [addImages]);
+  }, [addImages, cargarHoja]);
 
   /**
    * Clic izquierdo en la hoja: solo fija el punto de inserción. No crea nada,
@@ -369,8 +450,8 @@ export default function MathCanvas() {
     const onKey = (e: KeyboardEvent) => {
       const el = document.activeElement;
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
-      // Con un menú abierto el teclado es del menú, no de la hoja.
-      if (templatesOpen || imageMenuOpen) return;
+      // Con un menú o el cuadro de pegado abiertos, el teclado es de ellos.
+      if (templatesOpen || imageMenuOpen || pasteOpen) return;
 
       // Supr/Retroceso elimina la selección (fuera de edición).
       if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -390,7 +471,7 @@ export default function MathCanvas() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selected, insertRegion, templatesOpen, imageMenuOpen]);
+  }, [selected, insertRegion, templatesOpen, imageMenuOpen, pasteOpen]);
 
   const insertSymbol = useCallback(
     (entry: SymbolEntry) => {
@@ -445,28 +526,39 @@ export default function MathCanvas() {
 
   const loadTemplate = (tpl: Template) => {
     setTemplatesOpen(false);
-    const hasContent = regions.some((r) => r.src.trim() !== '');
-    if (hasContent && !confirm(`¿Reemplazar la hoja actual por «${tpl.titulo}»?`)) return;
-    // Clonar las regiones para no mutar la plantilla compartida al editarla.
-    setRegions(tpl.regions.map((r) => ({ ...r })));
-    setSelected(new Set());
-    setActiveId(null);
-    setInsertAt(null);
+    cargarHoja(tpl, { titulo: tpl.titulo });
   };
 
   const importJson = (file: File) => {
     file.text().then((text) => {
-      try {
-        const data = JSON.parse(text);
-        if (!Array.isArray(data?.regions)) throw new Error('formato inválido');
-        setRegions(data.regions as Region[]);
-        setSelected(new Set());
-        setActiveId(null);
-        setInsertAt(null);
-      } catch {
+      const data = parsearHoja(text);
+      if (!data) {
         alert('El archivo no es una hoja de cálculo válida.');
+        return;
       }
+      cargarHoja(data);
     });
+  };
+
+  /**
+   * Carga la hoja que el usuario pegó en el cuadro «Pegar JSON». Es la vía para
+   * una planilla recién salida de una conversación, que todavía no es un archivo
+   * ni está publicada en `public/planillas/`.
+   */
+  const cargarPegado = () => {
+    const data = parsearHoja(pasteText);
+    if (!data) {
+      setPasteError(
+        'Eso no parece una hoja del canvas. Se espera un JSON con la forma ' +
+          '{"version": 1, "regions": [...]}.',
+      );
+      return;
+    }
+    if (cargarHoja(data)) {
+      setPasteOpen(false);
+      setPasteText('');
+      setPasteError(null);
+    }
   };
 
   return (
@@ -613,6 +705,16 @@ export default function MathCanvas() {
           }}
         />
         <button
+          className={`${toolBtn} ${pasteOpen ? '!border-accent !text-accent' : ''}`}
+          onClick={() => {
+            setPasteError(null);
+            setPasteOpen((o) => !o);
+          }}
+          title="Pega una planilla en JSON (por ejemplo, la que te acaba de dar un chat) sin pasar por un archivo"
+        >
+          Pegar JSON
+        </button>
+        <button
           className={`${toolBtn} hover:!border-red-400 hover:!text-red-600`}
           onClick={() => {
             if (confirm('¿Vaciar toda la hoja?')) {
@@ -626,9 +728,53 @@ export default function MathCanvas() {
           Limpiar
         </button>
         <span className="ml-auto hidden text-xs text-muted sm:block">
-          Clic: fija el punto · doble clic: fórmula · Ctrl+V: imagen · Supr: borrar
+          Clic: fija el punto · doble clic: fórmula · Ctrl+V: imagen o planilla · Supr: borrar
         </span>
       </div>
+
+      {pasteOpen && (
+        <div className="border-b border-border bg-surface/60 px-3 py-2">
+          <label className="block text-xs font-medium text-ink" htmlFor="pegar-hoja">
+            Pega aquí la planilla en JSON
+          </label>
+          <p className="mt-0.5 text-[11px] text-muted">
+            El formato es <code>{'{"version": 1, "regions": [...]}'}</code> — el mismo que
+            produce «Exportar». Reemplaza la hoja actual. Si viene de un chat, todavía es un
+            borrador: verifícala con <code>npm run verify:planilla</code>.
+          </p>
+          <textarea
+            id="pegar-hoja"
+            className="mt-1.5 h-32 w-full resize-y rounded border border-border bg-white px-2 py-1.5 font-mono text-[11px] text-ink"
+            placeholder={'{\n  "version": 1,\n  "regions": [ … ]\n}'}
+            value={pasteText}
+            onChange={(e) => {
+              setPasteText(e.target.value);
+              setPasteError(null);
+            }}
+            autoFocus
+          />
+          {pasteError && <p className="mt-1 text-[11px] text-red-600">{pasteError}</p>}
+          <div className="mt-1.5 flex items-center gap-2">
+            <button
+              className={`${toolBtn} ${pasteText.trim() === '' ? 'opacity-40' : ''}`}
+              disabled={pasteText.trim() === ''}
+              onClick={cargarPegado}
+            >
+              Cargar en la hoja
+            </button>
+            <button
+              className={toolBtn}
+              onClick={() => {
+                setPasteOpen(false);
+                setPasteText('');
+                setPasteError(null);
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {paginacion.largos.length > 0 && (
         <div className="border-b border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
