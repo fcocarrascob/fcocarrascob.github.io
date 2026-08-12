@@ -29,11 +29,21 @@ const AVISO = `<!-- Generado por \`npm run esquema:planilla\` desde docs/ESQUEMA
 
 `;
 
+/**
+ * Compara ignorando el final de línea.
+ *
+ * Con `core.autocrlf=true` git reescribe los .md a CRLF al extraerlos, pero el
+ * aviso de arriba lleva `\n` literal: una comparación byte a byte daba «quedó
+ * atrás» en un archivo idéntico, justo después de un rebase. Lo que se verifica
+ * es que el texto sea el mismo, no cómo lo dejó git en el disco.
+ */
+const norm = (s) => s.replace(/\r\n/g, '\n');
+
 const fuente = await readFile(ORIGEN, 'utf8');
-const esperado = AVISO + fuente;
+const esperado = norm(AVISO + fuente);
 
 if (check) {
-  const actual = existsSync(DESTINO) ? readFileSync(DESTINO, 'utf8') : null;
+  const actual = existsSync(DESTINO) ? norm(readFileSync(DESTINO, 'utf8')) : null;
   if (actual === esperado) {
     console.log('OK  public/planillas/ESQUEMA.md está al día.');
     process.exit(0);
