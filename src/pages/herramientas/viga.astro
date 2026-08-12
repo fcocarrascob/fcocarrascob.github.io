@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
+import VigaTool from '../../components/viga/VigaTool.tsx';
+
+const title = 'Analizador de vigas';
+const description =
+  'Reacciones, diagramas de corte y momento, y deformada de una viga con cualquier combinación de apoyos y cargas, por rigidez matricial 1D. Exporta la memoria al canvas matemático para imprimirla.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+    <header class="mb-5">
+      <h1 class="text-2xl font-semibold text-ink">Analizador de vigas</h1>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Entra la geometría, los apoyos y las cargas, y salen las reacciones, los diagramas de
+        corte y momento, la deformada y los máximos con su posición. El motor es de
+        <strong>rigidez matricial</strong>, no un catálogo de fórmulas: una viga continua de tres
+        vanos con un voladizo y un apoyo elástico se resuelve igual que una simplemente apoyada.
+        Es <strong>solo análisis</strong> —sin normas ni materiales—, así que sirve igual para una
+        viga de acero, una de hormigón o un dintel de madera.
+      </p>
+      <p class="mt-2 text-sm text-muted leading-relaxed">
+        Con «Abrir memoria en el canvas» el resultado pasa al
+        <a href="/herramientas/canvas" class="text-accent hover:underline">canvas matemático</a>
+        como una hoja de cálculo: ahí puedes seguir con la verificación que corresponda e
+        imprimirla en A4. La hoja no se limita a copiar los resultados —<strong
+          >rearma ΣF = 0 y ΣM = 0 con mathjs</strong
+        > desde los datos declarados, así que el equilibrio queda verificado por un segundo camino.
+      </p>
+    </header>
+
+    <VigaTool client:only="react" />
+
+    <details class="mt-6 text-xs text-muted">
+      <summary class="cursor-pointer text-ink">Supuestos y notas del modelo</summary>
+      <div class="mt-2 space-y-2 leading-relaxed">
+        <p>
+          <strong>Teoría.</strong> Viga de Euler-Bernoulli: las secciones planas se mantienen planas
+          y normales al eje, o sea que <strong>no se incluye la deformación por corte</strong>. Para
+          vigas de relación luz/canto normal la diferencia es despreciable; en una viga muy corta o
+          de alma muy esbelta, la flecha real es mayor que la que sale acá. Material lineal-elástico,
+          pequeños desplazamientos, y sección constante dentro de cada tramo.
+        </p>
+        <p>
+          <strong>Signos.</strong> Las cargas de entrada son positivas hacia abajo, y el momento
+          puntual, antihorario. En los resultados el desplazamiento es positivo hacia arriba, el
+          momento es positivo cuando tracciona la fibra inferior, y el corte es positivo cuando el
+          trozo izquierdo empuja hacia arriba. Las reacciones se reportan como la acción que el
+          apoyo aplica a la viga: fuerza hacia arriba y momento antihorario.
+        </p>
+        <p>
+          <strong>Dibujo.</strong> El corte va con el positivo hacia arriba, pero el momento se
+          dibuja con el positivo <em>hacia abajo</em>: así queda representado en la cara
+          traccionada, que es la convención de uso corriente. La deformada se dibuja en geometría
+          real, o sea que una flecha hacia abajo se ve hacia abajo.
+        </p>
+        <p>
+          <strong>Precisión.</strong> El elemento de viga de Euler-Bernoulli es <em
+            >nodalmente exacto</em
+          >, y dentro de cada elemento el corte y el momento se recuperan por equilibrio y no
+          interpolando. La malla se corta en los puntos clave —apoyos, cargas puntuales, bordes de
+          cada carga distribuida— y con eso los diagramas son exactos, no aproximados: refinar más
+          no cambia ningún número. <code>npm run verify:viga</code> contrasta el motor contra las
+          soluciones cerradas de una veintena de casos canónicos.
+        </p>
+        <p>
+          <strong>Rigidez relativa.</strong> El reparto de momentos en una viga hiperestática
+          depende solo de las <em>razones</em> entre las rigideces de los tramos, no de su valor
+          absoluto. Por eso basta con el factor por tramo, y E e I quedan como dato opcional para la
+          deformada. Vale la pena saber que ese reparto a veces ni siquiera depende de la razón: en
+          dos vanos iguales con la misma carga en ambos, el momento del apoyo central es qL²/8
+          cualquiera sea la relación de inercias.
+        </p>
+        <p>
+          <strong>Fuera de alcance.</strong> Rótulas internas, combinaciones y envolventes de carga,
+          sección variable dentro de un tramo, deformación por corte, y viga sobre fundación
+          elástica continua. Un solo caso de carga por análisis.
+        </p>
+      </div>
+    </details>
+
+    <p class="mt-4 text-xs text-muted">
+      Herramienta de <strong>prediseño y verificación</strong>, no de proyecto definitivo. Los
+      resultados son de análisis estructural puro: la responsabilidad de la combinación de cargas,
+      del modelo adoptado y de la verificación normativa es de quien firma el cálculo.
+    </p>
+  </main>
+  <Footer />
+</BaseLayout>

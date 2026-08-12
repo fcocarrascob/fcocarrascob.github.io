@@ -13,11 +13,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { layout, m, t, type Item } from '../worksheet-layout';
+import { abrirEnCanvas, descargarHoja, verificarSimbolos } from '../canvas-handoff';
 import type { Region } from '../worksheet';
 import type { ResultadoSeccion } from './seccion';
 import type { EntradaVerificacion } from './tipos';
 
-const STORAGE_KEY = 'structpad.worksheet.v1';
 const TONF = 1000;
 const TONF_M = 100000;
 
@@ -45,54 +45,12 @@ function banner(texto: string): Item {
   return t(`━━ ${texto} ━━`);
 }
 
-/** Funciones y constantes que el motor del canvas ya trae en su scope. */
-const INTRINSECOS = new Set([
-  'pi', 'e', 'sqrt', 'abs', 'min', 'max', 'sin', 'cos', 'tan', 'log', 'exp',
-  'kgf', 'cm', 'tonf', 'tf', 'm', 'mm', 'kg', 'N', 'kN', 'MPa', 'Pa',
-]);
-
-/**
- * Símbolos que una región DEFINE (`nombre := …`) y los que USA.
- *
- * Es un análisis léxico deliberadamente simple: alcanza porque la memoria la
- * genera este archivo, no un humano, y la gramática de sus filas es la de
- * `parseMathRegion`.
- */
-function simbolos(src: string): { define: string | null; usa: string[] } {
-  const def = src.match(/^\s*([A-Za-z_]\w*)\s*:=/);
-  const cuerpo = def ? src.slice(src.indexOf(':=') + 2) : src;
-  const usa = (cuerpo.match(/[A-Za-z_]\w*/g) ?? []).filter((s) => !INTRINSECOS.has(s));
-  return { define: def ? def[1] : null, usa };
-}
-
-/**
- * Verifica que ninguna región referencie un símbolo que no se definió antes.
- *
- * Existe por un error real: la sección de interacción emitía
- * `u_tot := u_c + (8/9)*u_f` mientras el bloque que define `u_f` quedaba detrás
- * de un filtro de familia, así que la memoria de un HSS en flexocompresión
- * llegaba rota al canvas. Un bloque que se olvide vuelve a romper la hoja; esto
- * lo convierte en un fallo ruidoso al generar, no en tres regiones en rojo que
- * el usuario descubre después.
- */
-function verificarSimbolos(items: Item[]): void {
-  const definidos = new Set<string>();
-  const faltantes: string[] = [];
-  for (const it of items) {
-    if (it.kind === 'text') continue;
-    const { define, usa } = simbolos(it.src);
-    for (const s of usa) {
-      if (!definidos.has(s)) faltantes.push(`«${s}» en la fila \`${it.src}\``);
-    }
-    if (define) definidos.add(define);
-  }
-  if (faltantes.length > 0) {
-    throw new Error(
-      `La memoria referencia símbolos que no define: ${faltantes.join('; ')}. ` +
-        'Falta emitir el bloque que los define.'
-    );
-  }
-}
+// El guardián de símbolos que corría acá se movió a `../canvas-handoff`: no
+// tenía nada de acero, y la memoria de vigas necesita exactamente el mismo
+// chequeo. Nació de un error real: la sección de interacción emitía
+// `u_tot := u_c + (8/9)*u_f` mientras el bloque que define `u_f` quedaba detrás
+// de un filtro de familia, así que la memoria de un HSS en flexocompresión
+// llegaba rota al canvas.
 
 export interface Memoria {
   version: 1;
@@ -1018,41 +976,13 @@ function sigCoef(limite: number, E: number, Fy: number): string {
 }
 
 // ── Entrega al canvas ────────────────────────────────────────────────────────
+//
+// La mecánica vive en `../canvas-handoff`, compartida con las demás
+// herramientas que generan hojas. Acá solo queda el nombre del archivo.
 
-/**
- * Escribe la hoja en el slot del canvas y navega. `loadInitial()` de
- * MathCanvas lee esa clave al montar, así que la hoja aparece cargada.
- */
-export function abrirEnCanvas(memoria: Memoria): void {
-  if (typeof window === 'undefined') return;
-  try {
-    const previo = window.localStorage.getItem(STORAGE_KEY);
-    if (previo) {
-      const data = JSON.parse(previo) as { regions?: unknown[] };
-      const hayTrabajo = Array.isArray(data.regions) && data.regions.length > 0;
-      if (hayTrabajo && !window.confirm('El canvas tiene una hoja guardada. ¿Reemplazarla por la memoria?')) {
-        return;
-      }
-    }
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ version: 1, regions: memoria.regions })
-    );
-  } catch {
-    window.alert('No se pudo escribir en el almacenamiento local del navegador.');
-    return;
-  }
-  window.location.href = '/herramientas/canvas';
-}
+export { abrirEnCanvas };
 
 /** Descarga la memoria como .json — el mismo formato que `verify:planilla` lee. */
 export function descargarMemoria(memoria: Memoria): void {
-  if (typeof window === 'undefined') return;
-  const blob = new Blob([JSON.stringify(memoria, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'memoria-seccion.json';
-  a.click();
-  URL.revokeObjectURL(url);
+  descargarHoja(memoria, 'memoria-seccion.json');
 }

@@ -16,6 +16,7 @@
     "verify:planilla": "node scripts/verify-planilla.mjs",
     "verify:planillas": "node scripts/verify-planilla.mjs public/planillas",
     "verify:acero": "node scripts/verify-acero.mjs",
+    "verify:viga": "node scripts/verify-viga.mjs",
     "verify:servilletas": "node scripts/verify-servilletas.mjs",
     "indice:normas": "node scripts/build-indice-normas.mjs",
     "verify:ecuaciones": "node scripts/verify-ecuaciones.mjs",
