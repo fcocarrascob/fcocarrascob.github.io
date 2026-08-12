@@ -125,14 +125,66 @@ la degradación cíclica del fusible (el EPP puro es la versión optimista); y e
 de amortiguamiento. Ninguna cambia la estructura de lo medido; todas afinarían sus
 números.
 
+---
+
+## Posdata (agosto de 2026): qué cambió con NCh 2369:2025 y qué no
+
+La serie se escribió apoyada en el capítulo 7 de *Proyectar en Acero*[^libro], publicado
+en **2019** sobre la edición 2003 de NCh2369 y el borrador entonces en consulta. La
+edición vigente es la **3.ª, de mayo de 2025**[^nch2369]. Vale la pena separar qué de lo
+publicado aquí quedó desactualizado y qué no — porque, sorprendentemente, casi nada.
+
+**Lo que no cambió, y sostiene toda la serie:**
+
+- **La descomposición $R = R_\mu \cdot \Omega_0$** y las siete ecuaciones que la rodean
+  son del texto del libro, no de una cláusula. Ninguna edición las deroga.
+- **La hipótesis de Newmark ($C_d = R$)** sigue siendo la que adopta la norma industrial
+  chilena para estimar la deformación última.
+- **El $R = 3$ del experimento** sigue vigente: es la fila 5.4 de la Tabla 7 de la edición
+  2025, *marcos arriostrados sin anclajes dúctiles*.
+- **El espectro** del experimento ya usa la formulación vigente, anclada en
+  $A_r = 1{,}4\,A_0$. Esto no es menor: quien arrastre el $A_0$ de la edición 2003 a las
+  ecuaciones de 5.4.2 se queda **un 29 % corto** en la demanda.
+- **Todo lo medido** —los 63 osciladores, la regla de igual desplazamiento emergiendo,
+  su quiebre en períodos cortos, el pushover, el equilibrio plástico calzando al 0,00 %—
+  es física y medición. No tiene edición.
+
+**Lo que sí cambió:**
+
+| La serie escribe | La edición 2025 dice | Efecto |
+|---|---|---|
+| $0{,}7R$ | **$0{,}7R_1$**, con $R_1$ de la Ec. (14): $R^*$ corregido por el corte basal mínimo | Como $R \ge R^* \ge R_1$, usar $R$ **siempre amplifica de más** |
+| Piso $\ge 2{,}0$ | Piso **$\ge 1{,}0$**, consistente en las doce cláusulas de la cl. 8 donde aparece | No muerde aquí: $0{,}7 \times 3 = 2{,}1$ supera ambos |
+| $\Sigma M_{col} \ge 1{,}2\,\Sigma M_{viga}$ como obligación | **Recomendación** (§8.7.4) | Cambia el estatus, no el número |
+
+Rehecho el número principal con la notación correcta: con el $R^* = 2{,}90$ que midió el
+gemelo «esbeltez», el atajo normativo es $0{,}7R_1 = 2{,}03$ en vez de $2{,}1$, y el
+déficit de la conexión pasa de 74 % a **75 %**. Es decir: **la tesis de la serie no
+sobrevive a duras penas, sale reforzada.** El atajo se queda un poco más corto de lo que
+la serie midió, no menos.
+
+<Note type="tip" title="La lección que esto agrega al método">
+La serie tenía ya una lección sobre la referencia independiente como cazadora de trampas
+silenciosas. Esta posdata agrega otra, de un orden distinto: **la fecha de la fuente es
+un dato del cálculo.** El capítulo que originó la serie es excelente y sigue siendo la
+mejor explicación disponible de *por qué* la norma industrial chilena dice lo que dice —
+pero cada número normativo que contiene está una edición atrás, y el $0{,}7R \ge 2{,}0$
+aparece diez veces en él con tono de regla. Un buen texto desactualizado es más peligroso
+que uno mediocre, porque no despierta sospecha. Por eso el número va siempre de la norma
+vigente y el argumento puede venir del libro — nunca al revés.
+</Note>
+
+---
+
 La serie completa: [la anatomía](/blog/factor-r-anatomia) (los conceptos sobre una
 curva), [$R_\mu$ en el laboratorio](/blog/factor-r-rmu) (la regla de Newmark emergiendo),
 [$\Omega_0$ medido](/blog/factor-r-omega0) (la Figura 7.5 con datos) y
 [fusibles y capacidad esperada](/blog/factor-r-capacidad-esperada) (quién paga lo que el
-fusible entrega).
+fusible entrega). Y, para la disposición vigente en detalle,
+[el 0,7R₁ de NCh 2369:2025](/apuntes/nch2369-capacidad-y-07r1).
 
 [^libro]: Montecinos, R. (coord.) (2019). *Proyectar en Acero: práctica chilena*. Instituto Chileno del Acero (ICHA), Santiago.
 
 [^newmark]: Newmark, N. M., & Hall, W. J. (1982). *Earthquake Spectra and Design*. Earthquake Engineering Research Institute (EERI), Berkeley.
 
-[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+[^nch2369]: NCh 2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*, 3.ª ed. (2025.05.28). Instituto Nacional de Normalización (INN), Santiago. El espectro del experimento usa la formulación vigente, anclada en $A_r = 1{,}4\,A_0$, y el $R = 3$ sigue siendo el de la Tabla 7 para marcos arriostrados sin anclajes dúctiles. ⚠ La amplificación por capacidad, en cambio, se escribe en la serie como $0{,}7R$ —la notación de la edición 2003 y del libro que la originó—; en la edición vigente el factor es $0{,}7R_1 \ge 1{,}0$, con $R_1$ de la Ec. (14). Ver la posdata más arriba y [el 0,7R₁ en detalle](/apuntes/nch2369-capacidad-y-07r1).

@@ -42,6 +42,18 @@ capítulo 7 de *Proyectar en Acero: práctica chilena*[^libro]; las dos siguient
 mitad de $R$ con un experimento numérico; la última convierte lo medido en decisiones
 de diseño.
 
+<Note type="warning" title="Sobre la notación 0,7R que usa toda la serie">
+La serie escribe la amplificación por capacidad como $0{,}7R$, siguiendo al libro de 2019
+que la originó. **En NCh 2369:2025 el factor es $0{,}7R_1 \ge 1{,}0$**, con $R_1$ definido
+en la Ec. (14) a partir de $R^*$ corregido por el corte basal mínimo. El cambio es doble:
+bajó el piso (era $\ge 2{,}0$) y cambió el factor, porque $R \ge R^* \ge R_1$ por
+construcción — usar $R$ donde va $R_1$ **siempre amplifica de más**. Los experimentos no
+se ven afectados (usan el espectro vigente anclado en $A_r = 1{,}4A_0$ y un $R = 3$ que
+sigue en la Tabla 7), y las conclusiones se sostienen: rehechas con $R_1$, el déficit del
+atajo pasa de 74 % a 75 %. El detalle está en [el 0,7R₁](/apuntes/nch2369-capacidad-y-07r1)
+y en la [posdata del cierre](/blog/factor-r-cierre).
+</Note>
+
 ---
 
 ## La curva que ordena todo: tres niveles de corte basal
@@ -288,4 +300,4 @@ ductilidad. La serie es sobre verificar que las cuentas del pagaré cuadran.
 
 [^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*. American Institute of Steel Construction, Chicago.
 
-[^nch2369]: NCh2369:2003, *Diseño sísmico de estructuras e instalaciones industriales*. Instituto Nacional de Normalización (INN), Santiago.
+[^nch2369]: NCh 2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*, 3.ª ed. (2025.05.28). Instituto Nacional de Normalización (INN), Santiago. El espectro de la serie usa la formulación vigente, anclada en $A_r = 1{,}4\,A_0$, y el $R = 3$ del experimento sigue siendo el de la Tabla 7 para marcos arriostrados sin anclajes dúctiles. ⚠ La amplificación por capacidad, en cambio, se escribe en esta nota como $0{,}7R$ —la notación de la edición 2003 y del libro que originó la serie—; en la edición vigente el factor es $0{,}7R_1 \ge 1{,}0$, con $R_1$ de la Ec. (14). Ver la posdata del [cierre de la serie](/blog/factor-r-cierre) y [el 0,7R₁ en detalle](/apuntes/nch2369-capacidad-y-07r1).
