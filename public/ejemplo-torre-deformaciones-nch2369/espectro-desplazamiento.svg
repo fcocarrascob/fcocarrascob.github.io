@@ -6,7 +6,7 @@
   </defs>
   <rect width="1000" height="500" fill="#ffffff"/>
   <text x="500" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El espectro de desplazamiento: por qué la deriva se arregla con rigidez, y cuánta</text>
-  <text x="500" y="47" font-size="12" text-anchor="middle" fill="#6b7280">S_d(T) = S_a(T)·(T/2π)² sobre el espectro de referencia de §6.1 (zona 3, suelo D, ξ = 0,02, I = 1,0)</text>
+  <text x="500" y="47" font-size="12" text-anchor="middle" fill="#6b7280">S_d(T) = S_a(T)·g·(T/2π)², con S_a en unidades de g, sobre el espectro de referencia de §6.1 (zona 3, suelo D, ξ = 0,02, I = 1,0)</text>
   <line x1="84.0" y1="92" x2="84.0" y2="422" stroke="#d1d5db" stroke-width="1"/>
   <text x="84.0" y="438" font-size="11" fill="#6b7280" text-anchor="middle">0,0</text>
   <line x1="236.5" y1="92" x2="236.5" y2="422" stroke="#d1d5db" stroke-width="1"/>

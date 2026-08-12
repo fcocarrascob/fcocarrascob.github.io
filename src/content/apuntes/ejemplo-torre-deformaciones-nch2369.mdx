@@ -1,6 +1,6 @@
 ---
 title: "Ejemplo — Aprobar en fuerza y reprobar en deriva: las deformaciones de la cláusula 6"
-description: "La torre mixta del ejemplo anterior pasó completa la cadena de fuerzas de la NCh 2369:2025. La cláusula 6 la hace de nuevo con otro espectro —el de referencia, sin R*— y el veredicto se invierte: el marco de momento, que en fuerza ni rozaba la banda, tiene derivas de hasta 2,8 veces el límite de §6.3; ni la excepción que duplica los límites lo salva. El arriostrado pasa usando el 17 %. Cuantificar la salida cuesta caro: para cumplir la deriva, la rigidez del marco debe multiplicarse por 4,6 — al marco de momento chileno no lo dimensiona el corte, lo dimensiona la deformación. De regalo, la deriva de la cepa del primer ejemplo, que cierra la promesa que ese post dejó abierta."
+description: "La torre mixta del ejemplo anterior pasó completa la cadena de fuerzas de la NCh 2369:2025. La cláusula 6 la hace de nuevo con otro espectro —el de referencia, sin R*— y el veredicto se invierte: el marco de momento, que en fuerza ni rozaba la banda, tiene derivas de hasta 2,8 veces el límite de §6.3; ni la excepción que duplica los límites lo salva. El arriostrado pasa usando el 17 %. Cuantificar la salida cuesta caro: para cumplir la deriva, se estima que la rigidez del marco debe multiplicarse por 4,6 — al marco de momento chileno no lo dimensiona el corte, lo dimensiona la deformación. De regalo, la deriva de la cepa del primer ejemplo, que cierra la promesa que ese post dejó abierta."
 pubDate: 2026-08-12
 tags: ["nch2369", "ejemplo", "deformaciones sísmicas", "derivas", "P-Delta", "espectro de referencia", "marcos de momento", "separación entre estructuras", "sísmica", "SAP2000", "OpenSeesPy"]
 subsection: "nch2369"
@@ -36,8 +36,8 @@ ponderado por $I$. La simultaneidad de las componentes es la misma regla de §4.
 fuerzas.
 
 Para el modelo eso significa **dos casos espectrales por dirección** —diseño y referencia—, y como
-el $R^*$ de la 2025 es una constante por dirección (no una función del período), la relación entre
-ambos es exacta:
+el $R^*$ de la 2025 se evalúa una sola vez —en el $T^*$ de la dirección de análisis— y divide todo
+el espectro por un único número, la relación entre ambos es exacta:
 
 $$d_{\text{ref.}} = R^* \cdot d_{\text{diseño}} \qquad\quad \frac{391{,}70}{78{,}34} = 5{,}000 \qquad \frac{25{,}99}{6{,}75} = 3{,}850$$
 
@@ -87,7 +87,7 @@ vertical—. Con pisos de 4,0 m, el límite es 60 mm por entrepiso, y el veredic
 
 <Figure
   src="/ejemplo-torre-deformaciones-nch2369/derivas-por-piso.svg"
-  alt="Gráfico de barras horizontales con las derivas de entrepiso de los tres pisos de la torre, en milímetros, contra un eje de cero a doscientos. Para cada piso hay una barra azul con la deriva de la dirección X y una barra roja con la de la dirección Y. Una línea vertical segmentada verde marca el límite de la cláusula 6.3, 0,015 por h igual a 60 milímetros, y una línea punteada más tenue marca la excepción por dos, 120 milímetros. Las barras azules del CBF quedan muy a la izquierda: 9,6, 10,1 y 6,4 milímetros con un ticket de cumplimiento. Las barras rojas del MRF cruzan las dos líneas: 112,2 milímetros en el piso uno, 169,5 en el piso dos y 112,1 en el piso tres, rotuladas 1,87, 2,83 y 1,87 veces el límite. Al pie se indica que las derivas son CQC de derivas modales con el espectro de referencia de la cláusula 6.1, del análisis validado en dos motores con error menor al 0,01 por ciento"
+  alt="Gráfico de barras horizontales con las derivas de entrepiso de los tres pisos de la torre, en milímetros, contra un eje de cero a doscientos. Para cada piso hay una barra azul con la deriva de la dirección X y una barra roja con la de la dirección Y. Una línea vertical segmentada verde marca el límite de la cláusula 6.3, 0,015 por h igual a 60 milímetros, y una línea punteada más tenue marca la excepción por dos, 120 milímetros. Las barras azules del CBF quedan muy a la izquierda: 9,6, 10,1 y 6,4 milímetros con una marca de verificación. Las barras rojas del MRF cruzan las dos líneas: 112,2 milímetros en el piso uno, 169,5 en el piso dos y 112,1 en el piso tres, rotuladas 1,87, 2,82 y 1,87 veces el límite. Al pie se indica que las derivas son CQC de derivas modales con el espectro de referencia de la cláusula 6.1, del análisis validado en dos motores con error menor al 0,01 por ciento"
   caption="Las derivas contra el límite de §6.3. Las dos direcciones comparten modelo, masa y sitio; solo cambia el sistema que resiste. El CBF usa el 17 % de su límite; el MRF lo excede en los tres pisos, y en el segundo —donde vive el equipo— lo casi triplica. La línea punteada es la excepción de §6.3 que duplica los límites: tampoco alcanza."
 />
 
@@ -95,12 +95,12 @@ vertical—. Con pisos de 4,0 m, el límite es 60 mm por entrepiso, y el veredic
 sistema arriostrado — la diagonal convierte el problema de deriva en un problema de rigidez axial,
 y lo gana caminando.
 
-**Dirección Y.** Los tres pisos exceden el límite, y el piso 2 lo hace por **2,82 veces**. Vale la
-pena ubicar el margen: la EXCEPCIÓN de §6.3 permite aumentar los límites «al doble si se demuestra
-que el desplazamiento horizontal estimado no compromete la operación de la industria» — una torre
-que sostiene un equipo con sus cañerías tenía esa demostración cuesta arriba—, pero ni hace falta
-discutirlo: contra el límite duplicado de 120 mm, el piso 2 sigue un 41 % pasado. **No hay lectura
-de la cláusula bajo la cual este marco cumpla.**
+**Dirección Y.** Los tres pisos exceden el límite, y el piso 2 llega a **2,82 veces** el límite.
+Vale la pena ubicar el margen: la EXCEPCIÓN de §6.3 permite aumentar los límites «al doble si se
+demuestra que el desplazamiento horizontal estimado no compromete la operación de la industria»
+—una torre que sostiene un equipo con sus cañerías tendría esa demostración cuesta arriba—, pero
+ni hace falta discutirlo: contra el límite duplicado de 120 mm, el piso 2 sigue un 41 % pasado.
+**No hay lectura de la cláusula bajo la cual este marco cumpla.**
 
 La asimetría no es un accidente del ejemplo, es la fisiología de los dos sistemas: el CBF resiste
 el desplazamiento con rigidez axial de diagonales (barata por kilo), el MRF con flexión de columnas
@@ -116,10 +116,16 @@ orden.
 
 ¿Cuánto pesa acá el segundo orden? El índice clásico de estabilidad —$\theta = P\,\Delta/(V\,h)$,
 carga gravitacional sobre el piso por deriva, contra corte del piso por altura; no es una fórmula
-de la norma, se calcula como contexto— da para el piso más castigado del MRF $\theta \approx
-0{,}03$: una amplificación del orden del 3 %. Coherente con el comentario C6.4: el efecto «rara
-vez tiene importancia en estructuras arriostradas, pero puede serlo en estructuras de marcos
-resistentes a momento». La lección tiene forma de jerarquía: **el disparador de §6.4 se activó, pero el problema
+de la norma, se calcula como contexto— da igual con cuál de los dos espectros se evalúe, siempre
+que la deriva y el corte salgan **del mismo caso**: ambos escalan con la misma constante y el
+cociente no la ve. Para el piso más castigado del MRF, con las respuestas del caso de referencia
+—$P = 875$ kN encima del piso 2 (los niveles 2 y 3), $\Delta = 169{,}5$ mm, $V = 1\,118$ kN—:
+
+$$\theta = \frac{875 \cdot 169{,}5}{1\,118 \cdot 4\,000} = 0{,}033$$
+
+Una amplificación del orden del 3 %. Coherente con el comentario C6.4: el efecto «rara vez tiene
+importancia en estructuras arriostradas, pero puede serlo en estructuras de marcos resistentes a
+momento». La lección tiene forma de jerarquía: **el disparador de §6.4 se activó, pero el problema
 de esta torre no es la estabilidad — es que §6.3 ya está violado tres veces.** El P-Delta es el
 agravante, no el delito.
 
@@ -155,9 +161,10 @@ es la parte pedagógica del ejemplo:
   caption="El espectro de desplazamiento del sitio. Para cortar la deriva del MRF a un tercio no basta bajar un poco el período: hay que bajarlo a menos de la mitad, porque al rigidizar la aceleración espectral sube y se come parte de la ganancia. La rigidez del marco debe multiplicarse por 4,6. El CBF vive en la zona donde el espectro pide 21 mm — su holgura no es mérito del perfil, es la física del sistema."
 />
 
-La deriva escala con el desplazamiento espectral $S_d(T) = S_a(T)\,(T/2\pi)^2$ —dinámica
-estructural, no una cláusula—, y si la rigidización es pareja (la forma modal no cambia: es una
-estimación, y se declara), cumplir exige bajar $S_d$ de 298 a 105 mm: de $T^*_Y = 0{,}996$ s a
+La deriva escala con el desplazamiento espectral $S_d(T) = S_a(T)\,g\,(T/2\pi)^2$, con $S_a$ en
+unidades de $g$ —dinámica estructural, no una cláusula—, y si la rigidización es pareja (forma
+modal y masa constantes: es una estimación, y se declara), cumplir exige bajar $S_d$ de 298 a
+105 mm: de $T^*_Y = 0{,}996$ s a
 $T \approx 0{,}465$ s, es decir **multiplicar la rigidez del marco por 4,6**. No es un perfil más
 grande: es otra estructura. Las vigas IN 30 y las columnas HN 30 que sobraban en fuerza tendrían
 que convertirse en secciones varias veces más pesadas, o el marco ganar profundidad, o —la salida
@@ -199,6 +206,12 @@ desplazamientos en 9,9 y 15,1 mm y las **derivas en 9,9 y 5,2 mm** contra el mis
 §6.4 ni se activa. Es el mismo mensaje de la torre visto desde el lado bueno: **en una estructura
 arriostrada, §6 es un trámite que confirma; en un marco de momento, es el capítulo que dimensiona.**
 Las dos frases son la misma cláusula.
+
+Toda la cadena de esta página —los límites de §6.3 y su excepción, el disparador de §6.4, la
+Ec. (15) y la cepa completa— se puede rehacer en vivo:
+**[abrir la planilla en el canvas](/herramientas/canvas?planilla=ejemplo-torre-deformaciones-nch2369)**,
+con las derivas del modelo declaradas como dato y los veredictos recalculándose al cambiar
+cualquier número.
 
 ## El hilo, en una frase
 

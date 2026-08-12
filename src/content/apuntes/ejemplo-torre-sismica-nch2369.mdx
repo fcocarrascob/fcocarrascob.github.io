@@ -2,6 +2,7 @@
 title: "Ejemplo — La torre mixta: mismo R de tabla, un R₁ por cada dirección"
 description: "Una torre industrial de tres niveles, arriostrada en un sentido y con marco de momento en el otro —la configuración chilena del paso libre—, resuelta por la NCh 2369:2025. La Tabla 7 da R = 5 y ξ = 0,02 en las dos direcciones, y sin embargo el multiplicador del diseño por capacidad termina siendo 2,695 en una y 3,500 en la otra: todo el descuento lo produce el período. El corte de la dirección arriostrada choca contra el máximo de §5.13; el del marco cae dentro de la banda; y la componente vertical de §5.7 supera al corte del marco. Análisis validado en dos motores independientes con error menor al 0,01 %."
 pubDate: 2026-08-11
+updatedDate: 2026-08-12
 tags: ["nch2369", "ejemplo", "análisis modal espectral", "R1", "marcos arriostrados", "marcos de momento", "corte basal", "espectro de diseño", "sísmica", "SAP2000", "OpenSeesPy"]
 subsection: "nch2369"
 chapter: "Ejemplo — La torre mixta: R₁ por dirección"
@@ -218,8 +219,8 @@ de cada dirección es directamente su $R^*$:
 Ese último renglón es el que viaja al resto del proyecto. El $0{,}7R_1$ amplifica, en el diseño
 por capacidad de la cláusula 8, la demanda con que se dimensionan los elementos que deben
 permanecer elásticos: conexiones, puntales, columnas y fundación de **cada dirección llevan su
-propio multiplicador**, y acá difieren un 30 %. Quien
-escriba «$R_1 = 5$» en la portada de la memoria —el valor de la tabla— estará sobredimensionando
+propio multiplicador**, y acá difieren un 30 %. Quien escriba «$R_1 = 5$» en la portada de la
+memoria —el valor de la tabla— estará sobredimensionando
 la cadena de capacidad del CBF un 30 %; quien promedie o tome el menor para las dos direcciones
 estará inventando una cláusula que la norma no tiene. La cepa ya lo mostraba en una dirección;
 la torre mixta lo muestra en su forma general: **$R_1$ es un resultado del análisis, por
@@ -237,8 +238,8 @@ intuición:
 $$Q_{0Z} = 419{,}8\ \text{kN} \;>\; Q_{0Y} = 255{,}9\ \text{kN}$$
 
 **El corte vertical supera al corte horizontal del marco.** No es una rareza del ejemplo: la
-torre es axialmente rígida ($T_V = 0{,}058$ s: con $1{,}7\,T_V/T_0 = 0{,}16$, el espectro
-vertical de referencia entrega 0,61 g en su rama ascendente), y el divisor es $R_V = 2$, no 5. En la combinación
+torre es axialmente rígida ($T_V = 0{,}058$ s: con $1{,}7\,T_V/T_0 = 0{,}16$, el espectro vertical
+de referencia entrega 0,61 g en su rama ascendente), y el divisor es $R_V = 2$, no 5. En la combinación
 direccional de §4.5.2 —las tres ecuaciones $\pm 1{,}0/\pm 0{,}3/\pm 0{,}3$, evaluadas todas, con
 todos los signos— la componente vertical entra con el 30 % de ese valor acompañando a cada
 horizontal, y con el 100 % en la tercera ecuación. Para las columnas y las fundaciones de esta
@@ -249,9 +250,9 @@ torre, eso no es un redondeo.
 El modal de tres niveles con dos sistemas distintos no se invierte en prosa, así que este ejemplo
 hace explícito lo que la cepa pudo evitar: **los números del análisis vienen de un modelo, y un
 modelo no se cree — se confronta.** Todos los resultados del análisis que este post usa —los
-períodos y masas participantes de la tabla, los cortes CQC y los desplazamientos que sostienen la
-Note final— salieron de dos implementaciones
-independientes —SAP2000 operado por su API COM y un modelo OpenSeesPy escrito aparte— que
+períodos y masas participantes de la tabla, los cortes CQC y los desplazamientos que sostienen
+la Note final— salieron de dos implementaciones independientes —SAP2000 operado por su API COM
+y un modelo OpenSeesPy escrito aparte— que
 coinciden entre sí a menos de un 0,01 %, compartiendo solo los datos del caso: geometría, placas
 de los perfiles, masas y las ecuaciones del espectro leídas del PDF. El contraste completo —que
 además cubre las fuerzas de elemento— y las dos trampas que encontró en el camino (la deformación
@@ -267,12 +268,11 @@ recalculándose al cambiar cualquier número.
 <Note type="warning" title="Lo que este ejemplo deja pendiente — y ya se sabe cómo termina">
 El análisis de fuerzas aprueba a las dos direcciones. Pero §6.1 exige revisar los desplazamientos
 con el **espectro de referencia corregido por amortiguamiento** —sin $R^*$, lo que para el MRF
-significa demandas 5 veces mayores que las de diseño— y contra el límite de §6.3 ($0{,}015\,h$
-por nivel) el marco de momento de esta
-torre **no pasa: sus derivas llegan a 2,8 veces el límite**, mientras el CBF cumple
-con holgura de sobra. Esa historia —por qué al marco lo dimensiona la deriva y no el corte, qué
-dice §6.4 del P-Delta, y qué se hace con una torre que aprueba en fuerza y reprueba en
-deformación— está en el
+significa demandas 5 veces mayores que las de diseño— y contra el límite de §6.3 ($0{,}015\,h$ por
+nivel) el marco de momento de esta torre **no pasa: sus derivas llegan a 2,8 veces el límite**,
+mientras el CBF cumple con holgura de sobra. Esa historia —por qué al marco lo dimensiona la
+deriva y no el corte, qué dice §6.4 del P-Delta, y qué se hace con una torre que aprueba en fuerza
+y reprueba en deformación— está en el
 [ejemplo de las deformaciones](/apuntes/ejemplo-torre-deformaciones-nch2369).
 </Note>
 

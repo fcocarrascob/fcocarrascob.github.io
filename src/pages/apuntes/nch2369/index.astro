@@ -7,15 +7,29 @@ const sub = SUBSECTIONS['nch2369'];
 const posts = await getApuntesBySubsection('nch2369');
 
 // Las notas se ordenan por el número que abre `chapter` (p. ej. "Cap. 5 — …").
-// "Caps. 1–4 — …" cae en 1, así que el orden es el de la norma.
+// "Caps. 1–4 — …" cae en 1, así que el orden es el de la norma. Los ejemplos
+// no llevan dígito ASCII en su `chapter` a propósito (caen en 999, al final);
+// entre ellos el desempate es la fecha de publicación, que es el orden de
+// lectura de la serie (cepa → torre → deformaciones).
 const capNum = (chapter?: string) => {
   const n = chapter?.match(/\d+/)?.[0];
   return n ? parseInt(n, 10) : 999;
 };
 const sorted = [...posts].sort((a, b) => {
   const cmp = capNum(a.data.chapter) - capNum(b.data.chapter);
-  return cmp !== 0 ? cmp : a.data.title.localeCompare(b.data.title);
+  if (cmp !== 0) return cmp;
+  const fecha = a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
+  return fecha !== 0 ? fecha : a.data.title.localeCompare(b.data.title);
 });
+
+// Rótulo del chip: el tramo antes del «—» — salvo en los ejemplos, donde ese
+// tramo es solo la palabra «Ejemplo» y el chip útil es lo que viene después.
+const chip = (chapter: string | undefined, title: string) => {
+  if (!chapter) return title;
+  const [head, ...resto] = chapter.split('—');
+  const h = head.trim();
+  return h === 'Ejemplo' && resto.length > 0 ? resto.join('—').trim() : h;
+};
 ---
 <PageLayout title={sub.label} description={sub.description}>
   <div class="mb-10">
@@ -37,7 +51,7 @@ const sorted = [...posts].sort((a, b) => {
             title={post.data.chapter}
             class="text-xs px-3 py-1.5 rounded border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors"
           >
-            {post.data.chapter ? post.data.chapter.split('—')[0].trim() : post.data.title}
+            {chip(post.data.chapter, post.data.title)}
           </a>
         ))}
       </div>

@@ -2,6 +2,7 @@
 title: "Ejemplo — Del corte modal al R₁: lo que el análisis devuelve y lo que la norma exige encima"
 description: "Una cepa arriostrada de dos niveles resuelta por la NCh 2369:2025: el peso sísmico de §5.1.2, por qué la irregularidad de masa la saca del análisis estático, el modal espectral con CQC, y las tres cláusulas que ningún software aplica solo. El análisis entrega 599 kN de corte basal y se diseña con 500 kN, porque el máximo de §5.13 recorta un 16,6 %. Y el R₁ que sale de la Ec. (14) es 3,38, no el 5 de la Tabla 7 — un 32 % menos en el multiplicador del diseño por capacidad."
 pubDate: 2026-08-10
+updatedDate: 2026-08-12
 tags: ["nch2369", "ejemplo", "análisis modal espectral", "corte basal", "R1", "espectro de diseño", "SAP2000", "sísmica", "marcos arriostrados"]
 subsection: "nch2369"
 chapter: "Ejemplo — Del corte modal al R₁ efectivo"
@@ -442,7 +443,7 @@ Hasta acá todo es norma. Lo que sigue es oficio, y es donde la cadena se corta 
    la curva en el formato del programa: se tabula punto a punto.
 3. **El factor de escala del caso, en unidades de aceleración.** Si la función se ingresó
    adimensional —en fracción de $g$, que es lo natural leyendo la Ec. (1a)— el `Scale Factor` del
-   caso es $g$ en las unidades del modelo: 9,81 m/s² o 9 810 mm/s². Es el error que produce
+   caso es $g$ en las unidades del modelo: 9,80665 m/s² o 9 807 mm/s². Es el error que produce
    cortes basales absurdos y no da ninguna alarma.
 4. **`Modal Combination: CQC`** — §5.6.3 lo pide por nombre, «Superposición Cuadrática Completa». El
    amortiguamiento de esa combinación es $\xi = 0{,}02$, no el 5 % que viene por omisión, y su único
@@ -513,22 +514,29 @@ Los ocho son de proceso, no de aritmética, y ninguno lo caza revisar los result
 produce un cálculo que cuadra consigo mismo.
 
 <Note type="warning" title="Dónde termina este ejemplo, y qué sigue">
-Acá se cierra la fuerza. Falta el otro lado del bucle: **los desplazamientos de la cláusula 6**, que
-no se calculan con nada de lo que se hizo acá.
+Acá se cierra la fuerza. Queda el otro lado del bucle: **los desplazamientos de la cláusula 6**,
+que no se verifican con ninguno de los tres cortes de este ejemplo — la cláusula 6 reusa los
+modos, pero cambia el espectro.
 
 §6.1 los estima con el **espectro de referencia** —el de la Ec. (3), sin dividir por $R^*$—,
 corregido por amortiguamiento y ponderado por $I$. Para esta cepa eso significa una demanda de
 desplazamiento $R^* = 3{,}38$ veces la que daría el espectro de diseño. Y como ni el aumento de
-§5.12 ni la reducción de §5.13 se aplican a desplazamientos, el corte con que se verifica la deriva
-no es ninguno de los tres números de este ejemplo.
+§5.12 ni la reducción de §5.13 se aplican a desplazamientos, esa verificación es un cálculo
+aparte.
 
-Esa verificación ya está hecha, en el
-[ejemplo de las deformaciones de la torre mixta](/apuntes/ejemplo-torre-deformaciones-nch2369):
-ahí se recorren §6.1 a §6.4 completas, y su sección final rehace **esta cepa** a mano con el
-espectro de referencia — derivas de 9,9 y 5,2 mm contra los 60 mm de §6.3: cumple usando el 16 %.
-La moraleja del par de ejemplos: en una estructura arriostrada la cláusula 6 confirma; en un marco
-de momento, dimensiona.
+Ya está hecha, en el [ejemplo de las deformaciones](/apuntes/ejemplo-torre-deformaciones-nch2369)
+de una torre mixta —marco de momento en una dirección, arriostrada en la otra, presentada en
+[el ejemplo intermedio](/apuntes/ejemplo-torre-sismica-nch2369)—: ahí se recorren §6.1 a §6.4
+completas, y su sección final rehace **esta cepa** a mano con estos mismos modos — derivas de 9,9
+y 5,2 mm contra los 60 mm de §6.3: cumple usando el 16 %. La moraleja del par de ejemplos: en una
+estructura arriostrada la cláusula 6 confirma; en un marco de momento, dimensiona.
 </Note>
+
+La cadena completa de este ejemplo —peso sísmico, irregularidad, espectro, CQC, banda, $R_1$, la
+demanda de la diagonal y hasta la deriva del Note anterior— se puede rehacer en vivo:
+**[abrir la planilla en el canvas](/herramientas/canvas?planilla=ejemplo-analisis-sismico-cepa-nch2369)**,
+con los modos del 2 GDL declarados como dato y los veredictos recalculándose al cambiar cualquier
+número.
 
 ## El hilo, en una frase
 

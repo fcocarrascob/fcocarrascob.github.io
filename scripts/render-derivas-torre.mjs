@@ -53,8 +53,10 @@ const G = 9.80665; // m/s²
 
 // Derivas de entrepiso [mm] con el espectro de referencia de §6.1 (CQC de
 // derivas modales; case09 rukan ↔ SAP2000, error < 0,01 % en desplazamientos).
-const DERIVAS_X = [9.6, 10.1, 6.4];
-const DERIVAS_Y = [112.2, 169.5, 112.1];
+// Sin redondear: los cocientes contra el límite se calculan de estos valores
+// y deben cuadrar con la tabla del post (169,469/60 = 2,824 → 2,82).
+const DERIVAS_X = [9.561, 10.121, 6.368];
+const DERIVAS_Y = [112.221, 169.469, 112.137];
 const LIMITE = 60;      // 0,015·h con h = 4 000 mm (§6.3)
 const LIMITE_X2 = 120;  // la excepción de §6.3: límites ×2
 
@@ -216,7 +218,7 @@ function figuraSd() {
   </defs>
   <rect width="1000" height="500" fill="#ffffff"/>
   <text x="500" y="28" font-size="15" text-anchor="middle" fill="#222" font-weight="bold">El espectro de desplazamiento: por qué la deriva se arregla con rigidez, y cuánta</text>
-  <text x="500" y="47" font-size="12" text-anchor="middle" fill="${SUAVE}">S_d(T) = S_a(T)·(T/2π)² sobre el espectro de referencia de §6.1 (zona 3, suelo D, ξ = 0,02, I = 1,0)</text>
+  <text x="500" y="47" font-size="12" text-anchor="middle" fill="${SUAVE}">S_d(T) = S_a(T)·g·(T/2π)², con S_a en unidades de g, sobre el espectro de referencia de §6.1 (zona 3, suelo D, ξ = 0,02, I = 1,0)</text>
   ${marco.join('\n  ')}
   <polyline points="${curva}" fill="none" stroke="${TINTA}" stroke-width="2.6"/>
   ${punto(T_STAR_Y, sdY, ROJO, `T*_Y = ${COMA(T_STAR_Y, 3)} s → ${COMA(sdY, 0)} mm`, 'start', 12, -6)}
