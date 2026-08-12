@@ -1223,6 +1223,53 @@ post 0 y acá.
 posts publicados, no su contenido. Para los posts 3, 5 y 9 —que también tienen antecesores— hay que
 leer las secciones completas antes de fijar la tesis, no después.
 
+### 5.42 Post 3 — el deslinde, hecho ANTES esta vez, y qué queda como tesis
+
+Aplicando la lección de §5.41, se leyó entero el antecesor antes de escribir nada.
+**`apuntes/nch2369-panorama-y-combinaciones.mdx`** (secciones 1 a 4) ya agota:
+
+- las cuatro combinaciones de **§4.5.1** (dos ASD, dos LRFD), escritas con `Equation`;
+- **`SO` y `SA`** como las dos cargas que NCh3171 no tiene, y el factor **`a`** con su Tabla C-2;
+- **§4.5.2 completa**: las tres permutaciones 100/30/30, todos los signos, y el argumento de que
+  `E_z` está adentro y no es un caso aparte;
+- el **factor 1,5** del Anexo B;
+- las categorías y el `I`.
+
+O sea, la tesis que el plan asignaba al post 3 —«NCh3171 y NCh2369 §4.5 no son listas alternativas»
+y «§4.5.2 es 100/30/30»— **está publicada**.
+
+**Lo que queda como tesis nueva del post 3**, todo con hallazgo propio en esta memoria:
+
+| # | Qué | Dónde |
+|---|---|---|
+| 1 | **NCh3171 cede por escrito**: «Cuando las normas de diseño sísmico consideren otras combinaciones… éstas prevalecen». El panorama publicado documenta la remisión en el sentido NCh2369→NCh3171; **la de vuelta no está**. Y la diferencia es un **40 %** en el término sísmico (1,4E contra 1,0E) | §5.20 |
+| 2 | **La excepción 9.1 f) quedó colgando**: cita «NCh2369:**2003**, 4.5, combinación (ii), factor b = 1,4», y la edición 2025 no tiene ni esa combinación ni ese factor. De ahí sale el mito del «1,4 de §4.5 para conexiones» | §5.21 |
+| 3 | **Dos normas independientes** exigen estudio especial para este sitio: NCh2369 §4.5.1 (alta montaña) y NCh3171 §9.1.1 (zona montañosa), esta última con el piso de «no menores que las originales». La «deuda de NCh431» es en realidad lo que la norma manda hacer | §5.1, §5.22 |
+| 4 | **Sismo y viento no se combinan** (§9.1.1 y §9.2.1), que es la regla que poda el árbol | §5.22 |
+| 5 | **La errata de numeración del ASD**: §9.2.2 cita «(5), (6) y (7)» y §9.2.1 numera 5a/5b y 6a/6b. Al implementar hay que decidir y declarar qué es «(6)» | §5.23 |
+| 6 | **El árbol real**: 11 estados → **79** combinaciones (63 + 12 + 4), con la aritmética de cada rama. Y por qué la sísmica son **12 y no 48**: SAP aplica los casos espectrales con signo ± automático, así que solo se enumera el signo de `E_z`, que es estático | §6.2, script `combos` |
+| 7 | **La envolvente**: la nieve desbalanceada gobierna el dintel medio, y al arriostramiento lo gobierna el sismo | §5.37 |
+
+**Estado**: figuras hechas y miradas (`npm run figuras:galpon-combos` →
+`arbol-de-combinaciones.svg` y `quien-gobierna.svg`, en
+`public/ejemplo-galpon-altiplano-cargas-combinaciones/`). **Falta la prosa del post, su auditoría
+y su planilla.** Los datos que la prosa necesita, ya medidos del modelo:
+
+| | kN |
+|---|---|
+| `DEAD` | 233,657226 |
+| `DSD` | 302,963865 |
+| **D total** | **536,621091** |
+| `SBAL` | 691,2 (= 1,20 × 576, exacto) |
+| `SUNBI` | 518,4 (= 0,75 × `SBAL`) |
+| `LR` | 172,8 |
+| `WTXP` | Fz −192,082392 · Fx −81,939439 |
+| `WLYP` | Fz −185,722047 · Fx +10,205652 |
+| `WPI` | Fz −57,243097 |
+
+Linealidad verificada contra `Results.BaseReact`: `1,4·D = 751,269527` y
+`1,2·D + 1,6·S = 1749,865309`, ambas a **4·10⁻⁷ kN** de la cuenta a mano.
+
 ## 6. Estado de la serie
 
 ### 6.1 Fase 0 — sprint de PDF

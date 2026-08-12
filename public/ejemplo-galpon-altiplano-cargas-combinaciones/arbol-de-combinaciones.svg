@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1000" height="610" fill="#ffffff"/>
+  <text x="500" y="30" font-size="15.5" text-anchor="middle" fill="#222" font-weight="bold">De once estados de carga a 79 combinaciones, y de dos normas que se remiten entre sí</text>
+  <text x="500" y="50" font-size="12" text-anchor="middle" fill="#666">NCh 3171 pone el andamio de gravedad y viento · NCh 2369 §4.5 reemplaza la rama sísmica · sismo y viento no actúan a la vez (§9.1.1)</text>
+  <text x="70" y="104" font-size="12.5" fill="#222" font-weight="bold">A · Gravedad y viento — NCh 3171:2017 §9.1.1</text>
+  <text x="70" y="122" font-size="10.5" fill="#666">Con L = 0 (sin plataformas) y L_r = 0,30 kPa siempre menor que S = 1,20 kPa, la sobrecarga de techo no sobrevive a ninguna combinación donde la nieve esté.</text>
+  <text x="70" y="163.0" font-size="11" fill="#333" font-family="Consolas, monospace">(1)  1,4 D</text>
+  <rect x="280" y="150.0" width="9.6" height="20" fill="#1b4a6e" fill-opacity="0.30" stroke="#1b4a6e" stroke-width="1.3"/>
+  <text x="297.6" y="164.0" font-size="11.5" fill="#1b4a6e" font-weight="bold">1</text>
+  <text x="319.6" y="164.0" font-size="10" fill="#666">una sola</text>
+  <text x="70" y="197.0" font-size="11" fill="#333" font-family="Consolas, monospace">(2)  1,2 D + 0,5 S</text>
+  <rect x="280" y="184.0" width="28.8" height="20" fill="#2d6b9c" fill-opacity="0.30" stroke="#2d6b9c" stroke-width="1.3"/>
+  <text x="316.8" y="198.0" font-size="11.5" fill="#2d6b9c" font-weight="bold">3</text>
+  <text x="338.8" y="198.0" font-size="10" fill="#666">3 casos de nieve</text>
+  <text x="70" y="231.0" font-size="11" fill="#333" font-family="Consolas, monospace">(3a) 1,2 D + 1,6 S</text>
+  <rect x="280" y="218.0" width="28.8" height="20" fill="#2d6b9c" fill-opacity="0.30" stroke="#2d6b9c" stroke-width="1.3"/>
+  <text x="316.8" y="232.0" font-size="11.5" fill="#2d6b9c" font-weight="bold">3</text>
+  <text x="338.8" y="232.0" font-size="10" fill="#666">3 casos de nieve</text>
+  <text x="70" y="265.0" font-size="11" fill="#333" font-family="Consolas, monospace">(3b) 1,2 D + 1,6 S + 0,8 W</text>
+  <rect x="280" y="252.0" width="230.8" height="20" fill="#1c7c3c" fill-opacity="0.30" stroke="#1c7c3c" stroke-width="1.3"/>
+  <text x="518.8" y="266.0" font-size="11.5" fill="#1c7c3c" font-weight="bold">24</text>
+  <text x="540.8" y="266.0" font-size="10" fill="#666">3 × 4 × 2</text>
+  <text x="70" y="299.0" font-size="11" fill="#333" font-family="Consolas, monospace">(4)  1,2 D + 1,6 W + 0,5 S</text>
+  <rect x="280" y="286.0" width="230.8" height="20" fill="#1c7c3c" fill-opacity="0.30" stroke="#1c7c3c" stroke-width="1.3"/>
+  <text x="518.8" y="300.0" font-size="11.5" fill="#1c7c3c" font-weight="bold">24</text>
+  <text x="540.8" y="300.0" font-size="10" fill="#666">3 × 4 × 2</text>
+  <text x="70" y="333.0" font-size="11" fill="#333" font-family="Consolas, monospace">(6)  0,9 D + 1,6 W</text>
+  <rect x="280" y="320.0" width="76.9" height="20" fill="#1c7c3c" fill-opacity="0.30" stroke="#1c7c3c" stroke-width="1.3"/>
+  <text x="364.9" y="334.0" font-size="11.5" fill="#1c7c3c" font-weight="bold">8</text>
+  <text x="386.9" y="334.0" font-size="10" fill="#666">4 × 2</text>
+  <line x1="70" y1="358.0" x2="560" y2="358.0" stroke="#d1d5db" stroke-width="1"/>
+  <text x="70" y="380.0" font-size="12" fill="#222" font-weight="bold">Subtotal gravedad y viento: 63</text>
+  <text x="70" y="398.0" font-size="10.5" fill="#666">Las (5), (7) y (8) de NCh 3171 caen: la (5) es la sísmica, y esa rama la reemplaza NCh 2369.</text>
+  <text x="70" y="432.0" font-size="12.5" fill="#222" font-weight="bold">B · Sismo — NCh 2369:2025 §4.5.1, con la simultaneidad de §4.5.2</text>
+  <text x="70" y="450.0" font-size="11" fill="#333" font-family="Consolas, monospace">1,2 D + 0,2 S + E   y   0,9 D + E</text>
+  <text x="70" y="474.0" font-size="11" fill="#333">3 ecuaciones de simultaneidad × 2 signos de la vertical × 2 bases gravitacionales =</text>
+  <rect x="470.0" y="460.0" width="115.4" height="20" fill="#a8641b" fill-opacity="0.30" stroke="#a8641b" stroke-width="1.3"/>
+  <text x="593.4" y="474.0" font-size="11.5" fill="#a8641b" font-weight="bold">12</text>
+  <text x="70" y="498.0" font-size="11" fill="#333">Rama ilustrativa con R = 5, para comparar (2 ecuaciones × 2 signos) =</text>
+  <rect x="470.0" y="484.0" width="38.5" height="20" fill="#a8641b" fill-opacity="0.14" stroke="#a8641b" stroke-width="1.1" stroke-dasharray="4 3"/>
+  <text x="516.5" y="498.0" font-size="11.5" fill="#a8641b" font-weight="bold">4</text>
+  <line x1="70" y1="514.0" x2="770" y2="514.0" stroke="#333" stroke-width="1.5"/>
+  <text x="70" y="538.0" font-size="14" fill="#222" font-weight="bold">TOTAL: 79 combinaciones LRFD</text>
+  <rect x="640" y="150" width="300" height="196" fill="#faf7f2" stroke="#a8641b" stroke-width="1.2"/>
+  <text x="656" y="176" font-size="11.5" fill="#222" font-weight="bold">Por qué la rama sísmica son 12</text>
+  <text x="656" y="196" font-size="10.5" fill="#222" font-weight="bold">y no 48</text>
+  <text x="656" y="220" font-size="10.5" fill="#666">§4.5.2 pide las tres ecuaciones con</text>
+  <text x="656" y="234" font-size="10.5" fill="#666">TODOS los signos: 3 × 2³ × 2 = 48.</text>
+  <text x="656" y="256" font-size="10.5" fill="#666">Pero SAP aplica un caso espectral con</text>
+  <text x="656" y="270" font-size="10.5" fill="#666">signo ± automático y reporta Máx/Mín.</text>
+  <text x="656" y="284" font-size="10.5" fill="#666">Enumerar a mano los signos de E_x y</text>
+  <text x="656" y="298" font-size="10.5" fill="#666">E_y los duplicaría, sin agregar nada.</text>
+  <text x="656" y="320" font-size="10.5" fill="#222" font-weight="bold">Solo se enumera el signo de E_z,</text>
+  <text x="656" y="334" font-size="10.5" fill="#222" font-weight="bold">que es un caso estático.</text>
+  <rect x="640" y="366" width="300" height="152" fill="#f5f8fa" stroke="#1b4a6e" stroke-width="1.2"/>
+  <text x="656" y="392" font-size="11.5" fill="#222" font-weight="bold">El assert que no depende del motor</text>
+  <text x="656" y="414" font-size="10.5" fill="#666">Reacción vertical total, en kN:</text>
+  <text x="656" y="436" font-size="10.5" fill="#333" font-family="Consolas, monospace">D = 536,621   S = 691,2</text>
+  <text x="656" y="456" font-size="10.5" fill="#333" font-family="Consolas, monospace">1,4·D      = 751,270</text>
+  <text x="656" y="472" font-size="10.5" fill="#333" font-family="Consolas, monospace">1,2·D+1,6·S = 1749,865</text>
+  <text x="656" y="496" font-size="10.5" fill="#666">SAP devuelve lo mismo a 4·10⁻⁷ kN.</text>
+  <text x="656" y="510" font-size="10.5" fill="#666">Si no, la combinación no es lineal.</text>
+  <text x="70" y="586" font-size="10.5" fill="#666">Estructura y factores: galpon_altiplano_combos.py, contrastado contra NCh 3171:2017 §9.1.1 y NCh 2369:2025 §4.5.1 y §4.5.2 en página rasterizada.</text>
+  <text x="70" y="600" font-size="10.5" fill="#666">Reacciones basales y chequeo de linealidad: Results.BaseReact del modelo verificado (SAP2000 v27.1, 2026-08-12).</text>
+</svg>
