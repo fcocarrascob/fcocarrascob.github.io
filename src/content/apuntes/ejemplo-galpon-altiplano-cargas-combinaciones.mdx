@@ -1,0 +1,307 @@
+---
+title: "Ejemplo — Estados y combinaciones: las dos normas que se remiten entre sí"
+description: "Los once estados de carga del galpón del altiplano y las 79 combinaciones LRFD que salen de ellos. NCh 3171 pone el andamio de gravedad y viento y cede por escrito la rama sísmica; NCh 2369 la reemplaza con factor 1,0 y no 1,4, y la diferencia entre creerle a una o a la otra es un 40 %. Más la excepción de NCh 3171 que quedó colgando de una edición muerta, la nieve que no es una deuda sino lo que la norma manda estudiar, y por qué la rama sísmica son 12 combinaciones y no 48."
+pubDate: 2026-08-12
+tags: ["nch2369", "nch3171", "combinaciones de carga", "LRFD", "ejemplo", "galpón", "nieve", "cargas", "serie galpón"]
+subsection: "nch2369"
+chapter: "Ejemplo — Estados y combinaciones: NCh 3171 §9 y NCh 2369 §4.5"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.5 y 5.1 y Anexo B (normativo) · NCh 3171:2017 (2.ª ed.), cláusula 9"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Tercer post de la serie del [galpón del altiplano](/blog/galpon-altiplano-la-serie/). El
+[primero](/apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432) dejó cerrada la presión de
+velocidad en $q_h = 0{,}650$ kPa. Acá esa presión —y todo lo demás— se convierte en **once estados
+de carga y 79 combinaciones**, y en el camino aparecen tres cosas que no estaban en el guion.
+
+<Note type="info" title="Lo que este post no rehace">
+[**NCh 2369 — el contrato: alcance, desempeño y combinaciones**](/apuntes/nch2369-panorama-y-combinaciones)
+ya resuelve la teoría completa: las cuatro combinaciones de §4.5.1 (dos ASD, dos LRFD), las cargas
+$SO$ y $SA$ que NCh 3171 no tiene, el factor $a$ con su Tabla C-2, **la regla de simultaneidad de
+§4.5.2 entera** —las tres permutaciones 100/30/30, todos los signos, y por qué $E_z$ está adentro y
+no es un caso aparte— y el factor 1,5 del Anexo B.
+
+Nada de eso se repite. Acá se **arma** un caso concreto, y lo que aparece al armarlo es otra cosa:
+qué pasa en la frontera entre las dos normas, y qué queda cuando se poda el árbol.
+</Note>
+
+## 1. Los once estados
+
+El modelo tiene once estados de carga, ninguno de ellos una combinación. Estas son sus resultantes,
+leídas del propio modelo con `Results.BaseReact` — que es el primer chequeo, porque cada una tiene
+que coincidir con una cuenta a mano de dos líneas.
+
+| Estado | Qué es | Resultante |
+|---|---|---|
+| `DEAD` | peso propio del acero, lo pone el motor | $F_z = 233{,}657$ kN |
+| `DSD` | muerta superpuesta: cubierta, costaneras, instalaciones, revestimiento | $F_z = 302{,}964$ kN |
+| `LR` | sobrecarga de techo, 0,30 kPa | $F_z = 172{,}800$ kN |
+| `SBAL` | nieve balanceada, 1,20 kPa sobre proyección horizontal | $F_z = 691{,}200$ kN |
+| `SUNBI`, `SUNBD` | nieve desbalanceada, 100 % / 50 % por faldón | $F_z = 518{,}400$ kN |
+| `WTXP`, `WTXN` | viento transversal, los dos sentidos | $F_z = -192{,}082$ · $F_x = -81{,}939$ kN |
+| `WLYP`, `WLYN` | viento longitudinal, los dos sentidos | $F_z = -185{,}722$ · $F_x = +10{,}206$ kN |
+| `WPI` | presión interna, $GC_{pi} = \pm 0{,}18$ | $F_z = -57{,}243$ kN |
+
+Tres cosas se leen directo de esa tabla.
+
+**La nieve pesa 691,2 kN y toda la carga muerta pesa 536,6.** La nieve es **1,29 veces** todo el
+peso propio más la muerta superpuesta juntos, y **3,4 veces** la carga muerta de techo sola. En un
+galpón de altura la nieve no es una carga más: es *la* carga.
+
+**El viento levanta.** Los cuatro estados de viento dan $F_z$ negativo, y la presión interna suma
+otros 57 kN de succión. Es lo que hace que la combinación $0{,}9D + 1{,}6W$ —la que quita
+deliberadamente la gravedad que estabiliza— sea la que pone tracción en el dintel.
+
+**Y `LR` no va a sobrevivir.** Con 172,8 kN contra 691,2 de nieve, la sobrecarga de techo pierde en
+toda combinación donde la nieve esté presente. Se declara, se calcula, y se muere en la poda. Que
+sea irrelevante es la enseñanza, no un defecto del ejemplo.
+
+<Note type="tip" title="El assert que no necesita ningún motor">
+Cada resultante de arriba se contrasta contra la carga por el área que le toca. `SBAL`:
+$1{,}20 \times 576{,}0 = 691{,}2$ kN, exacto. `LR`: $0{,}30 \times 576{,}0 = 172{,}8$, exacto.
+`SUNBI`: $(1{,}0 + 0{,}5)/2 \times 691{,}2 = 518{,}4$, exacto.
+
+Los once estados cierran con **residuo 0,0**. Ese chequeo tonto —sumar reacciones y compararlas
+contra presión por área— cazó un error de carga de muro que ninguna revisión de resultados habría
+encontrado, porque el modelo devolvía números perfectamente plausibles.
+</Note>
+
+## 2. Quién manda: las dos remisiones
+
+Acá está la pregunta que hay que contestar antes de escribir una sola combinación, y que se contesta
+leyendo **las dos normas**, porque cada una remite a la otra.
+
+**NCh 2369 remite hacia afuera.** Su §4.5.1 arranca diciendo que las combinaciones **sin** acción
+sísmica se definen según NCh 3171. Eso ya estaba dicho en el post del contrato.
+
+**Y NCh 3171 remite de vuelta**, en la primera página de su §9:
+
+> «Cuando las normas de diseño sísmico consideren **otras combinaciones** para casos particulares de
+> cargas, **éstas prevalecen**.»
+
+Además se cuida de no definir la acción sísmica: «Para la definición específica del efecto del
+terremoto, $E$, ver normas de diseño según corresponda». O sea que **NCh 3171 no define $E$**, lo
+delega.
+
+Ninguna de las dos es completa por sí sola, y la frontera importa. Para el **mismo** $E$:
+
+| | LRFD | ASD |
+|---|---|---|
+| **NCh 3171** §9.1.1 (5) y §9.2.1 (5b) | $1{,}2D + \mathbf{1{,}4E} + L + 0{,}2S$ | $D + \mathbf{1{,}0E}$ |
+| **NCh 2369** §4.5.1 | $1{,}2D + aL + SO + SA + \mathbf{1{,}0E}$ | $D + 0{,}75aL + 0{,}75SO + 0{,}75SA + \mathbf{0{,}70E}$ |
+
+Meter el $E$ de NCh 2369 —que ya viene con su $I$ adentro y dividido por su $R^*$— en la
+combinación (5) de NCh 3171 lo amplificaría **un 40 % de más**. Y es un error fácil de cometer,
+porque la combinación (5) es la que uno tiene en la cabeza de cualquier edificio.
+
+El reparto que queda, y que es el que se implementó:
+
+- **Gravedad y viento** → NCh 3171 §9.1.1, combinaciones (1) a (7).
+- **Sismo** → NCh 2369 §4.5.1, que reemplaza esa rama entera, con $E$ a factor **1,0**.
+- **Simultaneidad direccional** → NCh 2369 §4.5.2.
+
+## 3. El «1,4» que quedó colgando de una edición muerta
+
+Circula un «1,4 de la §4.5 de NCh 2369» que se atribuye al diseño de conexiones. No existe. Lo que
+existe es la **excepción f) de §9.1** de NCh 3171:2017:
+
+> «En el caso de la combinación (ii) del método de diseño por cargas últimas de **NCh 2369:2003,
+> 4.5**, el factor "b" de amplificación de la carga sísmica para el diseño de estructuras de acero
+> se debe considerar igual a **1,4**.»
+
+Tres correcciones en una sola frase:
+
+1. El 1,4 está en **NCh 3171**, no en NCh 2369 §4.5.
+2. **No tiene nada que ver con conexiones**: es el factor «b» de amplificación de la carga sísmica.
+3. Remite a **NCh 2369:2003**, edición que la de 2025 reemplazó. La §4.5 de la 2025 **no tiene** una
+   «combinación (ii)» ni un factor «b».
+
+O sea: **la excepción f) apunta a una cláusula que ya no existe**. Es un cabo suelto entre dos
+normas que se actualizaron en fechas distintas, y explica de dónde viene el mito. Al implementar hay
+que decidir qué se hace con ella —acá se declara inaplicable, porque su referente desapareció— pero
+sobre todo hay que **no confundirla con el 0,7$R_1$ de capacidad**, que es otra cosa y sí está
+vigente.
+
+## 4. La nieve no es una deuda: es lo que la norma manda estudiar
+
+NCh 431 (nieve) y NCh 1537 (sobrecargas) no están disponibles como PDF en este equipo, así que
+ningún valor de nieve lleva número de cláusula al lado. Eso parece una deuda del ejemplo. **No lo
+es**, y hay dos textos normativos independientes que lo dicen.
+
+**NCh 2369 §4.5.1** exige, para proyectos de alta montaña, estudios específicos que definan el nivel
+de las cargas de interés «por ejemplo nieve o viento» *y la forma en que se combinan con el sismo*.
+
+**Y NCh 3171 §9.1.1** cierra con una regla propia:
+
+> «En zonas donde la presencia de viento y nieve no es eventual, por ejemplo, **zonas montañosas** o
+> ubicadas en las regiones XI o XII, se deben estudiar combinaciones especiales que reemplacen las
+> combinaciones (3b), (4) y (5), anteriormente indicadas, **pero que no sean menores que las
+> originales**.»
+
+Dos normas, por dos motivos distintos —altura y zona montañosa— pidiendo lo mismo. A 3 800 m,
+declarar $S$ desde un estudio de sitio deja de ser una carencia y pasa a ser el procedimiento.
+
+Con dos consecuencias prácticas que conviene no perder de vista:
+
+- La exigencia es que las combinaciones especiales **no sean menores que las originales**. Las (3b),
+  (4) y (5) siguen siendo el **piso**; el estudio solo puede subir.
+- La nieve **desbalanceada** —100 % en un faldón y 50 % en el otro— entra por esa puerta. Se redacta
+  como regla del estudio de sitio, **jamás** como regla normativa chilena, porque no lo es. Y va a
+  terminar gobernando algo.
+
+### La nieve en el peso sísmico
+
+Queda la pregunta cara: ¿participa la nieve en la masa sísmica? Son 691,2 kN contra 536,6 de carga
+muerta, así que la respuesta no es un detalle.
+
+**NCh 2369 §5.1.2 da un criterio, no un número.** Y el número lo pone, por coherencia interna, la
+propia combinación (5) de NCh 3171, que valoriza la nieve concurrente con el sismo en $0{,}2S$. De
+ahí sale la masa sísmica adoptada:
+
+<Equation>
+$$P = D + 0{,}20\,S = 536{,}621 + 0{,}20 \times 691{,}2 = \mathbf{674{,}861\ \text{kN}}$$
+</Equation>
+
+Quien arme la masa «con peso propio y nada más» se queda **un 26 % corto** antes de empezar a
+calcular.
+
+## 5. La poda, y el árbol que queda
+
+<Figure
+  src="/ejemplo-galpon-altiplano-cargas-combinaciones/arbol-de-combinaciones.svg"
+  alt="Diagrama del árbol de combinaciones. Panel A, gravedad y viento por NCh 3171 sección 9.1.1, con seis ramas y una barra por rama proporcional a su cantidad: la (1) 1,4 D es una sola; la (2) 1,2 D más 0,5 S son tres, por los tres casos de nieve; la (3a) 1,2 D más 1,6 S son otras tres; la (3b) 1,2 D más 1,6 S más 0,8 W son veinticuatro, que salen de tres nieves por cuatro vientos por dos signos de presión interna; la (4) 1,2 D más 1,6 W más 0,5 S son otras veinticuatro por la misma cuenta; y la (6) 0,9 D más 1,6 W son ocho, cuatro vientos por dos signos. Subtotal sesenta y tres, con la nota de que las combinaciones (5), (7) y (8) de NCh 3171 caen porque la (5) es la sísmica y esa rama la reemplaza NCh 2369. Panel B, sismo por NCh 2369 sección 4.5.1 con la simultaneidad de la 4.5.2, con las dos combinaciones 1,2 D más 0,2 S más E y 0,9 D más E: tres ecuaciones de simultaneidad por dos signos de la vertical por dos bases gravitacionales dan doce, más cuatro de una rama ilustrativa con R igual a 5 dibujada en trazos. Total setenta y nueve combinaciones LRFD. A la derecha, dos recuadros: uno explica por qué la rama sísmica son doce y no cuarenta y ocho, porque SAP aplica los casos espectrales con signo más menos automático y solo hay que enumerar el signo de E sub z que es estático; el otro muestra el chequeo de linealidad, con la carga muerta total de 536,621 kilonewton, la nieve de 691,2, y las combinaciones 1,4 D igual 751,270 y 1,2 D más 1,6 S igual 1749,865, que SAP devuelve iguales a cuatro por diez a la menos siete kilonewton."
+  caption="Las 79 no se enumeran a mano: cada rama es una multiplicación. Y las que no aparecen —la (5), la (7) y la (8) de NCh 3171— son tan informativas como las que sí."
+/>
+
+Cuatro reglas podan el árbol antes de escribir nada:
+
+1. **$L = 0$.** No hay plataformas ni entrepisos, así que las combinaciones donde la sobrecarga de
+   uso es protagonista se caen solas.
+2. **$L_r$ nunca gana.** Con 0,30 contra 1,20 kPa, la sobrecarga de techo no sobrevive a ninguna
+   combinación donde $S$ esté. Como $S$ está en todas las que importan, $L_r$ no aparece en
+   ninguna.
+3. **Sismo y viento no actúan a la vez.** Lo dicen §9.1.1 y §9.2.1: «no es necesario considerar que
+   actúan simultáneamente». Esto solo elimina el producto cartesiano entre las dos familias, que
+   sería lo que realmente haría inmanejable la lista.
+4. **La (5) de NCh 3171 no se escribe**, porque es la sísmica y esa rama la reemplaza NCh 2369.
+
+Lo que queda son **63 combinaciones de gravedad y viento**, y su conteo es puramente multiplicativo:
+tres casos de nieve, cuatro de viento, dos signos de presión interna.
+
+### Por qué la rama sísmica son 12 y no 48
+
+§4.5.2 pide las tres ecuaciones de simultaneidad con **todos** los signos. Enumerado ingenuamente
+eso son $3 \times 2^3 \times 2 = 48$ combinaciones, con las dos bases gravitacionales.
+
+Pero hay un detalle de implementación que cambia la cuenta, y que conviene saber antes de escribir el
+script: **en una combinación lineal aditiva, SAP2000 aplica un caso espectral con signo $\pm$
+automático y reporta máximo y mínimo.** Enumerar a mano los signos de $E_x$ y $E_y$ los duplicaría
+sin agregar un solo resultado.
+
+El único que **sí** hay que enumerar es el signo de $E_z$, porque la vertical de §5.7.1 entró al
+modelo como un caso **estático**, no espectral. Quedan entonces:
+
+$$3\ \text{ecuaciones} \times 2\ \text{signos de } E_z \times 2\ \text{bases gravitacionales} = \mathbf{12}$$
+
+Más cuatro de una rama ilustrativa con $R = 5$, que se corre sobre el mismo modelo solo para
+comparar contra la ruta de diseño de §12.2 con $R = 4$. **Total: 79.**
+
+<Note type="warning" title="Este es el tipo de detalle que solo aparece implementando">
+La cuenta de 48 no está mal en la norma: está mal como *implementación*. Y el error de duplicar
+—escribir las 48— no daría resultados incorrectos, daría los mismos resultados dos veces, un
+tiempo de análisis mayor y una tabla de envolvente el doble de larga. Es el tipo de cosa que no se
+descubre leyendo la cláusula, sino contando lo que sale.
+</Note>
+
+## 6. La linealidad, que sí es un assert
+
+Una combinación lineal aditiva tiene que ser exactamente eso. Con las resultantes de la §1:
+
+$$1{,}4 \times 536{,}621091 = \mathbf{751{,}269527\ \text{kN}}$$
+
+$$1{,}2 \times 536{,}621091 + 1{,}6 \times 691{,}2 = \mathbf{1\,749{,}865309\ \text{kN}}$$
+
+SAP devuelve esos mismos valores a **$4 \times 10^{-7}$ kN**. No es un chequeo decorativo: si una
+combinación arrastrara un caso que no corresponde, o un factor mal tecleado, la reacción vertical
+total lo delataría de inmediato, y es la magnitud más barata de comparar que existe.
+
+## 7. La envolvente: quién gobierna de verdad
+
+<Figure
+  src="/ejemplo-galpon-altiplano-cargas-combinaciones/quien-gobierna.svg"
+  alt="Tabla de la envolvente sobre las 79 combinaciones, con una barra de color a la izquierda de cada fila que indica la familia de la combinación gobernante. Columna de alero: momento 633,284 kilonewton metro, gobierna G3A_B. Dintel de alero: momento menos 633,206, gobierna G3A_B. Dintel a media luz: momento 176,334, gobierna G3A_I, la nieve desbalanceada. Dintel en cumbrera: momento 207,932, gobierna G3A_B. Dintel en tracción: axial más 24,780 kilonewton, gobierna G6_LYNP. Puntal de alero: axial más 28,248, gobierna E2P_A. Media diagonal de muro: axial menos 39,895, gobierna E2P_A. Pilar de hastial: momento menos 23,432, gobierna G4_BLYPN. Al pie, la leyenda de las familias y dos notas: que la nieve desbalanceada gobierna el dintel a media luz, el caso que casi nadie corre y que ninguna norma chilena disponible obliga a correr porque entra por el estudio de sitio; y que a la diagonal de muro la gobierna el sismo y no el viento, con 39,895 kilonewton contra 34,233 de la envolvente de gravedad y viento, un 16,5 por ciento más."
+  caption="De las 79, solo cinco nombres distintos gobiernan algo. El resto se corre y no dimensiona nada — pero no se sabe cuáles hasta haberlas corrido todas."
+/>
+
+Con $S = 1{,}20$ kPa y el sismo dividido por $R^* = 4$, **la gravedad con nieve gana cómodo en toda
+la estructura principal**. La envolvente sísmica llega al **53 %** del momento de alero (337,165
+contra 633,284 kNm). Ese es el resultado esperable, y confirma lo que el comentario C12.2.1 de
+NCh 2369 dice de los galpones livianos: son estructuras «en los cuales los esfuerzos de viento son
+normalmente superiores a los sísmicos».
+
+Pero hay dos resultados que no eran los esperables.
+
+**La nieve desbalanceada gobierna el dintel a media luz.** `G3A_I` —el caso que casi nadie corre, y
+que **ninguna norma chilena disponible obliga a correr**, porque entra por la puerta del estudio de
+sitio— es el que pone el momento máximo en la mitad del faldón. Quien resuelva el galpón solo con
+nieve balanceada no se entera.
+
+**Y al arriostramiento lo gobierna el sismo, no el viento.** La compresión en la media diagonal de
+muro es de **39,895 kN** bajo `E2P_A`, contra **34,233 kN** de la envolvente de gravedad y viento:
+el sismo gana por **16,5 %**. Contraintuitivo, porque el sismo entra dividido por $R^*$ y el viento
+entra multiplicado por 1,6 sin dividir por nada. La explicación es que el período longitudinal del
+galpón cae en la meseta del espectro, y la dirección arriostrada se lleva 130,3 kN de corte basal
+contra 87,0 de la transversal. **Rigidizar castiga.**
+
+## 8. Dos cosas del ASD que cambian el trabajo, y una errata
+
+Este galpón se diseña por LRFD, pero el ASD hay que leerlo igual, porque es donde vive la
+verificación de servicio.
+
+**No hay aumento de tensiones admisibles.** El cierre de §9.2.1 lo prohíbe salvo que la norma de
+material lo justifique «por la rapidez o la duración de la carga». El clásico aumento de un tercio
+por viento o sismo **no aplica**: la reducción ya está metida en los factores 0,75 y 0,6 de las
+propias combinaciones. Aplicarlo además es contarlo dos veces.
+
+**El servicio tiene combinaciones propias.** El Anexo B de NCh 2369 reconoce que deformaciones,
+vibraciones y fatiga se verifican con combinaciones de servicio «en general equivalentes al método
+ASD», y §9.2.1 d) además permite **omitir las combinaciones (7) y (8)** en el cálculo de estabilidad
+de fundaciones y tensiones del suelo. Una plantilla de modelado que marque LRFD y ASD **ambos como
+combinaciones de resistencia**, y que nunca declare cuáles son de deflexión, está mezclando dos
+cosas que la norma separa.
+
+**Y hay una errata interna, confirmada en el impreso.** La §9.2.2 y la regla de cierre de §9.2.1
+citan «(5), (6) y (7)», pero **§9.2.1 numera 5a/5b y 6a/6b**: la norma remite a rótulos que no
+existen. Al implementar hay que decidir —y **declarar**— si «(6)» significa 6a, 6b o ambas. Para
+este caso importa, porque la regla de zona montañosa reemplaza «la combinación (6)», y **6b es
+justamente la que trae $0{,}75E + 0{,}75S$**: la única del ASD donde nieve y sismo conviven.
+
+## El hilo, en una frase
+
+**Las combinaciones de un galpón industrial chileno no salen de una lista: salen de dos normas que
+se remiten mutuamente, y hay que saber cuál manda en cada rama.** NCh 3171 pone el andamio de
+gravedad y viento y cede por escrito la rama sísmica; NCh 2369 la reemplaza con $E$ a factor 1,0, y
+creerle a la otra cuesta un 40 %. En el medio quedan un cabo suelto que apunta a una edición muerta,
+una nieve que dos normas mandan estudiar en vez de tabular, y un árbol de 79 combinaciones del que
+solo cinco dimensionan algo — pero no se sabe cuáles hasta correrlas todas.
+
+Lo que sigue en la serie es el modelo: cómo estos once estados se aplican sobre las barras, y por
+qué la costanera se queda afuera. El mapa está en [la serie](/blog/galpon-altiplano-la-serie/).
+
+<Note type="info" title="Trazabilidad">
+Cláusulas leídas de la página rasterizada del PDF: **NCh 2369:2025 (3.ª ed., 2025.05.28)** §4.5.1,
+§4.5.2, §5.1.2, §12.2 con su comentario C12.2.1, y el Anexo B (normativo); **NCh 3171:2017 (2.ª
+ed.)** §9.1.1 con sus excepciones a) a f), §9.2.1 con sus cuatro excepciones, y §9.2.2. El texto
+citado de la excepción 9.1 f) y de la regla de zona montañosa está transcrito literal.
+
+Las resultantes por estado y el chequeo de linealidad se leyeron del modelo verificado con
+`Results.BaseReact` (SAP2000 v27.1, 2026-08-12). Las dos figuras las genera
+`npm run figuras:galpon-combos`, y el conteo del árbol **se calcula** en el script desde las
+multiplicaciones de cada rama: ningún total está escrito a mano.
+
+$S$ y $L_r$ se declaran como dato del estudio de sitio, sin número de cláusula al lado, amparados
+por NCh 2369 §4.5.1 y NCh 3171 §9.1.1.
+</Note>
