@@ -1,0 +1,233 @@
+---
+title: "El galpón del altiplano: el caso, y la bitácora de la serie"
+description: "Un galpón industrial a dos aguas de 24 × 24 m en una faena minera a 3.800 m, construido de punta a punta: sitio, cargas, modelo, análisis y verificación miembro por miembro, con NCh432, NCh3171, NCh2369 y AISC 360-22, y con dos motores de cálculo que se vigilan entre sí. Este post es el mapa de los diez que vienen y la bitácora de lo que se va midiendo — incluidas las tres hipótesis del plan que ya se cayeron."
+pubDate: 2026-08-12
+updatedDate: 2026-08-12
+tags: ["galpón", "NCh2369", "NCh432", "NCh3171", "AISC 360", "peralte variable", "SAP2000", "Rukan", "OpenSeesPy", "serie"]
+section: "Sísmica"
+norm: "NCh2369:2025"
+---
+
+import Note from '../../components/content/Note.astro';
+
+## Por qué existe este post
+
+Lo que viene son **diez posts sobre un mismo galpón**, y van a quedar repartidos en tres lugares
+distintos del sitio: los de norma en `apuntes`, los de contraste entre motores en la serie de
+Rukan, y los de verificación de miembros en `acero`. Ninguna de esas tres galerías tiene forma de
+mostrar que son una sola historia, así que el índice tiene que vivir en algún lado. Vive acá.
+
+Y como el trabajo es incremental —primero se leen los PDF, después se arma el modelo, después se
+verifica cada miembro— este post hace además de **bitácora**: cada vez que una fase cierra se
+anota qué se midió, qué cerró y qué se cayó. Esa última parte es la interesante. De las tesis con
+las que arrancó el plan, **tres ya se cayeron contra los números**, y una de ellas se cayó *para
+mejor*.
+
+Si llegaste buscando un tema puntual, salta directo al [mapa](#el-mapa-los-diez-posts). Si quieres
+el caso, sigue leyendo.
+
+## El caso
+
+Galpón industrial a dos aguas para una faena minera de altiplano, a unos 3.800 m de altitud.
+
+```
+              cumbrera
+                 /\              pendiente 10°
+                /  \
+               /    \            flecha f = 2,12 m
+          ____/      \____
+         |                |
+         |                |      h alero = 8,0 m
+         |                |
+        ===              ===     bases articuladas
+         |<--- 24,0 m --->|
+
+  Largo: 4 vanos x 6,0 m = 24,0 m  (5 marcos)
+  Area en planta: 24,0 x 24,0 = 576,0 m2
+  Faldon: 12,0 / cos 10° = 12,185 m  ->  9 espacios de 1,354 m (costaneras)
+```
+
+- **Transversal**: marcos a momento, columna y dintel de **peralte variable**, bases articuladas.
+  Las bases articuladas son práctica corriente en Chile y son las que hacen interesante la deriva.
+- **Longitudinal**: arriostrado con crucería, más **arriostramiento continuo de techo** — que no es
+  decoración, es lo que decide qué fila de la Tabla 7 de NCh2369 te corresponde.
+- **Perfiles**: soldados, definidos **por planchas**. El área, las inercias, la constante torsional
+  y los módulos plásticos salen de primeros principios. Un miembro de peralte variable no está en
+  ningún catálogo, así que no se depende del ICHA para nada.
+
+### El sitio
+
+| | |
+|---|---|
+| Ubicación | comuna de Pica, Región de Tarapacá, ~3.800 m |
+| Sismo | **zona 2**, $A_r = 0{,}42\ g$ · suelo **B** · $\xi = 0{,}02$ (uniones soldadas) |
+| Viento | zona **I-B**, $V = 30$ m/s |
+| Topografía | cima 2D, $H = 40$ m, $L_h = 120$ m, con el galpón **en la cresta** |
+
+Esa loma no es un adorno: es la que produce el $K_{zt}$ del que vive el primer post.
+
+### Las cargas de proyecto
+
+<Note type="info" title="Se declaran, no se citan">
+NCh431 (nieve) y NCh1537 (sobrecargas) no están disponibles como PDF en este equipo, así que
+**ningún valor de nieve o de sobrecarga lleva número de cláusula al lado**. Y resulta que no lo
+necesita: **§4.5.1 de NCh2369** exige, para proyectos de alta montaña, estudios específicos que
+definan el nivel de las cargas de interés «por ejemplo nieve o viento» *y la forma en que se
+combinan con el sismo*. A 3.800 m, declarar `S` desde un estudio de sitio deja de ser una deuda y
+pasa a ser lo que la norma manda hacer.
+</Note>
+
+| Carga | Valor | Nota |
+|---|---|---|
+| **D superpuesta de techo** | 0,35 kPa | cubierta 0,12 + costaneras 0,06 + instalaciones colgadas 0,15 |
+| D de revestimiento de muro | 0,12 kPa | |
+| $L_r$ | 0,30 kPa | con la nieve encima no gobierna nunca, y **que sea irrelevante es la enseñanza** |
+| **S balanceada** | **1,20 kPa** sobre proyección horizontal | ≈ 3,4× la carga muerta de techo |
+| S desbalanceada | 100 % / 50 % por faldón | regla del estudio de sitio, jamás presentada como regla normativa |
+
+El peso propio del marco lo pone el motor, aparte. Separar `D` propia de `D` superpuesta es
+deliberado y tiene su motivo: es el antídoto de un defecto concreto que arrastran las plantillas de
+modelado, y que sale en el subproducto de la serie.
+
+## La regla del juego: predimensionar a ojo de obra, y dejar que falle
+
+Ninguna sección se eligió para que cumpliera. Se eligieron como se eligen en una cotización rápida,
+y cada post cierra con la iteración que arregla lo que no pasó y cuánto acero costó.
+
+| Miembro | Predimensionado | Falla esperada |
+|---|---|---|
+| Columna tapered | alma 6 mm, peralte 350 → 800 mm, alas 220×12 | $h/t_w$ fuera del límite de alma esbelta |
+| Dintel tapered | alma 6 mm, 800 → 350 mm, alas 220×12 | flexión bajo nieve · LTB del ala inferior bajo succión |
+| Diagonal longitudinal | 2L 75×75×6, $L = 10{,}0$ m | esbeltez fuera del límite de NCh2369 §8 |
+| Costanera | C 200×50×15×2,0 @ 1,50 m | flexión en el eje **débil** |
+
+## Cómo se verifica
+
+Tres reglas que se aplican a todo lo que aparece en la serie.
+
+**Todo número de norma se lee de la página rasterizada del PDF de la edición vigente.** No de
+memoria, no de una ficha, no de la capa de texto — que en un PDF de norma destruye las fracciones y
+convierte la $\phi$ en una `f`. Si un número no se pudo leer, no se escribe. Cada lectura queda
+registrada con su cláusula, su página impresa y la fecha en que se leyó.
+
+**Todo resultado se corre en dos motores.** SAP2000 por la OAPI, y
+[Rukan](https://github.com/fcocarrascob/rukan) sobre OpenSeesPy. Los dos comparten **solo los
+datos**; el ensamble, los autovalores y la combinación modal los hace cada uno por su cuenta. Es el
+mismo método de la
+[serie de la torre](/blog/rukan-verificacion-torre-r-por-direccion/), que cazó una trampa que
+inflaba la demanda un 23 % en silencio.
+
+**Y hay asserts que no dependen de ningún motor.** El más útil resultó el más tonto: sumar las
+reacciones de cada estado de carga y compararlas contra la resultante calculada a mano. Los once
+estados cierran a **residuo 0,0**, y ese chequeo cazó un error de carga de muro que ninguna
+revisión de resultados habría encontrado.
+
+## El mapa: los diez posts
+
+Los enlaces aparecen a medida que cada post se publica.
+
+| # | Post | Dónde | De qué va |
+|---|---|---|---|
+| 1 | El sitio: $K_{zt}$, $K_e$ y el camino longitudinal | `apuntes` · NCh432 | El aire enrarecido regala un 36 % de presión y la loma lo devuelve con creces. Quien aplica solo el $K_e$ que todos conocen diseña con la **mitad** de la presión |
+| 2 | El peralte variable y la convergencia | Rukan (8) | Prohibirse la sección no prismática de SAP para poder verificar. Y el prismático equivalente **no es conservador** |
+| 3 | Estados y combinaciones | `apuntes` · NCh2369 | NCh3171 y NCh2369 §4.5 no son listas alternativas: una **cede por escrito** ante la otra, y la diferencia es un 40 % en el término sísmico |
+| 4 | Modal espectral | Rukan (9) | El techo no es diafragma rígido. Y **39 de los primeros 60 modos son basura local**: el modo longitudinal de verdad está en el puesto 41 |
+| 5 | El techo elige el $R$, y la deriva cobra | `apuntes` · NCh2369 | La Tabla 7 clasifica el edificio, no la dirección. Con $R = 5$ el corte cae bajo el mínimo y la norma se lleva de vuelta el $R$ que prometió |
+| 6 | La envolvente | Rukan (10) | De 79 combinaciones, tres dimensionan. Y por qué rukan **no debe tener módulo de viento ni de nieve, nunca** |
+| 7 | Columna de peralte variable | `acero` · Cap. H | AISC 360-22 no tiene capítulo de peralte variable. La estación que falla **no es la del momento máximo** |
+| 8 | Dintel de peralte variable y el LTB | `acero` · Cap. F | $L_b$ salta de 1,354 a 6,0 m **de una combinación a otra**, porque el ala comprimida cambia de lado |
+| 9 | Costanera y la flexión biaxial | `acero` · Cap. F | El 17 % tangencial de la pendiente consume media capacidad. Y los tirantes no son un truco: son **la condición que hace aplicable la ecuación** |
+| 10 | Diagonal longitudinal | `acero` · Cap. E | Ni el viento ni el sismo la dimensionan: la dimensiona la **esbeltez local sísmica** |
+| — | Los siete defectos de una plantilla de modelado | `blog` · SAP2000 | Subproducto: siete errores silenciosos en un script de modelado base, con el galpón de banco de pruebas |
+
+### Lo que la serie no rehace
+
+Varias piezas de esto ya están publicadas y los posts nuevos enlazan en vez de repetir:
+[el galpón por la cláusula 7 de NCh432](/apuntes/ejemplo-viento-galpon-nch432),
+[el panorama de cargas de viento](/apuntes/nch432-cargas-de-viento),
+[el galpón liviano de §12.2](/blog/galpon-liviano-nch2369/) y
+[el caso 8 de Rukan](/blog/rukan-verificacion-peso-propio-combinaciones/), que ya era un galpón a
+dos aguas en 3D.
+
+## Bitácora
+
+### 2026-08-12 · El sitio queda cerrado
+
+El sprint de lectura de PDF terminó. Lo que salió, y que ya cambió el primer post:
+
+$$K_{zt} = 1{,}948 \qquad K_e = 0{,}6362 \qquad q_h = 0{,}650\ \text{kPa}$$
+
+El plan estimaba $K_{zt}$ entre 1,1 y 1,4. Es **1,948**, casi el doble. Y el producto
+$K_{zt} \cdot K_e = 1{,}239$ significa que el galpón del altiplano **en una loma** se diseña con un
+**25 % más** de presión que el mismo galpón en terreno plano a nivel del mar. El $q_h$ cierra por
+dos vías independientes que dan lo mismo.
+
+De paso, tres trampas de lectura quedaron documentadas: los casos de torsión de NCh432 están
+**exentos** para este galpón, la excepción de §7.3.3 se aplica solo a la dirección de marcos, y
+§7.3.7 parece hecha a medida —«marcos transversales y techos inclinados»— pero su alcance son
+edificios **abiertos**.
+
+### 2026-08-12 · El modelo, cerrado a cuatro manos
+
+Seis pasos, cada uno confirmado antes de seguir. El modelo quedó así:
+
+| | |
+|---|---|
+| Tamaño | 105 nodos · 188 barras · 20 bases articuladas · **41,365 kg/m²** de acero |
+| Secciones de peralte variable | 7 · alma 6 mm, alas 220×12 |
+| Estados de carga | 11, todos con **residuo de equilibrio 0,0** |
+| Masa sísmica | $P = 674{,}861$ kN $= D + 0{,}20\,S$ |
+| Períodos dominantes | $T^*_X = 0{,}852657$ s (modo 1) · $T^*_Y = 0{,}161061$ s (**modo 41**) |
+| Reducción efectiva | $R^*_X = 4{,}000000$ · $R^*_Y = 3{,}830163$ |
+| Corte basal | $Q_{0X} = 86{,}960$ kN · $Q_{0Y} = 130{,}257$ kN, ambos dentro de la banda |
+
+Varias decisiones cambiaron sobre la marcha, y las que más movieron el resultado fueron dos: sacar
+las costaneras del modelo (se calculan aparte como viga simple, y modelarlas metía masa en nodos
+sin atadura) y aplicar todas las cargas de superficie **distribuidas sobre barras** en vez de
+nodales.
+
+Lo contraintuitivo del paso: **la dirección arriostrada se lleva un 49,8 % más de corte basal que
+la de marcos**. No es un error — el $T^*$ longitudinal cae en la meseta del espectro, y además
+queda bajo el codo de la Ec. (1b), que le baja el $R^*$ un poco más. Rigidizar castiga dos veces.
+
+### 2026-08-12 · Combinaciones y envolvente
+
+79 combinaciones LRFD. La gravedad con nieve gana cómodo en toda la estructura principal:
+$1{,}2D + 1{,}6S$ dimensiona la columna y el dintel, y la envolvente sísmica llega al **53 %** del
+momento de alero. La nieve **desbalanceada** —el caso que casi nadie corre— gobierna el dintel a
+media luz.
+
+### 2026-08-12 · La deriva
+
+$$\delta = 0{,}113504\ \text{m} \quad \text{contra} \quad 0{,}015\,h = 0{,}120\ \text{m} \quad \rightarrow \quad 94{,}6\ \%$$
+
+Pasa, con 5,4 % de margen. Y el mismo $0{,}015\,h$ que sirve de límite en §6.3 es el gatillo del
+P-Delta de §6.4, así que estamos a un 5 % de tener que correr segundo orden.
+
+## Lo que ya se cayó
+
+Esta es la parte que hace que valga la pena escribir la bitácora.
+
+**1. «La deriva reprueba el marco articulado».** No reprueba: pasa al 94,6 %. La tesis del post 5
+tuvo que cambiar, y quedó mejor — la historia ya no es que falla, es que **el mismo número que la
+aprueba es el que dispara el P-Delta**.
+
+**2. «La diagonal la dimensiona el viento».** El razonamiento del plan era limpio: el sismo entra
+dividido por $R^*$ y el viento entra multiplicado sin dividir por nada. **Es al revés**: la
+compresión sísmica es 39,895 kN contra 34,233 de gravedad y viento, o sea el sismo gana por 16,5 %.
+Falla porque el $T^*$ longitudinal cae en la meseta. Y al final no dimensiona ninguno de los dos:
+dimensiona la **esbeltez local sísmica**, con un tubo que pasa cómodo el $KL/r$ que todo el mundo
+revisa.
+
+**3. «El aire enrarecido regala y la loma devuelve».** Se quedaba corto. No devuelve: **cobra de
+más**. Un 25 % por sobre el terreno plano a nivel del mar.
+
+Y una que se cayó sola, por leer mal el índice: hay una cláusula de NCh2369 que obliga a considerar
+P-Delta «para todos los casos de carga y análisis» y que parecía aplicar. No aplica — está dentro
+de **§12.5, *Sistemas de almacenamiento***, y su comentario habla de carga almacenada y de racks.
+Citarla para un galpón es leer mal la sub-cláusula.
+
+<Note type="tip" title="Este post se actualiza">
+La bitácora crece a medida que cada fase cierra, y el mapa gana los enlaces a medida que cada post
+se publica. Si vuelves en un mes, mira la fecha de actualización arriba.
+</Note>
