@@ -4141,7 +4141,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
-| `ejemplo-galpon-altiplano-viento-sitio-nch432` | 2026-08-12 | ✅ | 16 (1🔴 4🟠 · 5🟡 6🔵) · **15 aplicados**, 1 descartado, 0 abiertos · planilla pendiente |
+| `ejemplo-galpon-altiplano-viento-sitio-nch432` | 2026-08-12 | ✅ | 16 (1🔴 4🟠 · 5🟡 6🔵) · **15 aplicados**, 1 descartado, 0 abiertos · planilla ✓ (14 verificaciones, 5 contrastes) |
 | `ejemplo-analisis-sismico-cepa-nch2369` | 2026-08-12 | ⚠️ | 0 · 7 aplicados en `7522225` (1🟠 2🟡 4🔵) + 16 previos cerrados · planilla ✓ (23 verificaciones + 17 contrastes; el ✗ de Q₀ > Q₀máx declarado) |
 | `ejemplo-torre-sismica-nch2369` | 2026-08-12 | ⚠️ | 0 · 4 aplicados en `7522225` (3🟡 1🔵) + 15 previos en `aa0b828` · planilla ✓ (9 verificaciones; veredictos activos para verify:planilla desde `7522225`) |
 | `ejemplo-torre-deformaciones-nch2369` | 2026-08-12 | ⚠️ | 0 · 10 aplicados en `7522225` (2🟠 5🟡 3🔵) · planilla ✓ (24 verificaciones + 10 contrastes; los 4 ✗ declarados) |
