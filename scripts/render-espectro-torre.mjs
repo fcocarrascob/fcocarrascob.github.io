@@ -170,7 +170,7 @@ function figuraEspectros() {
   ].join('\n  ');
 
   const leyenda = [
-    { color: GRIS, dash: '8 5', w: 2.2, rot: 'Referencia S_aH — Ec. (3), ξ = 0,05' },
+    { color: GRIS, dash: '8 5', w: 2.2, rot: 'S_aH — Ec. (3), sin corregir por ξ (0,05)' },
     { color: AZUL, dash: '', w: 2.8, rot: `Diseño X (CBF): R* = ${COMA(R_STAR_X, 4)} — la rampa` },
     { color: ROJO, dash: '', w: 2.8, rot: `Diseño Y (MRF): R* = ${COMA(R_STAR_Y, 1)} — la meseta` },
   ]

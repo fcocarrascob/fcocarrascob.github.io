@@ -10,18 +10,18 @@ seriesPart: 7
 
 import Note from '../../components/content/Note.astro';
 import Equation from '../../components/content/Equation.astro';
-import Figure from '../../components/content/Figure.astro';
 
 ## Lo que este caso agrega a la escalera
 
 Los peldaños anteriores de [Rukan](https://github.com/fcocarrascob/rukan) verificaron el análisis
 modal espectral con un espectro y la combinación direccional con un modelo isótropo. El
-[galpón del caso 8](/blog/rukan-verificacion-galpon-3d/) ya tenía la topología mixta —marco a
-momento en un plano, arriostrado en el otro— pero un solo espectro la cubría. El **caso 9** cruza
-la línea que faltaba: una estructura donde la norma misma exige **un espectro de diseño distinto
-por dirección**, porque el $R^*$ de la Ec. (1b) de NCh2369:2025 se calcula con el período del modo
-dominante *de cada dirección de análisis*, y en una torre CBF/MRF esos períodos difieren en un
-factor 4,5.
+[galpón del caso 8](/blog/rukan-verificacion-peso-propio-combinaciones/) ya tenía la topología
+mixta —marco de momento (MRF, *moment resisting frame*) en un plano, arriostrado concéntrico
+(CBF, *concentrically braced frame*) en el otro— pero un solo espectro la cubría. El **caso 9**
+cruza la línea que faltaba: una estructura donde la norma misma exige **un espectro de diseño
+distinto por dirección**, porque el $R^*$ de la Ec. (1b) de NCh2369:2025 se calcula con el
+período del modo dominante *de cada dirección de análisis*, y en una torre CBF/MRF esos períodos
+difieren en un factor 4,5.
 
 La estructura es la [torre del ejemplo normativo](/apuntes/ejemplo-torre-sismica-nch2369): planta
 6,0 × 4,0 m, tres niveles de 4,0 m, X apiladas en las caras largas, marcos de momento en las
@@ -35,7 +35,7 @@ que encontró.
 El caso es `verification/case09_torre_cbf_mrf.py`. Como en toda la serie, los dos modelos
 comparten **solo los datos**: geometría, propiedades de sección (las que SAP2000 calcula de las
 placas, extraídas y hardcodeadas — un solo juego de números), masas nodales ($P_k/4$ por esquina,
-con el mismo $g = 9{,}80665$ que SAP usa al convertir cargas en masa), y las ecuaciones del
+con el mismo $g = 9{,}80665$ m/s² que SAP usa al convertir cargas en masa), y las ecuaciones del
 espectro leídas del PDF. Todo lo demás —ensamble, autovalores, fuerzas estáticas equivalentes
 modo a modo, CQC— lo hace cada motor por su cuenta.
 
@@ -57,15 +57,17 @@ $\xi_V = 0{,}03$).
 
 El caso 5 ya lo había establecido: `elasticBeamColumn` es Euler-Bernoulli puro, y las secciones de
 SAP deben definirse con **área de corte cero** (`SetGeneral`, As2 = As3 = 0) para igualar la
-física. En la torre quedó cuantificado lo que esa convención evita: con las áreas de corte
-automáticas de los perfiles, el período del marco de momento da 1,038 s; sin deformación por
-corte, 0,996 s. **Un 4 % en el período** — dos órdenes de magnitud por encima de la tolerancia de
+física. En la torre quedó cuantificado lo que esa convención evita: en una corrida de control
+previa a la convención —las secciones con sus áreas de corte
+automáticas—, el período del marco de momento dio 1,038 s; sin deformación por
+corte, 0,996 s. **Un 4 % en el período** — unas 400 veces la tolerancia de
 la serie, en un solo parámetro silencioso.
 
 ## Trampa 2, nueva: el amortiguamiento de la función de espectro
 
-La primera corrida completa dio todos los períodos exactos… y **todas** las respuestas
-espectrales de rukan un 18,5 % por debajo de SAP. No un error disperso: un factor único por
+La primera corrida completa dio todos los períodos exactos… y todas las respuestas
+espectrales **horizontales** de rukan un 18,5 % por debajo de SAP (las verticales, un 11,3 % —
+su $\xi$ es 0,03). No un error disperso: un factor único por
 espectro —idéntico en cortes basales, desplazamientos y fuerzas de cada caso—, que es la firma de
 un escalar metido en la demanda, no de un bug estructural.
 
@@ -74,7 +76,9 @@ El escalar resultó ser un argumento que casi nadie mira. `Func.FuncRS.SetUser` 
 0,05. Y SAP2000, al ver que el caso corre con amortiguamiento modal 0,02, **ajustó la función**
 desde 5 % hacia 2 % con la amplificación de Newmark-Hall del dominio de velocidad:
 
+<Equation label="Newmark-Hall">
 $$a(\beta) = 2{,}31 - 0{,}41\,\ln(\beta\,\%) \;\Rightarrow\; \frac{a(2)}{a(5)} = 1{,}22767$$
+</Equation>
 
 El ratio medido entre los dos motores fue 1,2276663 — coincide con la fórmula en la octava cifra.
 Como las ordenadas de NCh2369 **ya traían** su corrección $(0{,}05/\xi)^{0{,}4}$ de la Ec. (1a),
@@ -98,14 +102,14 @@ serie.
 
 ## El contraste
 
-Doce períodos, con los dos que gobiernan marcados:
+Doce períodos, con los dos que gobiernan en negrita:
 
 | Modo | Rukan [s] | SAP2000 [s] | err |
 |---:|---:|---:|---:|
-| 1 — traslación Y (MRF), 87,1 % | 0,995672 | 0,995672 | 0,00000 % |
+| 1 — traslación Y (MRF), 87,1 % | **0,995672** | **0,995672** | 0,00000 % |
 | 2 — torsión pura | 0,377320 | 0,377320 | 0,00000 % |
 | 3 — segundo Y | 0,269338 | 0,269338 | 0,00000 % |
-| 4 — traslación X (CBF), 89,1 % | 0,220185 | 0,220185 | 0,00000 % |
+| 4 — traslación X (CBF), 89,1 % | **0,220185** | **0,220185** | 0,00000 % |
 | 8 — segundo X | 0,074321 | 0,074321 | 0,00000 % |
 | 10 — vertical, 93,5 % | 0,057862 | 0,057862 | 0,00000 % |
 
@@ -124,26 +128,29 @@ Cortes basales CQC de los cinco casos espectrales:
 
 Y hay un chequeo de consistencia que sale gratis y vale oro: la referencia y el diseño comparten
 forma espectral, así que su cociente debe ser exactamente $R^*$. En los dos motores:
-$1\,828{,}06 / 474{,}88 = 3{,}84954$ y $1\,279{,}55 / 255{,}91 = 5{,}0000$. Cualquier error de
+$1\,828{,}0565 / 474{,}8771 = 3{,}84954$ y $1\,279{,}55 / 255{,}91 = 5{,}0000$. Cualquier error de
 escala, de función o de amortiguamiento rompe esa identidad antes que ninguna otra cosa — la
 trampa 2 se delató ahí primero.
 
 Desplazamientos por nivel (12 valores, cuatro casos): error máximo 0,00000 %. Fuerzas de elemento:
 las cuatro medias diagonales del piso 1 bajo diseño X (142,87 y 142,83 kN — las mitades inferiores
 y superiores del X difieren en la cuarta cifra, y los dos motores reproducen esa diferencia) y la
-columna del marco en su base bajo diseño Y ($P = 174{,}72$ kN, $M_3 = 200{,}95$ kN·m, con
-$M_2 \approx 10^{-14}$ confirmando la orientación del eje fuerte): **todo a menos del 0,01 %**.
+columna del marco en su base bajo diseño Y ($P = 174{,}72$ kN, $M_3 = 200{,}95$ kN·m; el
+$M_2 \approx 10^{-14}$ kN·m que confirma la orientación del eje fuerte es una lectura de control
+hecha directo sobre el modelo SAP2000 — el caso no la extrae): **todo a menos del 0,01 %**.
 
 La combinación direccional 100/30 del repo cierra el caso sobre la columna:
-$P_{100/30} = 280{,}14 + 0{,}3 \cdot 174{,}72 = 332{,}55$ kN — el axial del CBF manda y el marco
-aporta el 30 %.
+$P_{100/30} = 280{,}1358 + 0{,}3 \cdot 174{,}7161 = 332{,}55$ kN — el axial del CBF manda y el
+marco aporta el 30 %.
 
 ## La cadena normativa, verificada de punta a punta
 
 El caso no solo compara motores: ejecuta la cadena completa de NCh2369 por dirección y la deja en
 asserts —
 
+<Equation label="§5.4 a §5.14">
 $$T^* \rightarrow R^* \;(\text{Ec. 1b}) \rightarrow Q_0 \;(\text{CQC}) \rightarrow \text{banda §5.12–§5.13} \rightarrow R_1 \;(\text{Ec. 14})$$
+</Equation>
 
 con el resultado que motivó la serie: mismo $R = 5$ de la Tabla 7 en ambas direcciones, y
 $R_1 = 3{,}85$ en la arriostrada contra $R_1 = 5{,}00$ en la del marco, porque el $T^*_X$ cae
@@ -156,8 +163,8 @@ lo decide una tabla: **lo decide el análisis, y por eso el análisis tiene que 
 Con el caso 9 en verde, la serie tiene verificado el escenario general de la estructura industrial
 chilena: sistemas distintos por dirección, espectro distinto por dirección, $R_1$ distinto por
 dirección, y los desplazamientos con espectro de referencia listos para el capítulo que sigue —
-[la deriva de §6, donde esta misma torre tiene un problema](/apuntes/ejemplo-torre-sismica-nch2369)
-que el análisis de fuerzas no ve. El modelo SAP2000 de referencia quedó como par de scripts
+la deriva de §6, el problema que la Note final del ejemplo ya adelanta y que el análisis de
+fuerzas no ve. El modelo SAP2000 de referencia quedó como par de scripts
 reproducibles en la biblioteca del [MCP de Skills_SAP](https://github.com/fcocarrascob/Skills_SAP)
 (`case9_torre_build`, `case9_torre_extract`), construido enteramente por API — sin abrir la
 interfaz gráfica.

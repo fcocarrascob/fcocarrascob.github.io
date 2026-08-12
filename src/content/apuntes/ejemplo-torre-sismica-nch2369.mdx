@@ -1,11 +1,11 @@
 ---
 title: "Ejemplo — La torre mixta: mismo R de tabla, un R₁ por cada dirección"
-description: "Una torre industrial de tres niveles, arriostrada en un sentido y con marco de momento en el otro —la configuración chilena del paso libre—, resuelta por la NCh 2369:2025. La Tabla 7 da R = 5 y ξ = 0,02 en las dos direcciones, y sin embargo el multiplicador del diseño por capacidad termina siendo 2,70 en una y 3,50 en la otra: todo el descuento lo produce el período. El corte de la dirección arriostrada choca contra el máximo de §5.13; el del marco cae dentro de la banda; y la componente vertical de §5.7 supera al corte del marco. Análisis validado en dos motores independientes con error menor al 0,01 %."
+description: "Una torre industrial de tres niveles, arriostrada en un sentido y con marco de momento en el otro —la configuración chilena del paso libre—, resuelta por la NCh 2369:2025. La Tabla 7 da R = 5 y ξ = 0,02 en las dos direcciones, y sin embargo el multiplicador del diseño por capacidad termina siendo 2,695 en una y 3,500 en la otra: todo el descuento lo produce el período. El corte de la dirección arriostrada choca contra el máximo de §5.13; el del marco cae dentro de la banda; y la componente vertical de §5.7 supera al corte del marco. Análisis validado en dos motores independientes con error menor al 0,01 %."
 pubDate: 2026-08-11
-tags: ["nch2369", "ejemplo", "análisis modal espectral", "R1", "marcos arriostrados", "marcos de momento", "corte basal", "espectro de diseño", "sísmica", "SAP2000", "openseespy"]
+tags: ["nch2369", "ejemplo", "análisis modal espectral", "R1", "marcos arriostrados", "marcos de momento", "corte basal", "espectro de diseño", "sísmica", "SAP2000", "OpenSeesPy"]
 subsection: "nch2369"
 chapter: "Ejemplo — La torre mixta: R₁ por dirección"
-source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.5.2, 5.1, 5.2, 5.3, 5.4, 5.6, 5.7, 5.12 a 5.14, con las Tablas 3, 4, 6 y 7 (pp. 16, 19-23, 27-29, 32-35, 48-49, 57-63), leídas en páginas rasterizadas el 2026-08-11"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.5.2, 5.1, 5.2, 5.3, 5.4, 5.6, 5.7, 5.12 a 5.14 y 6.1 a 6.4, con las Tablas 3, 4, 6 y 7 (pp. 16, 19-23, 27-29, 32-35, 48-49, 57-63 y 68-70), leídas en páginas rasterizadas el 2026-08-11"
 ---
 
 import Note from '../../components/content/Note.astro';
@@ -43,8 +43,8 @@ dirección corta:
 |---|---|
 | Planta | 6,0 m (X) × 4,0 m (Y) |
 | Niveles | 3, de 4,0 m cada uno → $H = 12{,}0$ m |
-| Dirección X | **CBF**: las dos caras de 6,0 m con X apiladas por nivel (2 líneas) |
-| Dirección Y | **MRF**: los dos marcos de 4,0 m, sin diagonales — el paso libre |
+| Dirección X | **CBF** (*concentrically braced frame*, marco arriostrado concéntrico): las dos caras de 6,0 m con X apiladas por nivel (2 líneas) |
+| Dirección Y | **MRF** (*moment resisting frame*, marco de momento): los dos marcos de 4,0 m, sin diagonales — el paso libre |
 | Columnas | HN 30 (alas 300×16, alma 268×8), **eje fuerte orientado al marco Y** |
 | Vigas | IN 30 (alas 150×10, alma 280×6): de momento en Y, puntal biarticulado en X |
 | Diagonales | cajón soldado 125×125×6, $A = 2\,856$ mm² ($= 2\cdot 6\cdot(125+125-12)$) |
@@ -97,10 +97,11 @@ de un nivel adyacente —la definición no aplica al último nivel—, y acá
 $$\frac{P_2}{P_1} = \frac{612{,}5}{325{,}0} = 1{,}88 > 1{,}50$$
 
 El método estático queda descartado (aunque la torre cumple los otros requisitos: Categoría II,
-3 niveles, 12 m justos). El análisis es **modal espectral** (§5.6), que la norma admite «para
-cualquier tipo de estructuras».
+3 niveles, 12 m justos). El análisis es **modal espectral** — el procedimiento 2 del menú de
+§5.2.2, que la norma admite «para cualquier tipo de estructuras», y que §5.6 desarrolla.
 
-**El modelo** (§5.3): tridimensional, sin diafragma rígido —las plataformas de grating no lo
+**El modelo** (§5.3): tridimensional, sin diafragma rígido —las plataformas de rejilla
+(*grating*) no lo
 justifican; en su lugar va el arriostramiento de planta, y §5.3.3 pide entonces grados de libertad
 nodales con masas traslacionales—, con la masa de cada nivel repartida en partes iguales entre las
 cuatro esquinas. El reparto simétrico es una decisión del ejemplo: sin excentricidad, la torsión no
@@ -120,13 +121,15 @@ un solo software — los períodos siguientes coinciden entre SAP2000 y OpenSees
 | 2 | 0,3773 | torsión pura | ≈ 0 |
 | 3 | 0,2693 | segundo modo Y | 8,0 % |
 | 4 | **0,2202** | traslación **X** — el CBF | 89,1 % de $M_X$ |
+| 5 | 0,1407 | tercer modo Y | 4,9 % |
 | 8 | 0,0743 | segundo modo X | 8,1 % |
 | 10 | 0,0579 | vertical | 93,5 % de $M_Z$ |
 
-Las sumas acumuladas —97,2 % en X, 100,0 % en Y— superan el 90 % que exige §5.6.2 en cada
-dirección de análisis. Y el dato que organiza todo lo que sigue está en la primera columna: **la
-torre es 4,5 veces más flexible en la dirección del marco que en la arriostrada**. El mismo
-edificio, la misma masa; solo cambió qué sistema resiste.
+Las sumas acumuladas sobre los doce modos —97,2 % en X, 100,0 % en Y— superan el 90 % que exige
+§5.6.2 en cada dirección de análisis. Y el dato que organiza todo lo que sigue está en la primera
+columna: **el período de la dirección del marco es 4,5 veces el de la arriostrada** — y como la
+flexibilidad va con $T^2$, el MRF es unas 20 veces más flexible que el CBF. El mismo edificio, la
+misma masa; solo cambió qué sistema resiste.
 
 $$T^*_X = 0{,}2202\ \text{s} \qquad T^*_Y = 0{,}9957\ \text{s}$$
 
@@ -151,7 +154,7 @@ mismo sitio, el mismo suelo y el mismo $R$ nominal:
 
 <Figure
   src="/ejemplo-torre-sismica-nch2369/espectros-por-direccion.svg"
-  alt="Gráfico de espectros de seudo aceleración en g contra período en segundos, de cero a dos segundos. Una curva gris segmentada muestra el espectro de referencia con amortiguamiento 0,05, con su pico cerca de 1,37 g alrededor de 0,42 segundos. Debajo, dos curvas continuas con la misma forma: una azul rotulada diseño X CBF con R asterisco igual a 3,8495, y una roja más baja rotulada diseño Y MRF con R asterisco igual a 5,0; la azul queda un 30 por ciento por encima de la roja en todo el rango. Una banda vertical sombreada marca la zona de la rampa hasta C sub r por T sub 1 igual a 0,328 segundos. Sobre la curva azul hay un punto en T asterisco X igual a 0,220 segundos, dentro de la banda de la rampa; sobre la curva roja hay un punto en T asterisco Y igual a 0,996 segundos, en la zona descendente. La leyenda indica que las curvas vienen del módulo nch2369-spectrum del sitio y que los T asterisco y R asterisco salen del análisis validado en dos motores con error menor al 0,01 por ciento"
+  alt="Gráfico de espectros de seudo aceleración en g contra período en segundos, de cero a dos segundos. Una curva gris segmentada muestra la curva S sub aH de la Ecuación 3, sin corregir por amortiguamiento (0,05), con su pico cerca de 1,37 g alrededor de 0,42 segundos. Debajo, dos curvas continuas con la misma forma: una azul rotulada diseño X CBF con R asterisco igual a 3,8495, y una roja más baja rotulada diseño Y MRF con R asterisco igual a 5,0; la azul queda un 30 por ciento por encima de la roja en todo el rango. Una banda vertical sombreada marca la zona de la rampa hasta C sub r por T sub 1 igual a 0,328 segundos. Sobre la curva azul hay un punto en T asterisco X igual a 0,220 segundos, dentro de la banda de la rampa; sobre la curva roja hay un punto en T asterisco Y igual a 0,996 segundos, en la zona descendente. La leyenda indica que las curvas vienen del módulo nch2369-spectrum del sitio y que los T asterisco y R asterisco salen del análisis validado en dos motores con error menor al 0,01 por ciento"
   caption="Mismo R = 5, dos espectros de diseño. El período de cada dirección elige su R*: el del CBF cae dentro de la rampa de la Ec. (1b) y su espectro queda un 30 % arriba; el del MRF pisa la meseta y usa el R completo. Cada punto marca dónde lee su demanda el modo dominante de cada dirección."
 />
 
@@ -183,7 +186,9 @@ Una sola banda —las dos direcciones comparten $R$, $\xi$ y $P$— y dos destin
 
 **Dirección X.** $Q_{0X} = 474{,}9 > 444{,}4$: el §5.13 permite —es opcional, «se pueden
 multiplicar»— escalar todas las fuerzas y esfuerzos internos por $444{,}4/474{,}9 = 0{,}936$. La
-reducción **no se aplica al cálculo de desplazamientos**, igual que el aumento del mínimo. El
+reducción **no se aplica al cálculo de desplazamientos**, igual que el aumento del mínimo. Y
+ninguna de las cinco exclusiones de §5.13 alcanza a esta torre (no es tiempo-historia, $R = 5 > 2$,
+suelo D, ni Categoría III/IV de la cláusula 13, ni generación eléctrica de la 14). El
 ejemplo la toma: es la práctica normal, y deja el corte de diseño en 444,4 kN.
 
 **Dirección Y.** $Q_{0Y} = 255{,}9$ kN cae dentro de la banda. Ni el mínimo muerde —le sobra un
@@ -210,9 +215,10 @@ de cada dirección es directamente su $R^*$:
 | $R_1$ (Ec. 14) | **3,850** | **5,000** |
 | $0{,}7\,R_1$ | **2,695** | **3,500** |
 
-Ese último renglón es el que viaja al resto del proyecto. El $0{,}7R_1$ multiplica la demanda del
-fusible en el diseño por capacidad de la cláusula 8: conexiones, puntales, columnas y fundación de
-**cada dirección se dimensionan con su propio multiplicador**, y acá difieren un 30 %. Quien
+Ese último renglón es el que viaja al resto del proyecto. El $0{,}7R_1$ amplifica, en el diseño
+por capacidad de la cláusula 8, la demanda con que se dimensionan los elementos que deben
+permanecer elásticos: conexiones, puntales, columnas y fundación de **cada dirección llevan su
+propio multiplicador**, y acá difieren un 30 %. Quien
 escriba «$R_1 = 5$» en la portada de la memoria —el valor de la tabla— estará sobredimensionando
 la cadena de capacidad del CBF un 30 %; quien promedie o tome el menor para las dos direcciones
 estará inventando una cláusula que la norma no tiene. La cepa ya lo mostraba en una dirección;
@@ -222,15 +228,17 @@ dirección, no un dato de entrada.**
 ## 7. La componente vertical no es un apéndice
 
 §5.1.1 obliga a considerar la acción vertical «en todos los casos», según §5.7. El camino estático
-de §5.7.1 para suelo D es $F_V = \pm 1{,}1\,I\,(A_r S/g)\,P$; el ejemplo usa la alternativa de
-§5.7.2 —análisis modal espectral con el espectro vertical de diseño, $R_V = 2$, $\xi_V = 0{,}03$,
-las mismas reglas de modos y superposición— y el resultado incomoda a la intuición:
+de §5.7.1 para suelo D es $F_V = \pm 1{,}1\,I\,(A_r S/g)\,P = 739{,}2$ kN; el ejemplo usa la
+alternativa de §5.7.2 —análisis modal espectral con el espectro vertical de diseño, $R_V = 2$,
+$\xi_V = 0{,}03$, las mismas reglas de modos y superposición—, que resulta un 43 % menor que el
+estático (elegirla fue favorable, y conviene decirlo). Aun así, el resultado incomoda a la
+intuición:
 
 $$Q_{0Z} = 419{,}8\ \text{kN} \;>\; Q_{0Y} = 255{,}9\ \text{kN}$$
 
-**El corte vertical supera al corte horizontal del marco.** No es una rareza del ejemplo: el
-espectro vertical corre los períodos con el factor 1,7 pero la torre es axialmente rígida
-($T_{V} = 0{,}058$ s, en plena meseta corta), y el divisor es $R_V = 2$, no 5. En la combinación
+**El corte vertical supera al corte horizontal del marco.** No es una rareza del ejemplo: la
+torre es axialmente rígida ($T_V = 0{,}058$ s: con $1{,}7\,T_V/T_0 = 0{,}16$, el espectro
+vertical de referencia entrega 0,61 g en su rama ascendente), y el divisor es $R_V = 2$, no 5. En la combinación
 direccional de §4.5.2 —las tres ecuaciones $\pm 1{,}0/\pm 0{,}3/\pm 0{,}3$, evaluadas todas, con
 todos los signos— la componente vertical entra con el 30 % de ese valor acompañando a cada
 horizontal, y con el 100 % en la tercera ecuación. Para las columnas y las fundaciones de esta
@@ -240,23 +248,25 @@ torre, eso no es un redondeo.
 
 El modal de tres niveles con dos sistemas distintos no se invierte en prosa, así que este ejemplo
 hace explícito lo que la cepa pudo evitar: **los números del análisis vienen de un modelo, y un
-modelo no se cree — se confronta.** Todos los resultados de este post (períodos, masas
-participantes, cortes CQC, desplazamientos y fuerzas de elemento) salieron de dos implementaciones
+modelo no se cree — se confronta.** Todos los resultados del análisis que este post usa —los
+períodos y masas participantes de la tabla, los cortes CQC y los desplazamientos que sostienen la
+Note final— salieron de dos implementaciones
 independientes —SAP2000 operado por su API COM y un modelo OpenSeesPy escrito aparte— que
 coinciden entre sí a menos de un 0,01 %, compartiendo solo los datos del caso: geometría, placas
-de los perfiles, masas y las ecuaciones del espectro leídas del PDF. El contraste completo, con
-las dos trampas que encontró en el camino (la deformación por corte y el amortiguamiento de la
-función de espectro), es [el post siguiente de la serie de
-verificación](/blog/rukan-verificacion-torre-r-por-direccion).
+de los perfiles, masas y las ecuaciones del espectro leídas del PDF. El contraste completo —que
+además cubre las fuerzas de elemento— y las dos trampas que encontró en el camino (la deformación
+por corte y el amortiguamiento de la función de espectro) están en [el post siguiente de la serie
+de verificación](/blog/rukan-verificacion-torre-r-por-direccion).
 
 La cadena normativa que se aplicó encima del análisis —la banda, el $R^*$, el $R_1$— sí es
 aritmética de esta página, y se puede rehacer con los números de las tablas de arriba.
 
 <Note type="warning" title="Lo que este ejemplo deja pendiente — y ya se sabe cómo termina">
 El análisis de fuerzas aprueba a las dos direcciones. Pero §6.1 exige revisar los desplazamientos
-con el **espectro de referencia** —sin $R^*$, que para el MRF significa demandas 5 veces mayores
-que las de diseño— y contra el límite de §6.3 ($0{,}015\,h$ por nivel) el marco de momento de esta
-torre **no pasa: sus derivas exceden el límite en un factor cercano a 3**, mientras el CBF cumple
+con el **espectro de referencia corregido por amortiguamiento** —sin $R^*$, lo que para el MRF
+significa demandas 5 veces mayores que las de diseño— y contra el límite de §6.3 ($0{,}015\,h$
+por nivel) el marco de momento de esta
+torre **no pasa: sus derivas llegan a 2,8 veces el límite**, mientras el CBF cumple
 con holgura de sobra. Esa historia —por qué al marco lo dimensiona la deriva y no el corte, qué
 dice §6.4 del P-Delta, y qué se hace con una torre que aprueba en fuerza y reprueba en
 deformación— es el próximo ejemplo de esta galería.
@@ -267,5 +277,5 @@ deformación— es el próximo ejemplo de esta galería.
 *Las cláusulas y tablas citadas se leyeron de las páginas rasterizadas del PDF de la 3.ª edición
 (2025.05.28) el 2026-08-11: Tablas 3 y 4 (p. 57), Tabla 6 (p. 60), Tabla 7 (pp. 60-63), §4.5.2
 (p. 16), §5.1 y §5.2 (pp. 19-21), §5.3 (p. 23), §5.4 (pp. 27-29), §5.6 (pp. 32-34), §5.7 (p. 35),
-§5.12 a §5.14 (pp. 48-49). Las figuras calculadas salen de `src/lib/nch2369-spectrum.ts` vía
-`npm run figuras:espectro-torre`.*
+§5.12 a §5.14 (pp. 48-49) y §6.1 a §6.4 (pp. 68-70). Las figuras calculadas salen de
+`src/lib/nch2369-spectrum.ts` vía `npm run figuras:espectro-torre`.*
