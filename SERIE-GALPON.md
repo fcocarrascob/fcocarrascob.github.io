@@ -1233,6 +1233,7 @@ Todo lo aprendido de la OAPI quedó en
 
 | # | Slug | Colección | Estado |
 |---|---|---|---|
+| **0** | `galpon-altiplano-la-serie` | `blog` / Sísmica | ✅ `05c3846` — **el caso + el mapa + la bitácora**. Sin campo `series` (los tres de rukan ya son Rukan 8-10; una serie de un miembro es ruido). **Se reabre y se actualiza al cerrar cada post**: entrada fechada en la bitácora, enlace en el mapa, y `updatedDate` |
 | 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ⬜ |
 | 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ |
 | 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ⬜ |
