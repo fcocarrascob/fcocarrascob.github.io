@@ -820,7 +820,7 @@ justo lo que la serie tiene, en dos motores.
 | 2 | Leer NCh2369:2025, cláusulas de la serie | 🔄 **en curso** |
 | 3 | Leer NCh3171:2017 §9 completo | ✅ **hecho** — §9, §9.1.1 con sus seis excepciones y reglas de cierre, §9.1.2, §9.1.3, §9.2.1 con sus cuatro excepciones y cierre, §9.2.2, §9.2.3 y §9.3 |
 | 4 | Leer NCh432:2025, parámetros del sitio | ✅ **hecho** — §3.2, §3.3, §5.5.2, §5.6.1, §5.6.2, §5.7, §5.8.1, §5.8.2, §5.9, §5.10, §5.11 y las Tablas 1, 2, 3, 4, 5, 6 y 7, más la **Figura 3 (K_zt)** |
-| 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ⬜ pendiente |
+| 5 | Arreglar los bloqueantes de `rukan/spectra.py` | ✅ **hecho** — commit `35c3050` en rukan, 8 tests pasan |
 
 **Ya leído de NCh2369** (2026-08-12): §4.3.1 · §4.3.2 · §4.5.1 + Tabla C-2 · §5.1.1 · §5.1.2 ·
 §8.3.2 · §8.3.3 · §8.6.1–8.6.4 · §8.7.1–8.7.6 · §8.8.4 · §8.8.5 · §12.1.1–12.1.6 · §12.2 completa con
@@ -840,13 +840,17 @@ implementadas y verificadas en `src/lib/nch2369-spectrum.ts` (contrastado contra
 a < 0,01 %). Se re-leen al escribir el post que las cite, para que la fila de esta memoria tenga su
 propia fecha — no se heredan.
 
-**Bloqueantes de rukan** (tarea 5), los tres verificados leyendo el código:
+**Bloqueantes de rukan** (tarea 5) — **los tres resueltos el 2026-08-12**, commit `35c3050` en rukan:
 
-| # | Qué | Dónde | Arreglo |
-|---|---|---|---|
-| 1 | `nch2369_spectrum` aplica **R\* período a período** | `spectra.py:115` | parámetro `r_fixed`; R\* constante por dirección |
-| 2 | docstring cita la Of2003 | `spectra.py:13-15, 21, 27` | actualizar la referencia (los **valores** están bien, §5.5) |
-| 3 | `_r_star` **sin** la rama `R ≤ 1 → R* = 1` | `spectra.py:57-62` | portar de `src/lib/nch2369-spectrum.ts` |
+| # | Qué era | Arreglo aplicado |
+|---|---|---|
+| 1 | `nch2369_spectrum` aplicaba **R\* período a período** | parámetro **`r_fixed`** para R\* constante, más el helper **`r_star_for(t_star, R, soil)`** que lo calcula desde el T\* dominante. El docstring explica el flujo obligatorio de dos pasadas |
+| 2 | docstring citaba la **Of2003** (Tablas 5.2 y 5.3) | referencia actualizada a **NCh2369:2025**, Tablas **3** y **6**, con la fecha de contraste. Los **valores** siempre estuvieron bien (§5.5) |
+| 3 | `_r_star` **sin** la rama `R ≤ 1 → R* = 1` | portada desde `src/lib/nch2369-spectrum.ts`, con el porqué en el docstring |
+
+Verificación: `R = 1 → R* = 1,0` ✅ · con `r_fixed` la meseta coincide exactamente con la versión
+período a período y en `T = 0,05 s` la razón es **2,164** (la variable reduce por 2,31 en vez de por 5) ·
+**8 tests pasan**.
 
 ### 6.2 Fase 2 — el modelo SAP2000, a cuatro manos
 
