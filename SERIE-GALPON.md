@@ -19,31 +19,78 @@ a saltarse.
 
 ## 1. Cómo se retoma esto en otra sesión
 
-> **Estado al 2026-08-12.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los parámetros
-> congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones, envolvente y
-> deriva incluidas). De la Fase 3 hay **tres posts cerrados**: el **0** publicado en `main`
-> (`blog/galpon-altiplano-la-serie`, que hace de mapa y bitácora) y el **1** y el **3** en la rama
-> `serie-galpon`, los tres auditados y con planilla. **Faltan siete.**
+> **Estado al 2026-08-12, fin de sesión.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los
+> parámetros congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones,
+> envolvente y deriva incluidas).
 >
-> El **post 5 quedó cerrado** el 2026-08-12, con su deslinde en §5.43 y auditado sin hallazgos
-> abiertos. **Quedan seis posts: 2, 4, 5b, 6, 7, 8, 9 y 10.**
+> De la Fase 3 hay **cuatro posts cerrados y auditados, los cuatro con planilla**: el **0** publicado
+> en `main` (hace de mapa y bitácora) y el **1**, el **3** y el **5** en la rama `serie-galpon`.
+> **Quedan siete: 2, 4, 5b, 6, 7, 8, 9 y 10.**
 >
 > **Lo próximo, y hay dos frentes.** El grande es **rukan**, que sigue intacto y bloquea los posts 2,
-> 4 y 6: hay que construir el caso 10 en OpenSeesPy contra el `.sdb` congelado. El barato es el
-> **5b** (los siete defectos del `modelo_base`), que no depende de nada y ya tiene sus hallazgos
-> hechos en §5.12 y §5.21.
+> 4 y 6: hay que construir el caso 10 en OpenSeesPy contra el `.sdb` congelado, tomando
+> `verification/case08_gable_loads.py` como molde. El barato es el **5b** (los siete defectos del
+> `modelo_base`), que no depende de nada y ya tiene sus hallazgos hechos en §5.12 y §5.21.
 >
 > **No hace falta abrir SAP2000** para los posts 7, 8, 9 y 10: sus números ya están en este archivo.
 > Sí les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22, y §8.6.3 de NCh2369—, y el deslinde
 > completo **antes** de fijar la tesis, que ya se llevó cuatro de las cinco piezas del post 5.
+>
+> **Decisión pendiente, y es del usuario**: la rama `serie-galpon` no está fusionada. El post 0 vive
+> en `main` y los posts 1, 3 y 5 solo en la rama. Hay que decidir si se fusiona por tandas o al
+> cerrar la serie entera.
+
+### Dónde está cada cosa
 
 **Los tres repos que participan** (los tres quedaron limpios y commiteados):
 
-| Repo | Qué guarda | Rama |
+| Repo | Ruta | Qué guarda | Rama |
+|---|---|---|---|
+| `fcocarrascob.github.io` | `C:\Proyectos_Python\fcocarrascob.github.io` | los posts, este archivo, `AUDIT.md`, las figuras y las planillas | **`serie-galpon`** |
+| `Skills_SAP` | `C:\Proyectos_Python\Skills_SAP` | los ocho scripts `galpon_altiplano_*`. **Lee `scripts/README.md` antes de correr ninguno**: hay orden obligatorio y tres scripts superados cuyas cabeceras traen números viejos | `main` |
+| `struct_llm` | `C:\Proyectos_Python\struct_llm` | `docs/lecciones-sap2000-modelado-oapi.md` §12 — lo aprendido de la OAPI | `auditoria-alcance-clausulas` |
+| `rukan` | `C:\Proyectos_Python\rukan` | el segundo motor (OpenSeesPy). **Sin tocar para esta serie.** Su venv es además el único Python con PyMuPDF | `main` |
+
+**El modelo SAP2000 no está en ningún repo.** Vive en el temporal, y buscarlo por el disco cuesta
+media sesión:
+
+```
+C:\Users\FRANCI~1.CAR\AppData\Local\Temp\sap2000_scripts\galpon_altiplano.sdb
+```
+
+La forma barata de encontrarlo es `connect_sap2000`, que devuelve `model_path`. La copia publicada y
+descargable del sitio es `public/galpon-altiplano-la-serie/galpon-altiplano.sdb` — **ojo con el
+nombre**, la copia lleva guion medio y el original guion bajo.
+
+### Qué importa para cada tipo de tarea
+
+| Si vas a… | Lee primero | Y trabajas en |
 |---|---|---|
-| `fcocarrascob.github.io` | los posts, este archivo, las figuras y planillas | `main` |
-| `Skills_SAP` | los ocho scripts `galpon_altiplano_*`. **Lee `scripts/README.md` antes de correr ninguno**: hay orden obligatorio y tres scripts superados cuyas cabeceras traen números viejos | `main` |
-| `struct_llm` | `docs/lecciones-sap2000-modelado-oapi.md` §12 — lo aprendido de la OAPI | `auditoria-alcance-clausulas` |
+| escribir un post | §5 (el hallazgo del post), §7 (qué no puede rehacer) y el **deslinde**: lee **completos** los posts antecedentes, no sus títulos (§5.41) | `src/content/<colección>/<slug>.mdx` |
+| hacer una figura | `scripts/render-galpon-sismico.mjs` como patrón vigente | `scripts/render-*.mjs` + `package.json` (`figuras:<nombre>`) |
+| hacer una planilla | `docs/ESQUEMA-PLANILLA.md` entero, y la skill `planilla` | `public/planillas/<slug>.json` |
+| auditar | la skill `auditar`; el auditor es read-only y **tú** aplicas los fixes | `AUDIT.md` |
+| tocar el modelo | §6.2 (cómo se construyó) y `Skills_SAP/scripts/README.md` | el MCP de SAP2000 |
+| citar una norma | §4.1. **Si el número no está ahí, no lo sabes**: hay que abrir el PDF rasterizado | — |
+
+### Comandos que se corren siempre antes de cerrar
+
+```bash
+npm run build              # 192 páginas hoy; valida TypeScript y el schema Zod
+npm run verify:planillas   # 32 planillas hoy
+npm run figuras:<nombre>   # y después rasterizar y MIRAR el PNG
+npm run render:esquema -- public/<slug>
+```
+
+### Dos trampas de PowerShell que ya costaron tiempo
+
+- **Nunca** `Get-Content -Raw | Set-Content` para editar texto: rompe la codificación de los acentos
+  y deja el archivo con mojibake. Se usa la herramienta de edición, no el shell.
+- Los mensajes de commit van en here-string `@'…'@`, y **no pueden llevar comillas dobles**: el
+  intérprete vuelve a tokenizar el argumento y git recibe cada palabra como si fuera una ruta.
+  Tampoco `\` ni `*`, que disparan el hook de seguridad.
+
+### Cómo se lee esto
 
 1. Lee este archivo entero. Es corto a propósito.
 2. Mira **§6 Estado de la serie** para saber en qué fase está y qué sigue.
