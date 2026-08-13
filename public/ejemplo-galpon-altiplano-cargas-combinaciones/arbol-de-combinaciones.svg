@@ -30,7 +30,7 @@
   <text x="386.9" y="334.0" font-size="10" fill="#666">4 × 2</text>
   <line x1="70" y1="358.0" x2="560" y2="358.0" stroke="#d1d5db" stroke-width="1"/>
   <text x="70" y="380.0" font-size="12" fill="#222" font-weight="bold">Subtotal gravedad y viento: 63</text>
-  <text x="70" y="398.0" font-size="10.5" fill="#666">Las (5), (7) y (8) de NCh 3171 caen: la (5) es la sísmica, y esa rama la reemplaza NCh 2369.</text>
+  <text x="70" y="398.0" font-size="10.5" fill="#666">La (5) y la (7) de §9.1.1 no se escriben: la (5) es la sísmica, y esa rama la reemplaza NCh 2369.</text>
   <text x="70" y="432.0" font-size="12.5" fill="#222" font-weight="bold">B · Sismo — NCh 2369:2025 §4.5.1, con la simultaneidad de §4.5.2</text>
   <text x="70" y="450.0" font-size="11" fill="#333" font-family="Consolas, monospace">1,2 D + 0,2 S + E   y   0,9 D + E</text>
   <text x="70" y="474.0" font-size="11" fill="#333">3 ecuaciones de simultaneidad × 2 signos de la vertical × 2 bases gravitacionales =</text>

@@ -59,14 +59,14 @@ const N_SISMO_INGENUO = N_ECS * 2 ** 3 * N_BASES_G;
 
 // Envolvente, del modelo (SERIE-GALPON.md §5.37).
 const GOBIERNAN = [
-  { m: 'Columna, alero', v: 'M₃ = 633,284 kNm', c: 'G3A_B', fam: 'S' },
-  { m: 'Dintel, alero', v: 'M₃ = −633,206 kNm', c: 'G3A_B', fam: 'S' },
-  { m: 'Dintel, medio', v: 'M₃ = 176,334 kNm', c: 'G3A_I', fam: 'Sd' },
-  { m: 'Dintel, cumbrera', v: 'M₃ = 207,932 kNm', c: 'G3A_B', fam: 'S' },
+  { m: 'Columna, alero', v: 'M₃ = 633,284 kN·m', c: 'G3A_B', fam: 'S' },
+  { m: 'Dintel, alero', v: 'M₃ = −633,206 kN·m', c: 'G3A_B', fam: 'S' },
+  { m: 'Dintel, medio', v: 'M₃ = 176,334 kN·m', c: 'G3A_I', fam: 'Sd' },
+  { m: 'Dintel, cumbrera', v: 'M₃ = 207,932 kN·m', c: 'G3A_B', fam: 'S' },
   { m: 'Dintel, tracción', v: 'P = +24,780 kN', c: 'G6_LYNP', fam: 'W' },
   { m: 'Puntal de alero', v: 'P = +28,248 kN', c: 'E2P_A', fam: 'E' },
   { m: 'Media diag. de muro', v: 'P = −39,895 kN', c: 'E2P_A', fam: 'E' },
-  { m: 'Pilar de hastial', v: 'M₃ = −23,432 kNm', c: 'G4_BLYPN', fam: 'W' },
+  { m: 'Pilar de hastial', v: 'M₃ = −23,432 kN·m', c: 'G4_BLYPN', fam: 'W' },
 ];
 
 // Reacciones basales por estado, leídas del modelo (kN).
@@ -123,7 +123,7 @@ function figuraArbol() {
   partes.push(
     `<line x1="${X0}" y1="${N(yG + 4)}" x2="${X0 + 490}" y2="${N(yG + 4)}" stroke="${BORDE}" stroke-width="1"/>`,
     `<text x="${X0}" y="${N(yG + 26)}" font-size="12" fill="${TINTA}" font-weight="bold">Subtotal gravedad y viento: ${N_GRAV}</text>`,
-    `<text x="${X0}" y="${N(yG + 44)}" font-size="10.5" fill="${SUAVE}">Las (5), (7) y (8) de NCh 3171 caen: la (5) es la sísmica, y esa rama la reemplaza NCh 2369.</text>`,
+    `<text x="${X0}" y="${N(yG + 44)}" font-size="10.5" fill="${SUAVE}">La (5) y la (7) de §9.1.1 no se escriben: la (5) es la sísmica, y esa rama la reemplaza NCh 2369.</text>`,
   );
 
   // rama sísmica
@@ -188,7 +188,7 @@ function figuraGobierna() {
   const Y0 = 130;
 
   partes.push(
-    `<text x="${X0}" y="104" font-size="12" fill="${SUAVE}">De las ${N_TOTAL} combinaciones, la envolvente deja ${new Set(GOBIERNAN.map((g) => g.c)).size} nombres distintos gobernando algo. El resto no dimensiona nada.</text>`,
+    `<text x="${X0}" y="104" font-size="12" fill="${SUAVE}">Ocho verificaciones de la envolvente, gobernadas por solo ${new Set(GOBIERNAN.map((g) => g.c)).size} nombres. En la envolvente completa —diez miembros × tres esfuerzos— son nueve.</text>`,
   );
 
   GOBIERNAN.forEach((g, i) => {
@@ -230,12 +230,12 @@ function figuraGobierna() {
     `<text x="560" y="${N(yF + 126)}" font-size="10.5" fill="${SUAVE}">viento, un 16,5 % más.</text>`,
   );
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="Segoe UI, Arial, sans-serif">
-  <rect width="1000" height="560" fill="#ffffff"/>
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 630" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1000" height="630" fill="#ffffff"/>
   <text x="500" y="30" font-size="15.5" text-anchor="middle" fill="${TINTA}" font-weight="bold">La envolvente: la gravedad con nieve gana casi todo, y el sismo se queda con el arriostramiento</text>
   <text x="500" y="50" font-size="12" text-anchor="middle" fill="${SUAVE}">Con S = 1,20 kPa y el sismo dividido por R* = 4, la envolvente sísmica llega al 53 % del momento de alero</text>
   ${partes.join('\n  ')}
-  <text x="70" y="540" font-size="10.5" fill="${SUAVE}">Envolvente sobre las ${N_TOTAL} combinaciones, extraída del modelo verificado con combinaciones envolventes de SAP2000 (SERIE-GALPON.md §5.37).</text>
+  <text x="70" y="608" font-size="10.5" fill="${SUAVE}">Envolvente sobre las ${N_TOTAL} combinaciones, extraída del modelo verificado con combinaciones envolventes de SAP2000 (SERIE-GALPON.md §5.37).</text>
 </svg>
 `;
 }
