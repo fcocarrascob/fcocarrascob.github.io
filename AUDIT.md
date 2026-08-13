@@ -47,6 +47,70 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-cargas-combinaciones` · ⚠️ 16 hallazgos
+
+> **Segunda pasada.** El bloque de la primera auditoría se perdió y nunca llegó a `AUDIT.md`:
+> **este reporte lo reemplaza**. De aquella tanda se aplicaron 12 de 18 hallazgos en `05fcd2f`;
+> los cinco que quedaron abiertos se verificaron uno a uno contra el archivo actual y **los cinco
+> siguen abiertos** (filas 1, 2, 5, 6 y 9). Las once restantes son nuevas de esta pasada.
+
+**Commit:** `7ddddb0` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (a mano y contra `public/planillas/galpon-altiplano-cargas-combinaciones.json`)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🟠 | N | L.45 (tabla de estados) | **Sigue abierto (pasada 1, #1).** La fila `WLYP`/`WLYN` reporta $F_x = +10{,}206$ kN, que es la fuga transversal del viento longitudinal. La componente que manda en ese estado es $F_y = 86{,}625229$ kN (SERIE §6.2.1). Con solo $F_x$, el «chequeo a mano de dos líneas» que promete L.34 no se puede hacer, y además se pierde la comparación natural con el §7 (viento longitudinal 86,6 kN contra corte basal sísmico 130,3 kN, que es justo el argumento de «al arriostramiento lo gobierna el sismo») | Escribir la fila como $F_z = -185{,}722$ · $F_y = \pm 86{,}625$ · $F_x = \pm 10{,}206$ kN | ⬜ |
+| 2 | 🟠 | N | L.44–45 | **Sigue abierto (pasada 1, #2).** `WTXP` y `WTXN` comparten un único $F_x = -81{,}939$, y `WLYP`/`WLYN` un único $F_x = +10{,}206$. El sentido opuesto invierte el signo: el valor mostrado solo es cierto para uno de los dos estados de cada fila | `$F_x = \mp 81{,}939$` y declarar en una nota que el signo corresponde al sentido P | ⬜ |
+| 3 | 🟠 | N L | L.178 (caption fig. 1) | El caption dice que las que no aparecen son «la (5), la (7) y **la (8)** de NCh 3171». **§9.1.1 (LRFD) numera (1), (2), (3a), (3b), (4), (5), (6) y (7)** — no existe una (8) (SERIE §4.1, lectura del 2026-08-12). La (8) es del ASD (§9.2.1, `0,6D + E`), y las 79 son todas LRFD. Además contradice al propio SVG, que dice «La (5) y la (7) de §9.1.1 no se escriben» | Dejar el caption en «la (5) y la (7) de §9.1.1» | ⬜ |
+| 4 | 🟠 | C R | Fig. 1 panel B (alt L.177) vs L.93–96 | Las dos bases gravitacionales de la rama sísmica —`1,2D + 0,2S + E` y `0,9D + E`— **solo aparecen en la figura**; la prosa habla de «dos bases gravitacionales» sin escribirlas. Y la §4.5.1 que el post cita en la tabla de §2 es `1,2D + aL + SO + SA + 1,0E`, **sin S** (SERIE §4.1). El post nunca declara de dónde sale ese `0,2S` dentro de la combinación sísmica (el 0,2S de §4 es la *masa*, no la combinación) | Escribir las dos bases en la prosa de §5 y declarar que el `0,2S` se agrega como combinación complementaria | ⬜ |
+| 5 | 🟡 | F | L.166–168 vs L.210, L.226, L.228 | **Sigue abierto (pasada 1, #3).** Cuatro ecuaciones display: la masa sísmica va en `<Equation>` (sin `label`), y las tres restantes —el conteo `3×2×2=12` y los dos asserts de linealidad— van como `$$` desnudos | Unificar: o las cuatro en `<Equation>`, o solo las que se referencian | ⬜ |
+| 6 | 🟡 | U | `scripts/render-galpon-combinaciones.mjs` L.83 y L.167 · alt L.177 | **Sigue abierto (pasada 1, #4).** El SVG escribe `1749,865` sin separador de miles (`COMA()` solo cambia el punto por coma), y el `alt` repite «1749,865». El cuerpo usa `1\,749{,}865309` | En `COMA()`, insertar espacio fino de miles; regenerar y corregir el `alt` | ⬜ |
+| 7 | 🟡 | N | L.306–309 | La enumeración de la planilla suma **11 de las 14** verificaciones y describe a todas como «igualdades que tienen que cerrar», cuando tres de las que faltan no lo son: `c_dtot`, `v_nieve_manda` y `v_lr_muere` son comparaciones | Cerrar la lista incluyendo el D total y las dos comparaciones | ⬜ |
+| 8 | 🟡 | N | L.242 (y subtítulo de fig. 2) | «el sismo dividido por $R^* = 4$» vale para la dirección transversal: el $R^*$ longitudinal es **3,830163** (SERIE §6.2.1), y es el que aplica a la media diagonal de muro que el mismo §7 discute | «$R^* = 4{,}00$ en la transversal y $3{,}83$ en la longitudinal» | ⬜ |
+| 9 | 🟡 | C | L.18 vs L.48 y L.248 | **Sigue abierto (pasada 1, #5).** El intro promete «tres cosas que no estaban en el guion» sin enumerarlas ni marcarlas después; §1 abre con otro «tres cosas» y §7 anuncia «dos resultados» más. El lector termina contando cinco sorpresas y tres «tres» | Enumerar las tres del intro y presentar las dos de §7 como «las dos del final» | ⬜ |
+| 10 | 🟡 | N C | L.104 vs L.192 y fig. 1 | «Gravedad y viento → NCh 3171 §9.1.1, **combinaciones (1) a (7)**» incluye la (5) y la (7), que son las sísmicas y **no se escriben**. La regla 4 de §5 solo desactiva la (5); la figura desactiva la (5) y la (7). Tres versiones del mismo conjunto | «combinaciones (1) a (4) y (6)» en L.104, y añadir la (7) a la regla 4 | ⬜ |
+| 11 | 🟡 | N | L.194 | «su conteo es puramente multiplicativo: tres casos de nieve, cuatro de viento, dos signos de presión interna» — quien multiplica obtiene 3 × 4 × 2 = **24**, no 63. El 63 es la **suma de seis productos de rama**: 1 + 3 + 3 + 24 + 24 + 8 | «cada rama es una multiplicación y el subtotal es su suma» | ⬜ |
+| 12 | 🟡 | L | L.280–281 | «La §9.2.2 **y la regla de cierre de §9.2.1** citan «(5), (6) y (7)»». Per SERIE §4.1: §9.2.2 sí las cita; la regla de cierre (zona montañosa, ASD) cita **solo «la combinación (6)»** —que es lo que el propio post dice tres líneas más abajo | Separar las dos citas | ⬜ |
+| 13 | 🟡 | R | L.66 (y §1 entera) | La geometría del galpón **no se declara en ningún punto del post**: los 576,0 m² del assert aparecen sin decir que son 24 × 24 m, y el faldón inclinado y los muros/hastiales (los que reconstruyen `DSD`) no tienen ni área ni pendiente. Con lo escrito, el lector no puede rehacer el assert que el post presenta como «el que no necesita ningún motor» | Una línea de datos al abrir §1: 24 × 24 m en planta, alero 8,0 m, techo a 10°, $A_p = 576{,}0$ m², $A_f = 584{,}89$ m², $A_m = 818{,}78$ m² | ⬜ |
+| 14 | 🟡 | N F | alt L.238 (fila «Dintel en tracción») | La fila «Dintel en tracción: +24,780 kN» es la tracción del dintel **en el alero**; las otras tres filas de dintel sí llevan ubicación. La tracción máxima del dintel en la envolvente es +32,502 kN en cumbrera (SERIE §5.37), así que la etiqueta sin ubicación se lee como un máximo que no es | Renombrar a «Dintel, alero (tracción)» en `GOBIERNAN` y regenerar figura y `alt` | ⬜ |
+| 15 | 🔵 | L | todo el post (22 apariciones) | El post escribe `NCh 2369` / `NCh 3171` con espacio; el resto del sitio usa mayoritariamente la forma pegada (296 apariciones de `NCh2369` contra 54 de `NCh 2369` en `src/content/`), y el post 0 de esta misma serie y `SERIE-GALPON.md` usan `NCh2369`. Otros posts de `apuntes` sí usan la forma con espacio, así que no es un error, es una convención sin decidir | Fijar la convención del sitio; dentro de la serie del galpón, al menos, unificar | ⬜ |
+| 16 | 🔵 | L | L.184 | La (2) se cita como `1,2D + 1,6L + 0,5(L_r o S)`; el texto de §9.1.1 es `1,2D + 1,6L + 0,5(L_r o S o R)` (SERIE §4.1). Falta la alternativa R (lluvia), que el post deja fuera por alcance pero sin decirlo | Citar completa y añadir «(R queda fuera: no hay acumulación de agua en este techo)» | ⬜ |
+
+**Disposición: 15 de los 16 aplicados en este commit** — las filas 1 a 14 y la 16, incluidas las
+cuatro 🟠 y las cinco que venían de la primera pasada. Los dos que tocaban la figura (6 y 14, más el
+$R^*$ de la fila 8 que también estaba en el subtítulo del SVG) se corrigieron en
+`scripts/render-galpon-combinaciones.mjs` y las figuras se regeneraron y se miraron.
+
+🚫 **La fila 15 queda abierta a propósito.** `NCh 2369` con espacio contra `NCh2369` pegado es una
+convención del sitio que no está decidida, y el propio post 1 de esta serie usa `NCh 432` con
+espacio: unificar solo este post lo dejaría inconsistente con su vecino, y unificar los 34 posts de
+`apuntes` es una decisión editorial que excede la auditoría de un post. Queda anotado como deuda.
+
+**Verificado y correcto:**
+
+- **Resultantes por estado** contra SERIE §5.42/§6.2.1: `DEAD` 233,657226 · `DSD` 302,963865 · `LR` 172,8 · `SBAL` 691,2 · `SUNBI/D` 518,4 · `WTXP` −192,082392/−81,939439 · `WLYP` −185,722047/+10,205652 · `WPI` −57,243097. Los once estados están y son once. El signo del post es el opuesto al de §6.2.1 y **coincide con §5.42**: es convención reacción↔carga aplicada, no un error.
+- **Asserts de presión × área**: 1,20 × 576,0 = 691,2 ✓ · 0,30 × 576,0 = 172,8 ✓ · (1,0 + 0,5)/2 × 691,2 = 518,4 ✓, los tres exactos.
+- **`DSD` reconstruido** con la geometría de la planilla: $A_f = 2\cdot(12/\cos 10°)\cdot 24 = 584{,}8885$ m², $A_m = 2\cdot24\cdot8 + 2\cdot(24\cdot8 + 0{,}5\cdot24\cdot 12\tan 10°) = 818{,}7822$ m² → 0,35 × 584,8885 + 0,12 × 818,7822 = **302,96484** kN, contra 302,963865 del modelo: **9,8 × 10⁻⁴ kN**. La afirmación de L.313 («cierra a menos de 0,001 kN») es exacta, con poco margen.
+- **D total**: 233,657226 + 302,963865 = **536,621091** ✓.
+- **Razones de la nieve**: 691,2/536,621091 = **1,2881** ✓ · 691,2/302,963865 = **2,281** ✓ · 1,20/0,35 = **3,4286** ✓.
+- **Masa sísmica**: 536,621 + 0,20 × 691,2 = **674,861** kN ✓. El par de porcentajes está bien planteado y con base explícita: 138,24/536,621 = **25,8 %** y 138,24/674,861 = **20,5 %**, que es el mismo dato con las dos bases y el post lo dice.
+- **Linealidad**: 1,4 × 536,621091 = **751,2695274** ✓ · 1,2 × 536,621091 + 1,6 × 691,2 = **1 749,8653092** ✓.
+- **El árbol**: 1+3+3+24+24+8 = **63** ✓ · 3 × 2 × 2 = **12** ✓ · 2 × 2 = **4** ✓ · total **79** ✓ · ingenuo 3 × 2³ × 2 = **48** ✓ y 48 = 4 × 12 ✓. Coincide con el script (que lo calcula, no lo transcribe), con la planilla y con el `alt` de la figura, número por número.
+- **Envolvente** contra SERIE §5.37: 337,165/633,284 = **53,2 %** ✓ · 39,895/34,233 = **1,1654** ✓ · «cinco nombres» en las 8 filas de la figura ✓ · «nueve de las 79» en los 10 miembros × 3 esfuerzos ✓.
+- **El 40 %**: 1,4E contra 1,0E = +40 % ✓, con el sentido bien descrito.
+- **Citas normativas** contra SERIE §4.1 (todas leídas rasterizadas el 2026-08-12): §9 de NCh 3171 («éstas prevalecen»), excepción 9.1 f), la regla de zona montañosa LRFD, §9.2.1 d), la numeración 5a/5b–6a/6b, (6b), la prohibición de aumentar tensiones admisibles, §4.5.1 y §4.5.2, §5.1.2, §5.7.1, C12.2.1 y el Anexo B. Las tres citas textuales están **literales**. Ediciones citadas: NCh 2369:2025 3.ª ed. y NCh 3171:2017 2.ª ed., ambas vigentes; la única otra edición nombrada, NCh 2369:**2003**, es el objeto del hallazgo del §3, no una fuente.
+- **Frontmatter** contra el schema de `apuntes`: `subsection: "nch2369"` existe en `SUBSECTIONS`; `chapter`, `source` y `tags` válidos; sin `draft`.
+- **Enlaces y activos**: los tres enlaces internos existen y ninguno es `draft`; las dos imágenes existen; la planilla existe y el deep-link es el parámetro que lee `MathCanvas.tsx`.
+- **Forma**: los tres componentes importados se usan; `Note` con `type` válidos; sin H1 y jerarquía sin saltos; coma decimal dentro y fuera de LaTeX; miles con `\,`; `×` para multiplicaciones.
+
+**No verificable:**
+
+- Todo lo que sale de `Results.BaseReact` y de la envolvente de SAP2000 v27.1: las once resultantes por estado, el residuo de equilibrio 0,0, el gap de linealidad de **4 × 10⁻⁷ kN**, los diez miembros × tres esfuerzos de §5.37, los cortes basales y $R^*_Y = 3{,}830163$. Están todos contrastados **contra `SERIE-GALPON.md`**, que es la memoria de la serie, pero no contra el modelo en esta pasada.
+- El texto impreso de NCh 3171:2017 §9 y de NCh 2369:2025 §4.5: verificado contra las fichas de §4.1 (con página impresa, página PDF y fecha), no contra el PDF en esta pasada.
+
+**Planilla del canvas:** parcial · **ya tiene: sí** · **0 verificaciones demanda–capacidad** (14 veredictos, todos igualdades de trazabilidad y dos comparaciones de magnitud) — la cadena que la planilla cierra es real y está completa: de las presiones y la geometría salen las áreas, de ahí las cuatro resultantes, la masa sísmica, los dos asserts de linealidad y el conteo del árbol, sin ningún número escrito a mano en el medio. Lo que **no** puede derivar y hoy ya entra declarado como dato es `D_dead = 233,657226` kN. Las presiones y el 50 % de la nieve desbalanceada son decisión de proyecto y estudio de sitio, y así están rotuladas.
+
+---
+
 ### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432` · ✅ 16 hallazgos, todos aplicados
 
 **Commit:** `cd82f08` (rama `serie-galpon`) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí
@@ -4141,6 +4205,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-galpon-altiplano-cargas-combinaciones` | 2026-08-12 (2.ª pasada) | ⚠️ | 16 (0🔴 4🟠 · 10🟡 2🔵) · **15 aplicados**, 1 abierto (convención `NCh2369`) · 12 previos en `05fcd2f` · planilla ✓ (14 verificaciones) |
 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | 2026-08-12 | ✅ | 16 (1🔴 4🟠 · 5🟡 6🔵) · **15 aplicados**, 1 descartado, 0 abiertos · planilla ✓ (14 verificaciones, 5 contrastes) |
 | `ejemplo-analisis-sismico-cepa-nch2369` | 2026-08-12 | ⚠️ | 0 · 7 aplicados en `7522225` (1🟠 2🟡 4🔵) + 16 previos cerrados · planilla ✓ (23 verificaciones + 17 contrastes; el ✗ de Q₀ > Q₀máx declarado) |
 | `ejemplo-torre-sismica-nch2369` | 2026-08-12 | ⚠️ | 0 · 4 aplicados en `7522225` (3🟡 1🔵) + 15 previos en `aa0b828` · planilla ✓ (9 verificaciones; veredictos activos para verify:planilla desde `7522225`) |

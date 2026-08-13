@@ -63,7 +63,10 @@ const GOBIERNAN = [
   { m: 'Dintel, alero', v: 'M₃ = −633,206 kN·m', c: 'G3A_B', fam: 'S' },
   { m: 'Dintel, medio', v: 'M₃ = 176,334 kN·m', c: 'G3A_I', fam: 'Sd' },
   { m: 'Dintel, cumbrera', v: 'M₃ = 207,932 kN·m', c: 'G3A_B', fam: 'S' },
-  { m: 'Dintel, tracción', v: 'P = +24,780 kN', c: 'G6_LYNP', fam: 'W' },
+  // La tracción del dintel EN EL ALERO. El máximo del dintel en la envolvente
+  // completa es +32,502 kN en cumbrera, así que la fila sin ubicación se leía
+  // como un máximo que no es.
+  { m: 'Dintel, alero (tracción)', v: 'P = +24,780 kN', c: 'G6_LYNP', fam: 'W' },
   { m: 'Puntal de alero', v: 'P = +28,248 kN', c: 'E2P_A', fam: 'E' },
   { m: 'Media diag. de muro', v: 'P = −39,895 kN', c: 'E2P_A', fam: 'E' },
   { m: 'Pilar de hastial', v: 'M₃ = −23,432 kN·m', c: 'G4_BLYPN', fam: 'W' },
@@ -80,7 +83,12 @@ const D_TOTAL = 233.657226 + 302.963865;
 const S_BAL = 691.2;
 
 // ---------------------------------------------------------------- utilidades
-const COMA = (x, d = 2) => x.toFixed(d).replace('.', ',');
+// Coma decimal y espacio fino de miles, como el cuerpo de los posts.
+const COMA = (x, d = 2) => {
+  const [ent, frac] = x.toFixed(d).split('.');
+  const conMiles = ent.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return frac ? `${conMiles},${frac}` : conMiles;
+};
 const N = (x) => x.toFixed(1);
 const TINTA = '#222';
 const TEXTO = '#333';
@@ -233,7 +241,7 @@ function figuraGobierna() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 630" font-family="Segoe UI, Arial, sans-serif">
   <rect width="1000" height="630" fill="#ffffff"/>
   <text x="500" y="30" font-size="15.5" text-anchor="middle" fill="${TINTA}" font-weight="bold">La envolvente: la gravedad con nieve gana casi todo, y el sismo se queda con el arriostramiento</text>
-  <text x="500" y="50" font-size="12" text-anchor="middle" fill="${SUAVE}">Con S = 1,20 kPa y el sismo dividido por R* = 4, la envolvente sísmica llega al 53 % del momento de alero</text>
+  <text x="500" y="50" font-size="12" text-anchor="middle" fill="${SUAVE}">Con S = 1,20 kPa y el sismo dividido por R* (4,00 en la transversal, 3,83 en la longitudinal), la envolvente sísmica llega al 53 % del momento de alero</text>
   ${partes.join('\n  ')}
   <text x="70" y="608" font-size="10.5" fill="${SUAVE}">Envolvente sobre las ${N_TOTAL} combinaciones, extraída del modelo verificado con combinaciones envolventes de SAP2000 (SERIE-GALPON.md §5.37).</text>
 </svg>

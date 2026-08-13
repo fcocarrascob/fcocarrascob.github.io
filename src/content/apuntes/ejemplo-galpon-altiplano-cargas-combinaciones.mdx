@@ -15,7 +15,11 @@ import Figure from '../../components/content/Figure.astro';
 Tercer post de la serie del [galpón del altiplano](/blog/galpon-altiplano-la-serie/). El
 [primero](/apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432) dejó cerrada la presión de
 velocidad en $q_h = 0{,}650$ kPa. Acá esa presión —y todo lo demás— se convierte en **once estados
-de carga y 79 combinaciones**, y en el camino aparecen tres cosas que no estaban en el guion.
+de carga y 79 combinaciones**, y en el camino aparecen cinco cosas que no estaban en el guion: una
+excepción de NCh 3171 que apunta a una edición muerta (§3), una errata interna de su propio ASD
+(§3), la nieve entrando en la masa sísmica por una puerta que no es §5.1.2 (§4), la rama sísmica que
+son 12 combinaciones y no 48 (§5), y —al final, con la envolvente ya corrida— quién gobierna de
+verdad cada miembro (§7).
 
 <Note type="info" title="Lo que este post no rehace">
 [**NCh 2369 — el contrato: alcance, desempeño y combinaciones**](/apuntes/nch2369-panorama-y-combinaciones)
@@ -30,6 +34,12 @@ qué pasa en la frontera entre las dos normas, y qué queda cuando se poda el á
 
 ## 1. Los once estados
 
+El galpón es de **24 × 24 m en planta**, alero a **8,0 m** y techo a dos aguas con **10°** de
+pendiente. De ahí salen las tres áreas que hacen falta para verificar cualquier estado a mano: la
+proyección horizontal $A_p = 576{,}0$ m² —que es la que recibe nieve y sobrecarga—, el faldón
+inclinado $A_f = 2 \cdot (12/\cos 10°) \cdot 24 = 584{,}889$ m² —el que recibe la carga muerta de
+cubierta— y los muros más los hastiales, $A_m = 818{,}782$ m².
+
 El modelo tiene once estados de carga, ninguno de ellos una combinación. Estas son sus resultantes,
 leídas del propio modelo con `Results.BaseReact` — que es el primer chequeo, porque cada una tiene
 que coincidir con una cuenta a mano de dos líneas.
@@ -42,8 +52,14 @@ que coincidir con una cuenta a mano de dos líneas.
 | `SBAL` | nieve balanceada, 1,20 kPa sobre proyección horizontal | $F_z = 691{,}200$ kN |
 | `SUNBI`, `SUNBD` | nieve desbalanceada, 100 % / 50 % por faldón | $F_z = 518{,}400$ kN |
 | `WTXP`, `WTXN` | viento transversal, los dos sentidos | $F_z = -192{,}082$ · $F_x = -81{,}939$ kN |
-| `WLYP`, `WLYN` | viento longitudinal, los dos sentidos | $F_z = -185{,}722$ · $F_x = +10{,}206$ kN |
+| `WLYP`, `WLYN` | viento longitudinal, los dos sentidos | $F_z = -185{,}722$ · $F_y = -86{,}625$ · $F_x = +10{,}206$ kN |
 | `WPI` | presión interna, $GC_{pi} = \pm 0{,}18$ | $F_z = -57{,}243$ kN |
+
+Las componentes horizontales están escritas **para el sentido `P`**; el sentido `N` las invierte, y
+por eso los dos estados de cada par no son el mismo con otro nombre. En el viento longitudinal la
+componente que manda es $F_y$: los 86,6 kN que empujan el hastial y que van a buscar el
+arriostramiento. Los 10,2 kN de $F_x$ son la fuga transversal de ese mismo estado, y aparecen porque
+las presiones de las dos caras largas no se cancelan exactamente.
 
 Tres cosas se leen directo de esa tabla.
 
@@ -101,7 +117,8 @@ porque la combinación (5) es la que uno tiene en la cabeza de cualquier edifici
 
 El reparto que queda, y que es el que se implementó:
 
-- **Gravedad y viento** → NCh 3171 §9.1.1, combinaciones (1) a (7).
+- **Gravedad y viento** → NCh 3171 §9.1.1, combinaciones (1) a (4) y (6): las dos que faltan, la (5)
+  y la (7), son las que llevan $E$.
 - **Sismo** → NCh 2369 §4.5.1, que reemplaza esa rama entera, con $E$ a factor **1,0**.
 - **Simultaneidad direccional** → NCh 2369 §4.5.2.
 
@@ -174,14 +191,15 @@ masa sísmica con la carga muerta y nada más se queda **un 20 % corto** antes d
 
 <Figure
   src="/ejemplo-galpon-altiplano-cargas-combinaciones/arbol-de-combinaciones.svg"
-  alt="Diagrama del árbol de combinaciones. Panel A, gravedad y viento por NCh 3171 sección 9.1.1, con seis ramas y una barra por rama proporcional a su cantidad: la (1) 1,4 D es una sola; la (2) 1,2 D más 0,5 S son tres, por los tres casos de nieve; la (3a) 1,2 D más 1,6 S son otras tres; la (3b) 1,2 D más 1,6 S más 0,8 W son veinticuatro, que salen de tres nieves por cuatro vientos por dos signos de presión interna; la (4) 1,2 D más 1,6 W más 0,5 S son otras veinticuatro por la misma cuenta; y la (6) 0,9 D más 1,6 W son ocho, cuatro vientos por dos signos. Subtotal sesenta y tres, con la nota de que la (5) y la (7) de la sección 9.1.1 no se escriben, porque la (5) es la sísmica y esa rama la reemplaza NCh 2369. Panel B, sismo por NCh 2369 sección 4.5.1 con la simultaneidad de la 4.5.2, con las dos combinaciones 1,2 D más 0,2 S más E y 0,9 D más E: tres ecuaciones de simultaneidad por dos signos de la vertical por dos bases gravitacionales dan doce, más cuatro de una rama ilustrativa con R igual a 5 dibujada en trazos. Total setenta y nueve combinaciones LRFD. A la derecha, dos recuadros: uno explica por qué la rama sísmica son doce y no cuarenta y ocho, porque SAP aplica los casos espectrales con signo más menos automático y solo hay que enumerar el signo de E sub z que es estático; el otro muestra el chequeo de linealidad, con la carga muerta total de 536,621 kilonewton, la nieve de 691,2, y las combinaciones 1,4 D igual 751,270 y 1,2 D más 1,6 S igual 1749,865, que SAP devuelve iguales a cuatro por diez a la menos siete kilonewton."
-  caption="Las 79 no se enumeran a mano: cada rama es una multiplicación. Y las que no aparecen —la (5), la (7) y la (8) de NCh 3171— son tan informativas como las que sí."
+  alt="Diagrama del árbol de combinaciones. Panel A, gravedad y viento por NCh 3171 sección 9.1.1, con seis ramas y una barra por rama proporcional a su cantidad: la (1) 1,4 D es una sola; la (2) 1,2 D más 0,5 S son tres, por los tres casos de nieve; la (3a) 1,2 D más 1,6 S son otras tres; la (3b) 1,2 D más 1,6 S más 0,8 W son veinticuatro, que salen de tres nieves por cuatro vientos por dos signos de presión interna; la (4) 1,2 D más 1,6 W más 0,5 S son otras veinticuatro por la misma cuenta; y la (6) 0,9 D más 1,6 W son ocho, cuatro vientos por dos signos. Subtotal sesenta y tres, con la nota de que la (5) y la (7) de la sección 9.1.1 no se escriben, porque la (5) es la sísmica y esa rama la reemplaza NCh 2369. Panel B, sismo por NCh 2369 sección 4.5.1 con la simultaneidad de la 4.5.2, con las dos combinaciones 1,2 D más 0,2 S más E y 0,9 D más E: tres ecuaciones de simultaneidad por dos signos de la vertical por dos bases gravitacionales dan doce, más cuatro de una rama ilustrativa con R igual a 5 dibujada en trazos. Total setenta y nueve combinaciones LRFD. A la derecha, dos recuadros: uno explica por qué la rama sísmica son doce y no cuarenta y ocho, porque SAP aplica los casos espectrales con signo más menos automático y solo hay que enumerar el signo de E sub z que es estático; el otro muestra el chequeo de linealidad, con la carga muerta total de 536,621 kilonewton, la nieve de 691,2, y las combinaciones 1,4 D igual 751,270 y 1,2 D más 1,6 S igual 1 749,865, que SAP devuelve iguales a cuatro por diez a la menos siete kilonewton."
+  caption="Las 79 no se enumeran a mano: cada rama es una multiplicación. Y las que no aparecen —la (5) y la (7) de §9.1.1, las dos que llevan E— son tan informativas como las que sí."
 />
 
 Cuatro reglas podan el árbol antes de escribir nada:
 
 1. **$L = 0$.** No hay plataformas ni entrepisos. Ojo con esto: **no borra ramas, vacía el
-   término**. La (2), que es $1{,}2D + 1{,}6L + 0{,}5(L_r$ o $S)$, no desaparece — degenera en
+   término**. La (2), que es $1{,}2D + 1{,}6L + 0{,}5(L_r$ o $S$ o $R)$ —la $R$ es lluvia, y queda
+   fuera porque este techo no acumula agua—, no desaparece: degenera en
    $1{,}2D + 0{,}5S$ y sigue aportando tres combinaciones.
 2. **$L_r$ nunca gana.** Con 0,30 contra 1,20 kPa, la sobrecarga de techo no sobrevive a ninguna
    combinación donde $S$ esté. Como $S$ está en todas las que importan, $L_r$ no aparece en
@@ -189,15 +207,29 @@ Cuatro reglas podan el árbol antes de escribir nada:
 3. **Sismo y viento no actúan a la vez.** Lo dicen §9.1.1 y §9.2.1: «no es necesario considerar que
    actúan simultáneamente». Esto solo elimina el producto cartesiano entre las dos familias, que
    sería lo que realmente haría inmanejable la lista.
-4. **La (5) de §9.1.1 no se escribe**, porque es la sísmica y esa rama la reemplaza NCh 2369.
+4. **La (5) y la (7) de §9.1.1 no se escriben**, porque son las dos que llevan $E$ y esa rama la
+   reemplaza NCh 2369.
 
-Lo que queda son **63 combinaciones de gravedad y viento**, y su conteo es puramente multiplicativo:
-tres casos de nieve, cuatro de viento, dos signos de presión interna.
+Lo que queda son **63 combinaciones de gravedad y viento**. Cada rama es una multiplicación y el
+subtotal es la suma de las seis: $1 + 3 + 3 + 24 + 24 + 8 = 63$, donde los tres casos de nieve, los
+cuatro de viento y los dos signos de presión interna se combinan solo en las ramas que llevan las
+tres cosas a la vez.
 
 ### Por qué la rama sísmica son 12 y no 48
 
+Las **dos bases gravitacionales** sobre las que se monta cada ecuación de simultaneidad son
+
+<Equation>
+$$1{,}2D + 0{,}2S + E \qquad\text{y}\qquad 0{,}9D + E$$
+</Equation>
+
+La primera es la §4.5.1 de NCh 2369 con $L = 0$ y $SO = SA = 0$, más el $0{,}2S$ que esa cláusula
+**no trae** y que se toma de la (5) de NCh 3171 por lo dicho en la §4: acá la nieve está sobre el
+techo cuando llega el sismo. La segunda es la que quita la gravedad estabilizante, que es la que
+pone tracción en las columnas de barlovento.
+
 §4.5.2 pide las tres ecuaciones de simultaneidad con **todos** los signos. Enumerado ingenuamente
-eso son $3 \times 2^3 \times 2 = 48$ combinaciones, con las dos bases gravitacionales.
+eso son $3 \times 2^3 \times 2 = 48$ combinaciones, con esas dos bases.
 
 Pero hay un detalle de implementación que cambia la cuenta, y que conviene saber antes de escribir el
 script: **en una combinación lineal aditiva, SAP2000 aplica un caso espectral con signo $\pm$
@@ -207,7 +239,9 @@ sin agregar un solo resultado.
 El único que **sí** hay que enumerar es el signo de $E_z$, porque la vertical de §5.7.1 entró al
 modelo como un caso **estático**, no espectral. Quedan entonces:
 
+<Equation>
 $$3\ \text{ecuaciones} \times 2\ \text{signos de } E_z \times 2\ \text{bases gravitacionales} = \mathbf{12}$$
+</Equation>
 
 Más cuatro de una rama ilustrativa con $R = 5$, que se corre sobre el mismo modelo solo para
 comparar contra la ruta de diseño de §12.2 con $R = 4$. **Total: 79.**
@@ -223,9 +257,13 @@ descubre leyendo la cláusula, sino contando lo que sale.
 
 Una combinación lineal aditiva tiene que ser exactamente eso. Con las resultantes de la §1:
 
+<Equation>
 $$1{,}4 \times 536{,}621091 = \mathbf{751{,}269527\ \text{kN}}$$
+</Equation>
 
+<Equation>
 $$1{,}2 \times 536{,}621091 + 1{,}6 \times 691{,}2 = \mathbf{1\,749{,}865309\ \text{kN}}$$
+</Equation>
 
 SAP devuelve esos mismos valores a **$4 \times 10^{-7}$ kN**. No es un chequeo decorativo: si una
 combinación arrastrara un caso que no corresponde, o un factor mal tecleado, la reacción vertical
@@ -235,11 +273,12 @@ total lo delataría de inmediato, y es la magnitud más barata de comparar que e
 
 <Figure
   src="/ejemplo-galpon-altiplano-cargas-combinaciones/quien-gobierna.svg"
-  alt="Tabla de la envolvente sobre las 79 combinaciones, con una barra de color a la izquierda de cada fila que indica la familia de la combinación gobernante. Columna de alero: momento 633,284 kilonewton metro, gobierna G3A_B. Dintel de alero: momento menos 633,206, gobierna G3A_B. Dintel a media luz: momento 176,334, gobierna G3A_I, la nieve desbalanceada. Dintel en cumbrera: momento 207,932, gobierna G3A_B. Dintel en tracción: axial más 24,780 kilonewton, gobierna G6_LYNP. Puntal de alero: axial más 28,248, gobierna E2P_A. Media diagonal de muro: axial menos 39,895, gobierna E2P_A. Pilar de hastial: momento menos 23,432, gobierna G4_BLYPN. Al pie, la leyenda de las familias y dos notas: que la nieve desbalanceada gobierna el dintel a media luz, el caso que casi nadie corre y que ninguna norma chilena disponible obliga a correr porque entra por el estudio de sitio; y que a la diagonal de muro la gobierna el sismo y no el viento, con 39,895 kilonewton contra 34,233 de la envolvente de gravedad y viento, un 16,5 por ciento más."
+  alt="Tabla de la envolvente sobre las 79 combinaciones, con una barra de color a la izquierda de cada fila que indica la familia de la combinación gobernante. Columna de alero: momento 633,284 kilonewton metro, gobierna G3A_B. Dintel de alero: momento menos 633,206, gobierna G3A_B. Dintel a media luz: momento 176,334, gobierna G3A_I, la nieve desbalanceada. Dintel en cumbrera: momento 207,932, gobierna G3A_B. Dintel en el alero, tracción: axial más 24,780 kilonewton, gobierna G6_LYNP. Puntal de alero: axial más 28,248, gobierna E2P_A. Media diagonal de muro: axial menos 39,895, gobierna E2P_A. Pilar de hastial: momento menos 23,432, gobierna G4_BLYPN. Al pie, la leyenda de las familias y dos notas: que la nieve desbalanceada gobierna el dintel a media luz, el caso que casi nadie corre y que ninguna norma chilena disponible obliga a correr porque entra por el estudio de sitio; y que a la diagonal de muro la gobierna el sismo y no el viento, con 39,895 kilonewton contra 34,233 de la envolvente de gravedad y viento, un 16,5 por ciento más."
   caption="Ocho verificaciones, gobernadas por cinco nombres. En la envolvente completa —diez miembros por tres esfuerzos— son nueve de las 79. El resto se corre y no dimensiona nada, pero no se sabe cuáles hasta haberlas corrido todas."
 />
 
-Con $S = 1{,}20$ kPa y el sismo dividido por $R^* = 4$, **la gravedad con nieve gana con comodidad en
+Con $S = 1{,}20$ kPa y el sismo dividido por $R^*$ —que vale $4{,}00$ en la dirección transversal y
+$3{,}83$ en la longitudinal, la de la crucería—, **la gravedad con nieve gana con comodidad en
 toda la estructura principal**. La envolvente sísmica llega al **53 %** del momento de alero
 (337,165 contra 633,284 kN·m). Eso era lo esperable, y va en la línea de lo que el comentario
 C12.2.1 de NCh 2369 dice de los galpones livianos: que son estructuras donde los esfuerzos de viento
@@ -277,9 +316,10 @@ de fundaciones y tensiones del suelo. Una plantilla de modelado que marque LRFD 
 combinaciones de resistencia**, y que nunca declare cuáles son de deflexión, está mezclando dos
 cosas que la norma separa.
 
-**Y hay una errata interna, confirmada en el impreso.** La §9.2.2 y la regla de cierre de §9.2.1
-citan «(5), (6) y (7)», pero **§9.2.1 numera 5a/5b y 6a/6b**: la norma remite a rótulos que no
-existen. Al implementar hay que decidir —y **declarar**— si «(6)» significa 6a, 6b o ambas. Para
+**Y hay una errata interna, confirmada en el impreso.** La §9.2.2 cita «(5), (6) y (7)» y la regla
+de zona montañosa que cierra §9.2.1 cita «la combinación (6)», pero **§9.2.1 numera 5a/5b y 6a/6b**:
+las dos remiten a rótulos que no existen. Al implementar hay que decidir —y **declarar**— si «(6)»
+significa 6a, 6b o ambas. Para
 este caso importa, porque la regla de zona montañosa reemplaza «la combinación (6)», y **6b es
 justamente la que trae $0{,}75E + 0{,}75S$**: la única del ASD donde nieve y sismo conviven.
 
@@ -303,10 +343,12 @@ factores del árbol arriba y a la vista.
 **[Abrir la planilla en el canvas](/herramientas/canvas?planilla=galpon-altiplano-cargas-combinaciones)** ·
 [descargar el JSON](/planillas/galpon-altiplano-cargas-combinaciones.json)
 
-Trae **catorce verificaciones**, y ninguna es de demanda contra capacidad: son todas igualdades que
-tienen que cerrar. Las cuatro resultantes por presión × área, la masa sísmica, los dos asserts de
-linealidad, y los cuatro del conteo del árbol —incluido el `n_ingenuo == 4 × n_sismo` que pone
-número al 48 contra 12—.
+Trae **catorce verificaciones**, y ninguna es de demanda contra capacidad. Once son igualdades que
+tienen que cerrar: las cuatro resultantes por presión × área, la carga muerta total, la masa
+sísmica, los dos asserts de linealidad y los tres del conteo del árbol. Las otras tres son
+comparaciones de magnitud —el `n_ingenuo == 4 × n_sismo` que le pone número al 48 contra 12, y las
+dos que dejan por escrito que la nieve manda ($S_{bal} > D_{tot}$) y que $L_r$ se muere
+($p_{L_r} < p_{nieve}$)—.
 
 La más útil es la de `DSD`: reconstruye los 302,963865 kN que reporta el modelo desde los 0,35 kPa
 de techo sobre el faldón inclinado y los 0,12 kPa de revestimiento sobre muros y hastiales, y cierra
