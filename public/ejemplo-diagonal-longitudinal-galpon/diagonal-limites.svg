@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="1000" height="640" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="640" fill="#fff"/>
+  <text x="92" y="32" font-size="17" fill="#333" text-anchor="start" font-weight="bold">Las tres fronteras sobre el mismo cajón soldado</text>
+  <text x="92" y="54" font-size="12.5" fill="#6b7280" text-anchor="start">A36 de plancha · F_y = 250 MPa · R_y = 1,30 · el eje vertical es la razón h/t de la pared</text>
+  <rect x="92" y="377.1827768718832" width="481.3003679698461" height="194.81722312811678" fill="#1f7a4d" opacity="0.07"/>
+  <line x1="92" y1="572" x2="750" y2="572" stroke="#333" stroke-width="1.4"/>
+  <line x1="92" y1="76" x2="92" y2="572" stroke="#333" stroke-width="1.4"/>
+  <line x1="92" y1="572" x2="92" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="92" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">115</text>
+  <line x1="223.6" y1="572" x2="223.6" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="223.6" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">120</text>
+  <line x1="355.2" y1="572" x2="355.2" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="355.2" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">125</text>
+  <line x1="486.8" y1="572" x2="486.8" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="486.8" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">130</text>
+  <line x1="618.4" y1="572" x2="618.4" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="618.4" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">135</text>
+  <line x1="750" y1="572" x2="750" y2="577" stroke="#6b7280" stroke-width="1"/>
+  <text x="750" y="592" font-size="11.5" fill="#6b7280" text-anchor="middle">140</text>
+  <line x1="87" y1="572" x2="92" y2="572" stroke="#6b7280" stroke-width="1"/>
+  <text x="82" y="576" font-size="11.5" fill="#6b7280" text-anchor="end">0</text>
+  <line x1="87" y1="468.66666666666663" x2="92" y2="468.66666666666663" stroke="#6b7280" stroke-width="1"/>
+  <text x="82" y="472.66666666666663" font-size="11.5" fill="#6b7280" text-anchor="end">10</text>
+  <line x1="87" y1="365.3333333333333" x2="92" y2="365.3333333333333" stroke="#6b7280" stroke-width="1"/>
+  <text x="82" y="369.3333333333333" font-size="11.5" fill="#6b7280" text-anchor="end">20</text>
+  <line x1="87" y1="262" x2="92" y2="262" stroke="#6b7280" stroke-width="1"/>
+  <text x="82" y="266" font-size="11.5" fill="#6b7280" text-anchor="end">30</text>
+  <line x1="87" y1="158.66666666666663" x2="92" y2="158.66666666666663" stroke="#6b7280" stroke-width="1"/>
+  <text x="82" y="162.66666666666663" font-size="11.5" fill="#6b7280" text-anchor="end">40</text>
+  <text x="421" y="620" font-size="13" fill="#333" text-anchor="middle">esbeltez global  L_c / r</text>
+  <text x="26" y="324" font-size="13" fill="#333" text-anchor="middle" transform="rotate(-90 26 324)">pandeo local  h / t</text>
+  <line x1="573.3003679698461" y1="76" x2="573.3003679698461" y2="572" stroke="#b02a1a" stroke-width="2"/>
+  <text x="581.3003679698461" y="92" font-size="12" fill="#b02a1a" text-anchor="start" font-weight="bold">1,5π√(E/F_y) = 133,29</text>
+  <text x="581.3003679698461" y="108" font-size="11.5" fill="#b02a1a" text-anchor="start">NCh2369  8.6.3 y 8.8.4</text>
+  <line x1="92" y1="136.51650369324489" x2="750" y2="136.51650369324489" stroke="#1a63a8" stroke-width="2"/>
+  <text x="760" y="130.51650369324489" font-size="12" fill="#1a63a8" text-anchor="start" font-weight="bold">λ_r = 1,49√(E/F_y) = 42,14</text>
+  <text x="760" y="146.51650369324489" font-size="11.5" fill="#1a63a8" text-anchor="start">AISC B4.1a caso 8 — cajón soldado</text>
+  <line x1="92" y1="162.82087595338453" x2="750" y2="162.82087595338453" stroke="#1a63a8" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.75"/>
+  <text x="760" y="178.82087595338453" font-size="11" fill="#1a63a8" text-anchor="start">caso 6 (HSS) = 39,60</text>
+  <line x1="92" y1="377.1827768718832" x2="750" y2="377.1827768718832" stroke="#1f7a4d" stroke-width="2.4"/>
+  <text x="760" y="371.1827768718832" font-size="12" fill="#1f7a4d" text-anchor="start" font-weight="bold">λ_md = 0,76√(E/R_yF_y) = 18,85</text>
+  <text x="760" y="387.1827768718832" font-size="11.5" fill="#1f7a4d" text-anchor="start">NCh2369 Tabla 9 — el que decide</text>
+  <path d="M 138 136.51650369324489 L 124 136.51650369324489 L 124 377.1827768718832 L 138 377.1827768718832" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <text x="146" y="254.84964028256405" font-size="13" fill="#b45309" text-anchor="start" font-weight="bold">×2,24</text>
+  <text x="146" y="271.84964028256405" font-size="11.5" fill="#b45309" text-anchor="start">más estricto</text>
+  <circle cx="420.1311853199363" cy="334.3333333333333" r="6.5" fill="#b02a1a" stroke="#fff" stroke-width="2"/>
+  <text x="420.1311853199363" y="320.3333333333333" font-size="12.5" fill="#b02a1a" text-anchor="middle" font-weight="bold">1</text>
+  <circle cx="453.69793153901696" cy="386" r="8.5" fill="#1f7a4d" stroke="#fff" stroke-width="2"/>
+  <circle cx="453.69793153901696" cy="386" r="12.5" fill="none" stroke="#1f7a4d" stroke-width="1.6"/>
+  <text x="453.69793153901696" y="372" font-size="12.5" fill="#1f7a4d" text-anchor="middle" font-weight="bold">2</text>
+  <circle cx="349.5859095121871" cy="398.9166666666667" r="6.5" fill="#1f7a4d" stroke="#fff" stroke-width="2"/>
+  <text x="349.5859095121871" y="384.9166666666667" font-size="12.5" fill="#1f7a4d" text-anchor="middle" font-weight="bold">3</text>
+  <circle cx="311.69298919409124" cy="377.3888888888889" r="6.5" fill="#1f7a4d" stroke="#fff" stroke-width="2"/>
+  <text x="311.69298919409124" y="363.3888888888889" font-size="12.5" fill="#1f7a4d" text-anchor="middle" font-weight="bold">4</text>
+  <rect x="330" y="420" width="580" height="134" rx="8" fill="#fff" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="370" y="442" font-size="11" fill="#6b7280" text-anchor="start" font-weight="bold">barra</text>
+  <text x="710" y="442" font-size="11" fill="#6b7280" text-anchor="end" font-weight="bold">h/t</text>
+  <text x="790" y="442" font-size="11" fill="#6b7280" text-anchor="end" font-weight="bold">L_c/r</text>
+  <text x="886" y="442" font-size="11" fill="#6b7280" text-anchor="end" font-weight="bold">uso λ_md</text>
+  <circle cx="352" cy="460" r="6" fill="#b02a1a"/>
+  <text x="352" y="464" font-size="10" fill="#fff" text-anchor="middle" font-weight="bold">1</text>
+  <text x="370" y="464" font-size="11.5" fill="#333" text-anchor="start">Diagonal de muro 100×100×4</text>
+  <text x="710" y="464" font-size="11.5" fill="#333" text-anchor="end">23,00</text>
+  <text x="790" y="464" font-size="11.5" fill="#333" text-anchor="end">127,47</text>
+  <text x="886" y="464" font-size="11.5" fill="#b02a1a" text-anchor="end" font-weight="bold">1,220 ✗</text>
+  <circle cx="352" cy="483" r="6" fill="#1f7a4d"/>
+  <text x="352" y="487" font-size="10" fill="#fff" text-anchor="middle" font-weight="bold">2</text>
+  <text x="370" y="487" font-size="11.5" fill="#333" text-anchor="start" font-weight="bold">Diagonal de muro 100×100×5 — adoptada</text>
+  <text x="710" y="487" font-size="11.5" fill="#333" text-anchor="end">18,00</text>
+  <text x="790" y="487" font-size="11.5" fill="#333" text-anchor="end">128,74</text>
+  <text x="886" y="487" font-size="11.5" fill="#1f7a4d" text-anchor="end" font-weight="bold">0,955 ✓</text>
+  <circle cx="352" cy="506" r="6" fill="#1f7a4d"/>
+  <text x="352" y="510" font-size="10" fill="#fff" text-anchor="middle" font-weight="bold">3</text>
+  <text x="370" y="510" font-size="11.5" fill="#333" text-anchor="start">Diagonal de techo 75×75×4</text>
+  <text x="710" y="510" font-size="11.5" fill="#333" text-anchor="end">16,75</text>
+  <text x="790" y="510" font-size="11.5" fill="#333" text-anchor="end">124,79</text>
+  <text x="886" y="510" font-size="11.5" fill="#1f7a4d" text-anchor="end" font-weight="bold">0,888 ✓</text>
+  <circle cx="352" cy="529" r="6" fill="#1f7a4d"/>
+  <text x="352" y="533" font-size="10" fill="#fff" text-anchor="middle" font-weight="bold">4</text>
+  <text x="370" y="533" font-size="11.5" fill="#333" text-anchor="start">Puntal de techo 125×125×6</text>
+  <text x="710" y="533" font-size="11.5" fill="#333" text-anchor="end">18,83</text>
+  <text x="790" y="533" font-size="11.5" fill="#333" text-anchor="end">123,35</text>
+  <text x="886" y="533" font-size="11.5" fill="#1f7a4d" text-anchor="end" font-weight="bold">0,999 ✓</text>
+  <text x="102" y="560" font-size="11.5" fill="#1f7a4d" text-anchor="start" font-weight="bold">región que cumple las tres</text>
+</svg>

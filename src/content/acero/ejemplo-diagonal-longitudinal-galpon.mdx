@@ -1,0 +1,591 @@
+---
+title: "Ejemplo — El mismo límite colgando de tres cláusulas: las diagonales y el puntal del galpón (NCh2369 8.6.3, 8.8.4 y 12.2)"
+description: "Las cuatro barras de arriostramiento del galpón del altiplano son el mismo cajón soldado de A36 y comparten el mismo λ_md = 18,85, pero cuelgan de cláusulas distintas y por eso tienen salidas distintas. La diagonal de muro cumple la esbeltez global al 95,6 % y excede el pandeo local en un 22 %; el puntal de techo cumple al 99,89 %, una parte en mil. AISC le da al cajón soldado el caso 8 de la Tabla B4.1a (1,49) y al HSS el caso 6 (1,40); NCh2369 le pone 0,76 a los dos. Y la exención del amplificador, que en el chevron y en la diagonal HSS estaba cerrada, acá está abierta con uso 0,52 — porque a esta diagonal la dimensionó la esbeltez y no la carga."
+pubDate: 2026-08-12
+tags: ["ejemplo", "acero", "nch2369", "aisc360", "marcos arriostrados", "arriostramiento de techo", "pandeo local", "esbeltez", "galpón liviano", "cajón soldado", "galpón", "serie galpón"]
+subsection: "ejemplos"
+chapter: "NCh2369 8.6.3 / 8.8.4 — Arriostramiento del galpón"
+tema: 'Marcos arriostrados'
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Décimo post de la serie del [galpón del altiplano](/blog/galpon-altiplano-la-serie/). El
+[quinto](/apuntes/ejemplo-galpon-altiplano-sismico-nch2369) dejó el edificio clasificado como
+**galpón liviano de acero** por §12.2 de NCh2369:2025[^nch], con $R = 4$, y dejó corrida la
+envolvente. Acá se verifican las **cuatro barras de arriostramiento** que salieron de ese modelo.
+
+Las cuatro son el mismo producto —cajón soldado por planchas, acero A36— y comparten el mismo
+límite de pandeo local. Y sin embargo no se verifican igual, porque **cuelgan de cláusulas
+distintas**, y cada cláusula deja abiertas puertas de salida distintas. Esa es la pregunta que
+organiza el post: no *cuánto da* el límite, sino **de qué cláusula cuelga cada barra y qué te deja
+hacer cuando no cumples**.
+
+<Note type="info" title="Lo que este post no rehace">
+El terreno de las diagonales sismorresistentes está muy trabajado en este sitio, y nada de lo
+siguiente se re-explica:
+
+- [**El paño en V invertida**](/acero/ejemplo-chevron-nch2369) agota **el hallazgo** de que el
+  $\lambda_{md}$ manda sobre la esbeltez global: lo publica sobre un **cajón soldado de A36** —el
+  mismo $18{,}9$ que sale acá—, con la diagonal que falla el pandeo local mientras pasa la
+  esbeltez, y con las **dos puertas de 8.6.3, las dos cerradas**. Acá ese mismo patrón vuelve a
+  aparecer, y se recalcula, **pero como dato de entrada del mapa de cláusulas, no como
+  descubrimiento**: lo que se compara es de qué cláusula cuelga cada barra y qué salida le queda,
+  y para eso hay que tener los números de las cuatro.
+- [**El gusset simple apernado**](/acero/ejemplo-gusset-simple-apernado) ya publica que el
+  **grado del acero mueve el límite** —porque la Tabla 9 va con $R_yF_y$— sobre un tubo que pasa
+  el $\lambda_{md}$ **al 98,2 %**. Es el pariente cercano del puntal de acá, que pasa al 99,89 %;
+  la diferencia es que allá cambiar de grado no da vuelta el veredicto y acá sí.
+- [**La diagonal HSS a tracción y compresión**](/acero/ejemplo-diagonal-hss-traccion) agota la
+  **8.6.4** —el cruce de la X como punto fijo, con el tubo cayendo de 53,5 a 25,1 tonf—, la
+  **8.6.8** con su $T_{ye}$, y la identidad entre el $1{,}5\pi\sqrt{E/F_y}$ de la norma chilena y
+  el quiebre $4{,}71\sqrt{E/F_y}$ del Cap. E. Acá el cruce de la X **se da por establecido** y se
+  cita, no se deriva.
+- [**Predimensionamiento de la diagonal**](/acero/predimensionamiento-diagonal-arriostramiento)
+  agota el $r_{\min} = L_c/(1{,}5\pi\sqrt{E/F_y})$ como servilleta, y el significado de ese límite
+  ($\lambda_c = 1{,}5$, el 39 % de $F_y$ conservado en compresión).
+- [**El galpón liviano**](/blog/galpon-liviano-nch2369) agota §12.2 entera: las ocho condiciones,
+  el $R = 4$, el **permiso de solo-tracción** de §8.6.1 y §8.8.2, y el $0{,}5R_1$ que reemplaza al
+  $0{,}7R_1$.
+- Las **conexiones quedan fuera** por alcance de la serie, y además la 8.6.8 ya está desarrollada
+  en el post de la diagonal HSS.
+
+Lo que no está publicado en ninguna parte es lo de este post: **que el mismo $\lambda_{md}$ cuelga
+de tres cláusulas con tres juegos de puertas distintos**, que **§8.8.4 tiene una salida que §8.6.3
+no tiene**, y que AISC distingue el cajón soldado del tubo conformado en frío donde NCh2369 no lo
+hace.
+</Note>
+
+## El caso
+
+Del modelo del galpón —24,0 m de luz, 5 marcos a 6,0 m, alero a 8,0 m— salen cuatro barras de
+arriostramiento, todas **cajones soldados por planchas**. Que sean soldados y no tubos comprados no
+es un detalle de fabricación: decide de qué fila de tabla salen sus límites, en las dos normas.
+
+| Barra | Sección | $L_c$ | De dónde sale $L_c$ | Cláusula |
+|---|---|:---:|---|:---:|
+| Diagonal de la crucería de muro | CAJ 100×100×4 | 5,000 m | media diagonal, cruce de la X fijo por **8.6.4** | **8.6.3** |
+| Diagonal del arriostramiento de techo | CAJ 75×75×4 | 3,623 m | media diagonal del panel de 4,00 × 6,00 × 0,71 m | **8.8.4** |
+| Puntal del arriostramiento de techo | CAJ 125×125×6 | 6,000 m | entre marcos, misma línea de costanera | **8.8.4** |
+
+Materiales, y acá está el primer punto que hay que declarar y casi nunca se declara: como las
+secciones se arman **con plancha**, el $R_y$ que entra en el límite sísmico es el de
+*Plates, Strips, and Sheets* de la Tabla A3.2 de AISC 341-22[^aisc341] —**1,30**—, no el 1,50 de
+los perfiles laminados ni el 1,30 del A500 Gr. C que coincide por casualidad. La 8.3.3 de
+NCh2369 es la que remite a esa tabla, y su comentario C8.3.3 lo confirma con ensayos nacionales
+sobre planchas A36.
+
+<Equation label="Datos de material">
+$$
+F_y = 250 \ \text{MPa} \qquad
+E = 200\,000 \ \text{MPa} \qquad
+R_y = 1{,}30 \qquad
+R_yF_y = 325 \ \text{MPa}
+$$
+</Equation>
+
+## 1. Un límite, tres cláusulas
+
+La NCh2369 no tiene *una* cláusula de esbeltez local para elementos de arriostramiento: tiene
+tres, en tres lugares distintos de la cláusula 8, y todas remiten a la misma Tabla 9. Lo que
+cambia no es el número: es **a quién aplica y qué te deja hacer si no cumples**.
+
+| Cláusula | A qué elemento | Exige | Puertas de salida |
+|---|---|---|---|
+| **8.6.3** | diagonales sismorresistentes **de planos verticales** que trabajen en compresión | $\lambda_{md}$ **y** $1{,}5\pi\sqrt{E/F_y}$ | **una sola**: sismo horizontal amplificado por $0{,}7R_1 \ge 1{,}0$ |
+| **8.8.4** | diagonales **y puntales** de arriostramiento **de piso o de cubierta** | los mismos dos | **dos**: el $0{,}7R_1$, **o la máxima carga que el sistema puede transferir al elemento** |
+| **8.7.3** | secciones de **vigas** de marcos de momento | $\lambda_{md}$ | el $0{,}7R_1$, pero *«para todos los esfuerzos»* |
+
+Y encima de las tres, **§12.2.2** reescribe el amplificador: en un galpón liviano el $0{,}7R_1$
+de todas ellas pasa a ser $0{,}5R_1$. Leerlo como «el descuento que compra el $R = 4$» es una
+interpretación cómoda y probablemente correcta, pero la norma no lo presenta como contrapartida:
+§12.2.2 se limita a reemplazar el factor, sin decir por qué.
+
+<Note type="warning" title="La asimetría que casi nadie nota">
+Compara palabra por palabra el texto de las dos primeras. La **8.6.3** dice:
+
+> *«Se pueden exceptuar de esta exigencia aquellas diagonales cuya resistencia requerida sea
+> determinada utilizando las combinaciones de cargas definidas en 4.5, en las cuales el estado de
+> carga sísmico horizontal ha sido amplificado por $0{,}7R_1 \ge 1{,}0$.»*
+
+Y la **8.8.4**, después de exigir exactamente lo mismo, cierra distinto:
+
+> *«…amplificado por $0{,}7R_1 \ge 1{,}0$, **o con la máxima carga que el sistema puede transferir
+> al elemento**.»*
+
+Esa coletilla no está en la 8.6.3. Es una puerta entera —la del diseño por capacidad, que en un
+arriostramiento de techo suele ser mucho menos exigente que amplificar el sismo— que la norma le
+da a la cubierta y le niega al plano vertical. El comentario C8.8.4 explica por qué: los sistemas
+horizontales *«son altamente redundantes, siendo muchas veces sus elementos dimensionados por
+requisitos mínimos»*, así que es común que ya tengan resistencia de sobra.
+</Note>
+
+## 2. El límite, y por qué es tan bajo
+
+La fila de la Tabla 9 que aplica a un cajón **soldado** usado como arriostramiento es «paredes de
+perfiles rectangulares soldados usados como arriostramientos», y su razón ancho/espesor se llama
+$h/t$ —la de los conformados en frío se llama $b/t$ y es una fila distinta, aunque el coeficiente
+coincida—:
+
+<Equation label="Tabla 9 — paredes de rectangulares soldados">
+$$
+\lambda_{md} = 0{,}76\sqrt{\frac{E}{R_yF_y}}
+= 0{,}76\sqrt{\frac{200\,000}{325}}
+= 0{,}76 \cdot 24{,}807 = \mathbf{18{,}85}
+$$
+</Equation>
+
+Lo que hay que medir contra él es la **luz libre** de la pared. Y acá hay una precisión que se
+pasa por alto porque el atajo más conocido es el otro: el $b = B - 3t$ que uno tiene en la cabeza
+es el item **(d)** de §B4.1b de AISC 360-22[^aisc360], y está escrito **solo para HSS**, para
+descontar el radio de esquina cuando no se conoce. Un cajón armado no tiene radio de esquina que
+descontar, y le corresponde el item **(e)**: *«For flanges or webs of box sections and other
+stiffened elements, the width, $b$, is the clear distance between the elements providing
+stiffening.»*
+
+<Equation label="§B4.1b(e) — cajón armado">
+$$
+b = B - 2t \qquad\text{(no } B - 3t\text{)}
+$$
+</Equation>
+
+Para el cajón de muro: $b = 100 - 2(4) = 92$ mm, y $h/t = 92/4 = 23{,}0$.
+
+## 3. La diagonal de muro pasa lo que todos miran
+
+Empecemos por lo que uno verifica primero, que es la esbeltez global. La media diagonal mide 5,00 m
+—la X completa cruza un vano de 6,0 m por 8,0 m de alto, y el cruce cuenta como punto fijo por
+8.6.4—, y el cajón da $r = 39{,}23$ mm:
+
+<Equation label="§8.6.3 — esbeltez global">
+$$
+\frac{L_c}{r} = \frac{5000}{39{,}226} = 127{,}47
+\;\le\;
+1{,}5\pi\sqrt{\frac{E}{F_y}} = 133{,}29
+\qquad \text{uso } \mathbf{0{,}956} \ \checkmark
+$$
+</Equation>
+
+Pasa. Raspando —al 95,6 % del límite—, pero pasa. Y por AISC la sección tampoco es esbelta a
+compresión, con margen amplio:
+
+<Equation label="Tabla B4.1a, caso 8">
+$$
+\frac{b}{t} = 23{,}0 \;\le\; \lambda_r = 1{,}49\sqrt{\frac{E}{F_y}} = 42{,}14
+\qquad \text{uso } 0{,}55 \ \checkmark
+$$
+</Equation>
+
+Dos verificaciones cómodas, un perfil que parece resuelto. Y entonces:
+
+<Equation label="Tabla 9 — pandeo local, 8.6.3">
+$$
+\frac{h}{t} = 23{,}0 \;>\; \lambda_{md} = 18{,}85
+\qquad \text{uso } \mathbf{1{,}220} \ ✗
+$$
+</Equation>
+
+**Excede el límite en un 22 %.** El listón que decide no es ninguno de los dos que uno mira: es el
+tercero.
+
+<Figure
+  src="/ejemplo-diagonal-longitudinal-galpon/diagonal-limites.svg"
+  alt="Plano con la razón ancho/espesor h/t en el eje vertical y la esbeltez global L_c/r en el eje horizontal. Tres fronteras: una vertical roja en L_c/r = 133,29, el límite de NCh2369 8.6.3 y 8.8.4; una horizontal azul en λ_r = 42,14, el caso 8 de la Tabla B4.1a de AISC para cajón soldado, con la del caso 6 para HSS punteada más abajo en 39,60; y una horizontal verde en λ_md = 18,85, el de la Tabla 9 de NCh2369. Una llave ámbar entre las dos horizontales marca que el listón sísmico es 2,24 veces más estricto que el de AISC. La región que cumple las tres queda sombreada en verde claro, abajo a la izquierda. Cuatro puntos numerados y una leyenda al pie: el 1, diagonal de muro 100×100×4, en h/t 23,00 y L_c/r 127,47, queda por encima de la frontera verde y por tanto fuera de la región segura, con uso 1,220; el 2, la misma diagonal en 100×100×5 y marcada como adoptada con un anillo, en 18,00 y 128,74, uso 0,955; el 3, diagonal de techo 75×75×4, en 16,75 y 124,79, uso 0,888; y el 4, puntal de techo 125×125×6, en 18,83 y 123,35, pegado por debajo a la frontera verde, uso 0,999."
+  caption="Las tres fronteras sobre el mismo plano. La diagonal de muro con pared de 4 mm cae en la franja donde la esbeltez global se cumple y el pandeo local de AISC también, pero el límite sísmico no. Subir la pared a 5 mm la mete en la región segura moviéndola casi solo en vertical."
+/>
+
+### Por qué el listón sísmico está tan abajo
+
+El cociente entre los dos límites de pandeo local es el dato:
+
+<Equation label="La razón entre los dos listones">
+$$
+\frac{\lambda_r}{\lambda_{md}} = \frac{42{,}14}{18{,}85} = \mathbf{2{,}24}
+$$
+</Equation>
+
+No es que la sección cambie: cambia lo que se le pide. El $\lambda_r$ de AISC pregunta si la pared
+se abolla **bajo la carga de diseño**; el $\lambda_{md}$ pregunta si se abolla **después de haber
+plastificado y en ciclos sucesivos**. El comentario C8.6.3 lo dice sin rodeos: ante el sismo de
+diseño *«es probable que las diagonales en compresión pandeen»*, y el límite existe *«con el fin de
+que los ciclos de pandeo de las diagonales no generen fatiga de bajo ciclaje»*.
+
+Parte de la diferencia es aritmética y está a la vista: el límite sísmico se escribe con $R_yF_y$ y
+no con $F_y$, lo que ya lo baja un $\sqrt{1{,}3} = 1{,}14$. El resto —de 1,49 a 0,76, un factor de
+1,96— es la exigencia de ductilidad propiamente dicha.
+
+<Note type="tip" title="AISC distingue el cajón soldado del tubo; NCh2369 no">
+Vale la pena mirar la Tabla B4.1a con cuidado, porque la fila que uno usa por costumbre no es la
+que corresponde. El **caso 6** es «Walls of rectangular HSS» y su pictograma tiene esquinas
+redondeadas: es el tubo **conformado en frío**, y su límite es $1{,}40\sqrt{E/F_y}$. Un cajón
+armado con cuatro planchas no es un HSS; cae en el **caso 8**, «All other stiffened elements»,
+cuyo pictograma es precisamente una plancha entre dos elementos que la atiesan, y su límite es
+$1{,}49\sqrt{E/F_y}$ — un **6,4 % más permisivo**. La explicación habitual es que el conformado en
+frío arrastra las tensiones residuales del plegado y el armado no; la Especificación separa los dos
+casos pero no lo justifica en el articulado, así que quede como lectura y no como cita.
+
+La Tabla 9 de NCh2369 **también tiene las dos filas separadas** —«conformados en frío (HSS) o
+plegados en frío» y «soldados»— pero les pone **el mismo 0,76** a las dos. Solo cambia el nombre
+de la razón: $b/t$ para el conformado, $h/t$ para el soldado. O sea que la norma chilena reconoce
+la distinción en la descripción y la ignora en el número.
+
+En una sección cuadrada la etiqueta no cambia la cuenta. Pero en un cajón rectangular sí importa
+cuál de las dos dimensiones estás midiendo, y ahí la fila que cites decide el resultado.
+</Note>
+
+## 4. El techo: mismo límite, otra cláusula, y una puerta más
+
+Las dos barras del arriostramiento de techo cuelgan de **8.8.4**, no de 8.6.3, porque son
+*«diagonales y puntales de sistemas de arriostramiento de piso o de cubierta»*. El límite numérico
+es idéntico. El resultado, no.
+
+<Equation label="Diagonal de techo — CAJ 75×75×4">
+$$
+\frac{h}{t} = \frac{67}{4} = 16{,}75 \;\le\; 18{,}85 \quad\text{uso } 0{,}888 \ \checkmark
+\qquad
+\frac{L_c}{r} = \frac{3623}{29{,}03} = 124{,}79 \;\le\; 133{,}29 \quad\text{uso } 0{,}936 \ \checkmark
+$$
+</Equation>
+
+Cumple las dos. Y el puntal, que es la barra más grande de las cuatro, cumple también — pero por
+un pelo que conviene mirar de cerca:
+
+<Equation label="Puntal de techo — CAJ 125×125×6">
+$$
+\frac{h}{t} = \frac{113}{6} = 18{,}8333 \;\le\; \lambda_{md} = 18{,}8533
+\qquad \text{uso } \mathbf{0{,}9989}
+$$
+</Equation>
+
+**Cumple al 99,89 %.** El margen es de 0,02 unidades de esbeltez, una parte en mil. Es el número
+más frágil de todo el modelo: cualquier cosa que mueva el $R_y$ hacia arriba, o el $F_y$ del
+certificado por encima de los 250 MPa nominales, lo deja fuera. Y como el límite va con $R_yF_y$,
+un acero *mejor* lo empeora — un A572 Gr. 50 en plancha tiene $R_y = 1{,}1$ pero
+$F_y = 345$ MPa, y el producto sube a 379,5 contra los 325 del A36, bajando el $\lambda_{md}$ a
+**17,45**. Con ese acero el puntal **no pasaría**.
+
+<Note type="warning" title="Un elemento que sube de calidad puede reprobar">
+Es contraintuitivo y vale como regla general de la cláusula 8: **subir el grado del acero baja
+todos los límites de la Tabla 9**, porque están escritos con $R_yF_y$ en el denominador. En
+verificaciones de resistencia un acero mejor siempre ayuda; en las de ductilidad, castiga. Si el
+proyecto cambia de A36 a A572 en el camino —cosa que pasa por disponibilidad, no por diseño— hay
+que **volver a correr toda la Tabla 9**, no solo las resistencias.
+</Note>
+
+## 5. La demanda: la manda el sismo, no el viento
+
+Antes de decidir qué hacer con la diagonal de muro, conviene saber quién la carga. La intuición
+dice que en un galpón liviano la diagonal la dimensiona el viento: el sismo entra dividido por
+$R^*$ y el viento entra multiplicado sin dividir por nada. Sobre este modelo **es al revés**.
+
+| Origen | Compresión en la media diagonal de muro |
+|---|:---:|
+| Envolvente de gravedad y viento | 34,233 kN |
+| **Envolvente sísmica** | **39,895 kN** |
+| Diferencia | **+16,5 % a favor del sismo** |
+
+La explicación no está en la diagonal sino en el espectro. Las dos direcciones del galpón caen en
+zonas muy distintas de la curva:
+
+| Dirección | $T^*$ | $S_{aH}$ de referencia | $Q_0$ |
+|---|:---:|:---:|:---:|
+| Transversal (marcos de momento) | 0,8527 s | 0,6306 | 86,96 kN |
+| **Longitudinal (arriostrada)** | **0,1611 s** | **1,3976** | **130,26 kN** |
+
+La dirección arriostrada es la rígida, y por eso su $T^*$ cae **cerca del pico** del espectro
+—que para este sitio está en $T = 0{,}2703$ s con $S_{aH} = 1{,}6828$—, sobre la rama que sube y al
+**83,1 %** de ese máximo. La transversal, en cambio, ya bajó por la rama descendente hasta el
+**37,5 %**. La razón entre las dos aceleraciones de referencia es **2,22**.
+
+Ese 2,22 explica el **sentido** del resultado, no su magnitud: entre la aceleración y el corte
+basal median dos cosas más, y tiran en direcciones opuestas. El $R^*$ es **direccional** —4,000 en
+la transversal contra 3,830 en la longitudinal—, lo que sube la razón de las aceleraciones *de
+diseño* a 2,31; y la **masa modal efectiva** la baja fuerte, porque el modo dominante transversal
+moviliza el 94,63 % de la masa mientras el longitudinal solo el 47,42 %. El resultado de las tres
+cosas juntas es el que mide el modelo:
+
+$$
+\frac{Q_{0Y}}{Q_{0X}} = \frac{130{,}257}{86{,}960} = 1{,}498
+\qquad\text{o sea } +49{,}8\ \%
+$$
+
+Rigidizar castiga, y la diagonal que produce esa rigidez es la que paga.
+
+<Figure
+  src="/ejemplo-diagonal-longitudinal-galpon/diagonal-espectro.svg"
+  alt="Espectro de referencia S_aH de NCh2369 para zona sísmica 2 y suelo B, ponderado por el factor de amortiguamiento (0,05/ξ)^0,4 = 1,4427, con el período en el eje horizontal de 0 a 1,5 s. La curva arranca en 0,61, sube hasta un pico marcado en gris en T = 0,2703 s con S_aH = 1,6828, y después decae. Se marcan dos puntos: T* longitudinal = 0,1611 s, sobre la rama ascendente y antes del pico, con S_aH = 1,3976; y T* transversal = 0,8527 s, ya sobre la rama descendente, con S_aH = 0,6306. Debajo, dos barras comparan los cortes basales resultantes, 130,26 kN en la dirección longitudinal contra 86,96 kN en la transversal, y se anota que la arriostrada se lleva un 49,8 % más, y que la diagonal recibe 39,895 kN de compresión sísmica contra 34,233 kN de gravedad y viento, un 16,5 % más."
+  caption="Por qué la dirección arriostrada se lleva más corte que la de marcos: su período cae cerca del pico del espectro, al 83 % del máximo, mientras el de la dirección flexible ya bajó al 37,5 %. La diagonal que da esa rigidez es la que después tiene que resistirla — y, por estar sobre la rama que sube, rigidizarla todavía más bajaría la aceleración."
+/>
+
+Con esa demanda, la resistencia sobra con comodidad. La media diagonal es no esbelta, así que la
+capacidad sale directo del Cap. E:
+
+<Equation label="Ecs. E3-4 y E3-2">
+$$
+F_e = \frac{\pi^2 E}{(L_c/r)^2} = \frac{\pi^2 \cdot 200\,000}{127{,}47^2} = 121{,}49 \ \text{MPa}
+\qquad
+\frac{F_y}{F_e} = 2{,}058 \le 2{,}25 \;\Rightarrow\; \text{rama inelástica}
+$$
+$$
+F_n = 0{,}658^{\,2{,}058} \cdot 250 = 105{,}65 \ \text{MPa}
+$$
+</Equation>
+
+<Equation label="Ec. E3-1">
+$$
+\phi_c P_n = 0{,}90 \cdot 105{,}65 \cdot 1536 = 146{,}06 \ \text{kN}
+\;\ge\; P_u = 39{,}90 \ \text{kN}
+\qquad \text{uso } \mathbf{0{,}273}
+$$
+</Equation>
+
+**Al 27 % de su capacidad.** A esta diagonal no la dimensionó la carga: la dimensionó la esbeltez
+global, que la obligó a tener $r \ge 37{,}5$ mm mucho antes de que la resistencia tuviera algo que
+decir. Y ese sobredimensionamiento forzado es, como se ve enseguida, lo que le abre la puerta.
+
+## 6. Las dos puertas, y esta vez una está abierta
+
+La diagonal de muro no cumple el $\lambda_{md}$. La 8.6.3 deja dos salidas, y hay que evaluar las
+dos — porque acogerse a la exención no es una firma, es un compromiso de diseño.
+
+### Puerta 1 — engrosar la pared
+
+Es la salida directa, y con cajones soldados es barata porque no dependes de catálogo: pides la
+plancha del espesor que necesites. Con 5 mm:
+
+<Equation label="CAJ 100×100×5">
+$$
+\frac{h}{t} = \frac{90}{5} = 18{,}0 \;\le\; 18{,}85 \quad \text{uso } 0{,}955 \ \checkmark
+\qquad
+\frac{L_c}{r} = \frac{5000}{38{,}84} = 128{,}74 \;\le\; 133{,}29 \quad \text{uso } 0{,}966 \ \checkmark
+$$
+</Equation>
+
+Cumple las dos, aunque ninguna con holgura. Y ojo con el efecto lateral, que es contraintuitivo:
+engrosar la pared **empeora** la esbeltez global, de 127,47 a 128,74. El área sube un 23,7 % pero la
+inercia sube menos que proporcionalmente, porque el material que agregas va hacia adentro, más
+cerca del eje. El radio de giro **baja** de 39,23 a 38,84 mm. Con una pared de 6 mm el efecto se
+acentúa, y en algún punto la solución al pandeo local rompe la esbeltez global.
+
+### Puerta 2 — la exención del amplificador
+
+La 8.6.3 exime de **ambos** requisitos —el $\lambda_{md}$ y la esbeltez global— si la resistencia
+requerida se determina amplificando el estado sísmico horizontal. Dicho sea de paso: el texto
+escribe «de esta **exigencia**», en singular, aunque el párrafo anterior impuso dos cosas; acá se
+lee como que exime de las dos, que es la lectura que ya usa el
+[ejemplo de la diagonal HSS](/acero/ejemplo-diagonal-hss-traccion) y la que no cambia nada en este
+caso, porque la esbeltez global cumple igual. Y como este galpón va por §12.2, la §12.2.2 reescribe
+ese amplificador:
+
+<Equation label="§12.2.2 — el amplificador del galpón liviano">
+$$
+0{,}7R_1 \;\longrightarrow\; 0{,}5R_1
+\qquad
+R_1 = R^*\cdot\min\!\left(\frac{Q_0}{Q_0^{\min}};\, 1\right)
+= 3{,}830 \cdot 1 = 3{,}830
+\qquad
+0{,}5R_1 = \mathbf{1{,}915}
+$$
+</Equation>
+
+<Note type="tip" title="El R₁ es direccional, y acá manda el longitudinal">
+El $R_1$ no es el $R$ de tabla ni es único para el edificio: sale de la Ec. (14) con el $R^*$ de
+**cada dirección**. En la transversal $R^*_X = 4{,}000$ y $0{,}5R_1 = 2{,}00$, que es el valor que
+uno anota mentalmente para el galpón. Pero esta diagonal vive en la dirección **longitudinal**,
+donde $R^*_Y = 3{,}830$ —el $T^*_Y$ cae bajo el codo $C_rT_1$ de la Ec. (1b) y le recorta el
+$R^*$— y el amplificador correcto es **1,915**. Usar el 2,00 acá sería conservador por poco, pero
+es la dirección equivocada.
+</Note>
+
+Ahora bien: para aplicar la exención en rigor hay que amplificar **solo la parte sísmica** de la
+combinación, y eso pide descomponerla. Se puede evitar el trámite, porque una **cota superior**
+basta para cerrar el caso: si se amplificara *toda* la combinación —gravedad incluida, que no
+corresponde y es más desfavorable— la demanda sería a lo más
+
+<Note type="info" title="Por qué esto es una cota, y no siempre lo sería">
+Amplificar la combinación entera acota amplificar solo su parte sísmica **si y solo si la parte no
+sísmica también comprime** la diagonal, es decir $P_G \ge 0$ con el signo de la compresión. Si la
+gravedad la traccionara, $P_G + \alpha P_E > \alpha (P_G + P_E)$ y el argumento se daría vuelta.
+En una crucería de muro de un galpón la gravedad comprime —las diagonales bajan desde el alero al
+pie de la columna vecina—, así que la condición se cumple; conviene decirlo porque en un
+arriostramiento de techo con levantamiento por viento no tiene por qué cumplirse.
+</Note>
+
+<Equation label="Cota superior de la demanda amplificada">
+$$
+P_u^{\,\text{amp}} \;\le\; 0{,}5R_1 \cdot P_u = 1{,}915 \cdot 39{,}90 = 76{,}4 \ \text{kN}
+\;<\;
+\phi_c P_n = 146{,}06 \ \text{kN}
+\qquad \text{uso } \le \mathbf{0{,}52} \ \checkmark
+$$
+</Equation>
+
+**La puerta está abierta.** Y es la primera vez en este sitio que lo está: en el
+[paño en V invertida](/acero/ejemplo-chevron-nch2369) la misma exención daba uso **1,52**, y en la
+[diagonal HSS](/acero/ejemplo-diagonal-hss-traccion) daba **4,68**. Las dos cerradas.
+
+<Note type="info" title="Por qué acá sí, y la regla que se saca de los tres casos">
+La exención se paga con capacidad disponible, así que la pregunta es siempre la misma: **¿cuánta
+reserva tiene el elemento sobre su demanda no amplificada?** Si esa reserva supera el
+amplificador, la puerta está abierta.
+
+| Caso | Reserva $\phi P_n/P_u$ | Amplificador | ¿Abre? |
+|---|:---:|:---:|:---:|
+| Diagonal de este galpón | **3,66** | $0{,}5R_1 = 1{,}92$ | **sí**, con margen |
+| Diagonal del [paño en V](/acero/ejemplo-chevron-nch2369) | 1,84 | $0{,}7R_1 = 2{,}80$ | no |
+| Diagonal [HSS](/acero/ejemplo-diagonal-hss-traccion), sin cruce fijo | 0,60 | $0{,}7R_1 = 2{,}80$ | no |
+
+Y se ve de dónde sale la diferencia: **este galpón tiene las dos ventajas a la vez**. Por un lado
+el $0{,}5R_1$ de §12.2.2, cuyo coeficiente es un 28,6 % menor que el $0{,}7R_1$ del resto. Por otro, una
+diagonal al 27 % de uso porque la dimensionó la esbeltez y no la carga. Un elemento que la carga
+dimensiona ajustado nunca va a poder acogerse a la exención — es el chevron.
+</Note>
+
+### Puerta 3, que solo existe en un galpón liviano
+
+Hay una tercera salida que este edificio tiene y ningún otro marco arriostrado regido por NCh2369
+tiene. El permiso en sí está desarrollado en
+[**el galpón liviano**](/blog/galpon-liviano-nch2369): la 8.6.1 prohíbe el arriostramiento que solo
+resiste tracción, **excepto en galpones livianos que se rigen por 12.2**. Lo que ese post no
+encadena, y es lo de acá, es con la 8.6.3: su límite aplica a las diagonales *«que trabajen en
+compresión»*.
+
+Encadenando las dos: si la crucería se detalla como **solo-tracción** —barras o planchuelas con
+tensor, que no toman compresión—, el $\lambda_{md}$ **no aplica por definición del elemento**. No
+es una exención que haya que ganarse con cálculo: es que la cláusula no habla de esa barra.
+
+No es la ruta que sigue este proyecto —el modelo tiene la X trabajando en los dos sentidos, y la
+crucería de cajón aporta rigidez que la deriva transversal agradece—, pero conviene saber que
+existe, y que la habilitó la misma clasificación §12.2 que trajo el $R = 4$.
+
+<Figure
+  src="/ejemplo-diagonal-longitudinal-galpon/diagonal-puertas.svg"
+  alt="Diagrama de árbol. La raíz pregunta: ¿la barra trabaja en compresión? La rama no lleva a solo-tracción, con dos casos: prohibido por 8.6.1 en general, y permitido en galpón liviano por la excepción de 12.2, donde el λ_md no aplica. La rama sí se abre según el plano del elemento: plano vertical lleva a 8.6.3, con una única puerta de salida, el amplificador 0,7R₁, que en galpón liviano pasa a 0,5R₁; piso o cubierta lleva a 8.8.4, con dos puertas, el mismo amplificador o la máxima carga que el sistema puede transferir. Bajo cada hoja se anota el elemento del galpón que cae ahí y su resultado: diagonal de muro 100×100×4, falla el λ_md pero la exención abre con uso 0,52; diagonal de techo 75×75×4 y puntal 125×125×6, cumplen directo."
+  caption="El árbol completo de la cláusula 8 para un elemento de arriostramiento. El nodo que casi nadie recorre es el primero: si la barra no trabaja en compresión, la 8.6.3 no le aplica — y en un galpón liviano eso es una opción legal."
+/>
+
+## 7. Qué se adopta, y por qué
+
+Con las tres puertas abiertas o cerradas sobre la mesa, la decisión no es normativa sino de
+proyecto:
+
+| Opción | Qué cuesta | Qué obliga después |
+|---|---|---|
+| **CAJ 100×100×5** | +23,7 % de acero en la diagonal (1 536 → 1 900 mm²) | nada: cumple directo, y la sección queda dúctil |
+| Exención por $0{,}5R_1$ | 0 kg de acero | rediseñar la diagonal —y su conexión— con el sismo amplificado, y **declararlo en el plano**, porque quien revise no puede deducirlo |
+| Solo-tracción | el detalle más barato del galpón | perder la rigidez de la crucería a compresión, que la deriva transversal usa |
+
+**Se adopta el CAJ 100×100×5.** El motivo no es el costo —364 mm² de área extra sobre 16 medias
+diagonales es acero despreciable frente al total— sino que la exención deja una estructura cuya
+admisibilidad depende de un cálculo que hay que arrastrar a los planos y a la revisión, mientras
+que engrosar 1 mm la deja cumpliendo el requisito de ductilidad **por geometría**. Cuando la
+diferencia entre las dos rutas es un milímetro de plancha, la ruta dúctil sale gratis.
+
+<Note type="warning" title="Lo que este post no reanalizó">
+Las fuerzas de todas las tablas salen del modelo corrido con la diagonal de **4 mm**, que es la
+que se predimensionó. Subir a 5 mm sube el área un 23,7 % y con ella la rigidez longitudinal, así
+que en rigor el modelo cambiaría.
+
+El efecto sobre la demanda va **en el sentido favorable**, y conviene ver por qué. Al rigidizar, el
+$T^*_Y$ baja; y como el $T^*_Y$ está sobre la rama **ascendente** del espectro (§5), bajarlo lo
+mueve hacia la izquierda y **hacia abajo** por la curva: menos aceleración espectral, no más. Si la
+diagonal fuera la única rigidez de la dirección, el $+23{,}7\ \%$ de área llevaría el período a
+$\approx 0{,}145$ s y el $S_{aH}$ caería un $6\ \%$; como las columnas y los puntales también
+aportan, la caída real es menor. En ningún escenario sube.
+
+Lo que sí cambiaría es el **reparto** entre las barras, y con él el $P_u$ de cada una en algún
+porcentaje. Con la diagonal al 22 % de uso en su versión de 5 mm, ningún reparto razonable la
+acerca al límite.
+
+Queda dicho igual, porque es la clase de cosa que un modelo no te avisa: **las verificaciones de
+este post son válidas para la sección que se adopta, con las fuerzas de la sección que se
+predimensionó.** Cerrar la iteración de verdad pide volver a correr el análisis, y esa vuelta no
+está en este post.
+</Note>
+
+## Resumen: las cuatro barras
+
+Acero A36 de plancha, $R_yF_y = 325$ MPa, $\lambda_{md} = 18{,}85$, esbeltez global límite 133,29.
+
+| Barra | Cláusula | $h/t$ | vs $\lambda_{md}$ | $L_c/r$ | vs 133,29 | $\phi_c P_n$ [kN] | $P_u$ [kN] | manda | uso |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Diagonal muro** CAJ 100×100×4 | §8.6.3 | 23,00 | **1,220 ✗** | 127,47 | 0,956 ✓ | 146,06 | 39,90 | `E2P_A` | 0,273 |
+| **Diagonal muro** CAJ 100×100×**5** *(adoptada)* | §8.6.3 | 18,00 | **0,955 ✓** | 128,74 | 0,966 ✓ | 177,56 | 39,90 | `E2P_A` | 0,225 |
+| Diagonal techo CAJ 75×75×4 | §8.8.4 | 16,75 | 0,888 ✓ | 124,79 | 0,936 ✓ | 111,96 | 28,23 | `G3A_B` | 0,252 |
+| Puntal techo CAJ 125×125×6 | §8.8.4 | 18,83 | **0,999 ✓** | 123,35 | 0,925 ✓ | 286,86 | 96,09 | `G3A_B` | 0,335 |
+
+`E2P_A` es una de las doce combinaciones sísmicas de §4.5.1; `G3A_B` es `1,2D + 1,6S` con la nieve
+balanceada. **Ojo con la columna «manda»**, porque matiza el §5: el sismo gobierna la diagonal de
+muro, pero a las dos barras del techo las gobierna la **gravedad con nieve**.
+
+Tres lecciones, y ninguna es sobre la diagonal:
+
+1. **La cláusula de la que cuelga un elemento decide qué salidas tiene**, no solo qué le exige. El
+   mismo $\lambda_{md}$ le da dos puertas al arriostramiento de cubierta (8.8.4) y una sola al
+   plano vertical (8.6.3). Buscar el límite y no leer el párrafo siguiente te cuesta la opción más
+   barata.
+2. **Los tres números que decidieron acá son de ductilidad y de geometría, no de resistencia.** Las
+   cuatro barras están entre el 22 % y el 34 % de su capacidad; lo que las dimensionó fue el
+   $\lambda_{md}$, la esbeltez global y, en el caso del puntal, un margen de una parte en mil.
+3. **La exención se paga con reserva**, y por eso solo la puede usar quien no la necesita: la
+   diagonal que cumple holgado la resistencia puede acogerse, y la que va justa —el chevron— no.
+   Es una asimetría incómoda de la cláusula y conviene tenerla en cuenta al predimensionar, no al
+   verificar.
+
+<Note type="info" title="Trazabilidad">
+Las cuatro secciones, sus longitudes y las fuerzas salen del modelo **`galpon-altiplano.sdb`**
+(SAP2000 v27.1), construido en la Fase 2 de la serie y
+[descargable desde el post 0](/blog/galpon-altiplano-la-serie/). La geometría de cada barra —la
+media diagonal de muro de 5,000 m, el panel de techo de 4,000 × 6,000 × 0,705 m y el puntal de
+6,000 m— se leyó del script que arma el modelo, no se midió en pantalla.
+
+Las tres figuras las dibuja **`npm run figuras:galpon-diagonal`**
+(`scripts/render-galpon-diagonal.mjs`), que recalcula todo desde las propiedades de plancha en vez
+de copiar números, y falla si alguna cifra se separa más de $10^{-9}$ de una segunda
+implementación escrita aparte. Ese contraste entre dos implementaciones independientes es lo que
+en esta serie ya cazó una ecuación transcrita de una edición equivocada.
+
+Las verificaciones normativas —§8.6.3, §8.8.4, la Tabla 9 y las Ecs. E3 y D2— se leyeron en
+**páginas rasterizadas** de los PDF, no de la capa de texto, que destruye las fracciones y
+convierte φ en `f`.
+</Note>
+
+## La planilla
+
+Todo lo anterior está en una **planilla paramétrica** del canvas: cambia `F_y`, `R_y`, o cualquiera
+de las cuatro geometrías `B × B × t` y se recalculan solos los tres límites, las propiedades de
+sección, las Ecs. E3 y los quince usos.
+
+- **Abrirla:** [`/herramientas/canvas?planilla=diagonal-longitudinal-galpon`](/herramientas/canvas?planilla=diagonal-longitudinal-galpon)
+- **El JSON:** [`diagonal-longitudinal-galpon.json`](/planillas/diagonal-longitudinal-galpon.json)
+- **Verificarla:** `npm run verify:planilla -- public/planillas/diagonal-longitudinal-galpon.json --md`
+
+Son **16 verificaciones**, y **dos dan ✗ a propósito** —están declaradas en `meta.esperadoFalso`
+con su razón, porque son el contenido del post y no un defecto:
+
+| Verificación | Por qué falla a propósito |
+|---|---|
+| `c_local_muro` | Es el hallazgo: la diagonal de 4 mm pasa la esbeltez global y falla el $\lambda_{md}$ |
+| `c_puntal_a572` | Muestra que cambiar el A36 por un A572 Gr. 50 —un acero **mejor**— deja al puntal fuera |
+
+Lo que la planilla toma como **dato de entrada**, porque no se deriva de nada escrito en ella: los
+tres $P_u$ y el 34,233 kN de la envolvente de gravedad y viento; el $R^*_Y$, el $Q_{0Y}$ y el
+$Q_0^{\min}$ que fijan el amplificador; y las cuatro secciones con sus $L_c$. Todos vienen del
+modelo y llevan su comentario de origen en la hoja.
+
+[^nch]: NCh2369:2025, *Diseño sísmico de estructuras e instalaciones industriales*, 3.ª ed.
+    (2025.05.28). Cláusulas **8.3.3** ($R_y$, con remisión a AISC 341), **8.6.1** (prohibición del
+    solo-tracción y su excepción para §12.2), **8.6.3** y **8.6.4** (págs. impresas 87), **8.7.3**
+    (pág. 92), **8.8.4** y **8.8.5** (pág. 96), **Tabla 9** (págs. 97-99), **5.14** Ec. (14)
+    (pág. 49) y **12.2.2** (pág. 144). Leídas en páginas rasterizadas el 2026-08-12.
+
+[^aisc360]: ANSI/AISC 360-22, *Specification for Structural Steel Buildings*. **Tabla B4.1a**
+    (pág. 16.1-21, casos 6 y 8), **§B4.1b** items (d) y (e) (pág. 16.1-22), **§E2** y **§E3** con
+    las Ecs. E3-1 a E3-4 (págs. 16.1-40 y 41), y **§D1**/**§D2** (pág. 16.1-32). Leídas en páginas
+    rasterizadas el 2026-08-12.
+
+[^aisc341]: ANSI/AISC 341-22, *Seismic Provisions for Structural Steel Buildings*, **Tabla A3.2**
+    (pág. 9.1-6), fila *Plates, Strips, and Sheets*, A36 → $R_y = 1{,}3$. NCh2369 §8.3.3 remite a
+    la Tabla A3.1 de la edición **16**; en la 22 esos factores están en la **A3.2**.

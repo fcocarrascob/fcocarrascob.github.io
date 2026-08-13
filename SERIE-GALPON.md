@@ -23,18 +23,24 @@ a saltarse.
 > parámetros congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones,
 > envolvente y deriva incluidas).
 >
-> De la Fase 3 hay **cuatro posts cerrados y auditados, los cuatro con planilla**: el **0** publicado
-> en `main` (hace de mapa y bitácora) y el **1**, el **3** y el **5** en la rama `serie-galpon`.
-> **Quedan siete: 2, 4, 5b, 6, 7, 8, 9 y 10.**
+> De la Fase 3 hay **cinco posts cerrados y auditados, los cinco con planilla**: el **0** publicado
+> en `main` (hace de mapa y bitácora) y el **1**, el **3**, el **5** y el **10** en la rama
+> `serie-galpon`. **Quedan siete: 2, 4, 5b, 6, 7, 8 y 9.**
 >
 > **Lo próximo, y hay dos frentes.** El grande es **rukan**, que sigue intacto y bloquea los posts 2,
 > 4 y 6: hay que construir el caso 10 en OpenSeesPy contra el `.sdb` congelado, tomando
 > `verification/case08_gable_loads.py` como molde. El barato es el **5b** (los siete defectos del
-> `modelo_base`), que no depende de nada y ya tiene sus hallazgos hechos en §5.12 y §5.21.
+> `modelo_base`), que no depende de nada — **pero ojo: solo dos de sus siete defectos están
+> documentados** (§5.12 y §5.21); los otros cinco hay que reconstruirlos, así que es más caro de lo
+> que dice la etiqueta.
 >
-> **No hace falta abrir SAP2000** para los posts 7, 8, 9 y 10: sus números ya están en este archivo.
-> Sí les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22, y §8.6.3 de NCh2369—, y el deslinde
-> completo **antes** de fijar la tesis, que ya se llevó cuatro de las cinco piezas del post 5.
+> **No hace falta abrir SAP2000** para los posts 7, 8 y 9: sus números ya están en este archivo. Sí
+> les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22—, y el **deslinde completo antes de
+> fijar la tesis**. Esa regla ya no es una recomendación: se llevó cuatro de las cinco piezas del
+> post 5 y **las dos tesis completas del post 10** (§5.44). El terreno de `acero/` está muy
+> trabajado; da por hecho que lo que creías nuevo ya está publicado, y búscalo **antes** de calcular.
+>
+> **El post 7 sigue con un bloqueo propio**: cita NCh427/1, que no está en PDF en este equipo.
 >
 > **Decisión pendiente, y es del usuario**: la rama `serie-galpon` no está fusionada. El post 0 vive
 > en `main` y los posts 1, 3 y 5 solo en la rama. Hay que decidir si se fusiona por tandas o al
@@ -223,10 +229,10 @@ de `raster.py`.
 | **§12.1.1 a §12.1.6** Galpones industriales | 143-144 | 149-150 | 2026-08-12 | **12.1.1** aplica a edificios industriales con o sin vigas portagrúas. **12.1.2** «Los edificios con marcos transversales **deben tener un sistema de arriostramiento continuo en el techo**. Cuando hay cerchas de techo el arriostramiento continuo se debe colocar en el plano de la cuerda inferior. **Se exceptúan los edificios sin puente-grúa en que las cargas permanentes sólo provienen del peso propio.**» **12.1.3** con puente-grúa, el análisis considera las magnitudes y alturas de carga suspendida más probables. **12.1.4** varias grúas → combinación con todas sin carga en la posición más desfavorable. **12.1.5** dispositivos contra caída de puentes grúa si hay levantamiento. **12.1.6** edificio flexible con muros rígidos no estructurales → uniones que soporten lateralmente el muro y permitan desplazamiento longitudinal independiente. **C12.1.2**: «El arriostramiento continuo de techo tiene las ventajas sísmicas de los diafragmas rígidos horizontales. Hace posible, además, distribuir cargas laterales concentradas, como las de grúas, entre varios marcos.» | **Hallazgo 5.7**; conecta con post 4 |
 | **§12.2** Galpones livianos de acero | 144-145 | 150-151 | 2026-08-12 | «La demanda sísmica para galpones livianos **se debe** evaluar utilizando los parámetros indicados en Tabla 7, punto 5.7.» **12.2.1**, ocho condiciones: **a)** Categoría I o II según §4.3.1 · **b)** una o varias naves paralelas · **c)** altura libre interior de columnas laterales ≤ **23 m** y luz entre ejes de columnas sismorresistentes adyacentes ≤ **75 m** (nave individual) o **45 m** (naves paralelas) · **d)** peso propio de la **estructura soportante del techo** (sólo vigas, costaneras, colgadores, puntales, arriostramientos y conexiones) ≤ **70 kg/m²** · **e)** puentes grúa ≤ 100 kN sin cabina, o 50 kN con cabina · **f)** sin estanterías de almacenamiento vinculadas sísmicamente · **g)** equipos soportados por la estructura ≤ **50 kN por marco** · **h)** altillos vinculados a columnas ≤ **15 kN de carga sísmica horizontal por columna**. **12.2.2** el diseño cumple la cláusula 8 **reemplazando el amplificador 0,7R₁ por 0,5R₁**. **12.2.3** sin puente grúa ni otros equipos, se puede usar el **panel de techo como diafragma** (estándares ANSI/SDI SD), con la resistencia requerida de los paneles según §4.5 amplificada por 0,5R₁. **C12.2.1**: galpones «de luz y altura limitadas y grúas o equipos de poco peso, **en los cuales los esfuerzos de viento son normalmente superiores a los sísmicos**». | **Hallazgo 5.8** — decide el R de la serie |
 | **§8.3.2 y §8.3.3** Estabilidad y resistencia esperada | 80 | 86 | 2026-08-12 | **8.3.2** «**No se permite ningún tipo de reducción de rigidez en los elementos estructurales, producto de la aplicación de algún método de diseño por estabilidad indicado en NCh427/1, al momento de evaluar los efectos sísmicos mediante las metodologías elásticas expuestas en esta norma**». **C8.3.2**: el Método de Análisis Directo reduce rigidez e incorpora P∆-Pδ; es adecuado para viento «cuya magnitud y sentido son fundamentalmente independientes de la respuesta dinámica», pero la solicitación sísmica depende fuertemente de ella, así que reducir rigidez «puede conducir a una subestimación de la demanda. Luego, **no se permite el uso del Análisis Directo en el contexto del diseño estructural sismorresistente nacional**». Además: no es adecuado diseñar a compresión con K = 1,0; «tal como lo establece NCh427, **debe realizarse un análisis de pandeo para definir el valor de K de cada elemento**» (K depende también de la distribución de cargas), o usar métodos conservadores reconocidos como los **nomogramas de Kavanagh (1962)**. El análisis aproximado de segundo orden de **NCh427/1:2016, Anexo 8** es aceptable. **8.3.3** para R_y y R_t se usan los valores del material correspondiente; para materiales certificados ASTM «se pueden usar los valores definidos en **ANSI/AISC 341-16, Tabla A3.1**»; se admiten otros valores justificados por ensayos de control de calidad y certificación del fabricante. **C8.3.3**: «De acuerdo a estudios sobre placas de acero calidad ASTM A36 (U. de Chile) […] el valor de **R_y es cercano a 1,3**, lo que es consistente con lo indicado por ANSI/AISC 341-16.» Arriba en la misma página, **método ASD**: las capacidades esperadas del LRFD **divididas por 1,5**. | **Hallazgos 5.16 y 5.17**; post 7 |
-| **§8.6.1 a §8.6.4** Marcos arriostrados concéntricamente (MAC) | 87 | 93 | 2026-08-12 | **8.6.1** «No se permiten sistemas de arriostramiento con elementos que **solo resisten tracción**, **excepto en los casos de galpones livianos de acero que se rigen por las disposiciones de 12.2**.» **8.6.2** «En una línea resistente cualquiera, para cada nivel, la resistencia proporcionada por las diagonales traccionadas, para cada sentido de la acción sísmica, debe ser como mínimo un **30 % del esfuerzo de corte total en esa línea**.» **8.6.3** las diagonales sismorresistentes de planos verticales **que trabajen en compresión** deben tener razones ancho/espesor menores que λ_md de Tabla 9, y **esbeltez global menor que 1,5π√(E/F_y)**; se exceptúan aquellas cuya resistencia requerida se determine con §4.5 amplificando el sismo horizontal por **0,7R₁ ≥ 1,0**. **8.6.4** «Las diagonales en X **se deben conectar en el punto de cruce**. Dicho punto **se puede considerar fijo en la dirección perpendicular al plano** de las diagonales para los efectos de determinar la longitud de pandeo de la diagonal comprimida cuando la otra esté traccionada y una de las diagonales sea continua en el cruce.» **C8.6.1**: el objetivo de la prohibición es generar redundancia. **C8.6.4**: la longitud de pandeo fuera del plano depende de la razón de fuerzas axiales y de la conexión de las diagonales discontinuas en el cruce. | **Hallazgos 5.10 y 5.11**; post 10 |
+| **§8.6.1 a §8.6.4** Marcos arriostrados concéntricamente (MAC) | 87 | 93 | 2026-08-12 | **8.6.1** «No se permiten sistemas de arriostramiento con elementos que **solo resisten tracción**, **excepto en los casos de galpones livianos de acero que se rigen por las disposiciones de 12.2**.» **8.6.2** «En una línea resistente cualquiera, para cada nivel, la resistencia proporcionada por las diagonales traccionadas, para cada sentido de la acción sísmica, debe ser como mínimo un **30 % del esfuerzo de corte total en esa línea**.» **8.6.3** las diagonales sismorresistentes de planos verticales **que trabajen en compresión** deben tener razones ancho/espesor menores que λ_md de Tabla 9, y **esbeltez global menor que 1,5π√(E/F_y)**; se exceptúan aquellas cuya resistencia requerida se determine con §4.5 amplificando el sismo horizontal por **0,7R₁ ≥ 1,0**. **8.6.4** «Las diagonales en X **se deben conectar en el punto de cruce**. Dicho punto **se puede considerar fijo en la dirección perpendicular al plano** de las diagonales para los efectos de determinar la longitud de pandeo de la diagonal comprimida cuando la otra esté traccionada y una de las diagonales sea continua en el cruce.» **C8.6.1**: el objetivo de la prohibición es generar redundancia. **C8.6.3** (releída rasterizada el 2026-08-12, 2.ª sesión): «Las configuraciones arriostradas nacionales se diseñan para proveer un nivel de ductilidad moderado. Se espera que ante eventos sísmicos leves no se presenten incursiones inelásticas. No obstante, ante eventos sísmicos del nivel de diseño **es probable que las diagonales en compresión pandeen**. Con el fin de que **los ciclos de pandeo de las diagonales no generen fatiga de bajo ciclaje**, se establece que estas no pueden presentar pandeo local previo a una incursión inelástica moderada.» **C8.6.4**: la longitud de pandeo fuera del plano depende de la razón de fuerzas axiales y de la conexión de las diagonales discontinuas en el cruce. **Ojo con la asimetría de la exención**: §8.6.3 exime **solo** por `0,7R₁`; §8.8.4 agrega «o con la máxima carga que el sistema puede transferir al elemento» (§5.44). | **Hallazgos 5.10 y 5.11**; post 10 |
 | **Anexo B (normativo)** B.1 Objetivo y generalidades | 220-221 | 226-227 | 2026-08-12 | Existe porque «NCh3171 no cuenta con combinaciones de cargas especialmente desarrolladas para casos industriales. Esto conduce a que en ocasiones las combinaciones indicadas en NCh3171, para casos generales, **generen inconsistencias**». Entrega lineamientos, no una lista cerrada. ASD sigue aceptable pero LRFD es superior en racionalidad probabilística. **Factor de equivalencia entre métodos, a nivel de resistencia, para diseño por capacidad: 1,5.** Las **tres reglas históricas**: (1) en cada combinación deben estar las cargas permanentes; (2) debe existir **al menos una acción crítica en su nivel de diseño (carga primaria)**, y las restantes (**acompañantes**) pueden adoptar su **valor más probable**; (3) sin información confiable y específica, criterios conservadores. **Definiciones probabilísticas**: el valor de diseño nominal de **nieve** y de **viento** es el de **2 % de probabilidad de excedencia anual**; el evento sísmico de diseño nominal es el de **10 % en 50 años**. «El **valor más probable** corresponde […] al **valor medio de la distribución** asociada a la carga.» Criterios conservadores **no** significan todas las acciones en su máximo simultáneo: «no es requerida la evaluación de escenarios de diseño que presenten conflictos con las leyes de la física». Remite a **ASCE/SEI 7-16 Caps. 1 y 2, y comentarios 2.3.5 y C2.3.5** para factores de acciones no tradicionales. Reconoce que servicio (deformaciones, vibraciones, fatiga) y estabilidad de fundaciones se verifican con **combinaciones de servicio**, en general equivalentes a ASD. | **Hallazgos 5.12 y 5.13**; post 3 |
 | **§8.7.1 a §8.7.6** Marcos resistentes a momento (MRM) | 92-93 | 98-99 | 2026-08-12 | **8.7.1** las uniones de momento «deben ser del tipo **totalmente rígidas (TR)**. **No se permite usar conexiones del tipo parcialmente rígidas (PR)**». **8.7.2** «**No se permiten discontinuidades geométricas abruptas** en las potenciales zonas de formación de rótulas plásticas en la viga». **8.7.3** «Las secciones transversales de **vigas** de marcos resistentes a momento sismorresistentes deben contar con razones ancho/espesor, menores que el valor λ_md establecido en Tabla 9. Se pueden **exceptuar** aquellos elementos en que la resistencia requerida **para todos los esfuerzos** sea determinada utilizando las combinaciones de 4.5 […] amplificado por **0,7R₁ ≥ 1,0**». **8.7.4** «En estructuras de **varios niveles**, se **recomienda** que la suma de las capacidades flexurales esperadas reducidas por carga axial de las columnas que concurren a un nudo sea mayor o igual a **1,2 veces** la suma de las capacidades flexurales esperadas de las vigas conectadas en dicho nudo». **8.7.5** conexiones de momento, atiesadores de continuidad y zona panel se diseñan para la **capacidad esperada en flexión de la viga y el corte asociado**; tope en §4.5 con 0,7R₁ ≥ 1,0 o la máxima solicitación transferible. **8.7.6** las zonas panel «se deben encontrar limitadas por **atiesadores de continuidad**»; el ancho atiesado de la columna ≥ ancho del ala de la viga más ancha o de la placa que entrega la carga; el espesor del atiesador ≥ el mayor espesor entre las alas de vigas que llegan al nudo o de la placa. **C8.7.1**: AISC 358-10 trae 7 conexiones precalificadas; la práctica nacional relaja algunos requisitos, y el **«choco»** (conector soldado en taller + empalme flexural apernado), aunque no reconocido por 358-10, «puede utilizarse en la medida que cumpla con los requisitos de la presente norma». **C8.7.2**: la reducción de sección (RBS) de AISC 358-10 **no** se considera discontinuidad abrupta. **C8.7.3**: el objetivo es evitar fatiga de bajo ciclaje. **C8.7.4**: «**La exigencia a nivel de requisito mandatorio del concepto tradicional de columna fuerte y viga débil se ha eliminado en esta versión de la norma**», porque toda columna ya debe resistir el sismo amplificado por 0,7R₁. **C8.7.5**: `V_e = 2·M_pe/L_h` con L_h la distancia entre potenciales rótulas; LRFD `φV_n ≥ V_e + V_ug`, ASD `V_n/Ω ≥ V_e/1,5 + V_ag`. **C8.7.6**: los atiesadores se diseñan por J10.8 de NCh427/1:2016. | **Hallazgos 5.18 y 5.19**; posts 7 y 8 |
-| **§8.8.4 y §8.8.5** Arriostramiento de piso o de cubierta | 96 | 102 | 2026-08-12 | **8.8.4** «Las diagonales y puntales de sistemas de arriostramiento de piso o de cubierta deben tener razones ancho/espesor, menores que el valor λ_md establecido en Tabla 9. **La esbeltez global de estos elementos debe ser menor que 1,5π√(E/F_y)**.» Se pueden **exceptuar** los elementos cuya resistencia requerida se determine con las combinaciones de §4.5 en las que el estado sísmico horizontal se amplificó por **0,7R₁ ≥ 1,0**, o con la máxima carga que el sistema puede transferir al elemento. **8.8.5** las conexiones de esas diagonales y puntales se diseñan para la **capacidad esperada en tracción y en compresión**; la resistencia requerida no necesita superar la de §4.5 con el sismo amplificado por 0,7R₁ ≥ 1,0, ni la máxima carga transferible. **C8.8.4**: el motivo del límite es que los ciclos de pandeo no generen fatiga de bajo ciclaje. | **Hallazgo 5.9**; post 10 |
+| **§8.8.4 y §8.8.5** Arriostramiento de piso o de cubierta | 96 | 102 | 2026-08-12 | **8.8.4** «Las diagonales y puntales de sistemas de arriostramiento de piso o de cubierta deben tener razones ancho/espesor, menores que el valor λ_md establecido en Tabla 9. **La esbeltez global de estos elementos debe ser menor que 1,5π√(E/F_y)**.» Se pueden **exceptuar** los elementos cuya resistencia requerida se determine con las combinaciones de §4.5 en las que el estado sísmico horizontal se amplificó por **0,7R₁ ≥ 1,0**, o con la máxima carga que el sistema puede transferir al elemento. **8.8.5** las conexiones de esas diagonales y puntales se diseñan para la **capacidad esperada en tracción y en compresión**; la resistencia requerida no necesita superar la de §4.5 con el sismo amplificado por 0,7R₁ ≥ 1,0, ni la máxima carga transferible. **C8.8.4** (releída rasterizada el 2026-08-12, 2.ª sesión, pág. impresa 96 / PDF 102): «Por lo general, los sistemas de arriostramiento horizontal para plataformas de piso son **altamente redundantes, siendo muchas veces sus elementos dimensionados por requisitos mínimos** (espaciamiento mínimo de pernos, espesores mínimos, entre otros). Consistentemente, es común que los elementos presenten resistencias de diseño superiores a las cargas amplificadas, por tanto, **no es necesario cumplir con los requisitos de esbeltez local indicados en Tabla 9**. Sin embargo, cuando no se dan las condiciones anteriores, es probable que las diagonales en compresión pandeen durante un evento del nivel de diseño. Con el objetivo de que los ciclos de pandeo de las diagonales no generen fatiga de bajo ciclaje, se establece que estas no pueden presentar pandeo local previo a una incursión inelástica moderada.» Es el comentario que explica **por qué §8.8.4 tiene la puerta de la máxima carga transferible y §8.6.3 no** (§5.44). | **Hallazgo 5.9**; post 10 |
 | **Tabla 9** — Límites de la relación ancho/espesor | 97-99 | 103-105 | 2026-08-12 | Todos los límites se escriben con **R_y·F_y**, no con F_y. **Elementos no atiesados** (pág. 97): alas de perfiles soldados o laminados I, H, y alas de soldados/laminados/plegados en frío C, T y L → λ = b/t, **λ_md = 0,40√(E/(R_y F_y))**; almas de perfiles soldados o laminados tipo T → λ = d/t, mismo 0,40√(...). **Elementos atiesados, usados como arriostramientos** (pág. 98): paredes de rectangulares conformados en frío (HSS) o plegados en frío, alas de rectangulares soldados o laminados I/H, planchas laterales de rectangulares I/H, y paredes de rectangulares soldados → **λ_md = 0,76√(E/(R_y F_y))**; almas de I, H o C soldados, laminados o plegados en frío → **λ_md = 1,57√(E/(R_y F_y))**. **Perfiles usados como vigas sometidos a flexo-compresión** (pág. 99): alas en compresión uniforme (rectangulares soldados, HSS, plegados en frío; y alas de rectangulares soldados o laminados I/H) → b/t, **λ_md = 1,18√(E/(R_y F_y))**; almas de perfiles soldados, laminados o plegados en frío I, H o C, planchas laterales de rectangulares I/H, y almas de rectangulares soldados/HSS/plegados → h/t, con **dos ramas**: para **C_a ≤ 0,114**, `3,96√(E/(R_y F_y))·(1 − 3,04·C_a)`; para **C_a > 0,114**, `1,29√(E/(R_y F_y))·(2,12 − C_a) ≥ 1,57√(E/(R_y F_y))`. En que `C_a = P_u/(φ_c·P_y)` (LRFD), `C_a = Ω_c·P_a/P_y` (ASD) y **`P_y = R_y·F_y·A_g`**. | **Hallazgo 5.15**; posts 7, 8 y 10 |
 | **Tabla 7** — R y ξ (filas de acero) | 60-61 | 66-67 | 2026-08-12 | 1. elásticas R 1, ξ 0,03 · 2. otras no incluidas o asimilables R 1,5, ξ 0,02 · 3. péndulo invertido R 2, ξ 0,03 · 4. sísmicas isostáticas R 2, ξ 0,03 · **5.1** marcos a momento **con** anclajes dúctiles R **5** · **5.2** marcos a momento **sin** anclajes dúctiles R **3** · **5.3** marcos arriostrados **con** anclajes dúctiles R **5** · **5.4** marcos arriostrados **sin** anclajes dúctiles R **3** · **5.5** edificios industriales de un piso, **con o sin puente grúa, con arriostramiento continuo de techo**, y con anclajes dúctiles R **5** · **5.6** edificios industriales de un piso, **sin puente grúa, sin arriostramiento continuo de techo**, y con anclajes dúctiles R **3** · **5.7** galpones livianos de acero R **4**. Todas las filas de acero: **ξ = 0,02 uniones soldadas / 0,03 uniones empernadas**. | Fila **5.5**, R = 5, ξ = 0,02; **Hallazgos 5.2 y 5.6** |
 
@@ -335,6 +341,21 @@ PDF: `A360-22W-ewr.pdf`. `pág.` = la numeración impresa `16.1-nn`; `PDF` = ín
 | **Cap. H, encabezado** | 82 | 149 | 2026-08-12 | «This chapter addresses members subjected to axial force and flexure about **one or both axes**, with or without torsion, and members subjected to torsion only.» `H1` doblemente y simplemente simétricos · `H2` no simétricos · `H3` torsión · `H4` rotura de alas con perforaciones. | Encuadre |
 | **§H1.1** — **Ecs. (H1-1a)** y **(H1-1b)** | 82 | 149 | 2026-08-12 | «The interaction of flexure and compression in doubly symmetric members and **singly symmetric members constrained to bend about a geometric axis (`x` and/or `y`)** shall be limited by Equations H1-1a and H1-1b.» **(a)** cuando `P_r/P_c ≥ 0,2`: `P_r/P_c + (8/9)·(M_rx/M_cx + M_ry/M_cy) ≤ 1,0`. **(b)** cuando `P_r/P_c < 0,2`: `P_r/(2P_c) + (M_rx/M_cx + M_ry/M_cy) ≤ 1,0`. **User Note**: «Section H2 may be used in lieu of the provisions of this section.» | **La ecuación del post 9**; **Hallazgo 5.39** |
 | **§H1.2** Flexión y tracción | 83 | 150 | 2026-08-12 | Mismas Ecs. H1-1a/H1-1b con `P_c` de tracción del Cap. D. Para miembros **doblemente** simétricos se permite multiplicar `C_b` por `√(1 + α·P_r/P_ey)`, **Ec. (H1-2)** `P_ey = π²EI_y/L_b²`, `α = 1,0` (LRFD). **User Note de §H1.1**: «All terms in Equations H1-1a and H1-1b are to be taken as positive.» | El bono de `C_b` **no** aplica al canal (es simplemente simétrico) |
+
+#### Lecturas de la Fase 3 — AISC 360-22 (la ruta del cajón de las diagonales)
+
+Mismo PDF y mismo offset (`PDF = impresa + 67`). Leídas el **2026-08-12** (2.ª sesión), todas
+rasterizadas a zoom 4,6 — el PDF de AISC es de 6 × 9 pulgadas y con zoom 2,6 la tabla no se lee.
+
+| Cláusula | pág. | PDF | Leída | Contenido verificado | Alimenta |
+|---|---|---|---|---|---|
+| **Tabla B4.1a** — razones ancho/espesor, compresión axial | 21 | 88 | 2026-08-12 | Nueve casos. **Caso 6 «Walls of rectangular HSS»** → λ = `b/t`, **λ_r = 1,40√(E/F_y)**, con pictograma de esquina redondeada. **Caso 8 «All other stiffened elements»** → λ = `b/t`, **λ_r = 1,49√(E/F_y)**, y su pictograma es **una plancha entre dos elementos que la atiesan** — que es la pared de un cajón armado. Caso 7 «Flange cover plates between lines of fasteners or welds» → 1,40. Caso 5 «Webs of doubly symmetric rolled and built-up I-shaped sections and channels» → `h/t_w`, 1,49. Al pie: `E = 200 000 MPa`, `F_y` = tensión de fluencia mínima especificada. | **Hallazgo 5.45** — el cajón **soldado** es caso 8, no caso 6 |
+| **§B4.1b**, items (d) y (e) | 22 | 89 | 2026-08-12 | **(d)** «For flanges of rectangular hollow structural sections (HSS), the width, `b`, is the clear distance between webs less the inside corner radius on each side… **If the corner radius is not known, `b` and `h` shall be taken as the corresponding outside dimension minus three times the thickness**.» — o sea el `b = B − 3t` es **solo para HSS**. **(e)** «For flanges or webs of **box sections** and other stiffened elements, the width, `b`, is **the clear distance between the elements providing stiffening**.» | **Hallazgo 5.45** — para el cajón armado la medida es la luz libre, `b = B − 2t` |
+| **§E2** Longitud efectiva | 40 | 107 | 2026-08-12 | `L_c = KL`. **User Note**: para miembros diseñados a compresión, `L_c/r` **preferiblemente** no debería exceder **200**; y la esbeltez del miembro como fabricado, **300**. Segunda User Note: `L_c` se puede determinar con un factor `K` **o con un análisis de pandeo**. | Contexto; conecta con §5.16 |
+| **§E3** — **Ecs. E3-1, E3-2, E3-3** | 40 | 107 | 2026-08-12 | Aplica a miembros de elementos **no esbeltos** según §B4.1. `P_n = F_n A_g` **(E3-1)**. **(a)** cuando `L_c/r ≤ 4,71√(E/F_y)` (o `F_y/F_e ≤ 2,25`): `F_n = (0,658^(F_y/F_e))·F_y` **(E3-2)**. **(b)** cuando `L_c/r > 4,71√(E/F_y)` (o `F_y/F_e > 2,25`): `F_n = 0,877·F_e` **(E3-3)**. | `φ_c P_n` de las cuatro secciones |
+| **§E3** — **Ec. E3-4** y User Note | 41 | 108 | 2026-08-12 | `F_e = π²E/(L_c/r)²` **(E3-4)**; alternativamente §7.2.3(b) del Apéndice 7, o un análisis de pandeo elástico. **User Note**: «The two inequalities for calculating the limits of applicability of Sections E3(a) and E3(b), one based on `L_c/r` and one based on `F_y/F_e`, **provide the same result** for flexural buckling.» | Ídem |
+| **§D1** y **§D2** — **Ec. D2-1** | 32 | 99 | 2026-08-12 | **D1**: «**There is no maximum slenderness limit for members in tension**»; la User Note recomienda `L/r ≤ 300` para los diseñados a tracción, y aclara que **no aplica a barras** (*rods*). **D2 (a)** fluencia en tracción: `P_n = F_y A_g` **(D2-1)**, `φ_t = 0,90` (LRFD), `Ω_t = 1,67` (ASD). | La rama solo-tracción de §12.2 |
+| **§D2 (b)** — **Ec. D2-2** · **§D3** — **Ec. D3-1** | 33 | 100 | 2026-08-12 | Rotura en tracción: `P_n = F_u A_e` **(D2-2)**, `φ_t = 0,75`, `Ω_t = 2,00`. **D3**: `A_e = A_n U` **(D3-1)**, con `U` de la Tabla D3.1. «For open cross sections such as W, M, S, C, or HP shapes, WTs, STs, and single and double angles, the shear lag factor, `U`, need not be less than the ratio of the gross area of the connected element(s) to the member gross area. **This provision does not apply to closed sections, such as HSS, nor to plates.**» | Declarado fuera de alcance (§3: sin conexiones) |
 
 ### 4.2 Parámetros derivados
 
@@ -516,8 +537,15 @@ Y como este galpón va por §12.2, **§12.2.2 reescribe ese 0,7R₁ como 0,5R₁
 
 Ojo con la distinción de cláusulas: **§8.8 es arriostramiento de piso o de cubierta** (nuestra crucería
 de techo) y **§8.6 es MAC, marcos arriostrados concéntricamente** (nuestra crucería longitudinal
-vertical). Ambas traen el mismo límite `1,5π√(E/F_y)` — §8.6.3 está en la pág. impresa 87 (PDF 93) y
-queda **pendiente de leer rasterizada**.
+vertical). Ambas traen el mismo límite `1,5π√(E/F_y)`.
+
+**Actualización 2026-08-12 (2.ª sesión): §8.6.3 ya estaba leída**, y su fila vive en §4.1 desde la
+primera sesión (pág. impresa 87, PDF 93). Se volvió a rasterizar para confirmarla y la
+transcripción es correcta. Lo que sí apareció al releer las dos páginas en paralelo es una
+**asimetría entre las dos cláusulas que ninguna ficha registraba**: §8.6.3 exime **solo** por
+`0,7R₁ ≥ 1,0`, mientras **§8.8.4 exime por `0,7R₁` _o_ por «la máxima carga que el sistema puede
+transferir al elemento»**. Mismo límite, distinto juego de puertas. Es el eje del post 10
+reencuadrado (§5.44).
 
 ### 5.10 Ir por galpón liviano habilita el arriostramiento solo-tracción
 
@@ -1078,7 +1106,14 @@ un error, es dónde cae cada `T*` en el espectro:
 | X transversal | 0,8526566 s | 0,6306425 | 0,1576606 |
 | Y longitudinal | 0,1610609 s | **1,3975929** | 0,3648912 |
 
-El T\* longitudinal cae en la meseta del espectro y además **6,8 % bajo el codo** de la Ec. (1b)
+**Corrección del 2026-08-12 (2.ª sesión): no hay «meseta».** Al dibujar el espectro para el post 10
+se midió que el pico de la Ec. (3) para este sitio está en **T = 0,2703 s** con
+**S_aH = 1,6828**, y que el T\* longitudinal (0,1611 s) está sobre la rama **ascendente**, al
+**83,1 %** de ese máximo; el transversal ya bajó al **37,5 %**. La razón entre los dos es **2,22**.
+La conclusión no cambia, pero sí una consecuencia que se deducía mal: como el T\* longitudinal
+está en la rama que sube, **rigidizar esa dirección baja el S_aH**, no lo deja igual.
+
+El T\* longitudinal cae cerca del pico del espectro y además **6,8 % bajo el codo** de la Ec. (1b)
 (`C_r T₁ = 0,1728 s` con R = 4), lo que le baja el R\* un 4,2 % adicional. Rigidizar la dirección
 arriostrada la castiga dos veces.
 
@@ -1380,6 +1415,124 @@ dos rutas), la decide el modelo y no el criterio: con R = 5 el mínimo se come e
 
 **Título de trabajo**: `chapter: "Ejemplo — Una sola fila de la Tabla 7 para dos sistemas"`.
 
+### 5.44 Post 10 — el deslinde le costó las dos tesis, y la que queda es un mapa de cláusulas
+
+El deslinde más caro de la serie hasta ahora: **se llevó la tesis principal y la de respaldo**, las
+dos que §5.9, §5.10, §5.11 y §5.15 habían dejado escritas. Vale como confirmación de la regla de
+§5.41 —leer **completos** los antecedentes, no sus títulos— y como aviso de que en `acero/` el
+terreno de las diagonales sismorresistentes ya está muy trabajado.
+
+**Lo que estaba tomado, y por quién:**
+
+1. **`acero/ejemplo-chevron-nch2369.mdx` (2026-07-27) mata la tesis principal.** Sobre un **cajón
+   soldado de A36** publica `λ_md = 0,76√(E/(R_y F_y)) = 18,9` —nuestro mismo 18,85—, muestra la
+   diagonal que **falla el λ_md mientras pasa la esbeltez global** (`b/t = 35,0` ✗ contra
+   `L_c/r = 71,5 ≤ 133,8` ✓), tiene una sección titulada «Las dos puertas de 8.6.3, y las dos
+   cerradas» con la exención verificada, y cierra con «diagonales de cajón soldado 200×200×10 —
+   **dimensionadas por λ_md, no por resistencia**». Es, palabra por palabra, la tesis que §5.15
+   proponía para el post 10.
+2. **`blog/galpon-liviano-nch2369.mdx` mata la tesis de respaldo.** Cita §8.6.1 **y §8.8.2**
+   textuales y afirma que «el solo-tracción queda permitido, en los planos verticales (§8.6.1) y en
+   el techo (§8.8.2)», con el `0,5R₁` y con lo que se pierde al salirse de §12.2. Es la bifurcación
+   que §5.10 daba por exclusiva de este galpón.
+3. **`acero/ejemplo-diagonal-hss-traccion.mdx` ya agotó §8.6.4** —el cruce de la X como punto fijo,
+   con el 53,5 contra 25,1 tonf— y la identidad `1,5π√(E/F_y) ≡ 4,71√(E/F_y)`, que era el hallazgo
+   de §5.11. Y **`predimensionamiento-diagonal-arriostramiento.mdx`** ya publicó el `r_min` que era
+   la fila «r mínimo de la diagonal» de §4.2.
+
+**Lo que sobrevive, y es lo que el post pasa a ser.** El usuario decidió **reencuadrarlo**: deja de
+ser un post de cálculo de una diagonal y pasa a ser el **mapa de a qué cláusula cuelga cada
+elemento y qué puerta de salida le queda**. Ese cruce no lo hace ningún post publicado.
+
+| Elemento del galpón | Cláusula | Exige | Puertas de salida |
+|---|---|---|---|
+| Diagonal de muro (crucería longitudinal) | **§8.6.3** | λ_md (Tabla 9) **y** `1,5π√(E/F_y)` | **solo** `0,7R₁ ≥ 1,0` |
+| Diagonal y puntales de techo | **§8.8.4** | los mismos dos | `0,7R₁ ≥ 1,0` **o la máxima carga que el sistema puede transferir** |
+| Vigas de marco de momento | **§8.7.3** | λ_md | `0,7R₁ ≥ 1,0`, para **todos** los esfuerzos |
+| Cualquiera de ellos, en galpón liviano | **§12.2.2** | ídem | el amplificador se reescribe **`0,5R₁`** |
+| Diagonal de muro **solo-tracción** | **§8.6.1**, excepción de §12.2 | — | §8.6.3 **no muerde**: solo aplica a las que «trabajen en compresión» |
+
+**La asimetría §8.6.3 / §8.8.4 es el hallazgo nuevo**, y salió de mirar las dos páginas rasterizadas
+en paralelo (PDF 93 y 102, el 2026-08-12): §8.6.3 **no** ofrece la puerta de «la máxima carga
+transferible» que §8.8.4 sí ofrece. Ninguna ficha lo registraba y ningún post lo dice.
+
+**El segundo material propio** es el contraste sobre las secciones reales del modelo —la de muro
+falla y la de techo pasa— y, sobre todo, **que la gobierna el sismo y no el viento** (§5.37), con la
+explicación de §5.36: el T\* longitudinal cae en la meseta del espectro. Ese resultado es de este
+modelo y no está publicado en ninguna parte.
+
+**Corrección de rotulado que salió de la Tabla 9 rasterizada** (PDF 104, pág. impresa 98): son dos
+filas distintas, y no dicen lo mismo. «Paredes de perfiles rectangulares **conformados en frío
+(HSS) o plegados en frío** usados como arriostramientos» → λ = **`b/t`**. «Paredes de perfiles
+rectangulares **soldados** usados como arriostramientos» → λ = **`h/t`**. Las dos con
+`λ_md = 0,76√(E/(R_y F_y))`. Nuestro cajón es **soldado por planchas** (§3), así que le corresponde
+la fila `h/t` y el `R_y = 1,3` de *Plates, Strips, and Sheets*. En una sección cuadrada el número no
+cambia, pero la etiqueta sí — y `ejemplo-chevron-nch2369` rotula `b/t` sobre un cajón soldado.
+
+**Tesis fijada**: *el mismo λ_md cuelga de tres cláusulas distintas, y cada una deja abierta una
+puerta de salida diferente — la que casi nadie usa es la que §8.8.4 tiene y §8.6.3 no.*
+
+### 5.45 Los cuatro elementos de arriostramiento, corridos — y la puerta que esta vez sí está abierta
+
+Calculado el 2026-08-12 con las cuatro secciones reales del `.sdb`, la geometría leída de
+`galpon_altiplano_build.py` y las demandas de §5.37. Acero **A36 de plancha**: `F_y = 250 MPa`,
+`E = 200 000 MPa`, `R_y = 1,3` (AISC 341-22 Tabla A3.2, *Plates, Strips, and Sheets*).
+
+Las cuatro secciones son **cajones soldados por planchas** —en el modelo son `SetTube`, con
+envolvente exterior `B × B` y espesor `t`—, así que les toca la fila `h/t` de «paredes de perfiles
+rectangulares **soldados**» de la Tabla 9 y el **caso 8** de la Tabla B4.1a.
+
+| Constante | Valor |
+|---|---|
+| `√(E/F_y)` | 28,284271 |
+| `√(E/(R_y F_y))` | 24,806947 |
+| **λ_md = 0,76√(E/(R_y F_y))** (Tabla 9) | **18,8533** |
+| λ_r = 1,49√(E/F_y) (B4.1a **caso 8**, cajón soldado) | 42,1436 |
+| λ_r = 1,40√(E/F_y) (B4.1a **caso 6**, HSS conformado) | 39,5980 |
+| **λ_r / λ_md** | **2,2353** |
+| `1,5π√(E/F_y)` (§8.6.3 y §8.8.4) | 133,2865 |
+| `4,71√(E/F_y)` (quiebre de §E3) | 133,2189 — difieren **0,051 %** |
+
+| Elemento | Cláusula | `L_c` | `b`, `A`, `r` | `h/t` vs **λ_md** | `L_c/r` vs 133,29 | `φ_c P_n` | `P_u` (§5.37) | uso |
+|---|---|---|---|---|---|---|---|---|
+| **Diagonal de muro** CAJ 100×100×4 | **§8.6.3** | 5,000 m | 92 mm · 1 536 mm² · 39,226 mm | **23,00 → ✗ 1,2199** | 127,467 → ✓ 0,9563 | 146,055 kN | 39,895 | 0,273 |
+| Diagonal de muro CAJ 100×100×**5** | §8.6.3 | 5,000 m | 90 mm · 1 900 mm² · 38,837 mm | 18,00 → ✓ 0,9547 | 128,742 → ✓ 0,9659 | 177,565 kN | 39,895 | 0,225 |
+| Diagonal de techo CAJ 75×75×4 | **§8.8.4** | 3,623 m | 67 mm · 1 136 mm² · 29,032 mm | 16,75 → ✓ 0,8884 | 124,787 → ✓ 0,9362 | 111,962 kN | 28,234 | 0,252 |
+| **Puntal de techo** CAJ 125×125×6 | **§8.8.4** | 6,000 m | 113 mm · 2 856 mm² · 48,643 mm | **18,833 → ✓ 0,9989** | 123,347 → ✓ 0,9254 | 286,862 kN | 96,087 | 0,335 |
+
+Geometría, de `galpon_altiplano_build.py`: la media diagonal de muro va de la base al nodo `XM`
+(`Δy = 3,0`, `Δz = 4,0`) → **5,000 m**; el panel de techo mide `Δx = 3·DXJ = 4,000 m`,
+`Δy = SEP = 6,000 m`, `Δz = 0,7053 m`, y la media diagonal es **3,6228 m**; el puntal une dos
+marcos en la misma línea `j` → **6,000 m**.
+
+**Cuatro cosas que salen de esta tabla:**
+
+1. **La diagonal de muro pasa lo que todos miran y falla lo que casi nadie mira.** `L_c/r = 127,47`
+   cumple el `1,5π√(E/F_y)` **al 95,6 %**, y `h/t = 23,0` **excede el λ_md en un 22 %**. Y por
+   AISC ni siquiera es esbelta: 23,0 contra 42,14, uso 0,55.
+2. **El puntal de techo cumple el λ_md al 99,89 %** — `18,8333` contra `18,8533`, una parte en mil.
+   Con 125×125×**7** no habría margen que discutir; con el 6 mm que tiene, el margen es de
+   0,02 unidades de esbeltez. Es el número más frágil de todo el modelo.
+3. **AISC distingue el cajón soldado del HSS y NCh2369 no.** La Tabla B4.1a le da al armado el
+   caso 8 (**1,49**) y al conformado en frío el caso 6 (**1,40**) — un 6,4 % de diferencia,
+   reconociendo que el conformado tiene tensiones residuales de plegado. La Tabla 9 de NCh2369 les
+   pone a los dos el mismo **0,76**, y solo cambia el nombre de la razón (`h/t` para el soldado,
+   `b/t` para el conformado). Ver §5.44.
+4. **La puerta del amplificador está ABIERTA, y es la primera vez en el sitio.** No hace falta
+   descomponer la combinación para demostrarlo: aunque se amplificara **toda** la combinación
+   —no solo su parte sísmica— por el `0,5R₁` de §12.2.2, la demanda sería a lo más
+   `2,00 × 39,895 = 79,79 kN` contra `φ_c P_n = 146,06 kN`, **uso 0,55**. Es una cota superior
+   rigurosa. En `ejemplo-chevron-nch2369` esa puerta daba 1,52 y en `ejemplo-diagonal-hss-traccion`
+   daba 4,68: **las dos cerradas**. Acá está abierta porque la diagonal está al 27 % de su
+   capacidad — la dimensionó la esbeltez, no la carga.
+
+**Ojo con el `R₁`, que es direccional.** §3 anota «`0,5R₁ = 2,00`», que sale de `R = 4`. Pero por la
+Ec. (14), `R₁ = R*·mín(Q₀/Q₀^mín; 1)`, y en la dirección **longitudinal** —la arriostrada, donde
+vive esta diagonal— `R*_Y = 3,8302` y `Q₀Y/Q₀^mín = 130,257/70,860 = 1,838 > 1`, así que
+`R₁_Y = 3,8302` y **`0,5R₁_Y = 1,9151`**. El 2,00 de §3 es el de la dirección transversal. La
+conclusión no cambia (1,9151 × 39,895 = 76,4 kN, uso 0,52), pero el número que se escriba en el
+post tiene que ser el de la dirección que corresponde.
+
 ### 6.1 Fase 0 — sprint de PDF
 
 | # | Tarea | Estado |
@@ -1514,7 +1667,7 @@ Todo lo aprendido de la OAPI quedó en
 | 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |
 | 8 | `ejemplo-dintel-tapered-ltb-galpon` | `acero` / Miembros | ⬜ |
 | 9 | `ejemplo-costanera-galpon-biaxial` | `acero` / Miembros | ⬜ · canal C por **AISC 360-22** (§5.39) |
-| 10 | `ejemplo-diagonal-longitudinal-galpon` | `acero` / Marcos arriostrados | ⬜ |
+| 10 | `ejemplo-diagonal-longitudinal-galpon` | `acero` / Marcos arriostrados | ✅ rama `serie-galpon` · 3 figuras · planilla de 16 verificaciones · auditado, **18 hallazgos, los 18 aplicados** · **deslinde en §5.44, que le costó las dos tesis** · números en §5.45 |
 
 Las tesis de cada uno están en el plan. Auditoría en dos tandas: tras 1+2+3, y tras el resto.
 
@@ -1532,6 +1685,12 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 | `blog/rukan-verificacion-peso-propio-combinaciones.mdx` | caso 8: galpón a dos aguas 3D de 3 marcos con D, L_r, E_X, E_Y | posts 2, 4, 6 |
 | `acero/ejemplo-columna-galpon-compresion.mdx` · `ejemplo-viga-columna.mdx` | compresión pura con K y esbeltez · H1 prismático | post 7 |
 | `acero/ejemplo-viga-ltb.mdx` | LTB con L_b como dato | post 8 (allí L_b es **función de la combinación**) |
+| `acero/ejemplo-chevron-nch2369.mdx` | **el λ_md sobre un cajón soldado de A36** (λ_md = 18,9, nuestro mismo número), la diagonal que **falla el λ_md pasando la esbeltez global**, «las dos puertas de §8.6.3 y las dos cerradas», y el cierre «dimensionadas por λ_md, no por resistencia» | **post 10 — le costó la tesis entera** (§5.44) |
+| `acero/ejemplo-diagonal-hss-traccion.mdx` | §8.6.4 con el cruce fijo (53,5 vs 25,1 tonf), §8.6.3 con sus dos exigencias y la exención verificada, §8.6.8 con `T_ye`, la identidad `1,5π√(E/F_y) ≡ 4,71√(E/F_y)`, y Caps. D, E y J sobre una diagonal | post 10 (§5.44) |
+| `acero/predimensionamiento-diagonal-arriostramiento.mdx` | el `1,5π√(E/F_y)` como servilleta, λ_c = 1,5, el 39 % de F_y, y `r_min = L_c/(1,5π√(E/F_y))` | post 10 (§5.44) |
+| `blog/galpon-liviano-nch2369.mdx` | además de §12.2: **§8.6.1 y §8.8.2 textuales**, «el solo-tracción queda permitido en los planos verticales y en el techo», y qué se pierde al salirse de §12.2 | **post 10 — le costó la tesis de respaldo** (§5.44) |
+| `acero/ejemplo-gusset-simple-apernado.mdx` · `ejemplo-gusset-esquina-apernado.mdx` | el λ_md sobre tubos conformados en frío, y el tubo «al 98,2 % del límite» | post 10 (§5.44) |
+| `acero/ejemplo-viga-carrilera-puente-grua.mdx` | **la Ec. H1-1b con `P_r = 0`** y la flexión biaxial gobernando al 0,97, sobre un perfil **doblemente simétrico** | post 9 (allí el perfil es **simplemente** simétrico, y ese es el punto) |
 | Serie de la torre (3 apuntes + Rukan 7) | la cadena `T*→R*→Q₀→banda→R₁`, la deriva de §6, el espectro de referencia | posts 4 y 5 |
 
 ---
@@ -1557,8 +1716,9 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 ### Abiertas
 
 - **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
-- **§8.6.3 de NCh2369** (esbeltez de las diagonales **que trabajan en compresión**), pág. impresa 87 /
-  PDF 93, sigue **sin leer rasterizada** (§5.9). Es la única lectura que le falta al post 10.
+- ~~**§8.6.3 de NCh2369** sigue sin leer rasterizada~~ → **estaba leída desde la primera sesión** y su
+  fila está en §4.1. Reconfirmada rasterizada el 2026-08-12 (2.ª sesión) junto con §8.8.4 y la
+  Tabla 9. La nota era obsoleta, no una deuda. Ver §5.9 y §5.44.
 - **La masa modal vertical no converge** (65,1 % con 60 modos, 75,4 % con 150). Se adopta §5.7.1
   estática, pero `C5.7.1` prefiere el dinámico para techos flexibles y el nuestro lo es. **Hay que
   declarar la salvedad en el post** (§5.31).

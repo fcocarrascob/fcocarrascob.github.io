@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="1000" height="640" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="640" fill="#fff"/>
+  <text x="40" y="34" font-size="17" fill="#333" text-anchor="start" font-weight="bold">De qué cláusula cuelga cada barra, y qué salidas le deja</text>
+  <text x="40" y="56" font-size="12.5" fill="#6b7280" text-anchor="start">NCh2369:2025, cláusula 8 — el mismo λ_md = 18,85 en las tres ramas</text>
+  <rect x="350" y="82" width="300" height="48" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.6"/>
+  <text x="500" y="112" font-size="13.5" fill="#333" text-anchor="middle" font-weight="bold">¿La barra trabaja en compresión?</text>
+  <line x1="430" y1="130" x2="220" y2="176" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <line x1="570" y1="130" x2="700" y2="176" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <text x="300" y="152" font-size="12.5" fill="#6b7280" text-anchor="start" font-weight="bold">no</text>
+  <text x="650" y="152" font-size="12.5" fill="#6b7280" text-anchor="start" font-weight="bold">sí</text>
+  <rect x="40" y="178" width="360" height="116" rx="6" fill="#f0fdf4" stroke="#1f7a4d" stroke-width="1.6"/>
+  <text x="60" y="202" font-size="13.5" fill="#1f7a4d" text-anchor="start" font-weight="bold">Solo-tracción  —  8.6.1</text>
+  <text x="60" y="224" font-size="12" fill="#333" text-anchor="start">Prohibido en general…</text>
+  <text x="60" y="244" font-size="12" fill="#333" text-anchor="start" font-weight="bold">…excepto en galpones livianos regidos por 12.2.</text>
+  <text x="60" y="268" font-size="12" fill="#1f7a4d" text-anchor="start">El λ_md NO APLICA: la 8.6.3 habla solo de las</text>
+  <text x="60" y="284" font-size="12" fill="#1f7a4d" text-anchor="start">diagonales «que trabajen en compresión».</text>
+  <rect x="620" y="178" width="340" height="44" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.6"/>
+  <text x="790" y="206" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">¿En qué plano está el elemento?</text>
+  <line x1="700" y1="222" x2="560" y2="268" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <line x1="880" y1="222" x2="880" y2="268" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <rect x="430" y="270" width="300" height="150" rx="6" fill="#fef2f2" stroke="#b02a1a" stroke-width="1.6"/>
+  <text x="450" y="294" font-size="13.5" fill="#b02a1a" text-anchor="start" font-weight="bold">Plano vertical  →  8.6.3</text>
+  <text x="450" y="316" font-size="12" fill="#333" text-anchor="start">λ_md  y  esbeltez global</text>
+  <text x="450" y="340" font-size="12" fill="#333" text-anchor="start" font-weight="bold">UNA puerta de salida:</text>
+  <text x="450" y="360" font-size="12" fill="#333" text-anchor="start">· sismo amplificado por 0,7R₁ ≥ 1,0</text>
+  <text x="450" y="386" font-size="12" fill="#b45309" text-anchor="start">En galpón liviano, 12.2.2 lo baja</text>
+  <text x="450" y="404" font-size="12" fill="#b45309" text-anchor="start" font-weight="bold">a 0,5R₁.</text>
+  <rect x="760" y="270" width="200" height="150" rx="6" fill="#eff6ff" stroke="#1a63a8" stroke-width="1.6"/>
+  <text x="778" y="294" font-size="13.5" fill="#1a63a8" text-anchor="start" font-weight="bold">Piso o cubierta</text>
+  <text x="778" y="312" font-size="13.5" fill="#1a63a8" text-anchor="start" font-weight="bold">→  8.8.4</text>
+  <text x="778" y="336" font-size="12" fill="#333" text-anchor="start">los mismos dos</text>
+  <text x="778" y="358" font-size="12" fill="#333" text-anchor="start" font-weight="bold">DOS puertas:</text>
+  <text x="778" y="376" font-size="12" fill="#333" text-anchor="start">· el 0,7R₁</text>
+  <text x="778" y="394" font-size="12" fill="#1a63a8" text-anchor="start" font-weight="bold">· o la máxima carga</text>
+  <text x="778" y="410" font-size="12" fill="#1a63a8" text-anchor="start" font-weight="bold">  transferible</text>
+  <line x1="580" y1="420" x2="580" y2="452" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <rect x="430" y="454" width="300" height="118" rx="6" fill="#fff" stroke="#b02a1a" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="860" y1="420" x2="860" y2="452" stroke="#6b7280" stroke-width="1.6" marker-end="url(#punta)"/>
+  <rect x="760" y="454" width="200" height="118" rx="6" fill="#fff" stroke="#1a63a8" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="450" y="478" font-size="12.5" fill="#b02a1a" text-anchor="start" font-weight="bold">Diagonal de muro  100×100×4</text>
+  <text x="450" y="500" font-size="11.5" fill="#333" text-anchor="start">h/t = 23,00  >  λ_md = 18,85   ✗</text>
+  <text x="450" y="518" font-size="11.5" fill="#333" text-anchor="start">L_c/r = 127,47  ≤  133,29   ✓</text>
+  <text x="450" y="536" font-size="11.5" fill="#333" text-anchor="start">φ_cP_n = 146,1 kN  ·  uso 0,273</text>
+  <text x="450" y="554" font-size="11.5" fill="#1f7a4d" text-anchor="start">Con 0,5R₁ = 1,9151:  uso ≤ 0,52   ✓ ABRE</text>
+  <text x="778" y="478" font-size="12.5" fill="#1a63a8" text-anchor="start" font-weight="bold">Techo  75×75×4</text>
+  <text x="778" y="500" font-size="11.5" fill="#333" text-anchor="start">h/t = 16,75  ✓  uso 0,888</text>
+  <text x="778" y="518" font-size="11.5" fill="#333" text-anchor="start" font-weight="bold">Puntal  125×125×6</text>
+  <text x="778" y="536" font-size="11.5" fill="#333" text-anchor="start">h/t = 18,83  ✓  uso 0,9989</text>
+  <text x="778" y="554" font-size="11.5" fill="#b45309" text-anchor="start" font-weight="bold">una parte en mil de margen</text>
+  <text x="40" y="316" font-size="11.5" fill="#6b7280" text-anchor="start">No es la ruta de este proyecto —la X toma</text>
+  <text x="40" y="332" font-size="11.5" fill="#6b7280" text-anchor="start">compresión y su rigidez la usa la deriva—</text>
+  <text x="40" y="348" font-size="11.5" fill="#6b7280" text-anchor="start">pero es legal, y solo acá.</text>
+  <text x="40" y="600" font-size="12.5" fill="#b45309" text-anchor="start" font-weight="bold">La coletilla «o con la máxima carga que el sistema puede transferir al elemento» está en 8.8.4 y NO está en 8.6.3.</text>
+</svg>

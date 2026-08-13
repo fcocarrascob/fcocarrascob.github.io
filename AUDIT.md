@@ -47,6 +47,37 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-12 · `acero/ejemplo-diagonal-longitudinal-galpon` · ✅ 18 hallazgos, todos aplicados
+
+**Commit:** `2a6e339` (post sin commitear, en el working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — a mano, con verificación cruzada contra el bloque `ESPERADO` de `scripts/render-galpon-diagonal.mjs` y contra `public/planillas/diagonal-longitudinal-galpon.json`. **En esa sesión el auditor no tuvo herramienta de shell**, así que no pudo correr `python`, `npm run verify:planilla` ni `npm run figuras:galpon-diagonal`: toda su aritmética está hecha a mano a 6-7 cifras y contrastada contra los valores a precisión completa que ya registran el script y §5.45.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix propuesto | Estado |
+|---|-----|-----|-----------|----------|---------------|--------|
+| 1 | 🔴 | E | L.185, L.295, L.426 | **Las tres imágenes no existen.** El post apunta a `/ejemplo-diagonal-longitudinal-galpon/limites.svg`, `.../espectro.svg` y `.../puertas.svg`, pero los archivos emitidos son `diagonal-limites.svg`, `diagonal-espectro.svg` y `diagonal-puertas.svg`. Astro no valida rutas de `public/`, así que el build pasa y las tres figuras se publican rotas | Anteponer `diagonal-` a los tres `src` | ✅ aplicado — figuras verificadas contra `public/` |
+| 2 | 🟠 | N | L.477 | **`φ_cP_n = 177,57 kN` está mal redondeado: son 177,56.** El contraste independiente del script registra `177,5647194584169` y la planilla imprime `177,56` | Cambiar a `177,56 kN` | ✅ aplicado |
+| 3 | 🟠 | C | L.30-33 vs §§2-3 | **El deslinde promete más de lo que cumple.** Declara que el chevron agota el λ_md «sobre un cajón soldado de A36 —el mismo 18,9— y la diagonal que falla el pandeo local mientras pasa la esbeltez global», y §2 vuelve a derivar el λ_md y §3 vuelve a mostrar ese patrón | Reescribir la viñeta: el patrón se repite acá **como dato de entrada del mapa de cláusulas**, no como hallazgo. No cortar §§2-3 | ✅ aplicado |
+| 4 | 🟠 | F/E | final del post | **El post no enlaza su planilla**, que existe y está verificada (16 verificaciones). Todos los demás ejemplos cierran con «## La planilla» | Agregar la sección con el enlace, el JSON, el comando y las dos verificaciones ✗ declaradas | ✅ aplicado — «## La planilla» al cierre |
+| 5 | 🟠 | R | todo el post | **No hay bloque de trazabilidad**: no nombra el modelo (`galpon-altiplano.sdb`), ni el script de figuras, ni **qué combinación gobierna cada `P_u`**. Importa: la diagonal de muro la gobierna `E2P_A` (sísmica), pero **la de techo y el puntal los gobierna `G3A_B = 1,2D + 1,6S`**, y §5 —«la manda el sismo, no el viento»— se puede leer como si valiera para las cuatro | Agregar `<Note>` de trazabilidad y una columna «manda» en la tabla resumen | ✅ aplicado — las dos cosas, más la línea que acota el alcance del §5 |
+| 6 | 🟠 | L | L.202-204, L.111-113 | **Dos citas de comentario sin fila en §4.1 de SERIE-GALPON.md**: la de **C8.6.3** («es probable que las diagonales en compresión pandeen») y la de **C8.8.4** («altamente redundantes… dimensionados por requisitos mínimos») | Abrir fila en §4.1 para las dos, con su página | ✅ aplicado — releídas rasterizadas (PDF 93 y 102) y transcritas completas; las dos citas del post resultaron exactas |
+| 7 | 🟡 | C | deslinde | **Falta `ejemplo-gusset-simple-apernado`**, que ya publica el efecto del grado del acero sobre `R_yF_y` con un λ_md al 98,2 % — el pariente más cercano del puntal al 99,89 % | Sumar una viñeta al deslinde | ✅ aplicado |
+| 8 | 🟡 | N | L.345 vs L.438, L.450 | «El área sube un **24 %**» contra «+**23,7 %**» dos veces. El exacto es 23,698 % | Unificar en 23,7 % | ✅ aplicado |
+| 9 | 🟡 | N/C | L.289-292 | «La razón entre las dos aceleraciones es 2,22, y de ahí sale que… se lleve un 49,8 % más de corte». **La cadena no es aritmética**: median el `R*` direccional (4,000/3,830) y la masa modal efectiva (94,63 % contra 47,42 %), que llevan de 2,22 a 1,4979 | Reescribir: la aceleración explica el **sentido**; el factor lo cierran el `R*` y la masa modal | ✅ aplicado — con la cadena 2,22 → 2,31 → 1,498 escrita |
+| 10 | 🟡 | N | L.297 (`caption`) | El `caption` dice «ya bajó al **37 %**» y la prosa dice **37,5 %**. El exacto es 37,47 % | Poner 37,5 % en el `caption` | ✅ aplicado |
+| 11 | 🟡 | C | L.376-388 | **La «cota superior» lo es solo si la parte de gravedad de la combinación también comprime** (`P_G ≥ 0`). El veredicto no está en riesgo, la palabra sí | Agregar media línea con la condición | ✅ aplicado — `<Note>` con la condición `P_G ≥ 0` y el caso donde no se cumple |
+| 12 | 🟡 | C | L.411-423 | «Puerta 3» reintroduce el permiso de solo-tracción que el deslinde declara agotado por `blog/galpon-liviano-nch2369`, y **no enlaza allá** | Enlazar en la primera frase | ✅ aplicado |
+| 13 | 🟡 | U | L.139, L.153, L.356 | Los `label` usan «Sec. 8.6.3» y el cuerpo «§8.6.3» | Unificar en `§` | ✅ aplicado |
+| 14 | 🟡 | U | L.474-479 | La columna `φ_cP_n` repite «kN» en cada celda y la de `P_u` no lleva unidad | Unidad al encabezado | ✅ aplicado |
+| 15 | 🔵 | C | L.216-217 | «porque el soldado no arrastra las tensiones residuales del plegado»: el 6,4 % es exacto, la causa no tiene fila en §4.1 | Citar el Commentary de B4.1, o pasarlo a «es la explicación habitual» | ✅ aplicado — pasado a lectura declarada |
+| 16 | 🔵 | C | L.94-95 | «Ese es el descuento que compra el R = 4» es lectura del autor, no cláusula | Marcarlo como lectura | ✅ aplicado |
+| 17 | 🔵 | L | L.352 | «exime de **ambos** requisitos»: el texto dice «de esta exigencia», en singular. Coincide con la lectura que ya publica `ejemplo-diagonal-hss-traccion`, así que es criterio de sitio | Dejar constancia en una línea | ✅ aplicado |
+| 18 | 🔵 | C | L.413 | «ningún otro marco arriostrado **de Chile**»: cierto dentro del alcance de NCh2369 | Acotar a «regido por NCh2369» | ✅ aplicado |
+
+**Verificado y correcto** (recalculado a mano y cruzado contra §4.1/§5.45, el bloque `ESPERADO` del script y las regiones de la planilla): las constantes (`√(E/F_y) = 28,28427`, `√(E/R_yF_y) = 24,80695`, `λ_md = 18,85328`, `λ_r caso 8 = 42,14356`, `caso 6 = 39,59798`, `1,5π√(E/F_y) = 133,28649`); la razón entre listones `2,2353`, cuya descomposición cierra sola (`√1,3 × 1,49/0,76 = 2,23533`); la diagonal de muro completa (`A = 1 536`, `I = 2 363 392`, `r = 39,22584`, `L_c/r = 127,46699`, `h/t = 23`, uso `1,21995`, `F_e = 121,488`, `F_n = 105,654`, `φ_cP_n = 146,06 kN`, uso `0,2731`); la iteración a 5 mm con el radio que **efectivamente baja** (39,226 → 38,837, porque `I` sube 21,3 % contra un área que sube 23,7 %); la diagonal de techo (`L_c = 3 622,76 mm` derivado de la geometría, uso `0,8884` y `0,9362`); el puntal (`h/t = 18,8333`, uso `0,99894`, margen de `0,0200` unidades) y el A572 que lo dejaría fuera (`λ_md = 17,447`); la exención (`R_1 = 3,8302`, `0,5R_1 = 1,91508`, `76,40 kN`, uso `0,5231`); la tabla de las tres reservas, verificada contra los dos posts citados (chevron `1,843`/1,52; HSS `0,598`/4,68); el espectro entero (`f_ξ = 1,44270`, pico en `0,27 s` con `1,6828`, `S_aH` en los dos `T*`, y `1,3976/0,6306 = 2,216`); la estimación del Note final (`0,1448 s`, `−6,3 %`) **y su sentido**, porque `0,1611 < 0,2703`; que engrosar acaba rompiendo la esbeltez global (con 9 mm, `133,9 > 133,29`); el rotulado `b/t` de AISC contra `h/t` de NCh2369 como **deliberado y correcto**; el `b = B − 2t` por §B4.1b(e); el frontmatter contra el schema Zod; los seis enlaces internos; los tres `alt` número por número; y el español neutro.
+
+**No verificable** (declarado): el texto literal de las cláusulas citadas entre comillas —el auditor no tuvo PyMuPDF—, aunque §4.1 y §5.44 registran la lectura del **contenido** de §8.6.3 y §8.8.4 el 2026-08-12 (PDF 93 y 102); y todo lo que sale del modelo (`P_u`, los dos `T*`, los dos `Q₀`, `Q₀mín`, `R*_Y`), que tiene fila en §5.35-§5.37 y §6.2.1.
+
+**Planilla del canvas:** sí · **ya la tiene** (`public/planillas/diagonal-longitudinal-galpon.json`, pero el post **no la enlaza** — hallazgo 4) · 16 verificaciones, dos declaradas ✗ a propósito (`c_local_muro`, `c_puntal_a572`).
+
 ### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-sismico-nch2369` · ✅ 18 hallazgos, todos aplicados
 
 **Commit:** `3355e50` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (toda la cadena a mano contra los valores sin redondear de `scripts/render-galpon-sismico.mjs` y de `SERIE-GALPON.md` §6.2.1)
@@ -4203,10 +4234,11 @@ Estado de auditoría por post. `—` = nunca auditado.
 | `aci318-25-cap8-losas-bidireccionales` | — | — | — |
 | `aci318-25-cap9-vigas` | — | — | — |
 
-### `acero` — acero (AISC 360-22) (29)
+### `acero` — acero (AISC 360-22) (30)
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-diagonal-longitudinal-galpon` | 2026-08-12 | ✅ | 18 (1🔴 5🟠 · 8🟡 4🔵) · **18 aplicados**, 0 abiertos. El 🔴 eran las tres rutas de figura rotas por un `replace_all` que se comió el prefijo `diagonal-` |
 | `placas-base-empotrada-o-rotulada` | 2026-08-07 | ⚠️ | 0 · 21 aplicados (7🟠 11🟡 3🔵) · 3 descartados |
 | `placa-base-ejemplo-trabajado` | 2026-07-15 | ⚠️ | 2 (0🔴 0🟠) · movido desde `blog` el 2026-08-07 |
 | `placas-base-teoria` | 2026-08-07 | ⚠️ | 0 · 20 aplicados (2🔴 7🟠 7🟡 4🔵). Los dos 🔴 eran material de **ACI 318-19** heredado de `placas-base-sap2000`: la interacción trilineal al 1,2 y el φ 0,70→0,75 de la armadura suplementaria. Los dos se reescribieron contra 318-25 y el §7 quedó como puente hacia la nota del Cap. 17 |
