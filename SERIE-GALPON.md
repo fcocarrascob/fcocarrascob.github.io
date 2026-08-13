@@ -19,17 +19,19 @@ a saltarse.
 
 ## 1. Cómo se retoma esto en otra sesión
 
-> **Estado al 2026-08-12, fin de sesión.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los
-> parámetros congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones,
-> envolvente y deriva incluidas). El **post 0 está publicado** (`blog/galpon-altiplano-la-serie`) y
-> hace de mapa y bitácora. **Faltan los diez posts.**
+> **Estado al 2026-08-12.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los parámetros
+> congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones, envolvente y
+> deriva incluidas). De la Fase 3 hay **tres posts cerrados**: el **0** publicado en `main`
+> (`blog/galpon-altiplano-la-serie`, que hace de mapa y bitácora) y el **1** y el **3** en la rama
+> `serie-galpon`, los tres auditados y con planilla. **Faltan siete.**
 >
-> **Lo próximo, sin ambigüedad: escribir el post 1** (`ejemplo-galpon-altiplano-viento-sitio-nch432`).
-> Es el único que no depende de ningún motor —todos sus números están en §4.1 y en la subsección
-> «El q_h del galpón»— y la primera tanda de auditoría es 1+2+3, así que fija el léxico de la serie.
+> **Lo próximo: el post 5** (`ejemplo-galpon-altiplano-sismico-nch2369`). Se escribe entero sin abrir
+> ningún motor y sin leer ningún PDF nuevo: §6.1–§6.4 ya están en §4.1 y los números salen de §5.35,
+> §5.36, §5.38 y §6.2.1. Antes de fijar su tesis va el deslinde completo (lección de §5.41), que en
+> este post es el más largo de la serie.
 >
-> **No hace falta abrir SAP2000** para los posts 1, 3 y 5: sus números ya están en este archivo.
-> Sí hace falta rukan para los posts 2, 4 y 6, y **rukan todavía no se ha tocado**.
+> **No hace falta abrir SAP2000** para los posts 5, 7, 8, 9 y 10: sus números ya están en este
+> archivo. Sí hace falta rukan para los posts 2, 4 y 6, y **rukan todavía no se ha tocado**.
 
 **Los tres repos que participan** (los tres quedaron limpios y commiteados):
 
@@ -1270,7 +1272,54 @@ y su planilla.** Los datos que la prosa necesita, ya medidos del modelo:
 Linealidad verificada contra `Results.BaseReact`: `1,4·D = 751,269527` y
 `1,2·D + 1,6·S = 1749,865309`, ambas a **4·10⁻⁷ kN** de la cuenta a mano.
 
-## 6. Estado de la serie
+### 5.43 Post 5 — el deslinde más caro de la serie, y la tesis que quedó
+
+Es el post con más antecedentes publicados, y el deslinde se hizo **antes** de fijar la tesis
+(§5.41). Se leyeron completos `blog/galpon-liviano-nch2369`, `apuntes/ejemplo-torre-sismica-nch2369`
+y `apuntes/ejemplo-torre-deformaciones-nch2369`, y se contrastaron por búsqueda el resto de los
+antecedentes. **Cayeron cuatro de las cinco piezas que el plan le asignaba al post.**
+
+| Pieza que el plan le daba al post 5 | Dónde ya está publicada | Veredicto |
+|---|---|---|
+| Las ocho condiciones de §12.2.1, el R = 4 y el 0,5R₁ | `galpon-liviano-nch2369` — tabla completa de las ocho letras, y la comparación 5.5 vs 5.7 con el **+25 % / −29 %** | **agotada**. El post 5 la **aplica**, no la re-explica |
+| La cadena `T* → R* → Q₀ → banda → R₁` | `ejemplo-torre-sismica-nch2369` §§3-6, con las Ecs. (12), (13) y (14) escritas y dos figuras (espectros por dirección, banda por dirección) | **agotada** |
+| El codo `C_r·T₁` y la rampa de la Ec. (1b) | `nch2369-espectro-de-diseno`, la cepa, la torre, `ejemplo-fundacion-anclada-nch2369` | **agotada** |
+| La deriva de §6.3, su excepción del doble, el gatillo del P-Delta de §6.4 y el chequeo `d_ref/d_dis = R*` | `ejemplo-torre-deformaciones-nch2369`, entero — incluido «el corte se verifica; la deriva se diseña» | **agotada** |
+| La NOTA 1 de la Tabla 1 (Categoría por contagio) | `nch2369-panorama-y-combinaciones` L.86, «una regla de contagio» | **agotada**. En el post 5 es una consecuencia de §12.2.1 a), no un hallazgo |
+
+**Lo que sobrevive, y es de lo que se escribe el post:**
+
+1. **La Tabla 7 tiene una sola fila para un edificio con dos sistemas.** Es el complemento exacto y
+   opuesto de la torre: allá dos sistemas ortogonales daban **dos filas** (5.1 y 5.3) que casualmente
+   compartían R, y el post mostró que el R₁ igual se separa por el período. Acá el marco transversal y
+   la crucería longitudinal son sistemas distintos y la Tabla 7 les da **una sola fila**, porque
+   clasifica el edificio. Nadie lo ha publicado.
+2. **La fila no la elige el ingeniero, y lo hacen dos cláusulas distintas.** §12.1.2 obliga al
+   arriostramiento continuo de techo en todo edificio con marcos transversales, salvo los que solo
+   cargan su peso propio — así que la fila 5.6 (R = 3) es **casi inalcanzable legalmente** y el «menú
+   5.5 contra 5.6» que cuenta `galpon-liviano-nch2369` (L.163-164) no existe en la práctica.
+   **Esto corrige un post publicado**, y hay que decirlo con enlace. Encima, si el galpón califica
+   como liviano, §12.2 vuelve a elegir por él: «se **debe** evaluar utilizando Tabla 7, punto 5.7».
+   Y queda el hueco de §5.6: «con puente grúa y sin arriostramiento continuo» no tiene fila, y cae en
+   R = 1,5.
+3. **La primera vez en el sitio que el segundo factor de la Ec. (14) no vale 1.** En la torre las dos
+   direcciones tenían `Q₀ > Q₀^mín` y el `min(·,1)` era trivial; en `ejemplo-pedestal-anclaje-nch2369`
+   y en `ejemplo-fundacion-anclada-nch2369` el R₁ ya corregido entra como **dato declarado**, no
+   derivado. Acá se deriva: con R = 5 el corte transversal cae **1,8 % bajo `Q₀^mín`**, §5.12
+   amplifica todo por 1,018573 y la Ec. (14) devuelve **R₁ = 4,908819**. La fila que promete el R más
+   alto no lo entrega (§5.35).
+4. **La deriva al 94,6 % es un resultado del mallado.** §5.38 mide el 94,6 %; §5.34 mide que con
+   N = 1 la deriva se sobreestima 37,8 % y con N = 2 un 9,2 %. Con cualquiera de esas dos mallas el
+   veredicto habría sido «reprueba» — falso. Es una lección de modelado que ninguno de los dos posts
+   de la torre podía tener, porque allá las columnas son prismáticas.
+5. **§12.5.9 es de racks, no de galpones** (§5.38). Citarla para exigir P-Delta en un galpón es leer
+   mal la sub-cláusula.
+
+**Tesis fijada**: *la Tabla 7 tiene una sola fila para este edificio, y la fila no la elige el
+ingeniero* — la eligen §12.1.2 y §12.2, y cuando por fin queda una decisión que tomar (cuál de las
+dos rutas), la decide el modelo y no el criterio: con R = 5 el mínimo se come el R prometido.
+
+**Título de trabajo**: `chapter: "Ejemplo — Una sola fila de la Tabla 7 para dos sistemas"`.
 
 ### 6.1 Fase 0 — sprint de PDF
 
@@ -1294,11 +1343,15 @@ De **NCh432:2025** se leyó la **cláusula 7 completa**: §7.1.1–§7.1.4, §7.
 **Ec. (7)**, §7.3.1.1, §7.3.2 con sus tres excepciones, §7.3.2.1, §7.3.2.2, §7.3.3–§7.3.6,
 §7.3.7 con las **Ecs. (9)/(10)**, y las **Figuras 12, 13 y 14**.
 
+**Leído después**, cerrando la deuda que esta tabla listaba: **§6.1, §6.2 con la Ec. (15), §6.3 y
+§6.4 con `C6.4`** — págs. impresas 68-70, PDF 74-76, el 2026-08-12, con sus filas en §4.1. El post 5
+ya no depende de ninguna lectura pendiente.
+
 **Lo que sigue faltando de NCh2369**, en orden de urgencia:
 
 | Cláusula | pág. impresa | PDF | Para qué |
 |---|---|---|---|
-| §6.1–§6.4 deformaciones | ~68-70 | ~74-76 | post 5 — **es lo próximo**, la deriva de §6.3 |
+| **§8.6.3** (esbeltez de las diagonales comprimidas) | 87 | 93 | post 10 — **es lo próximo que hay que rasterizar** (§5.9) |
 | §8.4 / §8.5 (el 0,7R₁ y sus alternativas) | ~81-86 | ~87-92 | contexto de §12.2.2 |
 | §5.2.2 irregularidades | ~30 | ~36 | post 4 |
 
@@ -1392,11 +1445,11 @@ Todo lo aprendido de la OAPI quedó en
 | # | Slug | Colección | Estado |
 |---|---|---|---|
 | **0** | `galpon-altiplano-la-serie` | `blog` / Sísmica | ✅ `05c3846` — **el caso + el mapa + la bitácora**. Sin campo `series` (los tres de rukan ya son Rukan 8-10; una serie de un miembro es ruido). **Se reabre y se actualiza al cerrar cada post**: entrada fechada en la bitácora, enlace en el mapa, y `updatedDate` |
-| 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ✅ escrito, rama `serie-galpon` · 3 figuras · **tesis afilada**: ver §5.41 |
-| 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ |
-| 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ⬜ |
-| 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ |
-| 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | ⬜ |
+| 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ✅ `7298bc5`, rama `serie-galpon` · 3 figuras · planilla de 14 verificaciones · auditado, 16 hallazgos, 15 aplicados · **tesis afilada**: ver §5.41 |
+| 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ **rukan sin tocar** |
+| 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ✅ `7ddddb0`, rama `serie-galpon` · 2 figuras · planilla de 14 verificaciones · auditado en dos pasadas · deslinde en §5.42 |
+| 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ **rukan sin tocar** |
+| 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | 🔨 **en curso** — sin motor y sin PDF nuevo; deslinde en §5.43 |
 | 5b | `modelo-base-skills-sap-los-siete-defectos` | `blog` / SAP2000 | ⬜ |
 | 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ⬜ |
 | 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |
@@ -1445,8 +1498,8 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
 ### Abiertas
 
 - **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
-- **§6.1–§6.4 de NCh2369 (deformaciones)** — es lo próximo que hay que leer: la deriva de §6.3 es la
-  que reprueba el marco articulado, y el modelo ya está listo para medirla.
+- **§8.6.3 de NCh2369** (esbeltez de las diagonales **que trabajan en compresión**), pág. impresa 87 /
+  PDF 93, sigue **sin leer rasterizada** (§5.9). Es la única lectura que le falta al post 10.
 - **La masa modal vertical no converge** (65,1 % con 60 modos, 75,4 % con 150). Se adopta §5.7.1
   estática, pero `C5.7.1` prefiere el dinámico para techos flexibles y el nuestro lo es. **Hay que
   declarar la salvedad en el post** (§5.31).
@@ -1454,11 +1507,7 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
   «limpio», hay que decidir si se documenta el artefacto o se modelan las diagonales enteras.
 - **El script `galpon_altiplano_espectral` fija `P_SIS` a mano** (constante literal). Al cambiar
   cualquier carga hay que actualizarlo, o leerlo del modelo.
-- **`material_teorico\taller\_indice-taller.md`**: la nota sobre §5.1.2 y NCh1537 es incorrecta (§5.3).
-- **Anexo B normativo de NCh2369** (combinaciones de cargas) no estaba en el plan. Leerlo antes del
-  post 3.
-- **NCh431 y NCh1537** siguen sin PDF. Ya no bloquean (§5.1), pero si aparecen, el post 3 gana una
-  sección.
+- **NCh431 y NCh1537** siguen sin PDF. Ya no bloquean (§5.1); el post 3 se publicó sin ellas.
 - **NCh427/1 no está en PDF.** La cita §8.3.2 (métodos de diseño por estabilidad) y C8.3.2 (el segundo
   orden aproximado del Anexo 8, aceptado explícitamente). Necesaria para el post 7.
 - **AISC 341-16 Tabla A3.1** — la norma cita esa edición y en disco está la 22. Ver §5.17.
@@ -1469,6 +1518,8 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
   publicable y como aviso a quien arme combos automáticamente desde NCh3171.
 - **Errata interna de NCh3171** (§5.23): §9.2.2 y el cierre de §9.2.1 citan «(5), (6) y (7)» cuando
   §9.2.1 numera 5a/5b y 6a/6b. Hay que decidir y **declarar** la lectura al implementar los combos.
-- **Figuras 25/26 de NCh432** (topografía, K_zt) y **Figura 2** (zonificación) no están transcritas al
-  wiki: hay que leerlas del PDF para el post 1.
+- **El wiki numera mal las figuras de NCh432.** El plan pedía «Figuras 25/26 (topografía)» y «Figura 2
+  (zonificación)»; en la 3.ª edición el `K_zt` está en la **Figura 3** y la zonificación con la
+  velocidad básica en la **Tabla 1**. Las dos se leyeron rasterizadas el 2026-08-12 y están en §4.1.
+  Queda corregir el wiki.
 - **rukan no tiene sección de peralte variable** ni `geom_transf` configurable. Ver plan, Fase 2.
