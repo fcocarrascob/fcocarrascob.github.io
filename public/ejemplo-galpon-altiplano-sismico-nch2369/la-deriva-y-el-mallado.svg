@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1000" height="520" fill="#ffffff"/>
+  <text x="500" y="34" font-size="15.5" fill="#222" text-anchor="middle" font-weight="bold">La deriva pasa por 5,4 % — y ese margen es más chico que el error de una malla gruesa</text>
+  <text x="500" y="56" font-size="12" fill="#6b7280" text-anchor="middle">Desplazamientos con el espectro de referencia de §6.1 (sin R*, con (0,05/ξ)^0,4 y con I) y la simultaneidad de §4.5.2</text>
+  <text x="106" y="88" font-size="12" fill="#333" text-anchor="start" font-weight="bold">Desplazamiento de alero [m], contra el límite de §6.3</text>
+  <text x="596" y="88" font-size="12" fill="#333" text-anchor="start" font-weight="bold">Cuánto sobreestima la deriva cada malla (§5.34)</text>
+  <line x1="118.0" y1="118" x2="118.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="118" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0,000</text>
+  <line x1="195.1" y1="118" x2="195.1" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="195.1428571428571" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0,030</text>
+  <line x1="272.3" y1="118" x2="272.3" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="272.2857142857142" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0,060</text>
+  <line x1="349.4" y1="118" x2="349.4" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="349.42857142857144" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0,090</text>
+  <line x1="426.6" y1="118" x2="426.6" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="426.5714285714285" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0,120</text>
+  <rect x="118.0" y="146" width="291.9" height="34" rx="3" fill="#b02a1a" fill-opacity="0.85"/>
+  <text x="106" y="168" font-size="11.5" fill="#333" text-anchor="end">X · marcos</text>
+  <text x="419.8674285714285" y="162" font-size="11.5" fill="#b02a1a" text-anchor="start" font-weight="bold">0,113504 m</text>
+  <text x="419.8674285714285" y="178" font-size="11" fill="#b02a1a" text-anchor="start">94,6 % del límite</text>
+  <rect x="118.0" y="210" width="17.8" height="34" rx="3" fill="#1a63a8" fill-opacity="0.6"/>
+  <text x="106" y="232" font-size="11.5" fill="#333" text-anchor="end">Y · arriostrada</text>
+  <text x="145.77371428571428" y="226" font-size="11.5" fill="#1a63a8" text-anchor="start" font-weight="bold">0,006912 m</text>
+  <text x="145.77371428571428" y="242" font-size="11" fill="#1a63a8" text-anchor="start">5,8 % del límite</text>
+  <line x1="426.6" y1="118" x2="426.6" y2="272" stroke="#1f7a4d" stroke-width="2.2"/>
+  <text x="426.5714285714285" y="110" font-size="11.5" fill="#1f7a4d" text-anchor="middle" font-weight="bold">0,015·h = 0,120 m</text>
+  <line x1="606.0" y1="118" x2="606.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="606" y="290" font-size="11" fill="#6b7280" text-anchor="middle">0 %</text>
+  <line x1="672.0" y1="118" x2="672.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="672" y="290" font-size="11" fill="#6b7280" text-anchor="middle">10 %</text>
+  <line x1="738.0" y1="118" x2="738.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="738" y="290" font-size="11" fill="#6b7280" text-anchor="middle">20 %</text>
+  <line x1="804.0" y1="118" x2="804.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="804" y="290" font-size="11" fill="#6b7280" text-anchor="middle">30 %</text>
+  <line x1="870.0" y1="118" x2="870.0" y2="272" stroke="#d1d5db" stroke-width="1"/>
+  <text x="870" y="290" font-size="11" fill="#6b7280" text-anchor="middle">40 %</text>
+  <rect x="606.0" y="132" width="249.5" height="19" rx="3" fill="#b02a1a" fill-opacity="0.8"/>
+  <text x="596" y="146" font-size="11" fill="#333" text-anchor="end">N = 1</text>
+  <text x="863.48" y="146" font-size="10.5" fill="#b02a1a" text-anchor="start" font-weight="bold">+37,80 %</text>
+  <text x="923.48" y="146" font-size="10" fill="#b02a1a" text-anchor="start">veredicto falso</text>
+  <rect x="606.0" y="160" width="60.9" height="19" rx="3" fill="#b02a1a" fill-opacity="0.8"/>
+  <text x="596" y="174" font-size="11" fill="#333" text-anchor="end">N = 2</text>
+  <text x="674.918" y="174" font-size="10.5" fill="#b02a1a" text-anchor="start" font-weight="bold">+9,23 %</text>
+  <text x="734.918" y="174" font-size="10" fill="#b02a1a" text-anchor="start">veredicto falso</text>
+  <rect x="606.0" y="188" width="26.3" height="19" rx="3" fill="#1f7a4d" fill-opacity="0.5"/>
+  <text x="596" y="202" font-size="11" fill="#333" text-anchor="end">N = 3</text>
+  <text x="653.7280000000001" y="202" font-size="10.5" fill="#6b7280" text-anchor="start">+3,98 %</text>
+  
+  <rect x="606.0" y="216" width="6.3" height="19" rx="3" fill="#1f7a4d" fill-opacity="0.5"/>
+  <text x="596" y="230" font-size="11" fill="#333" text-anchor="end">N = 6</text>
+  <text x="653.7280000000001" y="230" font-size="10.5" fill="#6b7280" text-anchor="start">+0,95 %</text>
+  
+  <rect x="606.0" y="244" width="2.6" height="19" rx="3" fill="#1f7a4d" fill-opacity="0.5"/>
+  <text x="596" y="258" font-size="11" fill="#333" text-anchor="end">N = 9</text>
+  <text x="653.7280000000001" y="258" font-size="10.5" fill="#6b7280" text-anchor="start">+0,40 %</text>
+  
+  <line x1="641.7" y1="118" x2="641.7" y2="272" stroke="#b45309" stroke-width="2.2" stroke-dasharray="6 4"/>
+  <text x="647.7280000000001" y="112" font-size="11.5" fill="#b45309" text-anchor="start" font-weight="bold">margen real: 5,4 %</text>
+  <text x="106" y="332" font-size="11" fill="#333" text-anchor="start">La dirección de marcos usa el 94,6 % del límite y la arriostrada el 5,8 %:</text>
+  <text x="106" y="350" font-size="11" fill="#333" text-anchor="start">el mismo edificio, la misma masa, y 16,4 veces de diferencia.</text>
+  <text x="106" y="376" font-size="11" fill="#333" text-anchor="start">El mismo 0,015·h de §6.3 es el gatillo del P-Delta de §6.4: estamos a un 5 %</text>
+  <text x="106" y="394" font-size="11" fill="#333" text-anchor="start">de tener que correr segundo orden. Y C6.4 avisa que el P-Delta «puede serlo</text>
+  <text x="106" y="412" font-size="11" fill="#333" text-anchor="start">en estructuras de marcos resistentes a momento».</text>
+  <text x="596" y="332" font-size="11" fill="#333" text-anchor="start">N es el número de tramos por columna del peralte variable, contra</text>
+  <text x="596" y="350" font-size="11" fill="#333" text-anchor="start">N = 36 como referencia. La malla adoptada es N = 4: cae entre las</text>
+  <text x="596" y="368" font-size="11" fill="#333" text-anchor="start">filas N = 3 y N = 6, o sea entre +3,98 % y +0,95 %. Con uno o dos</text>
+  <text x="596" y="386" font-size="11" fill="#333" text-anchor="start">tramos por columna el error solo se habría comido el margen: la</text>
+  <text x="596" y="404" font-size="11" fill="#333" text-anchor="start">deriva habría «reprobado» sin que nada en la salida lo delatara.</text>
+  <text x="106" y="462" font-size="10.5" fill="#6b7280" text-anchor="start">Desplazamientos del modelo galpon_altiplano.sdb (SAP2000 v27.1), caso espectral de referencia · chequeo de consistencia: bajo el caso de diseño</text>
+  <text x="106" y="478" font-size="10.5" fill="#6b7280" text-anchor="start">el mismo nodo da 0,028105 m, y 0,112442 / 0,028105 = 4,0009 ≈ R*_X = 4,0</text>
+  <text x="106" y="498" font-size="10.5" fill="#6b7280" text-anchor="start">NCh2369:2025 (3.ª ed.) · §6.1, §6.3 y §6.4 con C6.4, págs. impresas 68-70, leídas rasterizadas el 2026-08-12</text>
+</svg>

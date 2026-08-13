@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <text x="500" y="34" font-size="15.5" fill="#222" text-anchor="middle" font-weight="bold">Las dos rutas contra la banda de §5.12–§5.13 — y el único corte que se cae por abajo</text>
+  <text x="500" y="56" font-size="12" fill="#6b7280" text-anchor="middle">Mismo modelo, misma masa P = 674,861 kN. Solo cambia el R de tabla, y con él el R* de cada dirección y el Q₀máx de la Ec. (13)</text>
+  <text x="40" y="84" font-size="12" fill="#333" text-anchor="start" font-weight="bold">Corte basal Q₀ [kN]</text>
+  <line x1="214.0" y1="112" x2="214.0" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="214" y="410" font-size="11" fill="#6b7280" text-anchor="middle">0</text>
+  <line x1="306.7" y1="112" x2="306.7" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="306.6923076923077" y="410" font-size="11" fill="#6b7280" text-anchor="middle">50</text>
+  <line x1="399.4" y1="112" x2="399.4" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="399.38461538461536" y="410" font-size="11" fill="#6b7280" text-anchor="middle">100</text>
+  <line x1="492.1" y1="112" x2="492.1" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="492.07692307692304" y="410" font-size="11" fill="#6b7280" text-anchor="middle">150</text>
+  <line x1="584.8" y1="112" x2="584.8" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="584.7692307692307" y="410" font-size="11" fill="#6b7280" text-anchor="middle">200</text>
+  <line x1="677.5" y1="112" x2="677.5" y2="392" stroke="#d1d5db" stroke-width="1"/>
+  <text x="677.4615384615385" y="410" font-size="11" fill="#6b7280" text-anchor="middle">250</text>
+  <rect x="345.4" y="124" width="285.6" height="118" fill="#1f7a4d" fill-opacity="0.08"/>
+  <line x1="630.9" y1="124" x2="630.9" y2="242" stroke="#1f7a4d" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="622.9424013077569" y="136" font-size="10.5" fill="#1f7a4d" text-anchor="end">Q₀máx = 224,907 kN</text>
+  <text x="202" y="142" font-size="11.5" fill="#1a63a8" text-anchor="end" font-weight="bold">§12.2 · R = 4 (la ruta de diseño)</text>
+  <rect x="214.0" y="160" width="161.2" height="26" rx="3" fill="#1a63a8" fill-opacity="0.55"/>
+  <text x="202" y="178" font-size="11" fill="#6b7280" text-anchor="end">X · marcos</text>
+  <text x="385.21088554894413" y="178" font-size="11.5" fill="#1a63a8" text-anchor="start" font-weight="bold">86,960 kN</text>
+  <rect x="214.0" y="200" width="241.5" height="26" rx="3" fill="#1a63a8" fill-opacity="0.55"/>
+  <text x="202" y="218" font-size="11" fill="#6b7280" text-anchor="end">Y · arriostrada</text>
+  <text x="465.4767885866804" y="218" font-size="11.5" fill="#1a63a8" text-anchor="start" font-weight="bold">130,257 kN</text>
+  <rect x="345.4" y="256" width="216.1" height="118" fill="#1f7a4d" fill-opacity="0.08"/>
+  <line x1="561.5" y1="256" x2="561.5" y2="374" stroke="#1f7a4d" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="553.4520010897974" y="268" font-size="10.5" fill="#1f7a4d" text-anchor="end">Q₀máx = 187,422 kN</text>
+  <text x="202" y="274" font-size="11.5" fill="#b02a1a" text-anchor="end" font-weight="bold">fila 5.5 · R = 5 (la ilustrativa)</text>
+  <rect x="214.0" y="292" width="129.0" height="26" rx="3" fill="#b02a1a" fill-opacity="0.95"/>
+  <text x="202" y="310" font-size="11" fill="#6b7280" text-anchor="end">X · marcos</text>
+  <text x="352.9687084391553" y="310" font-size="11.5" fill="#b02a1a" text-anchor="start" font-weight="bold">69,568 kN</text>
+  <text x="434.9687084391553" y="310" font-size="11" fill="#b45309" text-anchor="start" font-weight="bold">✗ 1,82 % bajo el mínimo</text>
+  <rect x="214.0" y="332" width="225.0" height="26" rx="3" fill="#b02a1a" fill-opacity="0.55"/>
+  <text x="202" y="350" font-size="11" fill="#6b7280" text-anchor="end">Y · arriostrada</text>
+  <text x="449.0472971647413" y="350" font-size="11.5" fill="#b02a1a" text-anchor="start" font-weight="bold">121,395 kN</text>
+  <line x1="345.4" y1="112" x2="345.4" y2="392" stroke="#b45309" stroke-width="2"/>
+  <text x="345.3643069814524" y="104" font-size="11.5" fill="#b45309" text-anchor="middle" font-weight="bold">Q₀mín = 70,860 kN  (Ec. 12)</text>
+  <rect x="726" y="150" width="236" height="224" rx="6" fill="#fdf6ec" stroke="#b45309" stroke-width="1.6"/>
+  <text x="742" y="176" font-size="12.5" fill="#b45309" text-anchor="start" font-weight="bold">Lo que cobra el mínimo</text>
+  <text x="742" y="198" font-size="11" fill="#333" text-anchor="start">Dirección X, ruta R = 5:</text>
+  <text x="742" y="222" font-size="11" fill="#333" text-anchor="start">§5.12 amplifica todo por</text>
+  <text x="742" y="240" font-size="11.5" fill="#333" text-anchor="start" font-weight="bold">70,860 / 69,568 = 1,018575</text>
+  <text x="742" y="268" font-size="11" fill="#333" text-anchor="start">y la Ec. (14) devuelve</text>
+  <text x="742" y="290" font-size="11.5" fill="#333" text-anchor="start">R₁ = 5,00 × 0,981764</text>
+  <text x="742" y="316" font-size="17" fill="#b02a1a" text-anchor="start" font-weight="bold">R₁ = 4,908819</text>
+  <text x="742" y="342" font-size="11" fill="#6b7280" text-anchor="start">La fila que promete el R</text>
+  <text x="742" y="358" font-size="11" fill="#6b7280" text-anchor="start">más alto no lo entrega.</text>
+  <text x="40" y="462" font-size="11" fill="#333" text-anchor="start">La banda verde es distinta en cada ruta: el Q₀máx de la Ec. (13) divide por (R + 1), así que subir el R de 4 a 5 baja el techo de 224,907 a 187,422 kN.</text>
+  <text x="40" y="480" font-size="11" fill="#333" text-anchor="start">El piso de la Ec. (12) no depende del R y queda donde estaba. Con R = 5, el corte de la dirección de marcos cae por debajo de ese piso.</text>
+  <text x="40" y="506" font-size="10.5" fill="#6b7280" text-anchor="start">Cortes CQC del análisis modal espectral (60 modos, §5.6.2 cumplida) del modelo galpon_altiplano.sdb, SAP2000 v27.1</text>
+  <text x="40" y="522" font-size="10.5" fill="#6b7280" text-anchor="start">Ecs. (1a), (1b), (12), (13) y (14) de NCh2369:2025 (3.ª ed.), págs. impresas 27-29 y 48-49 · recalculadas contra src/lib/nch2369-spectrum.ts</text>
+</svg>
