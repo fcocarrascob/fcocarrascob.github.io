@@ -1,0 +1,373 @@
+---
+title: "Ejemplo — Una sola fila de la Tabla 7 para un edificio con dos sistemas"
+description: "El galpón del altiplano tiene marcos de momento en una dirección y crucería en la otra, y la Tabla 7 de NCh 2369:2025 le da una sola fila, porque clasifica el edificio y no la dirección. Lo que sorprende es que la fila tampoco la elige el ingeniero: §12.1.2 obliga el arriostramiento de techo, §12.2 manda a la fila 5.7, y cuando por fin queda una decisión —R = 4 o R = 5— la resuelve el modelo, porque con R = 5 el corte transversal cae bajo el mínimo de §5.12 y la Ec. (14) devuelve 4,909. Cierra con una deriva que pasa por 5,4 % y que una malla más gruesa habría reprobado."
+pubDate: 2026-08-12
+tags: ["nch2369", "ejemplo", "factor R", "Tabla 7", "galpón liviano", "corte basal", "derivas", "análisis modal espectral", "galpón", "serie galpón"]
+subsection: "nch2369"
+chapter: "Ejemplo — Una sola fila de la Tabla 7 para dos sistemas"
+source: "NCh 2369:2025 (3.ª ed., 2025.05.28), cláusulas 4.3, 5.1, 5.4, 5.6, 5.7, 5.12 a 5.14, 6.1 a 6.4, 12.1 y 12.2, con las Tablas 1, 3, 6 y 7 (págs. impresas 27-29, 48-49, 57-63, 68-70 y 143-145), leídas en páginas rasterizadas el 2026-08-12"
+---
+
+import Note from '../../components/content/Note.astro';
+import Equation from '../../components/content/Equation.astro';
+import Figure from '../../components/content/Figure.astro';
+
+Quinto post de la serie del [galpón del altiplano](/blog/galpon-altiplano-la-serie/). El
+[tercero](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones) dejó armadas las 79 combinaciones
+y la masa sísmica en $P = 674{,}861$ kN. Acá se corre el análisis sísmico completo sobre esa masa —y
+la pregunta que organiza el post no es cuánto da el corte basal, sino **quién eligió el $R$ con el
+que se calcula**.
+
+La respuesta corta: el ingeniero, no. Lo eligen dos cláusulas de la cláusula 12, y cuando por fin
+queda una decisión que tomar, la toma el modelo.
+
+<Note type="info" title="Lo que este post no rehace">
+Este es el post de la serie con más antecedentes publicados, y ninguno se repite:
+
+- [**El galpón liviano: tres beneficios por ocho condiciones**](/blog/galpon-liviano-nch2369) agota
+  §12.2 entera —las ocho condiciones de admisión, el $R = 4$, el permiso de solo-tracción y el
+  $0{,}5R_1$ que reemplaza al $0{,}7R_1$—, con la cuenta general de $+25\ \%$ en la demanda de
+  análisis contra $-29\ \%$ en los elementos protegidos. Acá esa cuenta **se aplica**, con los
+  números de un modelo, y se ve dónde la realidad se aparta de ella.
+- [**La torre mixta: mismo R de tabla, un $R_1$ por cada dirección**](/apuntes/ejemplo-torre-sismica-nch2369)
+  agota la cadena $T^* \to R^* \to Q_0 \to$ banda $\to R_1$, con las Ecs. (12), (13) y (14) escritas.
+- [**Aprobar en fuerza y reprobar en deriva**](/apuntes/ejemplo-torre-deformaciones-nch2369) agota la
+  cláusula 6: el espectro de referencia de §6.1, el límite de §6.3 con su excepción del doble, y el
+  gatillo del P-Delta de §6.4.
+- [**El espectro de diseño**](/apuntes/nch2369-espectro-de-diseno) agota la Ec. (1b) y el codo
+  $C_r T_1$, y [**el panorama**](/apuntes/nch2369-panorama-y-combinaciones) agota la NOTA 1 de la
+  Tabla 1 —la regla de contagio de la Categoría— que acá aparece como consecuencia, no como hallazgo.
+
+Lo que no está publicado en ninguna parte es lo de este post: **qué hace la Tabla 7 con un edificio
+que tiene dos sistemas sismorresistentes distintos**, y quién decide la fila.
+</Note>
+
+## 1. La torre tenía dos filas; el galpón tiene una
+
+La torre mixta del ejemplo anterior era arriostrada en un sentido y marco de momento en el otro, y
+la Tabla 7 le daba **dos filas**: la 5.3 para el marco arriostrado y la 5.1 para el de momento. Que
+las dos dieran $R = 5$ era una coincidencia numérica; el post mostró que el $R_1$ efectivo se separa
+igual, porque la Ec. (1b) se evalúa con el $T^*$ de cada dirección.
+
+Este galpón tiene la misma topología —marcos de momento transversales, crucería longitudinal— y sin
+embargo la Tabla 7 le da **una sola fila**. La diferencia no es el edificio: es qué está clasificando
+la tabla. Las filas de la torre describen **sistemas resistentes**; las filas 5.5 a 5.7 describen
+**edificios**: «edificios industriales de un piso, con o sin puente grúa, con arriostramiento
+continuo de techo, y con anclajes dúctiles».
+
+Eso tiene una consecuencia que conviene decir en voz alta antes de calcular nada: **la fila se elige
+mirando el techo, y una vez elegida aplica también a la dirección transversal, que ni siquiera lo
+toca.**
+
+<Figure
+  src="/ejemplo-galpon-altiplano-sismico-nch2369/la-fila-no-la-eliges.svg"
+  alt="Diagrama en dos partes sobre qué fila de la Tabla 7 de NCh 2369 le toca a un galpón industrial. A la izquierda, cuatro cajas apiladas, una por fila candidata, cada una con una barra horizontal proporcional a su factor R. La primera es la fila 5.5, edificios industriales de un piso, con o sin puente grúa, con arriostramiento continuo de techo y anclajes dúctiles, R igual a 5, y al pie dice que la cláusula 12.1.2 la vuelve la fila por defecto. La segunda es la fila 5.6, edificios industriales de un piso, sin puente grúa, sin arriostramiento continuo de techo, R igual a 3, y al pie dice que solo sirve para la excepción de 12.1.2. La tercera, resaltada en azul con borde grueso, es la fila 5.7, galpones livianos de acero definidos por las ocho condiciones de 12.2.1, R igual a 4, y al pie cita que la 12.2 dice que se debe evaluar utilizando el punto 5.7. La cuarta es la fila 2, otras estructuras no incluidas o asimilables, R igual a 1,5, y al pie dice que ahí cae la combinación con puente grúa y sin arriostramiento, que no tiene fila propia. A la derecha, el camino de este galpón en cuatro cajas verdes encadenadas por flechas: hay marcos transversales, así que la 12.1.2 obliga el arriostramiento continuo; no carga solo su peso propio, porque tiene 0,35 kilopascal de carga muerta superpuesta, así que no aplica la excepción; se cumplen las ocho letras de la 12.2.1, de la a hasta la h; y por lo tanto va por la 12.2 con R igual a 4, con el amplificador de capacidad bajando de 0,7 R uno a 0,5 R uno por la 12.2.2."
+  caption="La fila la eligen dos cláusulas, no el calculista. §12.1.2 vuelve obligatorio el arriostramiento continuo de techo —y con eso la fila 5.6 casi no existe—, y §12.2 manda a la 5.7 en cuanto se cumplen las ocho condiciones."
+/>
+
+**§12.1.2 exige el arriostramiento continuo de techo** en todo edificio con marcos transversales. La
+única excepción son los edificios sin puente grúa **cuyas cargas permanentes provienen solo del peso
+propio** — que no es este caso: la cubierta, las costaneras y las instalaciones colgadas suman
+0,35 kPa de carga muerta superpuesta.
+
+Eso da vuelta la lectura habitual. La fila 5.6, con $R = 3$, no es una alternativa que se elija por
+economía o por descuido de estructuración: es **casi inalcanzable legalmente**, porque si tienes
+marcos transversales §12.1.2 te obliga al arriostramiento y eso te pone en la 5.5. Describe la
+excepción —un galpón pelado cuya única carga permanente es su propio peso— o un edificio que no
+cumple §12.1.2. La comparación «5.5 contra 5.6» que suele contarse como un menú, y que el post del
+[galpón liviano](/blog/galpon-liviano-nch2369) también presenta así al describir qué se pierde,
+en la práctica no se ofrece.
+
+Y hay un hueco. La 5.5 dice «**con o sin** puente grúa, **con** arriostramiento continuo». La 5.6
+dice «**sin** puente grúa, **sin** arriostramiento continuo». El caso «con puente grúa y sin
+arriostramiento continuo» **no está en la tabla**: cae en la fila 2, «otras estructuras no incluidas
+o asimilables», con $R = 1{,}5$. Es coherente con §12.1.2 —ese edificio sencillamente no debería
+existir—, pero conviene saber dónde aterriza si aparece.
+
+## 2. Las ocho condiciones, y lo que se guarda adentro
+
+§12.2.1 define el galpón liviano con ocho condiciones, y hay que verificarlas una a una porque el
+paquete se firma completo. Contra este galpón:
+
+| | Exige | Este galpón | |
+|---|---|---|:-:|
+| a) | Categoría I o II (§4.3.1) | II | ✓ |
+| b) | una o varias naves paralelas | una nave | ✓ |
+| c) | altura libre ≤ 23 m; luz ≤ 75 m | 8,0 m; 24,0 m | ✓ |
+| d) | peso propio de la estructura de techo ≤ 70 kg/m² | 41,4 kg/m² (todo el acero) | ✓ |
+| e) | puente grúa ≤ 100/50 kN | no hay | ✓ |
+| f) | sin estanterías vinculadas sísmicamente | no hay | ✓ |
+| g) | equipos ≤ 50 kN por marco | 0,15 kPa × 144 m² ≈ 21,6 kN | ✓ |
+| h) | altillos ≤ 15 kN por columna | no hay | ✓ |
+
+La d) se cumple con holgura, y con un margen que conviene declarar: los 41,4 kg/m² son **todo el
+acero del modelo** —23 826,4 kg sobre 576 m²—, columnas incluidas, mientras que la condición solo
+cuenta «vigas, costaneras, colgadores, puntales, arriostramientos y conexiones». El valor que la
+norma pide es menor que el que se compara acá, así que si el mayorante pasa, la condición pasa.
+
+La letra que hay que mirar dos veces es la **a)**, y no por la estructura. La NOTA 1 de la Tabla 1
+—la regla de contagio que [ya está explicada](/apuntes/nch2369-panorama-y-combinaciones)— impide
+clasificar una instalación por debajo del equipo o proceso más crítico que aloje. Basta con que el
+galpón albergue equipo de proceso crítico para subir a Categoría III, y ahí se pierde de golpe el
+galpón liviano **y** el $I = 1{,}00$ sube a 1,20.
+
+Por eso el supuesto se declara explícito: **este galpón es bodega de insumos, sin equipo de proceso
+crítico**. Eso es lo que sostiene a la vez la Categoría II, el $I = 1{,}00$ y toda la ruta de §12.2.
+El $R$ de un galpón no lo decide solo su estructura: lo decide lo que se guarda adentro.
+
+<Note type="warning" title="Una tensión con el post del sitio que conviene no tapar">
+El [post 1 de esta serie](/apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432) le sacó al viento
+un $K_{zt} = 1{,}948$ porque la plataforma está sobre una loma. La nota a) de la **Tabla 4** de
+NCh 2369 dice que la clasificación sísmica de suelos aplica a topografía aproximadamente horizontal
+y a estructuras **lejos de singularidades geomorfológicas y topográficas**. Una plataforma sobre un
+lomo es, justamente, una singularidad topográfica.
+
+Las dos normas no se contradicen —hablan de fenómenos distintos— pero el mismo accidente del terreno
+que amplifica el viento es el que le quita respaldo a la clasificación de suelo. Acá se sigue con
+suelo B por el estudio de mecánica de suelos del sitio, y la tensión queda declarada.
+</Note>
+
+## 3. Las dos rutas, corridas sobre el mismo modelo
+
+Con la calificación resuelta quedaría una sola ruta: $R = 4$ por §12.2. Pero la comparación con la
+fila 5.5 es justamente lo que el post del galpón liviano resuelve en álgebra, y acá se puede hacer
+con números. Así que se corren **las dos** sobre el mismo modelo, misma masa y mismo modal:
+
+| | §12.2 · $R = 4$ | fila 5.5 · $R = 5$ |
+|---|---:|---:|
+| $C_r T_1 = 0{,}16\,R\,T_1$ | 0,1728 s | 0,2160 s |
+| $R^*_X$ ($T^*_X = 0{,}852657$ s) | **4,000000** | **5,000000** |
+| $R^*_Y$ ($T^*_Y = 0{,}161061$ s) | **3,830163** | **4,109783** |
+| $Q_{0X}$ (CQC) | 86,960 kN | **69,568 kN** |
+| $Q_{0Y}$ (CQC) | 130,257 kN | 121,395 kN |
+| $Q_0^{\text{máx.}}$ (Ec. 13) | 224,907 kN | 187,422 kN |
+
+El $T^*_X$ sale del modo 1, que se lleva el **94,63 %** de la masa traslacional en X; el $T^*_Y$ del
+modo **41**, con 47,42 %. Que el modo dominante de la dirección arriostrada esté tan arriba en la
+lista no es un error: 39 de los 60 modos son locales del punto de cruce de las diagonales, un
+artefacto de la discretización que la serie discute en su post de modelado. Sobre 60 modos la masa
+acumulada llega a **97,63 % en X y 97,83 % en Y**, y §5.6.2 pide 90 % en cada dirección de análisis.
+
+Dos cosas de esa tabla, antes de la banda.
+
+**El codo se mueve con el $R$, y el $T^*_Y$ queda del lado malo de los dos.** $C_r T_1$ vale
+$0{,}16 \cdot R \cdot 0{,}27$, así que sube con el $R$: 0,1728 s con $R = 4$ y 0,2160 s con $R = 5$.
+El período longitudinal, 0,161061 s, cae **por debajo de los dos** — un 6,79 % bajo el de la ruta de
+diseño. Por eso su $R^*$ nunca es el $R$ de tabla: la rampa de la Ec. (1b) se lo recorta en las dos
+rutas.
+
+**Y el par referencia/diseño cierra clavado.** El modelo lleva, además de los cuatro casos
+espectrales de diseño, dos con el espectro de referencia de §6.1. Su cociente contra el de diseño
+tiene que dar el $R^*$ de esa dirección, y da: $347{,}841/86{,}960 = 4{,}000000$ y
+$498{,}906/130{,}257 = 3{,}830163$. Es el chequeo de una línea que delata un espectro mal cargado
+antes de que contamine todo lo que sigue.
+
+## 4. La dirección más rígida se lleva más corte
+
+$Q_{0Y} = 130{,}257$ kN contra $Q_{0X} = 86{,}960$: la dirección arriostrada, que es la rígida, se
+lleva un **49,8 % más** de corte basal que la de marcos.
+
+No es un error, y no es una rareza de este galpón: es dónde cae cada $T^*$ en el espectro.
+
+| | $T^*$ | $S_{aH}$ de referencia | $S_a$ de diseño ($R = 4$) |
+|---|---:|---:|---:|
+| X · marcos | 0,852657 s | 0,630643 | 0,157661 |
+| Y · arriostrada | 0,161061 s | **1,397593** | **0,364891** |
+
+El $T^*$ longitudinal cae en la meseta del espectro, donde la ordenada es **2,2 veces** la que lee
+la dirección de marcos. Y encima, por caer bajo el codo, su $R^*$ baja un 4,2 % más. **Rigidizar
+castiga dos veces**: sube la aceleración que lees y te quita parte del factor con que la divides.
+
+Esto ya explica, por si quedaba duda, el resultado contraintuitivo del
+[post de las combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones): que a la
+diagonal de muro la gobierne el sismo y no el viento.
+
+## 5. El mínimo se come el R que la fila prometía
+
+La banda de §5.12–§5.13 no depende del análisis, pero sí del $R$: el $Q_0^{\text{máx.}}$ de la
+Ec. (13) divide por $(R+1)$, así que subir de 4 a 5 baja el techo de 224,907 a 187,422 kN. El piso
+de la Ec. (12) no lleva $R$ y se queda donde estaba, en 70,860 kN.
+
+<Figure
+  src="/ejemplo-galpon-altiplano-sismico-nch2369/el-minimo-se-come-el-r.svg"
+  alt="Gráfico de barras horizontales con los cuatro cortes basales del galpón contra la banda admisible, sobre un eje de cero a doscientos sesenta kilonewton. Arriba, la ruta de la cláusula 12.2 con R igual a 4, en azul: la dirección X de marcos llega a 86,960 kilonewton y la dirección Y arriostrada a 130,257, las dos dentro de una banda verde que va del mínimo al máximo de 224,907 kilonewton. Abajo, la ruta de la fila 5.5 con R igual a 5, en rojo: la dirección X llega a 69,568 kilonewton y queda marcada con una cruz y la nota de que está 1,82 por ciento bajo el mínimo, mientras la dirección Y llega a 121,395 y queda dentro de su banda, cuyo máximo es 187,422 kilonewton. Una línea vertical ámbar marca el corte basal mínimo de 70,860 kilonewton de la Ecuación 12, común a las dos rutas. A la derecha, un recuadro titulado lo que cobra el mínimo explica que en la dirección X de la ruta con R igual a 5 la cláusula 5.12 amplifica todo por 70,860 dividido 69,568 igual a 1,018575, y que la Ecuación 14 devuelve R uno igual a 5,00 por 0,981764, o sea 4,908819, con la nota de que la fila que promete el R más alto no lo entrega."
+  caption="Tres de los cuatro cortes caen dentro de su banda. El de la dirección de marcos con R = 5 cae 1,82 % por debajo del mínimo, y ese 1,82 % es lo que activa el único descuento de la Ec. (14) que se ha visto en el sitio."
+/>
+
+Tres de los cuatro cortes caen dentro. El cuarto no: con $R = 5$, la dirección de marcos da
+$Q_{0X} = 69{,}568$ kN contra un mínimo de 70,860, o sea un **1,82 % por debajo**. §5.12 ordena
+entonces multiplicar todas las fuerzas y esfuerzos internos por
+
+<Equation label="Ec. 12 (§5.12)">
+$$\frac{Q_0^{\text{mín.}}}{Q_0} = \frac{70{,}860}{69{,}568} = 1{,}018575$$
+</Equation>
+
+y la Ec. (14) devuelve el descuento correspondiente:
+
+<Equation label="Ec. 14 (§5.14)">
+$$R_1 = R^{*} \cdot \min\!\left(\frac{Q_0}{Q_0^{\text{mín.}}},\, 1\right) = 5{,}00 \times 0{,}981764 = \mathbf{4{,}908819}$$
+</Equation>
+
+**Es la primera vez en toda esta serie —y en los ejemplos de la torre— que ese segundo factor no
+vale 1.** En la torre mixta las dos direcciones tenían $Q_0 > Q_0^{\text{mín.}}$ y el $R_1$ era
+directamente el $R^*$; acá el mínimo muerde, y muerde justo en la ruta que prometía el $R$ más alto.
+La fila 5.5 ofrece un 5 que el corte mínimo convierte en 4,909 antes de que llegue a ninguna
+conexión.
+
+<Note type="tip" title="El aumento y el descuento se cancelan — y eso es el punto">
+Podría parecer que el galpón gana algo con el descuento. No: los dos efectos se cancelan
+exactamente, que es para lo que $R_1$ está definido. La demanda amplificada de un elemento protegido
+en la dirección X, ruta $R = 5$, vale
+
+$$0{,}7 \times 4{,}908819 \times \frac{1{,}018575}{5} \, E_{el} = 0{,}700\,E_{el}$$
+
+y por la ruta $R = 4$, donde no hay ni aumento ni descuento,
+
+$$0{,}5 \times 4{,}000000 \times \frac{1}{4} \, E_{el} = 0{,}500\,E_{el}$$
+
+Los dos $R$ se cancelan y quedan las dos tarifas, exactamente como
+[el post del galpón liviano](/blog/galpon-liviano-nch2369) lo demuestra en álgebra. Lo que sí se
+mueve es la demanda de los **fusibles**: la ruta $R = 4$ pide $0{,}250\,E_{el}$ y la ruta $R = 5$,
+ya amplificada por §5.12, pide $0{,}203715$. La diferencia real es **+22,7 %**, no el +25 % de la
+comparación general — el corte mínimo se comió 2,3 puntos de ese encarecimiento.
+</Note>
+
+## 6. La deriva pasa por 5,4 %, y ese margen es más chico que un error de malla
+
+Con la ruta de diseño resuelta, queda el otro bucle: §6.1 manda recalcular los desplazamientos con
+el **espectro de referencia** —sin $R^*$, corregido por $(0{,}05/\xi)^{0{,}4}$ y ponderado por $I$—
+y compararlos contra el límite de §6.3.
+
+<Figure
+  src="/ejemplo-galpon-altiplano-sismico-nch2369/la-deriva-y-el-mallado.svg"
+  alt="Figura en dos paneles. El panel izquierdo compara el desplazamiento de alero contra el límite de la cláusula 6.3, sobre un eje de cero a 0,14 metros: la dirección X de marcos llega a 0,113504 metros, el 94,6 por ciento del límite, y la dirección Y arriostrada a 0,006912 metros, el 5,8 por ciento; una línea verde vertical marca el límite de 0,015 por h igual a 0,120 metros. Al pie del panel se explica que el mismo umbral es el gatillo del P-Delta de la cláusula 6.4 y se cita el comentario C6.4. El panel derecho muestra cuánto sobreestima la deriva cada malla del peralte variable, contra N igual a 36 como referencia, sobre un eje de cero a cuarenta por ciento: con un tramo por columna el error es más 37,80 por ciento y con dos es más 9,23, los dos marcados en rojo con la etiqueta veredicto falso; con tres tramos es más 3,98, con seis más 0,95 y con nueve más 0,40, los tres en verde. Una línea vertical ámbar segmentada marca el margen real del galpón, 5,4 por ciento. Al pie se explica que la malla adoptada es de cuatro tramos por columna, entre las filas de tres y seis, y que con uno o dos tramos el error solo se habría comido el margen y la deriva habría reprobado."
+  caption="El galpón cumple, pero con 5,4 % de margen. El error de una malla de uno o dos tramos por columna es mayor que ese margen: con esa discretización el mismo modelo habría dicho «reprueba», y nada en la salida del programa lo habría delatado."
+/>
+
+El desplazamiento máximo de alero es **0,113504 m** —columna del marco 4— contra un límite de
+$0{,}015 \times 8{,}0 = 0{,}120$ m. Cumple, al **94,6 %**. La dirección arriostrada usa el 5,8 %.
+
+Tres cosas de ese 94,6 %.
+
+**Cumple sin necesidad de invocar la excepción.** §6.3 permite duplicar los límites si se demuestra
+que el desplazamiento no compromete la operación de la industria. Acá no hace falta abrir esa
+discusión, que es lo cómodo de pasar aunque sea raspando.
+
+**Pero estamos a un 5 % del P-Delta.** El $0{,}015\,h$ de §6.3 es exactamente el mismo umbral que
+dispara §6.4: «el efecto P-Delta se debe considerar cuando las deformaciones sísmicas excedan el
+valor $d = 0{,}015\,h$». Un cambio menor de proyecto —un revestimiento más pesado, una nieve
+revisada al alza— mete al galpón en análisis de segundo orden. Y `C6.4` avisa que el P-Delta «rara
+vez tiene importancia en estructuras arriostradas, pero **puede serlo en estructuras de marcos
+resistentes a momento**», que es exactamente la dirección que está al 94,6 %.
+
+**Y el 94,6 % es un resultado del mallado.** Las columnas y los dinteles son de peralte variable, y
+el estudio de convergencia de esta serie midió que la **deriva** es la magnitud que converge más
+lento —más que el período y mucho más que la flecha—: contra $N = 36$ tramos por columna, con $N = 1$
+la deriva se sobreestima un **37,80 %** y con $N = 2$ un **9,23 %**. Los dos errores son mayores que
+el 5,4 % de margen que tiene este galpón. **Con una malla de uno o dos tramos por columna, el mismo
+modelo habría reprobado la deriva**, y no habría nada en la salida del programa que lo delatara. La
+malla adoptada, $N = 4$, cae entre las filas $N = 3$ y $N = 6$ del estudio, o sea entre $+3{,}98$ y
+$+0{,}95$ %.
+
+El porqué es físico: con base articulada el momento de la columna es cero abajo y máximo en el
+alero, así que la rigidez que gobierna es la del extremo donde el peralte vale 800 mm, no la del
+promedio. Un solo elemento prismático con el peralte medio subestima esa rigidez y sobreestima el
+desplazamiento.
+
+<Note type="warning" title="Una trampa de lectura: §12.5.9 no es de galpones">
+Es fácil encontrar §12.5.9, que obliga a considerar «efecto P-Delta para todos los casos de carga y
+análisis», y citarla para un galpón. **§12.5 es *Sistemas de almacenamiento*** — racks. Su
+comentario `C12.5.9` habla de la carga almacenada y de columnas apoyadas, y su figura es el
+arriostramiento de una estantería. Para un galpón, el que manda es §6.4, con su umbral de
+$0{,}015\,h$ y no con un «siempre».
+</Note>
+
+## 7. Qué se lleva cada ruta
+
+Con las dos rutas corridas, la comparación deja de ser algebraica:
+
+| | §12.2 · $R = 4$ | fila 5.5 · $R = 5$ |
+|---|---:|---:|
+| $R_1$ transversal (Ec. 14) | 4,000000 | **4,908819** |
+| $R_1$ longitudinal | 3,830163 | 4,109783 |
+| Amplificador de capacidad | $0{,}5R_1$ | $0{,}7R_1$ |
+| Elementos protegidos, X | $0{,}500\,E_{el}$ | $0{,}700\,E_{el}$ |
+| Demanda de los fusibles, X | $0{,}250\,E_{el}$ | $0{,}203715\,E_{el}$ |
+| Arriostramiento solo-tracción | permitido (§8.6.1) | prohibido |
+
+**Se adopta §12.2.** No porque convenga elemento por elemento —encarece las diagonales un 22,7 %—
+sino porque **no es un menú**: si el galpón cumple las ocho condiciones de §12.2.1, es un galpón
+liviano, y §12.2 dice que la demanda «se **debe** evaluar utilizando […] Tabla 7, punto 5.7». La
+comparación con la fila 5.5 vale como lo que es: una ilustración de cuánto cambia el proyecto, y de
+qué tan poco confiable es el $R$ nominal cuando el corte mínimo anda cerca.
+
+<Note type="info" title="Lo que este análisis deja declarado, y no resuelto">
+Dos salvedades que no se tapan:
+
+**La masa modal vertical no converge.** Con 60 modos llega al 65,1 % y con 150 al 75,4 %. El 90 % de
+§5.6.2 está redactado para el análisis horizontal, así que la componente vertical se resolvió por el
+camino estático de §5.7.1 ($C_V = 0{,}504 \Rightarrow F_V = 340{,}130$ kN). Pero `C5.7.1` prefiere el
+camino dinámico para techos flexibles, y este techo lo es. Queda como una decisión declarada, no
+como un chequeo aprobado.
+
+**Los 39 modos locales.** De los 60 modos, 39 son movimientos locales del punto de cruce de las
+diagonales, donde la crucería concentra masa en un nodo poco atado. No contaminan la masa
+traslacional acumulada —97,6 % y 97,8 %— pero sí obligan a llegar al modo 41 para encontrar el
+dominante de la dirección Y. Quien corra «12 modos como siempre» no encuentra ese modo.
+</Note>
+
+## El hilo, en una frase
+
+**La Tabla 7 clasifica el edificio, no la dirección, y la fila no la elige el ingeniero.** §12.1.2
+obliga el arriostramiento continuo de techo y con eso deja la fila 5.6 casi sin uso; §12.2 manda a la
+fila 5.7 en cuanto se cumplen las ocho condiciones; y lo que se guarda adentro del galpón puede
+tumbar las dos por la NOTA 1 de la Tabla 1. Cuando por fin queda una decisión que tomar, la resuelve
+el modelo y no el criterio: con $R = 5$ el corte transversal cae 1,82 % bajo el mínimo de §5.12 y la
+Ec. (14) devuelve **4,909**, el primer descuento real de esa ecuación en toda la serie. Y el cierre
+lo pone la deriva, que pasa por 5,4 % — un margen más chico que el error de la malla que casi
+cualquiera habría usado para el peralte variable.
+
+Lo que sigue en la serie es la verificación de miembros, que empieza justo por la columna de peralte
+variable cuya discretización acaba de decidir este veredicto. El mapa está en
+[la serie](/blog/galpon-altiplano-la-serie/).
+
+## La planilla
+
+Toda la cadena de este post está en una hoja del canvas, con los dos $T^*$, la masa y los cuatro
+cortes basales del modelo declarados como dato de entrada, y el resto recalculándose.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=galpon-altiplano-sismico-nch2369)** ·
+[descargar el JSON](/planillas/galpon-altiplano-sismico-nch2369.json)
+
+Trae **21 verificaciones**, y de las 21 hay exactamente **una que da ✗**: el `Q0x5 >= Q0min` de la
+ruta $R = 5$, que es la tesis y está declarado como tal. Las otras veinte son la cadena entera —las
+dos ordenadas del espectro, los cuatro $R^*$, el cociente referencia/diseño que tiene que dar el
+$R^*$ de su dirección, la banda de las dos rutas, la Ec. (14), la deriva y el margen contra el error
+de malla—.
+
+Las dos cláusulas van como funciones, no como números: `saH(T)` es la Ec. (3) y `rstar(T, R)` la
+Ec. (1b) con sus tres ramas. Eso hace que la hoja sea de verdad paramétrica: cambiar el suelo, la
+zona o el $\xi$ recalcula las dos rutas completas, y se ve enseguida qué hace falta para que el corte
+de la fila 5.5 deje de caerse por abajo.
+
+Las dos verificaciones más satisfactorias son `prot4` y `prot5`: dan **0,500 y 0,700 exactos**, sin
+tolerancia, que es la cancelación algebraica del galpón liviano apareciendo sola desde números que
+salieron de un modelo.
+
+<Note type="info" title="Trazabilidad">
+Cláusulas leídas de la página rasterizada del PDF de **NCh 2369:2025 (3.ª ed., 2025.05.28)**: §4.3.1
+y §4.3.2 con la Tabla 1 y su NOTA 1 · §5.1.2 · §5.4.1 con las Ecs. (1a) y (1b) · §5.6.1 y §5.6.2 ·
+§5.7.1 · §5.12 con la Ec. (12), §5.13 con la Ec. (13) y §5.14 con la Ec. (14) · §6.1, §6.3 y §6.4 con
+`C6.4` · §12.1.1 a §12.1.3 con `C12.1.2` · §12.2 completa con las ocho condiciones de §12.2.1 y
+`C12.2.1` · Tablas 3, 6 y 7. Todas leídas el 2026-08-12.
+
+Los resultados del análisis —períodos, masas modales, cortes basales CQC y desplazamientos— salen
+del modelo `galpon_altiplano.sdb` (SAP2000 v27.1), congelado y descargable desde
+[el post de la serie](/blog/galpon-altiplano-la-serie/). Las tres figuras las genera
+`npm run figuras:galpon-sismico`, que **no dibuja** si las ordenadas del espectro, los $R^*$ y la
+banda que recalcula desde `src/lib/nch2369-spectrum.ts` no reproducen a $10^{-4}$ lo que midió el
+modelo.
+
+La nieve de 1,20 kPa que entra en la masa sísmica es dato del estudio de sitio, no de una norma
+chilena: el porqué está en el [post de las combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones).
+</Note>
