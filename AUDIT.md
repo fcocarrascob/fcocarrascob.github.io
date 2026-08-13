@@ -47,6 +47,64 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-sismico-nch2369` · ✅ 18 hallazgos, todos aplicados
+
+**Commit:** `3355e50` · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí (toda la cadena a mano contra los valores sin redondear de `scripts/render-galpon-sismico.mjs` y de `SERIE-GALPON.md` §6.2.1)
+
+| # | Sev | Cat | Ubicación | Hallazgo | Estado |
+|---|-----|-----|-----------|----------|--------|
+| 1 | 🟠 | N | §2, condición d) | El argumento del mayorante tenía un hueco. Los 41,4 kg/m² son todo el acero **del modelo**, y el modelo deja las costaneras **fuera** a propósito (§6.2.2: entran como carga distribuida) — pero §12.2.1 d) **sí** las cuenta. O sea el número comparado quitaba un ítem que la norma pide y agregaba otro que no pide (las columnas) | ✅ aplicado en este commit — se suman las costaneras (0,06 kPa sobre el faldón = 6,2 kg/m² de planta) y el mayorante queda en **47,6 kg/m² < 70**, con el porqué escrito |
+| 2 | 🟠 | C | `description`, intro y §7 | **La tesis prometía una decisión que el cuerpo niega.** Intro y `description` decían «cuando por fin queda una decisión, la toma el modelo», pero §7 dice —con razón— que §12.2 **no es un menú** y que la fila 5.5 es una ilustración. Nunca hubo elección de ruta | ✅ aplicado en este commit — las tres apariciones pasan a «la única duda que **parecía** quedar en pie la desarma el modelo antes de que llegue a ser una decisión» |
+| 3 | 🟠 | L | §5 | `label="Ec. 12 (§5.12)"` etiquetaba el cociente $Q_0^{mín}/Q_0$, que **no** es la Ec. (12) — y `ejemplo-torre-sismica-nch2369` usa esa misma etiqueta para la ecuación de verdad. Dos ecuaciones distintas con el mismo rótulo en el sitio | ✅ aplicado — `label="§5.12"` |
+| 4 | 🟡 | N | §3 y §5 | Los operandos impresos no reproducían el resultado impreso: `70,860/69,568` da 1,018572 y no 1,018575; `5,00 × 0,981764` da 4,908820 y no 4,908819; `347,841/86,960` da 4,000012. Los resultados eran correctos —salen de los valores sin redondear— pero la aritmética visible no cerraba | ✅ aplicado — operandos con todas sus cifras, más una línea que dice por qué |
+| 5 | 🟡 | R | `source` | El listado de páginas no cubría §4.3 (13), Tabla 1 (18), §5.1.2 (19), §5.6 (32) ni §5.7 (35), y omitía la Tabla 4 y §8.6.1, que el post cita | ✅ aplicado |
+| 6 | 🟡 | R | Trazabilidad | «los $R^*$ y la banda **que recalcula desde `src/lib/nch2369-spectrum.ts`**» sobrevendía el chequeo: de la biblioteca vienen los parámetros de las Tablas 3 y 6, no las fórmulas — `spectrumShape` no está exportado y las Ecs. (3) y (1b) están escritas en el propio script | ✅ aplicado, con el porqué (la biblioteca solo entrega la grilla de 0,01 s y los $T^*$ no caen en ella) |
+| 7 | 🟡 | E | Trazabilidad y figuras | El modelo se nombraba `galpon_altiplano.sdb`, pero el archivo publicado y descargable es `galpon-altiplano.sdb` | ✅ aplicado en el post y en el script |
+| 8 | 🟡 | C | caption fig. 2, §5, cierre | Tres alcances para el mismo hecho: «en el sitio», «en toda esta serie —y en los ejemplos de la torre—», «en toda la serie» | ✅ unificado en «en el sitio», que es el alcance verificado, con enlace a los dos ejemplos donde el $R_1$ corregido entra como dato declarado |
+| 9 | 🟡 | N | §planilla | «dan 0,500 y 0,700 exactos, **sin tolerancia**»: las verificaciones sí llevan tolerancia de $10^{-6}$; lo exacto es el valor, no el chequeo | ✅ aplicado — «la cancelación es algebraica y no numérica» |
+| 10 | 🟡 | F | §planilla | La descripción de las entradas quedaba corta en los dos sentidos: faltaban los cortes de referencia, los desplazamientos y los errores de malla, y de «los cuatro $R^*$» solo dos tienen verificación | ✅ aplicado |
+| 11 | 🟡 | U | §6 | «entre $+3{,}98$ y $+0{,}95$ %»: la unidad colgaba solo del segundo número | ✅ aplicado |
+| 12 | 🟡 | U | §5 | Al `0,203715` le faltaba el $E_{el}$, y mezclaba 3 y 6 decimales para dos valores igualmente exactos | ✅ aplicado |
+| 13 | 🟡 | C | `Note` del deslinde vs §2 | La nota abría con «ninguno se repite» y §2 vuelve a tabular las ocho condiciones con sus límites. Es defendible como *checklist* —la columna del galpón es nueva— pero contradecía la promesa literal | ✅ aplicado — «ninguno se **re-explica**» |
+| 14 | 🔵 | F | `alt` fig. 1 | El `alt` decía «cuatro cajas verdes» y el script pinta tres verdes y una azul; y describía la fila 5.6 sin «con anclajes dúctiles», que la Tabla 7 exige en las dos | ✅ aplicado |
+| 15 | 🔵 | L | título de la `Note` de §2 | «Una tensión con el post del sitio» cuando la tensión es entre NCh432 y la nota a) de la Tabla 4 de NCh2369, no con un post | ✅ aplicado |
+| 16 | 🔵 | N | §5 | La cita de §5.12 se quedaba a mitad: la cláusula cierra con «este aumento no se debe aplicar al cálculo de desplazamientos», y eso importa justo acá porque la §6 del post es de deriva | ✅ aplicado |
+| 17 | 🔵 | R | todo el post | No se declaraban en el cuerpo $A_r$, el suelo ni $\xi$, así que los 70,860 kN, los dos $Q_0^{máx}$ y las dos ordenadas no se podían rehacer desde el post | ✅ aplicado — línea de sitio al abrir §3 |
+| 18 | 🔵 | E | §3 y §6 | «el post de modelado» y «el estudio de convergencia de esta serie» apuntan a posts todavía sin publicar, sin enlace, y la tabla de mallado es el cierre del post | ✅ aplicado — el estudio queda nombrado con sus datos (base articulada, $N = 36$ de referencia) y el reenvío marcado como pendiente |
+
+**Verificado y correcto:** el auditor recalculó toda la cadena con los valores sin redondear.
+$F_\xi = 1{,}442699$ · $S_{aH}(T^*_X) = 0{,}630644$ y $S_{aH}(T^*_Y) = 1{,}397592$ ✓ · diseño
+0,157661 y 0,364891 ✓ · razón 2,216 → «2,2» ✓ · codos 0,1728 y 0,216 s ✓ · $R^*_Y$ **3,830163** y
+**4,109783** ✓ · 6,793 % → «6,79 %» ✓ · 4,25 % → «4,2 %» ✓ · $Q_0^{mín}$ **70,8604** ✓ ·
+$Q_0^{máx}$ **224,907** y **187,422** ✓ · 49,79 % → «49,8 %» ✓ · 1,8236 % → «1,82 %» ✓ ·
+$R_1 = 4{,}9088186$ ✓ · amplificación 1,0185750 ✓ · las dos cancelaciones dan **0,700000** y
+**0,500000** ✓ · fusibles 0,250 contra 0,203715 → **22,72 %** ✓ y los «2,3 puntos» bien dichos como
+puntos porcentuales · el −29 % heredado cierra con 0,500/0,700 − 1 = −28,6 % ✓ · deriva 94,59 % y
+margen 5,41 % ✓ · $C_V = 0{,}504$ y $F_V = 340{,}130$ kN ✓ · 23 826,4/576 = 41,365 ✓ (con la salvedad
+del hallazgo 1) · `AR_BY_ZONE[2]` y `SOIL_PARAMS.B` de la biblioteca coinciden con las Tablas 3 y 6 ✓.
+
+**Deslinde** — verificado contra los cinco antecedentes: **§12.1.2 no aparece en ningún otro post**
+de `src/content/`; la torre declara «en las dos direcciones $Q_0 > Q_0^{mín}$», que es exactamente lo
+que este post dice de ella; el panorama trae la regla de contagio; el espectro trae la Ec. (1b) por
+ramas. **La corrección al post publicado está bien fundada y bien apuntada**: `galpon-liviano-nch2369`
+sí presenta el «vuelve a competir entre la 5.5 y la 5.6» como menú, §12.1.2 —con su única excepción,
+que este galpón no cumple por los 0,35 kPa— lo desarma, el enlace apunta al post correcto, y la
+redacción no acusa error sino que acota el alcance.
+
+**No verificable:** todo lo que sale del modelo `galpon-altiplano.sdb` (SAP2000 v27.1), registrado sin
+redondear en §6.2.1, y el estudio de convergencia del mallado de §5.34, que es el que sostiene el
+cierre del post. Tampoco se abrió el PDF de NCh2369 en esta pasada: las citas se contrastaron contra
+§4.1 de `SERIE-GALPON.md`, que las registra con página impresa, página PDF y fecha de lectura.
+
+**Planilla del canvas:** **ya tiene: sí** · 21 verificaciones, 12 de ellas contrastes. Parcial por
+construcción: el dato duro sale del modelo y la hoja lo declara como entrada. A partir de ahí la
+cadena es cerrada —las dos ordenadas de la Ec. (3), los cuatro $R^*$ de la Ec. (1b), el cociente
+referencia/diseño, las Ecs. (12) y (13), el $R_1$ de la Ec. (14), las dos tarifas y el límite de
+§6.3 se recalculan todos—. Lo único que la hoja no puede reproducir es el peso de acero de la
+condición d) y las dimensiones de la c), que son inventario del `.sdb` y decisión de proyecto.
+
+---
+
 ### 2026-08-12 · `apuntes/ejemplo-galpon-altiplano-cargas-combinaciones` · ⚠️ 16 hallazgos
 
 > **Segunda pasada.** El bloque de la primera auditoría se perdió y nunca llegó a `AUDIT.md`:
@@ -4205,6 +4263,7 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `ejemplo-galpon-altiplano-sismico-nch2369` | 2026-08-12 | ✅ | 18 (0🔴 3🟠 · 10🟡 5🔵) · **18 aplicados**, 0 abiertos · planilla ✓ (21 verificaciones, 12 contrastes; el ✗ del corte bajo el mínimo declarado) |
 | `ejemplo-galpon-altiplano-cargas-combinaciones` | 2026-08-12 (2.ª pasada) | ⚠️ | 16 (0🔴 4🟠 · 10🟡 2🔵) · **15 aplicados**, 1 abierto (convención `NCh2369`) · 12 previos en `05fcd2f` · planilla ✓ (14 verificaciones) |
 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | 2026-08-12 | ✅ | 16 (1🔴 4🟠 · 5🟡 6🔵) · **15 aplicados**, 1 descartado, 0 abiertos · planilla ✓ (14 verificaciones, 5 contrastes) |
 | `ejemplo-analisis-sismico-cepa-nch2369` | 2026-08-12 | ⚠️ | 0 · 7 aplicados en `7522225` (1🟠 2🟡 4🔵) + 16 previos cerrados · planilla ✓ (23 verificaciones + 17 contrastes; el ✗ de Q₀ > Q₀máx declarado) |

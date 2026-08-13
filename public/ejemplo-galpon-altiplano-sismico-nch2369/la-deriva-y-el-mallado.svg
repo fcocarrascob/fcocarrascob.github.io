@@ -66,7 +66,7 @@
   <text x="596" y="368" font-size="11" fill="#333" text-anchor="start">filas N = 3 y N = 6, o sea entre +3,98 % y +0,95 %. Con uno o dos</text>
   <text x="596" y="386" font-size="11" fill="#333" text-anchor="start">tramos por columna el error solo se habría comido el margen: la</text>
   <text x="596" y="404" font-size="11" fill="#333" text-anchor="start">deriva habría «reprobado» sin que nada en la salida lo delatara.</text>
-  <text x="106" y="462" font-size="10.5" fill="#6b7280" text-anchor="start">Desplazamientos del modelo galpon_altiplano.sdb (SAP2000 v27.1), caso espectral de referencia · chequeo de consistencia: bajo el caso de diseño</text>
+  <text x="106" y="462" font-size="10.5" fill="#6b7280" text-anchor="start">Desplazamientos del modelo galpon-altiplano.sdb (SAP2000 v27.1), caso espectral de referencia · chequeo de consistencia: bajo el caso de diseño</text>
   <text x="106" y="478" font-size="10.5" fill="#6b7280" text-anchor="start">el mismo nodo da 0,028105 m, y 0,112442 / 0,028105 = 4,0009 ≈ R*_X = 4,0</text>
   <text x="106" y="498" font-size="10.5" fill="#6b7280" text-anchor="start">NCh2369:2025 (3.ª ed.) · §6.1, §6.3 y §6.4 con C6.4, págs. impresas 68-70, leídas rasterizadas el 2026-08-12</text>
 </svg>

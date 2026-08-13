@@ -50,6 +50,6 @@
   <text x="742" y="358" font-size="11" fill="#6b7280" text-anchor="start">más alto no lo entrega.</text>
   <text x="40" y="462" font-size="11" fill="#333" text-anchor="start">La banda verde es distinta en cada ruta: el Q₀máx de la Ec. (13) divide por (R + 1), así que subir el R de 4 a 5 baja el techo de 224,907 a 187,422 kN.</text>
   <text x="40" y="480" font-size="11" fill="#333" text-anchor="start">El piso de la Ec. (12) no depende del R y queda donde estaba. Con R = 5, el corte de la dirección de marcos cae por debajo de ese piso.</text>
-  <text x="40" y="506" font-size="10.5" fill="#6b7280" text-anchor="start">Cortes CQC del análisis modal espectral (60 modos, §5.6.2 cumplida) del modelo galpon_altiplano.sdb, SAP2000 v27.1</text>
+  <text x="40" y="506" font-size="10.5" fill="#6b7280" text-anchor="start">Cortes CQC del análisis modal espectral (60 modos, §5.6.2 cumplida) del modelo galpon-altiplano.sdb, SAP2000 v27.1</text>
   <text x="40" y="522" font-size="10.5" fill="#6b7280" text-anchor="start">Ecs. (1a), (1b), (12), (13) y (14) de NCh2369:2025 (3.ª ed.), págs. impresas 27-29 y 48-49 · recalculadas contra src/lib/nch2369-spectrum.ts</text>
 </svg>

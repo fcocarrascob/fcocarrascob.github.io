@@ -25,13 +25,17 @@ a saltarse.
 > (`blog/galpon-altiplano-la-serie`, que hace de mapa y bitácora) y el **1** y el **3** en la rama
 > `serie-galpon`, los tres auditados y con planilla. **Faltan siete.**
 >
-> **Lo próximo: el post 5** (`ejemplo-galpon-altiplano-sismico-nch2369`). Se escribe entero sin abrir
-> ningún motor y sin leer ningún PDF nuevo: §6.1–§6.4 ya están en §4.1 y los números salen de §5.35,
-> §5.36, §5.38 y §6.2.1. Antes de fijar su tesis va el deslinde completo (lección de §5.41), que en
-> este post es el más largo de la serie.
+> El **post 5 quedó cerrado** el 2026-08-12, con su deslinde en §5.43 y auditado sin hallazgos
+> abiertos. **Quedan seis posts: 2, 4, 5b, 6, 7, 8, 9 y 10.**
 >
-> **No hace falta abrir SAP2000** para los posts 5, 7, 8, 9 y 10: sus números ya están en este
-> archivo. Sí hace falta rukan para los posts 2, 4 y 6, y **rukan todavía no se ha tocado**.
+> **Lo próximo, y hay dos frentes.** El grande es **rukan**, que sigue intacto y bloquea los posts 2,
+> 4 y 6: hay que construir el caso 10 en OpenSeesPy contra el `.sdb` congelado. El barato es el
+> **5b** (los siete defectos del `modelo_base`), que no depende de nada y ya tiene sus hallazgos
+> hechos en §5.12 y §5.21.
+>
+> **No hace falta abrir SAP2000** para los posts 7, 8, 9 y 10: sus números ya están en este archivo.
+> Sí les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22, y §8.6.3 de NCh2369—, y el deslinde
+> completo **antes** de fijar la tesis, que ya se llevó cuatro de las cinco piezas del post 5.
 
 **Los tres repos que participan** (los tres quedaron limpios y commiteados):
 
@@ -421,11 +425,19 @@ Las ocho condiciones de **§12.2.1**, contrastadas contra el caso:
 | a) | Categoría I o II | II | ✅ |
 | b) | una o varias naves paralelas | una nave | ✅ |
 | c) | altura libre ≤ 23 m; luz ≤ 75 m | 8,0 m; 24,0 m | ✅ |
-| d) | **peso propio de la estructura de techo ≤ 70 kg/m²** | estimado ~25-30 kg/m² | ✅ (verificar en el paso 2.2) |
+| d) | **peso propio de la estructura de techo ≤ 70 kg/m²** | **47,6 kg/m²** (ver abajo) | ✅ **verificado** |
 | e) | puente grúa ≤ 100/50 kN | no hay | ✅ |
 | f) | sin estanterías vinculadas sísmicamente | no hay | ✅ |
 | g) | equipos ≤ 50 kN por marco | instalaciones colgadas 0,15 kPa × 144 m² ≈ 21,6 kN | ✅ |
 | h) | altillos ≤ 15 kN por columna | no hay | ✅ |
+
+**El peso de la condición d), armado bien** (la auditoría del post 5 encontró que el número que
+circulaba tenía un hueco): los **41,365 kg/m²** de §6.2.1 son *todo el acero del modelo* sobre los
+576 m² de planta, y ese modelo deja las **costaneras fuera** a propósito (§6.2.2) — pero §12.2.1 d)
+sí las cuenta. Sumadas, 0,06 kPa sobre los 584,889 m² de faldón son 3 578 kg, o **6,2 kg/m²** de
+planta, y el total queda en **47,6 kg/m² < 70**. Ese 47,6 es además un mayorante de lo que la
+condición pide, porque ella enumera «vigas, costaneras, colgadores, puntales, arriostramientos y
+conexiones» y **no incluye las columnas**, que en el modelo sí están.
 
 **Consecuencia**: §12.2 dice «se **debe** evaluar utilizando […] Tabla 7, punto 5.7», o sea **R = 4**, y
 §12.2.2 reemplaza el amplificador de capacidad **0,7R₁ por 0,5R₁**. No es un menú: si cumples las ocho
@@ -1449,7 +1461,7 @@ Todo lo aprendido de la OAPI quedó en
 | 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ **rukan sin tocar** |
 | 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ✅ `7ddddb0`, rama `serie-galpon` · 2 figuras · planilla de 14 verificaciones · auditado en dos pasadas · deslinde en §5.42 |
 | 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ **rukan sin tocar** |
-| 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | 🔨 **en curso** — sin motor y sin PDF nuevo; deslinde en §5.43 |
+| 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | ✅ rama `serie-galpon` · 3 figuras · planilla de 21 verificaciones · auditado, **18 hallazgos, los 18 aplicados** · deslinde en §5.43 |
 | 5b | `modelo-base-skills-sap-los-siete-defectos` | `blog` / SAP2000 | ⬜ |
 | 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ⬜ |
 | 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |

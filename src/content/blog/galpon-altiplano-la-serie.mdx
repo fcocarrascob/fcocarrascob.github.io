@@ -167,7 +167,7 @@ Los enlaces aparecen a medida que cada post se publica.
 | 2 | El peralte variable y la convergencia | Rukan (8) | Prohibirse la sección no prismática de SAP para poder verificar. Y el prismático equivalente **no es conservador** |
 | 3 | [Estados y combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones) | `apuntes` · NCh2369 | Las dos normas se remiten entre sí y NCh3171 **cede por escrito** la rama sísmica: creerle a la otra cuesta un 40 %. Y hay una excepción que apunta a una edición muerta |
 | 4 | Modal espectral | Rukan (9) | El techo no es diafragma rígido. Y **39 de los primeros 60 modos son basura local**: el modo longitudinal de verdad está en el puesto 41 |
-| 5 | El techo elige el $R$, y la deriva cobra | `apuntes` · NCh2369 | La Tabla 7 clasifica el edificio, no la dirección. Con $R = 5$ el corte cae bajo el mínimo y la norma se lleva de vuelta el $R$ que prometió |
+| 5 | [Una sola fila de la Tabla 7 para dos sistemas](/apuntes/ejemplo-galpon-altiplano-sismico-nch2369) | `apuntes` · NCh2369 | La Tabla 7 clasifica el edificio, no la dirección — y la fila **no la elige el ingeniero**. Con $R = 5$ el corte cae bajo el mínimo y la Ec. (14) se lleva de vuelta el $R$ que prometió |
 | 6 | La envolvente | Rukan (10) | De 79 combinaciones, **nueve** dimensionan algo. Y por qué rukan **no debe tener módulo de viento ni de nieve, nunca** |
 | 7 | Columna de peralte variable | `acero` · Cap. H | AISC 360-22 no tiene capítulo de peralte variable. La estación que falla **no es la del momento máximo** |
 | 8 | Dintel de peralte variable y el LTB | `acero` · Cap. F | $L_b$ salta de 1,354 a 6,0 m **de una combinación a otra**, porque el ala comprimida cambia de lado |
@@ -274,6 +274,29 @@ $$\delta = 0{,}113504\ \text{m} \quad \text{contra} \quad 0{,}015\,h = 0{,}120\ 
 
 Pasa, con 5,4 % de margen. Y el mismo $0{,}015\,h$ que sirve de límite en §6.3 es el gatillo del
 P-Delta de §6.4, así que estamos a un 5 % de tener que correr segundo orden.
+
+### 2026-08-12 · El post 5, y un deslinde que se llevó cuatro de cinco piezas
+
+El [post sísmico](/apuntes/ejemplo-galpon-altiplano-sismico-nch2369) es el que más antecedentes
+tenía publicados, y el deslinde —hecho **antes** de fijar la tesis, que es la lección que esta serie
+ya aprendió dos veces— se llevó cuatro de las cinco piezas que el plan le asignaba: las ocho
+condiciones de §12.2.1 y el $0{,}5R_1$ ya estaban en el post del galpón liviano, la cadena
+$T^* \to R^* \to Q_0 \to$ banda $\to R_1$ en el de la torre, la deriva de §6.3 con su gatillo de
+P-Delta en el de las deformaciones, y la regla de contagio de la Categoría en el panorama.
+
+Lo que sobrevivió es mejor que lo que había en el plan. La Tabla 7 le da **una sola fila** a un
+edificio que tiene dos sistemas sismorresistentes distintos —el complemento exacto y opuesto de la
+torre, donde dos sistemas daban dos filas—, y la fila **no la elige el ingeniero**: §12.1.2 obliga el
+arriostramiento continuo de techo y §12.2 manda a la fila 5.7. Y hay un hueco en la tabla: «con
+puente grúa y sin arriostramiento continuo» no tiene fila propia y cae en la 2, con $R = 1{,}5$.
+
+Además, dos números:
+
+$$R_1 = 5{,}00 \times \frac{69{,}568}{70{,}860} = \mathbf{4{,}908819}$$
+
+Es **la primera vez en todo el sitio** que el segundo factor de la Ec. (14) no vale 1. Y el
+encarecimiento real de los fusibles al ir por §12.2 no es el 25 % de la comparación general, sino
+**22,7 %**: el corte mínimo se comió 2,3 puntos.
 
 ## Lo que ya se cayó
 

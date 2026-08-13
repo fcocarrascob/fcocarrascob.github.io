@@ -5,7 +5,7 @@
 //   npm run figuras:galpon-sismico
 //
 // Las constantes vienen de SERIE-GALPON.md, que es la memoria de cálculo de la
-// serie, y de ahí del modelo SAP2000 congelado (galpon_altiplano.sdb, v27.1):
+// serie, y de ahí del modelo SAP2000 congelado (galpon-altiplano.sdb, v27.1):
 // §6.2.1 el modelo en números · §5.34 la convergencia del mallado · §5.35 la
 // banda y la Ec. (14) · §5.36 los dos T* · §5.38 la deriva. Van SIN redondear.
 //
@@ -439,7 +439,7 @@ function figuraBanda() {
   ${panel}
   ${texto(40, 462, 'La banda verde es distinta en cada ruta: el Q₀máx de la Ec. (13) divide por (R + 1), así que subir el R de 4 a 5 baja el techo de 224,907 a 187,422 kN.', { size: 11, fill: TINTA })}
   ${texto(40, 480, 'El piso de la Ec. (12) no depende del R y queda donde estaba. Con R = 5, el corte de la dirección de marcos cae por debajo de ese piso.', { size: 11, fill: TINTA })}
-  ${texto(40, 506, 'Cortes CQC del análisis modal espectral (60 modos, §5.6.2 cumplida) del modelo galpon_altiplano.sdb, SAP2000 v27.1', { size: 10.5, fill: SUAVE })}
+  ${texto(40, 506, 'Cortes CQC del análisis modal espectral (60 modos, §5.6.2 cumplida) del modelo galpon-altiplano.sdb, SAP2000 v27.1', { size: 10.5, fill: SUAVE })}
   ${texto(40, 522, 'Ecs. (1a), (1b), (12), (13) y (14) de NCh2369:2025 (3.ª ed.), págs. impresas 27-29 y 48-49 · recalculadas contra src/lib/nch2369-spectrum.ts', { size: 10.5, fill: SUAVE })}
 </svg>
 `;
@@ -549,7 +549,7 @@ function figuraDeriva() {
   ${texto(x1 - 10, 368, 'filas N = 3 y N = 6, o sea entre +3,98 % y +0,95 %. Con uno o dos', { size: 11, fill: TINTA })}
   ${texto(x1 - 10, 386, 'tramos por columna el error solo se habría comido el margen: la', { size: 11, fill: TINTA })}
   ${texto(x1 - 10, 404, 'deriva habría «reprobado» sin que nada en la salida lo delatara.', { size: 11, fill: TINTA })}
-  ${texto(x0 - 12, 462, 'Desplazamientos del modelo galpon_altiplano.sdb (SAP2000 v27.1), caso espectral de referencia · chequeo de consistencia: bajo el caso de diseño', { size: 10.5, fill: SUAVE })}
+  ${texto(x0 - 12, 462, 'Desplazamientos del modelo galpon-altiplano.sdb (SAP2000 v27.1), caso espectral de referencia · chequeo de consistencia: bajo el caso de diseño', { size: 10.5, fill: SUAVE })}
   ${texto(x0 - 12, 478, 'el mismo nodo da 0,028105 m, y 0,112442 / 0,028105 = 4,0009 ≈ R*_X = 4,0', { size: 10.5, fill: SUAVE })}
   ${texto(x0 - 12, 498, 'NCh2369:2025 (3.ª ed.) · §6.1, §6.3 y §6.4 con C6.4, págs. impresas 68-70, leídas rasterizadas el 2026-08-12', { size: 10.5, fill: SUAVE })}
 </svg>
