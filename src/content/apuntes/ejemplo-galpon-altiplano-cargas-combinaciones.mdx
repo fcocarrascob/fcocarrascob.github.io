@@ -295,6 +295,24 @@ solo nueve dimensionan algo — pero no se sabe cuáles hasta correrlas todas.
 Lo que sigue en la serie es el modelo: cómo estos once estados se aplican sobre las barras, y por
 qué la costanera se queda afuera. El mapa está en [la serie](/blog/galpon-altiplano-la-serie/).
 
+## La planilla
+
+La cadena entera está en una hoja del canvas, con las cuatro presiones de proyecto y los seis
+factores del árbol arriba y a la vista.
+
+**[Abrir la planilla en el canvas](/herramientas/canvas?planilla=galpon-altiplano-cargas-combinaciones)** ·
+[descargar el JSON](/planillas/galpon-altiplano-cargas-combinaciones.json)
+
+Trae **catorce verificaciones**, y ninguna es de demanda contra capacidad: son todas igualdades que
+tienen que cerrar. Las cuatro resultantes por presión × área, la masa sísmica, los dos asserts de
+linealidad, y los cuatro del conteo del árbol —incluido el `n_ingenuo == 4 × n_sismo` que pone
+número al 48 contra 12—.
+
+La más útil es la de `DSD`: reconstruye los 302,963865 kN que reporta el modelo desde los 0,35 kPa
+de techo sobre el faldón inclinado y los 0,12 kPa de revestimiento sobre muros y hastiales, y cierra
+a menos de 0,001 kN. Es el contraste que este post promete en la §1 y que en el texto solo se
+muestra para tres de los once estados.
+
 <Note type="info" title="Trazabilidad">
 Cláusulas leídas de la página rasterizada del PDF: **NCh 2369:2025 (3.ª ed., 2025.05.28)** §4.5.1,
 §4.5.2, §5.1.2, §5.7.1, §12.2 con su comentario C12.2.1, y el Anexo B (normativo); **NCh 3171:2017 (2.ª
