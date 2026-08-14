@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1000" height="620" fill="#ffffff"/>
+  <text x="48" y="46" font-size="21" fill="#333" text-anchor="start" font-weight="bold">El prismático equivalente es la malla de un tramo</text>
+  <text x="48" y="72" font-size="13" fill="#6b7280" text-anchor="start">Momento de rodilla y de cumbrera del marco tipo bajo 1,2(D + D_sd) + 1,6·S, contra el número de tramos prismáticos por miembro. Tapered 350 ↔ 800 mm.</text>
+  <line x1="92" y1="470" x2="616" y2="470" stroke="#d1d5db" stroke-width="1.4"/>
+  <line x1="92" y1="120" x2="92" y2="470" stroke="#d1d5db" stroke-width="1.4"/>
+  <text x="82" y="492" font-size="11" fill="#6b7280" text-anchor="end">N =</text>
+  <text x="131.0769230769231" y="492" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <line x1="131.0769230769231" y1="470" x2="131.0769230769231" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="170.15384615384616" y="492" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <line x1="170.15384615384616" y1="470" x2="170.15384615384616" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="209.23076923076923" y="492" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <line x1="209.23076923076923" y1="470" x2="209.23076923076923" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="248.30769230769232" y="492" font-size="11" fill="#6b7280" text-anchor="middle">4</text>
+  <line x1="248.30769230769232" y1="470" x2="248.30769230769232" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="326.46153846153845" y="492" font-size="11" fill="#6b7280" text-anchor="middle">6</text>
+  <line x1="326.46153846153845" y1="470" x2="326.46153846153845" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="443.6923076923077" y="492" font-size="11" fill="#6b7280" text-anchor="middle">9</text>
+  <line x1="443.6923076923077" y1="470" x2="443.6923076923077" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="560.9230769230769" y="492" font-size="11" fill="#6b7280" text-anchor="middle">12</text>
+  <line x1="560.9230769230769" y1="470" x2="560.9230769230769" y2="475" stroke="#d1d5db" stroke-width="1.2"/>
+  <line x1="92" y1="435.0344827586207" x2="616" y2="435.0344827586207" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="439.0344827586207" font-size="10" fill="#6b7280" text-anchor="end">200</text>
+  <line x1="92" y1="376.7586206896552" x2="616" y2="376.7586206896552" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="380.7586206896552" font-size="10" fill="#6b7280" text-anchor="end">300</text>
+  <line x1="92" y1="318.48275862068965" x2="616" y2="318.48275862068965" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="322.48275862068965" font-size="10" fill="#6b7280" text-anchor="end">400</text>
+  <line x1="92" y1="260.2068965517241" x2="616" y2="260.2068965517241" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="264.2068965517241" font-size="10" fill="#6b7280" text-anchor="end">500</text>
+  <line x1="92" y1="201.9310344827586" x2="616" y2="201.9310344827586" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="205.9310344827586" font-size="10" fill="#6b7280" text-anchor="end">600</text>
+  <line x1="92" y1="143.65517241379308" x2="616" y2="143.65517241379308" stroke="#eef1f4" stroke-width="1"/>
+  <text x="82" y="147.65517241379308" font-size="10" fill="#6b7280" text-anchor="end">700</text>
+  <text x="26" y="108" font-size="11" fill="#6b7280" text-anchor="start">M₃ [kN·m]</text>
+  <rect x="92" y="227.25041914863456" width="524" height="5.146327149375367" fill="#b02a1a" opacity="0.16"/>
+  <rect x="92" y="331.868686431278" width="524" height="4.119357900989428" fill="#b02a1a" opacity="0.16"/>
+  <line x1="92" y1="156.20839951611913" x2="616" y2="156.20839951611913" stroke="#1a63a8" stroke-width="1.4" stroke-dasharray="6 4" opacity="0.75"/><text x="612" y="148.20839951611913" font-size="10.5" fill="#1a63a8" text-anchor="end">tapered (N = 36)</text>
+  <line x1="92" y1="428.783836627997" x2="616" y2="428.783836627997" stroke="#1f7a4d" stroke-width="1.4" stroke-dasharray="6 4" opacity="0.75"/><text x="612" y="444.783836627997" font-size="10.5" fill="#1f7a4d" text-anchor="end">tapered (N = 36)</text>
+  <polyline points="131.0769230769231,229.79783667353817 170.15384615384616,173.29664826061747 209.23076923076923,163.53410982858458 248.30769230769232,160.24661630248193 326.46153846153845,157.9537208941448 443.6923076923077,156.95194551175013 560.9230769230769,156.60409118720958" fill="none" stroke="#1a63a8" stroke-width="2.4"/><circle cx="131.0769230769231" cy="229.79783667353817" r="3.4" fill="#1a63a8"/><circle cx="170.15384615384616" cy="173.29664826061747" r="3.4" fill="#1a63a8"/><circle cx="209.23076923076923" cy="163.53410982858458" r="3.4" fill="#1a63a8"/><circle cx="248.30769230769232" cy="160.24661630248193" r="3.4" fill="#1a63a8"/><circle cx="326.46153846153845" cy="157.9537208941448" r="3.4" fill="#1a63a8"/><circle cx="443.6923076923077" cy="156.95194551175013" r="3.4" fill="#1a63a8"/><circle cx="560.9230769230769" cy="156.60409118720958" r="3.4" fill="#1a63a8"/>
+  <polyline points="131.0769230769231,333.96093265291313 170.15384615384616,406.7345048517775 209.23076923076923,419.3251338663633 248.30769230769232,423.56823537165235 326.46153846153845,426.5290778151177 443.6923076923077,427.8231457063028 560.9230769230769,428.27257054775407" fill="none" stroke="#1f7a4d" stroke-width="2.4"/><circle cx="131.0769230769231" cy="333.96093265291313" r="3.4" fill="#1f7a4d"/><circle cx="170.15384615384616" cy="406.7345048517775" r="3.4" fill="#1f7a4d"/><circle cx="209.23076923076923" cy="419.3251338663633" r="3.4" fill="#1f7a4d"/><circle cx="248.30769230769232" cy="423.56823537165235" r="3.4" fill="#1f7a4d"/><circle cx="326.46153846153845" cy="426.5290778151177" r="3.4" fill="#1f7a4d"/><circle cx="443.6923076923077" cy="427.8231457063028" r="3.4" fill="#1f7a4d"/><circle cx="560.9230769230769" cy="428.27257054775407" r="3.4" fill="#1f7a4d"/>
+  <text x="326.46153846153845" y="140.20839951611913" font-size="12" fill="#1a63a8" text-anchor="start" font-weight="bold">rodilla</text>
+  <text x="326.46153846153845" y="454.783836627997" font-size="12" fill="#1f7a4d" text-anchor="start" font-weight="bold">cumbrera</text>
+  <circle cx="131.0769230769231" cy="229.79783667353817" r="7" fill="none" stroke="#b02a1a" stroke-width="2.2"/>
+  <circle cx="131.0769230769231" cy="333.96093265291313" r="7" fill="none" stroke="#b02a1a" stroke-width="2.2"/>
+  <text x="660" y="150" font-size="13" fill="#333" text-anchor="start" font-weight="bold">Los tres prismáticos equivalentes</text>
+  <text x="660" y="170" font-size="10.5" fill="#6b7280" text-anchor="start">malla fina, para que no se mezcle con la discretización</text>
+  <text x="660" y="202" font-size="10.5" fill="#6b7280" text-anchor="start">d [mm]</text>
+  <text x="778" y="202" font-size="10.5" fill="#6b7280" text-anchor="end">T₁ [s]</text>
+  <text x="870" y="202" font-size="10.5" fill="#6b7280" text-anchor="end">M rodilla</text>
+  <text x="966" y="202" font-size="10.5" fill="#6b7280" text-anchor="end">M cumbrera</text>
+  <line x1="660" y1="210" x2="966" y2="210" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="660" y="230" font-size="12" fill="#333" text-anchor="start">350</text>
+  <text x="778" y="230" font-size="12" fill="#333" text-anchor="end">1,707</text>
+  <text x="870" y="230" font-size="12" fill="#333" text-anchor="end">547,7</text>
+  <text x="966" y="230" font-size="12" fill="#333" text-anchor="end">370,0</text>
+  <text x="660" y="256" font-size="12" fill="#b02a1a" text-anchor="start" font-weight="bold">575</text>
+  <text x="778" y="256" font-size="12" fill="#333" text-anchor="end">1,003</text>
+  <text x="870" y="256" font-size="12" fill="#333" text-anchor="end">552,2</text>
+  <text x="966" y="256" font-size="12" fill="#333" text-anchor="end">373,4</text>
+  <text x="660" y="282" font-size="12" fill="#333" text-anchor="start">800</text>
+  <text x="778" y="282" font-size="12" fill="#333" text-anchor="end">0,702</text>
+  <text x="870" y="282" font-size="12" fill="#333" text-anchor="end">556,6</text>
+  <text x="966" y="282" font-size="12" fill="#333" text-anchor="end">377,0</text>
+  <line x1="660" y1="298" x2="966" y2="298" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="660" y="318" font-size="12" fill="#1a63a8" text-anchor="start" font-weight="bold">tapered</text>
+  <text x="778" y="318" font-size="12" fill="#333" text-anchor="end" font-weight="bold">0,862</text>
+  <text x="870" y="318" font-size="12" fill="#333" text-anchor="end" font-weight="bold">678,5</text>
+  <text x="966" y="318" font-size="12" fill="#333" text-anchor="end" font-weight="bold">210,7</text>
+  <rect x="646" y="350" width="300" height="118" rx="8" fill="#fdf6f4" stroke="#b02a1a" stroke-width="1.4"/>
+  <text x="660" y="372" font-size="12.5" fill="#b02a1a" text-anchor="start" font-weight="bold">El período se mueve ×2,4…</text>
+  <text x="660" y="394" font-size="12.5" fill="#333" text-anchor="start">…y los momentos, 1,6 % y 1,9 %.</text>
+  <text x="660" y="420" font-size="11.5" fill="#6b7280" text-anchor="start">El reparto lo decide la RAZÓN entre</text>
+  <text x="660" y="437" font-size="11.5" fill="#6b7280" text-anchor="start">rigideces, no su nivel. Cambiar el</text>
+  <text x="660" y="454" font-size="11.5" fill="#6b7280" text-anchor="start">peralte parejo no redistribuye nada.</text>
+  <rect x="48" y="528" width="904" height="60" rx="8" fill="#f7f9fb" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="70" y="554" font-size="13" fill="#333" text-anchor="start" font-weight="bold">El prismático de peralte medio (d = 575 mm) NO es una alternativa a discretizar: es la malla de UN tramo.</text>
+  <text x="70" y="574" font-size="12" fill="#6b7280" text-anchor="start">Con N = 1 la sección se toma en el punto medio del miembro, y el reparto de momentos da los mismos 552,2 y 373,4 kN·m.</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 624" width="1000" height="624" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1000" height="624" fill="#ffffff"/>
+  <text x="48" y="46" font-size="21" fill="#333" text-anchor="start" font-weight="bold">El período no lo movía la rigidez: lo movía la masa</text>
+  <text x="48" y="72" font-size="13" fill="#6b7280" text-anchor="start">Período fundamental del galpón, con la rigidez ya verificada exacta contra el modelo congelado.</text>
+  <line x1="300" y1="170" x2="730.924943784" y2="170" stroke="#b02a1a" stroke-width="3"/>
+  <circle cx="730.924943784" cy="170" r="7" fill="#b02a1a"/>
+  <text x="284" y="175" font-size="12.5" fill="#b02a1a" text-anchor="end" font-weight="bold">rukan con la masa del pilar</text>
+  <text x="746.924943784" y="171" font-size="12.5" fill="#333" text-anchor="start" font-weight="bold">0,883866 s</text>
+  <text x="746.924943784" y="187" font-size="10.5" fill="#6b7280" text-anchor="start">+3,66 % contra SAP</text>
+  <line x1="300" y1="244" x2="481.02767408880004" y2="244" stroke="#1f7a4d" stroke-width="3"/>
+  <circle cx="481.02767408880004" cy="244" r="7" fill="#1f7a4d"/>
+  <text x="284" y="249" font-size="12.5" fill="#1f7a4d" text-anchor="end" font-weight="bold">rukan reproduciendo el criterio de SAP</text>
+  <text x="497.02767408880004" y="245" font-size="12.5" fill="#333" text-anchor="start" font-weight="bold">0,852628 s</text>
+  <text x="497.02767408880004" y="261" font-size="10.5" fill="#6b7280" text-anchor="start">0,0033 % contra SAP</text>
+  <line x1="300" y1="318" x2="481.25277083334345" y2="318" stroke="#1a63a8" stroke-width="3"/>
+  <circle cx="481.25277083334345" cy="318" r="7" fill="#1a63a8"/>
+  <text x="284" y="323" font-size="12.5" fill="#1a63a8" text-anchor="end" font-weight="bold">SAP2000 (modelo congelado)</text>
+  <text x="497.25277083334345" y="319" font-size="12.5" fill="#333" text-anchor="start" font-weight="bold">0,852657 s</text>
+  <text x="497.25277083334345" y="335" font-size="10.5" fill="#6b7280" text-anchor="start">la referencia</text>
+  <line x1="300" y1="354" x2="890" y2="354" stroke="#d1d5db" stroke-width="1.4"/>
+  <text x="380" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,84</text>
+  <line x1="380" y1="354" x2="380" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="460" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,85</text>
+  <line x1="460" y1="354" x2="460" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="540" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,86</text>
+  <line x1="540" y1="354" x2="540" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="620" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,87</text>
+  <line x1="620" y1="354" x2="620" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="700" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,88</text>
+  <line x1="700" y1="354" x2="700" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="780" y="376" font-size="10.5" fill="#6b7280" text-anchor="middle">0,89</text>
+  <line x1="780" y1="354" x2="780" y2="359" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="894" y="376" font-size="11" fill="#6b7280" text-anchor="start">T₁ [s]</text>
+  <rect x="48" y="464" width="904" height="60" rx="8" fill="#f7f9fb" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="70" y="490" font-size="13" fill="#333" text-anchor="start" font-weight="bold">Y con el criterio reproducido, la otra dirección también cae en su lugar:</text>
+  <text x="70" y="510" font-size="12" fill="#6b7280" text-anchor="start">el T* longitudinal da 0,161150 s en el modo 41 — el mismo número de modo que SAP, que mide 0,161061 s.</text>
+  <rect x="48" y="536" width="904" height="56" rx="8" fill="#f4f8f5" stroke="#1f7a4d" stroke-width="1.4"/>
+  <text x="70" y="562" font-size="12" fill="#6b7280" text-anchor="start">Lo que descarta la rigidez: el momento de rodilla bajo 1,2D + 1,6S coincide con SAP a la sexta cifra, y no interviene</text>
+  <text x="70" y="579" font-size="12" fill="#6b7280" text-anchor="start">ninguna masa. En un marco hiperestático el reparto de momentos depende solo de la rigidez relativa.</text>
+</svg>

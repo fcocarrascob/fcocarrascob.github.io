@@ -19,23 +19,26 @@ a saltarse.
 
 ## 1. Cómo se retoma esto en otra sesión
 
-> **Estado al 2026-08-12, fin de sesión.** Fases 0, 1 y 2 **cerradas**: las normas están leídas, los
-> parámetros congelados, y el modelo SAP2000 construido, corrido y verificado (combinaciones,
-> envolvente y deriva incluidas).
+> **Estado al 2026-08-14, fin de sesión.** Fases 0, 1 y 2 **cerradas**, y la de rukan también: las
+> normas están leídas, los parámetros congelados, el modelo SAP2000 construido y verificado, y el
+> **caso 10 en OpenSeesPy lo reproduce sin abrir el programa**.
 >
-> De la Fase 3 hay **cinco posts cerrados y auditados, los cinco con planilla**: el **0** publicado
-> en `main` (hace de mapa y bitácora) y el **1**, el **3**, el **5** y el **10** en la rama
-> `serie-galpon`. **Quedan siete: 2, 4, 5b, 6, 7, 8 y 9.**
+> De la Fase 3 hay **ocho posts cerrados**: el **0** publicado en `main` (hace de mapa y bitácora) y
+> el **1**, **2**, **3**, **4**, **5**, **6** y **10** en la rama `serie-galpon`.
+> **Quedan cuatro: 5b, 7, 8 y 9.**
 >
-> **Lo próximo, y hay dos frentes.** El grande es **rukan**, que bloquea los posts 2, 4 y 6: hay que
-> construir el caso 10 en OpenSeesPy contra los números congelados del `.sdb`. Molde de armado:
-> `verification/case08_gable_loads.py`; molde de la capa espectral: **`case09_torre_cbf_mrf.py`**,
-> que es posterior y ya trae el R\* por dirección. El barato es el **5b** (los siete defectos del
-> `modelo_base`), que no depende de nada — **pero ojo: solo dos de sus siete defectos están
-> documentados** (§5.12 y §5.21); los otros cinco hay que reconstruirlos, así que es más caro de lo
-> que dice la etiqueta.
+> **Lo próximo.** Los **7, 8 y 9** son de verificación de miembros y **no necesitan SAP2000** — sus
+> números ya están en este archivo. El **5b** (los siete defectos del `modelo_base`) no depende de
+> nada, pero **solo dos de sus siete defectos están documentados** (§5.12 y §5.21); los otros cinco
+> hay que reconstruirlos, así que es más caro de lo que dice la etiqueta.
 >
-> **Estado al 2026-08-13, PC personal — el caso 10 está CONSTRUIDO Y CERRADO.** La sesión se abrió
+> **Deuda de esta sesión, y no es menor**: las auditorías de los posts 2, 4 y 6 **son
+> autoauditorías**. El subagente `auditor` murió cinco veces con `529 Overloaded` y la revisión la
+> hizo el mismo que escribió los posts. Encontró y corrigió cinco números que no trazaban, pero un
+> error de interpretación compartido no se caza así. **Los tres merecen una segunda pasada
+> independiente** (ver el aviso al inicio de `AUDIT.md`).
+>
+> **Cómo cerró el caso 10, en la sesión del 2026-08-13/14, en el PC personal.** La sesión se abrió
 > **sin SAP2000** y no hizo falta: el modelo de referencia estaba congelado en las tablas de este
 > archivo **y** en las cabeceras `# Result:` de los ocho scripts de `Skills_SAP`. Los dos repos se
 > pusieron al día — `rukan` a `35c3050` (en `main`, no en la rama de laboratorio donde estaba, y de
@@ -43,20 +46,26 @@ a saltarse.
 > con los ocho scripts.
 >
 > `rukan/verification/case10_galpon_altiplano.py` + `case10_data.py` reproducen el `.sdb` en tres
-> capas: **peso de acero a 4e-15** · **equilibrio de los 11 estados a 6e-11** · **momentos de un
+> capas: **peso de acero al último bit** · **equilibrio de los 11 estados a 6e-11** · **momentos de un
 > marco hiperestático a la sexta cifra** · **modal de 60 modos** con `T*_X` a 3,3e-5 y el modo
 > longitudinal en el **puesto 41**, el mismo número que SAP · `R*` a 1e-12 · `Q₀X` a 1,0e-4 · las
 > **79 combinaciones** con la envolvente de gravedad y viento **exacta** en sus 30 valores.
 >
 > Y encontró lo que la serie de dos motores existe para encontrar: **SAP deja los pilares de hastial
 > fuera de la matriz de masa** (§5.46). La estructura sacude 582,0 kN, no los 674,861 kN que este
-> archivo declara como `P` para el `Q₀^mín` y la banda. **Lo próximo es escribir los posts 2, 4 y 6**,
-> que ya tienen todos sus números.
+> archivo declara como `P` para el `Q₀^mín` y la banda.
 >
-> **No hace falta abrir SAP2000** para los posts 7, 8 y 9: sus números ya están en este archivo. Sí
-> les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22—, y el **deslinde completo antes de
-> fijar la tesis**. Esa regla ya no es una recomendación: se llevó cuatro de las cinco piezas del
-> post 5 y **las dos tesis completas del post 10** (§5.44). El terreno de `acero/` está muy
+> El estudio del marco tipo de §5.33/§5.34, que **no era reproducible**, se rehizo desde cero en
+> `rukan/lab/nota06_tapered_convergencia.py`: entradas declaradas, dos caminos independientes que
+> coinciden entre 1,7e-14 y 1,1e-12, y de paso dos hallazgos nuevos — que el **prismático equivalente
+> de peralte medio ES la malla de N = 1** en el reparto de momentos, y que `lab/_lib/ref.py`
+> descartaba la componente **axial** de la carga uniforme, con lo que el peso propio de las columnas
+> desaparecía del modelo sin dejar rastro.
+>
+> A los posts 7, 8 y 9 les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22—, y el
+> **deslinde completo antes de fijar la tesis**. Esa regla ya no es una recomendación: se llevó cuatro
+> de las cinco piezas del post 5, **las dos tesis completas del post 10** (§5.44) y **la tesis entera
+> del post 4** (§5.48), que estaba publicada dos veces. El terreno de `acero/` está muy
 > trabajado; da por hecho que lo que creías nuevo ya está publicado, y búscalo **antes** de calcular.
 >
 > **El post 7 sigue con un bloqueo propio**: cita NCh427/1, que no está en PDF en ninguno de los dos
@@ -1656,7 +1665,9 @@ relativa. Cerró a la sexta cifra:
 | `COL3A_4` P | −180,3845 | −180,384 | 2,6e-6 |
 
 Antes, el **marco tipo aislado** se había contrastado contra una referencia de rigidez directa en
-**numpy puro** —sin OpenSees ni SAP—: la flecha de alero bajo `H = 1 kN` coincidió a **1,8e-13**. La
+**numpy puro** —sin OpenSees ni SAP—, en `lab/nota06_tapered_convergencia.py`: sus **cinco
+magnitudes** (T₁, deriva de alero, flecha de cumbrera y los momentos de rodilla y de cumbrera)
+coinciden entre **1,7e-14 y 1,1e-12**. La
 rigidez del modelo, incluida la discretización del tapered, es correcta.
 
 **La causa.** La diferencia está entera en la masa, y es de los **pilares de hastial**. Excluyendo
@@ -1734,6 +1745,54 @@ tabla de §5.37, que sin ella salían al revés en la mitad de los miembros.
 También se comprobó que el `P_máx = 0,0` que SAP reporta para el pilar de hastial **no es un cero de
 redondeo**: es la estación superior, donde la `P` está liberada. El axial hay que leerlo en las dos
 estaciones, no solo en una.
+
+### 5.48 Deslinde de los posts 2, 4 y 6 — y al 4 le cuesta la tesis entera
+
+Hecho el 2026-08-13, **antes** de escribir una línea. Es la tercera vez que esta regla cambia un
+post de la serie, y la segunda que se lleva una tesis completa.
+
+**Post 4 — la tesis planeada ya está publicada, dos veces.** El mapa del post 0 le prometía «el techo
+no es diafragma rígido, y 39 de los primeros 60 modos son basura local: el modo longitudinal de
+verdad está en el puesto 41». Ese fenómeno —modos locales de baja frecuencia que empujan el modo que
+participa al fondo de la lista— es **exactamente** el tema de
+`blog/ritz-vs-eigen-masa-participativa-sap2000`, que además lo cuantifica mejor (2 vectores Ritz
+contra 18 modos Eigen para el 90 %), lo ancla al teorema de completitud modal, y remata con «ocho
+modos Eigen te dan corte basal cero, sin un solo warning». Y `blog/oficio-errores-sin-alarma` lo
+vuelve a contar como su caso 2, con el «cómo se caza»: leer la masa participativa **por dirección**.
+
+Queda agotado, entonces: el orden por frecuencia de Eigen, el bosque de modos locales, el 90 % de
+§5.6.2 leído por dirección, y el corte basal que sale corto sin aviso.
+
+**Lo que le queda al post 4 es mejor que lo que tenía**: §5.46, la masa que no está. Que SAP deje los
+pilares de hastial fuera de la matriz de masa —porque arrastra ahí la liberación axial de su extremo
+superior— no lo cuenta ningún post del sitio, y es de una especie distinta a las cinco de
+`oficio-errores-sin-alarma`: aquellas son cosas que el ingeniero **eligió mal**; esta es una que el
+programa **decidió por él**, sin campo que revisar. El puesto 41 pasa de tesis a contexto, con
+enlace a los dos posts que ya lo agotaron.
+
+**Post 2 — sobrevive, con el énfasis corrido.** Su tesis tiene dos mitades y la fuerte es la primera:
+**el modelo se prohibió la sección no prismática de SAP para que un segundo motor pudiera
+reproducirlo**. Eso es una decisión de modelación tomada por *verificabilidad*, no por precisión ni
+por economía, y no hay nada parecido publicado. La segunda mitad —que el prismático equivalente no
+es conservador— es un caso particular de algo que `acero/placas-base-empotrada-o-rotulada` ya
+estableció con la base empotrada o rotulada: «la misma decisión de modelación es conservadora aguas
+abajo y no conservadora aguas arriba… no hay un supuesto conservador para las dos preguntas a la
+vez». El post 2 no puede vender eso como novedad; sí puede mostrar que en el tapered es **peor**,
+porque no es un compromiso entre dos preguntas sino un error en el mismo sentido en las dos
+estaciones que importan. Y esa mitad hay que **rehacerla**: sus números viejos no son reproducibles
+(§8).
+
+De `blog/rukan-verificacion-peso-propio-combinaciones` (caso 8) quedan agotados además: el peso
+propio distribuido contra concentrado y para qué sirve cada uno, el pórtico a dos aguas que se abre,
+y el chequeo de sanidad modal como disciplina.
+
+**Post 6 — hay que buscarle otra mitad.** Ese mismo post cierra con «como la combinación es lineal y
+cada caso reproduce SAP2000, las combinaciones lo reproducen **por construcción**». O sea que
+«rukan reproduce las 79 combinaciones» no es noticia: es aritmética. Lo que sí queda en pie es la
+mitad que el mapa ya le daba —de 79 combinaciones, **nueve** dimensionan algo, y por qué rukan no
+debe tener nunca módulo de viento ni de nieve— más lo que apareció al construirlo (§5.47): que el
+dintel de cumbrera no lo gobierna ninguno de sus extremos sino la **estación media**, y que leer
+solo los extremos se lleva un 7 % del lado inseguro.
 
 ---
 
@@ -1862,12 +1921,12 @@ Todo lo aprendido de la OAPI quedó en
 |---|---|---|---|
 | **0** | `galpon-altiplano-la-serie` | `blog` / Sísmica | ✅ `05c3846` — **el caso + el mapa + la bitácora**. Sin campo `series` (los tres de rukan ya son Rukan 8-10; una serie de un miembro es ruido). **Se reabre y se actualiza al cerrar cada post**: entrada fechada en la bitácora, enlace en el mapa, y `updatedDate` |
 | 1 | `ejemplo-galpon-altiplano-viento-sitio-nch432` | `apuntes` / `nch432` | ✅ `7298bc5`, rama `serie-galpon` · 3 figuras · planilla de 14 verificaciones · auditado, 16 hallazgos, 15 aplicados · **tesis afilada**: ver §5.41 |
-| 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ⬜ **rukan sin tocar** |
+| 2 | `rukan-verificacion-galpon-tapered` | `blog` / Rukan 8 | ✅ rama `serie-galpon` · 2 figuras · nota `lab/nota06_tapered_convergencia.py` con referencia numpy · deslinde en §5.48, que le corrió el énfasis a la primera mitad de la tesis |
 | 3 | `ejemplo-galpon-altiplano-cargas-combinaciones` | `apuntes` / `nch2369` | ✅ `7ddddb0`, rama `serie-galpon` · 2 figuras · planilla de 14 verificaciones · auditado en dos pasadas · deslinde en §5.42 |
-| 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ⬜ **rukan sin tocar** |
+| 4 | `rukan-verificacion-galpon-modal-espectral` | `blog` / Rukan 9 | ✅ rama `serie-galpon` · 2 figuras · **tesis nueva**: §5.46, la masa que no se sacude. La planeada —el puesto 41— estaba publicada dos veces y quedó como contexto (§5.48) |
 | 5 | `ejemplo-galpon-altiplano-sismico-nch2369` | `apuntes` / `nch2369` | ✅ rama `serie-galpon` · 3 figuras · planilla de 21 verificaciones · auditado, **18 hallazgos, los 18 aplicados** · deslinde en §5.43 |
 | 5b | `modelo-base-skills-sap-los-siete-defectos` | `blog` / SAP2000 | ⬜ |
-| 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ⬜ |
+| 6 | `rukan-verificacion-galpon-envolvente` | `blog` / Rukan 10 | ✅ rama `serie-galpon` · 2 figuras · las nueve gobernantes verificadas (29 de 30 coinciden con SAP; la que falta es un empate en 0,0) y §5.47, la estación del medio |
 | 7 | `ejemplo-columna-tapered-galpon` | `acero` / Miembros | ⬜ |
 | 8 | `ejemplo-dintel-tapered-ltb-galpon` | `acero` / Miembros | ⬜ |
 | 9 | `ejemplo-costanera-galpon-biaxial` | `acero` / Miembros | ⬜ · canal C por **AISC 360-22** (§5.39) |

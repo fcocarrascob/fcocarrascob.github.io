@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <text x="48" y="46" font-size="21" fill="#333" text-anchor="start" font-weight="bold">La masa que el modelo declara y no sacude</text>
+  <text x="48" y="72" font-size="13" fill="#6b7280" text-anchor="start">Masa sísmica D + 0,20·S del galpón, de lo que la memoria declara a lo que entra en el problema de valores propios.</text>
+  <rect x="120" y="140" width="700" height="46" rx="4" fill="#1a63a8" opacity="1"/>
+  <text x="134" y="168" font-size="13" fill="#ffffff" text-anchor="start" font-weight="bold">P declarado para la norma</text>
+  <text x="846" y="168" font-size="13" fill="#1a63a8" text-anchor="start" font-weight="bold">674,9 kN</text>
+  <text x="106" y="168" font-size="11" fill="#6b7280" text-anchor="end">Ec. (12), banda</text>
+  <rect x="120" y="230" width="619.2062864149723" height="46" rx="4" fill="#b45309" opacity="1"/>
+  <text x="134" y="258" font-size="13" fill="#ffffff" text-anchor="start" font-weight="bold">masa en el modelo dinámico de SAP</text>
+  <text x="846" y="258" font-size="13" fill="#b45309" text-anchor="start" font-weight="bold">597,0 kN</text>
+  <text x="106" y="258" font-size="11" fill="#6b7280" text-anchor="end">lo que hay</text>
+  <rect x="120" y="320" width="603.7139130369052" height="46" rx="4" fill="#1f7a4d" opacity="1"/>
+  <text x="134" y="348" font-size="13" fill="#ffffff" text-anchor="start" font-weight="bold">masa que efectivamente participa</text>
+  <text x="846" y="348" font-size="13" fill="#1f7a4d" text-anchor="start" font-weight="bold">582,0 kN</text>
+  <text x="106" y="348" font-size="11" fill="#6b7280" text-anchor="end">lo que se sacude</text>
+  <rect x="739.2062864149723" y="230" width="80.79371358502772" height="46" rx="4" fill="none" stroke="#b02a1a" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="779.6031432074861" y="218" font-size="12" fill="#b02a1a" text-anchor="middle" font-weight="bold">− 77,9 kN</text>
+  <text x="779.6031432074861" y="296" font-size="11.5" fill="#b02a1a" text-anchor="middle">los pilares de hastial</text>
+  <text x="779.6031432074861" y="312" font-size="10.5" fill="#6b7280" text-anchor="middle">peso propio 33,6 + revestimiento 44,3</text>
+  <rect x="723.7139130369052" y="320" width="15.4923733780671" height="46" rx="4" fill="none" stroke="#9ca3af" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <path d="M 731.4600997259388 366 L 731.4600997259388 382 L 838 382" fill="none" stroke="#9ca3af" stroke-width="1.2"/>
+  <text x="846" y="386" font-size="11.5" fill="#9ca3af" text-anchor="start" font-weight="bold">− 14,9 kN</text>
+  <text x="846" y="403" font-size="10.5" fill="#6b7280" text-anchor="start">en nudos de base</text>
+  <rect x="48" y="432" width="904" height="96" rx="8" fill="#fdf6f4" stroke="#b02a1a" stroke-width="1.4"/>
+  <text x="70" y="460" font-size="13.5" fill="#333" text-anchor="start" font-weight="bold">El Q₀ mínimo se calcula con un P que es 15,9 % mayor que la masa de la que sale el Q₀ que se le compara.</text>
+  <text x="70" y="482" font-size="12" fill="#6b7280" text-anchor="start">El pilar de hastial lleva la P liberada arriba: todo su peso vertical reacciona en su propia base y nunca llega al nudo</text>
+  <text x="70" y="499" font-size="12" fill="#6b7280" text-anchor="start">de techo. SAP arrastra esa liberación al armado de la masa y lo deja entero fuera de la matriz. La inercia HORIZONTAL</text>
+  <text x="70" y="516" font-size="12" fill="#6b7280" text-anchor="start">del pilar, en cambio, existe igual: hay que acelerarlo, y siendo biarticulado le entrega la mitad al techo.</text>
+</svg>

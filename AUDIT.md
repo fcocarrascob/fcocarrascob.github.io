@@ -47,6 +47,71 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 
 ## Registro de auditorías
 
+> **Aviso sobre las tres auditorías del 2026-08-14.** El subagente `auditor` **no pudo correr**: se
+> lanzó cinco veces —una por post, más dos reintentos— y las cinco murieron con `API Error: 529
+> Overloaded`, un problema del servidor. Así que la revisión de los tres posts de Rukan la hizo el
+> mismo Claude que los escribió, con las mismas fuentes y el mismo criterio, **pero sin la
+> independencia que da el read-only**. Está declarado en cada bloque.
+>
+> Lo que eso cambia, y conviene tenerlo presente al releer: quien escribe el número y quien lo
+> verifica es el mismo, así que un error de *interpretación* compartido no se caza. Los errores
+> encontrados fueron todos de la clase que sí se caza sola —números que no trazaban a su fuente— y
+> los cinco se corrigieron en la misma pasada. **Estos tres posts merecen una segunda auditoría
+> independiente cuando el auditor vuelva a correr.**
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-envolvente` · ⚠️ autoauditado, 2 hallazgos aplicados
+
+**Commit:** sin commitear, en el working tree · **Auditor:** ninguno — autoauditoría (ver aviso) ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `case10_galpon_altiplano.py` corrido
+completo, `render-galpon-envolvente.mjs` con sus cuatro asserts, y las cabeceras `# Result:` de
+`galpon_altiplano_combos.py` y `galpon_altiplano_envolvente.py` leídas directas.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🟠 | R/C | §«Por qué el segundo motor no debe tener módulo de viento» | **Afirmación de hecho incorrecta.** El post decía que «las presiones se calcularon una vez, en el script que armó el modelo SAP, y rukan consumió el vector resultante por barra». Falso: `case10_data.py` **lleva el cálculo de presiones portado** —las tablas `_T05`/`_T20`, la interpolación a 10°, el promediado `_G1`/`_G2`— y lo re-deriva en cada corrida. El argumento sobrevive y queda más nítido, pero el hecho estaba mal | Reescribir: el cálculo está **portado literalmente** al módulo de datos compartido, y el port se verifica por sus resultantes (5e-7 kN). Lo que no tiene módulo de viento es el **núcleo** de rukan | ✅ aplicado |
+| 2 | 🟡 | N | §«Las tres envolventes» | «peso de acero a 4 × 10⁻¹⁵» — el caso reporta error **exactamente 0,0**. El 4e-15 venía de un sondeo con otro orden de suma | Decir «al último bit» | ✅ aplicado |
+| 3 | 🔵 | N | tabla de gobernantes | Los 30 valores verificados contra la corrida y contra la cabecera de SAP: **29 coinciden**, y la que no es el empate en 0,0 del pilar de hastial, declarado en el propio post. Las nueve combinaciones distintas contadas con assert en el script de figuras | — | verificado |
+| 4 | 🔵 | N | Ec. 1 y las tres estaciones | `M_centro = (M_i − M_j)/2 + w·L²/8` comprobada partiendo el elemento en dos: da 207,9321 contra los 207,932 de SAP. Las tres estaciones (163,041 / 207,932 / 193,624) trazan a §5.47 | — | verificado |
+
+**Planilla del canvas:** no — es un post de verificación entre motores, no un ejemplo de cálculo con
+cadena normativa. Ninguno de los diez posts de la serie Rukan tiene planilla.
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-modal-espectral` · ⚠️ autoauditado, 3 hallazgos aplicados
+
+**Commit:** sin commitear, en el working tree · **Auditor:** ninguno — autoauditoría (ver aviso) ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `case10_galpon_altiplano.py` y
+`nota06_tapered_convergencia.py` corridos completos, y `render-galpon-modal.mjs` con sus cuatro
+asserts (incluido el que deduce la masa participante de `Q0X/S_a/U_x` y la contrasta contra rukan).
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🟠 | C | §«Por qué, y es una sola causa» | **La inferencia se presentaba como hecho.** «SAP arrastra esa liberación al armado de la matriz de masa» no sale de la documentación del programa ni de un campo suyo: sale de que excluir esa masa reproduce su modal. Sin decirlo, el post atribuye a SAP un comportamiento interno que no verificó | Agregar `<Note>` que declara el estatus de inferencia, enumera las tres cosas que la sostienen —T\*_X a 3,3e-5, el mismo puesto 41, las tres masas acumuladas— y anota que con SAP delante se comprueba en una línea | ✅ aplicado |
+| 2 | 🟠 | N | §«Lo que descarta la rigidez» | «con error 1,8 × 10⁻¹³» contra la referencia numpy. Ese número venía de un **sondeo desechable** que ya no existe, no de la nota permanente. La nota mide cinco magnitudes, entre 1,7e-14 y 1,1e-12 | Citar el rango de las cinco magnitudes de `nota06` | ✅ aplicado |
+| 3 | 🟡 | N | §«El peldaño» | «peso de acero a 4 × 10⁻¹⁵» — el caso reporta error exactamente 0,0 | «al último bit» | ✅ aplicado |
+| 4 | 🔵 | C | §«Lo que este post no rehace» | Deslinde verificado leyendo los dos posts: `ritz-vs-eigen-masa-participativa-sap2000` agota el bosque de modos locales, el orden por frecuencia de Eigen y el corte basal corto sin aviso; `oficio-errores-sin-alarma` lo repite como su caso 2 con el «cómo se caza». El post los enlaza y baja el puesto 41 a contexto | — | verificado |
+| 5 | 🔵 | N | toda la cadena | Verificados contra la corrida: los cuatro momentos estáticos, los cinco valores del modal, `R*` a 1e-12, `Q0X`/`Q0Y`, la cascada de masa (674,861 − 77,89 = 596,969; −14,94 = 582,033), el 15,95 % de brecha y el 582,9 kN deducido de los números de SAP | — | verificado |
+
+**Planilla del canvas:** no — post de verificación entre motores.
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-tapered` · ⚠️ autoauditado, 3 hallazgos aplicados
+
+**Commit:** sin commitear, en el working tree · **Auditor:** ninguno — autoauditoría (ver aviso) ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `nota06_tapered_convergencia.py`
+corrido completo (sus cinco magnitudes por dos caminos independientes),
+`case10_galpon_altiplano.py`, y `render-galpon-tapered.mjs` con sus asserts. Las dos figuras
+rasterizadas y **miradas**; se corrigieron dos choques de rótulo antes de publicar.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🟠 | N | §«El prismático… es la malla de un tramo» | «El período y la deriva sí se separan un 1,5 % y un **6,6 %**». El cálculo da **6,16 %** | Corregir a 6,2 % en el post y a tres decimales en el comentario del script | ✅ aplicado |
+| 2 | 🟡 | N | §«Cuántos tramos hacen falta» y veredicto | «un factor **15**» y «quince veces más lento». El cociente de errores con N = 1 es **14,5**; el 15 salía de `toFixed(0)` en la figura | Poner 14,5 en el post, en el veredicto y en la figura | ✅ aplicado |
+| 3 | 🟡 | N | §«El modelo completo» | «Peso de acero \| 4 × 10⁻¹⁵» — el caso reporta error exactamente 0,0 | «**exacto**, al último bit», con el valor a 10 decimales | ✅ aplicado |
+| 4 | 🔵 | N | tabla del prismático y de convergencia | Verificadas contra la salida literal de la nota. Los rangos de la prosa cuadran: rodilla −17,97 a −19,27 % («entre 18 y 19 %»), cumbrera +75,56 a +78,91 % («entre 76 y 79 %»), factor de rigidez 2,430 («×2,4»), momentos 1,61 % y 1,91 % («menos de un 2 %») | — | verificado |
+| 5 | 🔵 | C | §«Lo que este post no rehace» | Deslinde verificado: el caso 8 agota peso propio distribuido/concentrado, el pórtico que se abre y el chequeo modal; `placas-base-empotrada-o-rotulada` agota «conservadora aguas abajo y no conservadora aguas arriba». El post declara los dos y afila el suyo por encima | — | verificado |
+| 6 | 🔵 | R | §«Los dos caminos» | La cita literal del script (`PROHIBIDA la seccion no prismatica…`) verificada en `galpon_altiplano_build.py`. La identidad prismático-575 ≡ N = 1 acotada correctamente al reparto de momentos, con la separación de período y deriva explicada por la masa concentrada | — | verificado |
+
+**Planilla del canvas:** no — post de verificación entre motores.
+
 ### 2026-08-12 · `acero/ejemplo-diagonal-longitudinal-galpon` · ✅ 18 hallazgos, todos aplicados
 
 **Commit:** `2a6e339` (post sin commitear, en el working tree) · **Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — a mano, con verificación cruzada contra el bloque `ESPERADO` de `scripts/render-galpon-diagonal.mjs` y contra `public/planillas/diagonal-longitudinal-galpon.json`. **En esa sesión el auditor no tuvo herramienta de shell**, así que no pudo correr `python`, `npm run verify:planilla` ni `npm run figuras:galpon-diagonal`: toda su aritmética está hecha a mano a 6-7 cifras y contrastada contra los valores a precisión completa que ya registran el script y §5.45.
@@ -4163,6 +4228,9 @@ Estado de auditoría por post. `—` = nunca auditado.
 
 | Post | Última auditoría | Veredicto | Abiertos |
 |------|------------------|-----------|----------|
+| `rukan-verificacion-galpon-tapered` | 2026-08-14 | ⚠️ | 6 (0🔴 1🟠 · 2🟡 3🔵) · **3 aplicados**, 0 abiertos · **autoauditado**, pendiente auditoría independiente |
+| `rukan-verificacion-galpon-modal-espectral` | 2026-08-14 | ⚠️ | 5 (0🔴 2🟠 · 1🟡 2🔵) · **3 aplicados**, 0 abiertos · **autoauditado**, pendiente auditoría independiente |
+| `rukan-verificacion-galpon-envolvente` | 2026-08-14 | ⚠️ | 4 (0🔴 1🟠 · 1🟡 2🔵) · **2 aplicados**, 0 abiertos · **autoauditado**, pendiente auditoría independiente |
 | `galpon-altiplano-la-serie` | 2026-08-12 | ✅ | 20 (2🔴 3🟠 · 9🟡 6🔵) · **20 aplicados**, 0 abiertos |
 | `capacidad-vs-resistencia` | 2026-07-29 | ⚠️ | 16 (0🔴 0🟠 · 12🟡 4🔵) · 4 aplicados (1🔴 3🟠) |
 | `oficio-errores-sin-alarma` | 2026-08-05 | ⚠️ | 6 (0🔴 0🟠 · 5🟡 1🔵) · 5 aplicados (1🔴 4🟠) |

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 592" width="1000" height="592" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <rect width="1000" height="592" fill="#ffffff"/>
+  <text x="48" y="46" font-size="21" fill="#333" text-anchor="start" font-weight="bold">La malla del tapered la fija la deriva, no la flecha</text>
+  <text x="48" y="72" font-size="13" fill="#6b7280" text-anchor="start">Error de cada magnitud contra la malla de referencia (N = 36 tramos por miembro), en escala logarítmica.</text>
+  <line x1="96" y1="428" x2="732" y2="428" stroke="#d1d5db" stroke-width="1.4"/>
+  <line x1="96" y1="124" x2="96" y2="428" stroke="#d1d5db" stroke-width="1.4"/>
+  <text x="84" y="450" font-size="11" fill="#6b7280" text-anchor="end">N =</text>
+  <text x="22" y="112" font-size="11" fill="#6b7280" text-anchor="start">error vs. N = 36</text>
+  <text x="144" y="450" font-size="11" fill="#6b7280" text-anchor="middle">1</text>
+  <text x="192" y="450" font-size="11" fill="#6b7280" text-anchor="middle">2</text>
+  <text x="240" y="450" font-size="11" fill="#6b7280" text-anchor="middle">3</text>
+  <text x="288" y="450" font-size="11" fill="#6b7280" text-anchor="middle">4</text>
+  <text x="384" y="450" font-size="11" fill="#6b7280" text-anchor="middle">6</text>
+  <text x="528" y="450" font-size="11" fill="#6b7280" text-anchor="middle">9</text>
+  <text x="672" y="450" font-size="11" fill="#6b7280" text-anchor="middle">12</text>
+  <line x1="96" y1="406.4513721181056" x2="732" y2="406.4513721181056" stroke="#eef1f4" stroke-width="1"/>
+  <text x="86" y="410.4513721181056" font-size="10" fill="#6b7280" text-anchor="end">0,01 %</text>
+  <line x1="96" y1="334.8683797509675" x2="732" y2="334.8683797509675" stroke="#eef1f4" stroke-width="1"/>
+  <text x="86" y="338.8683797509675" font-size="10" fill="#6b7280" text-anchor="end">0,10 %</text>
+  <line x1="96" y1="263.2853873838294" x2="732" y2="263.2853873838294" stroke="#eef1f4" stroke-width="1"/>
+  <text x="86" y="267.2853873838294" font-size="10" fill="#6b7280" text-anchor="end">1 %</text>
+  <line x1="96" y1="191.70239501669136" x2="732" y2="191.70239501669136" stroke="#eef1f4" stroke-width="1"/>
+  <text x="86" y="195.70239501669136" font-size="10" fill="#6b7280" text-anchor="end">10 %</text>
+  <polyline points="144,143.98581382403444 192,183.38491219636012 240,205.4048269057083 288,220.3496786219 384,240.73024826633642 528,261.0015613036645 672,276.0258724001531" fill="none" stroke="#b02a1a" stroke-width="2.6"/>
+  <circle cx="144" cy="143.98581382403444" r="3.6" fill="#b02a1a"/>
+  <circle cx="192" cy="183.38491219636012" r="3.6" fill="#b02a1a"/>
+  <circle cx="240" cy="205.4048269057083" r="3.6" fill="#b02a1a"/>
+  <circle cx="288" cy="220.3496786219" r="3.6" fill="#b02a1a"/>
+  <circle cx="384" cy="240.73024826633642" r="3.6" fill="#b02a1a"/>
+  <circle cx="528" cy="261.0015613036645" r="3.6" fill="#b02a1a"/>
+  <circle cx="672" cy="276.0258724001531" r="3.6" fill="#b02a1a"/>
+  <text x="686" y="280.0258724001531" font-size="12" fill="#b02a1a" text-anchor="start" font-weight="bold">deriva de alero</text>
+  <polyline points="144,179.86805642480346 192,219.54315114983916 240,245.09580238148115 288,263.41839598124716 384,289.3986678880075 528,315.8916025657578 672,335.4869687870294" fill="none" stroke="#b45309" stroke-width="2.6"/>
+  <circle cx="144" cy="179.86805642480346" r="3.6" fill="#b45309"/>
+  <circle cx="192" cy="219.54315114983916" r="3.6" fill="#b45309"/>
+  <circle cx="240" cy="245.09580238148115" r="3.6" fill="#b45309"/>
+  <circle cx="288" cy="263.41839598124716" r="3.6" fill="#b45309"/>
+  <circle cx="384" cy="289.3986678880075" r="3.6" fill="#b45309"/>
+  <circle cx="528" cy="315.8916025657578" r="3.6" fill="#b45309"/>
+  <circle cx="672" cy="335.4869687870294" r="3.6" fill="#b45309"/>
+  <text x="686" y="339.4869687870294" font-size="12" fill="#b45309" text-anchor="start" font-weight="bold">período T₁</text>
+  <polyline points="144,227.1491889356785 192,287.9252592239663 240,313.8493625058481 288,331.2149016270201 384,356.2640118804168 528,383.1066715718623 672,404.28845436410364" fill="none" stroke="#1f7a4d" stroke-width="2.6"/>
+  <circle cx="144" cy="227.1491889356785" r="3.6" fill="#1f7a4d"/>
+  <circle cx="192" cy="287.9252592239663" r="3.6" fill="#1f7a4d"/>
+  <circle cx="240" cy="313.8493625058481" r="3.6" fill="#1f7a4d"/>
+  <circle cx="288" cy="331.2149016270201" r="3.6" fill="#1f7a4d"/>
+  <circle cx="384" cy="356.2640118804168" r="3.6" fill="#1f7a4d"/>
+  <circle cx="528" cy="383.1066715718623" r="3.6" fill="#1f7a4d"/>
+  <circle cx="672" cy="404.28845436410364" r="3.6" fill="#1f7a4d"/>
+  <text x="686" y="408.28845436410364" font-size="12" fill="#1f7a4d" text-anchor="start" font-weight="bold">flecha de cumbrera</text>
+  <line x1="288" y1="124" x2="288" y2="428" stroke="#1a63a8" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="296" y="140" font-size="11" fill="#1a63a8" text-anchor="start" font-weight="bold">la malla del modelo</text>
+  <text x="296" y="156" font-size="11" fill="#1a63a8" text-anchor="start">deriva 3,98 %</text>
+  <rect x="48" y="484" width="904" height="76" rx="8" fill="#fdf6f4" stroke="#b02a1a" stroke-width="1.4"/>
+  <text x="70" y="512" font-size="13.5" fill="#333" text-anchor="start" font-weight="bold">Con un solo tramo la flecha se equivoca 3,20 % y la deriva 46,4 %: un factor 14,5.</text>
+  <text x="70" y="534" font-size="12" fill="#6b7280" text-anchor="start">Con base articulada el momento de la columna es cero abajo y máximo en la rodilla, así que la deriva la gobierna</text>
+  <text x="70" y="551" font-size="12" fill="#6b7280" text-anchor="start">el peralte del extremo (d = 800 mm) y no el del promedio. La flecha del dintel la manda la zona central, y casi no se entera.</text>
+</svg>

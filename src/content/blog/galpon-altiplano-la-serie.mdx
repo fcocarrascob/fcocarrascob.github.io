@@ -2,7 +2,7 @@
 title: "El galpón del altiplano: el caso, y la bitácora de la serie"
 description: "Un galpón industrial a dos aguas de 24 × 24 m en una faena minera a 3 800 m, construido de punta a punta: sitio, cargas, modelo, análisis y verificación miembro por miembro, con NCh432, NCh3171, NCh2369 y AISC 360-22, y con dos motores de cálculo que se vigilan entre sí. Este post es el mapa de los diez que vienen y la bitácora de lo que se va midiendo — incluidas las tres hipótesis del plan que ya se cayeron."
 pubDate: 2026-08-12
-updatedDate: 2026-08-12
+updatedDate: 2026-08-14
 tags: ["galpón", "NCh2369", "NCh432", "NCh3171", "AISC 360", "peralte variable", "SAP2000", "Rukan", "OpenSeesPy", "serie"]
 section: "Sísmica"
 norm: "NCh2369:2025"
@@ -164,11 +164,11 @@ Los enlaces aparecen a medida que cada post se publica.
 | # | Post | Dónde | De qué va |
 |---|---|---|---|
 | 1 | [El sitio: el mismo cerro, tres $K_{zt}$ distintos](/apuntes/ejemplo-galpon-altiplano-viento-sitio-nch432) | `apuntes` · NCh432 | El $K_{zt}$ no se calcula, se decide: clasificar la misma loma como cima 2D o como escarpamiento mueve la presión un **27 %**. Y quien olvida el factor diseña con la **mitad** |
-| 2 | El peralte variable y la convergencia | Rukan (8) | Prohibirse la sección no prismática de SAP para poder verificar. Y el prismático equivalente **no es conservador** |
+| 2 | [El peralte variable, y por qué el modelo se prohibió una función del programa](/blog/rukan-verificacion-galpon-tapered/) | Rukan (8) | Prohibirse la sección no prismática de SAP para poder verificar. Y el prismático equivalente **no es una alternativa a discretizar: es la malla de un tramo**, su peor caso |
 | 3 | [Estados y combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones) | `apuntes` · NCh2369 | Las dos normas se remiten entre sí y NCh3171 **cede por escrito** la rama sísmica: creerle a la otra cuesta un 40 %. Y hay una excepción que apunta a una edición muerta |
-| 4 | Modal espectral | Rukan (9) | El techo no es diafragma rígido. Y **39 de los primeros 60 modos son basura local**: el modo longitudinal de verdad está en el puesto 41 |
+| 4 | [La masa que el modelo declara y no sacude](/blog/rukan-verificacion-galpon-modal-espectral/) | Rukan (9) | El período salía 3,66 % largo con la rigidez verificada exacta: SAP deja los **pilares de hastial fuera de la matriz de masa**. La estructura sacude 582 kN, no los 674,9 que la memoria declara |
 | 5 | [Una sola fila de la Tabla 7 para dos sistemas](/apuntes/ejemplo-galpon-altiplano-sismico-nch2369) | `apuntes` · NCh2369 | La Tabla 7 clasifica el edificio, no la dirección — y la fila **no la elige el ingeniero**. Con $R = 5$ el corte cae bajo el mínimo y la Ec. (14) se lleva de vuelta el $R$ que prometió |
-| 6 | La envolvente | Rukan (10) | De 79 combinaciones, **nueve** dimensionan algo. Y por qué rukan **no debe tener módulo de viento ni de nieve, nunca** |
+| 6 | [De 79 combinaciones, nueve dimensionan algo](/blog/rukan-verificacion-galpon-envolvente/) | Rukan (10) | Las nueve, y la que gobierna el dintel medio es la nieve **desbalanceada**. El máximo del dintel de cumbrera no está en ningún extremo. Y por qué rukan **no debe tener módulo de viento ni de nieve, nunca** |
 | 7 | Columna de peralte variable | `acero` · Cap. H | AISC 360-22 no tiene capítulo de peralte variable. La estación que falla **no es la del momento máximo** |
 | 8 | Dintel de peralte variable y el LTB | `acero` · Cap. F | $L_b$ salta de 1,354 a 6,0 m **de una combinación a otra**, porque el ala comprimida cambia de lado |
 | 9 | Costanera y la flexión biaxial | `acero` · Cap. F | El 17 % tangencial de la pendiente consume media capacidad. Y los tirantes no son un truco: son **la condición que hace aplicable la ecuación** |
@@ -185,6 +185,36 @@ Varias piezas de esto ya están publicadas y los posts nuevos enlazan en vez de 
 validación*, publicado en la sexta entrega de esa serie—, que ya era un galpón a dos aguas en 3D.
 
 ## Bitácora
+
+### 2026-08-14 · El segundo motor encontró una masa que no está
+
+Los tres posts de Rukan —el 2, el 4 y el 6— están publicados, y el galpón queda armado y
+confrontado en los **dos** motores de punta a punta. El caso 10 se construyó en un equipo **sin
+SAP2000 instalado**, que era la duda de partida: se pudo porque el modelo de referencia estaba
+congelado en las cabeceras de los scripts que lo armaron y en la memoria de cálculo de la serie.
+
+Cierra así, contra el modelo congelado: peso de acero **al último bit** · equilibrio de los once
+estados a $6 \times 10^{-11}$ kN · momentos de un marco hiperestático a la sexta cifra · $T^*$ de las
+dos direcciones, con el modo longitudinal en el **mismo puesto 41** · $R^*$ a $10^{-12}$ · corte
+basal a $1{,}0 \times 10^{-4}$ · y la envolvente de gravedad y viento **exacta** en sus 30 valores,
+con 29 de 30 combinaciones gobernantes idénticas.
+
+Y encontró lo que la serie de dos motores existe para encontrar. El período fundamental salía
+**3,66 % largo** con la rigidez ya verificada exacta. La causa: **SAP deja los pilares de hastial
+fuera de la matriz de masa** — arrastra al armado de la masa la liberación axial de su extremo
+superior, así que los 77,9 kN del pilar reaccionan en su propia base y nunca llegan al techo.
+
+$$P_{\text{declarado}} = 674{,}861\ \text{kN} \qquad\text{contra}\qquad P_{\text{que se sacude}} = 582{,}0\ \text{kN}$$
+
+Un **16 %**. El $Q_0^{\text{mín}}$ de la Ec. (12) se calcula con el primero y se le compara el $Q_0$
+que sale del segundo. Se confirmó por un camino que no pasa por rukan: de los propios números de SAP,
+$Q_{0X}/S_a/U_x = 582{,}9$ kN.
+
+Dos cosas más, de las que valen para cualquier motor. El **dintel de cumbrera no lo gobierna ninguno
+de sus extremos** sino la estación del medio, y leer solo la salida de fuerzas del elemento se lleva
+un 6,9 % del lado inseguro. Y el **prismático equivalente no es una alternativa a discretizar el
+peralte variable**: es la malla de un tramo, su peor caso — barrer el peralte no arregla nada, porque
+el reparto de momentos lo decide la razón entre rigideces y no su nivel.
 
 ### 2026-08-12 · El sitio queda cerrado
 
