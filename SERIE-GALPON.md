@@ -27,12 +27,31 @@ a saltarse.
 > en `main` (hace de mapa y bitácora) y el **1**, el **3**, el **5** y el **10** en la rama
 > `serie-galpon`. **Quedan siete: 2, 4, 5b, 6, 7, 8 y 9.**
 >
-> **Lo próximo, y hay dos frentes.** El grande es **rukan**, que sigue intacto y bloquea los posts 2,
-> 4 y 6: hay que construir el caso 10 en OpenSeesPy contra el `.sdb` congelado, tomando
-> `verification/case08_gable_loads.py` como molde. El barato es el **5b** (los siete defectos del
+> **Lo próximo, y hay dos frentes.** El grande es **rukan**, que bloquea los posts 2, 4 y 6: hay que
+> construir el caso 10 en OpenSeesPy contra los números congelados del `.sdb`. Molde de armado:
+> `verification/case08_gable_loads.py`; molde de la capa espectral: **`case09_torre_cbf_mrf.py`**,
+> que es posterior y ya trae el R\* por dirección. El barato es el **5b** (los siete defectos del
 > `modelo_base`), que no depende de nada — **pero ojo: solo dos de sus siete defectos están
 > documentados** (§5.12 y §5.21); los otros cinco hay que reconstruirlos, así que es más caro de lo
 > que dice la etiqueta.
+>
+> **Estado al 2026-08-13, PC personal — el caso 10 está CONSTRUIDO Y CERRADO.** La sesión se abrió
+> **sin SAP2000** y no hizo falta: el modelo de referencia estaba congelado en las tablas de este
+> archivo **y** en las cabeceras `# Result:` de los ocho scripts de `Skills_SAP`. Los dos repos se
+> pusieron al día — `rukan` a `35c3050` (en `main`, no en la rama de laboratorio donde estaba, y de
+> paso trajo el `case09` de la torre, que es el molde bueno para la capa espectral) y `Skills_SAP`
+> con los ocho scripts.
+>
+> `rukan/verification/case10_galpon_altiplano.py` + `case10_data.py` reproducen el `.sdb` en tres
+> capas: **peso de acero a 4e-15** · **equilibrio de los 11 estados a 6e-11** · **momentos de un
+> marco hiperestático a la sexta cifra** · **modal de 60 modos** con `T*_X` a 3,3e-5 y el modo
+> longitudinal en el **puesto 41**, el mismo número que SAP · `R*` a 1e-12 · `Q₀X` a 1,0e-4 · las
+> **79 combinaciones** con la envolvente de gravedad y viento **exacta** en sus 30 valores.
+>
+> Y encontró lo que la serie de dos motores existe para encontrar: **SAP deja los pilares de hastial
+> fuera de la matriz de masa** (§5.46). La estructura sacude 582,0 kN, no los 674,861 kN que este
+> archivo declara como `P` para el `Q₀^mín` y la banda. **Lo próximo es escribir los posts 2, 4 y 6**,
+> que ya tienen todos sus números.
 >
 > **No hace falta abrir SAP2000** para los posts 7, 8 y 9: sus números ya están en este archivo. Sí
 > les hace falta sprint de PDF —Caps. E, F y H de AISC 360-22—, y el **deslinde completo antes de
@@ -40,7 +59,8 @@ a saltarse.
 > post 5 y **las dos tesis completas del post 10** (§5.44). El terreno de `acero/` está muy
 > trabajado; da por hecho que lo que creías nuevo ya está publicado, y búscalo **antes** de calcular.
 >
-> **El post 7 sigue con un bloqueo propio**: cita NCh427/1, que no está en PDF en este equipo.
+> **El post 7 sigue con un bloqueo propio**: cita NCh427/1, que no está en PDF en ninguno de los dos
+> equipos.
 >
 > **Decisión pendiente, y es del usuario**: la rama `serie-galpon` no está fusionada. El post 0 vive
 > en `main` y los posts 1, 3 y 5 solo en la rama. Hay que decidir si se fusiona por tandas o al
@@ -48,17 +68,28 @@ a saltarse.
 
 ### Dónde está cada cosa
 
-**Los tres repos que participan** (los tres quedaron limpios y commiteados):
+**Los cuatro repos que participan.** La raíz depende del equipo, así que compruébala antes de abrir
+nada — igual que las normas (ver más abajo):
 
-| Repo | Ruta | Qué guarda | Rama |
-|---|---|---|---|
-| `fcocarrascob.github.io` | `C:\Proyectos_Python\fcocarrascob.github.io` | los posts, este archivo, `AUDIT.md`, las figuras y las planillas | **`serie-galpon`** |
-| `Skills_SAP` | `C:\Proyectos_Python\Skills_SAP` | los ocho scripts `galpon_altiplano_*`. **Lee `scripts/README.md` antes de correr ninguno**: hay orden obligatorio y tres scripts superados cuyas cabeceras traen números viejos | `main` |
-| `struct_llm` | `C:\Proyectos_Python\struct_llm` | `docs/lecciones-sap2000-modelado-oapi.md` §12 — lo aprendido de la OAPI | `auditoria-alcance-clausulas` |
-| `rukan` | `C:\Proyectos_Python\rukan` | el segundo motor (OpenSeesPy). **Sin tocar para esta serie.** Su venv es además el único Python con PyMuPDF | `main` |
+| Equipo | Raíz de los repos |
+|---|---|
+| PC personal | `F:\Proyectos_Python\` — y el sitio se llama **`struct_pad`**, no `fcocarrascob.github.io` |
+| Notebook de oficina | `C:\Proyectos_Python\` |
 
-**El modelo SAP2000 no está en ningún repo.** Vive en el temporal, y buscarlo por el disco cuesta
-media sesión:
+| Repo | Qué guarda | Rama |
+|---|---|---|
+| el sitio (`struct_pad` / `fcocarrascob.github.io`) | los posts, este archivo, `AUDIT.md`, las figuras y las planillas | **`serie-galpon`** |
+| `Skills_SAP` | los ocho scripts `galpon_altiplano_*`. **Lee `scripts/README.md` antes de correr ninguno**: hay orden obligatorio, tres scripts superados cuyas cabeceras traen números viejos, y una tabla «Los números que tienen que salir» que es la lista de asserts si el modelo se rehace | `main` |
+| `struct_llm` | `docs/lecciones-sap2000-modelado-oapi.md` §12 — lo aprendido de la OAPI | `auditoria-alcance-clausulas` |
+| `rukan` | el segundo motor (OpenSeesPy). El caso 10 del galpón se construye acá | `main` |
+
+**En el PC personal, `rukan` no está en `main` por defecto**: quedó en
+`laboratorio/base-rigidez-rotacional`, y las Notas 04 y 05 viven en sus ramas sin fusionar. El
+caso 9 de la torre y los arreglos de `spectra.py` (`35c3050`) están en `main`, así que el trabajo
+de verificación va ahí. Comprueba la rama antes de escribir.
+
+**El modelo SAP2000 no está en ningún repo, y solo existe en el notebook.** Vive en el temporal, y
+buscarlo por el disco cuesta media sesión:
 
 ```
 C:\Users\FRANCI~1.CAR\AppData\Local\Temp\sap2000_scripts\galpon_altiplano.sdb
@@ -68,6 +99,21 @@ La forma barata de encontrarlo es `connect_sap2000`, que devuelve `model_path`. 
 descargable del sitio es `public/galpon-altiplano-la-serie/galpon-altiplano.sdb` — **ojo con el
 nombre**, la copia lleva guion medio y el original guion bajo.
 
+**En el PC personal no hay SAP2000, y la copia publicada no lo suple**: es binario, y además se
+guardó con el análisis bloqueado, así que los resultados no vienen con ella (viven en los `.Y0*`,
+que no se publicaron). Eso **no bloquea** el trabajo, porque los números de SAP están congelados en
+dos lugares que se leen sin el programa:
+
+1. las tablas de este archivo — §5.34, §5.36, §5.37, §5.38, §5.40, §5.45 y §6.2.1;
+2. la línea `# Result:` de cada script de `Skills_SAP`, que es **más completa** que las tablas: trae
+   las tres envolventes por miembro separadas (`ENV`, `ENVG_gravedad_viento`, `ENVE_sismo`), la
+   tabla de derivas de los 13 nodos con sus dos componentes, las cinco resultantes de viento con su
+   residuo, y los 79 nombres de combinación.
+
+Lo que sí se pierde sin el programa: **no se le puede volver a preguntar**. Si el segundo motor
+discrepa en algo que no está en esas dos fuentes, se anota como deuda en §8 y espera al notebook —
+no se rellena a ojo.
+
 ### Qué importa para cada tipo de tarea
 
 | Si vas a… | Lee primero | Y trabajas en |
@@ -76,6 +122,7 @@ nombre**, la copia lleva guion medio y el original guion bajo.
 | hacer una figura | `scripts/render-galpon-sismico.mjs` como patrón vigente | `scripts/render-*.mjs` + `package.json` (`figuras:<nombre>`) |
 | hacer una planilla | `docs/ESQUEMA-PLANILLA.md` entero, y la skill `planilla` | `public/planillas/<slug>.json` |
 | auditar | la skill `auditar`; el auditor es read-only y **tú** aplicas los fixes | `AUDIT.md` |
+| construir el caso 10 en rukan | `Skills_SAP/scripts/README.md` (orden, cabeceras superadas, tabla de asserts) y `galpon_altiplano_build.py` | `rukan/verification/case10_*.py`, rama `main` |
 | tocar el modelo | §6.2 (cómo se construyó) y `Skills_SAP/scripts/README.md` | el MCP de SAP2000 |
 | citar una norma | §4.1. **Si el número no está ahí, no lo sabes**: hay que abrir el PDF rasterizado | — |
 
@@ -107,11 +154,15 @@ npm run render:esquema -- public/<slug>
 
 ### Herramientas de lectura de PDF
 
-PyMuPDF **no está** en el Python del sistema. Está en el venv de rukan:
+Dónde está PyMuPDF **también depende del equipo**, y está cruzado respecto de lo que uno esperaría:
 
-```
-C:\Proyectos_Python\rukan\.venv\Scripts\python.exe     # PyMuPDF 1.28.2
-```
+| Equipo | Intérprete con PyMuPDF | Versión |
+|---|---|---|
+| PC personal | el **Python del sistema** (`python`, pyenv 3.12.10) — el venv de rukan **no** lo tiene | 1.28.0 |
+| Notebook de oficina | `C:\Proyectos_Python\rukan\.venv\Scripts\python.exe` — el del sistema **no** lo tiene | 1.28.2 |
+
+Ojo con el otro intérprete del PC personal: `py` resuelve a 3.13 y no tiene ni PyMuPDF ni
+OpenSeesPy. `python` resuelve a pyenv 3.12.10, que tiene los dos.
 
 Usar `import pymupdf` (el alias `fitz` está deprecado y emite warning). Los dos scripts auxiliares
 viven en el scratchpad de la sesión; si no existen, se reescriben en cinco líneas:
@@ -135,19 +186,35 @@ El wiki de `material_teorico` cita «+7» para NCh2369 porque cuenta páginas 1-
 
 ### Rutas reales de las normas
 
-`CLAUDE.md` cita `F:\OneDrive\Ingenieria\Normas\…`, que **no existe en este equipo**. Las reales:
+**Las dos carpetas existen, cada una en su equipo.** Comprueba cuál antes de abrir nada: si escribes
+la ruta que no es y concluyes que el PDF no está, acabas citando de memoria.
+
+**PC personal** — la que `CLAUDE.md` declara, y sí existe acá:
+
+```
+F:\OneDrive\Ingenieria\Normas\
+  NCh 2369 - 3°Edición 2025.05.28.pdf
+  NCh 432 - 3°Edición 2025.06.27.pdf
+  NCh 3171_2017.pdf           <- ojo con el nombre: espacio y guion BAJO, distinto del notebook
+  NCh 433 - 5°Edición 2026.03.26.pdf
+  A360-22W-ewr.pdf · A341-22W-oke.pdf · ACI 318-25_SI.pdf
+  AISC Design Guide 1 - 3rd Edition.pdf
+```
+
+**Notebook de oficina** — el nombre lleva acento y espacios, y la codificación de la consola lo
+rompe: resuélvelo con glob (`~\OneDrive*\Escritorio\Documentos\Normas\...`) en vez de escribirlo
+literal:
 
 ```
 C:\Users\francisco.carrasco\OneDrive - PSC INGENIERÍA SpA\Escritorio\Documentos\Normas\
-  NCh 2369 - 3°Edición 2025.05.28.pdf
-  NCh 432 - 3°Edición 2025.06.27.pdf
-  NCh3171-2017.pdf            <- escaneada, SIN capa de texto: localizar.py no sirve, todo rasterizado
-  NCh 433 - 5°Edición 2026.03.26.pdf
-  A360-22W-ewr.pdf · A341-22W-oke.pdf · ACI 318-25_SI.pdf
+  … los mismos, salvo que NCh3171 se llama ahí NCh3171-2017.pdf
 ```
 
-**NCh431 (nieve) y NCh1537 (sobrecargas) no existen en PDF** en este equipo. Ver §5.1: resultó no ser
-un problema.
+NCh3171 está **escaneada, SIN capa de texto** en los dos equipos: `localizar.py` no sirve, todo va
+rasterizado.
+
+**NCh431 (nieve), NCh1537 (sobrecargas) y NCh427/1 no existen en PDF en ninguno de los dos
+equipos.** Las dos primeras ya no bloquean (§5.1); la tercera sigue bloqueando el post 7.
 
 ---
 
@@ -1275,6 +1342,41 @@ arranca con un 3 % de desajuste en todo lo que dependa de la torsión — y el L
 doble T **en los nueve valores geométricos** (A, I₃₃, I₂₂, S, Z, r). Ese cerró al último dígito. El
 `J` es la única propiedad que **no** coincide, y por eso vale la pena decirlo aparte.
 
+#### 5.40-bis No es un porcentaje: es una constante, y eso reconstruye las tres que faltaban
+
+Medido el 2026-08-13 al portar las secciones a rukan. Puestas las cuatro filas de arriba una al lado
+de otra, la diferencia **no varía**:
+
+| Sección | `J` de SAP | Σbt³/3 | Diferencia |
+|---|---|---|---|
+| COL_1 (d = 406,25) | 271 980,7 | 280 962,0 | **−8 981,3** |
+| COL_4 (d = 743,75) | 296 280,7 | 305 262,0 | **−8 981,3** |
+| DIN_1 (d = 725,00) | 294 930,7 | 303 912,0 | **−8 981,3** |
+| DIN_3 (d = 425,00) | 273 330,7 | 282 312,0 | **−8 981,3** |
+
+Las siete secciones tapered comparten ala (220 × 12) y alma (6 mm); lo único que cambia es el
+peralte, y el peralte entra **solo en el término del alma**. Que la diferencia sea constante dice
+entonces dónde vive: **entera en el término del ala**. El término del alma de SAP es exactamente
+`h·t_w³/3` con `h = d − 2t_f`, y el del ala es `0,321516·b_f·t_f³` en vez de `b_f·t_f³/3` — el
+factor de forma del rectángulo de aspecto finito, que la fórmula de manual ignora.
+
+Dos consecuencias:
+
+1. **El porcentaje era un artefacto.** Que vaya de −2,94 % a −3,20 % no es dispersión de medición:
+   es la misma constante dividida por un denominador que crece con el peralte. Por eso «crece cuando
+   el alma pesa poco en el total» — no hay nada que explicar más allá de la aritmética.
+2. **Las tres secciones que nadie midió quedan reconstruidas, sin inventar nada.** COL_2, COL_3 y
+   DIN_2 no tienen fila en la tabla de arriba porque el modelo solo se interrogó en las cuatro
+   extremas. Con `J = Σbt³/3 − 8 981,3 mm⁴` salen las tres: 280 080,7 · 288 180,7 · 284 130,7 mm⁴.
+   Son cuatro datos, un offset y cero grados de libertad sobrantes, y el ajuste cierra en las cuatro
+   al **último dígito** (diferencia 0,0 mm⁴, no redondeada). Eso es lo que permite construir el
+   segundo motor sin volver a abrir SAP2000.
+
+Los **cajones** no necesitan este rodeo: `A = b² − (b−2t)²`, `I = (b⁴ − (b−2t)⁴)/12` y
+`J = t·(b−t)³` (Bredt, sección cerrada) reproducen dígito a dígito los valores que el **caso 9** ya
+había extraído del modelo con `GetSectProps` para `CAJ100X4` y `CAJ125X6`. Y las áreas coinciden con
+las de §5.45: 1 536 · 1 136 · 2 856 mm².
+
 ### 5.41 La tesis del post 1 hubo que afilarla: el panorama ya había hecho el K_zt
 
 Al escribir el post 1 apareció un solapamiento que el plan **no** había previsto. El plan declaraba
@@ -1533,6 +1635,108 @@ vive esta diagonal— `R*_Y = 3,8302` y `Q₀Y/Q₀^mín = 130,257/70,860 = 1,83
 conclusión no cambia (1,9151 × 39,895 = 76,4 kN, uso 0,52), pero el número que se escriba en el
 post tiene que ser el de la dirección que corresponde.
 
+### 5.46 El segundo motor cazó una masa que no está: los pilares de hastial no se sacuden
+
+Medido el 2026-08-13 al construir el caso 10 en rukan/OpenSeesPy. Es el hallazgo que justifica la
+serie de dos motores, y no lo habría encontrado ninguna revisión de resultados.
+
+**El síntoma.** Con la geometría, las secciones y las cargas portadas del `galpon_altiplano_build`,
+rukan daba `T₁ = 0,883866 s` contra los **0,852657 s** de SAP: **3,66 % más flexible**. Nada más
+discrepaba.
+
+**Lo que descartó la rigidez.** El momento de alero bajo `G3A_B = 1,2(D+DSD) + 1,6·S_bal` **no
+involucra masa**, y en un marco hiperestático el reparto de momentos es hipersensible a la rigidez
+relativa. Cerró a la sexta cifra:
+
+| | rukan | SAP | error |
+|---|---|---|---|
+| `COL3A_4` M₃ (alero) | 633,2838 | 633,284 | 2,8e-7 |
+| `DIN3_1` M₃ (alero) | −633,2065 | −633,206 | 7,8e-7 |
+| `COL3A_1` M₃ (base) | 158,3210 | 158,321 | 2,8e-7 |
+| `COL3A_4` P | −180,3845 | −180,384 | 2,6e-6 |
+
+Antes, el **marco tipo aislado** se había contrastado contra una referencia de rigidez directa en
+**numpy puro** —sin OpenSees ni SAP—: la flecha de alero bajo `H = 1 kN` coincidió a **1,8e-13**. La
+rigidez del modelo, incluida la discretización del tapered, es correcta.
+
+**La causa.** La diferencia está entera en la masa, y es de los **pilares de hastial**. Excluyendo
+sus 77,89 kN (33,57 de peso propio y 44,32 del revestimiento que cargan):
+
+| | rukan | SAP |
+|---|---|---|
+| `T*_X` (modo 1) | 0,8526284592611 s | 0,8526565963541679 s — **3,3e-5** |
+| `T*_Y` (**modo 41**) | 0,1611500332159 s | 0,1610608923144279 s — 5,5e-4 |
+| U_x del modo 1 | 0,94630 | 0,94627 |
+| U_y del modo 41 | 0,47495 | 0,47422 |
+| Masa acumulada X / Y / Z | 0,9763 / 0,9783 / 0,6509 | 0,9763 / 0,9783 / 0,6513 |
+
+Que el modo dominante longitudinal caiga en el **puesto 41** —el mismo número, no un número
+parecido— es lo que cierra el argumento: no es un ajuste, es el mismo modelo.
+
+**El porqué, y es una sola causa para las dos mitades.** El pilar lleva la **`P` liberada arriba**
+(§6.2.2: «la `P` liberada evita que apuntalen el dintel del marco extremo»). Con la P liberada, todo
+su peso vertical —el propio y el del revestimiento— reacciona en su **propia base** y nunca llega al
+nudo de techo. SAP arrastra esa liberación al armado de la matriz de masa y deja el pilar entero
+fuera. Excluir solo el revestimiento no alcanza (`T₁ = 0,866214 s`); hay que excluir las dos mitades,
+que es justo lo que predice la explicación.
+
+**Confirmación independiente, por otro camino.** De los propios números de SAP:
+`Q₀X / S_a = 86,960229 / 0,1576606 = 551,6 kN` de peso efectivo, y con `U_x = 0,94627` eso implica
+una masa de referencia de **≈ 582 kN**. La masa que participa en rukan tras la exclusión es
+**582,033 kN**. Los dos caminos dan el mismo número sin haberse mirado.
+
+**Y acá está lo que importa para la norma.** El `P = 674,861 kN` que §5.35 usa para el `Q₀^mín` de la
+Ec. (12), para la banda de §5.12/§5.13 y para el `R₁` de la Ec. (14) **no es la masa que el modelo
+sacude**:
+
+| | kN | |
+|---|---|---|
+| `P` declarado para los chequeos normativos | **674,861** | |
+| Masa en el modelo dinámico de SAP | 596,969 | −77,89: el pilar de hastial |
+| Masa que efectivamente participa | **582,033** | −14,94 más: cae en nudos de base restringidos |
+
+El `Q₀^mín` se calcula con un `P` **16 % mayor** que la masa de la que sale el `Q₀` que se le
+compara. La banda no reprueba igual (§5.35 la deja dentro con holgura), pero el chequeo está
+comparando dos cosas que no salen de la misma masa, y eso hay que decirlo.
+
+**El juicio, que es lo discutible.** La liberación axial gobierna el camino de la carga **vertical**;
+la inercia **horizontal** del pilar existe igual —hay que acelerarlo—, y siendo biarticulado le
+entrega la mitad de esa inercia al techo. Que SAP arrastre el release a las tres componentes de masa
+es una decisión del programa, no de la norma. Acá se reproduce para poder contrastar, y el costo de
+no reproducirla está medido: **3,66 % de período**, del lado inseguro para el `T*` transversal (un
+`T*` más corto cae más arriba en el espectro… salvo que ya esté en la rama descendente, que es este
+caso, donde un `T*` más corto sube la demanda). El caso 10 lo deja como parámetro
+(`seismic_mass(..., include_pilar=)`) para que el post pueda mostrar las dos.
+
+### 5.47 La envolvente reproducida, y la estación que casi se pierde
+
+El caso 10 rehace las **79 combinaciones** y las tres envolventes (`ENV`, `ENVG` de gravedad y
+viento, `ENVE` de sismo) sobre los diez miembros de control. La de **gravedad y viento —63
+combinaciones, 30 valores— coincide exacta**; el peor error de las tres es **6,9e-3**, y cae en dos
+miembros gobernados por sismo (`PUN00_1` y `ARWA1_1`), que heredan el 0,14 % del `Q₀Y`.
+
+Por el camino apareció algo que vale como advertencia de lectura, no de motor. **El dintel de
+cumbrera no lo gobierna ninguno de sus dos extremos**: bajo `G3A_B` sus estaciones dan
+
+| estación | M₃ [kNm] |
+|---|---|
+| i (j = 6) | 163,041 |
+| **centro** | **207,932** ← gobierna |
+| j (cumbrera) | 193,624 |
+
+Mirar solo los extremos —que es lo que devuelve `localForces` de un elemento— se lleva **207,932 a
+193,624, un 6,9 % menos**, y del lado inseguro. SAP reporta tres estaciones por defecto y por eso lo
+ve; un motor que solo lea fuerzas de extremo tiene que reconstruir la parábola:
+`M_centro = (M_i − M_j)/2 + w·L²/8`, con el signo del diagrama —**la estación j lleva el momento de
+extremo cambiado de signo**—. Esa misma corrección de signo es la que hace calzar los signos de la
+tabla de §5.37, que sin ella salían al revés en la mitad de los miembros.
+
+También se comprobó que el `P_máx = 0,0` que SAP reporta para el pilar de hastial **no es un cero de
+redondeo**: es la estación superior, donde la `P` está liberada. El axial hay que leerlo en las dos
+estaciones, no solo en una.
+
+---
+
 ### 6.1 Fase 0 — sprint de PDF
 
 | # | Tarea | Estado |
@@ -1742,3 +1946,15 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
   velocidad básica en la **Tabla 1**. Las dos se leyeron rasterizadas el 2026-08-12 y están en §4.1.
   Queda corregir el wiki.
 - **rukan no tiene sección de peralte variable** ni `geom_transf` configurable. Ver plan, Fase 2.
+- **El estudio del «marco tipo» de §5.33 y §5.34 no es reproducible.** Sus resultados están en este
+  archivo, pero **sus entradas no**: no quedó script en `Skills_SAP` (los ocho `galpon_altiplano_*`
+  son del modelo 3D), y ni la carga ni la masa del marco con que se obtuvieron `T₁ = 0,370397 s`,
+  `δ_x = 0,158560 m` y los `M₃` de 463,088 / 145,537 kNm constan en ninguna parte. Sin ellas no se
+  puede contrastar contra el segundo motor. **Se rehace desde cero en rukan**, dejando el script
+  permanente, y las cifras viejas quedan como antecedente, no como patrón. Las conclusiones
+  cualitativas —que el prismático equivalente no es conservador, y que la deriva converge mucho más
+  lento que la flecha— se re-derivan; no se heredan.
+- **`FrameElement` de rukan no tiene liberación axial.** El pilar de hastial la necesita (P liberada
+  arriba), y el caso 10 la emula con un nudo propio en el tope atado al de techo por `equalDOF` en
+  Ux, Uy y Rz. Funciona y está verificado, pero es andamiaje del caso: si aparece un segundo
+  miembro con release axial, va al núcleo.
