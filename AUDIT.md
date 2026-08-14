@@ -58,6 +58,187 @@ Veredicto del post: ✅ limpio · ⚠️ con hallazgos · ❌ bloqueado
 > encontrados fueron todos de la clase que sí se caza sola —números que no trazaban a su fuente— y
 > los cinco se corrigieron en la misma pasada. **Estos tres posts merecen una segunda auditoría
 > independiente cuando el auditor vuelva a correr.**
+>
+> **Actualización del mismo día.** El auditor volvió a correr, uno por vez en vez de en paralelo, y
+> la segunda pasada independiente **está registrada abajo, post por post**. El aviso queda como
+> testimonio de lo que la autoauditoría no alcanzó a ver: en el post modal encontró **20 hallazgos**
+> donde la autoauditoría había encontrado 3, y el 🔴 era exactamente la clase que se anticipó —un
+> error de *interpretación* compartido entre quien escribió el número y quien lo verificó—.
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-modal-espectral` (2.ª pasada, auditor independiente) · ❌ bloqueado — 20 hallazgos (1🔴 7🟠 10🟡 2🔵), **los 20 aplicados**
+
+**Commit:** `311992c` (auditado) · **Auditor:** subagente `auditor`, read-only ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `case10_galpon_altiplano.py` corrido
+completo, `nota06_tapered_convergencia.py` corrido **e instrumentado** para sacar el rango de error
+real de sus cinco magnitudes, el modal de rukan re-corrido en **tres variantes de masa**
+(`include_pilar` True/False y una tercera parcheada que excluye solo el revestimiento), el espectro
+de NCh2369:2025 reimplementado desde los parámetros de `galpon_altiplano_espectral.py`, y los cuatro
+asserts de `render-galpon-modal.mjs` reproducidos a mano.
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🔴 | N C | §«La cadena completa» | **La explicación del 0,14 % del corte longitudinal era falsa en mecanismo y en signo.** Decía que hereda el 0,055 % del `T*_Y` y arrastra el 0,034 % del `R*_Y`. (a) Signo: rukan queda **por debajo** de SAP y los dos efectos empujan hacia arriba. (b) Magnitud: el efecto del período es +0,033 %, cuatro veces menor. (c) Mecanismo: **el `R*` propagado nunca entra** — el caso arma el espectro con `r_fixed = r_star_for(T_SAP["Y"])`, o sea el `R*` de SAP. Los dos motores corren el mismo | Reescrito: el residuo **no** se explica por la cadena del período, y queda atribuido a las formas modales y la CQC de los 60 modos. La observación correcta sobre la linealidad de la Ec. (1b) bajo el codo se conserva, pero separada | ✅ aplicado |
+| 2 | 🟠 | N | §«El síntoma» | «3,66 % largo, o sea un 7,5 % de rigidez de menos». Base equivocada: `K ∝ 1/T²` da **6,94 %**. El 7,45 % es el recíproco, que es lo mismo que decir 7,45 % de **masa de más** — que es lo que resultó ser | «6,94 % de rigidez de menos, o bien un 7,45 % de masa de más», con el `T ∝ √(M/K)` a la vista | ✅ aplicado |
+| 3 | 🟠 | N | tabla del modal + docstring de `seismic_mass` | «las tres masas acumuladas coinciden a la cuarta cifra»: X e Y sí, **Z no** (0,6509 contra 0,6513, 0,061 %). El assert usa `< 5e-4` **absoluto** y lo tolera. El mismo error estaba en el docstring de `case10_data.seismic_mass` | «X e Y a la cuarta cifra, Z a la tercera», en el post y en el docstring | ✅ aplicado |
+| 4 | 🟠 | N C | §«El juicio» | «el costo de no reproducirlo… eso mueve la demanda **hacia arriba**» — invertido. No reproducirlo alarga el período, y el `T*` transversal ya está en la rama descendente: `S_a/g` baja de 0,157661 a 0,150227, **−4,7 %**. §5.46 de `SERIE-GALPON.md` lo dice bien («del lado inseguro») y el post perdió la palabra al condensarlo | Reescrito con signo explícito y el «lado inseguro» restituido | ✅ aplicado |
+| 5 | 🟠 | C | `description`, §«El juicio», veredicto, caja roja del SVG | **La acotación epistémica no salía de su `<Note>`.** Cuatro lugares posteriores —y la `description`, que es el más citable— volvían a hablar del mecanismo como hecho establecido. La caja roja de `la-masa-que-no-se-sacude.svg` es el peor caso: viaja sola cuando la figura se comparte | Distinguido en los cinco lugares el **hecho medido** (la masa del pilar no está en el modal de SAP) de la **explicación propuesta** (que la causa sea el arrastre del *release*), con «todo indica que» / «se comporta como si». Figura regenerada | ✅ aplicado |
+| 6 | 🟠 | R C | tabla de la cadena | La cabecera dice `SAP2000`, pero **las dos filas de `R*` no son salidas de SAP**: lo calcula `r_star()` del script de Python que le arma el espectro. Es un contraste entre dos implementaciones de la Ec. (1b), no entre dos motores | Nota al pie con daga que lo dice | ✅ aplicado |
+| 7 | 🟠 | C E | §«Lo que este post no rehace» | «Los **cinco** errores de aquel post son cosas que el ingeniero eligió mal». El caso 5 de `oficio-errores-sin-alarma` dice literalmente lo contrario: «Los cuatro anteriores son trampas de una herramienta comercial. **Este es de código propio**» — el bug de la rama `R = 1`, de la misma especie que este hallazgo. Debilitaba la bisagra del deslinde | «Los cuatro primeros errores» | ✅ aplicado |
+| 8 | 🟠 | L | todo el cuerpo + frontmatter | **NCh2369 no se nombraba ni una vez en el cuerpo**, y el post cita Ec. (12), Ec. (14), Ec. (1b), §5.12 y §5.13 sin norma ni edición. Aparecía solo en `tags`, y el frontmatter no usaba el campo `norm` que 10 posts de `blog` sí declaran | Norma con edición en las primeras citas y `norm: "NCh2369:2025"` en el frontmatter | ✅ aplicado |
+| 9 | 🟡 | N R | §«El peldaño» | «arma el galpón completo **en OpenSeesPy** — 105 nodos». 105 es el conteo del `.sdb`; el modelo de OpenSeesPy tiene **115**, porque `PILAR_TIE` agrega un nodo de tope por pilar — que es justamente el mecanismo con que rukan reproduce la `P` liberada. Atribuir 105 a OpenSeesPy contradice de pasada la explicación del propio post | Los dos conteos, atribuido cada uno a su modelo | ✅ aplicado |
+| 10 | 🟡 | U L | tabla de rigidez | Sin unidades (633,2838 y 158,3210 son kN·m; −180,3845 es kN), y llamaba «rodilla» y «alero» al **mismo nudo** en filas contiguas, mientras la fuente usa «alero» para los dos | `[kN·m]`/`[kN]` en la columna y «alero» en todo el post y en la figura 2 | ✅ aplicado |
+| 11 | 🟡 | N | tabla de la cadena | La columna «error» de las filas de `R*` decía `10⁻¹²`, que es la **tolerancia del assert**, no el error medido (~5 × 10⁻¹⁶). Inflaba el error tres órdenes | `< 10⁻¹⁵` | ✅ aplicado |
+| 12 | 🟡 | U F | §«La confirmación» | Tres imprecisiones: `W_ref` aparece en la ecuación y **nunca se define** —y es el que se despeja—; llamaba «masa modal» a `U_x = 0,94627`, que es una **razón**; y «ordenada espectral de diseño» a 0,1576606, que es `S_a/g` | Definido `W_ref`, «fracción de masa participativa», «normalizada por g» | ✅ aplicado |
+| 13 | 🟡 | N F | figura 2 vs tabla | La caja verde decía «bajo **1,2D + 1,6S**» y la tabla `1,2(D + D_sd) + 1,6 S`. `D_sd` vale 302,96 kN, **más** que el `D` de 233,66: omitirlo no es cosmético. Además faltaba «balanceada», y §5.47 registra que la **desbalanceada** gobierna el dintel medio | La misma combinación escrita igual en los tres lugares, con el subíndice `bal` | ✅ aplicado |
+| 14 | 🟡 | F | figura 1 | (a) La caja roja decía «**15,9 %** mayor» y la prosa «**16 %**» — dos números para el mismo dato. (b) La caja roja lleva **la tesis normativa del post** y ni el `alt` ni el `caption` la reproducían: un lector no vidente no la recibía | Redondeo unificado a 16 % en la figura, y la frase de la caja roja agregada al `alt` | ✅ aplicado |
+| 15 | 🟡 | F | §«La cadena completa» | La prosa decía «§5.4 a **§5.14**» y el `label` de la `Equation` «§5.4 a **§5.13**» | «§5.4 a §5.13» en los dos | ✅ aplicado |
+| 16 | 🟡 | F U | §«La confirmación» | El `label` «Ec. 1» **nunca se referencia** en la prosa y colisiona visualmente con las Ec. (1b), (12) y (14) de NCh2369 que el mismo post cita — dos numeraciones con el mismo prefijo | `label` quitado | ✅ aplicado |
+| 17 | 🟡 | R | `<Note>` de la inferencia | El 0,866214 s de «descontar solo el revestimiento» **no es reproducible** con lo que el post ofrece: `include_pilar` es un booleano que gobierna a la vez el peso propio y el revestimiento. El auditor reimplementó la variante y confirmó el número (0,866214252971 s), pero un lector que siga «Reproducir» no llega a él | Declarado en la `<Note>` que esa variante se midió parcheando `seismic_mass` | ✅ aplicado |
+| 18 | 🟡 | R | §«La cadena completa» | Faltaban dos supuestos que mueven **todo** el espectro: **ξ = 0,02** —el factor `(0,05/ξ)^0,4 = 1,443`— y la zona sísmica 2 con los parámetros de suelo B. El post daba «R = 4, suelo B» y nada más; sin eso ni el 0,1576606 ni la banda son recalculables | Línea de parámetros del sitio completa (A_r, S, T_0, T_1, p, q, r, I, R, ξ), leídos de `galpon_altiplano_espectral.py` y de la Tabla 3 verificada en §5.27 | ✅ aplicado |
+| 19 | 🔵 | C | `<Note>` de la inferencia | El argumento «si la causa fuera otra, no habría razón para que las dos mitades cayeran juntas» **no discrimina entre hipótesis**: cualquier mecanismo que descarte el elemento `PIL` entero descarta sus dos mitades a la vez —el manejo del nudo de tope, un filtro de la fuente de masa—. Lo que cerraría el punto: abrir el `.sdb` y leer `Assign > Joint > Masses` de los nudos de techo de los marcos 1 y 5 | Anotado en la `<Note>` que no se evaluaron hipótesis alternativas y qué las distinguiría | ✅ aplicado |
+| 20 | 🔵 | R | §«La confirmación» | Procedencia de los datos de SAP: `U_x` **sí** está en la cabecera `# Result:` de `galpon_altiplano_build.py`, y el `S_a/g = 0,1576606` se reimplementó exacto (0,15766063212). Pero `Q_0X = 86,960229` **no está en ninguna cabecera**: su única fuente escrita es la tabla de `Skills_SAP/scripts/README.md`, mantenida a mano | Declarado en el post, con la deuda de estampar una cabecera al volver al equipo con SAP2000 | ✅ aplicado |
+
+**Verificado y correcto (lo que el auditor recalculó y cerró):** los 188 miembros; el peso de acero
+con error `0,00e+00` («al último bit» es exacto); el equilibrio de los 11 estados con residuo máximo
+`6,074e-11`; los cuatro contrastes de rigidez a la sexta cifra; el rango `1,7e-14`–`1,1e-12` de la
+referencia numpy, medido instrumentando `nota06`; **los tres períodos re-corridos por su cuenta**
+(0,883865617973 / 0,852628459261 / 0,866214252971 s) con sus masas totales; la cascada de masa
+completa y la brecha del 15,95 %; los diez valores de la tabla modal dígito a dígito y el modo Y en
+el puesto 41 en los dos motores; `S_a/g` en las dos direcciones y el codo de la Ec. (1b) en
+`0,16·4·0,27 = 0,1728 s`; la banda `[70,86041 ; 224,90669]` recalculada desde §5.12 y §5.13; el
+deslinde de los dos posts antecedentes, leídos enteros; los cuatro enlaces internos; los dos SVG; el
+frontmatter contra el schema Zod; y el idioma (sin voseo, sin regionalismos).
+
+**No verificable, y declarado en el post:** el mecanismo por el que SAP excluye la masa (hace falta
+el `.sdb` abierto); los valores del modelo congelado que solo existen como texto en cabeceras
+`# Result:`; y el 0,14 % residual del `Q_0Y`, que pediría comparar los 60 pares modo a modo.
+
+**Planilla del canvas:** parcial — el corazón del post sale de dos motores y ninguna planilla puede
+reproducirlo, pero hay una sub-cadena cerrada sin cubrir (cascada de masa → `S_a` → `R*` → banda →
+`W = Q_0X/(S_a/g)/U_x`). Ojo con la superposición: `public/planillas/galpon-altiplano-sismico-nch2369.json`
+ya cubre `Q_0^mín`, `Q_0^máx`, la banda y el `R_1` de la Ec. (14) con **P = 674,861 kN sin
+cuestionar** — que es justo el número que este post pone en duda. Lo natural sería un bloque nuevo
+en esa planilla, no una planilla aparte. Queda anotado como deuda.
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-envolvente` (2.ª pasada, auditor independiente) · ❌ bloqueado — 19 hallazgos (2🔴 7🟠 7🟡 3🔵), **los 19 aplicados**
+
+**Commit:** `311992c` (auditado) · **Auditor:** subagente `auditor`, read-only ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `case10_galpon_altiplano.py` corrido
+completo (~90 s) más dos scripts propios sobre `case10_data.py`; el reparto 63 + 12 + 4 recontado
+desde el generador; la `ENVG` recalculada con precisión plena en sus 30 valores; y **cuatro cláusulas
+leídas rasterizadas del PDF**: NCh3171:2017 §9 (pág. 9), NCh2369:2025 §4.5.1 (pág. 15) y §4.5.2
+(pág. 16), y NCh432:2025 §7.3.5 / §7.3.7 (págs. 49-50).
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🔴 | N C | §«Las tres envolventes» | **Repetía la explicación que la auditoría del post 4 había desmentido**: «hereda el 0,14 % del corte basal longitudinal, que a su vez hereda el 0,055 % del $T^*_Y$. Se propaga entero». El $T^*_Y$ de rukan es más largo y cae en rama ascendente, así que su efecto es **+0,032 %** mientras el $Q_{0Y}$ queda **−0,14 %** — signo al revés y magnitud 4,5 veces menor. Y no se propaga entero: 0,00686/0,00143 = **×4,8** | Reescrito: el 0,14 % es residuo de formas modales y CQC de los 60 modos (con enlace al post del modal), y en `PUN00_1` se amplifica ~×5 porque la respuesta es chica (16,002 contra 16,113 kN) | ✅ aplicado |
+| 2 | 🔴 | N U | Ec. 1 y su `<Note>` | **La Ec. 1 no cerraba con la tabla que la precede.** Estaba escrita como $(M_i - M_j)/2 + wL^2/8$, que solo cierra con la convención cruda de `localForces` ($F_{11} = -193{,}624$); con los valores **publicados** —que son los del diagrama— da **14,31** kN·m, no 207,932. Peor: con esos valores, la forma que el post declaraba **mala** —$(M_i+M_j)/2$— es justamente la correcta. Y $w$ y $L$ no se publicaban, así que la ecuación no era evaluable | Ec. 1 reescrita en signo de diagrama, $(M_i + M_j)/2 + wL^2/8$, con $L = 4{,}06171$ m y $w = 14{,}35358$ kN/m publicados y la evaluación completa a la vista. La `<Note>` invierte la trampa: lo que falla es pasarle la salida cruda, que da 14,31 «sin romper nada». Corregidos también `render-galpon-envolvente.mjs` y el SVG | ✅ aplicado |
+| 3 | 🟠 | N | título, `description`, §«Nueve de setenta y nueve» | «exactamente **nueve**» depende de una convención de conteo no declarada: el caso imprime **10 de 79**, y el décimo es el ganador del empate en 0,0 del pilar (`G1` en rukan, `E3N_A` en SAP). Con las gobernantes de SAP el conteo mecánico también da 10 | Declarada la convención en el mismo párrafo: el conteo mecánico da diez y el décimo no decide nada | ✅ aplicado |
+| 4 | 🟠 | C E | §«Las tres envolventes», tabla de gobernantes, `<Note>` de la nieve | **Deslinde.** El apunte hermano `/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones` (post 3 de la misma serie, publicado el 2026-08-12) **ya publica** la cita de NCh3171 §9, el reparto 63/12/4, la tabla de gobernantes, «son nueve de las 79… no se sabe cuáles hasta haberlas corrido todas» y «la nieve desbalanceada gobierna el dintel a media luz». El post 10 las presentaba como propias y no lo enlazaba | Enlazado dos veces, y el énfasis corrido a lo que sí es de este post: que **el segundo motor elige la misma ganadora sin buscarla** | ✅ aplicado |
+| 5 | 🟠 | N | §«El último peldaño» | «armado en OpenSeesPy con sus **105 nodos**»: en rukan son **115**; 105 son los del `.sdb`. Los posts 8 y 9 ya lo dicen bien | Los dos conteos, como en los otros dos posts | ✅ aplicado |
+| 6 | 🟠 | C | cierre | «el galpón queda armado y confrontado en los dos motores… **sin abrir SAP2000 en ningún momento**». El modelo SAP2000 sí se armó abriendo SAP2000 (Fase 2 vía MCP, §6.2, cinco scripts de la OAPI). Lo que se hizo sin el programa es el **caso 10 de rukan** | «el segundo se construyó entero en un equipo sin SAP2000 instalado, contra el modelo congelado» | ✅ aplicado |
+| 7 | 🟠 | N U | §«Por qué el segundo motor no debe tener módulo de viento» | «mete un $1/\cos 10° = 1{,}5\ \%$»: la igualdad es falsa. $1/\cos 10° = 1{,}015427$; el **exceso** es 1,54 % | «un factor $1/\cos 10° = 1{,}0154$ —un 1,5 %—» | ✅ aplicado |
+| 8 | 🟠 | L | cinco citas + frontmatter | **Ninguna norma chilena citada con edición**: «NCh3171 §9», «§9.1.1», «NCh2369 §4.5.1», «§4.5.2», «NCh432». NCh2369 tiene dos ediciones vivas en el sitio y §4.5.1 cambia entre ellas — el post 3 de esta misma serie tiene como tesis una excepción que apunta a la de 2003. Y el frontmatter no declaraba `norm` | NCh3171:2017, NCh2369:2025 y NCh432:2025 en todas las citas (post y figura), y `norm: "NCh3171:2017 / NCh2369:2025"` | ✅ aplicado |
+| 9 | 🟠 | N | `<Note>` del signo | «sin ella salían al revés en la mitad de los miembros, **con las magnitudes correctas**». El comentario del propio extractor dice lo contrario: «y las magnitudes tampoco». Es cierto solo para las estaciones de extremo, donde cambiar el signo no cambia el módulo; en la central la magnitud pasa de 207,932 a 14,31. Además remitía a «la tabla de gobernantes» de este post, que no muestra signos | Acotado a las estaciones de extremo, con la central declarada aparte, y la remisión corregida a la tabla de esfuerzos de §5.37 de la memoria | ✅ aplicado |
+| 10 | 🟡 | N | `description` vs cuerpo | «un **7 %** del lado inseguro» en la *description* y «6,9 %» en el cuerpo y en la figura (exacto 6,881 %) | 6,9 % en los tres | ✅ aplicado |
+| 11 | 🟡 | N E | figura 1 | El subtítulo dibujaba «NCh3171 §9.1.1, **combinaciones (1) a (7)**», pero las 63 salen de seis ramas: (1), (2), (3a), (3b), (4) y (6). La **(5) y la (7) no se escriben** —son las que llevan E, y esa rama la reemplaza NCh2369—, cosa que el apunte del post 3 sí explica | «NCh3171:2017 §9.1.1, ramas (1), (2), (3a), (3b), (4) y (6)» | ✅ aplicado |
+| 12 | 🟡 | F | Ec. 1 | Etiquetada `Ec. 1` y nunca referenciada por su etiqueta en la prosa | Referenciada dos veces (la evaluación y el veredicto) | ✅ aplicado |
+| 13 | 🟡 | L E | §«Que las combinaciones cuadren» | «El **caso 8**» lleva a un post titulado «Rukan (**6**)»: la numeración de casos del repo no es la de la serie del blog. El post 0 lo aclara; este no | La aclaración del post 0, repetida | ✅ aplicado |
+| 14 | 🟡 | F | tabla de gobernantes | No declaraba de qué motor son los nombres, y la celda «—» del pilar no es lo que reporta ninguno de los dos | «Los nombres son los que reporta rukan, y coinciden con los de SAP salvo donde se indica», y la celda marcada *(empate)* | ✅ aplicado |
+| 15 | 🟡 | L | tabla de gobernantes | «Columna, **rodilla**» y «Dintel, **alero**» nombran los dos extremos que concurren al mismo nudo, en la misma tabla | **rodilla** en las dos filas — y, de paso, unificado en los tres posts de la tanda: el post 9 y su figura también decían «alero» donde el post 8 dice «rodilla» | ✅ aplicado |
+| 16 | 🟡 | U | §«Las tres envolventes» | El «peor error» iba como $6{,}9 \times 10^{-3}$ (adimensional) y dos líneas después convivían «0,14 %» y «0,055 %». Invita a leer 6,9e-3 como 0,0069 % | **0,69 %**, para que la comparación con el 0,14 % sea directa | ✅ aplicado |
+| 17 | 🔵 | R | §«Las tres envolventes» | «4 de una rama ilustrativa con $R = 5$» aparecía sin explicar qué es ni de dónde sale | Cláusula de contexto y enlace al apunte que la arma | ✅ aplicado |
+| 18 | 🔵 | R | `<Note>` de la nieve | Ni $S = 1{,}20$ kPa ni el 100 %/50 % de la desbalanceada se atribuían a fuente. En `case10_data.py` son estudio de sitio y decisión de proyecto —NCh431 no está en PDF en ninguno de los dos equipos—, no cláusula | Declarado en una línea | ✅ aplicado |
+| 19 | 🔵 | L | cita de NCh3171 §9 | La cita textual se transcribía «…**estas** prevalecen»; el PDF (pág. impresa 9, rasterizada) imprime «**éstas** prevalecen» | Grafía impresa respetada dentro de las comillas | ✅ aplicado |
+
+**Verificado y correcto:** las **79** combinaciones y su reparto **63 + 12 + 4**, recontado desde el
+generador (1 + 3·(1+1+8+8) + 8 = 63; 3·2·2 = 12; 2·2 = 4) y nombre a nombre contra el `# Result:` de
+`galpon_altiplano_combos.py`; la **tabla completa de gobernantes**, las 30 celdas idénticas a la
+corrida y a `GOB_SAP`, incluido el `G3A_I` del dintel medio; **29 de 30** contra SAP; la **`ENVG`
+exacta en los 30 valores** recalculada con precisión plena (peor desvío 3,1 × 10⁻⁴ relativo, puro
+redondeo de la tercera decimal que SAP publica); el peor error de `ENVE` y `ENV` (6,86 × 10⁻³, mismo
+par en los dos); las **tres estaciones** del dintel de cumbrera (163,0409 / 207,9321 / 193,6238)
+reproducidas desde los casos estáticos con `wL²/8 = 29,5997`, el 6,881 % de pérdida y que el máximo
+esté en el centro; el **$P_{máx} = 0{,}0$ exacto** del pilar y por tanto el empate; las **cinco
+resultantes de viento a 4,55 × 10⁻⁷ kN**; el port literal de los $GC_{pf}$ (tablas e interpolación a
+10° idénticas al script de SAP); nieve por proyección vs muerta por largo de barra; 11 estados y 188
+barras; enlaces, activos, frontmatter, imports y `Note` válidos; y el idioma.
+
+**No verificable:** que SAP2000 «reporte **tres estaciones por defecto**» —no hay SAP2000 acá; lo que
+sí está probado es que **ve** la estación central, porque su $|M_3|$ de `DIN3_3` es 207,932, y el post
+se corrigió a decir eso—; el 207,9321 «medido partiendo el elemento en dos» no se re-corrió (coincide
+con la reconstrucción analítica, pero el sub-modelo partido no vive en el caso); y «exacta» solo puede
+significar «coincide en todas las cifras que SAP publica», porque las cabeceras traen tres decimales.
+
+**Planilla del canvas:** no · **0 verificaciones demanda–capacidad** — la cadena no es cerrada: los 30
+valores de envolvente y las gobernantes salen del modelo. El árbol de 79 combinaciones y sus
+resultantes **ya están cubiertos** por `public/planillas/galpon-altiplano-cargas-combinaciones.json`,
+del apunte del post 3 — un motivo más para enlazarlo, que es el hallazgo 4.
+
+### 2026-08-14 · `blog/rukan-verificacion-galpon-tapered` (2.ª pasada, auditor independiente) · ⚠️ 21 hallazgos (1🔴 6🟠 11🟡 3🔵), **los 21 aplicados**
+
+**Commit:** `311992c` (auditado) · **Auditor:** subagente `auditor`, read-only ·
+**Categorías cubiertas:** N U L F E C R · **Recalculado:** sí — `nota06_tapered_convergencia.py` y
+`case10_galpon_altiplano.py` corridos completos, la malla no uniforme (4, 3) medida aparte, la trampa
+de la carga transversal reinstrumentada anulando `wx`, el offset del `J` recalculado desde
+`Σbt³/3`, y §6.3 de NCh2369:2025 leída **rasterizada** (pág. impresa 69).
+
+| # | Sev | Cat | Ubicación | Hallazgo | Fix | Estado |
+|---|-----|-----|-----------|----------|-----|--------|
+| 1 | 🔴 | N | `<Note>` «Entre los tres prismáticos» y caption fig. 1 | «El período va de 1,71 s a 0,70 s —un factor **2,4** en rigidez—» y «pese a cubrir un rango de **rigidez** de 2,4 veces». El 2,4 es la razón de **períodos** (1,706659/0,702282 = 2,4302). La rigidez lateral medida sobre la deriva bajo la misma carga es 6,030439/0,956803 = **6,303** — y coincide con `I₈₀₀/I₃₅₀ = 6,263`. El SVG dice bien «El período se mueve ×2,4»; era la prosa la que lo convertía en rigidez | «un factor 2,4, que en rigidez lateral es **6,3**: la deriva bajo la misma carga cae de 6,03 a 0,96 mm», y el caption con 6,3 | ✅ aplicado |
+| 2 | 🟠 | N | `<Note>` «La regla práctica» y anotación de fig. 2 | «El modelo del galpón usa cuatro tramos en la columna y tres por faldón: **4 % de error en deriva**». La tabla de convergencia y la figura son `Marco(n, n)` —n tramos en columna **y** en faldón—, así que la fila N = 4 (3,98 %) **no es la malla del modelo**. Corrido `Marco(4, 3)`: deriva +**4,99 %**, `T₁` +1,43 %, flecha **−0,62 %** (no +0,11 %). La figura rotulaba la línea N = 4 como «la malla del modelo» | «5 % de error en deriva» con los tres valores de la malla real, y la línea de la figura rotulada «N = 4 uniforme» (script y `alt`) | ✅ aplicado |
+| 3 | 🟠 | N | tabla de los dos caminos vs tabla de prismáticos | Las dos tablas miden **las mismas magnitudes en las mismas estaciones con mallas distintas**, sin decirlo: momento de rodilla 666,9801 (malla 4/3) contra **678,46** (N = 36), deriva 1,5385 contra **1,4654**, flecha 171,6586 contra 172,7265. Y la primera llama «Momento de alero» a lo que la segunda llama «M rodilla» | Cada tabla rotulada con su malla en la cabecera, una frase que avisa del cambio, y «rodilla» en las dos | ✅ aplicado |
+| 4 | 🟠 | N | `description` vs veredicto | La *description* decía «sobreestima el de cumbrera un **76 %**» y el veredicto «la cumbrera **77 %** larga». Medidos: +75,565 (d = 350), +77,216 (d = 575), +78,920 (d = 800). El par 19/76 es el de d = 350; el 77 es el de d = 575 | Las dos con el prismático de peralte medio (d = 575): 19 % / 77 %, y el veredicto dice cuál es | ✅ aplicado |
+| 5 | 🟠 | C | §«Lo que este caso agrega» | «Los **ocho** peldaños anteriores de Rukan verificaron el motor contra un modelo de SAP2000 abierto en la máquina de al lado». Falso para los tres primeros: `verification/README.md` da «mano» como patrón de los casos 1, 2 y 3, y el post Rukan (3) se titula «el salto a SAP2000». Solo **5 de los 8** | «los que llegaron a SAP2000 —cinco de los ocho; los tres primeros se contrastaron a mano—» | ✅ aplicado |
+| 6 | 🟠 | R | §«Los dos caminos» | El marco tipo se declara «por completo» y «las cargas también, porque sin ellas el estudio no se puede rehacer», pero faltaban cuatro entradas que el script sí usa: **D_muro = 0,12 kPa** sobre las columnas —justo el revestimiento que la `<Note>` siguiente dice que se perdía—, **E = 200 000 MPa**, **ν = 0,3** y **γ = 76,9822 kN/m³** | Los cuatro agregados, leídos de `nota06_tapered_convergencia.py` | ✅ aplicado |
+| 7 | 🟠 | N | caption fig. 2 vs `<Note>` «La regla práctica» | El caption decía «un error de la deriva que es **dos órdenes de magnitud** mayor» y la `<Note>` «un orden de magnitud». El factor es 14,5 → 1,16 órdenes; sube a 34,9 en N = 4 y 54,6 en N = 12, nunca a dos | «más de un orden de magnitud» en los dos | ✅ aplicado |
+| 8 | 🟡 | F | imports | `Equation` importado y **no usado**: el post no tiene ningún `<Equation>` | Import borrado | ✅ aplicado |
+| 9 | 🟡 | N | §«El prismático equivalente» | «entre 18 y 19 %» y «entre 76 y 79 %». Medidos: −17,968 / −18,612 / −**19,270** y +**75,565** / +77,216 / +78,920. Ninguno de los dos intervalos contenía sus extremos | «entre 18 y 19,3 %» y «entre 75,6 y 78,9 %» | ✅ aplicado |
+| 10 | 🟡 | L | tabla del modelo completo | La combinación escrita «$1{,}2D + 1{,}6S$» donde el resto del post usa «$1{,}2(D + D_{sd}) + 1{,}6\,S$». Es la misma G3A_B, y la forma corta omite `D_sd` = 302,96 kN, el 56 % de la muerta | La forma completa, con el subíndice `bal`, en la cabecera de la tabla | ✅ aplicado |
+| 11 | 🟡 | L | §«Lo que este post no rehace» | Un post titulado «Rukan (**8**)» enlaza «El **caso 8**» a un post titulado «Rukan (**6**)». Es correcto —caso 8 = `case08_gable_loads`, publicado en la sexta entrega— pero el post no lo explicaba; el post 0 sí | La aclaración del post 0, repetida en la primera mención | ✅ aplicado |
+| 12 | 🟡 | U | tabla del modelo completo | La columna «rukan vs SAP2000» mezclaba una magnitud absoluta (6 × 10⁻¹¹ **kN**) con errores relativos adimensionales bajo un encabezado único | «residuo» / «error relativo» explícitos en cada fila | ✅ aplicado |
+| 13 | 🟡 | L | 1.ª aparición de *tapered* | Usada 11 veces sin cursiva en su estreno, mientras *Non-prismatic* sí va en cursiva en el mismo post | Cursiva en la primera aparición | ✅ aplicado |
+| 14 | 🟡 | U | varias | Notación mixta: `$d$` en math con el `=` fuera («prismático $d$ = 350 mm») contra «$d = 575$»; y `N` nunca en math mode | `$d = 350$ mm` y `$N = 1$` en toda la prosa (los `alt`/`caption` quedan en texto plano, que es donde no renderiza) | ✅ aplicado |
+| 15 | 🟡 | L | `<Note>` «La regla práctica» | «en NCh2369 §6.3 lo es» — norma **sin edición**, contra la regla de CLAUDE.md. El auditor la verificó rasterizada: §6.3 «Desplazamientos sísmicos máximos», estructuras en general `d^máx = 0,015 h`. La cláusula y el contenido son correctos | «NCh2369:2025 §6.3» y `norm: "NCh2369:2025"` en el frontmatter | ✅ aplicado |
+| 16 | 🟡 | C | `<Note>` del `J` | «**Tiene que serlo**: el peralte entra solo en el término del alma, así que toda la discrepancia vive en el término del ala». La inferencia estaba al revés — si SAP usara otro coeficiente de alma, la diferencia variaría con `d`. Es la **constancia medida** la que prueba dónde vive, y así lo dice §5.40-bis | «Y eso dice dónde vive: como el peralte solo entra en el término del alma, una diferencia que no cambia con $d$ tiene que estar entera en el término del ala» | ✅ aplicado |
+| 17 | 🟡 | N | pie de fig. 1 vs prosa | El pie del SVG imprimía «los mismos **552,2 y 373,4**» (1 decimal) y la prosa «**552,18 y 373,44**» (2) para la misma identidad | `COMA(..., 2)` en `render-galpon-tapered.mjs`; figura regenerada y mirada | ✅ aplicado |
+| 18 | 🟡 | F | veredicto, punto 3 | 109 columnas contra las 92-102 del resto del cuerpo | Reenvuelto | ✅ aplicado |
+| 19 | 🔵 | N | §«El modelo completo» | «el caso 10 arma el galpón entero en OpenSeesPy —**105 nodos**». El modelo de rukan tiene **115**: los 105 del `.sdb` más los 10 nudos de tope que emulan la liberación axial | Los dos conteos, atribuido cada uno a su modelo (igual que en el post 4) | ✅ aplicado |
+| 20 | 🔵 | N | `<Note>` «El prismático de peralte medio ES N = 1» | «se separan un 1,5 % y un 6,2 %» sin declarar la base. Cierra con N = 1 como denominador; con la otra base el segundo sería 6,57 % | «tomando $N = 1$ como base» | ✅ aplicado |
+| 21 | 🔵 | C | `<Note>` «La regla práctica» | «un 46 % encima lo manda muy por arriba» mezclaba dos referencias: el 46,41 % es el error de N = 1 contra N = 36 en el **marco tipo 2D**, y el 94,6 % es la deriva del **galpón 3D** ya calculada con la malla (4, 3), que por el hallazgo 2 ya trae ~5 %. La conclusión aguanta, pero la aritmética que el lector reconstruiría no era la del post | Encadenado explícito: respecto de su propia malla, $N = 1$ sube la deriva un **39 %**, y 94,6 × 1,39 = **132 %** | ✅ aplicado |
+
+**Verificado y correcto:** la **tabla de los dos caminos** (0,8739 s · 1,5385 mm · 171,6586 mm ·
+666,9801 · 225,5761 kN·m, error 0,0000 % en las cinco) y la **tabla de los tres prismáticos** son
+exactas dígito a dígito; la **tabla de convergencia** entera contra `Marco(n, n)`; «los momentos se
+corren menos de un 2 %» (1,612 % y 1,911 %, que son el «1,6 % y 1,9 %» del `alt`); **la identidad
+N = 1 ≡ prismático 575** recorrida por su cuenta (552,181227 / 373,439820 contra 552,181191 /
+373,439786, 7 × 10⁻⁸), que además se extiende a la flecha —0,178252 m por las dos vías— y el post no
+lo reclama; el **factor 14,5** (46,4099/3,1991 = 14,507); la **trampa de la carga transversal**
+reinstrumentada anulando `wx` → 161,5616 contra 171,6586 mm = −5,88 %, o sea el «6 % menos»; la
+tabla del modelo completo contra la corrida del caso 10; el **offset del `J`** (−8 981,3 mm⁴ =
+−8 981,3 · 10⁻¹² m⁴) recalculado desde `Σbt³/3` con los porcentajes 3,197 % y 2,942 %, y el post
+**acota bien** el alcance —dice «las cuatro secciones **que se midieron**» y «las **tres** que nadie
+había medido», no habla como si tuviera las siete—; el 94,6 % del límite contra la cabecera de
+`galpon_altiplano_deriva.py`; **§6.3 de NCh2369:2025 leída rasterizada**; los dos SVG al día contra
+su script y todos los números de sus `alt`; los cuatro enlaces internos; el frontmatter contra el
+schema Zod; el **deslinde**, verificado leyendo enteros los dos posts que el post cede; y el idioma.
+
+**No verificable:** todo lo que sale del `.sdb` (`acero_kg`, los `T*`, la envolvente de los 10
+miembros de control, la deriva 0,113504 m, las combinaciones gobernantes) — solo se comprobó que
+rukan las **reproduce** y que coinciden con las cabeceras congeladas; el `J` de `GetSectProps` de las
+cuatro secciones medidas en valor absoluto (la **constancia** del offset sí se recalculó y cierra al
+último dígito); y que la sección *Non-prismatic* de SAP2000 integre la variación como el post
+describe, que es documentación del programa.
+
+**Corrección arrastrada a la memoria de cálculo:** §5.40-bis proponía `0,321516·b_f·t_f³` como
+explicación del offset, y ese coeficiente implica 8 985,9 mm⁴ en vez de 8 981,3. El que cierra
+exacto es **0,3215208** (244 458,7 / (2 · 220 · 12³)). Corregido en `SERIE-GALPON.md`. El post no
+cita el coeficiente, así que no era hallazgo suyo.
+
+**Planilla del canvas:** no · **0 verificaciones demanda–capacidad** — el dato duro sale de resolver
+dos veces una matriz de rigidez y de un modelo congelado, no de una cadena aritmética escrita en el
+post. Lo único cerrado son `A`, `I` y `Σbt³/3` de la doble T soldada más el offset del `J`: daría una
+micro-planilla de propiedades de sección (7 peraltes) pero sin veredicto ✓/✗. Queda descartada.
 
 ### 2026-08-14 · `blog/rukan-verificacion-galpon-envolvente` · ⚠️ autoauditado, 2 hallazgos aplicados
 

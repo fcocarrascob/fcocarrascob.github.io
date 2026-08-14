@@ -74,5 +74,5 @@
   <text x="660" y="454" font-size="11.5" fill="#6b7280" text-anchor="start">peralte parejo no redistribuye nada.</text>
   <rect x="48" y="528" width="904" height="60" rx="8" fill="#f7f9fb" stroke="#d1d5db" stroke-width="1.2"/>
   <text x="70" y="554" font-size="13" fill="#333" text-anchor="start" font-weight="bold">El prismático de peralte medio (d = 575 mm) NO es una alternativa a discretizar: es la malla de UN tramo.</text>
-  <text x="70" y="574" font-size="12" fill="#6b7280" text-anchor="start">Con N = 1 la sección se toma en el punto medio del miembro, y el reparto de momentos da los mismos 552,2 y 373,4 kN·m.</text>
+  <text x="70" y="574" font-size="12" fill="#6b7280" text-anchor="start">Con N = 1 la sección se toma en el punto medio del miembro, y el reparto de momentos da los mismos 552,18 y 373,44 kN·m.</text>
 </svg>

@@ -3,7 +3,7 @@
   <text x="48" y="46" font-size="21" fill="#333" text-anchor="start" font-weight="bold">De 79 combinaciones, nueve dimensionan algo</text>
   <text x="48" y="72" font-size="13" fill="#6b7280" text-anchor="start">Envolvente sobre los diez miembros de control del galpón. Cada cuadro es una combinación; las de borde oscuro gobiernan al menos una respuesta.</text>
   <text x="60" y="132" font-size="12.5" fill="#333" text-anchor="start" font-weight="bold">63 de gravedad y viento</text>
-  <text x="60" y="148" font-size="10.5" fill="#6b7280" text-anchor="start">NCh3171 §9.1.1, combinaciones (1) a (7)</text>
+  <text x="60" y="148" font-size="10.5" fill="#6b7280" text-anchor="start">NCh3171:2017 §9.1.1, ramas (1), (2), (3a), (3b), (4) y (6)</text>
   <rect x="60" y="158" width="15" height="15" rx="3" fill="#c7ccd1"/>
   <rect x="79" y="158" width="15" height="15" rx="3" fill="#c7ccd1"/>
   <rect x="98" y="158" width="15" height="15" rx="3" fill="#c7ccd1"/>
@@ -68,7 +68,7 @@
   <rect x="307" y="215" width="15" height="15" rx="3" fill="#1a63a8" stroke="#333" stroke-width="1"/>
   <rect x="326" y="215" width="15" height="15" rx="3" fill="#c7ccd1"/>
   <text x="60" y="250" font-size="12.5" fill="#333" text-anchor="start" font-weight="bold">12 sísmicas</text>
-  <text x="60" y="266" font-size="10.5" fill="#6b7280" text-anchor="start">NCh2369 §4.5.1 con la simultaneidad de §4.5.2</text>
+  <text x="60" y="266" font-size="10.5" fill="#6b7280" text-anchor="start">NCh2369:2025 §4.5.1 con la simultaneidad de §4.5.2</text>
   <rect x="60" y="276" width="15" height="15" rx="3" fill="#c7ccd1"/>
   <rect x="79" y="276" width="15" height="15" rx="3" fill="#c7ccd1"/>
   <rect x="98" y="276" width="15" height="15" rx="3" fill="#c7ccd1"/>

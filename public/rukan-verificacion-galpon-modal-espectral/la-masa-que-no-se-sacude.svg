@@ -23,8 +23,8 @@
   <text x="846" y="386" font-size="11.5" fill="#9ca3af" text-anchor="start" font-weight="bold">− 14,9 kN</text>
   <text x="846" y="403" font-size="10.5" fill="#6b7280" text-anchor="start">en nudos de base</text>
   <rect x="48" y="432" width="904" height="96" rx="8" fill="#fdf6f4" stroke="#b02a1a" stroke-width="1.4"/>
-  <text x="70" y="460" font-size="13.5" fill="#333" text-anchor="start" font-weight="bold">El Q₀ mínimo se calcula con un P que es 15,9 % mayor que la masa de la que sale el Q₀ que se le compara.</text>
+  <text x="70" y="460" font-size="13.5" fill="#333" text-anchor="start" font-weight="bold">El Q₀ mínimo se calcula con un P que es 16 % mayor que la masa de la que sale el Q₀ que se le compara.</text>
   <text x="70" y="482" font-size="12" fill="#6b7280" text-anchor="start">El pilar de hastial lleva la P liberada arriba: todo su peso vertical reacciona en su propia base y nunca llega al nudo</text>
-  <text x="70" y="499" font-size="12" fill="#6b7280" text-anchor="start">de techo. SAP arrastra esa liberación al armado de la masa y lo deja entero fuera de la matriz. La inercia HORIZONTAL</text>
-  <text x="70" y="516" font-size="12" fill="#6b7280" text-anchor="start">del pilar, en cambio, existe igual: hay que acelerarlo, y siendo biarticulado le entrega la mitad al techo.</text>
+  <text x="70" y="499" font-size="12" fill="#6b7280" text-anchor="start">de techo. Todo indica que SAP arrastra esa liberación al armado de la masa: excluir el pilar entero reproduce su modal.</text>
+  <text x="70" y="516" font-size="12" fill="#6b7280" text-anchor="start">La inercia HORIZONTAL del pilar, en cambio, existe igual: hay que acelerarlo, y biarticulado entrega la mitad al techo.</text>
 </svg>

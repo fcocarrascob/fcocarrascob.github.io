@@ -20,11 +20,11 @@
   <text x="720" y="162.985125" font-size="12.5" fill="#333" text-anchor="middle" font-weight="bold">193,624 kN·m</text>
   <text x="720" y="324" font-size="12" fill="#333" text-anchor="middle">estación j</text>
   <text x="720" y="340" font-size="10.5" fill="#6b7280" text-anchor="middle">cumbrera</text>
-  <text x="760" y="174.0424375" font-size="12" fill="#6b7280" text-anchor="start">M₃ bajo</text>
-  <text x="760" y="190.0424375" font-size="12" fill="#6b7280" text-anchor="start">1,2D + 1,6S</text>
+  <text x="760" y="174.0424375" font-size="12" fill="#6b7280" text-anchor="start">M₃ bajo G3A_B</text>
+  <text x="760" y="190.0424375" font-size="12" fill="#6b7280" text-anchor="start">1,2(D+Dsd) + 1,6·S</text>
   <rect x="48" y="388" width="904" height="100" rx="8" fill="#fdf6f4" stroke="#b02a1a" stroke-width="1.4"/>
   <text x="70" y="416" font-size="13.5" fill="#333" text-anchor="start" font-weight="bold">Leer solo los extremos de la barra se lleva 207,9 a 193,6 kN·m: un 6,9 % de menos, del lado inseguro.</text>
-  <text x="70" y="438" font-size="12" fill="#6b7280" text-anchor="start">Y es lo único que devuelve la salida de fuerzas de un elemento. SAP reporta tres estaciones por defecto y por eso lo ve; un motor</text>
-  <text x="70" y="455" font-size="12" fill="#6b7280" text-anchor="start">que solo lea los extremos tiene que reconstruir la parábola: M_centro = (M_i − M_j)/2 + w·L²/8, con el signo del DIAGRAMA —la</text>
-  <text x="70" y="472" font-size="12" fill="#6b7280" text-anchor="start">estación j lleva el momento de extremo cambiado de signo—. Con el signo mal, el promedio de los extremos sale mal y no se nota.</text>
+  <text x="70" y="438" font-size="12" fill="#6b7280" text-anchor="start">Y es lo único que devuelve la salida de fuerzas de un elemento. SAP muestra la estación central y por eso la ve; un motor que solo</text>
+  <text x="70" y="455" font-size="12" fill="#6b7280" text-anchor="start">lea los extremos tiene que reconstruir la parábola: M_centro = (M_i + M_j)/2 + w·L²/8, con M_i y M_j en signo de DIAGRAMA. Ojo:</text>
+  <text x="70" y="472" font-size="12" fill="#6b7280" text-anchor="start">localForces devuelve la estación j con el signo cambiado, y pasarla cruda da 14,31 en vez de 207,93 — sin romper nada.</text>
 </svg>

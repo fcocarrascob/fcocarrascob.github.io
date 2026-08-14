@@ -1,8 +1,9 @@
 ---
 title: "Rukan (9): la masa que el modelo declara y no sacude"
-description: "El modal del galpón del altiplano contra SAP2000, con un desenlace que ninguno de los dos motores podía ver solo: el período salía 3,66 % largo con la rigidez verificada exacta a la sexta cifra. La causa es que SAP deja los pilares de hastial fuera de la matriz de masa —arrastra ahí la liberación axial de su extremo superior—, así que la estructura sacude 582 kN y no los 674,9 que la memoria declara como masa sísmica. El Q₀ mínimo se calcula con un P un 16 % mayor que la masa de la que sale el Q₀ que se le compara."
+description: "El modal del galpón del altiplano contra SAP2000, con un desenlace que ninguno de los dos motores podía ver solo: el período salía 3,66 % largo con la rigidez verificada exacta a la sexta cifra. Los pilares de hastial no están en la matriz de masa de SAP —todo indica que arrastra ahí la liberación axial de su extremo superior—, así que la estructura sacude 582 kN y no los 674,9 que la memoria declara como masa sísmica. El Q₀ mínimo se calcula con un P un 16 % mayor que la masa de la que sale el Q₀ que se le compara."
 pubDate: 2026-08-14
 tags: ["OpenSees", "OpenSeesPy", "Rukan", "análisis modal", "masa sísmica", "NCh2369", "galpón", "SAP2000", "verificación", "liberaciones"]
+norm: "NCh2369:2025"
 section: "Rukan"
 series: "Rukan — verificación"
 seriesPart: 9
@@ -15,8 +16,10 @@ import Figure from '../../components/content/Figure.astro';
 ## El peldaño, y lo que encontró
 
 El [caso 10](/blog/rukan-verificacion-galpon-tapered/) arma el
-[galpón del altiplano](/blog/galpon-altiplano-la-serie/) completo en OpenSeesPy —105 nodos, 188
-barras, 11 estados de carga— y lo confronta contra el modelo SAP2000 congelado. La capa estática
+[galpón del altiplano](/blog/galpon-altiplano-la-serie/) completo en OpenSeesPy —los 105 nodos del
+`.sdb`, 188 barras, 11 estados de carga; en rukan son 115 nodos, porque necesita uno de tope por
+pilar de hastial para reproducir la `P` liberada que aparece más abajo— y lo confronta contra el
+modelo SAP2000 congelado. La capa estática
 cerró sin sorpresas: el peso de acero **al último bit**, el equilibrio de los once estados a
 $6 \times 10^{-11}$ kN, y los momentos del marco a la sexta cifra.
 
@@ -31,15 +34,17 @@ alarma](/blog/oficio-errores-sin-alarma/). Acá ese fenómeno aparece —el modo
 este galpón está en el **puesto 41**, y quien corra 30 modos se lleva un $T^*$ equivocado— pero
 va como contexto, no como hallazgo.
 
-Lo que sigue es de otra especie. Los cinco errores de aquel post son cosas que el ingeniero
-**eligió mal**. Este es uno que el programa **decidió por él**, y no hay campo que revisar.
+Lo que sigue es de otra especie. Los cuatro primeros errores de aquel post son cosas que el
+ingeniero **eligió mal**. Este es uno que el programa **decidió por él**, y no hay campo que
+revisar.
 </Note>
 
 ## El síntoma: 3,66 % de período, y nada más
 
 Con la masa sísmica $D + 0{,}20\,S$ armada como la arma SAP —de las cargas, concentrada en los
 nudos— rukan daba $T_1 = 0{,}883866$ s contra los **0,852657 s** del modelo congelado. Un **3,66 %**
-largo, o sea un 7,5 % de rigidez de menos. Y ninguna otra magnitud discrepaba.
+largo, o sea —como $T \propto \sqrt{M/K}$— un 6,94 % de rigidez de menos, o bien un 7,45 % de masa
+de más. Y ninguna otra magnitud discrepaba.
 
 Un período largo admite dos culpables: sobra masa o falta rigidez. Separarlos es lo primero, y hay
 una medición que lo hace sin ambigüedad.
@@ -50,12 +55,12 @@ En un marco hiperestático el reparto de momentos lo decide la **rigidez relativ
 miembros — la masa no interviene. Así que el momento de rodilla bajo la combinación gobernante de
 gravedad es un contraste de rigidez pura:
 
-| Estación, bajo $1{,}2(D + D_{sd}) + 1{,}6\,S$ | rukan | SAP2000 | error |
+| Estación, bajo $1{,}2(D + D_{sd}) + 1{,}6\,S_{\text{bal}}$ | rukan | SAP2000 | error |
 |---|---:|---:|---:|
-| Columna en la rodilla, $M_3$ | 633,2838 | 633,284 | $2{,}8 \times 10^{-7}$ |
-| Dintel en el alero, $M_3$ | −633,2065 | −633,206 | $7{,}8 \times 10^{-7}$ |
-| Columna en la base, $M_3$ | 158,3210 | 158,321 | $2{,}8 \times 10^{-7}$ |
-| Columna en la rodilla, $P$ | −180,3845 | −180,384 | $2{,}6 \times 10^{-6}$ |
+| Columna en la rodilla, $M_3$ [kN·m] | 633,2838 | 633,284 | $2{,}8 \times 10^{-7}$ |
+| Dintel en la rodilla, $M_3$ [kN·m] | −633,2065 | −633,206 | $7{,}8 \times 10^{-7}$ |
+| Columna en la base, $M_3$ [kN·m] | 158,3210 | 158,321 | $2{,}8 \times 10^{-7}$ |
+| Columna en la rodilla, $P$ [kN] | −180,3845 | −180,384 | $2{,}6 \times 10^{-6}$ |
 
 Coinciden a la sexta cifra. Y antes de eso, el marco tipo aislado se había contrastado contra una
 referencia de rigidez directa en **numpy puro** —sin OpenSees ni SAP— y sus cinco magnitudes
@@ -69,7 +74,7 @@ no es *cuánta*: es **dónde**.
 
 <Figure
   src="/rukan-verificacion-galpon-modal-espectral/la-masa-que-no-se-sacude.svg"
-  alt="Cascada de tres barras horizontales. La primera, azul, marca el P declarado para la norma: 674,9 kN. La segunda, naranja, la masa en el modelo dinámico de SAP: 597,0 kN, con un recuadro punteado rojo que marca el descuento de 77,9 kN correspondiente a los pilares de hastial, desglosado en 33,6 de peso propio y 44,3 de revestimiento. La tercera, verde, la masa que efectivamente participa: 582,0 kN, tras descontar 14,9 kN que caen en nudos de base restringidos."
+  alt="Cascada de tres barras horizontales. La primera, azul, marca el P declarado para la norma: 674,9 kN. La segunda, naranja, la masa en el modelo dinámico de SAP: 597,0 kN, con un recuadro punteado rojo que marca el descuento de 77,9 kN correspondiente a los pilares de hastial, desglosado en 33,6 de peso propio y 44,3 de revestimiento. La tercera, verde, la masa que efectivamente participa: 582,0 kN, tras descontar 14,9 kN que caen en nudos de base restringidos. La conclusión, al pie: el Q₀ mínimo se calcula con un P que es un 16 % mayor que la masa de la que sale el Q₀ que se le compara."
   caption="De lo que la memoria declara a lo que entra en el problema de valores propios. El descuento grande no es un redondeo ni una convención: son los diez pilares de hastial completos, peso propio y revestimiento."
 />
 
@@ -84,6 +89,9 @@ todo el modal cae en su lugar de golpe:
 | $U_y$ del modo 41 | 0,47495 | 0,47422 |
 | Masa acumulada X / Y / Z | 0,9763 / 0,9783 / 0,6509 | 0,9763 / 0,9783 / 0,6513 |
 
+Los períodos, las masas participativas de los dos modos que gobiernan y las acumuladas X e Y
+coinciden a la cuarta cifra; la acumulada Z, a la tercera.
+
 Que el modo longitudinal dominante caiga en el **puesto 41** —el mismo número, no uno parecido— es
 lo que cierra el argumento. No es un ajuste que compra el período: es el mismo modelo.
 
@@ -93,7 +101,7 @@ lo que cierra el argumento. No es un ajuste que compra el período: es el mismo 
   caption="La misma rigidez, dos masas. Reproducir el criterio de SAP cierra el período a 3,3 × 10⁻⁵; meter la masa del pilar lo abre 3,66 %."
 />
 
-### Por qué, y es una sola causa para las dos mitades
+### La explicación que cierra los números
 
 El pilar de hastial lleva la **`P` liberada en su extremo superior**. Es una decisión de modelación
 deliberada y está documentada: sin ella, los montantes de la testera apuntalarían el dintel del
@@ -110,27 +118,42 @@ exactamente esa masa reproduce su modal completo**, y de que el mecanismo predic
 libertad para ajustarlo.
 
 Lo que la sostiene son tres cosas que no se pueden acomodar a mano: el $T^*_X$ cierra a
-$3{,}3 \times 10^{-5}$, el modo longitudinal cae en el **mismo puesto 41**, y las tres masas modales
-acumuladas coinciden a la cuarta cifra. Y algo más: descontar solo el revestimiento **no alcanza**
-—$T_1$ queda en 0,866214 s—. Hay que descontar también el peso propio del pilar, que es justo lo que
-predice el mismo mecanismo, porque también es una carga vertical sobre un miembro con el extremo
-superior liberado. Si la causa fuera otra, no habría razón para que las dos mitades cayeran juntas.
+$3{,}3 \times 10^{-5}$, el modo longitudinal cae en el **mismo puesto 41**, y las masas modales
+acumuladas coinciden —X e Y a la cuarta cifra, Z a la tercera—. Y algo más: descontar solo el
+revestimiento **no alcanza** —$T_1$ queda en 0,866214 s—. Hay que descontar también el peso propio
+del pilar, que es justo lo que predice el mismo mecanismo, porque también es una carga vertical
+sobre un miembro con el extremo superior liberado. (Esa tercera variante se midió parcheando
+`seismic_mass`: el parámetro publicado es un booleano que gobierna a la vez el peso propio y el
+revestimiento, así que no se llega a ella desde el caso tal como está.)
 
-Con SAP2000 delante se comprobaría en una línea, leyendo la masa nodal del modelo. Queda anotado
-como lo que hay que mirar al volver al equipo que lo tiene.
+Conviene decir también qué **no** prueba. El argumento de que «las dos mitades caen juntas» no
+distingue entre hipótesis: cualquier mecanismo que descarte el elemento entero las descarta juntas
+—el manejo del nudo de tope, o un filtro de la fuente de masa que nada tenga que ver con la
+liberación—. El hecho medido es que la masa del pilar no está en el modal de SAP; el arrastre del
+*release* es la explicación que cierra los números, no una lectura del programa. Lo que cerraría el
+punto: abrir el `.sdb` congelado, leer `Assign > Joint > Masses` y sumar la masa de los nudos de
+techo de los marcos 1 y 5. Queda anotado para el equipo que tiene SAP2000.
 </Note>
 
 ### La confirmación, por un camino que no pasa por rukan
 
 Se puede llegar al mismo número **solo con los datos que SAP dejó escritos**. El corte basal
-transversal, la ordenada espectral de diseño en $T^*_X$ y la masa modal del primer modo cumplen
+transversal, la ordenada espectral de diseño normalizada por $g$ en $T^*_X$ y la **fracción de masa
+participativa** del primer modo cumplen
 
-<Equation label="Ec. 1">
+<Equation>
 $$Q_{0X} \;\approx\; U_x \cdot W_{\text{ref}} \cdot \frac{S_a}{g}$$
 </Equation>
 
-y despejando: $86{,}960229 / 0{,}1576606 / 0{,}94627 = 582{,}9$ kN. La masa que participa en rukan
-tras la exclusión es **582,0 kN**. Dos caminos que no se miraron, el mismo número al 0,15 %.
+donde $W_{\text{ref}}$ es el peso que el modelo dinámico realmente tiene. Despejándolo:
+$86{,}960229 / 0{,}1576606 / 0{,}94627 = 582{,}9$ kN. La masa que participa en rukan tras la
+exclusión es **582,0 kN**. Dos caminos que no se miraron, el mismo número al 0,15 %.
+
+De los tres datos de entrada, dos vienen de la cabecera `# Result:` de `galpon_altiplano_build.py`
+—el $U_x$ y, reimplementando el espectro desde los parámetros del sitio, el $S_a/g$—. El
+$Q_{0X} = 86{,}960229$ kN no está estampado en ninguna cabecera: su única fuente escrita es la
+tabla de `Skills_SAP/scripts/README.md`, mantenida a mano. Al volver al equipo con SAP2000 hay que
+correr el espectral una vez más para dejarlo estampado.
 
 ## Lo que esto le hace a la verificación normativa
 
@@ -139,7 +162,7 @@ Acá está lo que importa fuera del ejercicio de motores.
 <Note type="warning" title="El P de la norma no es la masa que se sacude">
 | | kN | |
 |---|---:|---|
-| $P$ declarado para los chequeos normativos | **674,861** | Ec. (12), banda §5.12–§5.13, Ec. (14) |
+| $P$ declarado para los chequeos normativos | **674,861** | NCh2369:2025 — Ec. (12), banda §5.12–§5.13, Ec. (14) |
 | Masa en el modelo dinámico | 596,969 | −77,89: los pilares de hastial |
 | Masa que efectivamente participa | **582,033** | −14,94 más, en nudos de base restringidos |
 
@@ -147,52 +170,72 @@ El $Q_0^{\text{mín}}$ de la Ec. (12) se calcula con un $P$ que es un **16 % may
 que sale el $Q_0$ al que se le compara. En este galpón la banda no reprueba —$Q_{0X} = 86{,}96$ kN
 contra un mínimo de 70,86— pero el chequeo está comparando dos cosas que no salen de la misma masa.
 
-Y el desvío va en la dirección incómoda: si el $Q_0$ hubiera quedado bajo el mínimo, §5.12 obliga a
-amplificar toda la estructura, y el factor se habría calculado contra un piso inflado.
+Y el desvío va en la dirección incómoda: si el $Q_0$ hubiera quedado bajo el mínimo, el §5.12 de
+NCh2369:2025 obliga a amplificar toda la estructura, y el factor se habría calculado contra un piso
+inflado.
 </Note>
 
 ### El juicio, que es discutible y hay que declararlo
 
 La liberación axial gobierna el camino de la carga **vertical**. La inercia **horizontal** del
 pilar, en cambio, existe igual: hay que acelerarlo, y siendo biarticulado le entrega la mitad de esa
-inercia al nudo de techo. Que un programa arrastre el *release* a las tres componentes de masa es
-una decisión de implementación, no de la norma.
+inercia al nudo de techo. Que un programa se comporte como si el *release* alcanzara a las tres
+componentes de masa sería una decisión de implementación, no de la norma.
 
 Acá se reprodujo el criterio de SAP **para poder contrastar** — si los dos motores no arman la misma
 masa, no hay verificación posible. Pero el caso lo deja como parámetro
-(`seismic_mass(..., include_pilar=)`), y el costo de no reproducirlo está medido: **3,66 % de
-período**. En este galpón eso mueve la demanda hacia arriba, porque el $T^*$ transversal ya está en
-la rama descendente del espectro y acortarlo sube la ordenada.
+(`seismic_mass(..., include_pilar=)`), y el costo de **no** reproducirlo está medido, con signo:
+meter la masa del pilar alarga el período un **3,66 %**, y el $T^*$ transversal ya está en la rama
+descendente del espectro, así que la ordenada **baja** un 4,7 % —de $S_a/g = 0{,}157661$ a
+$0{,}150227$—. Va del **lado inseguro**, entonces: el criterio más completo en masa es el que da
+menos demanda.
 
 ## La cadena completa, ya con la masa en su lugar
 
-Con el modal cerrado, el resto de §5.4 a §5.14 sigue sin sobresaltos:
+Con el modal cerrado, el resto de §5.4 a §5.13 de NCh2369:2025 sigue sin sobresaltos:
 
 <Equation label="§5.4 a §5.13">
 $$T^* \rightarrow R^* \;(\text{Ec. 1b}) \rightarrow Q_0 \;(\text{CQC de 60 modos}) \rightarrow \text{banda §5.12–§5.13}$$
 </Equation>
 
+Los parámetros del sitio, que hacen falta para recalcular cualquiera de estos números: **zona
+sísmica 2** ($A_r = 0{,}42\,g$, Tabla 3 de NCh2369:2025), **suelo B** ($S = 1{,}0$,
+$T_0 = 0{,}30$ s, $T_1 = 0{,}27$ s, $p = 1{,}60$, $q = 3{,}00$, $r = 4{,}50$), $I = 1{,}0$, $R = 4$ y
+**$\xi = 0{,}02$** —el factor $(0{,}05/\xi)^{0,4} = 1{,}443$ de la Ec. (1a) multiplica toda la
+demanda—.
+
 | | rukan | SAP2000 | error |
 |---|---:|---:|---:|
-| $R^*_X$ (Ec. 1b, $R = 4$, suelo B) | 4,0000000000 | 4,0000000000 | $10^{-12}$ |
-| $R^*_Y$ | 3,8301633726 | 3,8301633726 | $10^{-12}$ |
+| $R^*_X$ (Ec. 1b) † | 4,0000000000 | 4,0000000000 | $< 10^{-15}$ |
+| $R^*_Y$ † | 3,8301633726 | 3,8301633726 | $< 10^{-15}$ |
 | $Q_{0X}$ | 86,951 kN | 86,960 kN | $1{,}0 \times 10^{-4}$ |
 | $Q_{0Y}$ | 130,071 kN | 130,257 kN | $1{,}4 \times 10^{-3}$ |
 
-Las dos direcciones caen dentro de la banda $[70{,}860 ; 224{,}907]$ kN. El error del corte
-longitudinal —0,14 %— no es ruido suelto: hereda el 0,055 % del $T^*_Y$, que a su vez arrastra un
-0,034 % al $R^*_Y$ porque bajo el codo de la Ec. (1b) la reducción es **lineal en el período**. Vale
-la pena separarlos al comparar: la *ecuación*, evaluada en el $T^*$ de SAP, reproduce su $R^*$ al
-último bit; el *valor* propagado arrastra el período.
+† El $R^*$ **no lo calcula SAP2000**: lo calcula el script de Python que le arma el espectro, con su
+propia implementación de la Ec. (1b). Esas dos filas contrastan dos implementaciones de la misma
+ecuación —coinciden a precisión de máquina—, no dos motores de análisis.
+
+Las dos direcciones caen dentro de la banda $[70{,}860 ; 224{,}907]$ kN. El corte longitudinal de
+rukan queda un **0,14 % por debajo** del de SAP, y ese residuo **no** se explica por la cadena del
+período: los dos motores corren el **mismo** $R^*_Y$ —el caso arma el espectro con `r_fixed`, fijado
+en el $R^*$ de SAP— y el $T^*_Y$ de rukan, 0,055 % más largo, cae en la rama ascendente, así que por
+sí solo *subiría* la ordenada un 0,033 %. El 0,14 % viene de las formas modales y de la CQC de los
+60 modos, y atribuirlo pediría comparar los 60 pares uno a uno.
+
+Lo que sí conviene separar al comparar $R^*$: la *ecuación*, evaluada en el $T^*$ de SAP, reproduce
+su valor al último bit; el *valor* propagado desde el $T^*_Y$ de rukan se corre un 0,034 %, porque
+bajo el codo de la Ec. (1b) —en $0{,}16\,R\,T_1 = 0{,}1728$ s— la reducción es **lineal en el
+período**.
 
 ## El veredicto
 
 <Note type="tip" title="Tres cosas para llevarse">
 1. **Un período largo no siempre es rigidez.** Antes de tocar secciones, mídete un momento
    hiperestático: no sabe de masa, y separa las dos causas en una sola corrida.
-2. **Una liberación de extremo puede tener efectos que no declaraste.** Liberar la `P` de un montante
-   es una decisión sobre el camino de la carga vertical; que además le saque su inercia horizontal a
-   la estructura es un efecto colateral del programa, y no aparece en ningún reporte.
+2. **Una liberación de extremo puede venir con efectos que no declaraste.** Liberar la `P` de un
+   montante es una decisión sobre el camino de la carga vertical; que el modal se comporte como si
+   además le sacara su inercia horizontal a la estructura no aparece en ningún reporte, y acá se
+   dedujo del período, no de un campo del programa.
 3. **El `P` de la memoria y la masa del modelo son dos números distintos, y conviene escribirlos
    juntos.** Acá difieren un 16 %, y los dos entran en el mismo chequeo de la Ec. (12).
 </Note>

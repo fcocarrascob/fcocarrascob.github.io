@@ -63,7 +63,7 @@ const GOBERNANTES = {
 const ETIQUETA = {
   'COL3A_1': 'columna, base',
   'COL3A_4': 'columna, rodilla',
-  'DIN3_1': 'dintel, alero',
+  'DIN3_1': 'dintel, rodilla',
   'DIN3_2': 'dintel, medio',
   'DIN3_3': 'dintel, cumbrera',
   'PUN00_1': 'puntal de alero',
@@ -169,8 +169,8 @@ function figuraNueve() {
   };
 
   const rejilla = [
-    ...bloque('63 de gravedad y viento', GRAVEDAD, 'NCh3171 §9.1.1, combinaciones (1) a (7)'),
-    ...bloque('12 sísmicas', SISMO, 'NCh2369 §4.5.1 con la simultaneidad de §4.5.2'),
+    ...bloque('63 de gravedad y viento', GRAVEDAD, 'NCh3171:2017 §9.1.1, ramas (1), (2), (3a), (3b), (4) y (6)'),
+    ...bloque('12 sísmicas', SISMO, 'NCh2369:2025 §4.5.1 con la simultaneidad de §4.5.2'),
     ...bloque('4 de la rama ilustrativa', R5, 'con R = 5, para comparar'),
   ];
 
@@ -285,8 +285,8 @@ function figuraEstacion() {
 
   const perdida = 100 * (1 - Math.max(DIN3_3.i, DIN3_3.j) / DIN3_3.m);
   cuerpo.push(
-    texto(x1 + 40, sy(DIN3_3.m) + 4, 'M₃ bajo', { size: 12, fill: SUAVE }),
-    texto(x1 + 40, sy(DIN3_3.m) + 20, '1,2D + 1,6S', { size: 12, fill: SUAVE }),
+    texto(x1 + 40, sy(DIN3_3.m) + 4, 'M₃ bajo G3A_B', { size: 12, fill: SUAVE }),
+    texto(x1 + 40, sy(DIN3_3.m) + 20, '1,2(D+Dsd) + 1,6·S', { size: 12, fill: SUAVE }),
   );
 
   const caja = [
@@ -300,19 +300,19 @@ function figuraEstacion() {
     texto(
       70,
       H - 82,
-      'Y es lo único que devuelve la salida de fuerzas de un elemento. SAP reporta tres estaciones por defecto y por eso lo ve; un motor',
+      'Y es lo único que devuelve la salida de fuerzas de un elemento. SAP muestra la estación central y por eso la ve; un motor que solo',
       { size: 12, fill: SUAVE },
     ),
     texto(
       70,
       H - 65,
-      'que solo lea los extremos tiene que reconstruir la parábola: M_centro = (M_i − M_j)/2 + w·L²/8, con el signo del DIAGRAMA —la',
+      'lea los extremos tiene que reconstruir la parábola: M_centro = (M_i + M_j)/2 + w·L²/8, con M_i y M_j en signo de DIAGRAMA. Ojo:',
       { size: 12, fill: SUAVE },
     ),
     texto(
       70,
       H - 48,
-      'estación j lleva el momento de extremo cambiado de signo—. Con el signo mal, el promedio de los extremos sale mal y no se nota.',
+      'localForces devuelve la estación j con el signo cambiado, y pasarla cruda da 14,31 en vez de 207,93 — sin romper nada.',
       { size: 12, fill: SUAVE },
     ),
   ];

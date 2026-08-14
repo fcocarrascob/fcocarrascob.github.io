@@ -184,7 +184,7 @@ function figuraMasa() {
     texto(
       70,
       H - 100,
-      `El Q₀ mínimo se calcula con un P que es ${COMA(brecha, 1)} % mayor que la masa de la que sale el Q₀ que se le compara.`,
+      `El Q₀ mínimo se calcula con un P que es ${COMA(brecha, 0)} % mayor que la masa de la que sale el Q₀ que se le compara.`,
       { size: 13.5, bold: true },
     ),
     texto(
@@ -196,13 +196,13 @@ function figuraMasa() {
     texto(
       70,
       H - 61,
-      'de techo. SAP arrastra esa liberación al armado de la masa y lo deja entero fuera de la matriz. La inercia HORIZONTAL',
+      'de techo. Todo indica que SAP arrastra esa liberación al armado de la masa: excluir el pilar entero reproduce su modal.',
       { size: 12, fill: SUAVE },
     ),
     texto(
       70,
       H - 44,
-      'del pilar, en cambio, existe igual: hay que acelerarlo, y siendo biarticulado le entrega la mitad al techo.',
+      'La inercia HORIZONTAL del pilar, en cambio, existe igual: hay que acelerarlo, y biarticulado entrega la mitad al techo.',
       { size: 12, fill: SUAVE },
     ),
   ];
@@ -287,13 +287,13 @@ function figuraPeriodo() {
     texto(
       70,
       H - 62,
-      'Lo que descarta la rigidez: el momento de rodilla bajo 1,2D + 1,6S coincide con SAP a la sexta cifra, y no interviene',
+      'Lo que descarta la rigidez: el momento de rodilla bajo 1,2(D+Dsd) + 1,6·S balanceada coincide con SAP a la sexta cifra,',
       { size: 12, fill: SUAVE },
     ),
     texto(
       70,
       H - 45,
-      'ninguna masa. En un marco hiperestático el reparto de momentos depende solo de la rigidez relativa.',
+      'y no interviene ninguna masa. En un marco hiperestático el reparto de momentos depende solo de la rigidez relativa.',
       { size: 12, fill: SUAVE },
     ),
   ];

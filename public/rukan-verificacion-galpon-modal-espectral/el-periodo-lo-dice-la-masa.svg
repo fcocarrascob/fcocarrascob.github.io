@@ -35,6 +35,6 @@
   <text x="70" y="490" font-size="13" fill="#333" text-anchor="start" font-weight="bold">Y con el criterio reproducido, la otra dirección también cae en su lugar:</text>
   <text x="70" y="510" font-size="12" fill="#6b7280" text-anchor="start">el T* longitudinal da 0,161150 s en el modo 41 — el mismo número de modo que SAP, que mide 0,161061 s.</text>
   <rect x="48" y="536" width="904" height="56" rx="8" fill="#f4f8f5" stroke="#1f7a4d" stroke-width="1.4"/>
-  <text x="70" y="562" font-size="12" fill="#6b7280" text-anchor="start">Lo que descarta la rigidez: el momento de rodilla bajo 1,2D + 1,6S coincide con SAP a la sexta cifra, y no interviene</text>
-  <text x="70" y="579" font-size="12" fill="#6b7280" text-anchor="start">ninguna masa. En un marco hiperestático el reparto de momentos depende solo de la rigidez relativa.</text>
+  <text x="70" y="562" font-size="12" fill="#6b7280" text-anchor="start">Lo que descarta la rigidez: el momento de rodilla bajo 1,2(D+Dsd) + 1,6·S balanceada coincide con SAP a la sexta cifra,</text>
+  <text x="70" y="579" font-size="12" fill="#6b7280" text-anchor="start">y no interviene ninguna masa. En un marco hiperestático el reparto de momentos depende solo de la rigidez relativa.</text>
 </svg>

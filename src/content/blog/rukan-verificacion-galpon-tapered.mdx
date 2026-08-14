@@ -1,22 +1,23 @@
 ---
 title: "Rukan (8): el peralte variable, o por qué el modelo se prohibió una función del programa"
-description: "El modelo SAP2000 del galpón del altiplano tiene una regla escrita en su propio script: prohibida la sección no prismática. Es una decisión de modelación tomada por verificabilidad —renunciar a una comodidad del programa para que un segundo motor pueda rehacer el modelo— y este post mide lo que compra. De paso, la salida fácil: el prismático equivalente subestima el momento de rodilla un 19 % y sobreestima el de cumbrera un 76 %, y no hay peralte que arregle las dos, porque cambiar la rigidez de forma pareja no redistribuye nada."
+description: "El modelo SAP2000 del galpón del altiplano tiene una regla escrita en su propio script: prohibida la sección no prismática. Es una decisión de modelación tomada por verificabilidad —renunciar a una comodidad del programa para que un segundo motor pueda rehacer el modelo— y este post mide lo que compra. De paso, la salida fácil: el prismático equivalente subestima el momento de rodilla un 19 % y sobreestima el de cumbrera un 77 %, y no hay peralte que arregle las dos, porque cambiar la rigidez de forma pareja no redistribuye nada."
 pubDate: 2026-08-14
 tags: ["OpenSees", "OpenSeesPy", "Rukan", "peralte variable", "tapered", "galpón", "discretización", "convergencia", "SAP2000", "verificación"]
+norm: "NCh2369:2025"
 section: "Rukan"
 series: "Rukan — verificación"
 seriesPart: 8
 ---
 
 import Note from '../../components/content/Note.astro';
-import Equation from '../../components/content/Equation.astro';
 import Figure from '../../components/content/Figure.astro';
 
 ## Lo que este caso agrega a la escalera
 
-Los ocho peldaños anteriores de [Rukan](https://github.com/fcocarrascob/rukan) verificaron el motor
-contra un modelo de SAP2000 que estaba **abierto en la máquina de al lado**. Este no: el caso 10 —el
-[galpón del altiplano](/blog/galpon-altiplano-la-serie/), 105 nodos y 188 barras— se construyó en un
+Los peldaños de [Rukan](https://github.com/fcocarrascob/rukan) que llegaron a SAP2000 —cinco de los
+ocho; los tres primeros se contrastaron a mano— verificaron el motor contra un modelo que estaba
+**abierto en la máquina de al lado**. Este no: el caso 10 —el [galpón del
+altiplano](/blog/galpon-altiplano-la-serie/), 105 nodos del `.sdb` y 188 barras— se construyó en un
 equipo donde SAP2000 no está instalado. Funcionó porque el modelo de referencia estaba **congelado**:
 sus números viven en las cabeceras de los scripts que lo armaron y en la memoria de cálculo de la
 serie, y las dos fuentes se leen sin el programa.
@@ -26,7 +27,8 @@ preguntándole. Cuando no está, hay que decidir de antemano qué se va a poder 
 aparece la decisión que da título a este post.
 
 <Note type="info" title="Lo que este post no rehace">
-El [caso 8](/blog/rukan-verificacion-peso-propio-combinaciones/) ya agotó el peso propio y sus dos
+El [caso 8](/blog/rukan-verificacion-peso-propio-combinaciones/) —el octavo *caso de validación* de
+rukan, publicado en la sexta entrega de esta serie— ya agotó el peso propio y sus dos
 alcances —distribuido para los esfuerzos, concentrado para la masa—, el pórtico a dos aguas que **se
 abre** bajo carga vertical, y el chequeo de sanidad modal como disciplina. Acá se dan por sabidos.
 
@@ -68,22 +70,27 @@ discretizar: **¿cuántos tramos?**
 
 El vehículo es el marco transversal del galpón, aislado y declarado por completo: luz 24,0 m,
 pendiente 10°, alero 8,0 m, bases articuladas, columna de peralte variable 350 → 800 mm hacia la
-rodilla, dintel 800 → 350 mm hacia la cumbrera, todo soldado con alas 220 × 12 y alma de 6 mm, y
-6,0 m de ancho tributario. Las cargas también, porque sin ellas el estudio no se puede rehacer:
-gravedad $1{,}2(D + D_{sd}) + 1{,}6\,S$ con $D_{sd} = 0{,}35$ kPa de techo, $S = 1{,}20$ kPa de nieve
-sobre proyección horizontal; masa sísmica $D + 0{,}20\,S$ concentrada en los nudos; y una lateral de
-1 kN repartida en proporción a esa masa, que es el equivalente estático del primer modo.
+rodilla, dintel 800 → 350 mm hacia la cumbrera, todo soldado con alas 220 × 12 y alma de 6 mm, acero
+con $E = 200\,000$ MPa, $\nu = 0{,}3$ y $\gamma = 76{,}9822$ kN/m³, y 6,0 m de ancho tributario. Las
+cargas también, porque sin ellas el estudio no se puede rehacer: gravedad
+$1{,}2(D + D_{sd}) + 1{,}6\,S$ con $D_{sd} = 0{,}35$ kPa de techo y **0,12 kPa de revestimiento sobre
+las columnas**, $S = 1{,}20$ kPa de nieve sobre proyección horizontal; masa sísmica $D + 0{,}20\,S$
+concentrada en los nudos; y una lateral de 1 kN repartida en proporción a esa masa, que es el
+equivalente estático del primer modo.
 
 Se resuelve dos veces. Una en **numpy puro** —rigidez directa, con los grados de libertad sin masa
 condensados para el modal— y otra en **OpenSeesPy**. La referencia no importa `rukan` ni
 `openseespy`; es la restricción que hace que la tabla signifique algo.
 
-| Magnitud | Referencia | OpenSees | Error |
+Sobre la **malla del modelo** —cuatro tramos en la columna y tres por faldón—, que es la que interesa
+contrastar:
+
+| Magnitud, malla (4, 3) | Referencia | OpenSees | Error |
 |---|---|---|---|
 | Período fundamental [s] | 0,8739 | 0,8739 | 0,0000 % |
 | Deriva de alero (H = 1 kN) [mm] | 1,5385 | 1,5385 | 0,0000 % |
 | Flecha de cumbrera (G3A_B) [mm] | 171,6586 | 171,6586 | 0,0000 % |
-| Momento de alero (G3A_B) [kN·m] | 666,9801 | 666,9801 | 0,0000 % |
+| Momento de rodilla (G3A_B) [kN·m] | 666,9801 | 666,9801 | 0,0000 % |
 | Momento de cumbrera (G3A_B) [kN·m] | 225,5761 | 225,5761 | 0,0000 % |
 
 <Note type="warning" title="La trampa que apareció armando la referencia">
@@ -100,25 +107,27 @@ mal](/blog/oficio-errores-sin-alarma/). Lo cazó tenerlo escrito dos veces.
 
 ## El prismático equivalente no es una alternativa: es la malla de un tramo
 
-La salida fácil es reemplazar el tapered por una sección constante. Con la malla fina (36 tramos por
-miembro, para que la discretización no ensucie la comparación):
+La salida fácil es reemplazar el *tapered* por una sección constante. Ahora con la **malla fina**
+(36 tramos por miembro, para que la discretización no ensucie la comparación — por eso los valores
+del tapered no son los de la tabla anterior):
 
-| Variante | $T_1$ [s] | $\delta_x$ alero [mm] | $M$ rodilla [kN·m] | $M$ cumbrera [kN·m] |
+| Variante, malla (36, 36) | $T_1$ [s] | $\delta_x$ alero [mm] | $M$ rodilla [kN·m] | $M$ cumbrera [kN·m] |
 |---|---:|---:|---:|---:|
 | **tapered 350 ↔ 800** | 0,8616 | 1,4654 | **678,46** | **210,73** |
-| prismático $d$ = 350 mm | 1,7067 | 6,0304 | 547,72 | 369,96 |
-| prismático $d$ = 575 mm | 1,0025 | 2,0133 | 552,18 | 373,44 |
-| prismático $d$ = 800 mm | 0,7023 | 0,9568 | 556,55 | 377,03 |
+| prismático $d = 350$ mm | 1,7067 | 6,0304 | 547,72 | 369,96 |
+| prismático $d = 575$ mm | 1,0025 | 2,0133 | 552,18 | 373,44 |
+| prismático $d = 800$ mm | 0,7023 | 0,9568 | 556,55 | 377,03 |
 
-Lo primero es lo que uno espera: el prismático **subestima la rodilla** —entre 18 y 19 %— y
-**sobreestima la cumbrera** —entre 76 y 79 %—. Diseñar con él deja corta la sección que gobierna y
-sobra en la que no.
+Lo primero es lo que uno espera: el prismático **subestima la rodilla** —entre 18 y 19,3 %— y
+**sobreestima la cumbrera** —entre 75,6 y 78,9 %—. Diseñar con él deja corta la sección que gobierna
+y sobra en la que no.
 
 Lo segundo es lo que no se espera, y es el hallazgo:
 
 <Note type="warning" title="Entre los tres prismáticos, el momento casi no se mueve">
-El período va de 1,71 s a 0,70 s —un factor **2,4** en rigidez— y los momentos se corren **menos de
-un 2 %**: 547,7 → 556,6 en la rodilla, 370,0 → 377,0 en la cumbrera.
+El período va de 1,71 s a 0,70 s —un factor **2,4**, que en rigidez lateral es **6,3**: la deriva
+bajo la misma carga cae de 6,03 a 0,96 mm— y los momentos se corren **menos de un 2 %**:
+547,7 → 556,6 en la rodilla, 370,0 → 377,0 en la cumbrera.
 
 En un marco hiperestático el reparto de momentos lo decide la **razón** entre rigideces, no su valor
 absoluto. Cambiar el peralte de forma pareja no redistribuye nada: cambia cuánto se deforma la
@@ -140,7 +149,7 @@ Y hay una razón, que apareció recién al graficar la convergencia al lado de l
 <Figure
   src="/rukan-verificacion-galpon-tapered/el-prismatico-es-un-tramo.svg"
   alt="Gráfico del momento de rodilla y de cumbrera del marco tipo contra el número de tramos prismáticos por miembro. La curva de rodilla sube desde 552 kN·m con un tramo hasta la asíntota del tapered en 678,5; la de cumbrera baja desde 373 hasta 210,7. Los puntos de N = 1 están circulados en rojo y caen exactamente sobre las bandas que marcan los tres prismáticos equivalentes. A la derecha, una tabla con los tres prismáticos de 350, 575 y 800 mm, cuyos períodos van de 1,707 a 0,702 s mientras sus momentos se mueven 1,6 % y 1,9 %."
-  caption="Los dos usos que uno creería alternativos son el mismo eje. El prismático de peralte medio no es «la otra opción»: es el extremo de la discretización, N = 1. Y los tres prismáticos, pese a cubrir un rango de rigidez de 2,4 veces, dan prácticamente el mismo reparto de momentos."
+  caption="Los dos usos que uno creería alternativos son el mismo eje. El prismático de peralte medio no es «la otra opción»: es el extremo de la discretización, N = 1. Y los tres prismáticos, pese a cubrir un rango de 6,3 veces en rigidez lateral, dan prácticamente el mismo reparto de momentos."
 />
 
 <Note type="tip" title="El prismático de peralte medio ES N = 1">
@@ -154,8 +163,8 @@ tramos— y explica por qué barrer el peralte no sirve: mover $d$ recorre una f
 está sobre el camino de convergencia.
 
 La identidad vale para el **reparto de momentos**, que no depende de ninguna masa. El período y la
-deriva sí se separan un 1,5 % y un 6,2 %, pero no por la sección: por dónde queda la masa al
-concentrarla en los nudos, que con 36 tramos se reparte distinto que con uno.
+deriva sí se separan —tomando $N = 1$ como base, un 1,5 % y un 6,2 %—, pero no por la sección: por
+dónde queda la masa al concentrarla en los nudos, que con 36 tramos se reparte distinto que con uno.
 </Note>
 
 ## Cuántos tramos hacen falta, y qué magnitud manda
@@ -179,8 +188,8 @@ Convergen a ritmos que difieren en un factor **14,5**.
 
 <Figure
   src="/rukan-verificacion-galpon-tapered/la-malla-la-fija-la-deriva.svg"
-  alt="Tres curvas de error contra el número de tramos por miembro, en escala logarítmica. La deriva de alero parte en 46 % con un tramo y baja a 0,67 % con doce; el período T1 parte en 14,6 % y baja a 0,10 %; la flecha de cumbrera parte en 3,2 % y baja a 0,01 %. Una línea vertical marca N = 4, la malla del modelo, donde la deriva vale 3,98 %."
-  caption="Las tres magnitudes convergen, pero a ritmos que difieren en un factor 14,5. Verificar la malla mirando la flecha da el visto bueno con un error de la deriva que es dos órdenes de magnitud mayor."
+  alt="Tres curvas de error contra el número de tramos por miembro, en escala logarítmica. La deriva de alero parte en 46 % con un tramo y baja a 0,67 % con doce; el período T1 parte en 14,6 % y baja a 0,10 %; la flecha de cumbrera parte en 3,2 % y baja a 0,01 %. Una línea vertical marca N = 4 uniforme, donde la deriva vale 3,98 %; la malla real del modelo es (4, 3) y da 5,0 %."
+  caption="Las tres magnitudes convergen, pero a ritmos que difieren en un factor 14,5. Verificar la malla mirando la flecha da el visto bueno con un error de la deriva que es más de un orden de magnitud mayor."
 />
 
 El porqué es físico y se puede decir en una línea: con base articulada el momento de la columna es
@@ -190,28 +199,31 @@ ablanda la columna justo donde importa. La flecha del dintel, en cambio, la domi
 donde el peralte real anda cerca del promedio — por eso casi no se entera.
 
 <Note type="tip" title="La regla práctica">
-La malla del tapered **la fija la deriva**, no la flecha ni el período. Si el criterio de aceptación
-es un límite de deriva —y en NCh2369 §6.3 lo es—, verificar la convergencia sobre la flecha da luz
-verde con un error de un orden de magnitud más.
+La malla del *tapered* **la fija la deriva**, no la flecha ni el período. Si el criterio de
+aceptación es un límite de deriva —y en NCh2369:2025 §6.3 lo es—, verificar la convergencia sobre la
+flecha da luz verde con un error de más de un orden de magnitud.
 
-El modelo del galpón usa cuatro tramos en la columna y tres por faldón: **4 % de error en deriva**.
-Con un solo tramo, el mismo galpón habría dado un «reprueba» falso — su deriva real está al 94,6 %
-del límite, y un 46 % encima lo manda muy por arriba.
+El modelo del galpón usa cuatro tramos en la columna y tres por faldón. Esa malla no uniforme no
+está en la tabla de arriba, que barre $N$ parejo; medida aparte da **5 % de error en deriva** (y
++1,4 % en período, −0,6 % en flecha). Con un solo tramo, el mismo galpón habría dado un «reprueba»
+falso: respecto de su propia malla, $N = 1$ sube la deriva un **39 %**, y la deriva real del galpón
+ya está al 94,6 % del límite — o sea 94,6 × 1,39 = **132 %**.
 </Note>
 
 ## El modelo completo
 
-Con la decisión tomada y medida, el caso 10 arma el galpón entero en OpenSeesPy —105 nodos, 188
+Con la decisión tomada y medida, el caso 10 arma el galpón entero en OpenSeesPy —los 105 nodos del
+`.sdb` (115 en rukan, con el andamiaje que emula la liberación axial de los pilares de hastial), 188
 barras, 11 estados de carga, 79 combinaciones— y lo confronta contra el modelo congelado. La parte
 que le toca a este post es la que prueba que la discretización quedó bien:
 
-| Contraste | rukan vs SAP2000 |
+| Contraste, bajo $1{,}2(D + D_{sd}) + 1{,}6\,S_{\text{bal}}$ | rukan vs SAP2000 |
 |---|---|
 | Peso de acero (23 826,4068945062 kg) | **exacto**, al último bit |
-| Equilibrio de los 11 estados | 6 × 10⁻¹¹ kN |
-| $M_3$ de rodilla, $1{,}2D + 1{,}6S$ (633,284 kN·m) | 3 × 10⁻⁷ |
-| $M_3$ de dintel en el alero (−633,206 kN·m) | 8 × 10⁻⁷ |
-| $P$ en la base de la columna (−190,140 kN) | 2 × 10⁻⁶ |
+| Equilibrio de los 11 estados | residuo 6 × 10⁻¹¹ kN |
+| $M_3$ de rodilla (633,284 kN·m) | error relativo 3 × 10⁻⁷ |
+| $M_3$ de dintel en el alero (−633,206 kN·m) | error relativo 8 × 10⁻⁷ |
+| $P$ en la base de la columna (−190,140 kN) | error relativo 2 × 10⁻⁶ |
 
 El peso de acero es el assert más barato que existe y el más completo: para salir bien tienen que
 estar bien **a la vez** todas las coordenadas, toda la conectividad y todas las áreas. Y el momento
@@ -222,10 +234,10 @@ secciones del tapered, sus longitudes y su orden están donde tienen que estar.
 <Note type="info" title="Un detalle de las propiedades que hay que copiar bien">
 Las siete secciones tapered comparten ala (220 × 12) y alma (6 mm); solo cambia el peralte. La
 constante torsional que reporta SAP no es el $\sum bt^3/3$ de manual: está **8 981,3 mm⁴ por debajo**,
-y esa diferencia es la **misma en las cuatro secciones** que se midieron. Tiene que serlo: el peralte
-entra solo en el término del alma, así que toda la discrepancia vive en el término del ala, que es
-idéntico en las siete. Que parezca un porcentaje variable —de −2,94 % a −3,20 %— es un artefacto de
-dividir una constante por un denominador que crece.
+y esa diferencia es la **misma en las cuatro secciones** que se midieron. Y eso dice dónde vive: como
+el peralte solo entra en el término del alma, una diferencia que no cambia con $d$ tiene que estar
+entera en el término del ala, que es idéntico en las siete. Que parezca un porcentaje variable —de
+−2,94 % a −3,20 %— es un artefacto de dividir una constante por un denominador que crece.
 
 Eso es lo que permitió reconstruir el $J$ de las tres secciones que nadie había medido sin inventar
 nada: cuatro datos, un offset, cero grados de libertad sobrantes.
@@ -237,11 +249,12 @@ nada: cuatro datos, un offset, cero grados de libertad sobrantes.
 1. **La sección no prismática se puede evitar, y evitarla compra la verificación.** Cuatro tramos en
    la columna y tres por faldón bastan, y a cambio el modelo entero queda al alcance de un segundo
    motor. La pregunta «¿esto lo puede rehacer otro?» merece entrar antes que «¿esto es cómodo?».
-2. **El prismático equivalente no tiene arreglo, y no es una alternativa: es N = 1.** Deja la rodilla
-   19 % corta y la cumbrera 77 % larga, y barrer el peralte no cambia nada, porque el reparto lo
-   decide la razón entre rigideces y no su nivel. Solo hay una decisión que tomar, y es la malla.
-3. **La malla la fija la deriva.** Converge catorce veces y media más lento que la flecha; verificar la malla
-   mirando la flecha es darse el visto bueno con la magnitud equivocada.
+2. **El prismático equivalente no tiene arreglo, y no es una alternativa: es $N = 1$.** El de peralte
+   medio deja la rodilla 19 % corta y la cumbrera 77 % larga, y barrer el peralte no cambia nada,
+   porque el reparto lo decide la razón entre rigideces y no su nivel. Solo hay una decisión que
+   tomar, y es la malla.
+3. **La malla la fija la deriva.** Converge catorce veces y media más lento que la flecha; verificar
+   la malla mirando la flecha es darse el visto bueno con la magnitud equivocada.
 </Note>
 
 Lo que sigue en la serie es el modal del galpón completo, donde el contraste entre los dos motores

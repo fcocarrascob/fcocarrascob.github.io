@@ -277,7 +277,7 @@ function figuraPrismatico() {
     texto(
       70,
       H - 46,
-      `Con N = 1 la sección se toma en el punto medio del miembro, y el reparto de momentos da los mismos ${COMA(N1.Ma, 1)} y ${COMA(N1.Mc, 1)} kN·m.`,
+      `Con N = 1 la sección se toma en el punto medio del miembro, y el reparto de momentos da los mismos ${COMA(N1.Ma, 2)} y ${COMA(N1.Mc, 2)} kN·m.`,
       { size: 12, fill: SUAVE },
     ),
   ];
@@ -347,7 +347,7 @@ function figuraMalla() {
   const n4 = MALLA.find((m) => m.n === 4);
   const anot = [
     `<line x1="${sx(4)}" y1="${yTop - 12}" x2="${sx(4)}" y2="${yBot}" stroke="${AZUL}" stroke-width="1.4" stroke-dasharray="5 4"/>`,
-    texto(sx(4) + 8, yTop + 4, 'la malla del modelo', { size: 11, fill: AZUL, bold: true }),
+    texto(sx(4) + 8, yTop + 4, 'N = 4 uniforme', { size: 11, fill: AZUL, bold: true }),
     texto(sx(4) + 8, yTop + 20, `deriva ${COMA(Math.abs(PCT(n4.dx, TAPERED.dx)), 2)} %`, {
       size: 11,
       fill: AZUL,

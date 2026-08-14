@@ -1366,8 +1366,11 @@ de otra, la diferencia **no varía**:
 Las siete secciones tapered comparten ala (220 × 12) y alma (6 mm); lo único que cambia es el
 peralte, y el peralte entra **solo en el término del alma**. Que la diferencia sea constante dice
 entonces dónde vive: **entera en el término del ala**. El término del alma de SAP es exactamente
-`h·t_w³/3` con `h = d − 2t_f`, y el del ala es `0,321516·b_f·t_f³` en vez de `b_f·t_f³/3` — el
-factor de forma del rectángulo de aspecto finito, que la fórmula de manual ignora.
+`h·t_w³/3` con `h = d − 2t_f`, y el del ala es `0,3215208·b_f·t_f³` por ala, en vez de `b_f·t_f³/3` —
+el factor de forma del rectángulo de aspecto finito, que la fórmula de manual ignora. (El coeficiente
+decía `0,321516` hasta la auditoría del post 2, y con ese valor el offset habría sido 8 985,9 mm⁴ en
+vez de 8 981,3. Comprobación: ala = 271 980,7 − 27 522,0 = 244 458,7 mm⁴ para COL_1, y
+244 458,7 / (2 · 220 · 12³) = **0,3215208**.)
 
 Dos consecuencias:
 
@@ -1687,9 +1690,23 @@ parecido— es lo que cierra el argumento: no es un ajuste, es el mismo modelo.
 **El porqué, y es una sola causa para las dos mitades.** El pilar lleva la **`P` liberada arriba**
 (§6.2.2: «la `P` liberada evita que apuntalen el dintel del marco extremo»). Con la P liberada, todo
 su peso vertical —el propio y el del revestimiento— reacciona en su **propia base** y nunca llega al
-nudo de techo. SAP arrastra esa liberación al armado de la matriz de masa y deja el pilar entero
-fuera. Excluir solo el revestimiento no alcanza (`T₁ = 0,866214 s`); hay que excluir las dos mitades,
-que es justo lo que predice la explicación.
+nudo de techo. **Todo indica** que SAP arrastra esa liberación al armado de la matriz de masa y deja
+el pilar entero fuera. Excluir solo el revestimiento no alcanza (`T₁ = 0,866214 s`, medido parcheando
+`seismic_mass` — el parámetro publicado es un booleano y gobierna las dos mitades a la vez); hay que
+excluir las dos mitades, que es justo lo que predice la explicación.
+
+Cuidado con sobrevender ese último argumento, que la auditoría del post lo acotó: **que las dos
+mitades caigan juntas no discrimina entre hipótesis** — cualquier mecanismo que descarte el elemento
+`PIL` entero las descarta juntas, incluido el manejo del nudo de tope o un filtro de la fuente de
+masa que nada tenga que ver con la liberación. El **hecho medido** es que la masa del pilar no está
+en el modal de SAP; el arrastre del *release* es la explicación que cierra los números, no una
+lectura del programa. Lo que cerraría el punto, y es deuda de §8: abrir el `.sdb` congelado, leer
+`Assign > Joint > Masses` y sumar la masa de los nudos de techo de los marcos 1 y 5.
+
+Dos precisiones más de la misma auditoría: las masas acumuladas coinciden **X e Y a la cuarta cifra
+y Z a la tercera** (0,6509 contra 0,6513 — el assert usa `< 5e-4` *absoluto* y lo tolera), y el
+`3,66 %` de período equivale a **6,94 %** de rigidez de menos, no 7,5 %: `K ∝ 1/T²`. El 7,45 % es el
+recíproco, o sea el exceso de **masa**, que es lo que resultó ser.
 
 **Confirmación independiente, por otro camino.** De los propios números de SAP:
 `Q₀X / S_a = 86,960229 / 0,1576606 = 551,6 kN` de peso efectivo, y con `U_x = 0,94627` eso implica
@@ -1713,11 +1730,20 @@ comparando dos cosas que no salen de la misma masa, y eso hay que decirlo.
 **El juicio, que es lo discutible.** La liberación axial gobierna el camino de la carga **vertical**;
 la inercia **horizontal** del pilar existe igual —hay que acelerarlo—, y siendo biarticulado le
 entrega la mitad de esa inercia al techo. Que SAP arrastre el release a las tres componentes de masa
-es una decisión del programa, no de la norma. Acá se reproduce para poder contrastar, y el costo de
-no reproducirla está medido: **3,66 % de período**, del lado inseguro para el `T*` transversal (un
-`T*` más corto cae más arriba en el espectro… salvo que ya esté en la rama descendente, que es este
-caso, donde un `T*` más corto sube la demanda). El caso 10 lo deja como parámetro
+sería una decisión del programa, no de la norma. Acá se reproduce para poder contrastar, y el costo
+de **no** reproducirla está medido, con signo: meter la masa del pilar alarga el `T*` transversal un
+**3,66 %**, y ese `T*` ya está en la rama descendente del espectro, así que la ordenada **baja** de
+`S_a/g = 0,157661` a `0,150227`, un **4,7 % menos de demanda**. Va del **lado inseguro**: el criterio
+más completo en masa es el que da menos demanda. El caso 10 lo deja como parámetro
 (`seismic_mass(..., include_pilar=)`) para que el post pueda mostrar las dos.
+
+**Y una corrección que la auditoría cazó en el post, no en el caso.** El `Q₀Y` de rukan queda un
+**0,14 % por debajo** del de SAP, y el post lo explicaba como herencia del `T*_Y` y del `R*_Y`. Está
+mal en las tres patas: el signo (los dos efectos empujan hacia arriba), la magnitud (el efecto del
+período es +0,033 %, cuatro veces menor) y el mecanismo — **el `R*` propagado nunca entra**, porque
+el caso arma el espectro con `r_fixed = r_star_for(T_SAP["Y"])`, o sea el `R*` de SAP. Los dos
+motores corren el mismo `R*`. El residuo es de las formas modales y de la CQC de los 60 modos, y
+atribuirlo pediría comparar los 60 pares uno a uno — que ninguna fuente disponible registra.
 
 ### 5.47 La envolvente reproducida, y la estación que casi se pierde
 
@@ -1736,11 +1762,23 @@ cumbrera no lo gobierna ninguno de sus dos extremos**: bajo `G3A_B` sus estacion
 | j (cumbrera) | 193,624 |
 
 Mirar solo los extremos —que es lo que devuelve `localForces` de un elemento— se lleva **207,932 a
-193,624, un 6,9 % menos**, y del lado inseguro. SAP reporta tres estaciones por defecto y por eso lo
-ve; un motor que solo lea fuerzas de extremo tiene que reconstruir la parábola:
-`M_centro = (M_i − M_j)/2 + w·L²/8`, con el signo del diagrama —**la estación j lleva el momento de
-extremo cambiado de signo**—. Esa misma corrección de signo es la que hace calzar los signos de la
-tabla de §5.37, que sin ella salían al revés en la mitad de los miembros.
+193,624, un 6,9 % menos**, y del lado inseguro. SAP **muestra** la estación central —su `|M₃|` de
+`DIN3_3` es 207,932—; un motor que solo lea fuerzas de extremo tiene que reconstruir la parábola.
+
+**Cómo escribirla sin ambigüedad** (la auditoría del post 6 encontró que la forma de acá se prestaba
+a las dos lecturas). En signo de **diagrama**:
+
+`M_centro = (M_i + M_j)/2 + w·L²/8`, con `L = 4,0617064 m` y `w = 14,353580 kN/m` para este tramo,
+o sea `(163,041 + 193,624)/2 + 29,5997 = 207,932`.
+
+La trampa está en qué se le pasa: `localForces` **no** devuelve valores de diagrama, devuelve los
+momentos que actúan sobre la barra, y en la estación `j` eso lleva el signo cambiado (el componente
+crudo vale −193,624). Pasarlo tal cual da **14,31 kN·m**. Escrita con la salida cruda, la misma
+fórmula es `(M_i − F₁₂)/2 + w·L²/8` con `F₁₂ = localForces[11]`, que es como está en el extractor.
+
+Esa corrección de signo es la que hace calzar los signos de la tabla de §5.37: sin ella, las
+**estaciones de extremo** salían al revés en la mitad de los miembros —ahí cambiar el signo no cambia
+el módulo— y la **estación central** salía además con la magnitud mal (207,932 → 14,31).
 
 También se comprobó que el `P_máx = 0,0` que SAP reporta para el pilar de hastial **no es un cero de
 redondeo**: es la estación superior, donde la `P` está liberada. El axial hay que leerlo en las dos
@@ -1792,7 +1830,17 @@ cada caso reproduce SAP2000, las combinaciones lo reproducen **por construcción
 mitad que el mapa ya le daba —de 79 combinaciones, **nueve** dimensionan algo, y por qué rukan no
 debe tener nunca módulo de viento ni de nieve— más lo que apareció al construirlo (§5.47): que el
 dintel de cumbrera no lo gobierna ninguno de sus extremos sino la **estación media**, y que leer
-solo los extremos se lleva un 7 % del lado inseguro.
+solo los extremos se lleva un 6,9 % del lado inseguro.
+
+**Y hay que deslindarlo también del apunte hermano, no solo de los posts de Rukan.** La auditoría del
+post 6 encontró que `/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones` (post 3 de esta serie,
+publicado el 2026-08-12) ya publica la cita de NCh3171 §9, el reparto 63/12/4, la tabla de
+gobernantes, el «nueve de las 79, y no se sabe cuáles hasta correrlas» y la nieve desbalanceada
+gobernando el dintel a media luz. O sea que **casi todo el primer tercio del post 6 estaba ya dicho**
+en la misma serie. Lo que queda como suyo: que **el segundo motor elija las mismas ganadoras sin
+buscarlas** (29/30, con el empate identificado), la estación media y el argumento del módulo de
+viento. Lección para los posts que faltan: el deslinde se hace contra **toda** la serie, no solo
+contra la subserie de Rukan.
 
 ---
 
@@ -1989,6 +2037,16 @@ Párrafo obligatorio en el §1 de cada post, con enlace.
   «limpio», hay que decidir si se documenta el artefacto o se modelan las diagonales enteras.
 - **El script `galpon_altiplano_espectral` fija `P_SIS` a mano** (constante literal). Al cambiar
   cualquier carga hay que actualizarlo, o leerlo del modelo.
+- **La masa nodal del `.sdb` sigue sin leerse** (§5.46, auditoría del post 4). Es lo único que
+  convierte la explicación del release en un hecho: `Assign > Joint > Masses` en el modelo congelado,
+  sumando la masa de los nudos de techo de los marcos 1 y 5. Mientras no se haga, el post dice «todo
+  indica que» y no puede decir más.
+- **El `Q₀X = 86,960229 kN` no está estampado en ninguna cabecera `# Result:`** (auditoría del post
+  4). Su única fuente escrita es la tabla de `Skills_SAP/scripts/README.md`, mantenida a mano — y el
+  post lo usa para deducir la masa de referencia. Hay que correr el espectral una vez más y estampar
+  una cabecera con los dos cortes basales.
+- **El 0,14 % residual del `Q₀Y`** (§5.46) queda sin atribuir. Pediría comparar los 60 pares modo a
+  modo entre los dos motores; ninguna fuente disponible los registra.
 - **NCh431 y NCh1537** siguen sin PDF. Ya no bloquean (§5.1); el post 3 se publicó sin ellas.
 - **NCh427/1 no está en PDF.** La cita §8.3.2 (métodos de diseño por estabilidad) y C8.3.2 (el segundo
   orden aproximado del Anexo 8, aceptado explícitamente). Necesaria para el post 7.

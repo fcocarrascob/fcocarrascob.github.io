@@ -1,8 +1,9 @@
 ---
 title: "Rukan (10): de 79 combinaciones, nueve dimensionan algo"
-description: "La envolvente del galpón del altiplano, miembro a miembro, contra el modelo SAP2000 congelado: las 63 de gravedad y viento coinciden exactas en sus 30 valores, y la combinación gobernante se reproduce en 29 de 30. Con dos cosas que el contraste dejó a la vista: que el dintel de cumbrera no lo gobierna ninguno de sus extremos sino la estación del medio —un 7 % del lado inseguro para quien lea solo la salida del elemento— y por qué el segundo motor no debe tener nunca módulo de viento ni de nieve."
+description: "La envolvente del galpón del altiplano, miembro a miembro, contra el modelo SAP2000 congelado: las 63 de gravedad y viento coinciden exactas en sus 30 valores, y la combinación gobernante se reproduce en 29 de 30. Con dos cosas que el contraste dejó a la vista: que el dintel de cumbrera no lo gobierna ninguno de sus extremos sino la estación del medio —un 6,9 % del lado inseguro para quien lea solo la salida del elemento— y por qué el segundo motor no debe tener nunca módulo de viento ni de nieve."
 pubDate: 2026-08-14
 tags: ["OpenSees", "OpenSeesPy", "Rukan", "combinaciones", "envolvente", "NCh3171", "NCh2369", "galpón", "SAP2000", "verificación"]
+norm: "NCh3171:2017 / NCh2369:2025"
 section: "Rukan"
 series: "Rukan — verificación"
 seriesPart: 10
@@ -15,7 +16,8 @@ import Figure from '../../components/content/Figure.astro';
 ## El último peldaño, y lo que no tiene de mérito
 
 Cierra el caso 10: el [galpón del altiplano](/blog/galpon-altiplano-la-serie/) armado en OpenSeesPy
-con sus 105 nodos y 188 barras, sus once estados de carga y sus **79 combinaciones**, confrontado
+con los 105 nodos del `.sdb` —115 en rukan, con el nodo de tope por pilar de hastial— y 188 barras,
+sus once estados de carga y sus **79 combinaciones**, confrontado
 contra el modelo SAP2000 congelado. Las dos capas anteriores —[el peralte
 variable](/blog/rukan-verificacion-galpon-tapered/) y
 [el modal](/blog/rukan-verificacion-galpon-modal-espectral/)— ya cerraron.
@@ -23,7 +25,8 @@ variable](/blog/rukan-verificacion-galpon-tapered/) y
 Conviene empezar por lo que **no** es noticia.
 
 <Note type="info" title="Que las combinaciones cuadren no prueba nada">
-El [caso 8](/blog/rukan-verificacion-peso-propio-combinaciones/) ya lo dijo con todas sus letras:
+El [caso 8](/blog/rukan-verificacion-peso-propio-combinaciones/) —el octavo *caso de validación* de
+rukan, publicado en la sexta entrega de esta serie— ya lo dijo con todas sus letras:
 una combinación es una **suma lineal** de casos, así que si cada caso reproduce SAP2000, las
 combinaciones lo reproducen **por construcción**. No hay nada que verificar ahí; es aritmética.
 
@@ -33,22 +36,31 @@ que armaron el mismo árbol no eligen la misma ganadora.
 
 ## Las tres envolventes
 
-El árbol son 79 combinaciones LRFD, y el reparto entre normas lo resuelve NCh3171 §9 por escrito:
-*«cuando las normas de diseño sísmico consideren otras combinaciones para casos particulares de
-cargas, estas prevalecen»*. Quedan **63** de gravedad y viento por §9.1.1, **12** sísmicas por
-NCh2369 §4.5.1 con la simultaneidad de §4.5.2, y **4** de una rama ilustrativa con $R = 5$.
+El árbol son 79 combinaciones LRFD, y el reparto entre normas lo resuelve NCh3171:2017 §9 por
+escrito: *«cuando las normas de diseño sísmico consideren otras combinaciones para casos particulares
+de cargas, éstas prevalecen»*. Quedan **63** de gravedad y viento por §9.1.1, **12** sísmicas por
+NCh2369:2025 §4.5.1 con la simultaneidad de §4.5.2, y **4** de una rama ilustrativa con $R = 5$ — la
+que el [apunte de cargas y combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones/)
+arma para mostrar qué cambia al mover el factor.
+
+Ese apunte es, de hecho, donde el árbol está construido y explicado cláusula por cláusula. Acá se lo
+da por armado: lo que se pone a prueba es **si un segundo motor llega a las mismas ganadoras**.
 
 Sobre los diez miembros de control, contra el modelo congelado:
 
 | Envolvente | combos | resultado |
 |---|---:|---|
 | **`ENVG`** gravedad y viento | 63 | **exacta** en los 30 valores |
-| `ENVE` sismo | 12 | peor error $6{,}9 \times 10^{-3}$ |
-| `ENV` total | 79 | peor error $6{,}9 \times 10^{-3}$ |
+| `ENVE` sismo | 12 | peor error **0,69 %** |
+| `ENV` total | 79 | peor error **0,69 %** |
 
-El error de la envolvente sísmica no es ruido suelto: hereda el 0,14 % del corte basal
-longitudinal, que a su vez hereda el 0,055 % del $T^*_Y$. Se propaga entero y se puede seguir hasta
-su origen — que es lo que uno le pide a una discrepancia.
+El error de la envolvente sísmica se puede seguir, que es lo que uno le pide a una discrepancia. El
+corte basal longitudinal de rukan queda un **0,14 %** por debajo del de SAP —un residuo de las formas
+modales y de la combinación CQC de los 60 modos, no del $T^*$, como se
+[discute en el post del modal](/blog/rukan-verificacion-galpon-modal-espectral/)—. Pero no se propaga
+entero: el peor caso de la envolvente es la **compresión del puntal de alero**, 16,002 contra 16,113
+kN, y ahí el mismo orden de desvío absoluto pesa **casi cinco veces más** en relativo, porque la
+respuesta es chica.
 
 ## Nueve de setenta y nueve
 
@@ -58,21 +70,24 @@ su origen — que es lo que uno le pide a una discrepancia.
   caption="El árbol completo, con las nueve que deciden al menos una respuesta de los diez miembros de control. Las setenta restantes no sobran: no se sabe cuáles son hasta correrlas."
 />
 
-De las 79, exactamente **nueve** deciden alguna respuesta de algún miembro. Y la lista es más
-interesante que el número:
+De las 79, **nueve** deciden alguna respuesta de algún miembro. El conteo mecánico de la corrida da
+diez, y el décimo es el que gana el empate en 0,0 del pilar de hastial —`G1` en rukan, `E3N_A` en
+SAP—, o sea el que no decide nada; de ahí las nueve. Y la lista es más interesante que el número:
 
 | Miembro | $P$ compresión | $P$ tracción | $\lvert M_3 \rvert$ |
 |---|---|---|---|
 | Columna, base | `G3A_B` | `G6_TXPP` | `G3A_B` |
 | Columna, rodilla | `G3A_B` | `G6_TXPP` | `G3A_B` |
-| Dintel, alero | `G3A_B` | `G6_LYNP` | `G3A_B` |
+| Dintel, rodilla | `G3A_B` | `G6_LYNP` | `G3A_B` |
 | Dintel, medio | `G3A_B` | `G6_LYNP` | **`G3A_I`** |
 | Dintel, cumbrera | `G3A_B` | `G6_LYNP` | `G3A_B` |
 | Puntal de alero | `E2N_B` | `E2P_A` | `E3P_A` |
 | Puntal de cumbrera | `G3A_B` | `G6_TXNP` | `E3P_A` |
 | Media diagonal de muro | `E2P_A` | `E2N_B` | `E3P_A` |
 | Media diagonal de techo | `G3A_B` | `E2N_B` | `E3P_A` |
-| Pilar de hastial | `E3P_A` | — | `G4_BLYPN` |
+| Pilar de hastial | `E3P_A` | — *(empate)* | `G4_BLYPN` |
+
+Los nombres son los que reporta rukan, y coinciden con los de SAP salvo donde se indica.
 
 Rukan reproduce la gobernante de SAP en **29 de 30**. La única que no coincide es la tracción del
 pilar de hastial, y no es una discrepancia: ese miembro **nunca tracciona** —su $P_{\max}$ vale
@@ -81,12 +96,16 @@ combinación que dé cero «gana». Es un empate, no un desacuerdo.
 
 <Note type="tip" title="La nieve desbalanceada, el caso que nadie corre">
 Mira la fila del **dintel medio**. Toda la estructura principal la gobierna `G3A_B`
-—$1{,}2D + 1{,}6S$ con la nieve **balanceada**—, salvo ese miembro, que lo gobierna `G3A_I`: la
-misma combinación con la nieve **desbalanceada**, 100 % en un faldón y 50 % en el otro.
+—$1{,}2(D + D_{sd}) + 1{,}6\,S$ con la nieve **balanceada**—, salvo ese miembro, que lo gobierna
+`G3A_I`: la misma combinación con la nieve **desbalanceada**, 100 % en un faldón y 50 % en el otro.
+(La nieve es dato de proyecto —$S = 1{,}20$ kPa de estudio de sitio— y el reparto 100/50 es decisión
+de modelación, no un valor tabulado: NCh431 no está en PDF acá.)
 
-Es el argumento entero a favor de armar el árbol completo. La nieve desbalanceada no gobierna nada
-en nueve de los diez miembros, y si uno decide de antemano cuáles combinaciones «valen la pena», es
-exactamente la clase de caso que se salta. Correrla cuesta una suma lineal.
+Eso ya lo dice el [apunte de cargas y
+combinaciones](/apuntes/ejemplo-galpon-altiplano-cargas-combinaciones/), que es donde el árbol se
+construye. Lo que agrega este peldaño es que **el segundo motor elige la misma ganadora**, sin
+haberla buscado: la envolvente de rukan no sabe qué combinación «debería» gobernar el dintel medio, y
+llega a `G3A_I` corriendo las 79.
 </Note>
 
 Que las setenta restantes no gobiernen nada tampoco significa que sobren: **no se sabe cuáles son
@@ -114,32 +133,39 @@ Gobierna el **centro**. Y el centro es justamente lo que **no** devuelve la sali
 elemento: `localForces` da los dos extremos y nada más. Leer solo eso se lleva 207,9 a 193,6 kN·m
 —un **6,9 % de menos, del lado inseguro**— y no deja ninguna señal.
 
-SAP2000 reporta tres estaciones por defecto y por eso lo ve. Un motor que trabaje con fuerzas de
-extremo tiene que reconstruir la parábola:
+SAP2000 muestra la estación central —su $\lvert M_3 \rvert$ de ese tramo es 207,932— y por eso la ve.
+Un motor que trabaje con fuerzas de extremo tiene que reconstruir la parábola, con $M_i$ y $M_j$ los
+valores del **diagrama** en los dos extremos:
 
 <Equation label="Ec. 1">
-$$M_{\text{centro}} \;=\; \frac{M_i - M_j}{2} \;+\; \frac{w\,L^2}{8}$$
+$$M_{\text{centro}} \;=\; \frac{M_i + M_j}{2} \;+\; \frac{w\,L^2}{8}$$
 </Equation>
 
-<Note type="warning" title="Y el signo del segundo término no es el que uno escribiría">
-La resta del primer término es la trampa. `localForces` devuelve los momentos que actúan **sobre la
-barra** en cada extremo, y el valor del **diagrama** en la estación $j$ lleva el signo cambiado
-respecto de eso. Escribir $(M_i + M_j)/2$ —el promedio que parece natural— da un número plausible,
-del orden correcto, y **mal**.
+Para este tramo: $L = 4{,}06171$ m, $w = 14{,}35358$ kN/m, así que $wL^2/8 = 29{,}5997$ kN·m, y la
+Ec. 1 da $(163{,}041 + 193{,}624)/2 + 29{,}5997 = \mathbf{207{,}932}$ kN·m.
+
+<Note type="warning" title="La trampa está en qué le pasas a esa ecuación">
+`localForces` **no** devuelve los valores del diagrama: devuelve los momentos que actúan **sobre la
+barra** en cada extremo, y en la estación $j$ eso lleva el signo cambiado respecto del diagrama —el
+componente crudo vale −193,624—. Meter la salida tal cual en la Ec. 1 da
+$(163{,}041 + (-193{,}624))/2 + 29{,}5997 = 14{,}31$ kN·m: un número que no rompe nada, que se puede
+graficar, y que está catorce veces por debajo del real.
 
 Se caza igual que todo lo demás en esta serie: partiendo el elemento en dos y leyendo el nudo del
 medio, que para una barra prismática con carga uniforme es exacto. Da 207,9321 contra los 207,932
 de SAP.
 
-De paso, esa misma corrección de signo es la que hace calzar los signos de la tabla de gobernantes:
-sin ella salían al revés en la mitad de los miembros, con las magnitudes correctas.
+De paso, esa misma corrección de signo es la que hace calzar los signos de la tabla de esfuerzos de
+§5.37 de la memoria de cálculo: sin ella, en la mitad de los miembros las estaciones de extremo
+salían al revés —ahí cambiar el signo no cambia el módulo— y la estación central salía además con la
+magnitud mal, que es el 207,932 → 14,31 de arriba.
 </Note>
 
 ## Por qué el segundo motor no debe tener módulo de viento ni de nieve
 
 Queda una pregunta de diseño de la herramienta, y la envolvente es donde se contesta.
 
-Un motor de análisis chileno **podría** traer el cálculo de viento de NCh432 y el de nieve: zona,
+Un motor de análisis chileno **podría** traer el cálculo de viento de NCh432:2025 y el de nieve: zona,
 exposición, factor topográfico, coeficientes de presión por zona de cubierta. El núcleo de rukan no
 lo trae, y no debería traerlo nunca.
 
@@ -153,7 +179,8 @@ lo mismo, no verificó nada —los dos leyeron la misma figura y podrían haberl
 discrepa, la discrepancia es **ambigua**: no se sabe si falló el análisis o la lectura de la norma,
 que es justo la distinción que la verificación existe para hacer.
 
-Así que en el caso 10 el cálculo de presiones —los coeficientes $GC_{pf}$ de la Figura 12, la
+Así que en el caso 10 el cálculo de presiones —los coeficientes $GC_{pf}$ de la Figura 12 de
+NCh432:2025, la
 interpolación a los 10° de pendiente, el promediado de las zonas de esquina por área— está **portado
 literalmente** del script que armó el modelo SAP al módulo de datos compartido, y el port se verifica
 por sus resultantes: las cinco coinciden con las de SAP a $5 \times 10^{-7}$ kN. Que coincidan no es
@@ -166,7 +193,8 @@ convertiría el port en una segunda lectura independiente de la misma figura.
 Lo que sí es análisis —y donde rukan sí tiene que ser competente— es **cómo se aplica** esa carga.
 Ahí está la trampa que importa: la nieve va por **proyección horizontal** y la muerta de techo por
 **largo de barra**, y son dos reparticiones distintas sobre la misma barra inclinada. Confundirlas
-mete un $1/\cos 10° = 1{,}5\ \%$ en todo el faldón. Eso no es leer una figura: es ensamblar bien un
+mete un factor $1/\cos 10° = 1{,}0154$ —un **1,5 %**— en todo el faldón. Eso no es leer una figura: es
+ensamblar bien un
 vector de cargas, y es exactamente lo que un segundo motor tiene que saber hacer solo.
 
 ## El veredicto
@@ -176,16 +204,18 @@ vector de cargas, y es exactamente lo que un segundo motor tiene que saber hacer
    gobierna el dintel medio es la nieve desbalanceada, que no gobierna nada más. Podar el árbol por
    criterio es podarlo por la respuesta que uno ya esperaba.
 2. **El máximo no siempre está en un extremo.** La salida de fuerzas de un elemento da los extremos;
-   el dintel de cumbrera lo gobierna el centro, por un 6,9 % y del lado inseguro. Y reconstruir la
-   parábola tiene un signo que no es el que uno escribiría.
+   el dintel de cumbrera lo gobierna el centro, por un 6,9 % y del lado inseguro. Y al reconstruir la
+   parábola hay que pasarle valores de diagrama, no la salida cruda del elemento: con esta, la Ec. 1
+   da 14,31 donde el momento real es 207,932.
 3. **Un motor de verificación no debe reimplementar la norma de cargas.** El cálculo de presiones se
    escribe una vez y se porta; lo que se duplica es el análisis. Ese reparto es lo que hace que una
    discrepancia signifique algo.
 </Note>
 
-Con esto el galpón queda armado y confrontado en los dos motores, de punta a punta y sin abrir
-SAP2000 en ningún momento. Lo que sigue en la serie no es análisis: es el chequeo de cada miembro
-contra AISC 360-22, que es la otra mitad del trabajo.
+Con esto el galpón queda armado y confrontado en los dos motores, de punta a punta — y el segundo se
+construyó entero en un equipo **sin SAP2000 instalado**, contra el modelo congelado. Lo que sigue en
+la serie no es análisis: es el chequeo de cada miembro contra AISC 360-22, que es la otra mitad del
+trabajo.
 
 ## Reproducir
 
